@@ -107,10 +107,12 @@ class MainActivity : Activity() {
         traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)
         batteryEnergyTextView.text = String.format("%d/%d, %d%%", DataHolder.currentBatteryCapacity, DataHolder.maxBatteryCapacity, ((DataHolder.currentBatteryCapacity.toFloat()/DataHolder.maxBatteryCapacity.toFloat())*100).toInt())
         if (AppPreferences.consumptionUnit) { // Use Wh/km
-            currentInstConsTextView.text = String.format("%d Wh/km", ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6)).toInt())
+            if (DataHolder.currentSpeed > 0) currentInstConsTextView.text = String.format("%d Wh/km", ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6)).toInt())
+            else currentInstConsTextView.text = "N/A"
             averageConsumptionTextView.text = String.format("%d Wh/km", (DataHolder.usedEnergy/(DataHolder.traveledDistance/1000)).toInt())
         } else { // Use kWh/100km
-            currentInstConsTextView.text = String.format("%.1f kWh/100km", ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6))/10)
+            if (DataHolder.currentSpeed > 0) currentInstConsTextView.text = String.format("%.1f kWh/100km", ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6))/10)
+            else currentInstConsTextView.text = "N/A"
             averageConsumptionTextView.text = String.format("%.1f kWh/100km", (DataHolder.usedEnergy/(DataHolder.traveledDistance/1000))/10)
         }
     }
