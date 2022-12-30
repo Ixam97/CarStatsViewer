@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Car Stats Viewer</string>
+
+    <!-- MainActivity -->
+    <string name="main_port_connected">Ladekabel angeschlossen:</string>
+    <string name="main_current_power">Momentanleistung:</string>
+    <string name="main_used_energy">Verbrauchte Energie:</string>
+    <string name="main_current_speed">Aktuelle Geschwindigkeit:</string>
+    <string name="main_traveled_distance">Zurückgelegte Distanz:</string>
+    <string name="main_inst_consumption">Momentanverbrauch:</string>
+    <string name="main_average_consumption">Durchschnittsverbrauch:</string>
+    <string name="main_button_reset_stats">Statistiken zurücksetzen</string>
+
+    <!-- SettingsActivity -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_button_back">Zurück</string>
+    <string name="settings_notifications">Benachrichtigungen</string>
+    <string name="settings_consumption_unit">Wh/km als Verbrauchseinheit</string>
+
+    <!-- Notifications -->
+    <string name="notification_title">Aktuelle Fahrdaten:</string>
+</resources>

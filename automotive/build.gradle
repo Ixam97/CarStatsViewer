@@ -1,0 +1,39 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 32
+    buildToolsVersion "29.0.3"
+
+    defaultConfig {
+        applicationId "com.ixam97.carStatsViewer"
+        minSdkVersion 28
+        targetSdkVersion 32
+        versionCode 13
+        versionName "0.7"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // android.car exists since Android 10 (API level 29) Revision 5.
+    useLibrary 'android.car'
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.3.1'
+
+    // to fix unresolved references to android.car
+    def sdkDir = project.android.sdkDirectory.canonicalPath
+    def androidCarJar = "$sdkDir/platforms/android-33/optional/android.car.jar"
+    implementation(files(androidCarJar))
+}
