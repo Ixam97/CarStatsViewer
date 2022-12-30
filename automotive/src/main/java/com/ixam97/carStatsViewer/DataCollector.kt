@@ -80,15 +80,6 @@ class DataCollector : Service() {
 
     override fun onCreate() {
         super.onCreate()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        car.disconnect()
-    }
-
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        // Register vehicle properties callbacks
 
         notificationsEnabled = AppPreferences.notifications
 
@@ -112,6 +103,15 @@ class DataCollector : Service() {
 
         timerHandler = Handler(Looper.getMainLooper())
         timerHandler.post(updateStatsNotificationTask)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        car.disconnect()
+    }
+
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        // Register vehicle properties callbacks
 
         return START_STICKY
     }
@@ -210,20 +210,17 @@ class DataCollector : Service() {
             with(NotificationManagerCompat.from(this)) {
                 val averageConsumption = DataHolder.usedEnergy / (DataHolder.traveledDistance/1000)
 
-                var message = String.format(
-                    "P:%.1f kW, D: %.3f km, Ø: %d Wh/km",
+                var averageConsumptionString = String.format("%d Wh/km", averageConsumption.toInt())
+                if (!AppPreferences.consumptionUnit) averageConsumptionString = String.format("%.1f kWh/100km",averageConsumption / 10)
+                if ((DataHolder.traveledDistance <= 0)) averageConsumptionString = "N/A"
+
+                val message = String.format(
+                    "P:%.1f kW, D: %.3f km, Ø: %s",
                     DataHolder.currentPowermW / 1000000,
                     DataHolder.traveledDistance / 1000,
-                    averageConsumption.toInt()
+                    averageConsumptionString
                 )
-                if (!AppPreferences.consumptionUnit) {
-                    message = String.format(
-                        "P:%.1f kW, D: %.3f km, Ø: %.1f kWh/100km",
-                        DataHolder.currentPowermW / 1000000,
-                        DataHolder.traveledDistance / 1000,
-                        averageConsumption / 10
-                    )
-                }
+
                 statsNotification.setContentText(message)
                 notify(notificationId, statsNotification.build())
             }

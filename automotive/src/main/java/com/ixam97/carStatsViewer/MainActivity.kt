@@ -53,8 +53,8 @@ class MainActivity : Activity() {
         val sharedPref = context.getSharedPreferences(
             getString(R.string.preferences_file_key), Context.MODE_PRIVATE
         )
-        val preferencesConsumptionUnit = sharedPref.getBoolean(getString(R.string.preferences_consumption_unit_key), false)
-        AppPreferences.consumptionUnit = preferencesConsumptionUnit
+        AppPreferences.consumptionUnit = sharedPref.getBoolean(getString(R.string.preferences_consumption_unit_key), false)
+        AppPreferences.notifications = sharedPref.getBoolean(getString(R.string.preferences_notifications_key), false)
 
         dataCollectorIntent = Intent(this, DataCollector::class.java)
         starterIntent = intent
@@ -109,11 +109,13 @@ class MainActivity : Activity() {
         if (AppPreferences.consumptionUnit) { // Use Wh/km
             if (DataHolder.currentSpeed > 0) currentInstConsTextView.text = String.format("%d Wh/km", ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6)).toInt())
             else currentInstConsTextView.text = "N/A"
-            averageConsumptionTextView.text = String.format("%d Wh/km", (DataHolder.usedEnergy/(DataHolder.traveledDistance/1000)).toInt())
+            if (DataHolder.traveledDistance > 0) averageConsumptionTextView.text = String.format("%d Wh/km", (DataHolder.usedEnergy/(DataHolder.traveledDistance/1000)).toInt())
+            else averageConsumptionTextView.text = "N/A"
         } else { // Use kWh/100km
             if (DataHolder.currentSpeed > 0) currentInstConsTextView.text = String.format("%.1f kWh/100km", ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6))/10)
             else currentInstConsTextView.text = "N/A"
-            averageConsumptionTextView.text = String.format("%.1f kWh/100km", (DataHolder.usedEnergy/(DataHolder.traveledDistance/1000))/10)
+            if (DataHolder.traveledDistance > 0) averageConsumptionTextView.text = String.format("%.1f kWh/100km", (DataHolder.usedEnergy/(DataHolder.traveledDistance/1000))/10)
+            else averageConsumptionTextView.text = "N/A"
         }
     }
 
