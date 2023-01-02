@@ -5,6 +5,8 @@
     <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer.preferences</string>
     <string name="preferences_notifications_key" translatable="false">notifications</string>
     <string name="preferences_consumption_unit_key" translatable="false">consumption_unit</string>
+    <string name="preferences_debug_key" translatable="false">debug</string>
+    <string name="preferences_consumption_plot_key" translatable="false">consumption_plot</string>
 
     <!-- MainActivity -->
     <string name="main_port_connected">Charge port connected:</string>
@@ -16,12 +18,15 @@
     <string name="main_inst_consumption">Instantaneous consumption:</string>
     <string name="main_average_consumption">Average consumption:</string>
     <string name="main_button_reset_stats">Reset statistics</string>
+    <string name="main_consumption">Consumption over the last 3 km:</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
     <string name="settings_button_back">Back</string>
     <string name="settings_notifications">Notifications</string>
     <string name="settings_consumption_unit">Wh/km as consumption unit</string>
+    <string name="settings_debug">Debug information</string>
+    <string name="settings_consumption_plot">Show experimental consumption Plot</string>
 
     <!-- Notifications -->
     <string name="notification_title">Current stats:</string>

@@ -84,6 +84,29 @@
                 android:layout_height="2dp"
                 android:background="?android:attr/listDivider" />
 
+            <Switch
+                android:id="@+id/settings_switch_consumption_plot"
+                android:layout_width="match_parent"
+                android:layout_height="101dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="35dp"
+                android:text="@string/settings_consumption_plot"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_marginVertical="10dp"
+                android:layout_height="2dp"
+                android:background="?android:attr/listDivider" />
+
+            <Switch
+                android:id="@+id/settings_switch_debug"
+                android:layout_width="match_parent"
+                android:layout_height="101dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="35dp"
+                android:text="@string/settings_debug"
+                android:visibility="gone"/>
+
             <TextView
                 android:id="@+id/settings_version_text"
                 android:layout_width="match_parent"
@@ -94,6 +117,12 @@
                 android:gravity="center_vertical"
                 android:textAppearance="?android:attr/textAppearanceSmall"/>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_marginVertical="10dp"
+                android:layout_height="2dp"
+                android:background="?android:attr/listDivider"/>
+<!--
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="101dp"
@@ -103,7 +132,6 @@
                 android:textSize="35dp"
                 android:text="Über Car Stats Viewer"
                 android:textAlignment="textStart"
-                android:visibility="gone"
                 android:drawableEnd="@drawable/ic_chevron_right"/>
 
             <View
@@ -111,6 +139,7 @@
                 android:layout_marginVertical="10dp"
                 android:layout_height="2dp"
                 android:background="?android:attr/listDivider" />
+                -->
 
         </LinearLayout>
     </ScrollView>

@@ -10,6 +10,8 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
 /**
@@ -28,7 +30,7 @@ class MainActivity : Activity() {
     private val updateActivityTask = object : Runnable {
         override fun run() {
             updateActivity()
-            timerHandler.postDelayed(this, 1000)
+            timerHandler.postDelayed(this, 500)
         }
     }
 
@@ -55,6 +57,8 @@ class MainActivity : Activity() {
         )
         AppPreferences.consumptionUnit = sharedPref.getBoolean(getString(R.string.preferences_consumption_unit_key), false)
         AppPreferences.notifications = sharedPref.getBoolean(getString(R.string.preferences_notifications_key), false)
+        AppPreferences.debug = sharedPref.getBoolean(getString(R.string.preferences_debug_key), false)
+        AppPreferences.consumptionPlot = sharedPref.getBoolean(getString(R.string.preferences_consumption_plot_key), false)
 
         dataCollectorIntent = Intent(this, DataCollector::class.java)
         starterIntent = intent
@@ -65,6 +69,12 @@ class MainActivity : Activity() {
         checkPermissions()
 
         setContentView(R.layout.activity_main)
+
+        if (AppPreferences.consumptionPlot) main_consumption_plot_container.visibility = View.VISIBLE
+
+        for (i in 1..30) {
+            main_consumption_plot.addDataPoint(0F)
+        }
 
         main_button_reset.setOnClickListener {
             resetStats()
@@ -98,6 +108,21 @@ class MainActivity : Activity() {
 
     private fun updateActivity() {
         /** Use data from DataHolder to Update MainActivity text */
+
+        if (AppPreferences.consumptionPlot && main_consumption_plot_container.visibility == View.GONE) {
+            main_consumption_plot_container.visibility = View.VISIBLE
+        } else if (!AppPreferences.consumptionPlot && main_consumption_plot_container.visibility == View.VISIBLE) {
+            main_consumption_plot_container.visibility = View.GONE
+        }
+
+        if (DataHolder.newPlotValueAvailable) {
+            main_consumption_plot.addDataPoint(DataHolder.newPlotValue)
+            Log.d("Plot", String.format("Added %d Wh/km", DataHolder.newPlotValue.toInt()))
+            DataHolder.newPlotValueAvailable = false
+        }
+
+        main_consumption_plot.updateAverage(DataHolder.averageConsumption)
+
         chargePortConnectedTextView.text = DataHolder.chargePortConnected.toString()
         if (DataHolder.currentPowermW > 0) currentPowerTextView.setTextColor(Color.RED)
         else currentPowerTextView.setTextColor(Color.GREEN)
@@ -133,6 +158,10 @@ class MainActivity : Activity() {
     }
 
     private fun resetStats() {
+        for (i in 1..30) {
+            main_consumption_plot.addDataPoint(0F)
+        }
+        firstPlotValueAdded = false
         DataHolder.traveledDistance = 0F
         traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)
         DataHolder.usedEnergy = 0F

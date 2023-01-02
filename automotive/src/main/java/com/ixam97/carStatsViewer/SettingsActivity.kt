@@ -7,8 +7,10 @@ import android.content.Context
 import android.util.Log
 
 object AppPreferences {
+    var debug = false
     var notifications = false
     var consumptionUnit = false
+    var consumptionPlot = false
 }
 
 class SettingsActivity : Activity() {
@@ -24,16 +26,11 @@ class SettingsActivity : Activity() {
         val sharedPref = context.getSharedPreferences(
             getString(R.string.preferences_file_key), Context.MODE_PRIVATE
         )
+        settings_switch_notifications.isChecked = AppPreferences.notifications
+        settings_switch_consumption_unit.isChecked = AppPreferences.consumptionUnit
+        settings_switch_consumption_plot.isChecked = AppPreferences.consumptionPlot
 
-        val preferencesNotifications = sharedPref.getBoolean(getString(R.string.preferences_notifications_key), false)
-        val preferencesConsumptionUnit = sharedPref.getBoolean(getString(R.string.preferences_consumption_unit_key), false)
-
-        settings_version_text.text = String.format("Car Stats Viewer Version %s", BuildConfig.VERSION_NAME)
-
-        settings_switch_notifications.isChecked = preferencesNotifications
-        AppPreferences.notifications = preferencesNotifications
-        settings_switch_consumption_unit.isChecked = preferencesConsumptionUnit
-        AppPreferences.consumptionUnit = preferencesConsumptionUnit
+        settings_version_text.text = String.format("Car Stats Viewer Version %s (Build %d)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
 
         settings_button_back.setOnClickListener() {
             finish()
@@ -51,6 +48,20 @@ class SettingsActivity : Activity() {
                 .putBoolean(getString(R.string.preferences_consumption_unit_key), settings_switch_consumption_unit.isChecked)
                 .apply()
             AppPreferences.consumptionUnit = settings_switch_consumption_unit.isChecked
+        }
+
+        settings_switch_debug.setOnClickListener {
+            sharedPref.edit()
+                .putBoolean(getString(R.string.preferences_debug_key), settings_switch_debug.isChecked)
+                .apply()
+            AppPreferences.debug = settings_switch_debug.isChecked
+        }
+
+        settings_switch_consumption_plot.setOnClickListener {
+            sharedPref.edit()
+                .putBoolean(getString(R.string.preferences_consumption_plot_key), settings_switch_consumption_plot.isChecked)
+                .apply()
+            AppPreferences.consumptionPlot = settings_switch_consumption_plot.isChecked
         }
     }
 

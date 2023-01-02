@@ -12,6 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.*
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import kotlin.math.absoluteValue
@@ -25,15 +26,25 @@ object DataHolder {
     var currentBatteryCapacity = 0
     var chargePortConnected = false
     var maxBatteryCapacity = 0
+
+    var newPlotValueAvailable = false
+    var newPlotValue = 0F
 }
 
 lateinit var mainActivityPendingIntent: PendingIntent
+
+var firstPlotValueAdded = false
 
 class DataCollector : Service() {
     companion object {
         private const val CHANNEL_ID = "TestChannel"
         private const val notificationId = 1
     }
+
+    var lastPlotDistance = 0F
+    var lastPlotEnergy = 0F
+
+    private var counter = 0
 
     private val mBinder: LocalBinder = LocalBinder()
 
@@ -59,7 +70,8 @@ class DataCollector : Service() {
     private val updateStatsNotificationTask = object : Runnable {
         override fun run() {
             updateStatsNotification()
-            timerHandler.postDelayed(this, 1000)
+            registerCarPropertyCallbacks()
+            timerHandler.postDelayed(this, 500)
         }
     }
 
@@ -112,28 +124,28 @@ class DataCollector : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         // Register vehicle properties callbacks
-
+        registerCarPropertyCallbacks()
         return START_STICKY
     }
 
     private fun registerCarPropertyCallbacks() {
-        Log.d("registerCarPropertyCallbacks: ", "registering Callbacks")
-        carPropertyManager.registerCallback(
+
+        val powerRegistered = carPropertyManager.registerCallback(
             carPropertyPowerListener,
             VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE,
             CarPropertyManager.SENSOR_RATE_FASTEST
         )
-        carPropertyManager.registerCallback(
+        val speedRegistered = carPropertyManager.registerCallback(
             carPropertySpeedListener,
             VehiclePropertyIds.PERF_VEHICLE_SPEED,
             CarPropertyManager.SENSOR_RATE_FASTEST
         )
-        carPropertyManager.registerCallback(
+        val batteryRegistered = carPropertyManager.registerCallback(
             carPropertyBatteryListener,
             VehiclePropertyIds.EV_BATTERY_LEVEL,
             CarPropertyManager.SENSOR_RATE_ONCHANGE
         )
-        carPropertyManager.registerCallback(
+        val plugRegistered = carPropertyManager.registerCallback(
             carPropertyPortListener,
             VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED,
             CarPropertyManager.SENSOR_RATE_ONCHANGE
@@ -142,15 +154,7 @@ class DataCollector : Service() {
 
     private var carPropertyPowerListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
-            if (lastPowerTime != 0F) lastPowerTime = currentPowerTime
-            lastPowermW = DataHolder.currentPowermW
-            DataHolder.currentPowermW = -(value.value as Float)
-            currentPowerTime = SystemClock.elapsedRealtime().toFloat()
-            if (lastPowerTime == 0F) lastPowerTime = currentPowerTime
-            else {
-                var timeDifference = currentPowerTime - lastPowerTime
-                if (!DataHolder.chargePortConnected && timeDifference < 1000) DataHolder.usedEnergy += (lastPowermW / 1000) * (timeDifference / (1000 * 60 * 60))
-            }
+            powerUpdater(value.value as Float)
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
             Log.w("carPropertyPowerListener", "Received error car property event, propId=$propId")
@@ -159,14 +163,22 @@ class DataCollector : Service() {
 
     private var carPropertySpeedListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
-            if (lastSpeedTime != 0F) lastSpeedTime = currentSpeedTime
-            lastSpeed = DataHolder.currentSpeed
-            DataHolder.currentSpeed = (value.value as Float).absoluteValue
-            currentSpeedTime = SystemClock.elapsedRealtime().toFloat()
-            if (lastSpeedTime == 0F) lastSpeedTime = currentSpeedTime
-            else {
-                var timeDifference = currentSpeedTime - lastSpeedTime
-                if (timeDifference < 1000) DataHolder.traveledDistance += lastSpeed * (timeDifference / 1000)
+            //counter++
+            //Log.d("Counter", counter.toString())
+            speedUpdater(value.value as Float)
+
+            if (!firstPlotValueAdded) {
+                lastPlotDistance = DataHolder.traveledDistance
+                lastPlotEnergy = DataHolder.usedEnergy
+                firstPlotValueAdded = true
+            } else if (DataHolder.traveledDistance >= (lastPlotDistance + 100)) {
+                val distanceDifference = lastPlotDistance - DataHolder.traveledDistance
+                val powerDifference = lastPlotEnergy - DataHolder.usedEnergy
+                lastPlotDistance = DataHolder.traveledDistance
+                lastPlotEnergy = DataHolder.usedEnergy
+
+                DataHolder.newPlotValue = powerDifference / (distanceDifference / 1000)
+                DataHolder.newPlotValueAvailable = true
             }
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
@@ -190,6 +202,38 @@ class DataCollector : Service() {
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
             Log.w("carPropertyPortListener", "Received error car property event, propId=$propId")
+        }
+    }
+
+    private fun powerUpdater(value: Float) {
+        if (lastPowerTime != 0F) lastPowerTime = currentPowerTime
+        lastPowermW = DataHolder.currentPowermW
+        DataHolder.currentPowermW = - value
+        currentPowerTime = SystemClock.elapsedRealtime().toFloat()
+        if (lastPowerTime == 0F) lastPowerTime = currentPowerTime
+        else {
+            var timeDifference = currentPowerTime - lastPowerTime
+            if (!DataHolder.chargePortConnected && timeDifference < 1000) {
+                DataHolder.usedEnergy += (lastPowermW / 1000) * (timeDifference / (1000 * 60 * 60))
+                if (DataHolder.traveledDistance <= 0) DataHolder.averageConsumption = 0F
+                else DataHolder.averageConsumption = DataHolder.usedEnergy / (DataHolder.traveledDistance / 1000)
+            }
+        }
+    }
+
+    private fun speedUpdater(value: Float) {
+        if (lastSpeedTime != 0F) lastSpeedTime = currentSpeedTime
+        lastSpeed = DataHolder.currentSpeed
+        DataHolder.currentSpeed = value.absoluteValue
+        currentSpeedTime = SystemClock.elapsedRealtime().toFloat()
+        if (lastSpeedTime == 0F) lastSpeedTime = currentSpeedTime
+        else {
+            var timeDifference = currentSpeedTime - lastSpeedTime
+            if (timeDifference < 1000) {
+                DataHolder.traveledDistance += lastSpeed * (timeDifference / 1000)
+                if (DataHolder.traveledDistance <= 0) DataHolder.averageConsumption = 0F
+                else DataHolder.averageConsumption = DataHolder.usedEnergy / (DataHolder.traveledDistance / 1000)
+            }
         }
     }
 
