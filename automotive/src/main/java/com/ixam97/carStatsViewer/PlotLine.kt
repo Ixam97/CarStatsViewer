@@ -1,8 +1,10 @@
 package com.ixam97.carStatsViewer
 
-import java.util.Collections.max
-import java.util.Collections.min
+import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.floor
 
 class PlotLine(
     private val DefaultMinY: Float,
@@ -20,9 +22,12 @@ class PlotLine(
     private var minCalculated: Float? = null
     private var averageCalculated: Float? = null
 
-    private val dataPoints: ArrayList<Float> = ArrayList()
+    var duration: Long? = null
+        private set
 
-    var BaseLineAt: ArrayList<Float> = ArrayList()
+    private val dataPoints: ArrayList<PlotLineItem> = ArrayList()
+
+    var baseLineAt: ArrayList<Float> = ArrayList()
 
     var PlotPaint: PlotPaint? = null
     var displayItemCount: Int? = null
@@ -33,12 +38,12 @@ class PlotLine(
 
     fun addDataPoint(item: Float?) {
         if (item != null) {
-            dataPoints.add(item)
+            dataPoints.add(PlotLineItem(item, Calendar.getInstance()))
         }
         calculate()
     }
 
-    fun addDataPoints(items: ArrayList<Float?>) {
+    fun addDataPoints(items: ArrayList<PlotLineItem>) {
         if (items != null) {
             for (item in items) {
                 if (item == null) return
@@ -48,7 +53,7 @@ class PlotLine(
         calculate()
     }
 
-    fun setDataPoints(items: ArrayList<Float?>) {
+    fun setDataPoints(items: ArrayList<PlotLineItem>) {
         dataPoints.clear()
         addDataPoints(items)
     }
@@ -58,56 +63,70 @@ class PlotLine(
         calculate()
     }
 
-    private fun calculate() {
-        maxCalculated = maxCalculate()
-        minCalculated = minCalculate()
-        averageCalculated = averageCalculate()
-    }
-
-    fun getDataPoints(): List<Float> {
-        var limit = dataPoints.size - (displayItemCount ?: 0);
-        if (dataPoints.size == limit) return dataPoints;
+    fun getDataPoints(): List<PlotLineItem> {
+        var limit = dataPoints.size - (displayItemCount ?: 0)
+        if (dataPoints.size == limit) return dataPoints
         return dataPoints.filterIndexed { index, s -> index > limit }
     }
 
-    private fun maxCalculate(): Float? {
-        if (dataPoints.isEmpty()) return null;
-        return max(getDataPoints())
+    private fun calculate() {
+        var dataPoints = getDataPoints()
+        maxCalculated = maxCalculate(dataPoints)
+        minCalculated = minCalculate(dataPoints)
+        averageCalculated = averageCalculate(dataPoints)
+        duration = durationCalculate(dataPoints)
     }
 
-    private fun minCalculate(): Float? {
-        if (dataPoints.isEmpty()) return null;
-        return min(getDataPoints())
+    private fun maxCalculate(dataPoints: List<PlotLineItem>): Float? {
+        if (dataPoints.isEmpty()) return null
+        return dataPoints.maxBy { it.Value }?.Value
     }
 
-    private fun averageCalculate(): Float? {
+    private fun minCalculate(dataPoints: List<PlotLineItem>): Float? {
+        if (dataPoints.isEmpty()) return null
+        return dataPoints.minBy { it.Value }?.Value
+    }
+
+    private fun averageCalculate(dataPoints: List<PlotLineItem>): Float? {
         if (dataPoints.isEmpty()) return null
         var sum = 0f
         var itemCount = 0f
-        for (f in getDataPoints()) {
-            sum += f
+        for (f in dataPoints) {
+            sum += f.Value
             itemCount++
         }
         return if (itemCount == 0f) null else sum / itemCount
     }
 
-    fun isEmpty(): Boolean {
-        return dataPoints.isEmpty();
+    private fun durationCalculate(dataPoints: List<PlotLineItem>): Long? {
+        if (dataPoints.isEmpty()) return null
+        return TimeUnit.SECONDS.convert(
+            abs(dataPoints.last().Calendar.timeInMillis - dataPoints.first().Calendar.timeInMillis),
+            TimeUnit.MILLISECONDS
+        )
     }
 
     fun min(): Float {
-        return Math.floor(Math.min(minCalculated ?: DefaultMinY, DefaultMinY).toDouble()).toFloat()
+        return floor((minCalculated ?: DefaultMinY).coerceAtMost(DefaultMinY))
     }
 
     fun max(): Float {
-        return Math.ceil(Math.max(maxCalculated ?: DefaultMaxY, DefaultMaxY).toDouble()).toFloat()
+        return ceil((maxCalculated ?: DefaultMaxY).coerceAtLeast(DefaultMaxY))
+    }
+
+    fun range(): Float {
+        return max() - min()
+    }
+
+    fun isEmpty(): Boolean {
+        return dataPoints.isEmpty()
     }
 
     fun highlight(): Float? {
-        if (HighlightMethod == PlotHighlightMethod.AVG) return averageCalculated;
-        if (HighlightMethod == PlotHighlightMethod.MAX) return maxCalculated;
-        if (HighlightMethod == PlotHighlightMethod.MIN) return minCalculated;
-        return null;
+        if (HighlightMethod == PlotHighlightMethod.AVG) return averageCalculated
+        if (HighlightMethod == PlotHighlightMethod.MAX) return maxCalculated
+        if (HighlightMethod == PlotHighlightMethod.MIN) return minCalculated
+        return null
     }
 
     fun x(position: Int, margin: Int, maxX: Float): Float? {
@@ -117,7 +136,7 @@ class PlotLine(
     fun y(value: Float?, margin: Int, maxY: Float): Float? {
         if (value == null) return value
         val marginY: Float = maxY - 2 * margin
-        val distance = marginY / (max() - min()) * (value - min())
+        val distance = marginY / (range()) * (value - min())
         return margin + abs(marginY - distance)
     }
 
@@ -127,6 +146,11 @@ class PlotLine(
         }
     }
 }
+
+class PlotLineItem (
+    val Value: Float,
+    val Calendar: Calendar
+)
 
 enum class PlotLabelPosition {
     LEFT, RIGHT, NONE
