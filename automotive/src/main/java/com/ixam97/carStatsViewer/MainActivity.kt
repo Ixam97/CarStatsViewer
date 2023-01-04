@@ -72,9 +72,11 @@ class MainActivity : Activity() {
 
         if (AppPreferences.consumptionPlot) main_consumption_plot_container.visibility = View.VISIBLE
 
-        for (i in 1..30) {
-            main_consumption_plot.addDataPoint(0F)
-        }
+        main_consumption_plot.reset()
+        main_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
+        main_consumption_plot.setYLineCount(5)
+        main_consumption_plot.setDisplayItemCount(101)
+        main_consumption_plot.invalidate()
 
         main_button_reset.setOnClickListener {
             resetStats()
@@ -82,6 +84,15 @@ class MainActivity : Activity() {
 
         main_button_settings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
+        }
+
+        main_radio_group_distance.check(main_radio_10.id)
+        main_radio_group_distance.setOnCheckedChangeListener { group, checkedId ->
+            when (checkedId) {
+                main_radio_10.id -> main_consumption_plot.setDisplayItemCount(101)
+                main_radio_25.id -> main_consumption_plot.setDisplayItemCount(251)
+                main_radio_50.id -> main_consumption_plot.setDisplayItemCount(501)
+            }
         }
 
         timerHandler = Handler(Looper.getMainLooper())
@@ -116,18 +127,19 @@ class MainActivity : Activity() {
         }
 
         if (DataHolder.newPlotValueAvailable) {
-            main_consumption_plot.addDataPoint(DataHolder.newPlotValue)
-            Log.d("Plot", String.format("Added %d Wh/km", DataHolder.newPlotValue.toInt()))
+            main_consumption_plot.invalidate()
             DataHolder.newPlotValueAvailable = false
         }
-
-        main_consumption_plot.updateAverage(DataHolder.averageConsumption)
 
         chargePortConnectedTextView.text = DataHolder.chargePortConnected.toString()
         if (DataHolder.currentPowermW > 0) currentPowerTextView.setTextColor(Color.RED)
         else currentPowerTextView.setTextColor(Color.GREEN)
         currentPowerTextView.text = String.format("%.1f kW", DataHolder.currentPowermW / 1000000)
-        usedEnergyTextView.text = String.format("%d Wh", DataHolder.usedEnergy.toInt())
+        if (AppPreferences.consumptionUnit) {
+            usedEnergyTextView.text = String.format("%d Wh", DataHolder.usedEnergy.toInt())
+        } else {
+            usedEnergyTextView.text = String.format("%.1f kWh", DataHolder.usedEnergy / 1000)
+        }
         currentSpeedTextView.text = String.format("%d km/h", (DataHolder.currentSpeed*3.6).toInt())
         traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)
         batteryEnergyTextView.text = String.format("%d/%d, %d%%", DataHolder.currentBatteryCapacity, DataHolder.maxBatteryCapacity, ((DataHolder.currentBatteryCapacity.toFloat()/DataHolder.maxBatteryCapacity.toFloat())*100).toInt())
@@ -158,9 +170,8 @@ class MainActivity : Activity() {
     }
 
     private fun resetStats() {
-        for (i in 1..30) {
-            main_consumption_plot.addDataPoint(0F)
-        }
+        main_consumption_plot.reset()
+        DataHolder.consumptionPlotLine.addDataPoint(0f)
         firstPlotValueAdded = false
         DataHolder.traveledDistance = 0F
         traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)

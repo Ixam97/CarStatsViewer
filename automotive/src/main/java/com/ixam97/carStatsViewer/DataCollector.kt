@@ -27,6 +27,16 @@ object DataHolder {
     var chargePortConnected = false
     var maxBatteryCapacity = 0
 
+    var consumptionPlotLine = PlotLine(
+        -200f,
+        600f,
+        1f,
+        "%.0f",
+        "%.0f Wh/km",
+        PlotLabelPosition.LEFT,
+        PlotHighlightMethod.AVG
+    )
+
     var newPlotValueAvailable = false
     var newPlotValue = 0F
 }
@@ -43,6 +53,8 @@ class DataCollector : Service() {
 
     var lastPlotDistance = 0F
     var lastPlotEnergy = 0F
+
+    private var doLoops = false
 
     private var counter = 0
 
@@ -71,7 +83,7 @@ class DataCollector : Service() {
         override fun run() {
             updateStatsNotification()
             registerCarPropertyCallbacks()
-            timerHandler.postDelayed(this, 500)
+            if (doLoops) timerHandler.postDelayed(this, 500)
         }
     }
 
@@ -111,14 +123,19 @@ class DataCollector : Service() {
             }
         }
 
+        DataHolder.consumptionPlotLine.addDataPoint(0f)
+        DataHolder.newPlotValueAvailable = true
+
         registerCarPropertyCallbacks()
 
+        doLoops = true
         timerHandler = Handler(Looper.getMainLooper())
         timerHandler.post(updateStatsNotificationTask)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        doLoops = false
         car.disconnect()
     }
 
@@ -178,6 +195,7 @@ class DataCollector : Service() {
                 lastPlotEnergy = DataHolder.usedEnergy
 
                 DataHolder.newPlotValue = powerDifference / (distanceDifference / 1000)
+                DataHolder.consumptionPlotLine.addDataPoint(DataHolder.newPlotValue)
                 DataHolder.newPlotValueAvailable = true
             }
         }
@@ -213,7 +231,7 @@ class DataCollector : Service() {
         if (lastPowerTime == 0F) lastPowerTime = currentPowerTime
         else {
             var timeDifference = currentPowerTime - lastPowerTime
-            if (!DataHolder.chargePortConnected && timeDifference < 1000) {
+            if (!DataHolder.chargePortConnected && timeDifference < 10000) {
                 DataHolder.usedEnergy += (lastPowermW / 1000) * (timeDifference / (1000 * 60 * 60))
                 if (DataHolder.traveledDistance <= 0) DataHolder.averageConsumption = 0F
                 else DataHolder.averageConsumption = DataHolder.usedEnergy / (DataHolder.traveledDistance / 1000)

@@ -56,6 +56,7 @@
         <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:visibility="gone"
             android:weightSum="2">
 
             <TextView
@@ -198,28 +199,70 @@
         android:id="@+id/main_consumption_plot_container"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:visibility="gone">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_weight="0"
+            android:background="?android:attr/listDivider"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:text="@string/main_consumption"
+            android:visibility="gone"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="35dp"/>
+
+
+        <com.ixam97.carStatsViewer.PlotView
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:layout_margin="0dp"
+            android:id="@+id/main_consumption_plot"/>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="?android:attr/listDivider"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="20dp"
-            android:text="@string/main_consumption"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textSize="35dp"/>
 
-        <com.ixam97.carStatsViewer.PlotView
+        <RadioGroup
+            android:id="@+id/main_radio_group_distance"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="0dp"
-            android:id="@+id/main_consumption_plot"/>
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="0"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/main_radio_10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:textSize="35dp"
+                android:text="10 km"/>
+            <RadioButton
+                android:id="@+id/main_radio_25"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:textSize="35dp"
+                android:text="25 km"/>
+            <RadioButton
+                android:id="@+id/main_radio_50"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:textSize="35dp"
+                android:text="50 km"/>
+        </RadioGroup>
+
     </LinearLayout>
 
 </LinearLayout>

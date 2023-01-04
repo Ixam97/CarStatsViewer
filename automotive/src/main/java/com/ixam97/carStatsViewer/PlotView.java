@@ -1,24 +1,26 @@
 package com.ixam97.carStatsViewer;
 
+import static com.ixam97.carStatsViewer.PlotPaint.*;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class PlotView extends View {
-
     public PlotView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         setFocusable(true);
@@ -26,136 +28,297 @@ public class PlotView extends View {
         setupPaint();
     }
 
-    private final ArrayList<Float> DataPoints = new ArrayList<>();
+    private final float TextSize = 26f;
 
-    // defines paint and canvas
-    private Paint basePaint;
-    private Paint drawPaint;
-    private Paint averagePaint;
+    private final int XMargin = 150;
+    private int XLineCount = 6;
 
-    private float averageValue = 0f;
+    private final int YMargin = 60;
+    private int YLineCount = 4;
+
+    private Integer DisplayItemCount = null;
+
+    private Date StartDate;
+    private Date CurrentDate;
+
+    private final ArrayList<PlotLine> PlotLines = new ArrayList<>();
+    private final ArrayList<PlotPaint> PlotPaint = new ArrayList<>();
+
+    private Paint labelPaint;
+    private Paint labelLinePaint;
 
     // Setup paint with color and stroke styles
     private void setupPaint() {
-        basePaint = new Paint();
-        basePaint.setColor(Color.LTGRAY);
-        basePaint.setAntiAlias(true);
-        basePaint.setStrokeWidth(1);
-        basePaint.setStyle(Paint.Style.STROKE);
-        basePaint.setStrokeJoin(Paint.Join.ROUND);
-        basePaint.setStrokeCap(Paint.Cap.ROUND);
-
-        drawPaint = new Paint();
-
         TypedValue typedValue = new TypedValue();
         getContext().getTheme().resolveAttribute(android.R.attr.colorControlActivated, typedValue, true);
 
-        drawPaint.setColor(typedValue.data);
-        drawPaint.setAntiAlias(true);
-        drawPaint.setStrokeWidth(6);
-        drawPaint.setStyle(Paint.Style.STROKE);
-        drawPaint.setStrokeJoin(Paint.Join.ROUND);
-        drawPaint.setStrokeCap(Paint.Cap.ROUND);
+        // defines paint and canvas
+        Paint basePaint = Companion.basePaint();
 
-        averagePaint = new Paint();
+        labelLinePaint = new Paint(basePaint);
+        labelLinePaint.setColor(Color.DKGRAY);
 
-        averagePaint.setColor(typedValue.data);
-        averagePaint.setAntiAlias(true);
-        averagePaint.setStrokeWidth(3);
-        averagePaint.setPathEffect(new DashPathEffect(new float[]{5, 10}, 0));
-        averagePaint.setStyle(Paint.Style.STROKE);
-        averagePaint.setStrokeJoin(Paint.Join.ROUND);
-        averagePaint.setStrokeCap(Paint.Cap.ROUND);
+        labelPaint = new Paint(labelLinePaint);
+        labelPaint.setStyle(Paint.Style.FILL);
+
+        List<Integer> PlotColors = Arrays.asList(
+                Color.BLACK,
+                Color.GREEN,
+                Color.CYAN,
+                Color.BLUE,
+                Color.RED
+        );
+
+        for (Integer color : PlotColors) {
+            if (color == Color.BLACK) {
+                color = typedValue.data;
+            }
+
+            PlotPaint.add(Companion.byColor(color));
+        }
     }
 
-    public void addDataPoint(float dataPoint)
-    {
-        if (DataPoints.size() > 30)
-        {
-            DataPoints.remove(0);
+    public void reset() {
+        for (PlotLine item : PlotLines) {
+            item.reset();
         }
 
-        DataPoints.add(dataPoint);
+        StartDate = new Date();
+        CurrentDate = null;
+
         invalidate();
     }
 
-    public void updateAverage(float newAverageValue)
-    {
-        averageValue = newAverageValue;
+    public void addPlotLine(PlotLine plotLine) {
+        if (plotLine.getPlotPaint() == null) {
+            plotLine.setPlotPaint(PlotPaint.get(PlotLines.size()));
+        }
+
+        PlotLines.add(plotLine);
+
         invalidate();
     }
 
-    private float XCord(int position, int items, float maxX)
-    {
-        return maxX / (items -1) * position;
+    public void removePlotLine(PlotLine plotLine) {
+        PlotLines.remove(plotLine);
+        invalidate();
     }
 
-    private float YCord(float value, float minP, float maxP, float maxY)
-    {
-        return Math.abs((maxY / (maxP - minP) * (value - minP) - maxY));
+    public void setDataPoints(ArrayList<Float> primaryDataPoints) {
+        setDataPoints(primaryDataPoints, null);
+    }
+
+    public void setDataPoints(ArrayList<Float> primaryDataPoints, ArrayList<Float> secondaryDataPoints) {
+        if (PlotLines.size() >= 1) PlotLines.get(0).setDataPoints(primaryDataPoints);
+        if (PlotLines.size() >= 2) PlotLines.get(1).setDataPoints(secondaryDataPoints);
+
+        CurrentDate = new Date();
+        invalidate();
+    }
+
+    public void addDataPoints(ArrayList<Float> primaryDataPoints) {
+        addDataPoints(primaryDataPoints, null);
+    }
+
+    public void addDataPoints(ArrayList<Float> primaryDataPoints, ArrayList<Float> secondaryDataPoints) {
+        if (PlotLines.size() >= 1) PlotLines.get(0).addDataPoints(primaryDataPoints);
+        if (PlotLines.size() >= 2) PlotLines.get(1).addDataPoints(secondaryDataPoints);
+
+        CurrentDate = new Date();
+        invalidate();
+    }
+
+    public void addDataPoint(Float primaryDataPoint) {
+        addDataPoint(primaryDataPoint, null);
+    }
+
+    public void addDataPoint(Float primaryDataPoint, Float secondaryDataPoint) {
+        if (PlotLines.size() >= 1) PlotLines.get(0).addDataPoint(primaryDataPoint);
+        if (PlotLines.size() >= 2) PlotLines.get(1).addDataPoint(secondaryDataPoint);
+
+        CurrentDate = new Date();
+        invalidate();
+    }
+
+    public void setDisplayItemCount(Integer displayItemCount) {
+        for (PlotLine line : PlotLines) {
+            line.setDisplayItemCount(displayItemCount);
+        }
+        DisplayItemCount = displayItemCount;
+        invalidate();
+    }
+
+    public void setYLineCount(Integer lineCount) {
+        if (lineCount < 2) return;
+        YLineCount = lineCount;
+        invalidate();
+    }
+
+    public void setXLineCount(Integer lineCount) {
+        if (lineCount < 2) return;
+        XLineCount = lineCount;
+        invalidate();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        DrawXLines(canvas);
+        DrawYLines(canvas);
+        DrawPlot(canvas);
+    }
 
-        if (DataPoints.size() == 0) return;
+    private void DrawPlot(Canvas canvas) {
+        float maxX = canvas.getWidth();
+        float maxY = canvas.getHeight();
 
-        int maxX = getWidth();
-        int maxY = getHeight();
+        for (PlotLine line : PlotLines) {
+            if (line.isEmpty()) continue;
 
-        ArrayList<Float> clonePoints = (ArrayList<Float>) DataPoints.clone();
+            List<Float> items = line.getDataPoints();
 
-        float minP = Math.min(Math.min(Collections.min(clonePoints), averageValue), -20f);
-        float maxP = Math.max(Math.max(Collections.max(clonePoints), averageValue), 50f);
+            if (items.size() <= 0) {
+                return;
+            }
 
-        Path basePath = new Path();
-        basePath.moveTo(0f, YCord(0, minP, maxP, maxY));
-        basePath.lineTo(maxX, YCord(0, minP, maxP, maxY));
+            ArrayList<PlotPoint> plotPoints = new ArrayList<>();
 
-        Path fiftyPath = new Path();
-        fiftyPath.moveTo(0f, YCord(500, minP, maxP, maxY));
-        fiftyPath.lineTo(maxX, YCord(500, minP, maxP, maxY));
+            if (DisplayItemCount != null) {
+                for (int i = 0; i < DisplayItemCount - items.size(); i++) {
+                    plotPoints.add(null);
+                }
+            }
 
-        Path averagePath = new Path();
-        averagePath.moveTo(0f, YCord(averageValue, minP, maxP, maxY));
-        averagePath.lineTo(maxX, YCord(averageValue, minP, maxP, maxY));
+            int index = plotPoints.size();
+            for (Float item : items) {
+                plotPoints.add(new PlotPoint(line.x(index++, XMargin, maxX), line.y(item, YMargin, maxY)));
+            }
 
-        canvas.drawPath(basePath, basePaint);
-        canvas.drawPath(fiftyPath, basePaint);
-        canvas.drawPath(averagePath, averagePaint);
+            Path path = new Path();
+            PlotPoint prevPoint = null;
 
-        ArrayList<Point> points = new ArrayList<>();
+            int virtualIndex = 0;
+            for (int i = 0; i < plotPoints.size(); i++) {
+                PlotPoint point = plotPoints.get(i);
 
-        for (int i = 0; i < clonePoints.size(); i += 1)
-        {
-            points.add(new Point((int)XCord(i, clonePoints.size(), maxX), (int)YCord(clonePoints.get(i), minP, maxP, maxY)));
-        }
+                if (point == null) continue;
 
-        Path path = new Path();
-
-        if (points.size() > 1) {
-            Point prevPoint = null;
-            for (int i = 0; i < points.size(); i++) {
-                Point point = points.get(i);
-
-                if (i == 0) {
-                    path.moveTo(point.x, point.y);
+                if (virtualIndex == 0) {
+                    path.moveTo(point.getX(), point.getY());
+                    if (items.size() == 1) {
+                        path.lineTo(point.getX(), point.getY());
+                    }
                 } else {
-                    float midX = (prevPoint.x + point.x) / 2;
-                    float midY = (prevPoint.y + point.y) / 2;
+                    float midX = (prevPoint.getX() + point.getX()) / 2;
+                    float midY = (prevPoint.getY() + point.getY()) / 2;
 
-                    if (i == 1) {
+                    if (virtualIndex == 1) {
                         path.lineTo(midX, midY);
                     } else {
-                        path.quadTo(prevPoint.x, prevPoint.y, midX, midY);
+                        path.quadTo(prevPoint.getX(), prevPoint.getY(), midX, midY);
                     }
                 }
+
                 prevPoint = point;
+                virtualIndex++;
             }
-            path.lineTo(prevPoint.x, prevPoint.y);
+
+            path.lineTo(prevPoint.getX(), prevPoint.getY());
+
+            canvas.drawPath(path, line.getPlotPaint().getPlot());
+        }
+    }
+
+    private void DrawXLines(Canvas canvas) {
+        float maxX = canvas.getWidth();
+        float maxY = canvas.getHeight();
+
+        for (int i = 0; i <= XLineCount - 1; i++) {
+            String label = "";
+            if (DisplayItemCount != null) {
+                label = String.format("%dkm", Math.abs(((DisplayItemCount - 1) / 10) - ((i * (DisplayItemCount - 1) / (XLineCount - 1)) / 10)));
+            } else if (StartDate != null && CurrentDate != null) {
+                long diff = TimeUnit.SECONDS.convert(Math.abs(StartDate.getTime() - CurrentDate.getTime()), TimeUnit.MILLISECONDS);
+                float x = ((float) diff / (XLineCount - 1)) * i;
+                label = String.format("%02d:%02d", (int) (x / 60), (int) (x % 60));
+            }
+
+            float xCord = PlotLine.Companion.x(i, XLineCount, XMargin, maxX);
+            float yCord = maxY - YMargin;
+
+            Rect bounds = new Rect();
+            labelPaint.getTextBounds(label, 0, label.length(), bounds);
+
+            canvas.drawText(label, xCord - (bounds.width() / 2), yCord + (YMargin / 2) + (bounds.height() / 2), labelPaint);
+
+            Path path = new Path();
+            path.moveTo(xCord, YMargin);
+            path.lineTo(xCord, yCord);
+
+            canvas.drawPath(path, labelLinePaint);
+        }
+    }
+
+    private void DrawYLines(Canvas canvas) {
+        float maxX = canvas.getWidth();
+        float maxY = canvas.getHeight();
+
+        for (int i = 0; i <= YLineCount - 1; i++) {
+            float cordY = PlotLine.Companion.x(i, YLineCount, YMargin, maxY);
+
+            Path path = new Path();
+            path.moveTo(XMargin, cordY);
+            path.lineTo(maxX - XMargin, cordY);
+            canvas.drawPath(path, labelLinePaint);
         }
 
-        canvas.drawPath(path, drawPaint);
+        for (PlotLine line : PlotLines) {
+            if (line.isEmpty()) continue;
+
+            Rect bounds = new Rect();
+            labelPaint.getTextBounds("Dummy", 0, "Dummy".length(), bounds);
+
+            float labelShiftY = bounds.height() / 2;
+            float valueShiftY = (line.max() - line.min()) / (YLineCount - 1);
+
+            Float labelCordX = null;
+            if (line.getLabelPosition() == PlotLabelPosition.LEFT) labelCordX = TextSize;
+            if (line.getLabelPosition() == PlotLabelPosition.RIGHT) labelCordX = maxX - XMargin + TextSize;
+
+            Float highlightCordY = line.y(line.highlight(), YMargin, maxY);
+            Float baseCordY = line.y(0f, YMargin, maxY);
+
+            if (line.getLabelPosition() != PlotLabelPosition.NONE) {
+                for (int i = 0; i <= YLineCount - 1; i++) {
+                    float valueY = line.max() - (i * valueShiftY);
+                    float cordY = line.y(valueY, YMargin, maxY);
+
+                    String label = String.format(line.getLabelFormat(), valueY / line.getDivider());
+
+                    if (highlightCordY == null || Math.abs(cordY - highlightCordY) > TextSize) {
+                        canvas.drawText(label, labelCordX, cordY + labelShiftY, labelPaint);
+                    }
+                }
+            }
+
+            if (labelCordX != null) {
+                canvas.drawText(String.format(line.getHighlightFormat(), line.highlight() / line.getDivider()), labelCordX, highlightCordY + labelShiftY, line.getPlotPaint().getHighlightLabel());
+            }
+
+            if (highlightCordY != null && line.getHighlightMethod() == PlotHighlightMethod.AVG) {
+                Path highlightPath = new Path();
+                highlightPath.moveTo(XMargin, highlightCordY);
+                highlightPath.lineTo(maxX - XMargin, highlightCordY);
+
+                canvas.drawPath(highlightPath, line.getPlotPaint().getHighlightLabelLine());
+            }
+
+            if (baseCordY != null) {
+                Path basePath = new Path();
+                basePath.moveTo(XMargin,  baseCordY);
+                basePath.lineTo(maxX - XMargin, baseCordY);
+                canvas.drawPath(basePath, labelLinePaint);
+            }
+        }
     }
 }
