@@ -9,8 +9,8 @@ class PlotPaint(
     val HighlightLabelLine: Paint
 ) {
     companion object {
-        fun byColor(color : Int): PlotPaint {
-            val basePaint = basePaint();
+        fun byColor(color : Int, textSize: Float): PlotPaint {
+            val basePaint = basePaint(textSize);
 
             val plotPaint = Paint(basePaint)
             plotPaint.color = color
@@ -27,7 +27,7 @@ class PlotPaint(
             return PlotPaint(plotPaint, highlightLabelPaint, highlightLabelLinePaint)
         }
 
-        fun basePaint(): Paint {
+        fun basePaint(textSize: Float): Paint {
             // defines paint and canvas
             val basePaint = Paint()
             basePaint.isAntiAlias = true
@@ -35,7 +35,7 @@ class PlotPaint(
             basePaint.style = Paint.Style.STROKE
             basePaint.strokeJoin = Paint.Join.ROUND
             basePaint.strokeCap = Paint.Cap.ROUND
-            basePaint.textSize = 26f
+            basePaint.textSize = textSize
 
             return basePaint
         }
