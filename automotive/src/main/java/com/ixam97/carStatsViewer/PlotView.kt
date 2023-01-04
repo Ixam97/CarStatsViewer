@@ -12,7 +12,7 @@ import kotlin.math.abs
 class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private val textSize = 26f
 
-    var xMargin: Int = 150
+    var xMargin: Int = 100
         set(value) {
             if (value > 0) {
                 field = value
