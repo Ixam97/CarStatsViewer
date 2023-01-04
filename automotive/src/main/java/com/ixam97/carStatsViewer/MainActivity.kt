@@ -44,12 +44,12 @@ class MainActivity : Activity() {
         super.onResume()
 
         if (AppPreferences.consumptionUnit) {
-            main_consumption_plot.primaryUnitString = "Wh/km"
+            DataHolder.consumptionPlotLine.Unit = "Wh/km"
             DataHolder.consumptionPlotLine.HighlightFormat = "%.0f"
             DataHolder.consumptionPlotLine.LabelFormat = "%.0f"
             DataHolder.consumptionPlotLine.Divider = 1f
         } else {
-            main_consumption_plot.primaryUnitString = "kWh/100km"
+            DataHolder.consumptionPlotLine.Unit = "kWh/100km"
             DataHolder.consumptionPlotLine.HighlightFormat = "%.1f"
             DataHolder.consumptionPlotLine.LabelFormat = "%.1f"
             DataHolder.consumptionPlotLine.Divider = 10f
