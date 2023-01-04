@@ -46,6 +46,7 @@ public class PlotView extends View {
 
     private Paint labelPaint;
     private Paint labelLinePaint;
+    private Paint baseLinePaint;
 
     // Setup paint with color and stroke styles
     private void setupPaint() {
@@ -53,13 +54,16 @@ public class PlotView extends View {
         getContext().getTheme().resolveAttribute(android.R.attr.colorControlActivated, typedValue, true);
 
         // defines paint and canvas
-        Paint basePaint = Companion.basePaint();
+        Paint basePaint = Companion.basePaint(TextSize);
 
         labelLinePaint = new Paint(basePaint);
         labelLinePaint.setColor(Color.DKGRAY);
 
         labelPaint = new Paint(labelLinePaint);
         labelPaint.setStyle(Paint.Style.FILL);
+
+        baseLinePaint = new Paint(labelLinePaint);
+        baseLinePaint.setColor(Color.LTGRAY);
 
         List<Integer> PlotColors = Arrays.asList(
                 Color.BLACK,
@@ -74,7 +78,7 @@ public class PlotView extends View {
                 color = typedValue.data;
             }
 
-            PlotPaint.add(Companion.byColor(color));
+            PlotPaint.add(Companion.byColor(color, TextSize));
         }
     }
 
@@ -286,7 +290,6 @@ public class PlotView extends View {
             if (line.getLabelPosition() == PlotLabelPosition.RIGHT) labelCordX = maxX - XMargin + TextSize;
 
             Float highlightCordY = line.y(line.highlight(), YMargin, maxY);
-            Float baseCordY = line.y(0f, YMargin, maxY);
 
             if (line.getLabelPosition() != PlotLabelPosition.NONE) {
                 for (int i = 0; i <= YLineCount - 1; i++) {
@@ -305,19 +308,22 @@ public class PlotView extends View {
                 canvas.drawText(String.format(line.getHighlightFormat(), line.highlight() / line.getDivider()), labelCordX, highlightCordY + labelShiftY, line.getPlotPaint().getHighlightLabel());
             }
 
+            for (Float baseLineAt : line.getBaseLineAt()) {
+                Float baseCordY = line.y(baseLineAt, YMargin, maxY);
+                if (baseCordY != null) {
+                    Path basePath = new Path();
+                    basePath.moveTo(XMargin,  baseCordY);
+                    basePath.lineTo(maxX - XMargin, baseCordY);
+                    canvas.drawPath(basePath, baseLinePaint);
+                }
+            }
+
             if (highlightCordY != null && line.getHighlightMethod() == PlotHighlightMethod.AVG) {
                 Path highlightPath = new Path();
                 highlightPath.moveTo(XMargin, highlightCordY);
                 highlightPath.lineTo(maxX - XMargin, highlightCordY);
 
                 canvas.drawPath(highlightPath, line.getPlotPaint().getHighlightLabelLine());
-            }
-
-            if (baseCordY != null) {
-                Path basePath = new Path();
-                basePath.moveTo(XMargin,  baseCordY);
-                basePath.lineTo(maxX - XMargin, baseCordY);
-                canvas.drawPath(basePath, labelLinePaint);
             }
         }
     }
