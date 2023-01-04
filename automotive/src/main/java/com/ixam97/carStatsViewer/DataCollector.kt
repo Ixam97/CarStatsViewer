@@ -84,6 +84,7 @@ class DataCollector : Service() {
         override fun run() {
             updateStatsNotification()
             registerCarPropertyCallbacks()
+            InAppLogger.logNotificationUpdate()
             if (doLoops) timerHandler.postDelayed(this, 500)
         }
     }
@@ -105,6 +106,8 @@ class DataCollector : Service() {
 
     override fun onCreate() {
         super.onCreate()
+
+        InAppLogger.log("DataCollector.onCreate")
 
         notificationsEnabled = AppPreferences.notifications
 
@@ -130,6 +133,7 @@ class DataCollector : Service() {
 
         registerCarPropertyCallbacks()
 
+        InAppLogger.log("doLoops = true")
         doLoops = true
         timerHandler = Handler(Looper.getMainLooper())
         timerHandler.post(updateStatsNotificationTask)
@@ -137,6 +141,8 @@ class DataCollector : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        InAppLogger.log("DataCollector.onDestroy")
+        InAppLogger.log("doLoops = false")
         doLoops = false
         car.disconnect()
     }
@@ -144,10 +150,13 @@ class DataCollector : Service() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         // Register vehicle properties callbacks
         registerCarPropertyCallbacks()
+        InAppLogger.log("DataCollector.onStartCommand")
         return START_STICKY
     }
 
     private fun registerCarPropertyCallbacks() {
+
+        InAppLogger.deepLog("DataCollector.registerCarPropertyCallbacks")
 
         val powerRegistered = carPropertyManager.registerCallback(
             carPropertyPowerListener,
@@ -173,6 +182,7 @@ class DataCollector : Service() {
 
     private var carPropertyPowerListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
+            InAppLogger.deepLog("DataCollector.carPropertyPowerListener")
             powerUpdater(value.value as Float)
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
@@ -182,8 +192,8 @@ class DataCollector : Service() {
 
     private var carPropertySpeedListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
-            //counter++
-            //Log.d("Counter", counter.toString())
+            InAppLogger.deepLog("DataCollector.carPropertySpeedListener")
+            InAppLogger.logVHALCallback()
             speedUpdater(value.value as Float)
 
             if (!firstPlotValueAdded) {
@@ -208,6 +218,7 @@ class DataCollector : Service() {
 
     private var carPropertyBatteryListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
+            InAppLogger.deepLog("DataCollector.carPropertyBatteryListener")
             lastBatteryCapacity = DataHolder.currentBatteryCapacity
             DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
         }
@@ -218,6 +229,7 @@ class DataCollector : Service() {
 
     private var carPropertyPortListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
+            InAppLogger.deepLog("DataCollector.carPropertyPortListener")
             DataHolder.chargePortConnected = value.value as Boolean
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
@@ -270,6 +282,7 @@ class DataCollector : Service() {
     }
 
     private fun updateStatsNotification() {
+        InAppLogger.deepLog("DataCollector.updateStatsNotification")
         if (notificationsEnabled && AppPreferences.notifications) {
             with(NotificationManagerCompat.from(this)) {
                 val averageConsumption = DataHolder.usedEnergy / (DataHolder.traveledDistance/1000)
