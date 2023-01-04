@@ -16,9 +16,7 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class PlotView extends View {
     public PlotView(Context context, @Nullable AttributeSet attrs) {
@@ -37,9 +35,6 @@ public class PlotView extends View {
     private int YLineCount = 4;
 
     private Integer DisplayItemCount = null;
-
-    private Date StartDate;
-    private Date CurrentDate;
 
     private final ArrayList<PlotLine> PlotLines = new ArrayList<>();
     private final ArrayList<PlotPaint> PlotPaint = new ArrayList<>();
@@ -88,10 +83,6 @@ public class PlotView extends View {
         for (PlotLine item : PlotLines) {
             item.reset();
         }
-
-        StartDate = new Date();
-        CurrentDate = null;
-
         invalidate();
     }
 
@@ -99,9 +90,7 @@ public class PlotView extends View {
         if (plotLine.getPlotPaint() == null) {
             plotLine.setPlotPaint(PlotPaint.get(PlotLines.size()));
         }
-
         PlotLines.add(plotLine);
-
         invalidate();
     }
 
@@ -110,39 +99,8 @@ public class PlotView extends View {
         invalidate();
     }
 
-    public void setDataPoints(ArrayList<Float> primaryDataPoints) {
-        setDataPoints(primaryDataPoints, null);
-    }
-
-    public void setDataPoints(ArrayList<Float> primaryDataPoints, ArrayList<Float> secondaryDataPoints) {
-        if (PlotLines.size() >= 1) PlotLines.get(0).setDataPoints(primaryDataPoints);
-        if (PlotLines.size() >= 2) PlotLines.get(1).setDataPoints(secondaryDataPoints);
-
-        CurrentDate = new Date();
-        invalidate();
-    }
-
-    public void addDataPoints(ArrayList<Float> primaryDataPoints) {
-        addDataPoints(primaryDataPoints, null);
-    }
-
-    public void addDataPoints(ArrayList<Float> primaryDataPoints, ArrayList<Float> secondaryDataPoints) {
-        if (PlotLines.size() >= 1) PlotLines.get(0).addDataPoints(primaryDataPoints);
-        if (PlotLines.size() >= 2) PlotLines.get(1).addDataPoints(secondaryDataPoints);
-
-        CurrentDate = new Date();
-        invalidate();
-    }
-
-    public void addDataPoint(Float primaryDataPoint) {
-        addDataPoint(primaryDataPoint, null);
-    }
-
-    public void addDataPoint(Float primaryDataPoint, Float secondaryDataPoint) {
-        if (PlotLines.size() >= 1) PlotLines.get(0).addDataPoint(primaryDataPoint);
-        if (PlotLines.size() >= 2) PlotLines.get(1).addDataPoint(secondaryDataPoint);
-
-        CurrentDate = new Date();
+    public void removeAllPlotLine() {
+        PlotLines.clear();
         invalidate();
     }
 
@@ -179,11 +137,11 @@ public class PlotView extends View {
         float maxY = canvas.getHeight();
 
         for (PlotLine line : PlotLines) {
-            if (line.isEmpty()) continue;
+            if (line.isEmpty() || !line.getVisible()) continue;
 
-            List<Float> items = line.getDataPoints();
+            List<PlotLineItem> items = line.getDataPoints();
 
-            if (items.size() <= 0) {
+            if (items.isEmpty()) {
                 return;
             }
 
@@ -196,8 +154,8 @@ public class PlotView extends View {
             }
 
             int index = plotPoints.size();
-            for (Float item : items) {
-                plotPoints.add(new PlotPoint(line.x(index++, XMargin, maxX), line.y(item, YMargin, maxY)));
+            for (PlotLineItem item : items) {
+                plotPoints.add(new PlotPoint(line.x(index++, XMargin, maxX), line.y(item.getValue(), YMargin, maxY)));
             }
 
             Path path = new Path();
@@ -243,9 +201,15 @@ public class PlotView extends View {
             String label = "";
             if (DisplayItemCount != null) {
                 label = String.format("%dkm", Math.abs(((DisplayItemCount - 1) / 10) - ((i * (DisplayItemCount - 1) / (XLineCount - 1)) / 10)));
-            } else if (StartDate != null && CurrentDate != null) {
-                long diff = TimeUnit.SECONDS.convert(Math.abs(StartDate.getTime() - CurrentDate.getTime()), TimeUnit.MILLISECONDS);
-                float x = ((float) diff / (XLineCount - 1)) * i;
+            } else {
+                long duration = 0l;
+                for (PlotLine line : PlotLines) {
+                    if (line.getDuration() != null && duration < line.getDuration()) {
+                        duration = line.getDuration();
+                    }
+                }
+
+                float x = ((float) duration / (XLineCount - 1)) * i;
                 label = String.format("%02d:%02d", (int) (x / 60), (int) (x % 60));
             }
 
@@ -279,13 +243,13 @@ public class PlotView extends View {
         }
 
         for (PlotLine line : PlotLines) {
-            if (line.isEmpty()) continue;
+            if (line.isEmpty() || !line.getVisible()) continue;
 
             Rect bounds = new Rect();
             labelPaint.getTextBounds("Dummy", 0, "Dummy".length(), bounds);
 
             float labelShiftY = bounds.height() / 2;
-            float valueShiftY = (line.max() - line.min()) / (YLineCount - 1);
+            float valueShiftY = (line.range()) / (YLineCount - 1);
 
             Float labelCordX = null;
             if (line.getLabelPosition() == PlotLabelPosition.LEFT) labelCordX = TextSize;

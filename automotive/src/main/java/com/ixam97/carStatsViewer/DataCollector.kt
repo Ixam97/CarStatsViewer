@@ -126,7 +126,7 @@ class DataCollector : Service() {
             }
         }
 
-        DataHolder.consumptionPlotLine.BaseLineAt.add(0f)
+        DataHolder.consumptionPlotLine.baseLineAt.add(0f)
         DataHolder.consumptionPlotLine.addDataPoint(0f)
         DataHolder.newPlotValueAvailable = true
 
