@@ -32,12 +32,14 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1"/>
-        <!--<Button
-            android:id="@+id/settings_button_back"
+
+        <ImageButton
+            android:id="@+id/settings_button_kill"
+            android:src="@drawable/ic_kill"
             android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:layout_margin="15dp"
-            android:text="@string/settings_button_back"/>-->
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_margin="15dp"/>
 
     </LinearLayout>
     <View
@@ -45,11 +47,8 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="?android:attr/colorControlActivated"/>
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <LinearLayout
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
@@ -115,33 +114,15 @@
                 android:textColor="@android:color/white"
                 android:textSize="35dp"
                 android:gravity="center_vertical"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_marginVertical="10dp"
-                android:layout_height="2dp"
-                android:background="?android:attr/listDivider"/>
-<!--
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="101dp"
-                android:paddingStart="0dp"
-                android:paddingEnd="0dp"
-                android:background="@android:color/transparent"
-                android:textSize="35dp"
-                android:text="Über Car Stats Viewer"
-                android:textAlignment="textStart"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:drawableEnd="@drawable/ic_chevron_right"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_marginVertical="10dp"
                 android:layout_height="2dp"
-                android:background="?android:attr/listDivider" />
-                -->
+                android:background="?android:attr/listDivider"/>
 
         </LinearLayout>
-    </ScrollView>
 
 </LinearLayout>

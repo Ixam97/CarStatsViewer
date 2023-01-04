@@ -1,16 +1,25 @@
 package com.ixam97.carStatsViewer
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_settings.*
 import android.content.Context
+import android.content.Intent
 import android.util.Log
+import android.widget.TextView
+import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_settings.view.*
+import kotlin.system.exitProcess
 
 object AppPreferences {
     var debug = false
     var notifications = false
     var consumptionUnit = false
     var consumptionPlot = false
+    var deepLog = true
 }
 
 class SettingsActivity : Activity() {
@@ -19,6 +28,9 @@ class SettingsActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        InAppLogger.log("SettingsActivity.onCreate")
+
         setContentView(R.layout.activity_settings)
 
         context = applicationContext
@@ -34,6 +46,25 @@ class SettingsActivity : Activity() {
 
         settings_button_back.setOnClickListener() {
             finish()
+        }
+
+        settings_button_kill.setOnClickListener {
+
+            val builder = AlertDialog.Builder(this@SettingsActivity)
+            builder.setTitle(getString(R.string.quit_dialog_title))
+                .setMessage(getString(R.string.quit_dialog_message))
+                .setCancelable(true)
+                .setPositiveButton(getString(R.string.dialog_confirm)) { dialog, id ->
+                    InAppLogger.log("App killed from Settings")
+                    InAppLogger.copyToClipboard(this)
+                    exitProcess(-1)
+                }
+                .setNegativeButton(getString(R.string.dialog_dismiss)) { dialog, id ->
+                    // Dismiss the dialog
+                    dialog.dismiss()
+                }
+            val alert = builder.create()
+            alert.show()
         }
 
         settings_switch_notifications.setOnClickListener {
@@ -63,10 +94,15 @@ class SettingsActivity : Activity() {
                 .apply()
             AppPreferences.consumptionPlot = settings_switch_consumption_plot.isChecked
         }
+
+        settings_version_text.setOnClickListener {
+            startActivity(Intent(this, LogActivity::class.java))
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("Settings", "Destroyed")
+        InAppLogger.log("SettingsActivity.onDestroy")
     }
+
 }

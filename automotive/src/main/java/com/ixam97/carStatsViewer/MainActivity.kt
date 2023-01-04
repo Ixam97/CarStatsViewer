@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.ContactsContract.RawContacts.Data
 import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
@@ -29,6 +30,7 @@ class MainActivity : Activity() {
 
     private val updateActivityTask = object : Runnable {
         override fun run() {
+            InAppLogger.deepLog("MainActivity.updateActivityTask")
             updateActivity()
             timerHandler.postDelayed(this, 500)
         }
@@ -40,15 +42,32 @@ class MainActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        checkPermissions()
+
+        if (AppPreferences.consumptionUnit) {
+            main_consumption_plot.primaryUnitString = "Wh/km"
+            DataHolder.consumptionPlotLine.HighlightFormat = "%.0f"
+            DataHolder.consumptionPlotLine.LabelFormat = "%.0f"
+            DataHolder.consumptionPlotLine.Divider = 1f
+        } else {
+            main_consumption_plot.primaryUnitString = "kWh/100km"
+            DataHolder.consumptionPlotLine.HighlightFormat = "%.1f"
+            DataHolder.consumptionPlotLine.LabelFormat = "%.1f"
+            DataHolder.consumptionPlotLine.Divider = 10f
+        }
+
+        InAppLogger.log("MainActivity.onResume")
+        //checkPermissions()
     }
 
     override fun onPause() {
         super.onPause()
+        InAppLogger.log("MainActivity.onPause")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        InAppLogger.log("MainActivity.onCreate")
 
         context = applicationContext
 
@@ -59,6 +78,7 @@ class MainActivity : Activity() {
         AppPreferences.notifications = sharedPref.getBoolean(getString(R.string.preferences_notifications_key), false)
         AppPreferences.debug = sharedPref.getBoolean(getString(R.string.preferences_debug_key), false)
         AppPreferences.consumptionPlot = sharedPref.getBoolean(getString(R.string.preferences_consumption_plot_key), false)
+        AppPreferences.deepLog = sharedPref.getBoolean(getString(R.string.preferences_deep_log_key), true)
 
         dataCollectorIntent = Intent(this, DataCollector::class.java)
         starterIntent = intent
@@ -101,6 +121,7 @@ class MainActivity : Activity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        InAppLogger.log("MainActivity.onDestroy")
     }
 
     override fun onRequestPermissionsResult(
@@ -109,6 +130,7 @@ class MainActivity : Activity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        InAppLogger.log("onRequestPermissionResult")
         if(grantResults[0]==PackageManager.PERMISSION_GRANTED)
         {
             finish()
@@ -118,6 +140,7 @@ class MainActivity : Activity() {
     }
 
     private fun updateActivity() {
+        InAppLogger.logUIUpdate()
         /** Use data from DataHolder to Update MainActivity text */
 
         if (AppPreferences.consumptionPlot && main_consumption_plot_container.visibility == View.GONE) {
@@ -170,6 +193,7 @@ class MainActivity : Activity() {
     }
 
     private fun resetStats() {
+        InAppLogger.log("MainActivity.resetStats")
         main_consumption_plot.reset()
         DataHolder.consumptionPlotLine.addDataPoint(0f)
         firstPlotValueAdded = false

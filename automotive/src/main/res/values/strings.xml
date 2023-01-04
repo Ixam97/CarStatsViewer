@@ -7,6 +7,7 @@
     <string name="preferences_consumption_unit_key" translatable="false">consumption_unit</string>
     <string name="preferences_debug_key" translatable="false">debug</string>
     <string name="preferences_consumption_plot_key" translatable="false">consumption_plot</string>
+    <string name="preferences_deep_log_key" translatable="false">deep_log</string>
 
     <!-- MainActivity -->
     <string name="main_port_connected">Charge port connected:</string>
@@ -23,10 +24,20 @@
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
     <string name="settings_button_back">Back</string>
+    <string name="settings_button_quit">Quit app</string>
     <string name="settings_notifications">Notifications</string>
     <string name="settings_consumption_unit">Wh/km as consumption unit</string>
     <string name="settings_debug">Debug information</string>
     <string name="settings_consumption_plot">Show experimental consumption Plot</string>
+
+    <!-- Quit Dialog -->
+    <string name="quit_dialog_title">Quit App?</string>
+    <string name="quit_dialog_message">Log will be copied to clipboard.</string>
+    <string name="dialog_confirm">Yes</string>
+    <string name="dialog_dismiss">No</string>
+
+    <!-- LogActivity -->
+    <string name="log_title">Debug</string>
 
     <!-- Notifications -->
     <string name="notification_title">Current stats:</string>

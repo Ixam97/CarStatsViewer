@@ -16,10 +16,20 @@
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
     <string name="settings_button_back">Zurück</string>
+    <string name="settings_button_quit">App beenden</string>
     <string name="settings_notifications">Benachrichtigungen</string>
     <string name="settings_consumption_unit">Wh/km als Verbrauchseinheit</string>
     <string name="settings_debug">Debug-Informationen</string>
     <string name="settings_consumption_plot">Experimentelle Verbrauchsanzeige</string>
+
+    <!-- Quit Dialog -->
+    <string name="quit_dialog_title">App beenden?</string>
+    <string name="quit_dialog_message">Log wird in die Zwischenablage kopiert.</string>
+    <string name="dialog_confirm">Ja</string>
+    <string name="dialog_dismiss">Nein</string>
+
+    <!-- LogActivity -->
+    <string name="log_title">Debug</string>
 
     <!-- Notifications -->
     <string name="notification_title">Aktuelle Fahrdaten:</string>

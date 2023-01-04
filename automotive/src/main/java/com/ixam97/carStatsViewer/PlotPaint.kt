@@ -14,7 +14,7 @@ class PlotPaint(
 
             val plotPaint = Paint(basePaint)
             plotPaint.color = color
-            plotPaint.strokeWidth = 6f
+            plotPaint.strokeWidth = 3f
 
             val highlightLabelPaint = Paint(basePaint)
             highlightLabelPaint.color = color

@@ -30,7 +30,7 @@ public class PlotView extends View {
 
     private final float TextSize = 26f;
 
-    private final int XMargin = 150;
+    private final int XMargin = 100;
     private int XLineCount = 6;
 
     private final int YMargin = 60;
@@ -47,6 +47,8 @@ public class PlotView extends View {
     private Paint labelPaint;
     private Paint labelLinePaint;
     private Paint baseLinePaint;
+
+    String primaryUnitString = "";
 
     // Setup paint with color and stroke styles
     private void setupPaint() {
@@ -302,6 +304,7 @@ public class PlotView extends View {
                         canvas.drawText(label, labelCordX, cordY + labelShiftY, labelPaint);
                     }
                 }
+                canvas.drawText(primaryUnitString, labelCordX, line.y(line.max(), YMargin, maxY) - YMargin/3f, labelPaint);
             }
 
             if (labelCordX != null) {

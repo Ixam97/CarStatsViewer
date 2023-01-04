@@ -5,13 +5,13 @@ import java.util.Collections.min
 import kotlin.math.abs
 
 class PlotLine(
-    private val DefaultMinY: Float,
-    private val DefaultMaxY: Float,
+    var DefaultMinY: Float,
+    var DefaultMaxY: Float,
 
-    val Divider: Float,
+    var Divider: Float,
 
-    val LabelFormat: String,
-    val HighlightFormat: String,
+    var LabelFormat: String,
+    var HighlightFormat: String,
 
     val LabelPosition: PlotLabelPosition,
     val HighlightMethod: PlotHighlightMethod
