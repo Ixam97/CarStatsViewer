@@ -1,293 +1,315 @@
-package com.ixam97.carStatsViewer;
+package com.ixam97.carStatsViewer
 
-import static com.ixam97.carStatsViewer.PlotPaint.*;
+import android.R
+import android.content.Context
+import android.graphics.*
+import android.util.AttributeSet
+import android.util.TypedValue
+import android.view.View
+import java.util.*
+import kotlin.math.abs
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Rect;
-import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.View;
+class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
+    private val textSize = 26f
 
-import androidx.annotation.Nullable;
+    var xMargin: Int = 150
+        set(value) {
+            if (value > 0) {
+                field = value
+                invalidate()
+            }
+        }
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+    var xLineCount: Int = 6
+        set(value) {
+            if (value > 1) {
+                field = value
+                invalidate()
+            }
+        }
 
-public class PlotView extends View {
-    public PlotView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        setFocusable(true);
-        setFocusableInTouchMode(true);
-        setupPaint();
+    var yMargin: Int = 60
+        set(value) {
+            if (value > 0) {
+                field = value
+                invalidate()
+            }
+        }
+
+    var yLineCount: Int = 5
+        set(value) {
+            if (value > 1) {
+                field = value
+                invalidate()
+            }
+        }
+
+    var displayItemCount: Int? = null
+        set(value) {
+            if (value == null || value > 0) {
+                for (line in plotLines) {
+                    line.displayItemCount = value
+                }
+                field = value
+                invalidate()
+            }
+        }
+
+    private val plotLines = ArrayList<PlotLine>()
+    private val plotPaint = ArrayList<PlotPaint>()
+
+    private lateinit var labelPaint: Paint
+    private lateinit var labelLinePaint: Paint
+    private lateinit var baseLinePaint: Paint
+
+    init {
+        setupPaint()
     }
-
-    private final float TextSize = 26f;
-
-    private final int XMargin = 150;
-    private int XLineCount = 6;
-
-    private final int YMargin = 60;
-    private int YLineCount = 4;
-
-    private Integer DisplayItemCount = null;
-
-    private final ArrayList<PlotLine> PlotLines = new ArrayList<>();
-    private final ArrayList<PlotPaint> PlotPaint = new ArrayList<>();
-
-    private Paint labelPaint;
-    private Paint labelLinePaint;
-    private Paint baseLinePaint;
 
     // Setup paint with color and stroke styles
-    private void setupPaint() {
-        TypedValue typedValue = new TypedValue();
-        getContext().getTheme().resolveAttribute(android.R.attr.colorControlActivated, typedValue, true);
+    private fun setupPaint() {
+        val typedValue = TypedValue()
+        context.theme.resolveAttribute(R.attr.colorControlActivated, typedValue, true)
 
-        // defines paint and canvas
-        Paint basePaint = Companion.basePaint(TextSize);
+        val basePaint = PlotPaint.basePaint(textSize)
 
-        labelLinePaint = new Paint(basePaint);
-        labelLinePaint.setColor(Color.DKGRAY);
+        labelLinePaint = Paint(basePaint)
+        labelLinePaint.color = Color.DKGRAY
 
-        labelPaint = new Paint(labelLinePaint);
-        labelPaint.setStyle(Paint.Style.FILL);
+        labelPaint = Paint(labelLinePaint)
+        labelPaint.style = Paint.Style.FILL
 
-        baseLinePaint = new Paint(labelLinePaint);
-        baseLinePaint.setColor(Color.LTGRAY);
+        baseLinePaint = Paint(labelLinePaint)
+        baseLinePaint.color = Color.LTGRAY
 
-        List<Integer> PlotColors = Arrays.asList(
-                Color.BLACK,
-                Color.GREEN,
-                Color.CYAN,
-                Color.BLUE,
-                Color.RED
-        );
+        val plotColors = listOf(
+            null,
+            Color.GREEN,
+            Color.CYAN,
+            Color.BLUE,
+            Color.RED
+        )
 
-        for (Integer color : PlotColors) {
-            if (color == Color.BLACK) {
-                color = typedValue.data;
-            }
-
-            PlotPaint.add(Companion.byColor(color, TextSize));
+        for (color in plotColors) {
+            plotPaint.add(PlotPaint.byColor(color ?: typedValue.data, textSize))
         }
     }
 
-    public void reset() {
-        for (PlotLine item : PlotLines) {
-            item.reset();
+    fun reset() {
+        for (item in plotLines) {
+            item.reset()
         }
-        invalidate();
+        invalidate()
     }
 
-    public void addPlotLine(PlotLine plotLine) {
-        if (plotLine.getPlotPaint() == null) {
-            plotLine.setPlotPaint(PlotPaint.get(PlotLines.size()));
+    fun addPlotLine(plotLine: PlotLine) {
+        if (plotLine.PlotPaint == null) {
+            plotLine.PlotPaint = plotPaint[plotLines.size]
         }
-        PlotLines.add(plotLine);
-        invalidate();
+        plotLines.add(plotLine)
+        invalidate()
     }
 
-    public void removePlotLine(PlotLine plotLine) {
-        PlotLines.remove(plotLine);
-        invalidate();
+    fun removePlotLine(plotLine: PlotLine?) {
+        plotLines.remove(plotLine)
+        invalidate()
     }
 
-    public void removeAllPlotLine() {
-        PlotLines.clear();
-        invalidate();
+    fun removeAllPlotLine() {
+        plotLines.clear()
+        invalidate()
     }
 
-    public void setDisplayItemCount(Integer displayItemCount) {
-        for (PlotLine line : PlotLines) {
-            line.setDisplayItemCount(displayItemCount);
-        }
-        DisplayItemCount = displayItemCount;
-        invalidate();
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        drawXLines(canvas)
+        drawYLines(canvas)
+        drawPlot(canvas)
     }
 
-    public void setYLineCount(Integer lineCount) {
-        if (lineCount < 2) return;
-        YLineCount = lineCount;
-        invalidate();
-    }
+    private fun drawPlot(canvas: Canvas) {
+        val maxX = canvas.width.toFloat()
+        val maxY = canvas.height.toFloat()
 
-    public void setXLineCount(Integer lineCount) {
-        if (lineCount < 2) return;
-        XLineCount = lineCount;
-        invalidate();
-    }
+        for (line in plotLines) {
+            if (line.isEmpty() || !line.visible) continue
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        DrawXLines(canvas);
-        DrawYLines(canvas);
-        DrawPlot(canvas);
-    }
-
-    private void DrawPlot(Canvas canvas) {
-        float maxX = canvas.getWidth();
-        float maxY = canvas.getHeight();
-
-        for (PlotLine line : PlotLines) {
-            if (line.isEmpty() || !line.getVisible()) continue;
-
-            List<PlotLineItem> items = line.getDataPoints();
+            val items = line.getDataPoints()
 
             if (items.isEmpty()) {
-                return;
+                return
             }
 
-            ArrayList<PlotPoint> plotPoints = new ArrayList<>();
+            val plotPoints = ArrayList<PlotPoint?>()
 
-            if (DisplayItemCount != null) {
-                for (int i = 0; i < DisplayItemCount - items.size(); i++) {
-                    plotPoints.add(null);
+            if (displayItemCount != null) {
+                for (i in 0 until displayItemCount!! - items.size) {
+                    plotPoints.add(null)
                 }
             }
 
-            int index = plotPoints.size();
-            for (PlotLineItem item : items) {
-                plotPoints.add(new PlotPoint(line.x(index++, XMargin, maxX), line.y(item.getValue(), YMargin, maxY)));
+            var index = plotPoints.size
+            for (item in items) {
+                plotPoints.add(
+                    PlotPoint(
+                        line.x(index++, xMargin, maxX)!!,
+                        line.y(item.Value, yMargin, maxY)!!
+                    )
+                )
             }
 
-            Path path = new Path();
-            PlotPoint prevPoint = null;
+            val path = Path()
+            var prevPoint: PlotPoint? = null
+            var virtualIndex = 0
 
-            int virtualIndex = 0;
-            for (int i = 0; i < plotPoints.size(); i++) {
-                PlotPoint point = plotPoints.get(i);
-
-                if (point == null) continue;
+            for (i in plotPoints.indices) {
+                val point = plotPoints[i] ?: continue
 
                 if (virtualIndex == 0) {
-                    path.moveTo(point.getX(), point.getY());
-                    if (items.size() == 1) {
-                        path.lineTo(point.getX(), point.getY());
+                    path.moveTo(point.x, point.y)
+                    if (items.size == 1) {
+                        path.lineTo(point.x, point.y)
                     }
                 } else {
-                    float midX = (prevPoint.getX() + point.getX()) / 2;
-                    float midY = (prevPoint.getY() + point.getY()) / 2;
+                    val midX = (prevPoint!!.x + point.x) / 2
+                    val midY = (prevPoint!!.y + point.y) / 2
 
                     if (virtualIndex == 1) {
-                        path.lineTo(midX, midY);
+                        path.lineTo(midX, midY)
                     } else {
-                        path.quadTo(prevPoint.getX(), prevPoint.getY(), midX, midY);
+                        path.quadTo(prevPoint.x, prevPoint.y, midX, midY)
                     }
                 }
 
-                prevPoint = point;
-                virtualIndex++;
+                prevPoint = point
+                virtualIndex++
             }
 
-            path.lineTo(prevPoint.getX(), prevPoint.getY());
-
-            canvas.drawPath(path, line.getPlotPaint().getPlot());
+            path.lineTo(prevPoint!!.x, prevPoint.y)
+            canvas.drawPath(path, line.PlotPaint!!.Plot)
         }
     }
 
-    private void DrawXLines(Canvas canvas) {
-        float maxX = canvas.getWidth();
-        float maxY = canvas.getHeight();
+    private fun drawXLines(canvas: Canvas) {
+        val maxX = canvas.width.toFloat()
+        val maxY = canvas.height.toFloat()
 
-        for (int i = 0; i <= XLineCount - 1; i++) {
-            String label = "";
-            if (DisplayItemCount != null) {
-                label = String.format("%dkm", Math.abs(((DisplayItemCount - 1) / 10) - ((i * (DisplayItemCount - 1) / (XLineCount - 1)) / 10)));
+        for (i in 0 until xLineCount) {
+            var label: String
+
+            if (displayItemCount != null) {
+                label = String.format(
+                    "%dkm",
+                    abs((displayItemCount!! - 1) / 10 - i * (displayItemCount!! - 1) / (xLineCount - 1) / 10)
+                )
             } else {
-                long duration = 0l;
-                for (PlotLine line : PlotLines) {
-                    if (line.getDuration() != null && duration < line.getDuration()) {
-                        duration = line.getDuration();
+                var duration = 0L
+
+                for (line in plotLines) {
+                    if (line.duration != null && duration < line.duration!!) {
+                        duration = line.duration!!
                     }
                 }
 
-                float x = ((float) duration / (XLineCount - 1)) * i;
-                label = String.format("%02d:%02d", (int) (x / 60), (int) (x % 60));
+                val x = duration.toFloat() / (xLineCount - 1) * i
+                label = String.format("%02d:%02d", (x / 60).toInt(), (x % 60).toInt())
             }
 
-            float xCord = PlotLine.Companion.x(i, XLineCount, XMargin, maxX);
-            float yCord = maxY - YMargin;
+            val xCord = PlotLine.x(i, xLineCount, xMargin, maxX)!!
+            val yCord = maxY - yMargin
 
-            Rect bounds = new Rect();
-            labelPaint.getTextBounds(label, 0, label.length(), bounds);
+            val bounds = Rect()
 
-            canvas.drawText(label, xCord - (bounds.width() / 2), yCord + (YMargin / 2) + (bounds.height() / 2), labelPaint);
+            labelPaint.getTextBounds(label, 0, label.length, bounds)
 
-            Path path = new Path();
-            path.moveTo(xCord, YMargin);
-            path.lineTo(xCord, yCord);
+            canvas.drawText(
+                label,
+                xCord - bounds.width() / 2,
+                yCord + yMargin / 2 + bounds.height() / 2,
+                labelPaint
+            )
 
-            canvas.drawPath(path, labelLinePaint);
+            val path = Path()
+            path.moveTo(xCord, yMargin.toFloat())
+            path.lineTo(xCord, yCord)
+            canvas.drawPath(path, labelLinePaint)
         }
     }
 
-    private void DrawYLines(Canvas canvas) {
-        float maxX = canvas.getWidth();
-        float maxY = canvas.getHeight();
+    private fun drawYLines(canvas: Canvas) {
+        val maxX = canvas.width.toFloat()
+        val maxY = canvas.height.toFloat()
 
-        for (int i = 0; i <= YLineCount - 1; i++) {
-            float cordY = PlotLine.Companion.x(i, YLineCount, YMargin, maxY);
+        for (i in 0 until yLineCount) {
+            val cordY = PlotLine.x(i, yLineCount, yMargin, maxY)!!
 
-            Path path = new Path();
-            path.moveTo(XMargin, cordY);
-            path.lineTo(maxX - XMargin, cordY);
-            canvas.drawPath(path, labelLinePaint);
+            val path = Path()
+            path.moveTo(xMargin.toFloat(), cordY)
+            path.lineTo(maxX - xMargin, cordY)
+            canvas.drawPath(path, labelLinePaint)
         }
 
-        for (PlotLine line : PlotLines) {
-            if (line.isEmpty() || !line.getVisible()) continue;
+        for (line in plotLines) {
+            if (line.isEmpty() || !line.visible) continue
 
-            Rect bounds = new Rect();
-            labelPaint.getTextBounds("Dummy", 0, "Dummy".length(), bounds);
+            val bounds = Rect()
+            labelPaint.getTextBounds("Dummy", 0, "Dummy".length, bounds)
 
-            float labelShiftY = bounds.height() / 2;
-            float valueShiftY = (line.range()) / (YLineCount - 1);
+            val labelShiftY = (bounds.height() / 2).toFloat()
+            val valueShiftY = line.range() / (yLineCount - 1)
 
-            Float labelCordX = null;
-            if (line.getLabelPosition() == PlotLabelPosition.LEFT) labelCordX = TextSize;
-            if (line.getLabelPosition() == PlotLabelPosition.RIGHT) labelCordX = maxX - XMargin + TextSize;
+            var labelCordX: Float? = null
 
-            Float highlightCordY = line.y(line.highlight(), YMargin, maxY);
+            if (line.LabelPosition === PlotLabelPosition.LEFT) labelCordX = textSize
+            if (line.LabelPosition === PlotLabelPosition.RIGHT) labelCordX = maxX - xMargin + textSize
 
-            if (line.getLabelPosition() != PlotLabelPosition.NONE) {
-                for (int i = 0; i <= YLineCount - 1; i++) {
-                    float valueY = line.max() - (i * valueShiftY);
-                    float cordY = line.y(valueY, YMargin, maxY);
+            val highlightCordY = line.y(line.highlight(), yMargin, maxY)
 
-                    String label = String.format(line.getLabelFormat(), valueY / line.getDivider());
+            if (line.LabelPosition !== PlotLabelPosition.NONE && labelCordX != null) {
+                if (line.Unit.isNotEmpty()) {
+                    canvas.drawText(
+                        line.Unit,
+                        labelCordX,
+                        line.y(line.max(), yMargin, maxY)!! - (yMargin / 3f),
+                        labelPaint
+                    )
+                }
 
-                    if (highlightCordY == null || Math.abs(cordY - highlightCordY) > TextSize) {
-                        canvas.drawText(label, labelCordX, cordY + labelShiftY, labelPaint);
+                for (i in 0 until yLineCount) {
+                    val valueY = line.max() - i * valueShiftY
+                    val cordY = line.y(valueY, yMargin, maxY)!!
+                    val label = String.format(line.LabelFormat, valueY / line.Divider)
+
+                    if (highlightCordY == null || abs(cordY - highlightCordY) > textSize) {
+                        canvas.drawText(label, labelCordX, cordY + labelShiftY, labelPaint)
                     }
                 }
             }
 
             if (labelCordX != null) {
-                canvas.drawText(String.format(line.getHighlightFormat(), line.highlight() / line.getDivider()), labelCordX, highlightCordY + labelShiftY, line.getPlotPaint().getHighlightLabel());
+                canvas.drawText(
+                    String.format(
+                        line.HighlightFormat,
+                        line.highlight()!! / line.Divider
+                    ), labelCordX, highlightCordY!! + labelShiftY, line.PlotPaint!!.HighlightLabel
+                )
             }
 
-            for (Float baseLineAt : line.getBaseLineAt()) {
-                Float baseCordY = line.y(baseLineAt, YMargin, maxY);
+            for (baseLineAt in line.baseLineAt) {
+                val baseCordY = line.y(baseLineAt, yMargin, maxY)
                 if (baseCordY != null) {
-                    Path basePath = new Path();
-                    basePath.moveTo(XMargin,  baseCordY);
-                    basePath.lineTo(maxX - XMargin, baseCordY);
-                    canvas.drawPath(basePath, baseLinePaint);
+                    val basePath = Path()
+                    basePath.moveTo(xMargin.toFloat(), baseCordY)
+                    basePath.lineTo(maxX - xMargin, baseCordY)
+                    canvas.drawPath(basePath, baseLinePaint)
                 }
             }
 
-            if (highlightCordY != null && line.getHighlightMethod() == PlotHighlightMethod.AVG) {
-                Path highlightPath = new Path();
-                highlightPath.moveTo(XMargin, highlightCordY);
-                highlightPath.lineTo(maxX - XMargin, highlightCordY);
-
-                canvas.drawPath(highlightPath, line.getPlotPaint().getHighlightLabelLine());
+            if (highlightCordY != null && line.HighlightMethod === PlotHighlightMethod.AVG) {
+                val highlightPath = Path()
+                highlightPath.moveTo(xMargin.toFloat(), highlightCordY)
+                highlightPath.lineTo(maxX - xMargin, highlightCordY)
+                canvas.drawPath(highlightPath, line.PlotPaint!!.HighlightLabelLine)
             }
         }
     }

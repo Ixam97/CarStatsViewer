@@ -32,7 +32,8 @@ object DataHolder {
         600f,
         1f,
         "%.0f",
-        "%.0f Wh/km",
+        "%.0f",
+        "Wh/km",
         PlotLabelPosition.LEFT,
         PlotHighlightMethod.AVG
     )
