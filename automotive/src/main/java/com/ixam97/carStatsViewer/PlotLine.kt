@@ -27,6 +27,8 @@ class PlotLine(
 
     private val dataPoints: ArrayList<PlotLineItem> = ArrayList()
 
+    var visible: Boolean = true
+
     var baseLineAt: ArrayList<Float> = ArrayList()
 
     var PlotPaint: PlotPaint? = null

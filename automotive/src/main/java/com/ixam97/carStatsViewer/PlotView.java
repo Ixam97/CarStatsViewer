@@ -135,7 +135,7 @@ public class PlotView extends View {
         float maxY = canvas.getHeight();
 
         for (PlotLine line : PlotLines) {
-            if (line.isEmpty()) continue;
+            if (line.isEmpty() || !line.getVisible()) continue;
 
             List<PlotLineItem> items = line.getDataPoints();
 
@@ -241,7 +241,7 @@ public class PlotView extends View {
         }
 
         for (PlotLine line : PlotLines) {
-            if (line.isEmpty()) continue;
+            if (line.isEmpty() || !line.getVisible()) continue;
 
             Rect bounds = new Rect();
             labelPaint.getTextBounds("Dummy", 0, "Dummy".length(), bounds);
