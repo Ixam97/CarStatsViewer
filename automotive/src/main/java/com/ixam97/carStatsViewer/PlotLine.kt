@@ -41,11 +41,11 @@ class PlotLine(
             calculate()
         }
 
-    fun addDataPoint(item: Float?) {
+    fun addDataPoint(item: Float?, calculate: Boolean = true) {
         if (item != null) {
             dataPoints.add(PlotLineItem(item, Calendar.getInstance()))
         }
-        calculate()
+        if (calculate) calculate()
     }
 
     fun addDataPoints(items: ArrayList<PlotLineItem>) {
@@ -71,7 +71,7 @@ class PlotLine(
     fun getDataPoints(): List<PlotLineItem> {
         var limit = dataPoints.size - (displayItemCount ?: 0)
         if (dataPoints.size == limit) return dataPoints
-        return dataPoints.filterIndexed { index, s -> index > limit }
+        return dataPoints.filterIndexed { index, s -> index >= limit }
     }
 
     private fun calculate() {
@@ -134,7 +134,7 @@ class PlotLine(
         return null
     }
 
-    fun x(position: Int, margin: Int, maxX: Float): Float? {
+    fun x(position: Float, margin: Int, maxX: Float): Float? {
         return x(position, displayItemCount ?: dataPoints.size, margin, maxX)
     }
 
@@ -146,7 +146,7 @@ class PlotLine(
     }
 
     companion object {
-        fun x(position: Int, items: Int, margin: Int, maxX: Float): Float? {
+        fun x(position: Float, items: Int, margin: Int, maxX: Float): Float? {
             return margin + (maxX - 2 * margin) / (items - 1) * position
         }
     }

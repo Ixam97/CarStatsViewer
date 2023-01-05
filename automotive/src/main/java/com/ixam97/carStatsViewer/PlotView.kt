@@ -9,6 +9,7 @@ import android.view.View
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.ceil
+import kotlin.math.max
 
 class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private val textSize = 26f
@@ -138,32 +139,35 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             val items = line.getDataPoints()
             if (items.isEmpty()) continue
 
-            var itemShift = 0
+            var itemShift = -1
             var itemCount = items.size
 
             if (displayItemCount != null) {
                 itemCount = displayItemCount!!
-                itemShift = displayItemCount!! - items.size
+                itemShift = displayItemCount!! - items.size - 2
             }
 
             val plotPoints = ArrayList<PlotPoint>()
 
             val itemsPerPixelGroup = ((maxX - 2 * xMargin) / 5);
             val chunkSize = ceil(itemCount / itemsPerPixelGroup).toInt()
+
             for (chunks in items.chunked(chunkSize)) {
                 var ySum = 0f
                 for (chunkItem in chunks) {
                     ySum += chunkItem.Value
                 }
 
-                itemShift += chunks.size
+                var factor = chunks.size.toFloat() * itemShift / itemCount
 
                 plotPoints.add(
                     PlotPoint(
-                        line.x(itemShift, xMargin, maxX)!!,
+                        line.x(itemShift + max(factor, 1f), xMargin, maxX)!!,
                         line.y(ySum / chunks.size, yMargin, maxY)!!
                     )
                 )
+
+                itemShift += chunkSize
             }
 
             val path = Path()
@@ -224,7 +228,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 label = String.format("%02d:%02d", (x / 60).toInt(), (x % 60).toInt())
             }
 
-            val xCord = PlotLine.x(i, xLineCount, xMargin, maxX)!!
+            val xCord = PlotLine.x(i.toFloat(), xLineCount, xMargin, maxX)!!
             val yCord = maxY - yMargin
 
             val bounds = Rect()
@@ -250,7 +254,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val maxY = canvas.height.toFloat()
 
         for (i in 0 until yLineCount) {
-            val cordY = PlotLine.x(i, yLineCount, yMargin, maxY)!!
+            val cordY = PlotLine.x(i.toFloat(), yLineCount, yMargin, maxY)!!
 
             val path = Path()
             path.moveTo(xMargin.toFloat(), cordY)
