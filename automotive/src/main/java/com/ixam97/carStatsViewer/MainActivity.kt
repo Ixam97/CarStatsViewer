@@ -44,12 +44,12 @@ class MainActivity : Activity() {
         super.onResume()
 
         if (AppPreferences.consumptionUnit) {
-            main_consumption_plot.primaryUnitString = "Wh/km"
+            DataHolder.consumptionPlotLine.Unit = "Wh/km"
             DataHolder.consumptionPlotLine.HighlightFormat = "%.0f"
             DataHolder.consumptionPlotLine.LabelFormat = "%.0f"
             DataHolder.consumptionPlotLine.Divider = 1f
         } else {
-            main_consumption_plot.primaryUnitString = "kWh/100km"
+            DataHolder.consumptionPlotLine.Unit = "kWh/100km"
             DataHolder.consumptionPlotLine.HighlightFormat = "%.1f"
             DataHolder.consumptionPlotLine.LabelFormat = "%.1f"
             DataHolder.consumptionPlotLine.Divider = 10f
@@ -94,8 +94,7 @@ class MainActivity : Activity() {
 
         main_consumption_plot.reset()
         main_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
-        main_consumption_plot.setYLineCount(5)
-        main_consumption_plot.setDisplayItemCount(101)
+        main_consumption_plot.displayItemCount = 101
         main_consumption_plot.invalidate()
 
         main_button_reset.setOnClickListener {
@@ -109,9 +108,9 @@ class MainActivity : Activity() {
         main_radio_group_distance.check(main_radio_10.id)
         main_radio_group_distance.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
-                main_radio_10.id -> main_consumption_plot.setDisplayItemCount(101)
-                main_radio_25.id -> main_consumption_plot.setDisplayItemCount(251)
-                main_radio_50.id -> main_consumption_plot.setDisplayItemCount(501)
+                main_radio_10.id -> main_consumption_plot.displayItemCount = 101
+                main_radio_25.id -> main_consumption_plot.displayItemCount = 251
+                main_radio_50.id -> main_consumption_plot.displayItemCount = 501
             }
         }
 

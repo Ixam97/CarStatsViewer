@@ -7,13 +7,15 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 class PlotLine(
-    var DefaultMinY: Float,
-    var DefaultMaxY: Float,
+    private val DefaultMinY: Float,
+    private val DefaultMaxY: Float,
 
     var Divider: Float,
 
     var LabelFormat: String,
     var HighlightFormat: String,
+
+    var Unit: String,
 
     val LabelPosition: PlotLabelPosition,
     val HighlightMethod: PlotHighlightMethod

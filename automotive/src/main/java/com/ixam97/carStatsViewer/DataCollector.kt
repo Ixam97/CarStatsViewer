@@ -33,6 +33,7 @@ object DataHolder {
         1f,
         "%.0f",
         "%.0f",
+        "Wh/km",
         PlotLabelPosition.LEFT,
         PlotHighlightMethod.AVG
     )
@@ -131,7 +132,6 @@ class DataCollector : Service() {
         DataHolder.newPlotValueAvailable = true
 
         registerCarPropertyCallbacks()
-
 
         InAppLogger.log("doLoops = true")
         doLoops = true
