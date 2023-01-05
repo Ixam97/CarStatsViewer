@@ -10,11 +10,14 @@ import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.*
+import android.provider.ContactsContract.Data
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.gson.Gson
 import kotlin.math.absoluteValue
 
 object DataHolder {
@@ -38,6 +41,17 @@ object DataHolder {
         PlotHighlightMethod.AVG
     )
 
+    var speedPlotLine = PlotLine(
+        0f,
+        250f,
+        1f,
+        "%.0f",
+        "Ø %.0f",
+        "km/h",
+        PlotLabelPosition.RIGHT,
+        PlotHighlightMethod.AVG
+    )
+
     var newPlotValueAvailable = false
     var newPlotValue = 0F
 }
@@ -54,10 +68,13 @@ class DataCollector : Service() {
 
     var lastPlotDistance = 0F
     var lastPlotEnergy = 0F
+    var lastPlotTime = 0F
 
     private var doLoops = false
 
     private var counter = 0
+
+    private lateinit var sharedPref: SharedPreferences
 
     private val mBinder: LocalBinder = LocalBinder()
 
@@ -96,8 +113,7 @@ class DataCollector : Service() {
         .setOngoing(true)
 
     inner class LocalBinder : Binder() {
-        val service: DataCollector
-            get() = this@DataCollector
+        fun getService(): DataCollector = this@DataCollector
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -109,6 +125,16 @@ class DataCollector : Service() {
 
         InAppLogger.log("DataCollector.onCreate")
 
+        sharedPref = this.getSharedPreferences(
+            getString(R.string.preferences_file_key), Context.MODE_PRIVATE
+        )
+/*
+        val consumptionPlotLineJSON = sharedPref.getString(getString(R.string.userdata_consumption_plot_key), "")
+        val speedPlotLineJSON = sharedPref.getString(getString(R.string.userdata_speed_plot_key), "")
+
+        if (consumptionPlotLineJSON != "") DataHolder.consumptionPlotLine = Gson().fromJson(consumptionPlotLineJSON, PlotLine::class.java)
+        if (speedPlotLineJSON != "") DataHolder.consumptionPlotLine = Gson().fromJson(speedPlotLineJSON, PlotLine::class.java)
+*/
         notificationsEnabled = AppPreferences.notifications
 
         car = Car.createCar(this)
@@ -128,7 +154,9 @@ class DataCollector : Service() {
         }
 
         DataHolder.consumptionPlotLine.baseLineAt.add(0f)
-        DataHolder.consumptionPlotLine.addDataPoint(0f)
+        //DataHolder.consumptionPlotLine.addDataPoint(0f)
+        DataHolder.speedPlotLine.baseLineAt.add(0f)
+        //DataHolder.speedPlotLine.addDataPoint(0f)
         DataHolder.newPlotValueAvailable = true
 
         registerCarPropertyCallbacks()
@@ -195,19 +223,34 @@ class DataCollector : Service() {
             InAppLogger.deepLog("DataCollector.carPropertySpeedListener")
             InAppLogger.logVHALCallback()
             speedUpdater(value.value as Float)
+            val currentPlotTime = SystemClock.elapsedRealtime().toFloat()
 
             if (!firstPlotValueAdded) {
                 lastPlotDistance = DataHolder.traveledDistance
                 lastPlotEnergy = DataHolder.usedEnergy
+                lastPlotTime = currentPlotTime
                 firstPlotValueAdded = true
             } else if (DataHolder.traveledDistance >= (lastPlotDistance + 100)) {
                 val distanceDifference = lastPlotDistance - DataHolder.traveledDistance
                 val powerDifference = lastPlotEnergy - DataHolder.usedEnergy
+                val timeDifference = lastPlotTime - currentPlotTime
+                lastPlotTime = currentPlotTime
                 lastPlotDistance = DataHolder.traveledDistance
                 lastPlotEnergy = DataHolder.usedEnergy
 
-                DataHolder.newPlotValue = powerDifference / (distanceDifference / 1000)
-                DataHolder.consumptionPlotLine.addDataPoint(DataHolder.newPlotValue)
+                val newConsumptionPlotValue = powerDifference / (distanceDifference / 1000)
+                val newSpeedPlotValue = distanceDifference / (timeDifference / 3600)
+                DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue)
+                DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue)
+/*
+                val consumptionPlotLineJSON = Gson().toJson(DataHolder.consumptionPlotLine)
+                val speedPlotLineJSON = Gson().toJson(DataHolder.speedPlotLine)
+
+                sharedPref.edit()
+                    .putString(getString(R.string.userdata_consumption_plot_key), consumptionPlotLineJSON)
+                    .putString(getString(R.string.userdata_speed_plot_key), speedPlotLineJSON)
+                    .apply()
+*/
                 DataHolder.newPlotValueAvailable = true
             }
         }

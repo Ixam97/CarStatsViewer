@@ -232,36 +232,55 @@
             android:layout_height="2dp"
             android:background="?android:attr/listDivider"/>
 
-
-        <RadioGroup
-            android:id="@+id/main_radio_group_distance"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_weight="0"
             android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/main_radio_10"
+
+            <RadioGroup
+                android:id="@+id/main_radio_group_distance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_weight="0"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/main_radio_10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:textSize="35dp"
+                    android:text="10 km"/>
+                <RadioButton
+                    android:id="@+id/main_radio_25"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:textSize="35dp"
+                    android:text="25 km"/>
+                <RadioButton
+                    android:id="@+id/main_radio_50"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:textSize="35dp"
+                    android:text="50 km"/>
+            </RadioGroup>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <CheckBox
+                android:id="@+id/main_checkbox_speed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
+                android:text="@string/main_checkbox_speed"
                 android:textSize="35dp"
-                android:text="10 km"/>
-            <RadioButton
-                android:id="@+id/main_radio_25"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:textSize="35dp"
-                android:text="25 km"/>
-            <RadioButton
-                android:id="@+id/main_radio_50"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:textSize="35dp"
-                android:text="50 km"/>
-        </RadioGroup>
+                android:layout_margin="10dp"
+                android:layout_marginHorizontal="15dp"/>
+        </LinearLayout>
 
     </LinearLayout>
 

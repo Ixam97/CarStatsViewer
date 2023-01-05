@@ -1,6 +1,7 @@
 package com.ixam97.carStatsViewer
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.PendingIntent
 import android.car.Car
 import android.content.Context
@@ -14,6 +15,7 @@ import android.provider.ContactsContract.RawContacts.Data
 import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.system.exitProcess
 
 /**
  * A simple activity that demonstrates connecting to car API and processing car property change
@@ -45,12 +47,12 @@ class MainActivity : Activity() {
 
         if (AppPreferences.consumptionUnit) {
             DataHolder.consumptionPlotLine.Unit = "Wh/km"
-            DataHolder.consumptionPlotLine.HighlightFormat = "%.0f"
+            DataHolder.consumptionPlotLine.HighlightFormat = "Ø %.0f"
             DataHolder.consumptionPlotLine.LabelFormat = "%.0f"
             DataHolder.consumptionPlotLine.Divider = 1f
         } else {
             DataHolder.consumptionPlotLine.Unit = "kWh/100km"
-            DataHolder.consumptionPlotLine.HighlightFormat = "%.1f"
+            DataHolder.consumptionPlotLine.HighlightFormat = "Ø %.1f"
             DataHolder.consumptionPlotLine.LabelFormat = "%.1f"
             DataHolder.consumptionPlotLine.Divider = 10f
         }
@@ -94,11 +96,28 @@ class MainActivity : Activity() {
 
         main_consumption_plot.reset()
         main_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
+        main_consumption_plot.addPlotLine(DataHolder.speedPlotLine)
+        DataHolder.speedPlotLine.visible = main_checkbox_speed.isChecked
         main_consumption_plot.displayItemCount = 101
         main_consumption_plot.invalidate()
 
         main_button_reset.setOnClickListener {
-            resetStats()
+
+            val builder = AlertDialog.Builder(this@MainActivity)
+            builder.setTitle(getString(R.string.main_dialog_reset_title))
+                .setMessage(getString(R.string.main_dialog_reset_message))
+                .setCancelable(true)
+                .setPositiveButton(getString(R.string.dialog_confirm)) { dialog, id ->
+                    resetStats()
+                }
+                .setNegativeButton(getString(R.string.dialog_dismiss)) { dialog, id ->
+                    // Dismiss the dialog
+                    InAppLogger.log("Dismiss reset but refresh MainActivity")
+                    finish()
+                    startActivity(intent)
+                }
+            val alert = builder.create()
+            alert.show()
         }
 
         main_button_settings.setOnClickListener {
@@ -112,6 +131,15 @@ class MainActivity : Activity() {
                 main_radio_25.id -> main_consumption_plot.displayItemCount = 251
                 main_radio_50.id -> main_consumption_plot.displayItemCount = 501
             }
+        }
+
+        main_checkbox_speed.setOnClickListener {
+            if (main_checkbox_speed.isChecked && !DataHolder.speedPlotLine.visible) {
+                DataHolder.speedPlotLine.visible = true
+            } else if (!main_checkbox_speed.isChecked && DataHolder.speedPlotLine.visible) {
+                DataHolder.speedPlotLine.visible = false
+            }
+            main_consumption_plot.invalidate()
         }
 
         timerHandler = Handler(Looper.getMainLooper())
@@ -192,9 +220,12 @@ class MainActivity : Activity() {
     }
 
     private fun resetStats() {
+        finish()
+        startActivity(intent)
         InAppLogger.log("MainActivity.resetStats")
         main_consumption_plot.reset()
-        DataHolder.consumptionPlotLine.addDataPoint(0f)
+        //DataHolder.consumptionPlotLine.addDataPoint(0f)
+        //DataHolder.speedPlotLine.addDataPoint(DataHolder.currentSpeed * 3.6f)
         firstPlotValueAdded = false
         DataHolder.traveledDistance = 0F
         traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)
