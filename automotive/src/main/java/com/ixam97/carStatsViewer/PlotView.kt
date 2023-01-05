@@ -8,6 +8,7 @@ import android.util.TypedValue
 import android.view.View
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.ceil
 
 class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private val textSize = 26f
@@ -103,8 +104,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     fun addPlotLine(plotLine: PlotLine) {
-        if (plotLine.PlotPaint == null) {
-            plotLine.PlotPaint = plotPaint[plotLines.size]
+        if (plotLine.plotPaint == null) {
+            plotLine.plotPaint = plotPaint[plotLines.size]
         }
         plotLines.add(plotLine)
         invalidate()
@@ -135,46 +136,52 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             if (line.isEmpty() || !line.visible) continue
 
             val items = line.getDataPoints()
+            if (items.isEmpty()) continue
 
-            if (items.isEmpty()) {
-                return
-            }
-
-            val plotPoints = ArrayList<PlotPoint?>()
+            var itemShift = 0
+            var itemCount = items.size
 
             if (displayItemCount != null) {
-                for (i in 0 until displayItemCount!! - items.size) {
-                    plotPoints.add(null)
-                }
+                itemCount = displayItemCount!!
+                itemShift = displayItemCount!! - items.size
             }
 
-            var index = plotPoints.size
-            for (item in items) {
+            val plotPoints = ArrayList<PlotPoint>()
+
+            val itemsPerPixelGroup = ((maxX - 2 * xMargin) / 5);
+            val chunkSize = ceil(itemCount / itemsPerPixelGroup).toInt()
+            for (chunks in items.chunked(chunkSize)) {
+                var ySum = 0f
+                for (chunkItem in chunks) {
+                    ySum += chunkItem.Value
+                }
+
+                itemShift += chunks.size
+
                 plotPoints.add(
                     PlotPoint(
-                        line.x(index++, xMargin, maxX)!!,
-                        line.y(item.Value, yMargin, maxY)!!
+                        line.x(itemShift, xMargin, maxX)!!,
+                        line.y(ySum / chunks.size, yMargin, maxY)!!
                     )
                 )
             }
 
             val path = Path()
             var prevPoint: PlotPoint? = null
-            var virtualIndex = 0
 
             for (i in plotPoints.indices) {
-                val point = plotPoints[i] ?: continue
+                val point = plotPoints[i]
 
-                if (virtualIndex == 0) {
+                if (i == 0) {
                     path.moveTo(point.x, point.y)
-                    if (items.size == 1) {
+                    if (plotPoints.size == 1) {
                         path.lineTo(point.x, point.y)
                     }
-                } else {
-                    val midX = (prevPoint!!.x + point.x) / 2
-                    val midY = (prevPoint!!.y + point.y) / 2
+                } else if (prevPoint != null) {
+                    val midX = (prevPoint.x + point.x) / 2
+                    val midY = (prevPoint.y + point.y) / 2
 
-                    if (virtualIndex == 1) {
+                    if (i == 1) {
                         path.lineTo(midX, midY)
                     } else {
                         path.quadTo(prevPoint.x, prevPoint.y, midX, midY)
@@ -182,11 +189,13 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 }
 
                 prevPoint = point
-                virtualIndex++
             }
 
-            path.lineTo(prevPoint!!.x, prevPoint.y)
-            canvas.drawPath(path, line.PlotPaint!!.Plot)
+            if (prevPoint != null) {
+                path.lineTo(prevPoint.x, prevPoint.y)
+            }
+
+            canvas.drawPath(path, line.plotPaint!!.Plot)
         }
     }
 
@@ -291,7 +300,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     String.format(
                         line.HighlightFormat,
                         line.highlight()!! / line.Divider
-                    ), labelCordX, highlightCordY!! + labelShiftY, line.PlotPaint!!.HighlightLabel
+                    ), labelCordX, highlightCordY!! + labelShiftY, line.plotPaint!!.HighlightLabel
                 )
             }
 
@@ -309,7 +318,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 val highlightPath = Path()
                 highlightPath.moveTo(xMargin.toFloat(), highlightCordY)
                 highlightPath.lineTo(maxX - xMargin, highlightCordY)
-                canvas.drawPath(highlightPath, line.PlotPaint!!.HighlightLabelLine)
+                canvas.drawPath(highlightPath, line.plotPaint!!.HighlightLabelLine)
             }
         }
     }

@@ -33,7 +33,8 @@ class PlotLine(
 
     var baseLineAt: ArrayList<Float> = ArrayList()
 
-    var PlotPaint: PlotPaint? = null
+    var plotPaint: PlotPaint? = null
+
     var displayItemCount: Int? = null
         set(value) {
             field = value
