@@ -2,16 +2,10 @@ package com.ixam97.carStatsViewer
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_settings.*
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import android.widget.TextView
-import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_settings.view.*
 import kotlin.system.exitProcess
 
 object AppPreferences {
@@ -19,7 +13,9 @@ object AppPreferences {
     var notifications = false
     var consumptionUnit = false
     var consumptionPlot = false
-    var deepLog = true
+    var deepLog = false
+    var plotSpeed = false
+    var plotDistance = 1
 }
 
 class SettingsActivity : Activity() {

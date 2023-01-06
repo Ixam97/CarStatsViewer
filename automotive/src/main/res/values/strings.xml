@@ -10,6 +10,8 @@
     <string name="preferences_deep_log_key" translatable="false">deep_log</string>
     <string name="userdata_consumption_plot_key" translatable="false">userdata_consumption_plot</string>
     <string name="userdata_speed_plot_key" translatable="false">userdata_speed_plot</string>
+    <string name="preferences_plot_distance_key" translatable="false">preferences_plot_distance</string>
+    <string name="preferences_plot_speed_key" translatable="false">preferences_plot_speed</string>
 
     <!-- MainActivity -->
     <string name="main_port_connected">Charge port connected:</string>
@@ -46,4 +48,5 @@
 
     <!-- Notifications -->
     <string name="notification_title">Current stats:</string>
+    <string name="foreground_service_info">Data collection service running</string>
 </resources>

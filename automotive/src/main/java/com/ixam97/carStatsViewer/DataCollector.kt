@@ -1,9 +1,6 @@
 package com.ixam97.carStatsViewer
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.car.Car
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
@@ -12,12 +9,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.*
-import android.provider.ContactsContract.Data
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.google.gson.Gson
 import kotlin.math.absoluteValue
 
 object DataHolder {
@@ -53,26 +47,26 @@ object DataHolder {
     )
 
     var newPlotValueAvailable = false
-    var newPlotValue = 0F
 }
 
 lateinit var mainActivityPendingIntent: PendingIntent
 
 var firstPlotValueAdded = false
 
+
+
 class DataCollector : Service() {
     companion object {
         private const val CHANNEL_ID = "TestChannel"
-        private const val notificationId = 1
+        private const val statsNotificationId = 1
+        private const val foregroundNotificationId = 2
     }
 
     var lastPlotDistance = 0F
     var lastPlotEnergy = 0F
     var lastPlotTime = 0F
 
-    private var doLoops = false
-
-    private var counter = 0
+    private var notificationCounter = 0
 
     private lateinit var sharedPref: SharedPreferences
 
@@ -100,9 +94,8 @@ class DataCollector : Service() {
     private val updateStatsNotificationTask = object : Runnable {
         override fun run() {
             updateStatsNotification()
-            registerCarPropertyCallbacks()
             InAppLogger.logNotificationUpdate()
-            if (doLoops) timerHandler.postDelayed(this, 500)
+            timerHandler.postDelayed(this, 500)
         }
     }
 
@@ -123,7 +116,15 @@ class DataCollector : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        InAppLogger.log("DataCollector.onCreate")
+        val foregroundServiceNotification = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle(getString(R.string.app_name))
+            .setContentText(getString(R.string.foreground_service_info))
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setOngoing(true)
+
+        startForeground(foregroundNotificationId, foregroundServiceNotification.build())
+
+        InAppLogger.log(String.format("DataCollector.onCreate in Thread: %s", Thread.currentThread().name))
 
         sharedPref = this.getSharedPreferences(
             getString(R.string.preferences_file_key), Context.MODE_PRIVATE
@@ -137,7 +138,11 @@ class DataCollector : Service() {
 */
         notificationsEnabled = AppPreferences.notifications
 
-        car = Car.createCar(this)
+        val carPropertyCallbacksTaskHandlerThread = HandlerThread("CarPropertyCallbacksTaskThread")
+        carPropertyCallbacksTaskHandlerThread.start()
+        val carPropertyCallbacksTaskHandler = Handler(carPropertyCallbacksTaskHandlerThread.looper)
+
+        car = Car.createCar(this, carPropertyCallbacksTaskHandler)
         carPropertyManager = car.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager;
         DataHolder.maxBatteryCapacity = carPropertyManager.getProperty<Float>(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0).value.toInt()
 
@@ -149,7 +154,7 @@ class DataCollector : Service() {
 
         if (notificationsEnabled) {
             with(NotificationManagerCompat.from(this)) {
-                notify(notificationId, statsNotification.build())
+                notify(statsNotificationId, statsNotification.build())
             }
         }
 
@@ -161,8 +166,6 @@ class DataCollector : Service() {
 
         registerCarPropertyCallbacks()
 
-        InAppLogger.log("doLoops = true")
-        doLoops = true
         timerHandler = Handler(Looper.getMainLooper())
         timerHandler.post(updateStatsNotificationTask)
     }
@@ -170,21 +173,17 @@ class DataCollector : Service() {
     override fun onDestroy() {
         super.onDestroy()
         InAppLogger.log("DataCollector.onDestroy")
-        InAppLogger.log("doLoops = false")
-        doLoops = false
         car.disconnect()
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        // Register vehicle properties callbacks
-        registerCarPropertyCallbacks()
         InAppLogger.log("DataCollector.onStartCommand")
         return START_STICKY
     }
 
     private fun registerCarPropertyCallbacks() {
 
-        InAppLogger.deepLog("DataCollector.registerCarPropertyCallbacks")
+        InAppLogger.log("DataCollector.registerCarPropertyCallbacks")
 
         val powerRegistered = carPropertyManager.registerCallback(
             carPropertyPowerListener,
@@ -212,6 +211,7 @@ class DataCollector : Service() {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
             InAppLogger.deepLog("DataCollector.carPropertyPowerListener")
             powerUpdater(value.value as Float)
+            Log.d("carPropertyPowerListener", String.format("Received value %.0f on thread %s", value.value as Float, Thread.currentThread().name))
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
             Log.w("carPropertyPowerListener", "Received error car property event, propId=$propId")
@@ -272,7 +272,7 @@ class DataCollector : Service() {
 
     private var carPropertyPortListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
-            InAppLogger.deepLog("DataCollector.carPropertyPortListener")
+            InAppLogger.log(String.format("DataCollector.carPropertyPortListener on Thread: %s", Thread.currentThread().name))
             DataHolder.chargePortConnected = value.value as Boolean
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
@@ -334,20 +334,23 @@ class DataCollector : Service() {
                 if (!AppPreferences.consumptionUnit) averageConsumptionString = String.format("%.1f kWh/100km",averageConsumption / 10)
                 if ((DataHolder.traveledDistance <= 0)) averageConsumptionString = "N/A"
 
+                notificationCounter++
+
                 val message = String.format(
-                    "P:%.1f kW, D: %.3f km, Ø: %s",
+                    "P:%.1f kW, D: %.3f km, Ø: %s, notificationCounter = %d",
                     DataHolder.currentPowermW / 1000000,
                     DataHolder.traveledDistance / 1000,
-                    averageConsumptionString
+                    averageConsumptionString,
+                    notificationCounter
                 )
 
                 statsNotification.setContentText(message)
-                notify(notificationId, statsNotification.build())
+                notify(statsNotificationId, statsNotification.build())
             }
         } else if (notificationsEnabled && !AppPreferences.notifications) {
             notificationsEnabled = false
             with(NotificationManagerCompat.from(this)) {
-                cancel(notificationId)
+                cancel(statsNotificationId)
             }
         } else if (!notificationsEnabled && AppPreferences.notifications) {
             notificationsEnabled = true

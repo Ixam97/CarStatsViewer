@@ -36,4 +36,5 @@
 
     <!-- Notifications -->
     <string name="notification_title">Aktuelle Fahrdaten:</string>
+    <string name="foreground_service_info">Fahrdatenerfassung aktiv</string>
 </resources>

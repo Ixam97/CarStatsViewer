@@ -11,11 +11,8 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.ContactsContract.RawContacts.Data
-import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlin.system.exitProcess
 
 /**
  * A simple activity that demonstrates connecting to car API and processing car property change
@@ -80,17 +77,28 @@ class MainActivity : Activity() {
         AppPreferences.notifications = sharedPref.getBoolean(getString(R.string.preferences_notifications_key), false)
         AppPreferences.debug = sharedPref.getBoolean(getString(R.string.preferences_debug_key), false)
         AppPreferences.consumptionPlot = sharedPref.getBoolean(getString(R.string.preferences_consumption_plot_key), false)
-        AppPreferences.deepLog = sharedPref.getBoolean(getString(R.string.preferences_deep_log_key), true)
+        AppPreferences.deepLog = sharedPref.getBoolean(getString(R.string.preferences_deep_log_key), false)
+        AppPreferences.plotDistance = sharedPref.getInt(getString(R.string.preferences_plot_distance_key), 1)
+        AppPreferences.plotSpeed = sharedPref.getBoolean(getString(R.string.preferences_plot_speed_key), false)
 
         dataCollectorIntent = Intent(this, DataCollector::class.java)
         starterIntent = intent
         val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         mainActivityPendingIntent = pendingIntent
-        startService(dataCollectorIntent)
+        startForegroundService(dataCollectorIntent)
 
         checkPermissions()
 
         setContentView(R.layout.activity_main)
+
+        main_checkbox_speed.isChecked = AppPreferences.plotSpeed
+        var plotDistanceId = main_radio_10.id
+        when (AppPreferences.plotDistance) {
+            1 -> plotDistanceId = main_radio_10.id
+            2 -> plotDistanceId = main_radio_25.id
+            3 -> plotDistanceId = main_radio_50.id
+        }
+        main_radio_group_distance.check(plotDistanceId)
 
         if (AppPreferences.consumptionPlot) main_consumption_plot_container.visibility = View.VISIBLE
 
@@ -100,6 +108,10 @@ class MainActivity : Activity() {
         DataHolder.speedPlotLine.visible = main_checkbox_speed.isChecked
         main_consumption_plot.displayItemCount = 101
         main_consumption_plot.invalidate()
+
+        main_title.setOnClickListener {
+            finish()
+        }
 
         main_button_reset.setOnClickListener {
 
@@ -124,13 +136,27 @@ class MainActivity : Activity() {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
-        main_radio_group_distance.check(main_radio_10.id)
         main_radio_group_distance.setOnCheckedChangeListener { group, checkedId ->
+            var id = 1
             when (checkedId) {
-                main_radio_10.id -> main_consumption_plot.displayItemCount = 101
-                main_radio_25.id -> main_consumption_plot.displayItemCount = 251
-                main_radio_50.id -> main_consumption_plot.displayItemCount = 501
+                main_radio_10.id -> {
+                    main_consumption_plot.displayItemCount = 101
+                    id = 1
+                }
+                main_radio_25.id -> {
+                    main_consumption_plot.displayItemCount = 251
+                    id = 2
+                }
+                main_radio_50.id -> {
+                    main_consumption_plot.displayItemCount = 501
+                    id = 3
+                }
             }
+
+            sharedPref.edit()
+                .putInt(getString(R.string.preferences_plot_distance_key), id)
+                .apply()
+            AppPreferences.plotDistance = id
         }
 
         main_checkbox_speed.setOnClickListener {
@@ -139,6 +165,12 @@ class MainActivity : Activity() {
             } else if (!main_checkbox_speed.isChecked && DataHolder.speedPlotLine.visible) {
                 DataHolder.speedPlotLine.visible = false
             }
+
+            sharedPref.edit()
+                .putBoolean(getString(R.string.preferences_plot_speed_key), main_checkbox_speed.isChecked)
+                .apply()
+            AppPreferences.plotSpeed = main_checkbox_speed.isChecked
+
             main_consumption_plot.invalidate()
         }
 
