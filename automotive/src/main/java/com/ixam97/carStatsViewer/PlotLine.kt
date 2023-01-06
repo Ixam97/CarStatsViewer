@@ -10,6 +10,8 @@ class PlotLine(
     private val DefaultMinY: Float,
     private val DefaultMaxY: Float,
 
+    val SmoothAxle: Float? = null,
+
     var Divider: Float,
 
     var LabelFormat: String,
@@ -112,11 +114,15 @@ class PlotLine(
     }
 
     fun min(): Float {
-        return floor((minCalculated ?: DefaultMinY).coerceAtMost(DefaultMinY))
+        var min = floor((minCalculated ?: DefaultMinY).coerceAtMost(DefaultMinY))
+        if (SmoothAxle == null || min % SmoothAxle == 0f) return min
+        return min - (min % SmoothAxle) - SmoothAxle;
     }
 
     fun max(): Float {
-        return ceil((maxCalculated ?: DefaultMaxY).coerceAtLeast(DefaultMaxY))
+        var max = ceil((maxCalculated ?: DefaultMaxY).coerceAtLeast(DefaultMaxY))
+        if (SmoothAxle == null || max % SmoothAxle == 0f) return max
+        return max + (SmoothAxle - max % SmoothAxle)
     }
 
     fun range(): Float {

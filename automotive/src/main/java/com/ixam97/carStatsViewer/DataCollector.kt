@@ -33,6 +33,7 @@ object DataHolder {
     var consumptionPlotLine = PlotLine(
         -200f,
         600f,
+        100f,
         1f,
         "%.0f",
         "%.0f",
@@ -43,7 +44,8 @@ object DataHolder {
 
     var speedPlotLine = PlotLine(
         0f,
-        250f,
+        120f,
+        40f,
         1f,
         "%.0f",
         "Ø %.0f",
