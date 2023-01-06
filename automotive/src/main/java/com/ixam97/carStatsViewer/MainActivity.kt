@@ -14,13 +14,6 @@ import android.os.Looper
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
-/**
- * A simple activity that demonstrates connecting to car API and processing car property change
- * events.
- *
- * <p>Please see https://developer.android.com/reference/android/car/packages for API documentation.
- */
-
 class MainActivity : Activity() {
     companion object {
         private val permissions = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED)
@@ -208,14 +201,17 @@ class MainActivity : Activity() {
             main_consumption_plot_container.visibility = View.GONE
         }
 
-        if (DataHolder.newPlotValueAvailable) {
-            main_consumption_plot.invalidate()
-            DataHolder.newPlotValueAvailable = false
-        }
+        main_consumption_plot.invalidate()
 
         chargePortConnectedTextView.text = DataHolder.chargePortConnected.toString()
-        if (DataHolder.currentPowermW > 0) currentPowerTextView.setTextColor(Color.RED)
-        else currentPowerTextView.setTextColor(Color.GREEN)
+        if (DataHolder.currentPowermW > 0) {
+            currentPowerTextView.setTextColor(Color.RED)
+            currentInstConsTextView.setTextColor(Color.RED)
+        }
+        else {
+            currentPowerTextView.setTextColor(Color.GREEN)
+            currentInstConsTextView.setTextColor(Color.GREEN)
+        }
         currentPowerTextView.text = String.format("%.1f kW", DataHolder.currentPowermW / 1000000)
         if (AppPreferences.consumptionUnit) {
             usedEnergyTextView.text = String.format("%d Wh", DataHolder.usedEnergy.toInt())
@@ -225,6 +221,7 @@ class MainActivity : Activity() {
         currentSpeedTextView.text = String.format("%d km/h", (DataHolder.currentSpeed*3.6).toInt())
         traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)
         batteryEnergyTextView.text = String.format("%d/%d, %d%%", DataHolder.currentBatteryCapacity, DataHolder.maxBatteryCapacity, ((DataHolder.currentBatteryCapacity.toFloat()/DataHolder.maxBatteryCapacity.toFloat())*100).toInt())
+
         if (AppPreferences.consumptionUnit) { // Use Wh/km
             if (DataHolder.currentSpeed > 0) currentInstConsTextView.text = String.format("%d Wh/km", ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6)).toInt())
             else currentInstConsTextView.text = "N/A"

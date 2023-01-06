@@ -47,8 +47,6 @@ object DataHolder {
         PlotLabelPosition.RIGHT,
         PlotHighlightMethod.AVG
     )
-
-    var newPlotValueAvailable = false
 }
 
 lateinit var mainActivityPendingIntent: PendingIntent
@@ -164,7 +162,6 @@ class DataCollector : Service() {
         //DataHolder.consumptionPlotLine.addDataPoint(0f)
         DataHolder.speedPlotLine.baseLineAt.add(0f)
         //DataHolder.speedPlotLine.addDataPoint(0f)
-        DataHolder.newPlotValueAvailable = true
 
         registerCarPropertyCallbacks()
 
@@ -253,7 +250,6 @@ class DataCollector : Service() {
                     .putString(getString(R.string.userdata_speed_plot_key), speedPlotLineJSON)
                     .apply()
 */
-                DataHolder.newPlotValueAvailable = true
             }
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
@@ -339,11 +335,10 @@ class DataCollector : Service() {
                 notificationCounter++
 
                 val message = String.format(
-                    "P:%.1f kW, D: %.3f km, Ø: %s, notificationCounter = %d",
+                    "P:%.1f kW, D: %.3f km, Ø: %s",
                     DataHolder.currentPowermW / 1000000,
                     DataHolder.traveledDistance / 1000,
-                    averageConsumptionString,
-                    notificationCounter
+                    averageConsumptionString
                 )
 
                 statsNotification.setContentText(message)
