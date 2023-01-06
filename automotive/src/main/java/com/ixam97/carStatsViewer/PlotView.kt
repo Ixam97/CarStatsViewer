@@ -10,6 +10,7 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max
+import kotlin.math.min
 
 class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private val textSize = 26f
@@ -139,12 +140,12 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             val items = line.getDataPoints()
             if (items.isEmpty()) continue
 
-            var itemShift = -1
+            var indexShift = 0
             var itemCount = items.size
 
             if (displayItemCount != null) {
                 itemCount = displayItemCount!!
-                itemShift = displayItemCount!! - items.size - 2
+                indexShift = displayItemCount!! - items.size
             }
 
             val plotPoints = ArrayList<PlotPoint>()
@@ -158,16 +159,16 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     ySum += chunkItem.Value
                 }
 
-                var factor = chunks.size.toFloat() * itemShift / itemCount
+                var factor = (min(indexShift + chunks.size.toFloat(), itemCount.toFloat()) - 1) / (itemCount - 1)
 
                 plotPoints.add(
                     PlotPoint(
-                        line.x(itemShift + max(factor, 1f), xMargin, maxX)!!,
+                        line.x(min(indexShift + max((factor * chunks.size) -1, 0f), (itemCount.toFloat() - 1)), xMargin, maxX)!!,
                         line.y(ySum / chunks.size, yMargin, maxY)!!
                     )
                 )
 
-                itemShift += chunkSize
+                indexShift += chunkSize
             }
 
             val path = Path()
