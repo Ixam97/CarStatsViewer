@@ -186,10 +186,10 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             }
 
             val postPlotPoints = ArrayList<PlotPoint>()
-            val groupCount = areaX / 5
+            val min = prePlotPoints.minBy { it.x }?.x!!
             val groupBy = 5 / areaX
 
-            for (group in prePlotPoints.groupBy { ceil(it.x / groupBy).toInt() }) {
+            for (group in prePlotPoints.groupBy { ceil((it.x - min) / groupBy).toInt() }) {
                 val x = when (group.key) {
                     0 -> group.value.minBy { it.x }?.x!!
                     else -> group.value.maxBy { it.x }?.x!!
@@ -330,12 +330,12 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 }
             }
 
-            if (labelCordX != null) {
+            if (labelCordX != null && highlightCordY != null) {
                 canvas.drawText(
                     String.format(
                         line.HighlightFormat,
                         line.highlight()!! / line.Divider
-                    ), labelCordX, highlightCordY!! + labelShiftY, line.plotPaint!!.HighlightLabel
+                    ), labelCordX, highlightCordY + labelShiftY, line.plotPaint!!.HighlightLabel
                 )
             }
 
