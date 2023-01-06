@@ -8,8 +8,7 @@ import android.util.TypedValue
 import android.view.View
 import java.util.*
 import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.ceil
 
 class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private val textSize = 26f
@@ -190,11 +189,14 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             val groupCount = areaX / 5
             val groupBy = 5 / areaX
 
-            for (group in prePlotPoints.groupBy { (it.x / groupBy).toInt() }) {
-                val min = group.value.minBy { it.x }?.x!!
-                val max = group.value.maxBy { it.x }?.x!!
+            for (group in prePlotPoints.groupBy { ceil(it.x / groupBy).toInt() }) {
+                val x = when (group.key) {
+                    0 -> group.value.minBy { it.x }?.x!!
+                    else -> group.value.maxBy { it.x }?.x!!
+                }
+
                 postPlotPoints.add(PlotPoint(
-                    x(min(max(min + (max - min) * (1f / groupCount * group.key), 0f), 1f), 1f, maxX)!!,
+                    x(x, 1f, maxX)!!,
                     y(group.value.map { it.y }.average().toFloat(), 1f, maxY)!!
                 ))
             }
