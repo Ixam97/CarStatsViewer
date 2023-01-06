@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_log.*
-import kotlinx.android.synthetic.main.activity_settings.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
