@@ -10,6 +10,8 @@ class PlotLine(
     private val DefaultMinY: Float,
     private val DefaultMaxY: Float,
 
+    val SmoothAxle: Float? = null,
+
     var Divider: Float,
 
     var LabelFormat: String,
@@ -33,18 +35,19 @@ class PlotLine(
 
     var baseLineAt: ArrayList<Float> = ArrayList()
 
-    var PlotPaint: PlotPaint? = null
+    var plotPaint: PlotPaint? = null
+
     var displayItemCount: Int? = null
         set(value) {
             field = value
             calculate()
         }
 
-    fun addDataPoint(item: Float?) {
+    fun addDataPoint(item: Float?, calculate: Boolean = true) {
         if (item != null) {
             dataPoints.add(PlotLineItem(item, Calendar.getInstance()))
         }
-        calculate()
+        if (calculate) calculate()
     }
 
     fun addDataPoints(items: ArrayList<PlotLineItem>) {
@@ -70,7 +73,7 @@ class PlotLine(
     fun getDataPoints(): List<PlotLineItem> {
         var limit = dataPoints.size - (displayItemCount ?: 0)
         if (dataPoints.size == limit) return dataPoints
-        return dataPoints.filterIndexed { index, s -> index > limit }
+        return dataPoints.filterIndexed { index, s -> index >= limit }
     }
 
     private fun calculate() {
@@ -111,11 +114,15 @@ class PlotLine(
     }
 
     fun min(): Float {
-        return floor((minCalculated ?: DefaultMinY).coerceAtMost(DefaultMinY))
+        var min = floor((minCalculated ?: DefaultMinY).coerceAtMost(DefaultMinY))
+        if (SmoothAxle == null || min % SmoothAxle == 0f) return min
+        return min - (min % SmoothAxle) - SmoothAxle;
     }
 
     fun max(): Float {
-        return ceil((maxCalculated ?: DefaultMaxY).coerceAtLeast(DefaultMaxY))
+        var max = ceil((maxCalculated ?: DefaultMaxY).coerceAtLeast(DefaultMaxY))
+        if (SmoothAxle == null || max % SmoothAxle == 0f) return max
+        return max + (SmoothAxle - max % SmoothAxle)
     }
 
     fun range(): Float {
@@ -133,7 +140,7 @@ class PlotLine(
         return null
     }
 
-    fun x(position: Int, margin: Int, maxX: Float): Float? {
+    fun x(position: Float, margin: Int, maxX: Float): Float? {
         return x(position, displayItemCount ?: dataPoints.size, margin, maxX)
     }
 
@@ -145,7 +152,7 @@ class PlotLine(
     }
 
     companion object {
-        fun x(position: Int, items: Int, margin: Int, maxX: Float): Float? {
+        fun x(position: Float, items: Int, margin: Int, maxX: Float): Float? {
             return margin + (maxX - 2 * margin) / (items - 1) * position
         }
     }
