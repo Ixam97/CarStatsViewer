@@ -51,11 +51,8 @@ class PlotLine(
     }
 
     fun addDataPoints(items: ArrayList<PlotLineItem>) {
-        if (items != null) {
-            for (item in items) {
-                if (item == null) return
-                dataPoints.add(item)
-            }
+        for (item in items) {
+            dataPoints.add(item)
         }
         calculate()
     }
@@ -71,13 +68,16 @@ class PlotLine(
     }
 
     fun getDataPoints(): List<PlotLineItem> {
-        var limit = dataPoints.size - (displayItemCount ?: 0)
-        if (dataPoints.size == limit) return dataPoints
-        return dataPoints.filterIndexed { index, s -> index >= limit }
+        val limit = dataPoints.size - (displayItemCount ?: 0)
+
+        return when (dataPoints.size) {
+            limit -> dataPoints
+            else -> dataPoints.filterIndexed { index, s -> index >= limit }
+        }
     }
 
     private fun calculate() {
-        var dataPoints = getDataPoints()
+        val dataPoints = getDataPoints()
         maxCalculated = maxCalculate(dataPoints)
         minCalculated = minCalculate(dataPoints)
         averageCalculated = averageCalculate(dataPoints)
@@ -86,23 +86,29 @@ class PlotLine(
 
     private fun maxCalculate(dataPoints: List<PlotLineItem>): Float? {
         if (dataPoints.isEmpty()) return null
-        return dataPoints.maxBy { it.Value }?.Value
+        val max = dataPoints.maxBy { it.Value }?.Value
+
+        return when {
+            max == null -> null
+            SmoothAxle != null -> max + (SmoothAxle - max % SmoothAxle)
+            else -> max
+        }
     }
 
     private fun minCalculate(dataPoints: List<PlotLineItem>): Float? {
         if (dataPoints.isEmpty()) return null
-        return dataPoints.minBy { it.Value }?.Value
+        val min = dataPoints.minBy { it.Value }?.Value
+
+        return when {
+            min == null -> null
+            SmoothAxle != null -> min - (min % SmoothAxle) - SmoothAxle
+            else -> min
+        }
     }
 
     private fun averageCalculate(dataPoints: List<PlotLineItem>): Float? {
         if (dataPoints.isEmpty()) return null
-        var sum = 0f
-        var itemCount = 0f
-        for (f in dataPoints) {
-            sum += f.Value
-            itemCount++
-        }
-        return if (itemCount == 0f) null else sum / itemCount
+        return dataPoints.map { it.Value }.average().toFloat()
     }
 
     private fun durationCalculate(dataPoints: List<PlotLineItem>): Long? {
@@ -114,15 +120,11 @@ class PlotLine(
     }
 
     fun min(): Float {
-        var min = floor((minCalculated ?: DefaultMinY).coerceAtMost(DefaultMinY))
-        if (SmoothAxle == null || min % SmoothAxle == 0f) return min
-        return min - (min % SmoothAxle) - SmoothAxle;
+        return floor((minCalculated ?: DefaultMinY).coerceAtMost(DefaultMinY))
     }
 
     fun max(): Float {
-        var max = ceil((maxCalculated ?: DefaultMaxY).coerceAtLeast(DefaultMaxY))
-        if (SmoothAxle == null || max % SmoothAxle == 0f) return max
-        return max + (SmoothAxle - max % SmoothAxle)
+        return ceil((maxCalculated ?: DefaultMaxY).coerceAtLeast(DefaultMaxY))
     }
 
     fun range(): Float {
@@ -134,34 +136,45 @@ class PlotLine(
     }
 
     fun highlight(): Float? {
-        if (HighlightMethod == PlotHighlightMethod.AVG) return averageCalculated
-        if (HighlightMethod == PlotHighlightMethod.MAX) return maxCalculated
-        if (HighlightMethod == PlotHighlightMethod.MIN) return minCalculated
-        return null
-    }
-
-    fun x(position: Float, margin: Int, maxX: Float): Float? {
-        return x(position, displayItemCount ?: dataPoints.size, margin, maxX)
-    }
-
-    fun y(value: Float?, margin: Int, maxY: Float): Float? {
-        if (value == null) return value
-        val marginY: Float = maxY - 2 * margin
-        val distance = marginY / (range()) * (value - min())
-        return margin + abs(marginY - distance)
-    }
-
-    companion object {
-        fun x(position: Float, items: Int, margin: Int, maxX: Float): Float? {
-            return margin + (maxX - 2 * margin) / (items - 1) * position
+        return when (HighlightMethod) {
+            PlotHighlightMethod.AVG -> averageCalculated
+            PlotHighlightMethod.MAX -> maxCalculated
+            PlotHighlightMethod.MIN -> minCalculated
+            else -> null
         }
+    }
+
+    fun x(index: Calendar) : Float {
+        return PlotLineItem.x(index, dataPoints.first().Calendar, dataPoints.last().Calendar)
+    }
+
+    fun y(index: Float?) : Float? {
+        return PlotLineItem.cord(index, min(), max())
     }
 }
 
 class PlotLineItem (
     val Value: Float,
     val Calendar: Calendar
-)
+){
+    companion object {
+        fun x(index: Calendar, min: Calendar, max: Calendar) : Float {
+            return 1f / (max.timeInMillis - min.timeInMillis) * (index.timeInMillis - min.timeInMillis)
+        }
+
+        fun cord(index: Float?, min: Float, max: Float) : Float? {
+            return when (index) {
+                null -> null
+                else -> 1f / (max - min) * (index - min)
+            }
+        }
+
+        fun cord(index: Int, min: Int, max: Int) : Float {
+            return 1f / (max - min) * (index - min)
+        }
+    }
+}
+
 
 enum class PlotLabelPosition {
     LEFT, RIGHT, NONE
