@@ -8,6 +8,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -24,7 +26,7 @@ class MainActivity : Activity() {
         override fun run() {
             InAppLogger.deepLog("MainActivity.updateActivityTask")
             updateActivity()
-            timerHandler.postDelayed(this, 500)
+            timerHandler.postDelayed(this, 40)
         }
     }
 
@@ -69,7 +71,8 @@ class MainActivity : Activity() {
         AppPreferences.consumptionUnit = sharedPref.getBoolean(getString(R.string.preferences_consumption_unit_key), false)
         AppPreferences.notifications = sharedPref.getBoolean(getString(R.string.preferences_notifications_key), false)
         AppPreferences.debug = sharedPref.getBoolean(getString(R.string.preferences_debug_key), false)
-        AppPreferences.consumptionPlot = sharedPref.getBoolean(getString(R.string.preferences_consumption_plot_key), false)
+        // AppPreferences.consumptionPlot = sharedPref.getBoolean(getString(R.string.preferences_consumption_plot_key), false)
+        AppPreferences.experimentalLayout = sharedPref.getBoolean(getString(R.string.preferences_experimental_layout_key), false)
         AppPreferences.deepLog = sharedPref.getBoolean(getString(R.string.preferences_deep_log_key), false)
         AppPreferences.plotDistance = sharedPref.getInt(getString(R.string.preferences_plot_distance_key), 1)
         AppPreferences.plotSpeed = sharedPref.getBoolean(getString(R.string.preferences_plot_speed_key), false)
@@ -93,7 +96,12 @@ class MainActivity : Activity() {
         }
         main_radio_group_distance.check(plotDistanceId)
 
-        if (AppPreferences.consumptionPlot) main_consumption_plot_container.visibility = View.VISIBLE
+        // if (AppPreferences.consumptionPlot) main_consumption_plot_container.visibility = View.VISIBLE
+
+        if (AppPreferences.experimentalLayout) {
+            legacy_layout.visibility = View.GONE
+            gage_layout.visibility = View.VISIBLE
+        }
 
         main_consumption_plot.reset()
         main_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
@@ -108,6 +116,18 @@ class MainActivity : Activity() {
         main_title.setOnClickListener {
             finish()
         }
+
+        main_power_gage.gageName = getString(R.string.main_gage_power)
+        main_power_gage.gageUnit = "kW"
+        main_power_gage.maxValue = 350f
+        main_power_gage.minValue = -150f
+        main_power_gage.setValue(0f)
+
+        main_speed_gage.gageName = getString(R.string.main_gage_speed)
+        main_speed_gage.gageUnit = "km/h"
+        main_speed_gage.maxValue = 205f
+        main_speed_gage.minValue = 0f
+        main_speed_gage.setValue(0f)
 
         main_button_reset.setOnClickListener {
 
@@ -198,12 +218,16 @@ class MainActivity : Activity() {
         InAppLogger.logUIUpdate()
         /** Use data from DataHolder to Update MainActivity text */
 
-        if (AppPreferences.consumptionPlot && main_consumption_plot_container.visibility == View.GONE) {
-            main_consumption_plot_container.visibility = View.VISIBLE
-        } else if (!AppPreferences.consumptionPlot && main_consumption_plot_container.visibility == View.VISIBLE) {
-            main_consumption_plot_container.visibility = View.GONE
+        if (AppPreferences.experimentalLayout && legacy_layout.visibility == View.VISIBLE) {
+            gage_layout.visibility = View.VISIBLE
+            legacy_layout.visibility = View.GONE
+        } else if (!AppPreferences.experimentalLayout && legacy_layout.visibility == View.GONE) {
+            gage_layout.visibility = View.GONE
+            legacy_layout.visibility = View.VISIBLE
         }
 
+        main_power_gage.setValue(DataHolder.currentPowermW / 1000000)
+        main_speed_gage.setValue((DataHolder.currentSpeed * 3.6f).toInt())
         main_consumption_plot.invalidate()
 
         chargePortConnectedTextView.text = DataHolder.chargePortConnected.toString()

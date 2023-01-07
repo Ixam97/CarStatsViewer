@@ -84,12 +84,12 @@
                 android:background="?android:attr/listDivider" />
 
             <Switch
-                android:id="@+id/settings_switch_consumption_plot"
+                android:id="@+id/settings_switch_experimental_layout"
                 android:layout_width="match_parent"
                 android:layout_height="101dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textSize="35dp"
-                android:text="@string/settings_consumption_plot"/>
+                android:text="@string/settings_experimental_layout"/>
 
             <View
                 android:layout_width="match_parent"
@@ -123,6 +123,13 @@
                 android:layout_height="2dp"
                 android:background="?android:attr/listDivider"/>
 
+            <com.ixam97.carStatsViewer.GageView
+                android:id="@+id/test_gage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
         </LinearLayout>
+
 
 </LinearLayout>

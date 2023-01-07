@@ -13,6 +13,7 @@ object AppPreferences {
     var notifications = false
     var consumptionUnit = false
     var consumptionPlot = false
+    var experimentalLayout = false
     var deepLog = false
     var plotSpeed = false
     var plotDistance = 1
@@ -36,7 +37,8 @@ class SettingsActivity : Activity() {
         )
         settings_switch_notifications.isChecked = AppPreferences.notifications
         settings_switch_consumption_unit.isChecked = AppPreferences.consumptionUnit
-        settings_switch_consumption_plot.isChecked = AppPreferences.consumptionPlot
+        settings_switch_experimental_layout.isChecked = AppPreferences.experimentalLayout
+        // settings_switch_consumption_plot.isChecked = AppPreferences.consumptionPlot
 
         settings_version_text.text = String.format("Car Stats Viewer Version %s (Build %d)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
 
@@ -84,16 +86,24 @@ class SettingsActivity : Activity() {
             AppPreferences.debug = settings_switch_debug.isChecked
         }
 
+        settings_switch_experimental_layout.setOnClickListener {
+            sharedPref.edit()
+                .putBoolean(getString(R.string.preferences_experimental_layout_key), settings_switch_experimental_layout.isChecked)
+                .apply()
+            AppPreferences.experimentalLayout = settings_switch_experimental_layout.isChecked
+        }
+/*
         settings_switch_consumption_plot.setOnClickListener {
             sharedPref.edit()
                 .putBoolean(getString(R.string.preferences_consumption_plot_key), settings_switch_consumption_plot.isChecked)
                 .apply()
             AppPreferences.consumptionPlot = settings_switch_consumption_plot.isChecked
         }
-
+*/
         settings_version_text.setOnClickListener {
             startActivity(Intent(this, LogActivity::class.java))
         }
+
     }
 
     override fun onDestroy() {
