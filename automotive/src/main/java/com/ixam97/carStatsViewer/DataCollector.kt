@@ -12,6 +12,7 @@ import android.os.*
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 
 object DataHolder {
@@ -45,7 +46,7 @@ object DataHolder {
         "Ø %.0f",
         "km/h",
         PlotLabelPosition.RIGHT,
-        PlotHighlightMethod.AVG
+        PlotHighlightMethod.AVG_BY_DIMENSION
     )
 }
 
@@ -239,8 +240,11 @@ class DataCollector : Service() {
 
                 val newConsumptionPlotValue = powerDifference / (distanceDifference / 1000)
                 val newSpeedPlotValue = distanceDifference / (timeDifference / 3600)
-                DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue)
-                DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue)
+
+                val seconds = TimeUnit.MILLISECONDS.convert(value.timestamp, TimeUnit.NANOSECONDS) / 1000f
+
+                DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, seconds, DataHolder.traveledDistance)
+                DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, seconds, DataHolder.traveledDistance)
 /*
                 val consumptionPlotLineJSON = Gson().toJson(DataHolder.consumptionPlotLine)
                 val speedPlotLineJSON = Gson().toJson(DataHolder.speedPlotLine)
