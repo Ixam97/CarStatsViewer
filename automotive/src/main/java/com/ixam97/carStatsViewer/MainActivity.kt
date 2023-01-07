@@ -98,8 +98,11 @@ class MainActivity : Activity() {
         main_consumption_plot.reset()
         main_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
         main_consumption_plot.addPlotLine(DataHolder.speedPlotLine)
+
         DataHolder.speedPlotLine.visible = main_checkbox_speed.isChecked
-        main_consumption_plot.displayItemCount = 101
+
+        main_consumption_plot.dimension = PlotDimension.DISTANCE
+        main_consumption_plot.dimensionRestriction = 10_001f
         main_consumption_plot.invalidate()
 
         main_title.setOnClickListener {
@@ -133,15 +136,15 @@ class MainActivity : Activity() {
             var id = 1
             when (checkedId) {
                 main_radio_10.id -> {
-                    main_consumption_plot.displayItemCount = 101
+                    main_consumption_plot.dimensionRestriction = 10_001f
                     id = 1
                 }
                 main_radio_25.id -> {
-                    main_consumption_plot.displayItemCount = 251
+                    main_consumption_plot.dimensionRestriction = 25_001f
                     id = 2
                 }
                 main_radio_50.id -> {
-                    main_consumption_plot.displayItemCount = 501
+                    main_consumption_plot.dimensionRestriction = 50_001f
                     id = 3
                 }
             }
