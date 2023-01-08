@@ -262,12 +262,10 @@ class DataCollector : Service() {
 
         timeDifferenceStore[value.propertyId] = timeInMilliseconds
 
-        if (timeDifference != null && timeDifference > maxDiff)
-        {
-            return null
+        return when {
+            timeDifference == null || timeDifference > maxDiff -> null
+            else -> timeDifference
         }
-
-        return timeDifference
     }
 
     private val timeTriggerStore: HashMap<Int, Float> = HashMap()
@@ -362,12 +360,10 @@ class DataCollector : Service() {
         val currentPlotTime = timestampAsMilliseconds(value)
 
         if (!firstPlotValueAdded) {
-            if (DataHolder.lastSpeed != 0f) {
-                lastPlotDistance = DataHolder.traveledDistance
-                lastPlotEnergy = DataHolder.usedEnergy
-                lastPlotTime = currentPlotTime
-                firstPlotValueAdded = true
-            }
+            lastPlotDistance = DataHolder.traveledDistance
+            lastPlotEnergy = DataHolder.usedEnergy
+            lastPlotTime = currentPlotTime
+            firstPlotValueAdded = true
         } else if (!DataHolder.chargePortConnected && DataHolder.traveledDistance >= (lastPlotDistance + 100)) {
             val distanceDifference = DataHolder.traveledDistance - lastPlotDistance
             val powerDifference = DataHolder.usedEnergy - lastPlotEnergy
