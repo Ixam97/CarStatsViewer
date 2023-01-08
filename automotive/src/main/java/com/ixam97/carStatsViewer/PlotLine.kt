@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer
 
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -22,25 +23,14 @@ class PlotLine(
 
     var Visible: Boolean = true
 ) {
-    private val dataPoints: ArrayList<PlotLineItem> = ArrayList()
+    private val dataPoints: ConcurrentHashMap<Int, PlotLineItem> = ConcurrentHashMap()
 
     var baseLineAt: ArrayList<Float> = ArrayList()
 
     var plotPaint: PlotPaint? = null
 
     fun addDataPoint(item: Float, timestamp: Long, distance: Float) {
-        dataPoints.add(PlotLineItem(item, timestamp, distance))
-    }
-
-    fun addDataPoints(items: ArrayList<PlotLineItem>) {
-        for (item in items) {
-            dataPoints.add(item)
-        }
-    }
-
-    fun setDataPoints(items: ArrayList<PlotLineItem>) {
-        dataPoints.clear()
-        addDataPoints(items)
+        dataPoints[dataPoints.size] = PlotLineItem(item, timestamp, distance)
     }
 
     fun reset() {
@@ -48,40 +38,42 @@ class PlotLine(
     }
 
     fun getDataPoints(dimension: PlotDimension, dimensionRestriction: Float?): List<PlotLineItem> {
+        var clone = dataPoints.map { it.value }
         return when (dimensionRestriction) {
-            null -> dataPoints
+            null -> clone
             else -> when (dimension) {
-                PlotDimension.INDEX -> when (dataPoints.size > dimensionRestriction) {
-                   true -> dataPoints.filterIndexed { index, s -> index >= dimensionRestriction }
-                   else -> dataPoints
+                PlotDimension.INDEX -> when (clone.size > dimensionRestriction) {
+                   true -> clone.filterIndexed { index, _ -> index >= dimensionRestriction }
+                   else -> clone
                 }
                 PlotDimension.DISTANCE -> {
-                    val min = dataPoints.last().Distance - dimensionRestriction
-                    return dataPoints.filter { it.Distance >= min }
+                    val min = clone.last().Distance - dimensionRestriction
+                    return clone.filter { it.Distance >= min }
                 }
                 PlotDimension.TIME -> {
-                    val min = dataPoints.last().timestampInSeconds - dimensionRestriction
-                    return dataPoints.filter { it.timestampInSeconds >= min }
+                    val min = clone.last().timestampInSeconds - dimensionRestriction
+                    return clone.filter { it.timestampInSeconds >= min }
                 }
             }
         }
     }
 
-    fun minDimension(dimension: PlotDimension, dataPoints: List<PlotLineItem>? = null): Float {
-        if ((dataPoints?:this.dataPoints).isEmpty()) return 0f
+    fun minDimension(dimension: PlotDimension): Float {
+        if (dataPoints.isEmpty()) return 0f
         return when (dimension) {
             PlotDimension.INDEX -> 0f
-            PlotDimension.DISTANCE -> (dataPoints?:this.dataPoints).first().Distance
-            PlotDimension.TIME -> (dataPoints?:this.dataPoints).first().timestampInSeconds
+            PlotDimension.DISTANCE -> dataPoints[0]?.Distance?:0f
+            PlotDimension.TIME -> dataPoints[0]?.timestampInSeconds?:0f
         }
     }
 
-    fun maxDimension(dimension: PlotDimension, dataPoints: List<PlotLineItem>? = null): Float {
-        if ((dataPoints?:this.dataPoints).isEmpty()) return 0f
+    fun maxDimension(dimension: PlotDimension): Float {
+        if (dataPoints.isEmpty()) return 0f
+        val index = dataPoints.size - 1
         return when (dimension) {
-            PlotDimension.INDEX -> ((dataPoints?:this.dataPoints).size - 1).toFloat()
-            PlotDimension.DISTANCE -> (dataPoints?:this.dataPoints).last().Distance
-            PlotDimension.TIME -> (dataPoints?:this.dataPoints).last().timestampInSeconds
+            PlotDimension.INDEX -> index.toFloat()
+            PlotDimension.DISTANCE -> dataPoints[index]?.Distance?:0f
+            PlotDimension.TIME -> dataPoints[index]?.timestampInSeconds?:0f
         }
     }
 
@@ -178,20 +170,20 @@ class PlotLine(
         }
     }
 
-    fun x(index: Float, dimension: PlotDimension, dimensionRestriction: Float?, dataPoints: List<PlotLineItem>? = null) : Float {
+    fun x(index: Float, dimension: PlotDimension, dimensionRestriction: Float?, dataPoints: List<PlotLineItem>) : Float {
         return when(dimension) {
             PlotDimension.DISTANCE -> {
-                val max = (dataPoints ?: this.dataPoints).last().Distance
+                val max = dataPoints.last().Distance
                 val min = when (dimensionRestriction) {
-                    null -> (dataPoints ?: this.dataPoints).first().Distance
+                    null -> dataPoints.first().Distance
                     else -> max - dimensionRestriction
                 }
                 PlotLineItem.cord(index, min, max)
             }
             PlotDimension.TIME -> {
-                val max = (dataPoints ?: this.dataPoints).last().timestampInSeconds
+                val max = dataPoints.last().timestampInSeconds
                 val min = when (dimensionRestriction) {
-                    null -> (dataPoints ?: this.dataPoints).first().timestampInSeconds
+                    null -> dataPoints.first().timestampInSeconds
                     else -> max - dimensionRestriction
                 }
                 PlotLineItem.cord(index, min, max)

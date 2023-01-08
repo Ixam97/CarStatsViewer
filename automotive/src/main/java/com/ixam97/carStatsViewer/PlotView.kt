@@ -181,15 +181,28 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             val groupBy = 5 / areaX
 
             for (group in prePlotPoints.groupBy { ceil((it.x - min) / groupBy).toInt() }) {
-                val x = when (group.key) {
-                    0 -> group.value.minBy { it.x }?.x!!
-                    else -> group.value.maxBy { it.x }?.x!!
+                val postPoint = when (group.value.size > 1) {
+                    false -> {
+                        val point = group.value.first()
+                        PlotPoint(
+                            x(point.x, 0f, 1f, maxX)!!,
+                            y(point.y.Value, minValue, maxValue, maxY)!!
+                        )
+                    }
+                    else -> {
+                        val x = when (group.key) {
+                            0 -> group.value.minBy { it.x }?.x!!
+                            else -> group.value.maxBy { it.x }?.x!!
+                        }
+
+                        PlotPoint(
+                            x(x, 0f, 1f, maxX)!!,
+                            y(line.averageValue(group.value.map { it.y }, dimension), minValue, maxValue, maxY)!!
+                        )
+                    }
                 }
 
-                postPlotPoints.add(PlotPoint(
-                    x(x, 0f, 1f, maxX)!!,
-                    y(line.averageValue(group.value.map { it.y }, dimension), minValue, maxValue, maxY)!!
-                ))
+                postPlotPoints.add(postPoint)
             }
 
             val path = Path()
