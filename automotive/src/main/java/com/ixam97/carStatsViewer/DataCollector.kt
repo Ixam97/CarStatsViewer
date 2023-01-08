@@ -15,11 +15,6 @@ import androidx.core.app.NotificationManagerCompat
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 
-lateinit var mainActivityPendingIntent: PendingIntent
-
-var firstPlotValueAdded = false
-
-
 object DataHolder {
     var currentPowermW = 0F
         set(value) {
@@ -329,7 +324,6 @@ class DataCollector : Service() {
                     .putString(getString(R.string.userdata_speed_plot_key), speedPlotLineJSON)
                     .apply()
 */
-            }
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
             Log.w("carPropertySpeedListener",
