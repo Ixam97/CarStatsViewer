@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_log.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import com.ixam97.carStatsViewer.objects.AppPreferences
 
 object InAppLogger {
 

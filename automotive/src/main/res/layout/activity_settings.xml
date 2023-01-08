@@ -123,12 +123,6 @@
                 android:layout_height="2dp"
                 android:background="?android:attr/listDivider"/>
 
-            <com.ixam97.carStatsViewer.GageView
-                android:id="@+id/test_gage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-
         </LinearLayout>
 
 
