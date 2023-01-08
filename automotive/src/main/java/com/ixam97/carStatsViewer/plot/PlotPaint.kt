@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer
+package com.ixam97.carStatsViewer.plot
 
 import android.graphics.DashPathEffect
 import android.graphics.Paint

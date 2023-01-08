@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer
+package com.ixam97.carStatsViewer.plot
 
 class PlotPoint(val x: Float, val y: Float) {
 }

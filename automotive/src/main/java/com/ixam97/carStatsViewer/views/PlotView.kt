@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer
+package com.ixam97.carStatsViewer.views
 
 import android.R
 import android.content.Context
@@ -6,6 +6,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
+import com.ixam97.carStatsViewer.plot.*
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -166,14 +167,16 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             val prePlotPoints = ArrayList<PlotLineItemPoint>()
             for (index in dataPoints.indices) {
                 val item = dataPoints[index]
-                prePlotPoints.add(PlotLineItemPoint(
+                prePlotPoints.add(
+                    PlotLineItemPoint(
                     when (dimension) {
                         PlotDimension.INDEX -> PlotLineItem.cord((dimensionRestriction?:dataPoints.size.toFloat()) - dataPoints.size + index, 0f, (dimensionRestriction?:dataPoints.size.toFloat()) - 1f)
                         PlotDimension.DISTANCE -> line.x(item.Distance, dimension, dimensionRestriction, dataPoints)
                         PlotDimension.TIME -> line.x(item.timestampInSeconds, dimension, dimensionRestriction, dataPoints)
                     },
                     item
-                ))
+                )
+                )
             }
 
             val postPlotPoints = ArrayList<PlotPoint>()
@@ -319,7 +322,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
             val labelUnitXOffset = when (line.LabelPosition) {
                 PlotLabelPosition.LEFT -> 0f
-                PlotLabelPosition.RIGHT-> -labelPaint.measureText(line.Unit)/2
+                PlotLabelPosition.RIGHT -> -labelPaint.measureText(line.Unit)/2
                 else -> 0f
             }
 

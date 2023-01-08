@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer
+package com.ixam97.carStatsViewer.plot
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit

@@ -1,5 +1,7 @@
-package com.ixam97.carStatsViewer
+package com.ixam97.carStatsViewer.activities
 
+import com.ixam97.carStatsViewer.*
+import com.ixam97.carStatsViewer.objects.*
 import android.app.Activity
 import android.app.AlertDialog
 import android.os.Bundle
@@ -7,16 +9,6 @@ import kotlinx.android.synthetic.main.activity_settings.*
 import android.content.Context
 import android.content.Intent
 import kotlin.system.exitProcess
-
-object AppPreferences {
-    var debug = false
-    var notifications = false
-    var consumptionUnit = false
-    var experimentalLayout = false
-    var deepLog = false
-    var plotSpeed = false
-    var plotDistance = 1
-}
 
 class SettingsActivity : Activity() {
 

@@ -1,5 +1,8 @@
-package com.ixam97.carStatsViewer
+package com.ixam97.carStatsViewer.activities
 
+import com.ixam97.carStatsViewer.*
+import com.ixam97.carStatsViewer.objects.*
+import com.ixam97.carStatsViewer.services.*
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.PendingIntent
@@ -12,28 +15,24 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.util.Log
 import android.view.View
+import com.ixam97.carStatsViewer.plot.PlotDimension
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : Activity() {
     companion object {
         private val permissions = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED)
+        private const val uiUpdateDelayMillis = 40L
     }
     private lateinit var timerHandler: Handler
 
-    private var counter = 0
     private var updateUi = false
+
     private val updateActivityTask = object : Runnable {
         override fun run() {
-            InAppLogger.deepLog("MainActivity.updateActivityTask")
-            counter++
-            Log.d("MainActivity",
-                String.format("%04d updateActivityTask, Thread %s",
-                    counter,
-                    Thread.currentThread().name))
+            // InAppLogger.deepLog("MainActivity.updateActivityTask")
             updateActivity()
-            if (updateUi) timerHandler.postDelayed(this, 500)
+            if (updateUi) timerHandler.postDelayed(this, uiUpdateDelayMillis)
         }
     }
 
@@ -289,8 +288,8 @@ class MainActivity : Activity() {
             lastPlotUpdate = SystemClock.elapsedRealtime()
         }
 
-        main_power_gage.setValue(DataHolder.currentPowermW / 1000000)
-        main_speed_gage.setValue((DataHolder.currentSpeed * 3.6f).toInt())
+        main_power_gage.setValue(DataHolder.currentPowerSmooth / 1000000)
+        main_speed_gage.setValue((DataHolder.currentSpeedSmooth * 3.6f).toInt())
 
         chargePortConnectedTextView.text = DataHolder.chargePortConnected.toString()
         if (DataHolder.currentPowermW > 0) {
@@ -307,26 +306,26 @@ class MainActivity : Activity() {
         } else {
             usedEnergyTextView.text = String.format("%.1f kWh", DataHolder.usedEnergy / 1000)
         }
-        currentSpeedTextView.text = String.format("%d km/h", (DataHolder.currentSpeed*3.6).toInt())
+        currentSpeedTextView.text = String.format("%d km/h", (DataHolder.currentSpeed *3.6).toInt())
         traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)
         batteryEnergyTextView.text = String.format("%d/%d, %d%%",
             DataHolder.currentBatteryCapacity,
             DataHolder.maxBatteryCapacity,
-            ((DataHolder.currentBatteryCapacity.toFloat()/DataHolder.maxBatteryCapacity.toFloat())*100).toInt())
+            ((DataHolder.currentBatteryCapacity.toFloat()/ DataHolder.maxBatteryCapacity.toFloat())*100).toInt())
 
         if (AppPreferences.consumptionUnit) { // Use Wh/km
             if (DataHolder.currentSpeed > 0) currentInstConsTextView.text = String.format("%d Wh/km",
                 ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6)).toInt())
             else currentInstConsTextView.text = "N/A"
             if (DataHolder.traveledDistance > 0) averageConsumptionTextView.text = String.format("%d Wh/km",
-                (DataHolder.usedEnergy/(DataHolder.traveledDistance/1000)).toInt())
+                (DataHolder.usedEnergy /(DataHolder.traveledDistance /1000)).toInt())
             else averageConsumptionTextView.text = "N/A"
         } else { // Use kWh/100km
             if (DataHolder.currentSpeed > 0) currentInstConsTextView.text = String.format("%.1f kWh/100km",
                 ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6))/10)
             else currentInstConsTextView.text = "N/A"
             if (DataHolder.traveledDistance > 0) averageConsumptionTextView.text = String.format("%.1f kWh/100km",
-                (DataHolder.usedEnergy/(DataHolder.traveledDistance/1000))/10)
+                (DataHolder.usedEnergy /(DataHolder.traveledDistance /1000))/10)
             else averageConsumptionTextView.text = "N/A"
         }
     }
