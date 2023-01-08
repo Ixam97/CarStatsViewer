@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer
 
+import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -16,18 +17,18 @@ class PlotLine(
 
     var Unit: String,
 
-    val LabelPosition: PlotLabelPosition,
-    val HighlightMethod: PlotHighlightMethod
+    var LabelPosition: PlotLabelPosition,
+    var HighlightMethod: PlotHighlightMethod,
+
+    var Visible: Boolean = true
 ) {
     private val dataPoints: ArrayList<PlotLineItem> = ArrayList()
-
-    var visible: Boolean = true
 
     var baseLineAt: ArrayList<Float> = ArrayList()
 
     var plotPaint: PlotPaint? = null
 
-     fun addDataPoint(item: Float, timestamp: Float, distance: Float) {
+    fun addDataPoint(item: Float, timestamp: Long, distance: Float) {
         dataPoints.add(PlotLineItem(item, timestamp, distance))
     }
 
@@ -59,26 +60,28 @@ class PlotLine(
                     return dataPoints.filter { it.Distance >= min }
                 }
                 PlotDimension.TIME -> {
-                    val min = dataPoints.last().Timestamp - dimensionRestriction
-                    return dataPoints.filter { it.Timestamp >= min }
+                    val min = dataPoints.last().timestampInSeconds - dimensionRestriction
+                    return dataPoints.filter { it.timestampInSeconds >= min }
                 }
             }
         }
     }
 
     fun minDimension(dimension: PlotDimension, dataPoints: List<PlotLineItem>? = null): Float {
+        if ((dataPoints?:this.dataPoints).isEmpty()) return 0f
         return when (dimension) {
             PlotDimension.INDEX -> 0f
             PlotDimension.DISTANCE -> (dataPoints?:this.dataPoints).first().Distance
-            PlotDimension.TIME -> (dataPoints?:this.dataPoints).first().Timestamp
+            PlotDimension.TIME -> (dataPoints?:this.dataPoints).first().timestampInSeconds
         }
     }
 
     fun maxDimension(dimension: PlotDimension, dataPoints: List<PlotLineItem>? = null): Float {
+        if ((dataPoints?:this.dataPoints).isEmpty()) return 0f
         return when (dimension) {
             PlotDimension.INDEX -> ((dataPoints?:this.dataPoints).size - 1).toFloat()
             PlotDimension.DISTANCE -> (dataPoints?:this.dataPoints).last().Distance
-            PlotDimension.TIME -> (dataPoints?:this.dataPoints).last().Timestamp
+            PlotDimension.TIME -> (dataPoints?:this.dataPoints).last().timestampInSeconds
         }
     }
 
@@ -114,11 +117,46 @@ class PlotLine(
         }
     }
 
-    fun averageValue(dataPoints: List<PlotLineItem>, averageMethod: PlotHighlightMethod): Float? {
+    fun averageValue(dataPoints: List<PlotLineItem>, dimension: PlotDimension): Float? {
+        return when(dimension) {
+            PlotDimension.INDEX -> averageValue(dataPoints, PlotHighlightMethod.AVG_BY_INDEX)
+            PlotDimension.DISTANCE -> averageValue(dataPoints, PlotHighlightMethod.AVG_BY_DISTANCE)
+            PlotDimension.TIME -> averageValue(dataPoints, PlotHighlightMethod.AVG_BY_TIME)
+        }
+    }
+
+    private fun averageValue(dataPoints: List<PlotLineItem>, averageMethod: PlotHighlightMethod): Float? {
         if (dataPoints.isEmpty()) return null
+        if (dataPoints.size == 1) return dataPoints.first().Value
+
         return when (averageMethod) {
-            PlotHighlightMethod.AVG -> dataPoints.map { it.Value }.average().toFloat()
-            PlotHighlightMethod.AVG_BY_DIMENSION -> (dataPoints.last().Distance - dataPoints.first().Distance) / (dataPoints.last().Timestamp - dataPoints.first().Timestamp) * 3.6f
+            PlotHighlightMethod.AVG_BY_INDEX -> dataPoints.map { it.Value }.average().toFloat()
+            PlotHighlightMethod.AVG_BY_DISTANCE -> {
+                var last : Float? = null
+                var value = 0F
+                for (point in dataPoints) {
+                    if (last != null) {
+                        value += (point.Distance - last) * point.Value
+                    }
+
+                    last = point.Distance
+                }
+
+                return value / (dataPoints.last().Distance - dataPoints.first().Distance)
+            }
+            PlotHighlightMethod.AVG_BY_TIME -> {
+                var last : Long? = null
+                var value = 0F
+                for (point in dataPoints) {
+                    if (last != null) {
+                        value += (point.Timestamp - last) * point.Value
+                    }
+
+                    last = point.Timestamp
+                }
+
+                return value / (dataPoints.last().Timestamp - dataPoints.first().Timestamp)
+            }
             else -> null
         }
     }
@@ -129,10 +167,13 @@ class PlotLine(
 
     fun byHighlightMethod(dataPoints: List<PlotLineItem>): Float? {
         return when (HighlightMethod) {
-            PlotHighlightMethod.AVG -> averageValue(dataPoints, HighlightMethod)
-            PlotHighlightMethod.AVG_BY_DIMENSION -> averageValue(dataPoints, HighlightMethod)
-            PlotHighlightMethod.MAX -> maxValue(dataPoints)
             PlotHighlightMethod.MIN -> minValue(dataPoints)
+            PlotHighlightMethod.MAX -> maxValue(dataPoints)
+            PlotHighlightMethod.FIRST -> dataPoints.first().Value
+            PlotHighlightMethod.LAST -> dataPoints.last().Value
+            PlotHighlightMethod.AVG_BY_INDEX -> averageValue(dataPoints, HighlightMethod)
+            PlotHighlightMethod.AVG_BY_DISTANCE -> averageValue(dataPoints, HighlightMethod)
+            PlotHighlightMethod.AVG_BY_TIME -> averageValue(dataPoints, HighlightMethod)
             else -> null
         }
     }
@@ -148,23 +189,28 @@ class PlotLine(
                 PlotLineItem.cord(index, min, max)
             }
             PlotDimension.TIME -> {
-                val max = (dataPoints ?: this.dataPoints).last().Timestamp
+                val max = (dataPoints ?: this.dataPoints).last().timestampInSeconds
                 val min = when (dimensionRestriction) {
-                    null -> (dataPoints ?: this.dataPoints).first().Timestamp
+                    null -> (dataPoints ?: this.dataPoints).first().timestampInSeconds
                     else -> max - dimensionRestriction
                 }
                 PlotLineItem.cord(index, min, max)
             }
-            else -> index
+            PlotDimension.INDEX -> index
         }
     }
 }
 
 class PlotLineItem (
     val Value: Float,
-    val Timestamp: Float,
+    val Timestamp: Long,
     val Distance: Float
 ){
+    val timestampInSeconds: Float
+        get() {
+            return TimeUnit.MILLISECONDS.convert(Timestamp, TimeUnit.NANOSECONDS) / 1_000f
+        }
+
     companion object {
         fun cord(index: Float?, min: Float, max: Float) : Float? {
             return when (index) {
@@ -188,5 +234,5 @@ enum class PlotLabelPosition {
 }
 
 enum class PlotHighlightMethod {
-    MAX, AVG, MIN, AVG_BY_DIMENSION, NONE
+    MIN, MAX, FIRST, LAST, AVG_BY_INDEX, AVG_BY_DISTANCE, AVG_BY_TIME, NONE
 }

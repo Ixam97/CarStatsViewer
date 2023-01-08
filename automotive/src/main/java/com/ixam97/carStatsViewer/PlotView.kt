@@ -155,7 +155,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val areaX = maxX - 2 * xMargin
 
         for (line in plotLines) {
-            if (line.isEmpty() || !line.visible) continue
+            if (line.isEmpty() || !line.Visible) continue
 
             val dataPoints = line.getDataPoints(dimension, dimensionRestriction)
             if (dataPoints.isEmpty()) continue
@@ -163,16 +163,16 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             val minValue = line.minValue(dataPoints)!!
             val maxValue = line.maxValue(dataPoints)!!
 
-            val prePlotPoints = ArrayList<PlotPoint>()
+            val prePlotPoints = ArrayList<PlotLineItemPoint>()
             for (index in dataPoints.indices) {
                 val item = dataPoints[index]
-                prePlotPoints.add(PlotPoint(
+                prePlotPoints.add(PlotLineItemPoint(
                     when (dimension) {
                         PlotDimension.INDEX -> PlotLineItem.cord((dimensionRestriction?:dataPoints.size.toFloat()) - dataPoints.size + index, 0f, (dimensionRestriction?:dataPoints.size.toFloat()) - 1f)
                         PlotDimension.DISTANCE -> line.x(item.Distance, dimension, dimensionRestriction, dataPoints)
-                        PlotDimension.TIME -> line.x(item.Timestamp, dimension, dimensionRestriction, dataPoints)
+                        PlotDimension.TIME -> line.x(item.timestampInSeconds, dimension, dimensionRestriction, dataPoints)
                     },
-                    PlotLineItem.cord(item.Value, minValue, maxValue)
+                    item
                 ))
             }
 
@@ -188,7 +188,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                 postPlotPoints.add(PlotPoint(
                     x(x, 0f, 1f, maxX)!!,
-                    y(group.value.map { it.y }.average().toFloat(), 0f, 1f, maxY)!!
+                    y(line.averageValue(group.value.map { it.y }, dimension), minValue, maxValue, maxY)!!
                 ))
             }
 
@@ -292,7 +292,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         labelPaint.getTextBounds("Dummy", 0, "Dummy".length, bounds)
 
         for (line in plotLines) {
-            if (line.isEmpty() || !line.visible) continue
+            if (line.isEmpty() || !line.Visible) continue
 
             val dataPoints = line.getDataPoints(dimension, dimensionRestriction)
             if (dataPoints.isEmpty()) continue
@@ -339,8 +339,9 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             }
 
             when (line.HighlightMethod) {
-                PlotHighlightMethod.AVG -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
-                PlotHighlightMethod.AVG_BY_DIMENSION -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
+                PlotHighlightMethod.AVG_BY_INDEX -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
+                PlotHighlightMethod.AVG_BY_DISTANCE -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
+                PlotHighlightMethod.AVG_BY_TIME -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
             }
         }
     }
