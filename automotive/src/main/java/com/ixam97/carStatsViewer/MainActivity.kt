@@ -12,8 +12,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
+import com.ixam97.carStatsViewer.objects.DataHolder
+import com.ixam97.carStatsViewer.objects.AppPreferences
 
 class MainActivity : Activity() {
     companion object {
@@ -21,11 +24,18 @@ class MainActivity : Activity() {
     }
     private lateinit var timerHandler: Handler
 
+    private var counter = 0
+    private var updateUi = false
     private val updateActivityTask = object : Runnable {
         override fun run() {
             InAppLogger.deepLog("MainActivity.updateActivityTask")
+            counter++
+            Log.d("MainActivity",
+                String.format("%04d updateActivityTask, Thread %s",
+                    counter,
+                    Thread.currentThread().name))
             updateActivity()
-            timerHandler.postDelayed(this, 40)
+            if (updateUi) timerHandler.postDelayed(this, 500)
         }
     }
 
@@ -49,12 +59,11 @@ class MainActivity : Activity() {
         }
 
         InAppLogger.log("MainActivity.onResume")
-        //checkPermissions()
-    }
 
-    override fun onPause() {
-        super.onPause()
-        InAppLogger.log("MainActivity.onPause")
+        updateUi = true
+        timerHandler.removeCallbacks(updateActivityTask)
+        timerHandler.post(updateActivityTask)
+        //checkPermissions()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,14 +79,15 @@ class MainActivity : Activity() {
         AppPreferences.consumptionUnit = sharedPref.getBoolean(getString(R.string.preferences_consumption_unit_key), false)
         AppPreferences.notifications = sharedPref.getBoolean(getString(R.string.preferences_notifications_key), false)
         AppPreferences.debug = sharedPref.getBoolean(getString(R.string.preferences_debug_key), false)
-        AppPreferences.consumptionPlot = sharedPref.getBoolean(getString(R.string.preferences_consumption_plot_key), false)
+        AppPreferences.experimentalLayout = sharedPref.getBoolean(getString(R.string.preferences_experimental_layout_key), false)
         AppPreferences.deepLog = sharedPref.getBoolean(getString(R.string.preferences_deep_log_key), false)
         AppPreferences.plotDistance = sharedPref.getInt(getString(R.string.preferences_plot_distance_key), 1)
         AppPreferences.plotSpeed = sharedPref.getBoolean(getString(R.string.preferences_plot_speed_key), false)
 
         dataCollectorIntent = Intent(this, DataCollector::class.java)
         starterIntent = intent
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(
+            this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         mainActivityPendingIntent = pendingIntent
         startForegroundService(dataCollectorIntent)
 
@@ -87,10 +97,20 @@ class MainActivity : Activity() {
 
         main_checkbox_speed.isChecked = AppPreferences.plotSpeed
         var plotDistanceId = main_radio_10.id
+        var plotDistanceValue = 10_001f
         when (AppPreferences.plotDistance) {
-            1 -> plotDistanceId = main_radio_10.id
-            2 -> plotDistanceId = main_radio_25.id
-            3 -> plotDistanceId = main_radio_50.id
+            1 -> {
+                plotDistanceId = main_radio_10.id
+                plotDistanceValue = 10_001f
+            }
+            2 -> {
+                plotDistanceId = main_radio_25.id
+                plotDistanceValue = 25_001f
+            }
+            3 -> {
+                plotDistanceId = main_radio_50.id
+                plotDistanceValue = 50_001f
+            }
         }
         main_radio_group_distance.check(plotDistanceId)
 
@@ -108,7 +128,7 @@ class MainActivity : Activity() {
         DataHolder.speedPlotLine.Visible = main_checkbox_speed.isChecked
 
         main_consumption_plot.dimension = PlotDimension.DISTANCE
-        main_consumption_plot.dimensionRestriction = 10_001f
+        main_consumption_plot.dimensionRestriction = plotDistanceValue
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
@@ -196,13 +216,23 @@ class MainActivity : Activity() {
             main_consumption_plot.invalidate()
         }
 
+        updateUi = true
         timerHandler = Handler(Looper.getMainLooper())
         timerHandler.post(updateActivityTask)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        updateUi = false
+        timerHandler.removeCallbacks(updateActivityTask)
         InAppLogger.log("MainActivity.onDestroy")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        updateUi = false
+        timerHandler.removeCallbacks(updateActivityTask)
+        InAppLogger.log("MainActivity.onPause")
     }
 
     override fun onRequestPermissionsResult(
@@ -289,17 +319,24 @@ class MainActivity : Activity() {
         }
         currentSpeedTextView.text = String.format("%d km/h", (DataHolder.currentSpeed*3.6).toInt())
         traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)
-        batteryEnergyTextView.text = String.format("%d/%d, %d%%", DataHolder.currentBatteryCapacity, DataHolder.maxBatteryCapacity, ((DataHolder.currentBatteryCapacity.toFloat()/DataHolder.maxBatteryCapacity.toFloat())*100).toInt())
+        batteryEnergyTextView.text = String.format("%d/%d, %d%%",
+            DataHolder.currentBatteryCapacity,
+            DataHolder.maxBatteryCapacity,
+            ((DataHolder.currentBatteryCapacity.toFloat()/DataHolder.maxBatteryCapacity.toFloat())*100).toInt())
 
         if (AppPreferences.consumptionUnit) { // Use Wh/km
-            if (DataHolder.currentSpeed > 0) currentInstConsTextView.text = String.format("%d Wh/km", ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6)).toInt())
+            if (DataHolder.currentSpeed > 0) currentInstConsTextView.text = String.format("%d Wh/km",
+                ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6)).toInt())
             else currentInstConsTextView.text = "N/A"
-            if (DataHolder.traveledDistance > 0) averageConsumptionTextView.text = String.format("%d Wh/km", (DataHolder.usedEnergy/(DataHolder.traveledDistance/1000)).toInt())
+            if (DataHolder.traveledDistance > 0) averageConsumptionTextView.text = String.format("%d Wh/km",
+                (DataHolder.usedEnergy/(DataHolder.traveledDistance/1000)).toInt())
             else averageConsumptionTextView.text = "N/A"
         } else { // Use kWh/100km
-            if (DataHolder.currentSpeed > 0) currentInstConsTextView.text = String.format("%.1f kWh/100km", ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6))/10)
+            if (DataHolder.currentSpeed > 0) currentInstConsTextView.text = String.format("%.1f kWh/100km",
+                ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6))/10)
             else currentInstConsTextView.text = "N/A"
-            if (DataHolder.traveledDistance > 0) averageConsumptionTextView.text = String.format("%.1f kWh/100km", (DataHolder.usedEnergy/(DataHolder.traveledDistance/1000))/10)
+            if (DataHolder.traveledDistance > 0) averageConsumptionTextView.text = String.format("%.1f kWh/100km",
+                (DataHolder.usedEnergy/(DataHolder.traveledDistance/1000))/10)
             else averageConsumptionTextView.text = "N/A"
         }
     }

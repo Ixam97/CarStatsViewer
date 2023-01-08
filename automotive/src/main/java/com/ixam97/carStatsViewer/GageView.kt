@@ -21,8 +21,14 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             this.invalidate()
         }
 
+    var minValue = 0f
+    var maxValue = 1f
+
     private var gageValueInt : Int? = null
     private var gageValueFloat: Float? = null
+
+    private var gageValueIntArray = arrayListOf<Int>()
+    private var gageValueFloatArray = arrayListOf<Float>()
 
     fun setValue(value: Int) {
         gageValueInt = value
@@ -30,12 +36,9 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         this.invalidate()
     }
 
-    var minValue = 0f
-    var maxValue = 1f
 
     fun setValue(value: Float) {
         gageValueFloat = value
-        gageValueInt = null
         this.invalidate()
     }
 
@@ -63,7 +66,11 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val borderPaint = Paint().apply {
         color = Color.DKGRAY
-        color = Color.argb((Color.alpha(color) * .5f).roundToInt(), Color.red(color), Color.green(color), Color.blue(color))
+        color = Color.argb(
+            (Color.alpha(color) * .5f).roundToInt(),
+            Color.red(color),
+            Color.green(color),
+            Color.blue(color))
         strokeWidth = 2f
         style = Paint.Style.STROKE
     }
@@ -108,7 +115,9 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         if (gageValue < minValue) gageValue = minValue
         if (gageValue > maxValue) gageValue = maxValue
 
-        val gageRectYPos = Math.max(borderPaint.strokeWidth, gageZeroLineYPos - (gageZeroLineYPos/maxValue) * gageValue)
+        val gageRectYPos = Math.max(
+            borderPaint.strokeWidth,
+            gageZeroLineYPos - (gageZeroLineYPos/maxValue) * gageValue)
 
         canvas.drawRect(
             borderPaint.strokeWidth,

@@ -8,12 +8,17 @@ import android.car.hardware.property.CarPropertyManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.BitmapFactory
 import android.os.*
 import android.util.Log
-import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
+
+lateinit var mainActivityPendingIntent: PendingIntent
+
+var firstPlotValueAdded = false
+
 
 object DataHolder {
     var currentPowermW = 0F
@@ -139,11 +144,7 @@ class DataCollector : Service() {
         }
     }
 
-    private var statsNotification = NotificationCompat.Builder(this, CHANNEL_ID)
-        .setContentTitle("Title")
-        .setContentText("Test Notification from Car Stats Viewer")
-        .setSmallIcon(R.drawable.ic_launcher_foreground)
-        .setOngoing(true)
+    private lateinit var statsNotification: Notification.Builder
 
     inner class LocalBinder : Binder() {
         fun getService(): DataCollector = this@DataCollector
@@ -156,19 +157,30 @@ class DataCollector : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        val foregroundServiceNotification = NotificationCompat.Builder(this, CHANNEL_ID)
+        val foregroundServiceNotification = Notification.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(getString(R.string.foreground_service_info))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setOngoing(true)
 
+        statsNotification = Notification.Builder(this, CHANNEL_ID)
+            .setContentTitle("Title")
+            .setContentText("Test Notification from Car Stats Viewer")
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher_foreground))
+            // .setStyle(Notification.MediaStyle())
+            .setCategory(Notification.CATEGORY_TRANSPORT)
+            .setOngoing(true)
+
         startForeground(foregroundNotificationId, foregroundServiceNotification.build())
 
-        InAppLogger.log(String.format("DataCollector.onCreate in Thread: %s", Thread.currentThread().name))
+        InAppLogger.log(String.format(
+            "DataCollector.onCreate in Thread: %s",
+            Thread.currentThread().name))
 
         sharedPref = this.getSharedPreferences(
-            getString(R.string.preferences_file_key), Context.MODE_PRIVATE
-        )
+            getString(R.string.preferences_file_key),
+            Context.MODE_PRIVATE)
 /*
         val consumptionPlotLineJSON = sharedPref.getString(getString(R.string.userdata_consumption_plot_key), "")
         val speedPlotLineJSON = sharedPref.getString(getString(R.string.userdata_speed_plot_key), "")
@@ -178,13 +190,15 @@ class DataCollector : Service() {
 */
         notificationsEnabled = AppPreferences.notifications
 
-        val carPropertyCallbacksTaskHandlerThread = HandlerThread("CarPropertyCallbacksTaskThread")
-        carPropertyCallbacksTaskHandlerThread.start()
-        val carPropertyCallbacksTaskHandler = Handler(carPropertyCallbacksTaskHandlerThread.looper)
+        // val carPropertyCallbacksTaskHandlerThread = HandlerThread("CarPropertyCallbacksTaskThread")
+        // carPropertyCallbacksTaskHandlerThread.start()
+        // val carPropertyCallbacksTaskHandler = Handler(carPropertyCallbacksTaskHandlerThread.looper)
 
-        car = Car.createCar(this, carPropertyCallbacksTaskHandler)
+        car = Car.createCar(this)
         carPropertyManager = car.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager;
-        DataHolder.maxBatteryCapacity = carPropertyManager.getProperty<Float>(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0).value.toInt()
+        DataHolder.maxBatteryCapacity = carPropertyManager
+            .getProperty<Float>(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
+            .value.toInt()
 
         notificationTitleString = resources.getString(R.string.notification_title)
         statsNotification.setContentTitle(notificationTitleString).setContentIntent(mainActivityPendingIntent)
@@ -199,9 +213,7 @@ class DataCollector : Service() {
         }
 
         DataHolder.consumptionPlotLine.baseLineAt.add(0f)
-        //DataHolder.consumptionPlotLine.addDataPoint(0f)
         DataHolder.speedPlotLine.baseLineAt.add(0f)
-        //DataHolder.speedPlotLine.addDataPoint(0f)
 
         registerCarPropertyCallbacks()
 
@@ -288,11 +300,17 @@ class DataCollector : Service() {
     private var carPropertyPowerListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
             InAppLogger.deepLog("DataCollector.carPropertyPowerListener")
+
             powerUpdater(value)
-            Log.d("carPropertyPowerListener", String.format("Received value %.0f on thread %s", value.value as Float, Thread.currentThread().name))
+            Log.d("carPropertyPowerListener",
+                String.format(
+                    "Received value %.0f on thread %s",
+                    value.value as Float,
+                    Thread.currentThread().name))
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
-            Log.w("carPropertyPowerListener", "Received error car property event, propId=$propId")
+            Log.w("carPropertyPowerListener",
+                "Received error car property event, propId=$propId")
         }
     }
 
@@ -300,10 +318,22 @@ class DataCollector : Service() {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
             InAppLogger.deepLog("DataCollector.carPropertySpeedListener")
             InAppLogger.logVHALCallback()
+
             speedUpdater(value)
+/*
+                val consumptionPlotLineJSON = Gson().toJson(DataHolder.consumptionPlotLine)
+                val speedPlotLineJSON = Gson().toJson(DataHolder.speedPlotLine)
+
+                sharedPref.edit()
+                    .putString(getString(R.string.userdata_consumption_plot_key), consumptionPlotLineJSON)
+                    .putString(getString(R.string.userdata_speed_plot_key), speedPlotLineJSON)
+                    .apply()
+*/
+            }
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
-            Log.w("carPropertySpeedListener", "Received error car property event, propId=$propId")
+            Log.w("carPropertySpeedListener",
+                "Received error car property event, propId=$propId")
         }
     }
 
@@ -313,17 +343,21 @@ class DataCollector : Service() {
             DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
-            Log.w("carPropertyBatteryListener", "Received error car property event, propId=$propId")
+            Log.w("carPropertyBatteryListener",
+                "Received error car property event, propId=$propId")
         }
     }
 
     private var carPropertyPortListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
-            InAppLogger.log(String.format("DataCollector.carPropertyPortListener on Thread: %s", Thread.currentThread().name))
+            InAppLogger.log(String.format(
+                "DataCollector.carPropertyPortListener on Thread: %s",
+                Thread.currentThread().name))
             DataHolder.chargePortConnected = value.value as Boolean
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
-            Log.w("carPropertyPortListener", "Received error car property event, propId=$propId")
+            Log.w("carPropertyPortListener",
+                "Received error car property event, propId=$propId")
         }
     }
 
@@ -401,7 +435,11 @@ class DataCollector : Service() {
                 val averageConsumption = DataHolder.usedEnergy / (DataHolder.traveledDistance/1000)
 
                 var averageConsumptionString = String.format("%d Wh/km", averageConsumption.toInt())
-                if (!AppPreferences.consumptionUnit) averageConsumptionString = String.format("%.1f kWh/100km",averageConsumption / 10)
+                if (!AppPreferences.consumptionUnit) {
+                    averageConsumptionString = String.format(
+                        "%.1f kWh/100km",
+                        averageConsumption / 10)
+                }
                 if ((DataHolder.traveledDistance <= 0)) averageConsumptionString = "N/A"
 
                 notificationCounter++

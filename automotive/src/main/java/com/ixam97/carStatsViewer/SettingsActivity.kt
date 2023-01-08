@@ -12,7 +12,6 @@ object AppPreferences {
     var debug = false
     var notifications = false
     var consumptionUnit = false
-    var consumptionPlot = false
     var experimentalLayout = false
     var deepLog = false
     var plotSpeed = false
@@ -40,7 +39,10 @@ class SettingsActivity : Activity() {
         settings_switch_experimental_layout.isChecked = AppPreferences.experimentalLayout
         // settings_switch_consumption_plot.isChecked = AppPreferences.consumptionPlot
 
-        settings_version_text.text = String.format("Car Stats Viewer Version %s (Build %d)", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
+        settings_version_text.text = String.format("Car Stats Viewer Version %s (Build %d)",
+            BuildConfig.VERSION_NAME,
+            BuildConfig.VERSION_CODE
+        )
 
         settings_button_back.setOnClickListener() {
             finish()
