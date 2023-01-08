@@ -5,6 +5,9 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
+import java.text.DecimalFormat
+import java.util.*
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 
@@ -30,22 +33,21 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private var gageValueIntArray = arrayListOf<Int>()
     private var gageValueFloatArray = arrayListOf<Float>()
 
-    fun setValue(value: Int) {
+    fun setValue(value: Int?) {
         gageValueInt = value
         gageValueFloat = null
         this.invalidate()
     }
 
 
-    fun setValue(value: Float) {
+    fun setValue(value: Float?) {
         gageValueFloat = value
+        gageValueInt = null
         this.invalidate()
     }
 
     private val posPaint = Paint().apply {
-        var typedValue = TypedValue()
-        context.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
-        color = typedValue.data
+        color = getPrimaryColor()
     }
 
     private val negPaint = Paint().apply {
@@ -53,14 +55,14 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     private val namePaint = Paint().apply {
-        color = Color.WHITE
-        textSize = dpToPx(35f)
+        color = Color.GRAY
+        textSize = dpToPx(30f)
         isAntiAlias = true
     }
 
     private val unitPaint = Paint().apply {
-        color = Color.DKGRAY
-        textSize = dpToPx(30f)
+        color = getPrimaryColor()
+        textSize = dpToPx(32f)
         isAntiAlias = true
     }
 
@@ -82,7 +84,7 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val valuePaint = Paint().apply {
         color = Color.WHITE
-        textSize = dpToPx(110f)
+        textSize = dpToPx(100f)
         isAntiAlias = true
     }
 
@@ -91,10 +93,10 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private val gageWidth = dpToPx(100f)
 
     private val nameYPos = namePaint.textSize * 0.76f
-    private val unitYPos = nameYPos + yTextMargin + unitPaint.textSize
-    private val valueYPos = unitYPos + valuePaint.textSize * 0.85f
+    private val valueYPos = nameYPos + valuePaint.textSize * 0.9f
+    private val unitYPos = valueYPos - (valuePaint.textSize * 0.8f - unitPaint.textSize)
 
-    private val viewHeight = valueYPos + dpToPx(20f)
+    private val viewHeight = valueYPos + dpToPx(3f)
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -110,10 +112,12 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         val gageBorder = Path()
         val gageZeroLine = Path()
 
-        val gageZeroLineYPos = ((valueYPos - borderPaint.strokeWidth/2)/(maxValue - minValue)) * maxValue
+        var gageZeroLineYPos = ((viewHeight - borderPaint.strokeWidth)/(maxValue - minValue)) * maxValue
 
         if (gageValue < minValue) gageValue = minValue
         if (gageValue > maxValue) gageValue = maxValue
+
+        val gageValueWidth = valuePaint.measureText(gageValue())
 
         val gageRectYPos = Math.max(
             borderPaint.strokeWidth,
@@ -127,8 +131,8 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             gagePaint)
 
         gageBorder.moveTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
-        gageBorder.lineTo(borderPaint.strokeWidth/2, valueYPos)
-        gageBorder.lineTo(gageWidth, valueYPos)
+        gageBorder.lineTo(borderPaint.strokeWidth/2, viewHeight - borderPaint.strokeWidth/2)
+        gageBorder.lineTo(gageWidth, viewHeight - borderPaint.strokeWidth/2)
         gageBorder.lineTo(gageWidth, borderPaint.strokeWidth/2)
         gageBorder.lineTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
 
@@ -136,14 +140,14 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         // canvas.drawRect(0f, 0f, gageWidth, valueYPos, posPaint)
         canvas.drawPath(gageBorder, borderPaint)
         canvas.drawText(gageName, gageWidth + xTextMargin, nameYPos, namePaint)
-        canvas.drawText(gageUnit, gageWidth + xTextMargin, unitYPos, unitPaint)
+        canvas.drawText(gageUnit, gageWidth + xTextMargin * 1.5f + gageValueWidth, unitYPos, unitPaint)
         canvas.drawText(gageValue(), gageWidth + xTextMargin, valueYPos, valuePaint)
 
-        if (minValue < 0) {
-            gageZeroLine.moveTo(0f, gageZeroLineYPos)
-            gageZeroLine.lineTo(gageWidth + borderPaint.strokeWidth/2, gageZeroLineYPos)
-            canvas.drawPath(gageZeroLine, zeroLinePaint)
-        }
+        if (minValue >= 0) gageZeroLineYPos += borderPaint.strokeWidth/2
+        gageZeroLine.moveTo(0f, gageZeroLineYPos)
+        gageZeroLine.lineTo(gageWidth + borderPaint.strokeWidth/2, gageZeroLineYPos)
+        canvas.drawPath(gageZeroLine, zeroLinePaint)
+        //}
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -152,12 +156,30 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     private fun gageValue() : String {
-        if (gageValueInt != null) return String.format("%d", gageValueInt)
-        if (gageValueFloat != null) return String.format("%.1f", gageValueFloat)
-        return "N/A"
+        if (gageValueInt != null){
+            if (gageValueInt!! > 2 * maxValue)
+                return String.format(">%d", (2 * maxValue).toInt())
+            if (gageValueInt!! < 2 * minValue && minValue < 0)
+                return  String.format("<%d", (2 * minValue).toInt())
+            return String.format("%d", gageValueInt)
+        }
+        if (gageValueFloat != null){
+            if (gageValueFloat!! > 2 * maxValue)
+                return String.format(">%.1f", (2 * maxValue))
+            if (gageValueFloat!! < 2 * minValue && minValue < 0)
+                return  String.format("<%.1f", (2 * minValue))
+            return "%.1f".format(Locale.ENGLISH, gageValueFloat)
+        } // String.format("%.1f", gageValueFloat)
+        return "-"
     }
 
     private fun dpToPx(dpSize: Float) : Float {
         return (dpSize * resources.displayMetrics.density)
+    }
+
+    private fun getPrimaryColor(): Int {
+        val typedValue = TypedValue()
+        context.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
+        return typedValue.data
     }
 }

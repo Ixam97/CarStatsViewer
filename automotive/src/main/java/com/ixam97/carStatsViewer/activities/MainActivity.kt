@@ -142,15 +142,21 @@ class MainActivity : Activity() {
 
         main_power_gage.gageName = getString(R.string.main_gage_power)
         main_power_gage.gageUnit = "kW"
-        main_power_gage.maxValue = 350f
+        main_power_gage.maxValue = 300f
         main_power_gage.minValue = -150f
         main_power_gage.setValue(0f)
 
-        main_speed_gage.gageName = getString(R.string.main_gage_speed)
+        main_consumption_gage.gageName = getString(R.string.main_gage_consumption)
+        main_consumption_gage.gageUnit = "kWh/100km"
+        main_consumption_gage.minValue = -30f
+        main_consumption_gage.maxValue = 60f
+        main_consumption_gage.setValue(0f)
+
+/*      main_speed_gage.gageName = getString(R.string.main_gage_speed)
         main_speed_gage.gageUnit = "km/h"
         main_speed_gage.maxValue = 205f
         main_speed_gage.minValue = 0f
-        main_speed_gage.setValue(0f)
+        main_speed_gage.setValue(0f)*/
 
         main_button_reset.setOnClickListener {
 
@@ -289,10 +295,36 @@ class MainActivity : Activity() {
         }
 
         main_power_gage.setValue(DataHolder.currentPowerSmooth / 1000000)
-        main_speed_gage.setValue((DataHolder.currentSpeedSmooth * 3.6f).toInt())
+        //main_speed_gage.setValue((DataHolder.currentSpeedSmooth * 3.6f).toInt())
+        var consumptionValue: Float? = null
+
+        if (AppPreferences.consumptionUnit) {
+            /** Wh/km */
+            main_consumption_gage.gageUnit = "Wh/km"
+            main_consumption_gage.minValue = -300f
+            main_consumption_gage.maxValue = 600f
+            if (DataHolder.currentSpeedSmooth > 0) {
+                main_consumption_gage.setValue(((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6)).toInt())
+            } else {
+                main_consumption_gage.setValue(consumptionValue)
+            }
+
+        } else {
+            /** kWh/100km */
+            main_consumption_gage.gageUnit = "kWh/100km"
+            main_consumption_gage.minValue = -30f
+            main_consumption_gage.maxValue = 60f
+            if (DataHolder.currentSpeedSmooth > 0) {
+                main_consumption_gage.setValue(((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6f))/10)
+            } else {
+                main_consumption_gage.setValue(consumptionValue)
+            }
+        }
+
+        //var consumptionGageValue: Float? = (((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6))/10).toFloat()
 
         chargePortConnectedTextView.text = DataHolder.chargePortConnected.toString()
-        if (DataHolder.currentPowermW > 0) {
+        if (DataHolder.currentPowerSmooth > 0) {
             currentPowerTextView.setTextColor(Color.RED)
             currentInstConsTextView.setTextColor(Color.RED)
         }
@@ -300,13 +332,13 @@ class MainActivity : Activity() {
             currentPowerTextView.setTextColor(Color.GREEN)
             currentInstConsTextView.setTextColor(Color.GREEN)
         }
-        currentPowerTextView.text = String.format("%.1f kW", DataHolder.currentPowermW / 1000000)
+        currentPowerTextView.text = String.format("%.1f kW", DataHolder.currentPowerSmooth / 1000000)
         if (AppPreferences.consumptionUnit) {
             usedEnergyTextView.text = String.format("%d Wh", DataHolder.usedEnergy.toInt())
         } else {
             usedEnergyTextView.text = String.format("%.1f kWh", DataHolder.usedEnergy / 1000)
         }
-        currentSpeedTextView.text = String.format("%d km/h", (DataHolder.currentSpeed *3.6).toInt())
+        currentSpeedTextView.text = String.format("%d km/h", (DataHolder.currentSpeedSmooth *3.6).toInt())
         traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)
         batteryEnergyTextView.text = String.format("%d/%d, %d%%",
             DataHolder.currentBatteryCapacity,
@@ -314,20 +346,24 @@ class MainActivity : Activity() {
             ((DataHolder.currentBatteryCapacity.toFloat()/ DataHolder.maxBatteryCapacity.toFloat())*100).toInt())
 
         if (AppPreferences.consumptionUnit) { // Use Wh/km
-            if (DataHolder.currentSpeed > 0) currentInstConsTextView.text = String.format("%d Wh/km",
-                ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6)).toInt())
+            if (DataHolder.currentSpeedSmooth > 0) currentInstConsTextView.text = String.format("%d Wh/km",
+                ((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6)).toInt())
             else currentInstConsTextView.text = "N/A"
             if (DataHolder.traveledDistance > 0) averageConsumptionTextView.text = String.format("%d Wh/km",
                 (DataHolder.usedEnergy /(DataHolder.traveledDistance /1000)).toInt())
             else averageConsumptionTextView.text = "N/A"
         } else { // Use kWh/100km
-            if (DataHolder.currentSpeed > 0) currentInstConsTextView.text = String.format("%.1f kWh/100km",
-                ((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6))/10)
+            if (DataHolder.currentSpeedSmooth > 0) currentInstConsTextView.text = String.format("%.1f kWh/100km",
+                ((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6))/10)
             else currentInstConsTextView.text = "N/A"
             if (DataHolder.traveledDistance > 0) averageConsumptionTextView.text = String.format("%.1f kWh/100km",
                 (DataHolder.usedEnergy /(DataHolder.traveledDistance /1000))/10)
             else averageConsumptionTextView.text = "N/A"
         }
+
+        main_gage_avg_consumption_text_view.text = String.format("  Ø %s", averageConsumptionTextView.text)
+        main_gage_distance_text_view.text = String.format("  %s", traveledDistanceTextView.text)
+        main_gage_used_power_text_view.text = String.format("  %s", usedEnergyTextView.text)
     }
 
     private fun checkPermissions() {

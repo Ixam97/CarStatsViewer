@@ -52,23 +52,98 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:weightSum="10"
         android:visibility="gone">
 
-        <com.ixam97.carStatsViewer.views.GageView
-            android:id="@+id/main_power_gage"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="20dp"
-            android:layout_marginHorizontal="20dp"/>
+            android:orientation="vertical"
+            android:layout_weight="6">
 
-        <com.ixam97.carStatsViewer.views.GageView
-            android:id="@+id/main_speed_gage"
-            android:layout_width="wrap_content"
+            <com.ixam97.carStatsViewer.views.GageView
+                android:id="@+id/main_power_gage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="20dp"/>
+
+            <!--<com.ixam97.carStatsViewer.views.GageView
+                android:id="@+id/main_speed_gage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="20dp"/>-->
+
+            <com.ixam97.carStatsViewer.views.GageView
+                android:id="@+id/main_consumption_gage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="20dp"
-            android:layout_marginHorizontal="20dp"/>
+            android:orientation="vertical"
+            android:layout_weight="4">
+
+            <TextView
+                android:id="@+id/main_gage_distance_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="35dp"
+                android:drawableStart="@drawable/ic_distance"
+                />
+
+
+            <TextView
+                android:id="@+id/main_gage_used_power_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="35dp"
+                android:drawableStart="@drawable/ic_power"
+                />
+
+            <TextView
+                android:id="@+id/main_gage_avg_consumption_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="35dp"
+                android:drawableStart="@drawable/ic_avg_consumption"
+                />
+
+            <TextView
+                android:id="@+id/main_gage_time_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="35dp"
+                android:drawableStart="@drawable/ic_time"
+                />
+
+            <TextView
+                android:id="@+id/main_gage_remaining_range_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="35dp"
+                android:drawableStart="@drawable/ic_remaining_range"
+                />
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <TableLayout

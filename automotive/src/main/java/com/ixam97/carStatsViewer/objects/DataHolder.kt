@@ -3,13 +3,16 @@ package com.ixam97.carStatsViewer.objects
 import com.ixam97.carStatsViewer.plot.*
 
 object DataHolder {
+
+    private const val maxSmoothSize = 20
+
     var currentPowermW = 0F
         set(value) {
             lastPowermW = field
             field = value
 
             currentPowerSmoothArray.add(value)
-            if (currentPowerSmoothArray.size > 20) currentPowerSmoothArray.removeAt(0)
+            if (currentPowerSmoothArray.size > maxSmoothSize) currentPowerSmoothArray.removeAt(0)
         }
 
     private var currentPowerSmoothArray = arrayListOf<Float>()
@@ -28,7 +31,7 @@ object DataHolder {
             field = value
 
             currentSpeedSmoothArray.add(value)
-            if (currentSpeedSmoothArray.size > 20) currentSpeedSmoothArray.removeAt(0)
+            if (currentSpeedSmoothArray.size > maxSmoothSize) currentSpeedSmoothArray.removeAt(0)
         }
     private var currentSpeedSmoothArray = arrayListOf<Float>()
     var currentSpeedSmooth = 0f

@@ -17,6 +17,7 @@
     <string name="main_dialog_reset_message">Alle gespeicherten Fahrdaten werden auf Null zurückgesetzt</string>
     <string name="main_gage_speed">Geschwindigkeit</string>
     <string name="main_gage_power">Leistung</string>
+    <string name="main_gage_consumption">Verbrauch</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
