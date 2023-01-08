@@ -65,7 +65,7 @@ object DataHolder {
 
     var speedPlotLine = PlotLine(
         0f,
-        120f,
+        40f,
         40f,
         1f,
         "%.0f",
@@ -79,7 +79,7 @@ object DataHolder {
     var chargePlotLine = PlotLine(
         0f,
         20f,
-        5f,
+        20f,
         1f,
         "%.1f",
         "%.1f",
