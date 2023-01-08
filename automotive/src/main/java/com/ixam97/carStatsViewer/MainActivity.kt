@@ -15,8 +15,6 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
-import com.ixam97.carStatsViewer.objects.DataHolder
-import com.ixam97.carStatsViewer.objects.AppPreferences
 
 class MainActivity : Activity() {
     companion object {
@@ -264,27 +262,19 @@ class MainActivity : Activity() {
             legacy_layout.visibility = View.VISIBLE
         }
 
-        when (AppPreferences.consumptionPlot) {
-            true -> {
-                if (main_consumption_plot_container.visibility == View.GONE && !DataHolder.chargePortConnected) {
-                    main_consumption_plot_container.visibility = View.VISIBLE
-                }
-                else if (main_consumption_plot_container.visibility == View.VISIBLE && DataHolder.chargePortConnected) {
-                    main_consumption_plot_container.visibility = View.GONE
-                }
+        if (main_consumption_plot_container.visibility == View.GONE && !DataHolder.chargePortConnected) {
+            main_consumption_plot_container.visibility = View.VISIBLE
+        }
+        else if (main_consumption_plot_container.visibility == View.VISIBLE && DataHolder.chargePortConnected) {
+            main_consumption_plot_container.visibility = View.GONE
+        }
 
-                if (main_charge_plot_container.visibility == View.GONE && DataHolder.chargePortConnected) {
-                    main_charge_plot.reset()
-                    main_charge_plot_container.visibility = View.VISIBLE
-                }
-                else if (main_charge_plot_container.visibility == View.VISIBLE && !DataHolder.chargePortConnected) {
-                    main_charge_plot_container.visibility = View.GONE
-                }
-            }
-            false -> {
-                main_consumption_plot_container.visibility = View.GONE
-                main_charge_plot_container.visibility = View.GONE
-            }
+        if (main_charge_plot_container.visibility == View.GONE && DataHolder.chargePortConnected) {
+            main_charge_plot.reset()
+            main_charge_plot_container.visibility = View.VISIBLE
+        }
+        else if (main_charge_plot_container.visibility == View.VISIBLE && !DataHolder.chargePortConnected) {
+            main_charge_plot_container.visibility = View.GONE
         }
 
         if (SystemClock.elapsedRealtime() - lastPlotUpdate > 1_000L) {
