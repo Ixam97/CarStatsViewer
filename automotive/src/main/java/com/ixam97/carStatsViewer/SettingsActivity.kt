@@ -7,7 +7,16 @@ import kotlinx.android.synthetic.main.activity_settings.*
 import android.content.Context
 import android.content.Intent
 import kotlin.system.exitProcess
-import com.ixam97.carStatsViewer.objects.AppPreferences
+
+object AppPreferences {
+    var debug = false
+    var notifications = false
+    var consumptionUnit = false
+    var experimentalLayout = false
+    var deepLog = false
+    var plotSpeed = false
+    var plotDistance = 1
+}
 
 class SettingsActivity : Activity() {
 
