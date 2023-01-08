@@ -360,10 +360,12 @@ class DataCollector : Service() {
         val currentPlotTime = timestampAsMilliseconds(value)
 
         if (!firstPlotValueAdded) {
-            lastPlotDistance = DataHolder.traveledDistance
-            lastPlotEnergy = DataHolder.usedEnergy
-            lastPlotTime = currentPlotTime
-            firstPlotValueAdded = true
+            if (timeDifference != null) {
+                lastPlotDistance = DataHolder.traveledDistance
+                lastPlotEnergy = DataHolder.usedEnergy
+                lastPlotTime = currentPlotTime
+                firstPlotValueAdded = true
+            }
         } else if (!DataHolder.chargePortConnected && DataHolder.traveledDistance >= (lastPlotDistance + 100)) {
             val distanceDifference = DataHolder.traveledDistance - lastPlotDistance
             val powerDifference = DataHolder.usedEnergy - lastPlotEnergy
