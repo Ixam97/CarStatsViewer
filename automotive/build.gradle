@@ -10,8 +10,8 @@ android {
         applicationId "com.ixam97.carStatsViewer"
         minSdkVersion 28
         targetSdkVersion 32
-        versionCode 22
-        versionName "0.14"
+        versionCode 23
+        versionName "0.15"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

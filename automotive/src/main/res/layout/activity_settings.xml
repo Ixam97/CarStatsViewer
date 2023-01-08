@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingsActivity">
+    tools:context=".activities.SettingsActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,8 +25,8 @@
             android:layout_margin="20dp"
             android:text="@string/settings_title"
             android:textColor="?android:attr/textColorPrimary"
-            android:textSize="50dp"
-            android:textStyle="bold"/>
+            android:textSize="47sp"
+            android:textFontWeight="600"/>
 
         <View
             android:layout_width="0dp"
@@ -60,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="101dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="35dp"
+                android:textSize="35sp"
                 android:text="@string/settings_notifications"/>
 
             <View
@@ -74,7 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="101dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="35dp"
+                android:textSize="35sp"
                 android:text="@string/settings_consumption_unit"/>
 
             <View
@@ -88,7 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="101dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="35dp"
+                android:textSize="35sp"
                 android:text="@string/settings_experimental_layout"/>
 
             <View
@@ -102,7 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="101dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="35dp"
+                android:textSize="35sp"
                 android:text="@string/settings_debug"
                 android:visibility="gone"/>
 
@@ -112,7 +112,7 @@
                 android:layout_height="101dp"
                 android:text=""
                 android:textColor="@android:color/white"
-                android:textSize="35dp"
+                android:textSize="35sp"
                 android:gravity="center_vertical"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:drawableEnd="@drawable/ic_chevron_right"/>
