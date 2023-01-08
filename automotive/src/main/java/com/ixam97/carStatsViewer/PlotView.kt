@@ -304,9 +304,15 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             val labelShiftY = (bounds.height() / 2).toFloat()
             val valueShiftY = (maxValue - minValue) / (yLineCount - 1)
 
+            val labelUnitXOffset = when (line.LabelPosition) {
+                PlotLabelPosition.LEFT -> 0f
+                PlotLabelPosition.RIGHT-> -labelPaint.measureText(line.Unit)/2
+                else -> 0f
+            }
+
             val labelCordX = when (line.LabelPosition) {
                 PlotLabelPosition.LEFT -> textSize
-                PlotLabelPosition.RIGHT -> maxX - xMargin + textSize
+                PlotLabelPosition.RIGHT -> maxX - xMargin + textSize/2
                 else -> null
             }
 
@@ -314,7 +320,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
             if (line.LabelPosition !== PlotLabelPosition.NONE && labelCordX != null) {
                 if (line.Unit.isNotEmpty()) {
-                    canvas.drawText(line.Unit, labelCordX,yMargin - (yMargin / 3f), labelPaint)
+                    canvas.drawText(line.Unit, labelCordX + labelUnitXOffset,yMargin - (yMargin / 3f), labelPaint)
                 }
 
                 for (i in 0 until yLineCount) {

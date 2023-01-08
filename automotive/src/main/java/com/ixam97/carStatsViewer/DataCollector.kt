@@ -93,9 +93,9 @@ object DataHolder {
         100f,
         20f,
         1f,
-        "%.1f",
-        "%.1f",
-        "% SOC",
+        "%.0f",
+        "%.0f",
+        "% SoC",
         PlotLabelPosition.RIGHT,
         PlotHighlightMethod.LAST
     )
