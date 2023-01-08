@@ -309,4 +309,37 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/main_charge_plot_container"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_weight="0"
+            android:background="?android:attr/listDivider"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:text="@string/main_consumption"
+            android:visibility="gone"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="35dp"/>
+
+        <com.ixam97.carStatsViewer.PlotView
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:layout_margin="0dp"
+            android:id="@+id/main_charge_plot"/>
+
+    </LinearLayout>
+
 </LinearLayout>

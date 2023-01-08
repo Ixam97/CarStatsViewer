@@ -17,13 +17,39 @@ import kotlin.math.absoluteValue
 
 object DataHolder {
     var currentPowermW = 0F
+        set(value) {
+            lastPowermW = field
+            field = value
+        }
+
+    var lastPowermW = 0F
+        private set
+
     var currentSpeed = 0F
+        set(value) {
+            lastSpeed = field
+            field = value
+        }
+
+    var lastSpeed = 0F
+        private set
+
+    var currentBatteryCapacity = 0
+        set(value) {
+            lastBatteryCapacity = field
+            field = value
+        }
+
+    var lastBatteryCapacity = 0
+        private set
+
+    var maxBatteryCapacity = 0
+
     var traveledDistance = 0F
     var usedEnergy = 0F
     var averageConsumption = 0F
-    var currentBatteryCapacity = 0
+
     var chargePortConnected = false
-    var maxBatteryCapacity = 0
 
     var consumptionPlotLine = PlotLine(
         -200f,
@@ -34,7 +60,7 @@ object DataHolder {
         "%.0f",
         "Wh/km",
         PlotLabelPosition.LEFT,
-        PlotHighlightMethod.AVG
+        PlotHighlightMethod.AVG_BY_TIME
     )
 
     var speedPlotLine = PlotLine(
@@ -46,15 +72,38 @@ object DataHolder {
         "Ø %.0f",
         "km/h",
         PlotLabelPosition.RIGHT,
-        PlotHighlightMethod.AVG_BY_DIMENSION
+        PlotHighlightMethod.AVG_BY_TIME,
+        false
+    )
+
+    var chargePlotLine = PlotLine(
+        0f,
+        20f,
+        5f,
+        1f,
+        "%.1f",
+        "%.1f",
+        "kW",
+        PlotLabelPosition.LEFT,
+        PlotHighlightMethod.AVG_BY_TIME
+    )
+
+    var stateOfChargePlotLine = PlotLine(
+        0f,
+        100f,
+        20f,
+        1f,
+        "%.1f",
+        "%.1f",
+        "% SOC",
+        PlotLabelPosition.RIGHT,
+        PlotHighlightMethod.LAST
     )
 }
 
 lateinit var mainActivityPendingIntent: PendingIntent
 
 var firstPlotValueAdded = false
-
-
 
 class DataCollector : Service() {
     companion object {
@@ -77,16 +126,6 @@ class DataCollector : Service() {
 
     private lateinit var car: Car
     private lateinit var carPropertyManager: CarPropertyManager
-
-    private var currentPowerTime = 0F
-    private var lastPowermW = 0F
-    private var lastPowerTime = 0F
-
-    private var currentSpeedTime = 0F
-    private var lastSpeed = 0F
-    private var lastSpeedTime = 0F
-
-    private var lastBatteryCapacity = 0
 
     private lateinit var notificationTitleString: String
 
@@ -207,10 +246,51 @@ class DataCollector : Service() {
         )
     }
 
+    private fun timestampAsMilliseconds(value: CarPropertyValue<*>) : Float {
+        return TimeUnit.MILLISECONDS.convert(value.timestamp, TimeUnit.NANOSECONDS).toFloat()
+    }
+
+    private val timeDifferenceStore: HashMap<Int, Float> = HashMap()
+
+    private fun timeDifference(value: CarPropertyValue<*>, maxDiff: Float) : Float? {
+        val timeInMilliseconds = timestampAsMilliseconds(value)
+        var timeDifference : Float? = null
+
+        if (timeDifferenceStore.containsKey(value.propertyId)) {
+            timeDifference = timeInMilliseconds - timeDifferenceStore[value.propertyId]!!
+        }
+
+        timeDifferenceStore[value.propertyId] = timeInMilliseconds
+
+        if (timeDifference != null && timeDifference > maxDiff)
+        {
+            return null
+        }
+
+        return timeDifference
+    }
+
+    private val timeTriggerStore: HashMap<Int, Float> = HashMap()
+
+    private fun timerTriggered(value: CarPropertyValue<*>, timer: Float) : Boolean {
+        val timeInMilliseconds = timestampAsMilliseconds(value)
+        var timeTriggered = true
+
+        if (timeTriggerStore.containsKey(value.propertyId)) {
+            timeTriggered = timeTriggerStore[value.propertyId]?.plus(timer)!! <= timeInMilliseconds
+        }
+
+        if (timeTriggered) {
+            timeTriggerStore[value.propertyId] = timeInMilliseconds
+        }
+
+        return timeTriggered
+    }
+
     private var carPropertyPowerListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
             InAppLogger.deepLog("DataCollector.carPropertyPowerListener")
-            powerUpdater(value.value as Float)
+            powerUpdater(value)
             Log.d("carPropertyPowerListener", String.format("Received value %.0f on thread %s", value.value as Float, Thread.currentThread().name))
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
@@ -222,39 +302,7 @@ class DataCollector : Service() {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
             InAppLogger.deepLog("DataCollector.carPropertySpeedListener")
             InAppLogger.logVHALCallback()
-            speedUpdater(value.value as Float)
-            val currentPlotTime = SystemClock.elapsedRealtime().toFloat()
-
-            if (!firstPlotValueAdded) {
-                lastPlotDistance = DataHolder.traveledDistance
-                lastPlotEnergy = DataHolder.usedEnergy
-                lastPlotTime = currentPlotTime
-                firstPlotValueAdded = true
-            } else if (DataHolder.traveledDistance >= (lastPlotDistance + 100)) {
-                val distanceDifference = lastPlotDistance - DataHolder.traveledDistance
-                val powerDifference = lastPlotEnergy - DataHolder.usedEnergy
-                val timeDifference = lastPlotTime - currentPlotTime
-                lastPlotTime = currentPlotTime
-                lastPlotDistance = DataHolder.traveledDistance
-                lastPlotEnergy = DataHolder.usedEnergy
-
-                val newConsumptionPlotValue = powerDifference / (distanceDifference / 1000)
-                val newSpeedPlotValue = distanceDifference / (timeDifference / 3600)
-
-                val seconds = TimeUnit.MILLISECONDS.convert(value.timestamp, TimeUnit.NANOSECONDS) / 1000f
-
-                DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, seconds, DataHolder.traveledDistance)
-                DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, seconds, DataHolder.traveledDistance)
-/*
-                val consumptionPlotLineJSON = Gson().toJson(DataHolder.consumptionPlotLine)
-                val speedPlotLineJSON = Gson().toJson(DataHolder.speedPlotLine)
-
-                sharedPref.edit()
-                    .putString(getString(R.string.userdata_consumption_plot_key), consumptionPlotLineJSON)
-                    .putString(getString(R.string.userdata_speed_plot_key), speedPlotLineJSON)
-                    .apply()
-*/
-            }
+            speedUpdater(value)
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
             Log.w("carPropertySpeedListener", "Received error car property event, propId=$propId")
@@ -264,7 +312,6 @@ class DataCollector : Service() {
     private var carPropertyBatteryListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
             InAppLogger.deepLog("DataCollector.carPropertyBatteryListener")
-            lastBatteryCapacity = DataHolder.currentBatteryCapacity
             DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
@@ -282,35 +329,59 @@ class DataCollector : Service() {
         }
     }
 
-    private fun powerUpdater(value: Float) {
-        if (lastPowerTime != 0F) lastPowerTime = currentPowerTime
-        lastPowermW = DataHolder.currentPowermW
-        DataHolder.currentPowermW = - value
-        currentPowerTime = SystemClock.elapsedRealtime().toFloat()
-        if (lastPowerTime == 0F) lastPowerTime = currentPowerTime
-        else {
-            var timeDifference = currentPowerTime - lastPowerTime
-            if (!DataHolder.chargePortConnected && timeDifference < 10000) {
-                DataHolder.usedEnergy += (lastPowermW / 1000) * (timeDifference / (1000 * 60 * 60))
-                if (DataHolder.traveledDistance <= 0) DataHolder.averageConsumption = 0F
-                else DataHolder.averageConsumption = DataHolder.usedEnergy / (DataHolder.traveledDistance / 1000)
+    private fun powerUpdater(value: CarPropertyValue<*>) {
+        DataHolder.currentPowermW = - (value.value as Float)
+
+        val timeDifference = timeDifference(value, 10_000f)
+        if (timeDifference != null && !DataHolder.chargePortConnected) {
+            DataHolder.usedEnergy += (DataHolder.lastPowermW / 1000) * (timeDifference / (1000 * 60 * 60))
+            DataHolder.averageConsumption = when {
+                DataHolder.traveledDistance <= 0 -> 0F
+                else -> DataHolder.usedEnergy / (DataHolder.traveledDistance / 1_000)
             }
+        }
+
+        if (timerTriggered(value, 2_000f) && DataHolder.chargePortConnected) {
+            DataHolder.chargePlotLine.addDataPoint(- (DataHolder.currentPowermW / 1_000_000), value.timestamp,0f)
+            DataHolder.stateOfChargePlotLine.addDataPoint(100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity, value.timestamp, 0f)
         }
     }
 
-    private fun speedUpdater(value: Float) {
-        if (lastSpeedTime != 0F) lastSpeedTime = currentSpeedTime
-        lastSpeed = DataHolder.currentSpeed
-        DataHolder.currentSpeed = value.absoluteValue
-        currentSpeedTime = SystemClock.elapsedRealtime().toFloat()
-        if (lastSpeedTime == 0F) lastSpeedTime = currentSpeedTime
-        else {
-            var timeDifference = currentSpeedTime - lastSpeedTime
-            if (timeDifference < 1000) {
-                DataHolder.traveledDistance += lastSpeed * (timeDifference / 1000)
-                if (DataHolder.traveledDistance <= 0) DataHolder.averageConsumption = 0F
-                else DataHolder.averageConsumption = DataHolder.usedEnergy / (DataHolder.traveledDistance / 1000)
+    private fun speedUpdater(value: CarPropertyValue<*>) {
+        DataHolder.currentSpeed = (value.value as Float).absoluteValue
+
+        val timeDifference = timeDifference(value, 1_000f)
+        if (timeDifference != null) {
+            DataHolder.traveledDistance += DataHolder.lastSpeed * (timeDifference / 1000)
+            DataHolder.averageConsumption = when {
+                DataHolder.traveledDistance <= 0 -> 0F
+                else -> DataHolder.usedEnergy / (DataHolder.traveledDistance / 1000)
             }
+        }
+
+        val currentPlotTime = timestampAsMilliseconds(value)
+
+        if (!firstPlotValueAdded) {
+            if (DataHolder.lastSpeed != 0f) {
+                lastPlotDistance = DataHolder.traveledDistance
+                lastPlotEnergy = DataHolder.usedEnergy
+                lastPlotTime = currentPlotTime
+                firstPlotValueAdded = true
+            }
+        } else if (!DataHolder.chargePortConnected && DataHolder.traveledDistance >= (lastPlotDistance + 100)) {
+            val distanceDifference = DataHolder.traveledDistance - lastPlotDistance
+            val powerDifference = DataHolder.usedEnergy - lastPlotEnergy
+            val timeDifference = currentPlotTime - lastPlotTime
+
+            val newConsumptionPlotValue = powerDifference / (distanceDifference / 1000)
+            val newSpeedPlotValue = distanceDifference / (timeDifference / 3600)
+
+            DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, value.timestamp, DataHolder.traveledDistance)
+            DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, value.timestamp, DataHolder.traveledDistance)
+
+            lastPlotDistance = DataHolder.traveledDistance
+            lastPlotEnergy = DataHolder.usedEnergy
+            lastPlotTime = currentPlotTime
         }
     }
 
@@ -321,8 +392,7 @@ class DataCollector : Service() {
         val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
             description = descriptionText
         }
-        val notificationManager: NotificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
 
@@ -340,7 +410,7 @@ class DataCollector : Service() {
 
                 val message = String.format(
                     "P:%.1f kW, D: %.3f km, Ø: %s",
-                    DataHolder.currentPowermW / 1000000,
+                    DataHolder.currentPowermW / 1_000_000,
                     DataHolder.traveledDistance / 1000,
                     averageConsumptionString
                 )

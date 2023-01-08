@@ -8,11 +8,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -71,8 +70,7 @@ class MainActivity : Activity() {
         AppPreferences.consumptionUnit = sharedPref.getBoolean(getString(R.string.preferences_consumption_unit_key), false)
         AppPreferences.notifications = sharedPref.getBoolean(getString(R.string.preferences_notifications_key), false)
         AppPreferences.debug = sharedPref.getBoolean(getString(R.string.preferences_debug_key), false)
-        // AppPreferences.consumptionPlot = sharedPref.getBoolean(getString(R.string.preferences_consumption_plot_key), false)
-        AppPreferences.experimentalLayout = sharedPref.getBoolean(getString(R.string.preferences_experimental_layout_key), false)
+        AppPreferences.consumptionPlot = sharedPref.getBoolean(getString(R.string.preferences_consumption_plot_key), false)
         AppPreferences.deepLog = sharedPref.getBoolean(getString(R.string.preferences_deep_log_key), false)
         AppPreferences.plotDistance = sharedPref.getInt(getString(R.string.preferences_plot_distance_key), 1)
         AppPreferences.plotSpeed = sharedPref.getBoolean(getString(R.string.preferences_plot_speed_key), false)
@@ -107,11 +105,19 @@ class MainActivity : Activity() {
         main_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
         main_consumption_plot.addPlotLine(DataHolder.speedPlotLine)
 
-        DataHolder.speedPlotLine.visible = main_checkbox_speed.isChecked
+        DataHolder.speedPlotLine.Visible = main_checkbox_speed.isChecked
 
         main_consumption_plot.dimension = PlotDimension.DISTANCE
         main_consumption_plot.dimensionRestriction = 10_001f
         main_consumption_plot.invalidate()
+
+        main_charge_plot.reset()
+        main_charge_plot.addPlotLine(DataHolder.chargePlotLine)
+        main_charge_plot.addPlotLine(DataHolder.stateOfChargePlotLine)
+
+        main_charge_plot.dimension = PlotDimension.TIME
+        main_charge_plot.dimensionRestriction = null
+        main_charge_plot.invalidate()
 
         main_title.setOnClickListener {
             finish()
@@ -176,10 +182,10 @@ class MainActivity : Activity() {
         }
 
         main_checkbox_speed.setOnClickListener {
-            if (main_checkbox_speed.isChecked && !DataHolder.speedPlotLine.visible) {
-                DataHolder.speedPlotLine.visible = true
-            } else if (!main_checkbox_speed.isChecked && DataHolder.speedPlotLine.visible) {
-                DataHolder.speedPlotLine.visible = false
+            if (main_checkbox_speed.isChecked && !DataHolder.speedPlotLine.Visible) {
+                DataHolder.speedPlotLine.Visible = true
+            } else if (!main_checkbox_speed.isChecked && DataHolder.speedPlotLine.Visible) {
+                DataHolder.speedPlotLine.Visible = false
             }
 
             sharedPref.edit()
@@ -214,6 +220,8 @@ class MainActivity : Activity() {
         }
     }
 
+    private var lastPlotUpdate: Long = 0L
+
     private fun updateActivity() {
         InAppLogger.logUIUpdate()
         /** Use data from DataHolder to Update MainActivity text */
@@ -226,9 +234,43 @@ class MainActivity : Activity() {
             legacy_layout.visibility = View.VISIBLE
         }
 
+        when (AppPreferences.consumptionPlot) {
+            true -> {
+                if (main_consumption_plot_container.visibility == View.GONE && !DataHolder.chargePortConnected) {
+                    main_consumption_plot_container.visibility = View.VISIBLE
+                }
+                else if (main_consumption_plot_container.visibility == View.VISIBLE && DataHolder.chargePortConnected) {
+                    main_consumption_plot_container.visibility = View.GONE
+                }
+
+                if (main_charge_plot_container.visibility == View.GONE && DataHolder.chargePortConnected) {
+                    main_charge_plot.reset()
+                    main_charge_plot_container.visibility = View.VISIBLE
+                }
+                else if (main_charge_plot_container.visibility == View.VISIBLE && !DataHolder.chargePortConnected) {
+                    main_charge_plot_container.visibility = View.GONE
+                }
+            }
+            false -> {
+                main_consumption_plot_container.visibility = View.GONE
+                main_charge_plot_container.visibility = View.GONE
+            }
+        }
+
+        if (SystemClock.elapsedRealtime() - lastPlotUpdate > 1_000L) {
+            if (main_consumption_plot_container.visibility == View.VISIBLE) {
+                main_consumption_plot.invalidate()
+            }
+
+            if (main_charge_plot_container.visibility == View.VISIBLE) {
+                main_charge_plot.invalidate()
+            }
+
+            lastPlotUpdate = SystemClock.elapsedRealtime()
+        }
+
         main_power_gage.setValue(DataHolder.currentPowermW / 1000000)
         main_speed_gage.setValue((DataHolder.currentSpeed * 3.6f).toInt())
-        main_consumption_plot.invalidate()
 
         chargePortConnectedTextView.text = DataHolder.chargePortConnected.toString()
         if (DataHolder.currentPowermW > 0) {
