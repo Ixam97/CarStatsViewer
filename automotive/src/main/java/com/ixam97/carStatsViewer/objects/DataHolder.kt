@@ -73,7 +73,7 @@ object DataHolder {
         "%.0f",
         "Wh/km",
         PlotLabelPosition.LEFT,
-        PlotHighlightMethod.AVG_BY_TIME
+        PlotHighlightMethod.AVG_BY_DISTANCE
     )
 
     var speedPlotLine = PlotLine(
