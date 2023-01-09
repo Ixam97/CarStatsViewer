@@ -13,20 +13,11 @@
 
         <ImageButton
             android:id="@+id/settings_button_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_arrow_back"/>
+            style="@style/title_back_button_style"/>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="@string/settings_title"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="47sp"
-            android:textFontWeight="600"/>
+            style="@style/title_text_style"
+            android:text="@string/settings_title" />
 
         <View
             android:layout_width="0dp"
@@ -49,81 +40,105 @@
         android:background="?android:attr/colorControlActivated"/>
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="10dp"
+        android:orientation="vertical">
+
+        <Switch
+            android:id="@+id/settings_switch_notifications"
+            style="@style/menu_standard_switch_style"
+            android:text="@string/settings_notifications"/>
+
+        <View
+            style="@style/menu_divider_style"
+            android:background="?android:attr/listDivider"/>
+
+        <Switch
+            android:id="@+id/settings_switch_consumption_unit"
+            style="@style/menu_standard_switch_style"
+            android:text="@string/settings_consumption_unit"/>
+
+        <View
+            style="@style/menu_divider_style"
+            android:background="?android:attr/listDivider"/>
+
+        <Switch
+            android:id="@+id/settings_switch_experimental_layout"
+            style="@style/menu_standard_switch_style"
+            android:text="@string/settings_experimental_layout"/>
+
+        <View
+            style="@style/menu_divider_style"
+            android:background="?android:attr/listDivider"/>
+
+        <Switch
+            android:id="@+id/settings_switch_debug"
+            style="@style/menu_standard_switch_style"
+            android:text="@string/settings_debug"
+            android:visibility="gone"/>
+
+        <TextView
+            android:text="@string/settings_consumption_plot"
+            style="@style/menu_button_row_style"
+            />
+
+        <View
+            style="@style/menu_divider_style"
+            android:background="?android:attr/listDivider"/>
+
+        <TextView
+            android:text="@string/settings_charge_plot"
+            style="@style/menu_button_row_style"
+            />
+
+        <View
+            style="@style/menu_divider_style"
+            android:background="?android:attr/listDivider"/>
+
+
+        <!-- Example layout for a menu row with two radio buttons -->
+        <!--
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginVertical="10dp"
-            android:orientation="vertical">
-
-            <Switch
-                android:id="@+id/settings_switch_notifications"
-                android:layout_width="match_parent"
-                android:layout_height="101dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="35sp"
-                android:text="@string/settings_notifications"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_marginVertical="10dp"
-                android:layout_height="2dp"
-                android:background="?android:attr/listDivider" />
-
-            <Switch
-                android:id="@+id/settings_switch_consumption_unit"
-                android:layout_width="match_parent"
-                android:layout_height="101dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="35sp"
-                android:text="@string/settings_consumption_unit"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_marginVertical="10dp"
-                android:layout_height="2dp"
-                android:background="?android:attr/listDivider" />
-
-            <Switch
-                android:id="@+id/settings_switch_experimental_layout"
-                android:layout_width="match_parent"
-                android:layout_height="101dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="35sp"
-                android:text="@string/settings_experimental_layout"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_marginVertical="10dp"
-                android:layout_height="2dp"
-                android:background="?android:attr/listDivider" />
-
-            <Switch
-                android:id="@+id/settings_switch_debug"
-                android:layout_width="match_parent"
-                android:layout_height="101dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="35sp"
-                android:text="@string/settings_debug"
-                android:visibility="gone"/>
-
+            android:layout_height="101dp"
+            android:orientation="horizontal">
             <TextView
-                android:id="@+id/settings_version_text"
-                android:layout_width="match_parent"
-                android:layout_height="101dp"
-                android:text=""
-                android:textColor="@android:color/white"
-                android:textSize="35sp"
-                android:gravity="center_vertical"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:drawableEnd="@drawable/ic_chevron_right"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_marginVertical="10dp"
-                android:layout_height="2dp"
-                android:background="?android:attr/listDivider"/>
+                style="@style/menu_standard_row_label"
+                android:text="Radio Buttons" />
+            <View style="@style/filler"/>
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:text="Option 1"
+                    style="@style/menu_standard_row_label" />
+                <RadioButton
+                    android:text="Option 2"
+                    android:layout_marginStart="20dp"
+                    style="@style/menu_standard_row_label" />
+            </RadioGroup>
 
         </LinearLayout>
+
+        <View
+            style="@style/menu_divider_style"
+            android:background="?android:attr/listDivider"/>
+        -->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/settings_version_text"/>
+
+    </LinearLayout>
 
 
 </LinearLayout>

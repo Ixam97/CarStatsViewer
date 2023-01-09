@@ -20,17 +20,11 @@
 
         <TextView
             android:id="@+id/main_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="@string/app_name"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="47sp"
-            android:textFontWeight="600"/>
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            style="@style/title_text_style"
+            android:text="@string/app_name"/>
+
+        <View style="@style/filler"/>
+
         <ImageButton
             android:id="@+id/main_button_reset"
             android:layout_width="wrap_content"
@@ -61,14 +55,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="10"
+        android:weightSum="14"
         android:visibility="gone">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_weight="6">
+            android:layout_weight="8">
 
             <com.ixam97.carStatsViewer.views.GageView
                 android:id="@+id/main_power_gage"
@@ -92,65 +86,76 @@
 
         </LinearLayout>
 
-
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="4">
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="6">
 
-            <TextView
-                android:id="@+id/main_gage_distance_text_view"
-                android:layout_width="wrap_content"
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="?android:attr/listDivider"
+                android:layout_margin="15dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="35sp"
-                android:drawableStart="@drawable/ic_distance"
-                />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/main_gage_distance_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="35sp"
+                    android:drawableStart="@drawable/ic_distance"
+                    />
 
 
-            <TextView
-                android:id="@+id/main_gage_used_power_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="35sp"
-                android:drawableStart="@drawable/ic_power"
-                />
+                <TextView
+                    android:id="@+id/main_gage_used_power_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="35sp"
+                    android:drawableStart="@drawable/ic_power"
+                    />
 
-            <TextView
-                android:id="@+id/main_gage_avg_consumption_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="35sp"
-                android:drawableStart="@drawable/ic_avg_consumption"
-                />
+                <TextView
+                    android:id="@+id/main_gage_avg_consumption_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="35sp"
+                    android:drawableStart="@drawable/ic_avg_consumption"
+                    />
 
-            <TextView
-                android:id="@+id/main_gage_time_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="35sp"
-                android:drawableStart="@drawable/ic_time"
-                />
+                <TextView
+                    android:id="@+id/main_gage_time_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="35sp"
+                    android:drawableStart="@drawable/ic_time"
+                    />
 
-            <TextView
-                android:id="@+id/main_gage_remaining_range_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="10dp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="35sp"
-                android:drawableStart="@drawable/ic_remaining_range"
-                />
+                <TextView
+                    android:id="@+id/main_gage_remaining_range_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="35sp"
+                    android:drawableStart="@drawable/ic_remaining_range"
+                    />
 
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

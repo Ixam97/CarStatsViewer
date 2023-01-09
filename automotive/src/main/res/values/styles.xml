@@ -23,4 +23,54 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
+
+
+    <style name="title_text_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">20dp</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textSize">47sp</item>
+        <item name="android:textFontWeight">600</item>
+    </style>
+    <style name="title_back_button_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">15dp</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:src">@drawable/ic_arrow_back</item>
+    </style>
+    <style name="menu_standard_switch_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">101dp</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textSize">35sp</item>
+    </style>
+    <style name="menu_standard_row_label">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">35sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+    <style name="menu_button_row_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">101dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">35sp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:drawableEnd">@drawable/ic_chevron_right</item>
+    </style>
+    <style name="menu_divider_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginVertical">10dp</item>
+        <item name="android:layout_height">2dp</item>
+    </style>
+    <style name="filler">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
 </resources>

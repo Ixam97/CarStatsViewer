@@ -15,7 +15,7 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     var gageName : String = "gageName"
         set(value) {
-            field = value
+            field = "$value |"
             this.invalidate()
         }
     var gageUnit : String = "gageUnit"
@@ -62,7 +62,7 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val unitPaint = Paint().apply {
         color = getPrimaryColor()
-        textSize = dpToPx(32f)
+        textSize = dpToPx(30f)
         isAntiAlias = true
     }
 
@@ -118,6 +118,7 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         if (gageValue > maxValue) gageValue = maxValue
 
         val gageValueWidth = valuePaint.measureText(gageValue())
+        val gageNameWidth = namePaint.measureText(gageName)
 
         val gageRectYPos = Math.max(
             borderPaint.strokeWidth,
@@ -140,7 +141,7 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         // canvas.drawRect(0f, 0f, gageWidth, valueYPos, posPaint)
         canvas.drawPath(gageBorder, borderPaint)
         canvas.drawText(gageName, gageWidth + xTextMargin, nameYPos, namePaint)
-        canvas.drawText(gageUnit, gageWidth + xTextMargin * 1.5f + gageValueWidth, unitYPos, unitPaint)
+        canvas.drawText(gageUnit, gageWidth + xTextMargin * 1.5f + gageNameWidth, nameYPos, unitPaint)
         canvas.drawText(gageValue(), gageWidth + xTextMargin, valueYPos, valuePaint)
 
         if (minValue >= 0) gageZeroLineYPos += borderPaint.strokeWidth/2
@@ -165,9 +166,9 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         }
         if (gageValueFloat != null){
             if (gageValueFloat!! > 2 * maxValue)
-                return String.format(">%.1f", (2 * maxValue))
+                return "<%.1f".format(Locale.ENGLISH, (2 * maxValue))
             if (gageValueFloat!! < 2 * minValue && minValue < 0)
-                return  String.format("<%.1f", (2 * minValue))
+                return  "<%.1f".format(Locale.ENGLISH, (2 * minValue))
             return "%.1f".format(Locale.ENGLISH, gageValueFloat)
         } // String.format("%.1f", gageValueFloat)
         return "-"

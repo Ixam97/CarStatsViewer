@@ -13,25 +13,13 @@
 
         <ImageButton
             android:id="@+id/log_button_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_arrow_back"/>
+            style="@style/title_back_button_style"/>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="@string/log_title"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="47sp"
-            android:textFontWeight="600"/>
+            style="@style/title_text_style"
+            android:text="@string/log_title"/>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+        <View style="@style/filler"/>
 
         <ImageButton
             android:id="@+id/log_button_copy"
@@ -57,6 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="?android:attr/colorControlActivated"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,33 +55,21 @@
 
         <Switch
             android:id="@+id/log_switch_deep_log"
-            android:layout_width="match_parent"
-            android:layout_height="101dp"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textSize="35sp"
+            style="@style/menu_standard_switch_style"
             android:text="Deep Log"/>
 
         <View
-            android:layout_width="match_parent"
-            android:layout_marginVertical="10dp"
-            android:layout_height="2dp"
+            style="@style/menu_divider_style"
             android:background="?android:attr/listDivider" />
 
         <TextView
             android:id="@+id/log_reset_log"
-            android:layout_width="match_parent"
-            android:layout_height="101dp"
+            style="@style/menu_button_row_style"
             android:text="Empty Log"
-            android:textColor="@android:color/white"
-            android:textSize="35sp"
-            android:gravity="center_vertical"
-            android:textAppearance="?android:attr/textAppearanceSmall"
             android:drawableEnd="@drawable/ic_delete"/>
 
         <View
-            android:layout_width="match_parent"
-            android:layout_marginVertical="10dp"
-            android:layout_height="2dp"
+            style="@style/menu_divider_style"
             android:background="?android:attr/listDivider" />
 
         <ScrollView

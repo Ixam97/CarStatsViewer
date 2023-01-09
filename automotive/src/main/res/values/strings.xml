@@ -39,8 +39,9 @@
     <string name="settings_notifications">Notifications</string>
     <string name="settings_consumption_unit">Wh/km as consumption unit</string>
     <string name="settings_debug">Debug information</string>
-    <string name="settings_consumption_plot">Show experimental consumption Plot</string>
     <string name="settings_experimental_layout">Show experimental Layout</string>
+    <string name="settings_consumption_plot">Consumption plot settings</string>
+    <string name="settings_charge_plot">Charge plot settings</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">Quit App?</string>
