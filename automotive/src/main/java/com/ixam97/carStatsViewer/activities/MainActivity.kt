@@ -183,6 +183,25 @@ class MainActivity : Activity() {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
+        /** cycle through consumption plot distances when tapping the plot */
+        main_consumption_plot.setOnClickListener {
+            var plotDistanceId = main_radio_10.id
+
+            AppPreferences.plotDistance++
+
+            if (AppPreferences.plotDistance >= 4) AppPreferences.plotDistance = 1
+
+            when (AppPreferences.plotDistance) {
+                1 -> plotDistanceId = main_radio_10.id
+                2 -> plotDistanceId = main_radio_25.id
+                3 -> plotDistanceId = main_radio_50.id
+            }
+            sharedPref.edit()
+                .putInt(getString(R.string.preferences_plot_distance_key), AppPreferences.plotDistance)
+                .apply()
+            main_radio_group_distance.check(plotDistanceId)
+        }
+
         main_radio_group_distance.setOnCheckedChangeListener { group, checkedId ->
             var id = 1
             when (checkedId) {

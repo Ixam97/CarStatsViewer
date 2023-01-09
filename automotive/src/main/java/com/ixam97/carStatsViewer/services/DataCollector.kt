@@ -61,6 +61,7 @@ class DataCollector : Service() {
     }
 
     private lateinit var statsNotification: Notification.Builder
+    private lateinit var foregroundServiceNotification: Notification.Builder
 
     inner class LocalBinder : Binder() {
         fun getService(): DataCollector = this@DataCollector
@@ -73,7 +74,7 @@ class DataCollector : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        val foregroundServiceNotification = Notification.Builder(this, CHANNEL_ID)
+        foregroundServiceNotification = Notification.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(getString(R.string.foreground_service_info))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -276,14 +277,8 @@ class DataCollector : Service() {
 
             when (value.propertyId) {
                 VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
-                VehiclePropertyIds.GEAR_SELECTION -> {
-                    DataHolder.currentGear = value.value as Int
-                    InAppLogger.log("Current gear: ${DataHolder.currentGear}")
-                }
-                VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> {
-                    DataHolder.chargePortConnected = value.value as Boolean
-                    InAppLogger.log("Charge Port Connected: ${DataHolder.chargePortConnected}")
-                }
+                VehiclePropertyIds.GEAR_SELECTION -> DataHolder.currentGear = value.value as Int
+                VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> DataHolder.chargePortConnected = value.value as Boolean
             }
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
@@ -407,13 +402,17 @@ class DataCollector : Service() {
                 )
 
                 statsNotification.setContentText(message)
+                foregroundServiceNotification.setContentText(message)
                 notify(statsNotificationId, statsNotification.build())
+                notify(foregroundNotificationId, foregroundServiceNotification.build())
             }
         } else if (notificationsEnabled && !AppPreferences.notifications) {
             notificationsEnabled = false
             with(NotificationManagerCompat.from(this)) {
                 cancel(statsNotificationId)
             }
+            foregroundServiceNotification.setContentText(getString(R.string.foreground_service_info))
+            NotificationManagerCompat.from(this).notify(foregroundNotificationId, foregroundServiceNotification.build())
         } else if (!notificationsEnabled && AppPreferences.notifications) {
             notificationsEnabled = true
         }
