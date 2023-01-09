@@ -29,8 +29,8 @@ class PlotLine(
 
     var plotPaint: PlotPaint? = null
 
-    fun addDataPoint(item: Float, timestamp: Long, distance: Float) {
-        dataPoints[dataPoints.size] = PlotLineItem(item, timestamp, distance)
+    fun addDataPoint(item: Float, timestamp: Long, distance: Float, plotMarker: PlotMarker? = null) {
+        dataPoints[dataPoints.size] = PlotLineItem(item, timestamp, distance, plotMarker)
     }
 
     fun reset() {
@@ -43,8 +43,8 @@ class PlotLine(
             null -> clone
             else -> when (dimension) {
                 PlotDimension.INDEX -> when (clone.size > dimensionRestriction) {
-                   true -> clone.filterIndexed { index, _ -> index >= dimensionRestriction }
-                   else -> clone
+                    true -> clone.filterIndexed { index, _ -> index >= dimensionRestriction }
+                    else -> clone
                 }
                 PlotDimension.DISTANCE -> {
                     val min = clone.last().Distance - dimensionRestriction
@@ -126,28 +126,40 @@ class PlotLine(
             PlotHighlightMethod.AVG_BY_DISTANCE -> {
                 var last : Float? = null
                 var value = 0F
+                var distance = 0F
                 for (point in dataPoints) {
-                    if (last != null) {
-                        value += (point.Distance - last) * point.Value
+                    if (last != null && point.Marker != PlotMarker.BEGIN_SESSION) {
+                        val diff = point.Distance - last
+                        distance += diff
+                        value +=  diff * point.Value
                     }
 
                     last = point.Distance
                 }
 
-                return value / (dataPoints.last().Distance - dataPoints.first().Distance)
+                return when(distance) {
+                    0f -> null
+                    else -> value / distance
+                }
             }
             PlotHighlightMethod.AVG_BY_TIME -> {
                 var last : Long? = null
                 var value = 0F
+                var distance = 0L
                 for (point in dataPoints) {
-                    if (last != null) {
-                        value += (point.Timestamp - last) * point.Value
+                    if (last != null && point.Marker != PlotMarker.BEGIN_SESSION) {
+                        val diff = point.Timestamp - last
+                        distance += diff
+                        value += diff * point.Value
                     }
 
                     last = point.Timestamp
                 }
 
-                return value / (dataPoints.last().Timestamp - dataPoints.first().Timestamp)
+                return when(distance) {
+                    0L -> null
+                    else -> value / distance
+                }
             }
             else -> null
         }
@@ -196,7 +208,8 @@ class PlotLine(
 class PlotLineItem (
     val Value: Float,
     val Timestamp: Long,
-    val Distance: Float
+    val Distance: Float,
+    val Marker: PlotMarker?
 ){
     val timestampInSeconds: Float
         get() {
@@ -227,4 +240,8 @@ enum class PlotLabelPosition {
 
 enum class PlotHighlightMethod {
     MIN, MAX, FIRST, LAST, AVG_BY_INDEX, AVG_BY_DISTANCE, AVG_BY_TIME, NONE
+}
+
+enum class PlotMarker {
+    BEGIN_SESSION, END_SESSION
 }

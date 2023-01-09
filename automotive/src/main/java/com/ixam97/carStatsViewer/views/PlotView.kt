@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import com.ixam97.carStatsViewer.plot.*
-import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.ceil
 
@@ -164,80 +164,97 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             val minValue = line.minValue(dataPoints)!!
             val maxValue = line.maxValue(dataPoints)!!
 
-            val prePlotPoints = ArrayList<PlotLineItemPoint>()
+            val prePlotPointCollections = ArrayList<ArrayList<PlotLineItemPoint>>()
+            var prePlotPoints = ArrayList<PlotLineItemPoint>()
+
             for (index in dataPoints.indices) {
                 val item = dataPoints[index]
+
                 prePlotPoints.add(
                     PlotLineItemPoint(
-                    when (dimension) {
-                        PlotDimension.INDEX -> PlotLineItem.cord((dimensionRestriction?:dataPoints.size.toFloat()) - dataPoints.size + index, 0f, (dimensionRestriction?:dataPoints.size.toFloat()) - 1f)
-                        PlotDimension.DISTANCE -> line.x(item.Distance, dimension, dimensionRestriction, dataPoints)
-                        PlotDimension.TIME -> line.x(item.timestampInSeconds, dimension, dimensionRestriction, dataPoints)
-                    },
-                    item
+                        when (dimension) {
+                            PlotDimension.INDEX -> PlotLineItem.cord((dimensionRestriction?:dataPoints.size.toFloat()) - dataPoints.size + index, 0f, (dimensionRestriction?:dataPoints.size.toFloat()) - 1f)
+                            PlotDimension.DISTANCE -> line.x(item.Distance, dimension, dimensionRestriction, dataPoints)
+                            PlotDimension.TIME -> line.x(item.timestampInSeconds, dimension, dimensionRestriction, dataPoints)
+                        },
+                        item
+                    )
                 )
-                )
+
+                if (item.Marker == PlotMarker.END_SESSION) {
+                    prePlotPointCollections.add(prePlotPoints)
+                    prePlotPoints = ArrayList()
+                }
             }
+            prePlotPointCollections.add(prePlotPoints)
 
-            val postPlotPoints = ArrayList<PlotPoint>()
-            val min = prePlotPoints.minBy { it.x }?.x!!
-            val groupBy = 5 / areaX
+            val postPlotPointCollections = ArrayList<ArrayList<PlotPoint>>()
+            for (midPlotPoints in prePlotPointCollections) {
+                if (midPlotPoints.isEmpty()) continue
 
-            for (group in prePlotPoints.groupBy { ceil((it.x - min) / groupBy).toInt() }) {
-                val postPoint = when (group.value.size > 1) {
-                    false -> {
-                        val point = group.value.first()
-                        PlotPoint(
-                            x(point.x, 0f, 1f, maxX)!!,
-                            y(point.y.Value, minValue, maxValue, maxY)!!
-                        )
-                    }
-                    else -> {
-                        val x = when (group.key) {
-                            0 -> group.value.minBy { it.x }?.x!!
-                            else -> group.value.maxBy { it.x }?.x!!
+                val postPlotPoints = ArrayList<PlotPoint>()
+                val min = midPlotPoints.minBy { it.x }?.x!!
+                val groupBy = 5 / areaX
+
+                for (group in midPlotPoints.groupBy { ceil((it.x - min) / groupBy).toInt() }) {
+                    val postPoint = when (group.value.size > 1) {
+                        false -> {
+                            val point = group.value.first()
+                            PlotPoint(
+                                x(point.x, 0f, 1f, maxX)!!,
+                                y(point.y.Value, minValue, maxValue, maxY)!!
+                            )
                         }
+                        else -> {
+                            val x = when (group.key) {
+                                0 -> group.value.minBy { it.x }?.x!!
+                                else -> group.value.maxBy { it.x }?.x!!
+                            }
 
-                        PlotPoint(
-                            x(x, 0f, 1f, maxX)!!,
-                            y(line.averageValue(group.value.map { it.y }, dimension), minValue, maxValue, maxY)!!
-                        )
+                            PlotPoint(
+                                x(x, 0f, 1f, maxX)!!,
+                                y(line.averageValue(group.value.map { it.y }, dimension), minValue, maxValue, maxY)!!
+                            )
+                        }
                     }
+
+                    postPlotPoints.add(postPoint)
+                }
+                postPlotPointCollections.add(postPlotPoints)
+            }
+
+            for (postPlotPoints in postPlotPointCollections) {
+                val path = Path()
+                var prevPoint: PlotPoint? = null
+
+                for (i in postPlotPoints.indices) {
+                    val point = postPlotPoints[i]
+
+                    if (i == 0) {
+                        path.moveTo(point.x, point.y)
+                        if (postPlotPoints.size == 1) {
+                            path.lineTo(point.x, point.y)
+                        }
+                    } else if (prevPoint != null) {
+                        val midX = (prevPoint.x + point.x) / 2
+                        val midY = (prevPoint.y + point.y) / 2
+
+                        if (i == 1) {
+                            path.lineTo(midX, midY)
+                        } else {
+                            path.quadTo(prevPoint.x, prevPoint.y, midX, midY)
+                        }
+                    }
+
+                    prevPoint = point
                 }
 
-                postPlotPoints.add(postPoint)
-            }
-
-            val path = Path()
-            var prevPoint: PlotPoint? = null
-
-            for (i in postPlotPoints.indices) {
-                val point = postPlotPoints[i]
-
-                if (i == 0) {
-                    path.moveTo(point.x, point.y)
-                    if (postPlotPoints.size == 1) {
-                        path.lineTo(point.x, point.y)
-                    }
-                } else if (prevPoint != null) {
-                    val midX = (prevPoint.x + point.x) / 2
-                    val midY = (prevPoint.y + point.y) / 2
-
-                    if (i == 1) {
-                        path.lineTo(midX, midY)
-                    } else {
-                        path.quadTo(prevPoint.x, prevPoint.y, midX, midY)
-                    }
+                if (prevPoint != null) {
+                    path.lineTo(prevPoint.x, prevPoint.y)
                 }
 
-                prevPoint = point
+                canvas.drawPath(path, line.plotPaint!!.Plot)
             }
-
-            if (prevPoint != null) {
-                path.lineTo(prevPoint.x, prevPoint.y)
-            }
-
-            canvas.drawPath(path, line.plotPaint!!.Plot)
         }
     }
 
