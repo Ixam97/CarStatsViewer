@@ -287,7 +287,7 @@ class DataCollector : Service() {
             }
         }
 
-        if (timerTriggered(value, 2_000f) && DataHolder.chargePortConnected) {
+        if (timerTriggered(value, 2_000f) && DataHolder.chargePortConnected && DataHolder.currentPowermW < 0) {
             DataHolder.chargePlotLine.addDataPoint(- (DataHolder.currentPowermW / 1_000_000), value.timestamp,0f)
             DataHolder.stateOfChargePlotLine.addDataPoint(100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity, value.timestamp, 0f)
         }
