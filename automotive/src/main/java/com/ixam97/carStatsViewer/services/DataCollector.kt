@@ -16,7 +16,9 @@ import android.content.SharedPreferences
 import android.graphics.BitmapFactory
 import android.os.*
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
+import com.ixam97.carStatsViewer.activities.devMode
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 
@@ -113,6 +115,14 @@ class DataCollector : Service() {
         DataHolder.maxBatteryCapacity = carPropertyManager
             .getProperty<Float>(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
             .value.toInt()
+
+
+        /** Get vehicle name to enable dev mode in emulator */
+        val carName = carPropertyManager.getProperty<String>(VehiclePropertyIds.INFO_MODEL, 0).value.toString()
+        if (carName == "Speedy Model") {
+            Toast.makeText(this, "Dev Mode", Toast.LENGTH_LONG).show()
+            devMode = true
+        }
 
         DataHolder.currentGear = carPropertyManager.getIntProperty(VehiclePropertyIds.GEAR_SELECTION, 0)
 

@@ -19,6 +19,8 @@ import android.view.View
 import com.ixam97.carStatsViewer.plot.PlotDimension
 import kotlinx.android.synthetic.main.activity_main.*
 
+var devMode = false
+
 class MainActivity : Activity() {
     companion object {
         private val permissions = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED)
