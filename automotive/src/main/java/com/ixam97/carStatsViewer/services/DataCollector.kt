@@ -82,7 +82,7 @@ class DataCollector : Service() {
             .setContentText("Test Notification from Car Stats Viewer")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher_foreground))
-            // .setStyle(Notification.MediaStyle())
+            .setStyle(Notification.MediaStyle())
             .setCategory(Notification.CATEGORY_TRANSPORT)
             .setOngoing(true)
 
@@ -177,7 +177,7 @@ class DataCollector : Service() {
 
         carPropertyManager.registerCallback(
             carPropertyGenericListener,
-            VehiclePropertyIds.CURRENT_GEAR,
+            VehiclePropertyIds.GEAR_SELECTION,
             CarPropertyManager.SENSOR_RATE_ONCHANGE
         )
     }
@@ -266,8 +266,14 @@ class DataCollector : Service() {
 
             when (value.propertyId) {
                 VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
-                VehiclePropertyIds.CURRENT_GEAR -> DataHolder.currentGear = value.value as Int
-                VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> DataHolder.chargePortConnected = value.value as Boolean
+                VehiclePropertyIds.GEAR_SELECTION -> {
+                    DataHolder.currentGear = value.value as Int
+                    InAppLogger.log("Current gear: ${DataHolder.currentGear}")
+                }
+                VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> {
+                    DataHolder.chargePortConnected = value.value as Boolean
+                    InAppLogger.log("Charge Port Connected: ${DataHolder.chargePortConnected}")
+                }
             }
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
