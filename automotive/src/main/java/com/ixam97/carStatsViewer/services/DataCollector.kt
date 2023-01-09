@@ -6,6 +6,7 @@ import com.ixam97.carStatsViewer.objects.*
 import com.ixam97.carStatsViewer.*
 import android.app.*
 import android.car.Car
+import android.car.VehicleGear
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
@@ -21,8 +22,6 @@ import kotlin.math.absoluteValue
 
 lateinit var mainActivityPendingIntent: PendingIntent
 
-var firstPlotValueAdded = false
-
 class DataCollector : Service() {
     companion object {
         private const val CHANNEL_ID = "TestChannel"
@@ -30,9 +29,11 @@ class DataCollector : Service() {
         private const val foregroundNotificationId = 2
     }
 
-    var lastPlotDistance = 0F
-    var lastPlotEnergy = 0F
-    var lastPlotTime = 0F
+    private var consumptionPlotTracking = false
+    private var lastPlotDistance = 0F
+    private var lastPlotEnergy = 0F
+    private var lastPlotTime = 0F
+    private var lastPlotGear = VehicleGear.GEAR_PARK
 
     private var notificationCounter = 0
 
@@ -113,6 +114,8 @@ class DataCollector : Service() {
             .getProperty<Float>(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
             .value.toInt()
 
+        DataHolder.currentGear = carPropertyManager.getIntProperty(VehiclePropertyIds.GEAR_SELECTION, 0)
+
         notificationTitleString = resources.getString(R.string.notification_title)
         statsNotification.setContentTitle(notificationTitleString).setContentIntent(mainActivityPendingIntent)
 
@@ -159,14 +162,22 @@ class DataCollector : Service() {
             VehiclePropertyIds.PERF_VEHICLE_SPEED,
             CarPropertyManager.SENSOR_RATE_FASTEST
         )
-        val batteryRegistered = carPropertyManager.registerCallback(
-            carPropertyBatteryListener,
+
+        carPropertyManager.registerCallback(
+            carPropertyGenericListener,
             VehiclePropertyIds.EV_BATTERY_LEVEL,
             CarPropertyManager.SENSOR_RATE_ONCHANGE
         )
-        val plugRegistered = carPropertyManager.registerCallback(
-            carPropertyPortListener,
+
+        carPropertyManager.registerCallback(
+            carPropertyGenericListener,
             VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED,
+            CarPropertyManager.SENSOR_RATE_ONCHANGE
+        )
+
+        carPropertyManager.registerCallback(
+            carPropertyGenericListener,
+            VehiclePropertyIds.CURRENT_GEAR,
             CarPropertyManager.SENSOR_RATE_ONCHANGE
         )
     }
@@ -249,27 +260,18 @@ class DataCollector : Service() {
         }
     }
 
-    private var carPropertyBatteryListener = object : CarPropertyManager.CarPropertyEventCallback {
+    private var carPropertyGenericListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
-            InAppLogger.deepLog("DataCollector.carPropertyBatteryListener")
-            DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
-        }
-        override fun onErrorEvent(propId: Int, zone: Int) {
-            Log.w("carPropertyBatteryListener",
-                "Received error car property event, propId=$propId")
-        }
-    }
+            InAppLogger.deepLog("DataCollector.carPropertyGenericListener")
 
-    private var carPropertyPortListener = object : CarPropertyManager.CarPropertyEventCallback {
-        override fun onChangeEvent(value: CarPropertyValue<*>) {
-            InAppLogger.log(String.format(
-                "DataCollector.carPropertyPortListener on Thread: %s",
-                Thread.currentThread().name))
-            DataHolder.chargePortConnected = value.value as Boolean
+            when (value.propertyId) {
+                VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
+                VehiclePropertyIds.CURRENT_GEAR -> DataHolder.currentGear = value.value as Int
+                VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> DataHolder.chargePortConnected = value.value as Boolean
+            }
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
-            Log.w("carPropertyPortListener",
-                "Received error car property event, propId=$propId")
+            Log.w("carPropertyGenericListener","Received error car property event, propId=$propId")
         }
     }
 
@@ -292,7 +294,19 @@ class DataCollector : Service() {
     }
 
     private fun speedUpdater(value: CarPropertyValue<*>) {
-        DataHolder.currentSpeed = (value.value as Float).absoluteValue
+        val currentPlotTime = timestampAsMilliseconds(value)
+
+        // speed in park = 0 (overrule emulator)
+        DataHolder.currentSpeed = when (DataHolder.currentGear) {
+            VehicleGear.GEAR_PARK -> 0f
+            else -> (value.value as Float).absoluteValue
+        }
+
+        // after reset
+        if (DataHolder.traveledDistance == 0f) {
+            consumptionPlotTracking = false
+            resetPlotVar(currentPlotTime)
+        }
 
         val timeDifference = timeDifference(value, 1_000f)
         if (timeDifference != null) {
@@ -303,16 +317,12 @@ class DataCollector : Service() {
             }
         }
 
-        val currentPlotTime = timestampAsMilliseconds(value)
+        if (!consumptionPlotTracking && timeDifference != null) {
+            consumptionPlotTracking = DataHolder.currentGear != VehicleGear.GEAR_PARK
+            resetPlotVar(currentPlotTime)
+        }
 
-        if (!firstPlotValueAdded) {
-            if (timeDifference != null) {
-                lastPlotDistance = DataHolder.traveledDistance
-                lastPlotEnergy = DataHolder.usedEnergy
-                lastPlotTime = currentPlotTime
-                firstPlotValueAdded = true
-            }
-        } else if (!DataHolder.chargePortConnected && DataHolder.traveledDistance >= (lastPlotDistance + 100)) {
+        if (consumptionPlotTracking && (DataHolder.currentGear == VehicleGear.GEAR_PARK || DataHolder.traveledDistance >= (lastPlotDistance + 100))) {
             val distanceDifference = DataHolder.traveledDistance - lastPlotDistance
             val powerDifference = DataHolder.usedEnergy - lastPlotEnergy
             val timeDifference = currentPlotTime - lastPlotTime
@@ -320,13 +330,30 @@ class DataCollector : Service() {
             val newConsumptionPlotValue = powerDifference / (distanceDifference / 1000)
             val newSpeedPlotValue = distanceDifference / (timeDifference / 3600)
 
-            DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, value.timestamp, DataHolder.traveledDistance)
-            DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, value.timestamp, DataHolder.traveledDistance)
+            val plotMarker = when(lastPlotGear) {
+                VehicleGear.GEAR_PARK -> PlotMarker.BEGIN_SESSION
+                else -> when (DataHolder.currentGear) {
+                    VehicleGear.GEAR_PARK -> PlotMarker.END_SESSION
+                    else -> null
+                }
+            }
+
+            DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, value.timestamp, DataHolder.traveledDistance, plotMarker)
+            DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, value.timestamp, DataHolder.traveledDistance, plotMarker)
 
             lastPlotDistance = DataHolder.traveledDistance
             lastPlotEnergy = DataHolder.usedEnergy
+            lastPlotGear = DataHolder.currentGear
             lastPlotTime = currentPlotTime
+
+            consumptionPlotTracking = DataHolder.currentGear != VehicleGear.GEAR_PARK
         }
+    }
+
+    private fun resetPlotVar(currentPlotTime: Float) {
+        lastPlotDistance = DataHolder.traveledDistance
+        lastPlotEnergy = DataHolder.usedEnergy
+        lastPlotTime = currentPlotTime
     }
 
     private fun createNotificationChannel() {

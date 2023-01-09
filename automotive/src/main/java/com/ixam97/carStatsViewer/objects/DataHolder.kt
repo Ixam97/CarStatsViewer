@@ -1,10 +1,13 @@
 package com.ixam97.carStatsViewer.objects
 
+import android.car.VehicleGear
 import com.ixam97.carStatsViewer.plot.*
 
 object DataHolder {
 
     private const val maxSmoothSize = 20
+
+    var currentGear: Int = VehicleGear.GEAR_PARK
 
     var currentPowermW = 0F
         set(value) {

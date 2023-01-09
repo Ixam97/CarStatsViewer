@@ -386,7 +386,7 @@ class MainActivity : Activity() {
         main_consumption_plot.reset()
         //DataHolder.consumptionPlotLine.addDataPoint(0f)
         //DataHolder.speedPlotLine.addDataPoint(DataHolder.currentSpeed * 3.6f)
-        firstPlotValueAdded = false
+
         DataHolder.traveledDistance = 0F
         traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)
         DataHolder.usedEnergy = 0F
