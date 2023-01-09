@@ -171,7 +171,7 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
                 return  "<%.1f".format(Locale.ENGLISH, (2 * minValue))
             return "%.1f".format(Locale.ENGLISH, gageValueFloat)
         } // String.format("%.1f", gageValueFloat)
-        return "-"
+        return "-/-"
     }
 
     private fun dpToPx(dpSize: Float) : Float {

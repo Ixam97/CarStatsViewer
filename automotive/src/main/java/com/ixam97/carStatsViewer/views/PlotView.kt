@@ -59,6 +59,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private lateinit var labelPaint: Paint
     private lateinit var labelLinePaint: Paint
     private lateinit var baseLinePaint: Paint
+    private lateinit var backgroundPaint: Paint
 
     init {
         setupPaint()
@@ -79,6 +80,10 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         baseLinePaint = Paint(labelLinePaint)
         baseLinePaint.color = Color.LTGRAY
+
+        backgroundPaint = Paint(basePaint)
+        backgroundPaint.color = Color.BLACK
+        backgroundPaint.style = Paint.Style.FILL
 
         val plotColors = listOf(
             null,
@@ -147,7 +152,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         super.onDraw(canvas)
         drawXLines(canvas)
         drawYLines(canvas)
-        drawPlot(canvas)
+        // drawPlot(canvas) Moved to drawYLines to move it behind labels
     }
 
     private fun drawPlot(canvas: Canvas) {
@@ -368,19 +373,46 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 }
             }
 
-            if (labelCordX != null && highlightCordY != null) {
-                val label = String.format(line.HighlightFormat, highlight!! / line.Divider)
-                canvas.drawText(label, labelCordX, highlightCordY + labelShiftY, line.plotPaint!!.HighlightLabel)
+            when (line.HighlightMethod) {
+                PlotHighlightMethod.AVG_BY_INDEX -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
+                PlotHighlightMethod.AVG_BY_DISTANCE -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
+                PlotHighlightMethod.AVG_BY_TIME -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
+                else -> {
+                    // Don't draw
+                }
             }
 
             for (baseLineAt in line.baseLineAt) {
                 drawYLine(canvas, y(baseLineAt, minValue, maxValue, maxY), maxX, baseLinePaint)
             }
 
-            when (line.HighlightMethod) {
-                PlotHighlightMethod.AVG_BY_INDEX -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
-                PlotHighlightMethod.AVG_BY_DISTANCE -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
-                PlotHighlightMethod.AVG_BY_TIME -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
+            drawPlot(canvas)
+
+            if (labelCordX != null && highlightCordY != null) {
+                val label = String.format(line.HighlightFormat, highlight!! / line.Divider)
+                line.plotPaint!!.HighlightLabel.textSize = 35f
+                val labelWidth = line.plotPaint!!.HighlightLabel.measureText(label)
+                val labelHeight = line.plotPaint!!.HighlightLabel.textSize
+                val textBoxMargin = line.plotPaint!!.HighlightLabel.textSize / 3.5f
+                canvas.drawRoundRect(
+                    labelCordX + labelUnitXOffset - textBoxMargin,
+                    highlightCordY - labelHeight + labelShiftY,
+                    labelCordX + labelUnitXOffset + labelWidth + textBoxMargin,
+                    highlightCordY + labelShiftY + textBoxMargin,
+                    5f,
+                    5f,
+                    backgroundPaint
+                )
+                canvas.drawRoundRect(
+                    labelCordX + labelUnitXOffset - textBoxMargin,
+                    highlightCordY - labelHeight + labelShiftY,
+                    labelCordX + labelUnitXOffset + labelWidth + textBoxMargin,
+                    highlightCordY + labelShiftY + textBoxMargin,
+                    5f,
+                    5f,
+                    line.plotPaint!!.Plot
+                )
+                canvas.drawText(label, labelCordX + labelUnitXOffset, highlightCordY + labelShiftY, line.plotPaint!!.HighlightLabel)
             }
         }
     }
