@@ -9,11 +9,13 @@ Based on https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerK
 ## Changelog [DE]:
 
 ### 0.16 (10.01.2023)
-- Labels der Diagramme hervorgehoben
-- 50km bei Diagrammen durch "Trip" ersetzt
-- Kleinere UI-Anpassungen
-- Fahrzeit hinzugefügt
-- Allgemeine Stabilitätsverbessrungen
+ - Labels der Diagramme hervorgehoben
+ - 50km bei Diagrammen durch "Trip" ersetzt (Zeigt die gesamte Strecke seit dem letzten Reset in 10km-Schritten an)
+ - Zwischen den Distanzen kann durch ein Tippen auf das Diagramm durchgeschaltet werden
+ - Kleinere UI-Anpassungen
+ - Fahrzeit hinzugefügt
+ - Mittelwertberechnung in den Diagrammen korrigiert
+ - Allgemeine Stabilitätsverbessrungen
 
 ### 0.15 (08.01.2023)
 - Ladekurve hinzugefügt.
