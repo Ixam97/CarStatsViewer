@@ -19,7 +19,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import com.ixam97.carStatsViewer.activities.devMode
-import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
@@ -42,6 +41,8 @@ class DataCollector : Service() {
 
     private var notificationCounter = 0
 
+    private var parkTimestamp: Long = 0
+
     private lateinit var sharedPref: SharedPreferences
 
     private val mBinder: LocalBinder = LocalBinder()
@@ -59,7 +60,6 @@ class DataCollector : Service() {
         override fun run() {
             updateStatsNotification()
             InAppLogger.logNotificationUpdate()
-            Log.d("Distance test", "Traveled Distance: %.3f".format(Locale.ENGLISH, DataHolder.traveledDistance / 1000))
             timerHandler.postDelayed(this, 500)
         }
     }
@@ -102,18 +102,8 @@ class DataCollector : Service() {
         sharedPref = this.getSharedPreferences(
             getString(R.string.preferences_file_key),
             Context.MODE_PRIVATE)
-/*
-        val consumptionPlotLineJSON = sharedPref.getString(getString(R.string.userdata_consumption_plot_key), "")
-        val speedPlotLineJSON = sharedPref.getString(getString(R.string.userdata_speed_plot_key), "")
 
-        if (consumptionPlotLineJSON != "") DataHolder.consumptionPlotLine = Gson().fromJson(consumptionPlotLineJSON, PlotLine::class.java)
-        if (speedPlotLineJSON != "") DataHolder.consumptionPlotLine = Gson().fromJson(speedPlotLineJSON, PlotLine::class.java)
-*/
         notificationsEnabled = AppPreferences.notifications
-
-        // val carPropertyCallbacksTaskHandlerThread = HandlerThread("CarPropertyCallbacksTaskThread")
-        // carPropertyCallbacksTaskHandlerThread.start()
-        // val carPropertyCallbacksTaskHandler = Handler(carPropertyCallbacksTaskHandlerThread.looper)
 
         car = Car.createCar(this)
         carPropertyManager = car.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager;
@@ -123,6 +113,9 @@ class DataCollector : Service() {
 
         DataHolder.currentGear = carPropertyManager.getIntProperty(VehiclePropertyIds.GEAR_SELECTION, 0)
 
+        DataHolder.resetTimestamp = System.nanoTime()
+        if (DataHolder.currentGear == VehicleGear.GEAR_PARK) parkTimestamp = DataHolder.resetTimestamp
+
         /** Get vehicle name to enable dev mode in emulator */
         val carName = carPropertyManager.getProperty<String>(VehiclePropertyIds.INFO_MODEL, 0).value.toString()
         if (carName == "Speedy Model") {
@@ -131,9 +124,10 @@ class DataCollector : Service() {
             DataHolder.currentGear = VehicleGear.GEAR_DRIVE
         }
 
+
+
         notificationTitleString = resources.getString(R.string.notification_title)
         statsNotification.setContentTitle(notificationTitleString).setContentIntent(mainActivityPendingIntent)
-
 
         createNotificationChannel()
 
@@ -283,6 +277,8 @@ class DataCollector : Service() {
                 VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
                 VehiclePropertyIds.GEAR_SELECTION -> {
                     if (!devMode) DataHolder.currentGear = value.value as Int
+                    if (value.value as Int == VehicleGear.GEAR_PARK) parkTimestamp = System.nanoTime()
+                    else DataHolder.resetTimestamp += (System.nanoTime() - parkTimestamp)
                 }
                 VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> DataHolder.chargePortConnected = value.value as Boolean
             }

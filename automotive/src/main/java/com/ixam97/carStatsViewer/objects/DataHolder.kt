@@ -6,6 +6,7 @@ import com.ixam97.carStatsViewer.plot.*
 object DataHolder {
 
     private const val maxSmoothSize = 20
+    private const val FTC = 2f
 
     var currentGear: Int = VehicleGear.GEAR_PARK
 
@@ -14,15 +15,16 @@ object DataHolder {
             lastPowermW = field
             field = value
 
-            currentPowerSmoothArray.add(value)
-            if (currentPowerSmoothArray.size > maxSmoothSize) currentPowerSmoothArray.removeAt(0)
+            currentPowerSmooth += ((1f / FTC) * (value - currentPowerSmooth))
+            // currentPowerSmoothArray.add(value)
+            // if (currentPowerSmoothArray.size > maxSmoothSize) currentPowerSmoothArray.removeAt(0)
         }
 
     private var currentPowerSmoothArray = arrayListOf<Float>()
     var currentPowerSmooth = 0f
-        get() {
-            return currentPowerSmoothArray.average().toFloat()
-        }
+        //get() {
+        //    return currentPowerSmooth // Array.average().toFloat()
+        //}
         private set
 
     var lastPowermW = 0F
@@ -33,14 +35,15 @@ object DataHolder {
             lastSpeed = field
             field = value
 
-            currentSpeedSmoothArray.add(value)
-            if (currentSpeedSmoothArray.size > maxSmoothSize) currentSpeedSmoothArray.removeAt(0)
+            currentSpeedSmooth += ((1f / FTC) * (value - currentSpeedSmooth))
+            // currentSpeedSmoothArray.add(value)
+            // if (currentSpeedSmoothArray.size > maxSmoothSize) currentSpeedSmoothArray.removeAt(0)
         }
     private var currentSpeedSmoothArray = arrayListOf<Float>()
     var currentSpeedSmooth = 0f
-        get() {
-            return currentSpeedSmoothArray.average().toFloat()
-        }
+        //get() {
+        //    return currentSpeedSmooth // Array.average().toFloat()
+        //}
         private set
 
 
@@ -61,8 +64,8 @@ object DataHolder {
     var traveledDistance = 0F
     var usedEnergy = 0F
     var averageConsumption = 0F
-
     var chargePortConnected = false
+    var resetTimestamp = 0L
 
     var consumptionPlotLine = PlotLine(
         -200f,

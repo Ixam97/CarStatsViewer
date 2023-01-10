@@ -78,7 +78,7 @@
             style="@style/menu_standard_switch_style"
             android:text="@string/settings_debug"
             android:visibility="gone"/>
-
+        <!--
         <TextView
             android:text="@string/settings_consumption_plot"
             style="@style/menu_button_row_style"
@@ -96,7 +96,7 @@
         <View
             style="@style/menu_divider_style"
             android:background="?android:attr/listDivider"/>
-
+        -->
 
         <!-- Example layout for a menu row with two radio buttons -->
         <!--

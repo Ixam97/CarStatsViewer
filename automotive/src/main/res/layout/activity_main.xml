@@ -141,7 +141,7 @@
                     android:layout_marginTop="5dp"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="35sp"
-                    android:text="  1:23:45"
+                    android:text="  00:00:00"
                     android:drawableStart="@drawable/ic_time"
                     />
 
@@ -153,7 +153,7 @@
                     android:layout_marginBottom="10dp"
                     android:textColor="?android:attr/textColorPrimary"
                     android:textSize="35sp"
-                    android:text="  123 km"
+                    android:text="  --- km"
                     android:drawableStart="@drawable/ic_remaining_range"
                     />
 

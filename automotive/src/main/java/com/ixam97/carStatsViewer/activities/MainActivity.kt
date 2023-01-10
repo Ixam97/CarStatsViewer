@@ -7,6 +7,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.PendingIntent
 import android.car.Car
+import android.car.VehicleGear
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -18,6 +19,7 @@ import android.os.SystemClock
 import android.view.View
 import com.ixam97.carStatsViewer.plot.PlotDimension
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.TimeUnit
 
 var devMode = false
 
@@ -280,6 +282,15 @@ class MainActivity : Activity() {
         InAppLogger.logUIUpdate()
         /** Use data from DataHolder to Update MainActivity text */
 
+        if (DataHolder.currentGear != VehicleGear.GEAR_PARK) {
+            val timeElapsedNanos = System.nanoTime() - DataHolder.resetTimestamp
+            val timeString = String.format("  %02d:%02d:%02d", TimeUnit.NANOSECONDS.toHours(timeElapsedNanos),
+                TimeUnit.NANOSECONDS.toMinutes(timeElapsedNanos) % TimeUnit.HOURS.toMinutes(1),
+                TimeUnit.NANOSECONDS.toSeconds(timeElapsedNanos) % TimeUnit.MINUTES.toSeconds(1))
+
+            main_gage_time_text_view.text = timeString
+        }
+
         if (AppPreferences.experimentalLayout && legacy_layout.visibility == View.VISIBLE) {
             gage_layout.visibility = View.VISIBLE
             legacy_layout.visibility = View.GONE
@@ -416,5 +427,7 @@ class MainActivity : Activity() {
         usedEnergyTextView.text = String.format("%d Wh", DataHolder.usedEnergy.toInt())
         DataHolder.averageConsumption = 0F
         averageConsumptionTextView.text = String.format("%d Wh/km", DataHolder.averageConsumption.toInt())
+
+        DataHolder.resetTimestamp = System.nanoTime()
     }
 }
