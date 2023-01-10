@@ -29,8 +29,17 @@ class PlotLine(
 
     var plotPaint: PlotPaint? = null
 
-    fun addDataPoint(item: Float, timestamp: Long, distance: Float, plotMarker: PlotMarker? = null) {
-        dataPoints[dataPoints.size] = PlotLineItem(item, timestamp, distance, plotMarker)
+    fun addDataPoint(item: Float, time: Long, distance: Float, timeDelta: Long? = null, distanceDelta: Float? = null, plotMarker: PlotMarker? = null) {
+        val prev = dataPoints[dataPoints.size - 1]
+
+        dataPoints[dataPoints.size] = PlotLineItem(
+            item,
+            time,
+            distance,
+            timeDelta?:(time - (prev?.Time ?: time)),
+            distanceDelta?:(distance - (prev?.Distance ?: distance)),
+            plotMarker
+        )
     }
 
     fun reset() {
@@ -51,8 +60,8 @@ class PlotLine(
                     return clone.filter { it.Distance >= min }
                 }
                 PlotDimension.TIME -> {
-                    val min = clone.last().timestampInSeconds - dimensionRestriction
-                    return clone.filter { it.timestampInSeconds >= min }
+                    val min = clone.last().timeInSeconds - dimensionRestriction
+                    return clone.filter { it.timeInSeconds >= min }
                 }
             }
         }
@@ -62,8 +71,8 @@ class PlotLine(
         if (dataPoints.isEmpty()) return 0f
         return when (dimension) {
             PlotDimension.INDEX -> 0f
-            PlotDimension.DISTANCE -> dataPoints[0]?.Distance?:0f
-            PlotDimension.TIME -> dataPoints[0]?.timestampInSeconds?:0f
+            PlotDimension.DISTANCE -> dataPoints[0]?.DistanceDelta?:0f
+            PlotDimension.TIME -> dataPoints[0]?.timeInSeconds?:0f
         }
     }
 
@@ -72,8 +81,8 @@ class PlotLine(
         val index = dataPoints.size - 1
         return when (dimension) {
             PlotDimension.INDEX -> index.toFloat()
-            PlotDimension.DISTANCE -> dataPoints[index]?.Distance?:0f
-            PlotDimension.TIME -> dataPoints[index]?.timestampInSeconds?:0f
+            PlotDimension.DISTANCE -> dataPoints[index]?.DistanceDelta?:0f
+            PlotDimension.TIME -> dataPoints[index]?.timeInSeconds?:0f
         }
     }
 
@@ -124,41 +133,21 @@ class PlotLine(
         return when (averageMethod) {
             PlotHighlightMethod.AVG_BY_INDEX -> dataPoints.map { it.Value }.average().toFloat()
             PlotHighlightMethod.AVG_BY_DISTANCE -> {
-                var last : Float? = null
-                var value = 0F
-                var distance = 0F
-                for (point in dataPoints) {
-                    if (last != null && point.Marker != PlotMarker.BEGIN_SESSION) {
-                        val diff = point.Distance - last
-                        distance += diff
-                        value +=  diff * point.Value
-                    }
+                var value = dataPoints.map { (it.DistanceDelta?:0f) * it.Value }.sum()
+                var distance = dataPoints.map { (it.DistanceDelta?:0f) }.sum()
 
-                    last = point.Distance
-                }
-
-                return when(distance) {
-                    0f -> 0f
-                    else -> value / distance
+                return when(distance != 0f) {
+                    true -> value / distance
+                    else -> distance
                 }
             }
             PlotHighlightMethod.AVG_BY_TIME -> {
-                var last : Long? = null
-                var value = 0F
-                var distance = 0L
-                for (point in dataPoints) {
-                    if (last != null && point.Marker != PlotMarker.BEGIN_SESSION) {
-                        val diff = point.Timestamp - last
-                        distance += diff
-                        value += diff * point.Value
-                    }
+                var value = dataPoints.map { (it.TimeDelta?:0L) * it.Value }.sum()
+                var distance = dataPoints.map { (it.TimeDelta?:0L) }.sum()
 
-                    last = point.Timestamp
-                }
-
-                return when(distance) {
-                    0L -> 0f
-                    else -> value / distance
+                return when(distance != 0L) {
+                    true -> value / distance
+                    else -> distance.toFloat()
                 }
             }
             else -> null
@@ -193,9 +182,9 @@ class PlotLine(
                 PlotLineItem.cord(index, min, max)
             }
             PlotDimension.TIME -> {
-                val max = dataPoints.last().timestampInSeconds
+                val max = dataPoints.last().timeInSeconds
                 val min = when (dimensionRestriction) {
-                    null -> dataPoints.first().timestampInSeconds
+                    null -> dataPoints.first().timeInSeconds
                     else -> max - dimensionRestriction
                 }
                 PlotLineItem.cord(index, min, max)
@@ -207,13 +196,18 @@ class PlotLine(
 
 class PlotLineItem (
     val Value: Float,
-    val Timestamp: Long,
+
+    val Time: Long,
     val Distance: Float,
+
+    val TimeDelta: Long?,
+    val DistanceDelta: Float?,
+
     val Marker: PlotMarker?
 ){
-    val timestampInSeconds: Float
+    val timeInSeconds: Float
         get() {
-            return TimeUnit.MILLISECONDS.convert(Timestamp, TimeUnit.NANOSECONDS) / 1_000f
+            return TimeUnit.MILLISECONDS.convert(Time, TimeUnit.NANOSECONDS) / 1_000f
         }
 
     companion object {
@@ -243,5 +237,5 @@ enum class PlotHighlightMethod {
 }
 
 enum class PlotMarker {
-    BEGIN_SESSION, END_SESSION
+    BEGIN_SESSION, END_SESSION, SINGLE_SESSION
 }

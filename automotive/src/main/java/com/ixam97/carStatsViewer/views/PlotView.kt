@@ -180,7 +180,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                         when (dimension) {
                             PlotDimension.INDEX -> PlotLineItem.cord((dimensionRestriction?:dataPoints.size.toFloat()) - dataPoints.size + index, 0f, (dimensionRestriction?:dataPoints.size.toFloat()) - 1f)
                             PlotDimension.DISTANCE -> line.x(item.Distance, dimension, dimensionRestriction, dataPoints)
-                            PlotDimension.TIME -> line.x(item.timestampInSeconds, dimension, dimensionRestriction, dataPoints)
+                            PlotDimension.TIME -> line.x(item.timeInSeconds, dimension, dimensionRestriction, dataPoints)
                         },
                         item
                     )
