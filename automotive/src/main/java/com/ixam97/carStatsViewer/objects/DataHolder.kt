@@ -65,7 +65,9 @@ object DataHolder {
     var usedEnergy = 0F
     var averageConsumption = 0F
     var chargePortConnected = false
+
     var resetTimestamp = 0L
+    var parkTimestamp = 0L
 
     var consumptionPlotLine = PlotLine(
         -200f,

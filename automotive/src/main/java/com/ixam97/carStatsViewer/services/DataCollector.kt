@@ -41,8 +41,6 @@ class DataCollector : Service() {
 
     private var notificationCounter = 0
 
-    private var parkTimestamp: Long = 0
-
     private lateinit var sharedPref: SharedPreferences
 
     private val mBinder: LocalBinder = LocalBinder()
@@ -113,15 +111,15 @@ class DataCollector : Service() {
 
         DataHolder.currentGear = carPropertyManager.getIntProperty(VehiclePropertyIds.GEAR_SELECTION, 0)
 
-        DataHolder.resetTimestamp = System.nanoTime()
-        if (DataHolder.currentGear == VehicleGear.GEAR_PARK) parkTimestamp = DataHolder.resetTimestamp
+        if (DataHolder.resetTimestamp == 0L)  DataHolder.resetTimestamp = System.nanoTime()
+        if (DataHolder.currentGear == VehicleGear.GEAR_PARK) DataHolder.parkTimestamp = DataHolder.resetTimestamp
 
         /** Get vehicle name to enable dev mode in emulator */
         val carName = carPropertyManager.getProperty<String>(VehiclePropertyIds.INFO_MODEL, 0).value.toString()
         if (carName == "Speedy Model") {
             Toast.makeText(this, "Dev Mode", Toast.LENGTH_LONG).show()
             devMode = true
-            DataHolder.currentGear = VehicleGear.GEAR_DRIVE
+            DataHolder.currentGear = VehicleGear.GEAR_PARK
         }
 
 
@@ -277,8 +275,8 @@ class DataCollector : Service() {
                 VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
                 VehiclePropertyIds.GEAR_SELECTION -> {
                     if (!devMode) DataHolder.currentGear = value.value as Int
-                    if (value.value as Int == VehicleGear.GEAR_PARK) parkTimestamp = System.nanoTime()
-                    else DataHolder.resetTimestamp += (System.nanoTime() - parkTimestamp)
+                    if (value.value as Int == VehicleGear.GEAR_PARK) DataHolder.parkTimestamp = System.nanoTime()
+                    else DataHolder.resetTimestamp += (System.nanoTime() - DataHolder.parkTimestamp)
                 }
                 VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> DataHolder.chargePortConnected = value.value as Boolean
             }

@@ -17,6 +17,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.view.View
+import android.widget.Toast
 import com.ixam97.carStatsViewer.plot.PlotDimension
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.TimeUnit
@@ -141,7 +142,20 @@ class MainActivity : Activity() {
         main_charge_plot.invalidate()
 
         main_title.setOnClickListener {
-            finish()
+            if (devMode) {
+                DataHolder.currentGear = when (DataHolder.currentGear) {
+                    VehicleGear.GEAR_PARK -> {
+                        Toast.makeText(this, "Drive", Toast.LENGTH_SHORT).show()
+                        DataHolder.resetTimestamp += (System.nanoTime() - DataHolder.parkTimestamp)
+                        VehicleGear.GEAR_DRIVE
+                    }
+                    else -> {
+                        Toast.makeText(this, "Park", Toast.LENGTH_SHORT).show()
+                        DataHolder.parkTimestamp = System.nanoTime()
+                        VehicleGear.GEAR_PARK
+                    }
+                }
+            }
         }
 
         main_power_gage.gageName = getString(R.string.main_gage_power)
@@ -335,7 +349,7 @@ class MainActivity : Activity() {
             main_consumption_gage.gageUnit = "Wh/km"
             main_consumption_gage.minValue = -300f
             main_consumption_gage.maxValue = 600f
-            if (DataHolder.currentSpeedSmooth > 0) {
+            if (DataHolder.currentSpeed > 0) {
                 main_consumption_gage.setValue(((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6)).toInt())
             } else {
                 main_consumption_gage.setValue(consumptionValue)
@@ -346,7 +360,7 @@ class MainActivity : Activity() {
             main_consumption_gage.gageUnit = "kWh/100km"
             main_consumption_gage.minValue = -30f
             main_consumption_gage.maxValue = 60f
-            if (DataHolder.currentSpeedSmooth > 0) {
+            if (DataHolder.currentSpeed > 0) {
                 main_consumption_gage.setValue(((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6f))/10)
             } else {
                 main_consumption_gage.setValue(consumptionValue)
@@ -429,5 +443,6 @@ class MainActivity : Activity() {
         averageConsumptionTextView.text = String.format("%d Wh/km", DataHolder.averageConsumption.toInt())
 
         DataHolder.resetTimestamp = System.nanoTime()
+        if (DataHolder.currentGear == VehicleGear.GEAR_PARK) DataHolder.parkTimestamp = DataHolder.resetTimestamp
     }
 }
