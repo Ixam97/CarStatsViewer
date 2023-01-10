@@ -243,5 +243,5 @@ enum class PlotHighlightMethod {
 }
 
 enum class PlotMarker {
-    BEGIN_SESSION, END_SESSION
+    BEGIN_SESSION, END_SESSION, SINGLE_SESSION
 }

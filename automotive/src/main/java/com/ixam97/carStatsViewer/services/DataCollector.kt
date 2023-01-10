@@ -327,47 +327,59 @@ class DataCollector : Service() {
                 DataHolder.traveledDistance <= 0 -> 0F
                 else -> DataHolder.usedEnergy / (DataHolder.traveledDistance / 1000)
             }
-        }
 
-        if (!consumptionPlotTracking && timeDifference != null) {
-            consumptionPlotTracking = DataHolder.currentGear != VehicleGear.GEAR_PARK
-            resetPlotVar(currentPlotTime)
-        }
-
-        if (consumptionPlotTracking && ((DataHolder.currentGear == VehicleGear.GEAR_PARK && (lastPlotMarker != PlotMarker.END_SESSION || DataHolder.traveledDistance != lastPlotDistance)) || DataHolder.traveledDistance >= (lastPlotDistance + 100))) {
-            val distanceDifference = DataHolder.traveledDistance - lastPlotDistance
-            val powerDifference = DataHolder.usedEnergy - lastPlotEnergy
-            val timeDifference = currentPlotTime - lastPlotTime
-
-            val newConsumptionPlotValue = powerDifference / (distanceDifference / 1000)
-            val newSpeedPlotValue = distanceDifference / (timeDifference.toFloat() / 3600)
-
-            val plotMarker = when(lastPlotGear) {
-                VehicleGear.GEAR_PARK -> PlotMarker.BEGIN_SESSION
-                else -> when (DataHolder.currentGear) {
-                    VehicleGear.GEAR_PARK -> PlotMarker.END_SESSION
-                    else -> null
-                }
+            if (!consumptionPlotTracking) {
+                consumptionPlotTracking = DataHolder.currentGear != VehicleGear.GEAR_PARK
+                resetPlotVar( currentPlotTime)
             }
 
-            lastPlotMarker = plotMarker
+            val consumptionPlotTrigger = when (consumptionPlotTracking) {
+                true -> when {
+                    DataHolder.traveledDistance >= lastPlotDistance + 100 -> true
+                    DataHolder.currentGear == VehicleGear.GEAR_PARK -> (lastPlotMarker?:PlotMarker.BEGIN_SESSION) == PlotMarker.BEGIN_SESSION || DataHolder.traveledDistance != lastPlotDistance
+                    else -> false
+                }
+                else -> false
+            }
 
-            DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, value.timestamp, DataHolder.traveledDistance, plotMarker)
-            DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, value.timestamp, DataHolder.traveledDistance, plotMarker)
+            if (consumptionPlotTrigger) {
+                consumptionPlotTracking = DataHolder.currentGear != VehicleGear.GEAR_PARK
 
-            lastPlotDistance = DataHolder.traveledDistance
-            lastPlotEnergy = DataHolder.usedEnergy
-            lastPlotGear = DataHolder.currentGear
-            lastPlotTime = currentPlotTime
+                val distanceDifference = DataHolder.traveledDistance - lastPlotDistance
+                val powerDifference = DataHolder.usedEnergy - lastPlotEnergy
+                val timeDifference = currentPlotTime - lastPlotTime
 
-            consumptionPlotTracking = DataHolder.currentGear != VehicleGear.GEAR_PARK
+                val newConsumptionPlotValue = powerDifference / (distanceDifference / 1000)
+                val newSpeedPlotValue = distanceDifference / (timeDifference.toFloat() / 3600)
+
+                val plotMarker = when(lastPlotGear) {
+                    VehicleGear.GEAR_PARK -> when (DataHolder.currentGear) {
+                        VehicleGear.GEAR_PARK -> PlotMarker.SINGLE_SESSION
+                        else -> PlotMarker.BEGIN_SESSION
+                    }
+                    else -> when (DataHolder.currentGear) {
+                        VehicleGear.GEAR_PARK -> PlotMarker.END_SESSION
+                        else -> null
+                    }
+                }
+
+                lastPlotMarker = plotMarker
+                lastPlotGear = DataHolder.currentGear
+
+                resetPlotVar(currentPlotTime)
+
+                if (plotMarker != PlotMarker.SINGLE_SESSION) {
+                    DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, value.timestamp, DataHolder.traveledDistance, plotMarker)
+                    DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, value.timestamp, DataHolder.traveledDistance, plotMarker)
+                }
+            }
         }
     }
 
-    private fun resetPlotVar(currentPlotTime: Long) {
+    private fun resetPlotVar(currentPlotTimestampMilliseconds: Long) {
         lastPlotDistance = DataHolder.traveledDistance
+        lastPlotTime = currentPlotTimestampMilliseconds
         lastPlotEnergy = DataHolder.usedEnergy
-        lastPlotTime = currentPlotTime
     }
 
     private fun createNotificationChannel() {
