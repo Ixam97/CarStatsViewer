@@ -336,7 +336,7 @@ class DataCollector : Service() {
             resetPlotVar(currentPlotTime)
         }
 
-        if (consumptionPlotTracking && ((DataHolder.currentGear == VehicleGear.GEAR_PARK && lastPlotMarker != PlotMarker.END_SESSION) || DataHolder.traveledDistance >= (lastPlotDistance + 100))) {
+        if (consumptionPlotTracking && ((DataHolder.currentGear == VehicleGear.GEAR_PARK && (lastPlotMarker != PlotMarker.END_SESSION || DataHolder.traveledDistance != lastPlotDistance)) || DataHolder.traveledDistance >= (lastPlotDistance + 100))) {
             val distanceDifference = DataHolder.traveledDistance - lastPlotDistance
             val powerDifference = DataHolder.usedEnergy - lastPlotEnergy
             val timeDifference = currentPlotTime - lastPlotTime

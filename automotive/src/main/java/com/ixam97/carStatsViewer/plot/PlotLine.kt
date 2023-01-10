@@ -138,7 +138,7 @@ class PlotLine(
                 }
 
                 return when(distance) {
-                    0f -> null
+                    0f -> 0f
                     else -> value / distance
                 }
             }
@@ -157,7 +157,7 @@ class PlotLine(
                 }
 
                 return when(distance) {
-                    0L -> null
+                    0L -> 0f
                     else -> value / distance
                 }
             }
