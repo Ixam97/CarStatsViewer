@@ -108,7 +108,7 @@ class MainActivity : Activity() {
             }
             3 -> {
                 plotDistanceId = main_radio_50.id
-                plotDistanceValue = 50_001f
+                plotDistanceValue = ((DataHolder.traveledDistance/10000).toInt() + 1) * 10000f + 1
             }
         }
         main_radio_group_distance.check(plotDistanceId)
@@ -214,7 +214,7 @@ class MainActivity : Activity() {
                     id = 2
                 }
                 main_radio_50.id -> {
-                    main_consumption_plot.dimensionRestriction = 50_001f
+                    main_consumption_plot.dimensionRestriction = ((DataHolder.traveledDistance/10000).toInt() + 1) * 10000f + 1
                     id = 3
                 }
             }
@@ -341,6 +341,8 @@ class MainActivity : Activity() {
                 main_consumption_gage.setValue(consumptionValue)
             }
         }
+
+        if (AppPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = ((DataHolder.traveledDistance/10000).toInt() + 1) * 10000f + 1
 
         //var consumptionGageValue: Float? = (((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6))/10).toFloat()
 

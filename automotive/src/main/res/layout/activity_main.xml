@@ -364,7 +364,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
                     android:textSize="35sp"
-                    android:text="50 km"/>
+                    android:text="Trip"/>
             </RadioGroup>
 
             <View

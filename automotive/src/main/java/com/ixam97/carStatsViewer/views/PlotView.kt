@@ -394,22 +394,18 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 val labelWidth = line.plotPaint!!.HighlightLabel.measureText(label)
                 val labelHeight = line.plotPaint!!.HighlightLabel.textSize
                 val textBoxMargin = line.plotPaint!!.HighlightLabel.textSize / 3.5f
-                canvas.drawRoundRect(
+                canvas.drawRect(
                     labelCordX + labelUnitXOffset - textBoxMargin,
                     highlightCordY - labelHeight + labelShiftY,
                     labelCordX + labelUnitXOffset + labelWidth + textBoxMargin,
                     highlightCordY + labelShiftY + textBoxMargin,
-                    5f,
-                    5f,
                     backgroundPaint
                 )
-                canvas.drawRoundRect(
+                canvas.drawRect(
                     labelCordX + labelUnitXOffset - textBoxMargin,
                     highlightCordY - labelHeight + labelShiftY,
                     labelCordX + labelUnitXOffset + labelWidth + textBoxMargin,
                     highlightCordY + labelShiftY + textBoxMargin,
-                    5f,
-                    5f,
                     line.plotPaint!!.Plot
                 )
                 canvas.drawText(label, labelCordX + labelUnitXOffset, highlightCordY + labelShiftY, line.plotPaint!!.HighlightLabel)
