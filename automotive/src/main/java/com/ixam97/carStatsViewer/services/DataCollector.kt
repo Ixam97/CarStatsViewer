@@ -19,7 +19,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import com.ixam97.carStatsViewer.activities.devMode
-import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
 
@@ -325,8 +324,8 @@ class DataCollector : Service() {
                 resetPlotVar(value.timestamp)
             }
 
-            val consumptionPlotTrigger = when (consumptionPlotTracking) {
-                true -> when {
+            val consumptionPlotTrigger = when {
+                consumptionPlotTracking -> when {
                     DataHolder.traveledDistance >= lastPlotDistance + 100 -> true
                     DataHolder.currentGear == VehicleGear.GEAR_PARK -> (lastPlotMarker?:PlotMarker.BEGIN_SESSION) == PlotMarker.BEGIN_SESSION || DataHolder.traveledDistance != lastPlotDistance
                     else -> false
@@ -338,11 +337,11 @@ class DataCollector : Service() {
                 consumptionPlotTracking = DataHolder.currentGear != VehicleGear.GEAR_PARK
 
                 val distanceDifference = DataHolder.traveledDistance - lastPlotDistance
-                val timeDifference = TimeUnit.MILLISECONDS.convert(value.timestamp - lastPlotTime, TimeUnit.NANOSECONDS)
+                val timeDifference = value.timestamp - lastPlotTime
                 val powerDifference = DataHolder.usedEnergy - lastPlotEnergy
 
                 val newConsumptionPlotValue = powerDifference / (distanceDifference / 1000)
-                val newSpeedPlotValue = distanceDifference / (timeDifference.toFloat() / 3600)
+                val newSpeedPlotValue = distanceDifference / (timeDifference.toFloat() / 1_000_000_000 / 3.6f)
 
                 val plotMarker = when(lastPlotGear) {
                     VehicleGear.GEAR_PARK -> when (DataHolder.currentGear) {

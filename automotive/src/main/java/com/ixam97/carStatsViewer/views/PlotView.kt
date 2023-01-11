@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import com.ixam97.carStatsViewer.plot.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -47,7 +48,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         }
 
     var dimension: PlotDimension = PlotDimension.INDEX
-    var dimensionRestriction: Float? = null
+    var dimensionRestriction: Long? = null
         set(value) {
             field = value
             invalidate()
@@ -178,15 +179,15 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 prePlotPoints.add(
                     PlotLineItemPoint(
                         when (dimension) {
-                            PlotDimension.INDEX -> PlotLineItem.cord((dimensionRestriction?:dataPoints.size.toFloat()) - dataPoints.size + index, 0f, (dimensionRestriction?:dataPoints.size.toFloat()) - 1f)
+                            PlotDimension.INDEX -> line.x(index.toFloat(), dimension, dimensionRestriction, dataPoints)
                             PlotDimension.DISTANCE -> line.x(item.Distance, dimension, dimensionRestriction, dataPoints)
-                            PlotDimension.TIME -> line.x(item.timeInSeconds, dimension, dimensionRestriction, dataPoints)
+                            PlotDimension.TIME -> line.x(item.Time, dimension, dimensionRestriction, dataPoints)
                         },
                         item
                     )
                 )
 
-                if (item.Marker == PlotMarker.END_SESSION) {
+                if ((item.Marker ?: PlotMarker.BEGIN_SESSION) != PlotMarker.BEGIN_SESSION) {
                     prePlotPointCollections.add(prePlotPoints)
                     prePlotPoints = ArrayList()
                 }
@@ -267,17 +268,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val maxX = canvas.width.toFloat()
         val maxY = canvas.height.toFloat()
 
-        val minDimension = when (dimensionRestriction) {
-           null -> plotLines.mapNotNull { it.minDimension(dimension) }.min()?:0f
-           else -> 0f
-        }
-
-        val maxDimension = when (dimensionRestriction) {
-            null -> plotLines.mapNotNull { it.maxDimension(dimension) }.max()?:0f
-            else -> dimensionRestriction!! - 1
-        }
-
-        val distanceDimension = maxDimension - minDimension
+        val distanceDimension = plotLines.mapNotNull { it.distanceDimension(dimension, dimensionRestriction) }.max()?:0f
 
         for (i in 0 until xLineCount) {
             val cordX = x(i.toFloat(), 0f, xLineCount.toFloat() - 1, maxX)!!
@@ -290,11 +281,11 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
             val label = when (dimension) {
                 PlotDimension.INDEX -> String.format("%d", leftZero.toInt())
-                PlotDimension.DISTANCE -> when(rightZero < 1000) {
-                    true -> String.format("%d m", (rightZero - (rightZero % 100)).toInt())
+                PlotDimension.DISTANCE -> when {
+                    rightZero < 1000 -> String.format("%d m", (rightZero - (rightZero % 100)).toInt())
                     else -> String.format("%d km", (rightZero / 1000).toInt())
                 }
-                PlotDimension.TIME -> String.format("%02d:%02d", (rightZero / 60).toInt(), (rightZero % 60).toInt())
+                PlotDimension.TIME -> String.format("%02d:%02d", TimeUnit.MINUTES.convert(rightZero.toLong(), TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(rightZero.toLong(), TimeUnit.NANOSECONDS))
             }
 
             val bounds = Rect()
