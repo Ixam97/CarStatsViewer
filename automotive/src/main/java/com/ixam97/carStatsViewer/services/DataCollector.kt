@@ -362,6 +362,8 @@ class DataCollector : Service() {
 
                 DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
                 DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
+
+                InAppLogger.log("consumptionPlot: $newConsumptionPlotValue, speedPlot: $newSpeedPlotValue, currentSpeed: ${DataHolder.currentSpeed * 3.6f}")
             }
         }
     }
