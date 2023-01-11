@@ -5,7 +5,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class PlotLine(
-    private val Range: PlotRange,
+    internal val Range: PlotRange,
 
     var Divider: Float,
 
