@@ -1,16 +1,11 @@
 package com.ixam97.carStatsViewer.plot
 
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.math.ceil
-import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
 class PlotLine(
-    private val MinValueDefault: Float,
-    private val MaxValueDefault: Float,
-
-    val SmoothAxle: Float? = null,
+    private val Range: PlotRange,
 
     var Divider: Float,
 
@@ -115,32 +110,44 @@ class PlotLine(
 
 
     fun maxValue(dataPoints: List<PlotLineItem>): Float? {
-        val max = when {
+        val max : Float? = when {
             dataPoints.isEmpty() -> null
-            else -> ceil((dataPoints.maxBy { it.Value }?.Value ?: MaxValueDefault).coerceAtLeast(MaxValueDefault))
+            else -> {
+                val min = (dataPoints.maxBy { it.Value }?.Value ?: Range.minPositive).coerceAtLeast(Range.minPositive)
+                return when {
+                    Range.maxPositive != null -> min.coerceAtMost(Range.maxPositive)
+                    else -> min
+                }
+            }
         }
 
         return when {
             max == null -> null
-            SmoothAxle != null -> when (max % SmoothAxle) {
+            Range.smoothAxis != null -> when (max % Range.smoothAxis) {
                 0f -> max
-                else -> max + (SmoothAxle - max % SmoothAxle)
+                else -> max + (Range.smoothAxis - max % Range.smoothAxis)
             }
             else -> max
         }
     }
 
     fun minValue(dataPoints: List<PlotLineItem>): Float? {
-        val min = when {
+        val min : Float? = when {
             dataPoints.isEmpty() -> null
-            else -> floor((dataPoints.minBy { it.Value }?.Value ?: MinValueDefault).coerceAtMost(MinValueDefault))
+            else -> {
+                val max = (dataPoints.minBy { it.Value }?.Value ?: Range.minNegative).coerceAtMost(Range.minNegative)
+                return when {
+                    Range.maxNegative != null -> max.coerceAtLeast(Range.maxNegative)
+                    else -> max
+                }
+            }
         }
 
         return when {
             min == null -> null
-            SmoothAxle != null -> when (min % SmoothAxle) {
+            Range.smoothAxis != null -> when (min % Range.smoothAxis) {
                 0f -> min
-                else -> min - (min % SmoothAxle) - SmoothAxle
+                else -> min - (min % Range.smoothAxis) - Range.smoothAxis
             }
             else -> min
         }
@@ -215,47 +222,3 @@ class PlotLine(
     }
 }
 
-class PlotLineItem (
-    val Value: Float,
-
-    val Time: Long,
-    val Distance: Float,
-
-    val TimeDelta: Long?,
-    val DistanceDelta: Float?,
-
-    val Marker: PlotMarker?
-){
-    companion object {
-        fun cord(index: Float?, min: Float, max: Float) : Float? {
-            return when (index) {
-                null -> null
-                else -> cord(index, min, max)
-            }
-        }
-
-        fun cord(index: Float, min: Float, max: Float) : Float {
-            return 1f / (max - min) * (index - min)
-        }
-
-        fun cord(index: Long, min: Long, max: Long) : Float {
-            return 1f / (max - min) * (index - min)
-        }
-    }
-}
-
-enum class PlotDimension {
-    INDEX, DISTANCE, TIME
-}
-
-enum class PlotLabelPosition {
-    LEFT, RIGHT, NONE
-}
-
-enum class PlotHighlightMethod {
-    MIN, MAX, FIRST, LAST, AVG_BY_INDEX, AVG_BY_DISTANCE, AVG_BY_TIME, NONE
-}
-
-enum class PlotMarker {
-    BEGIN_SESSION, END_SESSION, SINGLE_SESSION
-}

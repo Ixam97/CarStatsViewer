@@ -145,7 +145,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             null -> null
             else -> {
                 val px = maxY - (2 * yMargin)
-                yMargin + abs(px - px * value)
+                yMargin + px - px * value
             }
         }
     }
