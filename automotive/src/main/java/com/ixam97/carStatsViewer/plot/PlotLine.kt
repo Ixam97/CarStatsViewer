@@ -114,7 +114,7 @@ class PlotLine(
             dataPoints.isEmpty() -> null
             else -> {
                 val min = (dataPoints.maxBy { it.Value }?.Value ?: Range.minPositive).coerceAtLeast(Range.minPositive)
-                return when {
+                when {
                     Range.maxPositive != null -> min.coerceAtMost(Range.maxPositive)
                     else -> min
                 }
@@ -136,7 +136,7 @@ class PlotLine(
             dataPoints.isEmpty() -> null
             else -> {
                 val max = (dataPoints.minBy { it.Value }?.Value ?: Range.minNegative).coerceAtMost(Range.minNegative)
-                return when {
+                when {
                     Range.maxNegative != null -> max.coerceAtLeast(Range.maxNegative)
                     else -> max
                 }
