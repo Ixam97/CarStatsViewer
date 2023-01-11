@@ -80,7 +80,7 @@ object DataHolder {
     )
 
     var speedPlotLine = PlotLine(
-        PlotRange(0f, 40f, 0f, 160f, 40f),
+        PlotRange(0f, 40f, 0f, null, 40f),
         1f,
         "%.0f",
         "Ø %.0f",
