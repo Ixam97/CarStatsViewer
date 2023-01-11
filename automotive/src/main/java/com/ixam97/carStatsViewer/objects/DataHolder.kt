@@ -72,7 +72,7 @@ object DataHolder {
     var travelTimeMillis = 0L
 
     var consumptionPlotLine = PlotLine(
-        PlotRange(-200f, 600f, -400f, 800f, 100f),
+        PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
         1f,
         "%.0f",
         "%.0f",
@@ -82,7 +82,7 @@ object DataHolder {
     )
 
     var speedPlotLine = PlotLine(
-        PlotRange(0f, 40f, 0f, 250f, 40f),
+        PlotRange(0f, 40f, 0f, 240f, 40f),
         1f,
         "%.0f",
         "Ø %.0f",

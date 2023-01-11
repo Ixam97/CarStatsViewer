@@ -19,6 +19,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import com.ixam97.carStatsViewer.activities.emulatorMode
+import com.ixam97.carStatsViewer.activities.emulatorPowerSign
+import java.sql.Timestamp
 import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
 
@@ -118,7 +120,7 @@ class DataCollector : Service() {
         /** Get vehicle name to enable dev mode in emulator */
         val carName = carPropertyManager.getProperty<String>(VehiclePropertyIds.INFO_MODEL, 0).value.toString()
         if (carName == "Speedy Model") {
-            Toast.makeText(this, "Dev Mode", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Emulator Mode", Toast.LENGTH_LONG).show()
             emulatorMode = true
             DataHolder.currentGear = VehicleGear.GEAR_PARK
         }
@@ -192,14 +194,14 @@ class DataCollector : Service() {
 
     private val timeDifferenceStore: HashMap<Int, Long> = HashMap()
 
-    private fun timeDifference(value: CarPropertyValue<*>, maxDifferenceInMilliseconds: Int) : Float? {
+    private fun timeDifference(value: CarPropertyValue<*>, maxDifferenceInMilliseconds: Int, timestamp: Long) : Float? {
         var timeDifference : Long? = null
 
         if (timeDifferenceStore.containsKey(value.propertyId)) {
-            timeDifference = value.timestamp - timeDifferenceStore[value.propertyId]!!
+            timeDifference = timestamp - timeDifferenceStore[value.propertyId]!!
         }
 
-        timeDifferenceStore[value.propertyId] = value.timestamp
+        timeDifferenceStore[value.propertyId] = timestamp
 
         return when {
             timeDifference == null || timeDifference > (maxDifferenceInMilliseconds * 1_000_000) -> null
@@ -207,20 +209,28 @@ class DataCollector : Service() {
         }
     }
 
+    private fun timeDifference(value: CarPropertyValue<*>, maxDifferenceInMilliseconds: Int) : Float? {
+        return timeDifference(value, maxDifferenceInMilliseconds, value.timestamp)
+    }
+
     private val timeTriggerStore: HashMap<Int, Long> = HashMap()
 
-    private fun timerTriggered(value: CarPropertyValue<*>, timerInMilliseconds: Float) : Boolean {
+    private fun timerTriggered(value: CarPropertyValue<*>, timerInMilliseconds: Float, timestamp: Long): Boolean {
         var timeTriggered = true
 
         if (timeTriggerStore.containsKey(value.propertyId)) {
-            timeTriggered = timeTriggerStore[value.propertyId]?.plus(timerInMilliseconds * 1_000_000)!! <= value.timestamp
+            timeTriggered = timeTriggerStore[value.propertyId]?.plus(timerInMilliseconds * 1_000_000)!! <= timestamp
         }
 
         if (timeTriggered) {
-            timeTriggerStore[value.propertyId] = value.timestamp
+            timeTriggerStore[value.propertyId] = timestamp
         }
 
         return timeTriggered
+    }
+
+    private fun timerTriggered(value: CarPropertyValue<*>, timerInMilliseconds: Float) : Boolean {
+        return timerTriggered(value, timerInMilliseconds, value.timestamp)
     }
 
     private var carPropertyPowerListener = object : CarPropertyManager.CarPropertyEventCallback {
@@ -246,6 +256,13 @@ class DataCollector : Service() {
             InAppLogger.logVHALCallback()
 
             speedUpdater(value)
+
+            if (emulatorMode) {
+                // Also get power in emulator
+                var powerValue = carPropertyManager.getProperty<Float>(VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE,0)
+                powerUpdater(powerValue, value.timestamp)
+
+            }
 /*
                 val consumptionPlotLineJSON = Gson().toJson(DataHolder.consumptionPlotLine)
                 val speedPlotLineJSON = Gson().toJson(DataHolder.speedPlotLine)
@@ -281,11 +298,16 @@ class DataCollector : Service() {
         }
     }
 
-    private fun powerUpdater(value: CarPropertyValue<*>) {
-        DataHolder.currentPowermW = - (value.value as Float)
+    private fun powerUpdater(value: CarPropertyValue<*>, timestamp: Long) {
+        DataHolder.currentPowermW = when (emulatorMode) {
+            true -> (value.value as Float) * emulatorPowerSign
+            else -> - (value.value as Float)
+        }
 
-        val timeDifference = timeDifference(value, 10_000)
-        Log.d("powerUpdater", "Time Difference: $timeDifference")
+        InAppLogger.log("new Power value: ${value.value as Float}, $timestamp")
+
+        val timeDifference = timeDifference(value, 10_000, timestamp)
+        // Log.d("powerUpdater", "Time Difference: $timeDifference")
         if (timeDifference != null && !DataHolder.chargePortConnected) {
             DataHolder.usedEnergy += (DataHolder.lastPowermW / 1000) * (timeDifference.toFloat() / (1000 * 60 * 60))
             DataHolder.averageConsumption = when {
@@ -294,10 +316,14 @@ class DataCollector : Service() {
             }
         }
 
-        if (timerTriggered(value, 2_000f) && DataHolder.chargePortConnected && DataHolder.currentPowermW < 0) {
-            DataHolder.chargePlotLine.addDataPoint(- (DataHolder.currentPowermW / 1_000_000), value.timestamp,0f)
-            DataHolder.stateOfChargePlotLine.addDataPoint(100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity, value.timestamp, 0f)
+        if (timerTriggered(value, 2_000f, timestamp) && DataHolder.chargePortConnected && DataHolder.currentPowermW < 0) {
+            DataHolder.chargePlotLine.addDataPoint(- (DataHolder.currentPowermW / 1_000_000), timestamp,0f)
+            DataHolder.stateOfChargePlotLine.addDataPoint(100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity, timestamp, 0f)
         }
+    }
+
+    private fun powerUpdater(value: CarPropertyValue<*>) {
+        powerUpdater(value, value.timestamp)
     }
 
     private fun speedUpdater(value: CarPropertyValue<*>) {

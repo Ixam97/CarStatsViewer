@@ -17,7 +17,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.provider.ContactsContract.Data
 import android.view.View
 import android.widget.Toast
 import com.ixam97.carStatsViewer.plot.PlotDimension
@@ -26,6 +25,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 var emulatorMode = false
+var emulatorPowerSign = -1
 
 class MainActivity : Activity() {
     companion object {
@@ -97,7 +97,7 @@ class MainActivity : Activity() {
         checkPermissions()
         setContentView(R.layout.activity_main)
         setupDefaultUi()
-        setupUiEventListeners()
+        setUiEventListeners()
 
         timerHandler = Handler(Looper.getMainLooper())
         enableUiUpdates()
@@ -289,7 +289,7 @@ class MainActivity : Activity() {
         return lastTimeString
         */
 
-        return String.format("  %02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(DataHolder.travelTimeMillis),
+        return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(DataHolder.travelTimeMillis),
             TimeUnit.MILLISECONDS.toMinutes(DataHolder.travelTimeMillis) % TimeUnit.HOURS.toMinutes(1),
             TimeUnit.MILLISECONDS.toSeconds(DataHolder.travelTimeMillis) % TimeUnit.MINUTES.toSeconds(1))
     }
@@ -405,7 +405,8 @@ class MainActivity : Activity() {
         main_consumption_gage.setValue(0f)
     }
 
-    private fun setupUiEventListeners() {
+    private fun setUiEventListeners() {
+
         main_title.setOnClickListener {
             if (emulatorMode) {
                 DataHolder.currentGear = when (DataHolder.currentGear) {
@@ -422,6 +423,14 @@ class MainActivity : Activity() {
                 }
             }
         }
+        main_title_icon.setOnClickListener {
+            if (emulatorMode) {
+                emulatorPowerSign = if (emulatorPowerSign < 0) 1
+                else -1
+            }
+        }
+
+
 
         main_button_reset.setOnClickListener {
 
