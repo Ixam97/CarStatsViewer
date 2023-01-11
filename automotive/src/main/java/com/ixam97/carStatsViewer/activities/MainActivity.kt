@@ -271,6 +271,7 @@ class MainActivity : Activity() {
     }
 
     private fun getElapsedTimeString(): String {
+        /*
         if (DataHolder.currentGear != VehicleGear.GEAR_PARK) {
             val timeElapsedNanos = System.nanoTime() - DataHolder.resetTimestamp
             val timeString = String.format("  %02d:%02d:%02d", TimeUnit.NANOSECONDS.toHours(timeElapsedNanos),
@@ -281,6 +282,11 @@ class MainActivity : Activity() {
             return timeString
         }
         return lastTimeString
+        */
+
+        return String.format("  %02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(DataHolder.travelTimeMillis),
+            TimeUnit.MILLISECONDS.toMinutes(DataHolder.travelTimeMillis) % TimeUnit.HOURS.toMinutes(1),
+            TimeUnit.MILLISECONDS.toSeconds(DataHolder.travelTimeMillis) % TimeUnit.MINUTES.toSeconds(1))
     }
 
     private fun setValueColors() {
@@ -330,9 +336,10 @@ class MainActivity : Activity() {
         usedEnergyTextView.text = String.format("%d Wh", DataHolder.usedEnergy.toInt())
         DataHolder.averageConsumption = 0F
         averageConsumptionTextView.text = String.format("%d Wh/km", DataHolder.averageConsumption.toInt())
+        DataHolder.travelTimeMillis = 0L
 
-        DataHolder.resetTimestamp = System.nanoTime()
-        if (DataHolder.currentGear == VehicleGear.GEAR_PARK) DataHolder.parkTimestamp = DataHolder.resetTimestamp
+        //DataHolder.resetTimestamp = System.nanoTime()
+        //if (DataHolder.currentGear == VehicleGear.GEAR_PARK) DataHolder.parkTimestamp = DataHolder.resetTimestamp
     }
 
     private fun loadPreferences() {
@@ -399,12 +406,12 @@ class MainActivity : Activity() {
                 DataHolder.currentGear = when (DataHolder.currentGear) {
                     VehicleGear.GEAR_PARK -> {
                         Toast.makeText(this, "Drive", Toast.LENGTH_SHORT).show()
-                        DataHolder.resetTimestamp += (System.nanoTime() - DataHolder.parkTimestamp)
+                        // DataHolder.resetTimestamp += (System.nanoTime() - DataHolder.parkTimestamp)
                         VehicleGear.GEAR_DRIVE
                     }
                     else -> {
                         Toast.makeText(this, "Park", Toast.LENGTH_SHORT).show()
-                        DataHolder.parkTimestamp = System.nanoTime()
+                        // DataHolder.parkTimestamp = System.nanoTime()
                         VehicleGear.GEAR_PARK
                     }
                 }

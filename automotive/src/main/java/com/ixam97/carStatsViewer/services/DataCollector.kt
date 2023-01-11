@@ -27,8 +27,9 @@ lateinit var mainActivityPendingIntent: PendingIntent
 class DataCollector : Service() {
     companion object {
         private const val CHANNEL_ID = "TestChannel"
-        private const val statsNotificationId = 1
-        private const val foregroundNotificationId = 2
+        private const val STATS_NOTIFICATION_ID = 1
+        private const val FOREGROUND_NOTIFICATION_ID = 2
+        private const val TIMER_HANDLER_DELAY_MILLIS = 1000L
     }
 
     private var consumptionPlotTracking = false
@@ -57,7 +58,8 @@ class DataCollector : Service() {
         override fun run() {
             updateStatsNotification()
             InAppLogger.logNotificationUpdate()
-            timerHandler.postDelayed(this, 500)
+            if (DataHolder.currentGear != VehicleGear.GEAR_PARK) DataHolder.travelTimeMillis += TIMER_HANDLER_DELAY_MILLIS
+            timerHandler.postDelayed(this, TIMER_HANDLER_DELAY_MILLIS)
         }
     }
 
@@ -90,7 +92,7 @@ class DataCollector : Service() {
             .setCategory(Notification.CATEGORY_TRANSPORT)
             .setOngoing(true)
 
-        startForeground(foregroundNotificationId, foregroundServiceNotification.build())
+        startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
 
         InAppLogger.log(String.format(
             "DataCollector.onCreate in Thread: %s",
@@ -110,8 +112,8 @@ class DataCollector : Service() {
 
         DataHolder.currentGear = carPropertyManager.getIntProperty(VehiclePropertyIds.GEAR_SELECTION, 0)
 
-        if (DataHolder.resetTimestamp == 0L)  DataHolder.resetTimestamp = System.nanoTime()
-        if (DataHolder.currentGear == VehicleGear.GEAR_PARK) DataHolder.parkTimestamp = DataHolder.resetTimestamp
+        // if (DataHolder.resetTimestamp == 0L)  DataHolder.resetTimestamp = System.nanoTime()
+        // if (DataHolder.currentGear == VehicleGear.GEAR_PARK) DataHolder.parkTimestamp = DataHolder.resetTimestamp
 
         /** Get vehicle name to enable dev mode in emulator */
         val carName = carPropertyManager.getProperty<String>(VehiclePropertyIds.INFO_MODEL, 0).value.toString()
@@ -130,7 +132,7 @@ class DataCollector : Service() {
 
         if (notificationsEnabled) {
             with(NotificationManagerCompat.from(this)) {
-                notify(statsNotificationId, statsNotification.build())
+                notify(STATS_NOTIFICATION_ID, statsNotification.build())
             }
         }
 
@@ -268,8 +270,8 @@ class DataCollector : Service() {
                 VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
                 VehiclePropertyIds.GEAR_SELECTION -> {
                     if (!emulatorMode) DataHolder.currentGear = value.value as Int
-                    if (value.value as Int == VehicleGear.GEAR_PARK) DataHolder.parkTimestamp = System.nanoTime()
-                    else DataHolder.resetTimestamp += (System.nanoTime() - DataHolder.parkTimestamp)
+                    // if (value.value as Int == VehicleGear.GEAR_PARK) DataHolder.parkTimestamp = System.nanoTime()
+                    // else DataHolder.resetTimestamp += (System.nanoTime() - DataHolder.parkTimestamp)
                 }
                 VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> DataHolder.chargePortConnected = value.value as Boolean
             }
@@ -409,16 +411,16 @@ class DataCollector : Service() {
 
                 statsNotification.setContentText(message)
                 foregroundServiceNotification.setContentText(message)
-                notify(statsNotificationId, statsNotification.build())
-                notify(foregroundNotificationId, foregroundServiceNotification.build())
+                notify(STATS_NOTIFICATION_ID, statsNotification.build())
+                notify(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
             }
         } else if (notificationsEnabled && !AppPreferences.notifications) {
             notificationsEnabled = false
             with(NotificationManagerCompat.from(this)) {
-                cancel(statsNotificationId)
+                cancel(STATS_NOTIFICATION_ID)
             }
             foregroundServiceNotification.setContentText(getString(R.string.foreground_service_info))
-            NotificationManagerCompat.from(this).notify(foregroundNotificationId, foregroundServiceNotification.build())
+            NotificationManagerCompat.from(this).notify(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
         } else if (!notificationsEnabled && AppPreferences.notifications) {
             notificationsEnabled = true
         }
