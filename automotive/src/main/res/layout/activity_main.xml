@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginVertical="15dp"
-            android:src="@drawable/ic_launcher_foreground"/>
+            android:src="@mipmap/ic_launcher"/>
 
         <TextView
             android:id="@+id/main_title"
@@ -351,14 +351,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
                     android:textSize="35sp"
-                    android:text="10 km"/>
+                    android:text="5 km"/>
                 <RadioButton
                     android:id="@+id/main_radio_25"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
                     android:textSize="35sp"
-                    android:text="25 km"/>
+                    android:text="15 km"/>
                 <RadioButton
                     android:id="@+id/main_radio_50"
                     android:layout_width="wrap_content"

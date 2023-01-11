@@ -307,9 +307,9 @@ class MainActivity : Activity() {
 
     private fun dimensionRestrictionById(id : Int) : Long {
         return when (id) {
-            1 -> 10_001L
-            2 -> 25_001L
-            3 -> ((DataHolder.traveledDistance / 10_000).toInt() + 1) * 10_000L + 1
+            1 -> 5_001L
+            2 -> 15_001L
+            3 -> ((DataHolder.traveledDistance / 5_000).toInt() + 1) * 5_000L + 1
             else -> 10_001L
         }
     }
