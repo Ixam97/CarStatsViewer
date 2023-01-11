@@ -151,13 +151,18 @@ class MainActivity : Activity() {
         averageConsumptionTextView.text = getAvgConsumptionString()
 
         main_gage_avg_consumption_text_view.text = "  Ø ${getAvgConsumptionString()}"
-        main_gage_distance_text_view.text = "  ${getTraveledDistanceString()}"
+        main_gage_distance_text_view.text = "  %s".format(getTraveledDistanceString())
         main_gage_used_power_text_view.text = "  ${getUsedEnergyString()}"
         main_gage_time_text_view.text = "  ${getElapsedTimeString()}"
     }
 
     private fun getCurrentSpeedString(): String {
         return "${(DataHolder.currentSpeedSmooth * 3.6).toInt()} km/h"
+    }
+
+    private fun getAvgSpeedString(): String {
+        return " %d km/h".format(
+            ((DataHolder.traveledDistance / 1000) / (DataHolder.travelTimeMillis.toFloat() / 3_600_000)).toInt())
     }
 
     private fun getCurrentPowerString(): String {

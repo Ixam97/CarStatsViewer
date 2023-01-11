@@ -8,6 +8,13 @@ Based on https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerK
 
 ## Changelog [DE]:
 
+### 0.17 (11.01.2023)#
+ - Diagrammachsen aufgehellt
+ - Versuchsweise hellgrauer statt grüner Graph für die Geschwindigkeit
+ - Min- und Max-Grenzen für die Diagrammskalierung (WIP)
+ - Farbe und Grenzwerte für Balkenanzeigen angepasst
+ - Fahrzeit sollte nun korrekt funktionieren
+
 ### 0.16 (10.01.2023)
  - Labels der Diagramme hervorgehoben
  - 50km bei Diagrammen durch "Trip" ersetzt (Zeigt die gesamte Strecke seit dem letzten Reset in 10km-Schritten an)

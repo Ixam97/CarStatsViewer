@@ -46,6 +46,7 @@ object DataHolder {
         //}
         private set
 
+    var avgSpeed = 0F
 
     var lastSpeed = 0F
         private set
