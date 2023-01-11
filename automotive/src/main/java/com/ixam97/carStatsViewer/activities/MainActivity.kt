@@ -234,27 +234,29 @@ class MainActivity : Activity() {
     }
 
     private fun updateGages() {
-        main_power_gage.setValue(DataHolder.currentPowerSmooth / 1000000)
-        var consumptionValue: Float? = null
+        if(AppPreferences.gagesOn){
+            main_power_gage.setValue(DataHolder.currentPowerSmooth / 1000000)
+            var consumptionValue: Float? = null
 
-        if (AppPreferences.consumptionUnit) {
-            main_consumption_gage.gageUnit = "Wh/km"
-            main_consumption_gage.minValue = -300f
-            main_consumption_gage.maxValue = 600f
-            if (DataHolder.currentSpeed * 3.6 > 3) {
-                main_consumption_gage.setValue(((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6)).toInt())
-            } else {
-                main_consumption_gage.setValue(consumptionValue)
-            }
+            if (AppPreferences.consumptionUnit) {
+                main_consumption_gage.gageUnit = "Wh/km"
+                main_consumption_gage.minValue = -300f
+                main_consumption_gage.maxValue = 600f
+                if (DataHolder.currentSpeed * 3.6 > 3) {
+                    main_consumption_gage.setValue(((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6)).toInt())
+                } else {
+                    main_consumption_gage.setValue(consumptionValue)
+                }
 
-        } else {
-            main_consumption_gage.gageUnit = "kWh/100km"
-            main_consumption_gage.minValue = -30f
-            main_consumption_gage.maxValue = 60f
-            if (DataHolder.currentSpeed * 3.6 > 3) {
-                main_consumption_gage.setValue(((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6f))/10)
             } else {
-                main_consumption_gage.setValue(consumptionValue)
+                main_consumption_gage.gageUnit = "kWh/100km"
+                main_consumption_gage.minValue = -30f
+                main_consumption_gage.maxValue = 60f
+                if (DataHolder.currentSpeed * 3.6 > 3) {
+                    main_consumption_gage.setValue(((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6f))/10)
+                } else {
+                    main_consumption_gage.setValue(consumptionValue)
+                }
             }
         }
     }

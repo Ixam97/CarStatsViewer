@@ -5,6 +5,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
+import com.ixam97.carStatsViewer.objects.AppPreferences
 import java.text.DecimalFormat
 import java.util.*
 import kotlin.math.min
@@ -90,7 +91,8 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val xTextMargin = dpToPx(15f)
     private val yTextMargin = dpToPx(10f)
-    private val gageWidth = dpToPx(60f)
+    private val gageWidth = if(AppPreferences.gagesOn){
+        dpToPx(60f)} else { dpToPx(0f)}
 
     private val nameYPos = namePaint.textSize * 0.76f
     private val valueYPos = nameYPos + valuePaint.textSize * 0.9f

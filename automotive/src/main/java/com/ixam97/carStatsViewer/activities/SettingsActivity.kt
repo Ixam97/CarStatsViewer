@@ -29,6 +29,7 @@ class SettingsActivity : Activity() {
         settings_switch_notifications.isChecked = AppPreferences.notifications
         settings_switch_consumption_unit.isChecked = AppPreferences.consumptionUnit
         settings_switch_experimental_layout.isChecked = AppPreferences.experimentalLayout
+        settings_switch_gagesOn.isChecked = AppPreferences.gagesOn
         // settings_switch_consumption_plot.isChecked = AppPreferences.consumptionPlot
 
         settings_version_text.text = String.format("Car Stats Viewer Version %s (Build %d)",
@@ -86,6 +87,13 @@ class SettingsActivity : Activity() {
                 .apply()
             AppPreferences.experimentalLayout = settings_switch_experimental_layout.isChecked
         }
+        settings_switch_gagesOn.setOnClickListener {
+            sharedPref.edit()
+                .putBoolean(getString(R.string.preferences_gagesOn_key), settings_switch_gagesOn.isChecked)
+                .apply()
+            AppPreferences.gagesOn = settings_switch_gagesOn.isChecked
+        }
+
 /*
         settings_switch_consumption_plot.setOnClickListener {
             sharedPref.edit()

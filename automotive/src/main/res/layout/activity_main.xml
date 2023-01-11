@@ -14,16 +14,16 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
             android:layout_marginVertical="15dp"
-            android:src="@drawable/ic_launcher_foreground"/>
+            android:layout_marginStart="20dp"
+            android:src="@drawable/ic_launcher_foreground" />
 
         <TextView
             android:id="@+id/main_title"
             style="@style/title_text_style"
-            android:text="@string/app_name"/>
+            android:text="@string/app_name" />
 
-        <View style="@style/filler"/>
+        <View style="@style/filler" />
 
         <ImageButton
             android:id="@+id/main_button_reset"
@@ -32,7 +32,7 @@
             android:layout_marginVertical="15dp"
             android:layout_marginEnd="10dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_reset"/>
+            android:src="@drawable/ic_reset" />
 
         <ImageButton
             android:id="@+id/main_button_settings"
@@ -41,35 +41,35 @@
             android:layout_marginVertical="15dp"
             android:layout_marginEnd="15dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_settings"/>
+            android:src="@drawable/ic_settings" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="?android:attr/colorControlActivated"/>
+        android:background="?android:attr/colorControlActivated" />
 
     <LinearLayout
         android:id="@+id/gage_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="14"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:weightSum="14">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="8">
+            android:layout_weight="8"
+            android:orientation="vertical">
 
             <com.ixam97.carStatsViewer.views.GageView
                 android:id="@+id/main_power_gage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginHorizontal="20dp"/>
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp" />
 
             <!--<com.ixam97.carStatsViewer.views.GageView
                 android:id="@+id/main_speed_gage"
@@ -82,21 +82,21 @@
                 android:id="@+id/main_consumption_gage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"/>
+                android:layout_margin="20dp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="6">
+            android:layout_weight="6"
+            android:orientation="horizontal">
 
             <View
                 android:layout_width="2dp"
                 android:layout_height="match_parent"
-                android:background="?android:attr/listDivider"
-                android:layout_margin="15dp"/>
+                android:layout_margin="15dp"
+                android:background="?android:attr/listDivider" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -108,10 +108,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="35sp"
                     android:drawableStart="@drawable/ic_distance"
-                    />
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="35sp" />
 
 
                 <TextView
@@ -119,31 +118,28 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="35sp"
                     android:drawableStart="@drawable/ic_power"
-                    />
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="35sp" />
 
                 <TextView
                     android:id="@+id/main_gage_avg_consumption_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="35sp"
                     android:drawableStart="@drawable/ic_avg_consumption"
-                    />
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="35sp" />
 
                 <TextView
                     android:id="@+id/main_gage_time_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="35sp"
-                    android:text="  00:00:00"
                     android:drawableStart="@drawable/ic_time"
-                    />
+                    android:text="  00:00:00"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="35sp" />
 
                 <TextView
                     android:id="@+id/main_gage_remaining_range_text_view"
@@ -151,11 +147,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="10dp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="35sp"
-                    android:text="  --- km"
                     android:drawableStart="@drawable/ic_remaining_range"
-                    />
+                    android:text="  --- km"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="35sp" />
 
             </LinearLayout>
         </LinearLayout>
@@ -313,22 +308,22 @@
 
     <LinearLayout
         android:id="@+id/main_consumption_plot_container"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_weight="0"
-            android:background="?android:attr/listDivider"/>
+            android:background="?android:attr/listDivider" />
 
         <com.ixam97.carStatsViewer.views.PlotView
+            android:id="@+id/main_consumption_plot"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
             android:layout_margin="0dp"
-            android:id="@+id/main_consumption_plot"/>
+            android:layout_weight="1" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -344,66 +339,69 @@
                 android:layout_marginBottom="5dp"
                 android:layout_weight="0"
                 android:orientation="horizontal">
+
                 <RadioButton
                     android:id="@+id/main_radio_10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
-                    android:textSize="35sp"
-                    android:text="10 km"/>
+                    android:text="10 km"
+                    android:textSize="35sp" />
+
                 <RadioButton
                     android:id="@+id/main_radio_25"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
-                    android:textSize="35sp"
-                    android:text="25 km"/>
+                    android:text="25 km"
+                    android:textSize="35sp" />
+
                 <RadioButton
                     android:id="@+id/main_radio_50"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
-                    android:textSize="35sp"
-                    android:text="Trip"/>
+                    android:text="Trip"
+                    android:textSize="35sp" />
             </RadioGroup>
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <CheckBox
                 android:id="@+id/main_checkbox_speed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/main_checkbox_speed"
-                android:textSize="35sp"
+                android:layout_marginHorizontal="15dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="5dp"
-                android:layout_marginHorizontal="15dp"/>
+                android:text="@string/main_checkbox_speed"
+                android:textSize="35sp" />
         </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/main_charge_plot_container"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:visibility="visible">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_weight="0"
-            android:background="?android:attr/listDivider"/>
+            android:background="?android:attr/listDivider" />
 
         <com.ixam97.carStatsViewer.views.PlotView
+            android:id="@+id/main_charge_plot"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
             android:layout_margin="0dp"
-            android:id="@+id/main_charge_plot"/>
+            android:layout_weight="1" />
 
     </LinearLayout>
 

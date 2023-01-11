@@ -13,6 +13,7 @@
     <string name="preferences_plot_distance_key" translatable="false">preferences_plot_distance</string>
     <string name="preferences_plot_speed_key" translatable="false">preferences_plot_speed</string>
     <string name="preferences_experimental_layout_key" translatable="false">preferences_experimental_layout</string>
+    <string name="preferences_gagesOn_key" translatable="false">preferences_gagesOn</string>
 
     <!-- MainActivity -->
     <string name="main_port_connected">Charge port connected:</string>
@@ -40,6 +41,7 @@
     <string name="settings_consumption_unit">Wh/km as consumption unit</string>
     <string name="settings_debug">Debug information</string>
     <string name="settings_experimental_layout">Show experimental Layout</string>
+    <string name="settings_gagesOn">Show power and consump. bars</string>
     <string name="settings_consumption_plot">Consumption plot settings</string>
     <string name="settings_charge_plot">Charge plot settings</string>
 

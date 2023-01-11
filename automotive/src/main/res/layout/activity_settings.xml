@@ -74,6 +74,13 @@
             android:background="?android:attr/listDivider"/>
 
         <Switch
+            android:id="@+id/settings_switch_gagesOn"
+            style="@style/menu_standard_switch_style"
+            android:layout_width="match_parent"
+            android:layout_height="101dp"
+            android:text="@string/settings_gagesOn" />
+
+        <Switch
             android:id="@+id/settings_switch_debug"
             style="@style/menu_standard_switch_style"
             android:text="@string/settings_debug"
