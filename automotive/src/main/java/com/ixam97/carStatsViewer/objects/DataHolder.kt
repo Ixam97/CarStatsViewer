@@ -82,7 +82,6 @@ object DataHolder {
     )
 
     var speedPlotLine = PlotLine(
-        PlotRange(0f, 40f, 0f, null, 40f),
         PlotRange(0f, 40f, 0f, 250f, 40f),
         1f,
         "%.0f",
@@ -94,7 +93,7 @@ object DataHolder {
     )
 
     var chargePlotLine = PlotLine(
-        PlotRange(0f,20f, 0f, 20f,20f),
+        PlotRange(0f, 20f, 0f, 20f, 20f),
         1f,
         "%.1f",
         "%.1f",
@@ -104,7 +103,7 @@ object DataHolder {
     )
 
     var stateOfChargePlotLine = PlotLine(
-        PlotRange(0f,100f, 0f, 100f, 20f),
+        PlotRange(0f, 100f, 0f, 100f, 20f, 0f),
         1f,
         "%.0f",
         "%.0f",
