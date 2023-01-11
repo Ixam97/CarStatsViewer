@@ -73,7 +73,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val basePaint = PlotPaint.basePaint(textSize)
 
         labelLinePaint = Paint(basePaint)
-        labelLinePaint.color = Color.DKGRAY
+        labelLinePaint.color = Color.GRAY
 
         labelPaint = Paint(labelLinePaint)
         labelPaint.style = Paint.Style.FILL
@@ -87,6 +87,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         val plotColors = listOf(
             null,
+            Color.LTGRAY,
             Color.GREEN,
             Color.CYAN,
             Color.BLUE,

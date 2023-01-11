@@ -46,6 +46,7 @@ object DataHolder {
         //}
         private set
 
+    var avgSpeed = 0F
 
     var lastSpeed = 0F
         private set
@@ -66,8 +67,9 @@ object DataHolder {
     var averageConsumption = 0F
     var chargePortConnected = false
 
-    var resetTimestamp = 0L
-    var parkTimestamp = 0L
+    // var resetTimestamp = 0L
+    // var parkTimestamp = 0L
+    var travelTimeMillis = 0L
 
     var consumptionPlotLine = PlotLine(
         PlotRange(-200f, 600f, -400f, 800f, 100f),
@@ -81,6 +83,7 @@ object DataHolder {
 
     var speedPlotLine = PlotLine(
         PlotRange(0f, 40f, 0f, null, 40f),
+        PlotRange(0f, 40f, 0f, 250f, 40f),
         1f,
         "%.0f",
         "Ø %.0f",

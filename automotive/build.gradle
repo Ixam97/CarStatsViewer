@@ -10,8 +10,8 @@ android {
         applicationId "com.ixam97.carStatsViewer"
         minSdkVersion 28
         targetSdkVersion 32
-        versionCode 25
-        versionName "0.16"
+        versionCode 26
+        versionName "0.17"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -25,6 +25,7 @@ android {
 
     // android.car exists since Android 10 (API level 29) Revision 5.
     useLibrary 'android.car'
+    namespace 'com.ixam97.carStatsViewer'
 }
 
 dependencies {

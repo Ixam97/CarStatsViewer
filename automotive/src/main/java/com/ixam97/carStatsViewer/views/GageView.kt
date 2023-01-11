@@ -51,7 +51,7 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     private val negPaint = Paint().apply {
-        color = Color.GREEN
+        color = Color.LTGRAY
     }
 
     private val namePaint = Paint().apply {
@@ -90,7 +90,7 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val xTextMargin = dpToPx(15f)
     private val yTextMargin = dpToPx(10f)
-    private val gageWidth = dpToPx(100f)
+    private val gageWidth = dpToPx(60f)
 
     private val nameYPos = namePaint.textSize * 0.76f
     private val valueYPos = nameYPos + valuePaint.textSize * 0.9f
@@ -158,17 +158,17 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private fun gageValue() : String {
         if (gageValueInt != null){
-            if (gageValueInt!! > 2 * maxValue)
-                return String.format(">%d", (2 * maxValue).toInt())
-            if (gageValueInt!! < 2 * minValue && minValue < 0)
-                return  String.format("<%d", (2 * minValue).toInt())
+            //if (gageValueInt!! > 2 * maxValue)
+            //    return String.format(">%d", (2 * maxValue).toInt())
+            //if (gageValueInt!! < 2 * minValue && minValue < 0)
+            //    return  String.format("<%d", (2 * minValue).toInt())
             return String.format("%d", gageValueInt)
         }
         if (gageValueFloat != null){
-            if (gageValueFloat!! > 2 * maxValue)
-                return "<%.1f".format(Locale.ENGLISH, (2 * maxValue))
-            if (gageValueFloat!! < 2 * minValue && minValue < 0)
-                return  "<%.1f".format(Locale.ENGLISH, (2 * minValue))
+            //if (gageValueFloat!! > 2 * maxValue)
+            //    return ">%.1f".format(Locale.ENGLISH, (2 * maxValue))
+            //if (gageValueFloat!! < 2 * minValue && minValue < 0)
+            //    return  "<%.1f".format(Locale.ENGLISH, (2 * minValue))
             return "%.1f".format(Locale.ENGLISH, gageValueFloat)
         } // String.format("%.1f", gageValueFloat)
         return "-/-"
