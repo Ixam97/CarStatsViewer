@@ -68,6 +68,15 @@ class MainActivity : Activity() {
         //checkPermissions()
     }
 
+    private fun dimensionRestrictionById(id : Int) : Long {
+        return when (id) {
+            1 -> 10_001L
+            2 -> 25_001L
+            3 -> ((DataHolder.traveledDistance / 10_000).toInt() + 1) * 10_000L + 1
+            else -> 10_001L
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -98,22 +107,14 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
 
         main_checkbox_speed.isChecked = AppPreferences.plotSpeed
-        var plotDistanceId = main_radio_10.id
-        var plotDistanceValue = 10_001f
-        when (AppPreferences.plotDistance) {
-            1 -> {
-                plotDistanceId = main_radio_10.id
-                plotDistanceValue = 10_001f
-            }
-            2 -> {
-                plotDistanceId = main_radio_25.id
-                plotDistanceValue = 25_001f
-            }
-            3 -> {
-                plotDistanceId = main_radio_50.id
-                plotDistanceValue = ((DataHolder.traveledDistance/10000).toInt() + 1) * 10000f + 1
-            }
+        var plotDistanceId = when (AppPreferences.plotDistance) {
+            1 -> main_radio_10.id
+            2 -> main_radio_25.id
+            3 -> main_radio_50.id
+            else -> main_radio_10.id
         }
+        var plotDistanceValue = dimensionRestrictionById(AppPreferences.plotDistance)
+
         main_radio_group_distance.check(plotDistanceId)
 
         // if (AppPreferences.consumptionPlot) main_consumption_plot_container.visibility = View.VISIBLE
@@ -219,21 +220,14 @@ class MainActivity : Activity() {
         }
 
         main_radio_group_distance.setOnCheckedChangeListener { group, checkedId ->
-            var id = 1
-            when (checkedId) {
-                main_radio_10.id -> {
-                    main_consumption_plot.dimensionRestriction = 10_001f
-                    id = 1
-                }
-                main_radio_25.id -> {
-                    main_consumption_plot.dimensionRestriction = 25_001f
-                    id = 2
-                }
-                main_radio_50.id -> {
-                    main_consumption_plot.dimensionRestriction = ((DataHolder.traveledDistance/10000).toInt() + 1) * 10000f + 1
-                    id = 3
-                }
+            var id = when (checkedId) {
+                main_radio_10.id -> 1
+                main_radio_25.id -> 2
+                main_radio_50.id -> 3
+                else -> 1
             }
+
+            main_consumption_plot.dimensionRestriction = dimensionRestrictionById(id)
 
             sharedPref.edit()
                 .putInt(getString(R.string.preferences_plot_distance_key), id)
@@ -367,7 +361,7 @@ class MainActivity : Activity() {
             }
         }
 
-        if (AppPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = ((DataHolder.traveledDistance/10000).toInt() + 1) * 10000f + 1
+        if (AppPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = dimensionRestrictionById(AppPreferences.plotDistance)
 
         //var consumptionGageValue: Float? = (((DataHolder.currentPowermW / 1000) / (DataHolder.currentSpeed * 3.6))/10).toFloat()
 
