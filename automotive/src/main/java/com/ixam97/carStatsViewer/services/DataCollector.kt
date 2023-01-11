@@ -18,7 +18,7 @@ import android.os.*
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
-import com.ixam97.carStatsViewer.activities.devMode
+import com.ixam97.carStatsViewer.activities.emulatorMode
 import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
 
@@ -117,7 +117,7 @@ class DataCollector : Service() {
         val carName = carPropertyManager.getProperty<String>(VehiclePropertyIds.INFO_MODEL, 0).value.toString()
         if (carName == "Speedy Model") {
             Toast.makeText(this, "Dev Mode", Toast.LENGTH_LONG).show()
-            devMode = true
+            emulatorMode = true
             DataHolder.currentGear = VehicleGear.GEAR_PARK
         }
 
@@ -267,7 +267,7 @@ class DataCollector : Service() {
             when (value.propertyId) {
                 VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
                 VehiclePropertyIds.GEAR_SELECTION -> {
-                    if (!devMode) DataHolder.currentGear = value.value as Int
+                    if (!emulatorMode) DataHolder.currentGear = value.value as Int
                     if (value.value as Int == VehicleGear.GEAR_PARK) DataHolder.parkTimestamp = System.nanoTime()
                     else DataHolder.resetTimestamp += (System.nanoTime() - DataHolder.parkTimestamp)
                 }
@@ -362,7 +362,7 @@ class DataCollector : Service() {
                 DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
                 DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
 
-                InAppLogger.log("consumptionPlot: $newConsumptionPlotValue, speedPlot: $newSpeedPlotValue, currentSpeed: ${DataHolder.currentSpeed * 3.6f}")
+                InAppLogger.log("newSpeedPlotValue: $newSpeedPlotValue, currentSpeed: ${DataHolder.currentSpeed * 3.6f}")
             }
         }
     }

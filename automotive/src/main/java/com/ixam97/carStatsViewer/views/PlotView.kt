@@ -88,6 +88,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         val plotColors = listOf(
             null,
+            Color.LTGRAY,
             Color.GREEN,
             Color.CYAN,
             Color.BLUE,

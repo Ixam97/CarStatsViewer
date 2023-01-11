@@ -30,7 +30,7 @@
     <string name="main_dialog_reset_message">All saved trip data will be reset to zero.</string>
     <string name="main_gage_speed">Speed</string>
     <string name="main_gage_power">Power</string>
-    <string name="main_gage_consumption">Consumption</string>
+    <string name="main_gage_consumption">Inst. consumption</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
