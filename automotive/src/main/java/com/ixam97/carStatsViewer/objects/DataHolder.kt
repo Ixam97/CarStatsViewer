@@ -70,9 +70,7 @@ object DataHolder {
     var parkTimestamp = 0L
 
     var consumptionPlotLine = PlotLine(
-        -200f,
-        600f,
-        100f,
+        PlotRange(-200f, 600f, -400f, 800f, 100f),
         1f,
         "%.0f",
         "%.0f",
@@ -82,9 +80,7 @@ object DataHolder {
     )
 
     var speedPlotLine = PlotLine(
-        0f,
-        40f,
-        40f,
+        PlotRange(0f, 40f, 0f, 160f, 40f),
         1f,
         "%.0f",
         "Ø %.0f",
@@ -95,9 +91,7 @@ object DataHolder {
     )
 
     var chargePlotLine = PlotLine(
-        0f,
-        20f,
-        20f,
+        PlotRange(0f,20f, 0f, 20f,20f),
         1f,
         "%.1f",
         "%.1f",
@@ -107,9 +101,7 @@ object DataHolder {
     )
 
     var stateOfChargePlotLine = PlotLine(
-        0f,
-        100f,
-        20f,
+        PlotRange(0f,100f, 0f, 100f, 20f),
         1f,
         "%.0f",
         "%.0f",
