@@ -26,6 +26,8 @@ import java.util.concurrent.TimeUnit
 var emulatorMode = false
 var emulatorPowerSign = -1
 
+const val SETTINGS_REQUEST_CODE = 1
+
 class MainActivity : Activity() {
     companion object {
         private val permissions = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED)
@@ -357,8 +359,8 @@ class MainActivity : Activity() {
 
         main_power_gage.gageName = getString(R.string.main_gage_power)
         main_power_gage.gageUnit = "kW"
-        main_power_gage.maxValue = 300f
-        main_power_gage.minValue = -150f
+        main_power_gage.maxValue = if (appPreferences.singleMotor) 170f else 300f
+        main_power_gage.minValue = if (appPreferences.singleMotor) -100f else -150f
         main_power_gage.setValue(0f)
 
         main_consumption_gage.gageName = getString(R.string.main_gage_consumption)
@@ -415,7 +417,7 @@ class MainActivity : Activity() {
         }
 
         main_button_settings.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
+            startActivityForResult(Intent(this, SettingsActivity::class.java), SETTINGS_REQUEST_CODE)
         }
 
         /** cycle through consumption plot distances when tapping the plot */
@@ -485,6 +487,14 @@ class MainActivity : Activity() {
         updateUi = false
         if (this::timerHandler.isInitialized) {
             timerHandler.removeCallbacks(updateActivityTask)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == SETTINGS_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            InAppLogger.log("Settings changed, refresh MainActivity")
+            finish()
+            startActivity(intent)
         }
     }
 }

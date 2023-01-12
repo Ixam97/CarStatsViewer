@@ -74,6 +74,15 @@
             android:background="?android:attr/listDivider"/>
 
         <Switch
+            android:id="@+id/settings_switch_single_motor"
+            style="@style/menu_standard_switch_style"
+            android:text="@string/settings_single_motor" />
+
+        <View
+            style="@style/menu_divider_style"
+            android:background="?android:attr/listDivider"/>
+
+        <Switch
             android:id="@+id/settings_switch_debug"
             style="@style/menu_standard_switch_style"
             android:text="@string/settings_debug"

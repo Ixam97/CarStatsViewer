@@ -33,6 +33,7 @@ class SettingsActivity : Activity() {
         settings_switch_notifications.isChecked = appPreferences.notifications
         settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
         settings_switch_experimental_layout.isChecked = appPreferences.experimentalLayout
+        settings_switch_single_motor.isChecked = appPreferences.singleMotor
         // settings_switch_consumption_plot.isChecked = AppPreferences.consumptionPlot
 
         settings_version_text.text = String.format("Car Stats Viewer Version %s (Build %d)",
@@ -41,6 +42,8 @@ class SettingsActivity : Activity() {
         )
 
         settings_button_back.setOnClickListener() {
+            intent = Intent()
+            setResult(RESULT_OK, intent);
             finish()
         }
 
@@ -89,6 +92,10 @@ class SettingsActivity : Activity() {
             //     .putBoolean(getString(R.string.preferences_experimental_layout_key), settings_switch_experimental_layout.isChecked)
             //     .apply()
             appPreferences.experimentalLayout = settings_switch_experimental_layout.isChecked
+        }
+
+        settings_switch_single_motor.setOnClickListener {
+            appPreferences.singleMotor = settings_switch_single_motor.isChecked
         }
 /*
         settings_switch_consumption_plot.setOnClickListener {

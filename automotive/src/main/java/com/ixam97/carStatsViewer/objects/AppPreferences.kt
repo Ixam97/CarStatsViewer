@@ -2,6 +2,7 @@ package com.ixam97.carStatsViewer.objects
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.ixam97.carStatsViewer.R
 
 class AppPreferences(context: Context) {
@@ -63,6 +64,13 @@ class AppPreferences(context: Context) {
         set(value) {
             setPreference(AppPreference.PLOT_DISTANCE, value)
         }
+    var singleMotor: Boolean
+        get() {
+            return getPreference(AppPreference.SINGLE_MOTOR) as Boolean
+        }
+        set(value) {
+            setPreference(AppPreference.SINGLE_MOTOR, value)
+        }
 
 
 
@@ -73,7 +81,8 @@ class AppPreferences(context: Context) {
         AppPreference.EXPERIMENTAL_LAYOUT to context.getString(R.string.preferences_experimental_layout_key),
         AppPreference.DEEP_LOG to context.getString(R.string.preferences_deep_log_key),
         AppPreference.PLOT_SHOW_SPEED to context.getString(R.string.preferences_plot_speed_key),
-        AppPreference.PLOT_DISTANCE to context.getString(R.string.preferences_plot_distance_key)
+        AppPreference.PLOT_DISTANCE to context.getString(R.string.preferences_plot_distance_key),
+        AppPreference.SINGLE_MOTOR to context.getString(R.string.preferences_single_motor_key)
     )
 
     private var typeMap = mapOf<AppPreference, Any>(
@@ -83,7 +92,8 @@ class AppPreferences(context: Context) {
         AppPreference.EXPERIMENTAL_LAYOUT to false,
         AppPreference.DEEP_LOG to false,
         AppPreference.PLOT_SHOW_SPEED to false,
-        AppPreference.PLOT_DISTANCE to 1
+        AppPreference.PLOT_DISTANCE to 1,
+        AppPreference.SINGLE_MOTOR to false
     )
 
     fun getPreference(appPreference: AppPreference): Any? {
@@ -121,5 +131,6 @@ enum class AppPreference {
     EXPERIMENTAL_LAYOUT,
     DEEP_LOG,
     PLOT_SHOW_SPEED,
-    PLOT_DISTANCE
+    PLOT_DISTANCE,
+    SINGLE_MOTOR
 }

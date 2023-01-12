@@ -29,6 +29,7 @@
     <string name="settings_experimental_layout">Zeige experimentelles Layout</string>
     <string name="settings_consumption_plot">Einstellungen für Verbrauchsanzeige</string>
     <string name="settings_charge_plot">Einstellungen für Ladekurve</string>
+    <string name="settings_single_motor">Single Motor Model</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">App beenden?</string>

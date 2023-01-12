@@ -13,6 +13,7 @@
     <string name="preferences_plot_distance_key" translatable="false">preferences_plot_distance</string>
     <string name="preferences_plot_speed_key" translatable="false">preferences_plot_speed</string>
     <string name="preferences_experimental_layout_key" translatable="false">preferences_experimental_layout</string>
+    <string name="preferences_single_motor_key" translatable="false">preferences_single_motor_key</string>
 
     <!-- MainActivity -->
     <string name="main_port_connected">Charge port connected:</string>
@@ -42,6 +43,7 @@
     <string name="settings_experimental_layout">Show experimental Layout</string>
     <string name="settings_consumption_plot">Consumption plot settings</string>
     <string name="settings_charge_plot">Charge plot settings</string>
+    <string name="settings_single_motor">Single motor model</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">Quit App?</string>
