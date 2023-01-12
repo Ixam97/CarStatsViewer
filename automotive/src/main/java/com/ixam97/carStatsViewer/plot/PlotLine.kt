@@ -25,6 +25,10 @@ class PlotLine(
 
     var plotPaint: PlotPaint? = null
 
+    var alignZero: Boolean = false
+
+    var zeroAt: Float? = null
+
     fun addDataPoint(item: Float, time: Long, distance: Float, timeDelta: Long? = null, distanceDelta: Float? = null, plotMarker: PlotMarker? = null) {
         val prev = dataPoints[dataPoints.size - 1]
 
@@ -154,13 +158,22 @@ class PlotLine(
             }
         }
 
-        return when {
+        val minSmooth = when {
             min == null -> null
             Range.smoothAxis != null -> when (min % Range.smoothAxis) {
                 0f -> min
                 else -> min - (min % Range.smoothAxis) - Range.smoothAxis
             }
             else -> min
+        }
+
+        val zeroAtCopy = zeroAt
+        when {
+            zeroAtCopy == null || zeroAtCopy <= 0f || zeroAtCopy >= 1f -> return minSmooth
+            else -> {
+                val max = maxValue(dataPoints) ?: return minSmooth
+                return -(max /  (1f - zeroAtCopy) * (zeroAtCopy))
+            }
         }
     }
 
