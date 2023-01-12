@@ -73,10 +73,10 @@ class AppPreferences(context: Context) {
         }
     var consumptionPlotSecondaryColor: Boolean
         get() {
-            return getPreference(AppPreference.PLOT_SHOW_SPEED) as Boolean
+            return getPreference(AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR) as Boolean
         }
         set(value) {
-            setPreference(AppPreference.PLOT_SHOW_SPEED, value)
+            setPreference(AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR, value)
         }
     var consumptionPlotVisibleGages: Boolean
         get() {
