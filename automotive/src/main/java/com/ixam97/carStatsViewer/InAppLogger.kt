@@ -35,9 +35,9 @@ object InAppLogger {
         logArray.add(logMessage)
     }
 
-    fun deepLog(message: String) {
-        if (AppPreferences.deepLog) log("DEEP LOG: $message")
-    }
+    // fun deepLog(message: String, doDeepLog: Boolean) {
+    //     if (doDeepLog) log("DEEP LOG: $message")
+    // }
 
     fun logVHALCallback() {
         numVHALCallbacks++
@@ -90,17 +90,22 @@ object InAppLogger {
 }
 
 class LogActivity : Activity() {
+
+    private lateinit var appPreferences: AppPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         InAppLogger.log("LogActivity.onCreate")
 
-        val sharedPref = applicationContext.getSharedPreferences(
-            getString(R.string.preferences_file_key), Context.MODE_PRIVATE
-        )
+        appPreferences = AppPreferences(applicationContext)
+
+        // val sharedPref = applicationContext.getSharedPreferences(
+        //     getString(R.string.preferences_file_key), Context.MODE_PRIVATE
+        // )
 
         setContentView(R.layout.activity_log)
 
-        log_switch_deep_log.isChecked = AppPreferences.deepLog
+        log_switch_deep_log.isChecked = appPreferences.deepLog
 
         for (i in 0 until InAppLogger.logArray.size) {
             val logTextView = TextView(this)
@@ -139,10 +144,10 @@ class LogActivity : Activity() {
         }
 
         log_switch_deep_log.setOnClickListener {
-            sharedPref.edit()
-                .putBoolean(getString(R.string.preferences_deep_log_key), log_switch_deep_log.isChecked)
-                .apply()
-            AppPreferences.deepLog = log_switch_deep_log.isChecked
+            // sharedPref.edit()
+            //     .putBoolean(getString(R.string.preferences_deep_log_key), log_switch_deep_log.isChecked)
+            //     .apply()
+            appPreferences.deepLog = log_switch_deep_log.isChecked
         }
 
     }

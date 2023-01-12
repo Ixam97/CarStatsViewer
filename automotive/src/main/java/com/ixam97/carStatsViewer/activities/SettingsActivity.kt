@@ -13,6 +13,7 @@ import kotlin.system.exitProcess
 class SettingsActivity : Activity() {
 
     private lateinit var context : Context
+    private lateinit var appPreferences: AppPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,12 +24,15 @@ class SettingsActivity : Activity() {
 
         context = applicationContext
 
-        val sharedPref = context.getSharedPreferences(
-            getString(R.string.preferences_file_key), Context.MODE_PRIVATE
-        )
-        settings_switch_notifications.isChecked = AppPreferences.notifications
-        settings_switch_consumption_unit.isChecked = AppPreferences.consumptionUnit
-        settings_switch_experimental_layout.isChecked = AppPreferences.experimentalLayout
+        // val sharedPref = context.getSharedPreferences(
+        //     getString(R.string.preferences_file_key), Context.MODE_PRIVATE
+        // )
+
+        appPreferences = AppPreferences(context)
+
+        settings_switch_notifications.isChecked = appPreferences.notifications
+        settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
+        settings_switch_experimental_layout.isChecked = appPreferences.experimentalLayout
         // settings_switch_consumption_plot.isChecked = AppPreferences.consumptionPlot
 
         settings_version_text.text = String.format("Car Stats Viewer Version %s (Build %d)",
@@ -60,31 +64,31 @@ class SettingsActivity : Activity() {
         }
 
         settings_switch_notifications.setOnClickListener {
-            sharedPref.edit()
-                .putBoolean(getString(R.string.preferences_notifications_key), settings_switch_notifications.isChecked)
-                .apply()
-            AppPreferences.notifications = settings_switch_notifications.isChecked
+            // sharedPref.edit()
+            //     .putBoolean(getString(R.string.preferences_notifications_key), settings_switch_notifications.isChecked)
+            //     .apply()
+            appPreferences.notifications = settings_switch_notifications.isChecked
         }
 
         settings_switch_consumption_unit.setOnClickListener {
-            sharedPref.edit()
-                .putBoolean(getString(R.string.preferences_consumption_unit_key), settings_switch_consumption_unit.isChecked)
-                .apply()
-            AppPreferences.consumptionUnit = settings_switch_consumption_unit.isChecked
+            // sharedPref.edit()
+            //     .putBoolean(getString(R.string.preferences_consumption_unit_key), settings_switch_consumption_unit.isChecked)
+            //     .apply()
+            appPreferences.consumptionUnit = settings_switch_consumption_unit.isChecked
         }
 
         settings_switch_debug.setOnClickListener {
-            sharedPref.edit()
-                .putBoolean(getString(R.string.preferences_debug_key), settings_switch_debug.isChecked)
-                .apply()
-            AppPreferences.debug = settings_switch_debug.isChecked
+            // sharedPref.edit()
+            //     .putBoolean(getString(R.string.preferences_debug_key), settings_switch_debug.isChecked)
+            //     .apply()
+            appPreferences.debug = settings_switch_debug.isChecked
         }
 
         settings_switch_experimental_layout.setOnClickListener {
-            sharedPref.edit()
-                .putBoolean(getString(R.string.preferences_experimental_layout_key), settings_switch_experimental_layout.isChecked)
-                .apply()
-            AppPreferences.experimentalLayout = settings_switch_experimental_layout.isChecked
+            // sharedPref.edit()
+            //     .putBoolean(getString(R.string.preferences_experimental_layout_key), settings_switch_experimental_layout.isChecked)
+            //     .apply()
+            appPreferences.experimentalLayout = settings_switch_experimental_layout.isChecked
         }
 /*
         settings_switch_consumption_plot.setOnClickListener {

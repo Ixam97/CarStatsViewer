@@ -20,7 +20,6 @@ import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.activities.emulatorPowerSign
-import java.sql.Timestamp
 import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
 
@@ -43,7 +42,8 @@ class DataCollector : Service() {
 
     private var notificationCounter = 0
 
-    private lateinit var sharedPref: SharedPreferences
+    // private lateinit var sharedPref: SharedPreferences
+    private lateinit var appPreferences: AppPreferences
 
     private val mBinder: LocalBinder = LocalBinder()
 
@@ -100,11 +100,13 @@ class DataCollector : Service() {
             "DataCollector.onCreate in Thread: %s",
             Thread.currentThread().name))
 
-        sharedPref = this.getSharedPreferences(
-            getString(R.string.preferences_file_key),
-            Context.MODE_PRIVATE)
+        // sharedPref = this.getSharedPreferences(
+        //     getString(R.string.preferences_file_key),
+        //     Context.MODE_PRIVATE)
 
-        notificationsEnabled = AppPreferences.notifications
+        appPreferences = AppPreferences(applicationContext)
+
+        notificationsEnabled = appPreferences.notifications
 
         car = Car.createCar(this)
         carPropertyManager = car.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager;
@@ -226,6 +228,8 @@ class DataCollector : Service() {
             timeTriggerStore[value.propertyId] = timestamp
         }
 
+        Log.d("timerTriggered", "$timeTriggered")
+
         return timeTriggered
     }
 
@@ -235,7 +239,7 @@ class DataCollector : Service() {
 
     private var carPropertyPowerListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
-            InAppLogger.deepLog("DataCollector.carPropertyPowerListener")
+            //InAppLogger.deepLog("DataCollector.carPropertyPowerListener", appPreferences.deepLog)
 
             powerUpdater(value)
             Log.d("carPropertyPowerListener",
@@ -252,7 +256,7 @@ class DataCollector : Service() {
 
     private var carPropertySpeedListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
-            InAppLogger.deepLog("DataCollector.carPropertySpeedListener")
+            //InAppLogger.deepLog("DataCollector.carPropertySpeedListener", appPreferences.deepLog)
             InAppLogger.logVHALCallback()
 
             speedUpdater(value)
@@ -281,7 +285,7 @@ class DataCollector : Service() {
 
     private var carPropertyGenericListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
-            InAppLogger.deepLog("DataCollector.carPropertyGenericListener")
+            // InAppLogger.deepLog("DataCollector.carPropertyGenericListener", appPreferences.deepLog)
 
             when (value.propertyId) {
                 VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
@@ -413,13 +417,12 @@ class DataCollector : Service() {
     }
 
     private fun updateStatsNotification() {
-        InAppLogger.deepLog("DataCollector.updateStatsNotification")
-        if (notificationsEnabled && AppPreferences.notifications) {
+        if (notificationsEnabled && appPreferences.notifications) {
             with(NotificationManagerCompat.from(this)) {
                 val averageConsumption = DataHolder.usedEnergy / (DataHolder.traveledDistance/1000)
 
                 var averageConsumptionString = String.format("%d Wh/km", averageConsumption.toInt())
-                if (!AppPreferences.consumptionUnit) {
+                if (!appPreferences.consumptionUnit) {
                     averageConsumptionString = String.format(
                         "%.1f kWh/100km",
                         averageConsumption / 10)
@@ -440,14 +443,14 @@ class DataCollector : Service() {
                 notify(STATS_NOTIFICATION_ID, statsNotification.build())
                 notify(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
             }
-        } else if (notificationsEnabled && !AppPreferences.notifications) {
+        } else if (notificationsEnabled && !appPreferences.notifications) {
             notificationsEnabled = false
             with(NotificationManagerCompat.from(this)) {
                 cancel(STATS_NOTIFICATION_ID)
             }
             foregroundServiceNotification.setContentText(getString(R.string.foreground_service_info))
             NotificationManagerCompat.from(this).notify(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
-        } else if (!notificationsEnabled && AppPreferences.notifications) {
+        } else if (!notificationsEnabled && appPreferences.notifications) {
             notificationsEnabled = true
         }
     }

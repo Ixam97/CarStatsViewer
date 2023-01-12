@@ -157,7 +157,7 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         }
 
         canvas.drawText(gageName, textXStart, nameYPos, namePaint)
-        canvas.drawText(gageUnit, textXStart * 1.5f + gageNameWidth, nameYPos, unitPaint)
+        canvas.drawText(gageUnit, textXStart + xTextMargin * 0.5f + gageNameWidth, nameYPos, unitPaint)
         canvas.drawText(gageValue(), textXStart, valueYPos, valuePaint)
 
         //}

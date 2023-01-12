@@ -93,7 +93,7 @@ object DataHolder {
     )
 
     var chargePlotLine = PlotLine(
-        PlotRange(0f, 20f, 0f, 20f, 20f),
+        PlotRange(0f, 20f, 0f, 160f, 20f),
         1f,
         "%.1f",
         "%.1f",

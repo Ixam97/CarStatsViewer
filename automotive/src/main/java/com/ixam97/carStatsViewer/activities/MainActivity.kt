@@ -10,7 +10,6 @@ import android.car.Car
 import android.car.VehicleGear
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
@@ -38,7 +37,7 @@ class MainActivity : Activity() {
     private lateinit var timerHandler: Handler
     private lateinit var starterIntent: Intent
     private lateinit var context: Context
-    private lateinit var sharedPref: SharedPreferences
+    private lateinit var appPreferences: AppPreferences
 
     private var updateUi = false
     private var lastPlotUpdate: Long = 0L
@@ -58,7 +57,7 @@ class MainActivity : Activity() {
 
         InAppLogger.log("MainActivity.onResume")
 
-        if (AppPreferences.consumptionUnit) {
+        if (appPreferences.consumptionUnit) {
             DataHolder.consumptionPlotLine.Unit = "Wh/km"
             DataHolder.consumptionPlotLine.HighlightFormat = "Ø %.0f"
             DataHolder.consumptionPlotLine.LabelFormat = "%.0f"
@@ -71,7 +70,6 @@ class MainActivity : Activity() {
         }
 
         enableUiUpdates()
-        //checkPermissions()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,11 +79,7 @@ class MainActivity : Activity() {
 
         context = applicationContext
 
-        sharedPref = context.getSharedPreferences(
-            getString(R.string.preferences_file_key), Context.MODE_PRIVATE
-        )
-
-        loadPreferences()
+        appPreferences = AppPreferences(context)
 
         startForegroundService(Intent(this, DataCollector::class.java))
 
@@ -150,10 +144,10 @@ class MainActivity : Activity() {
         currentInstConsTextView.text = getInstConsumptionString()
         averageConsumptionTextView.text = getAvgConsumptionString()
 
-        main_gage_avg_consumption_text_view.text = "  Ø ${getAvgConsumptionString()}"
+        main_gage_avg_consumption_text_view.text = "  Ø %s".format(getAvgConsumptionString())
         main_gage_distance_text_view.text = "  %s".format(getTraveledDistanceString())
-        main_gage_used_power_text_view.text = "  ${getUsedEnergyString()}"
-        main_gage_time_text_view.text = "  ${getElapsedTimeString()}"
+        main_gage_used_power_text_view.text = "  %s".format(getUsedEnergyString())
+        main_gage_time_text_view.text = "  %s".format(getElapsedTimeString())
     }
 
     private fun getCurrentSpeedString(): String {
@@ -172,7 +166,7 @@ class MainActivity : Activity() {
     }
 
     private fun getUsedEnergyString(): String {
-        if (!AppPreferences.consumptionUnit) {
+        if (!appPreferences.consumptionUnit) {
             return "%.1f kWh".format(
                 Locale.ENGLISH,
                 DataHolder.usedEnergy / 1000)
@@ -184,7 +178,7 @@ class MainActivity : Activity() {
         if (DataHolder.currentSpeed <= 0) {
             return "-/-"
         }
-        if (!AppPreferences.consumptionUnit) {
+        if (!appPreferences.consumptionUnit) {
             return "%.1f kWh/100km".format(
                 Locale.ENGLISH,
                 ((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6))/10)
@@ -196,7 +190,7 @@ class MainActivity : Activity() {
         if (DataHolder.traveledDistance <= 0) {
             return "-/-"
         }
-        if (!AppPreferences.consumptionUnit) {
+        if (!appPreferences.consumptionUnit) {
             return "%.1f kWh/100km".format(
                 Locale.ENGLISH,
                 (DataHolder.usedEnergy /(DataHolder.traveledDistance /1000))/10)
@@ -209,10 +203,10 @@ class MainActivity : Activity() {
     }
 
     private fun setUiVisibilities() {
-        if (AppPreferences.experimentalLayout && legacy_layout.visibility == View.VISIBLE) {
+        if (appPreferences.experimentalLayout && legacy_layout.visibility == View.VISIBLE) {
             gage_layout.visibility = View.VISIBLE
             legacy_layout.visibility = View.GONE
-        } else if (!AppPreferences.experimentalLayout && legacy_layout.visibility == View.GONE) {
+        } else if (!appPreferences.experimentalLayout && legacy_layout.visibility == View.GONE) {
             gage_layout.visibility = View.GONE
             legacy_layout.visibility = View.VISIBLE
         }
@@ -237,7 +231,7 @@ class MainActivity : Activity() {
         main_power_gage.setValue(DataHolder.currentPowerSmooth / 1000000)
         var consumptionValue: Float? = null
 
-        if (AppPreferences.consumptionUnit) {
+        if (appPreferences.consumptionUnit) {
             main_consumption_gage.gageUnit = "Wh/km"
             main_consumption_gage.minValue = -300f
             main_consumption_gage.maxValue = 600f
@@ -260,7 +254,7 @@ class MainActivity : Activity() {
     }
 
     private fun updatePlots(){
-        if (AppPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = dimensionRestrictionById(AppPreferences.plotDistance)
+        if (appPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
 
         if (SystemClock.elapsedRealtime() - lastPlotUpdate > 1_000L) {
             if (main_consumption_plot_container.visibility == View.VISIBLE) {
@@ -276,19 +270,6 @@ class MainActivity : Activity() {
     }
 
     private fun getElapsedTimeString(): String {
-        /*
-        if (DataHolder.currentGear != VehicleGear.GEAR_PARK) {
-            val timeElapsedNanos = System.nanoTime() - DataHolder.resetTimestamp
-            val timeString = String.format("  %02d:%02d:%02d", TimeUnit.NANOSECONDS.toHours(timeElapsedNanos),
-                TimeUnit.NANOSECONDS.toMinutes(timeElapsedNanos) % TimeUnit.HOURS.toMinutes(1),
-                TimeUnit.NANOSECONDS.toSeconds(timeElapsedNanos) % TimeUnit.MINUTES.toSeconds(1))
-
-            lastTimeString = timeString
-            return timeString
-        }
-        return lastTimeString
-        */
-
         return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(DataHolder.travelTimeMillis),
             TimeUnit.MILLISECONDS.toMinutes(DataHolder.travelTimeMillis) % TimeUnit.HOURS.toMinutes(1),
             TimeUnit.MILLISECONDS.toSeconds(DataHolder.travelTimeMillis) % TimeUnit.MINUTES.toSeconds(1))
@@ -315,14 +296,10 @@ class MainActivity : Activity() {
     }
 
     private fun checkPermissions() {
-        if(checkSelfPermission(Car.PERMISSION_ENERGY) == PackageManager.PERMISSION_GRANTED) {
-            //your code here
-        } else {
+        if(checkSelfPermission(Car.PERMISSION_ENERGY) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(permissions, 0)
         }
-        if(checkSelfPermission(Car.PERMISSION_SPEED) == PackageManager.PERMISSION_GRANTED) {
-            //your code here
-        } else {
+        if(checkSelfPermission(Car.PERMISSION_SPEED) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(permissions, 1)
         }
     }
@@ -332,8 +309,6 @@ class MainActivity : Activity() {
         startActivity(intent)
         InAppLogger.log("MainActivity.resetStats")
         main_consumption_plot.reset()
-        //DataHolder.consumptionPlotLine.addDataPoint(0f)
-        //DataHolder.speedPlotLine.addDataPoint(DataHolder.currentSpeed * 3.6f)
 
         DataHolder.traveledDistance = 0F
         traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)
@@ -343,24 +318,12 @@ class MainActivity : Activity() {
         averageConsumptionTextView.text = String.format("%d Wh/km", DataHolder.averageConsumption.toInt())
         DataHolder.travelTimeMillis = 0L
 
-        //DataHolder.resetTimestamp = System.nanoTime()
-        //if (DataHolder.currentGear == VehicleGear.GEAR_PARK) DataHolder.parkTimestamp = DataHolder.resetTimestamp
-    }
-
-    private fun loadPreferences() {
-        AppPreferences.consumptionUnit = sharedPref.getBoolean(getString(R.string.preferences_consumption_unit_key), false)
-        AppPreferences.notifications = sharedPref.getBoolean(getString(R.string.preferences_notifications_key), false)
-        AppPreferences.debug = sharedPref.getBoolean(getString(R.string.preferences_debug_key), false)
-        AppPreferences.experimentalLayout = sharedPref.getBoolean(getString(R.string.preferences_experimental_layout_key), false)
-        AppPreferences.deepLog = sharedPref.getBoolean(getString(R.string.preferences_deep_log_key), false)
-        AppPreferences.plotDistance = sharedPref.getInt(getString(R.string.preferences_plot_distance_key), 1)
-        AppPreferences.plotSpeed = sharedPref.getBoolean(getString(R.string.preferences_plot_speed_key), false)
     }
 
     private fun setupDefaultUi() {
 
-        main_checkbox_speed.isChecked = AppPreferences.plotSpeed
-        var plotDistanceId = when (AppPreferences.plotDistance) {
+        main_checkbox_speed.isChecked = appPreferences.plotSpeed
+        var plotDistanceId = when (appPreferences.plotDistance) {
             1 -> main_radio_10.id
             2 -> main_radio_25.id
             3 -> main_radio_50.id
@@ -369,7 +332,7 @@ class MainActivity : Activity() {
 
         main_radio_group_distance.check(plotDistanceId)
 
-        if (AppPreferences.experimentalLayout) {
+        if (appPreferences.experimentalLayout) {
             legacy_layout.visibility = View.GONE
             gage_layout.visibility = View.VISIBLE
         }
@@ -381,7 +344,7 @@ class MainActivity : Activity() {
         DataHolder.speedPlotLine.Visible = main_checkbox_speed.isChecked
 
         main_consumption_plot.dimension = PlotDimension.DISTANCE
-        main_consumption_plot.dimensionRestriction = dimensionRestrictionById(AppPreferences.plotDistance)
+        main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
@@ -459,18 +422,15 @@ class MainActivity : Activity() {
         main_consumption_plot.setOnClickListener {
             var plotDistanceId = main_radio_10.id
 
-            AppPreferences.plotDistance++
+            appPreferences.plotDistance++
 
-            if (AppPreferences.plotDistance >= 4) AppPreferences.plotDistance = 1
+            if (appPreferences.plotDistance >= 4) appPreferences.plotDistance = 1
 
-            when (AppPreferences.plotDistance) {
+            when (appPreferences.plotDistance) {
                 1 -> plotDistanceId = main_radio_10.id
                 2 -> plotDistanceId = main_radio_25.id
                 3 -> plotDistanceId = main_radio_50.id
             }
-            sharedPref.edit()
-                .putInt(getString(R.string.preferences_plot_distance_key), AppPreferences.plotDistance)
-                .apply()
             main_radio_group_distance.check(plotDistanceId)
         }
 
@@ -484,10 +444,12 @@ class MainActivity : Activity() {
 
             main_consumption_plot.dimensionRestriction = dimensionRestrictionById(id)
 
-            sharedPref.edit()
-                .putInt(getString(R.string.preferences_plot_distance_key), id)
-                .apply()
-            AppPreferences.plotDistance = id
+            appPreferences.plotDistance = id
+
+            // sharedPref.edit()
+            //     .putInt(getString(R.string.preferences_plot_distance_key), id)
+            //     .apply()
+            // appPreferences.plotDistance = id
         }
 
         main_checkbox_speed.setOnClickListener {
@@ -497,10 +459,12 @@ class MainActivity : Activity() {
                 DataHolder.speedPlotLine.Visible = false
             }
 
-            sharedPref.edit()
-                .putBoolean(getString(R.string.preferences_plot_speed_key), main_checkbox_speed.isChecked)
-                .apply()
-            AppPreferences.plotSpeed = main_checkbox_speed.isChecked
+            appPreferences.plotSpeed = main_checkbox_speed.isChecked
+
+            // sharedPref.edit()
+            //     .putBoolean(getString(R.string.preferences_plot_speed_key), main_checkbox_speed.isChecked)
+            //     .apply()
+            // appPreferences.plotSpeed = main_checkbox_speed.isChecked
 
             main_consumption_plot.invalidate()
         }
