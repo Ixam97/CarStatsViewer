@@ -5,9 +5,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
-import java.text.DecimalFormat
 import java.util.*
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 
@@ -26,6 +24,12 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     var minValue = 0f
     var maxValue = 1f
+
+    var barVisibility : Boolean = true
+        set(value) {
+            field = value
+            this.invalidate()
+        }
 
     private var gageValueInt : Int? = null
     private var gageValueFloat: Float? = null
@@ -98,6 +102,10 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val viewHeight = valueYPos + dpToPx(3f)
 
+    private var gageBarRect = RectF()
+    private val gageBorder = Path()
+    private val gageZeroLine = Path()
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
@@ -108,9 +116,6 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         if (gageValueFloat != null) gageValue = gageValueFloat!!
 
         if (gageValue < 0) gagePaint = negPaint
-
-        val gageBorder = Path()
-        val gageZeroLine = Path()
 
         var gageZeroLineYPos = ((viewHeight - borderPaint.strokeWidth)/(maxValue - minValue)) * maxValue
 
@@ -124,30 +129,37 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             borderPaint.strokeWidth,
             gageZeroLineYPos - (gageZeroLineYPos/maxValue) * gageValue)
 
-        canvas.drawRect(
-            borderPaint.strokeWidth,
-            gageRectYPos,
-            gageWidth - borderPaint.strokeWidth/2,
-            gageZeroLineYPos,
-            gagePaint)
+        val textXStart = when (barVisibility) {
+            true -> gageWidth + xTextMargin
+            else -> 0f
+        }
 
-        gageBorder.moveTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
-        gageBorder.lineTo(borderPaint.strokeWidth/2, viewHeight - borderPaint.strokeWidth/2)
-        gageBorder.lineTo(gageWidth, viewHeight - borderPaint.strokeWidth/2)
-        gageBorder.lineTo(gageWidth, borderPaint.strokeWidth/2)
-        gageBorder.lineTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
+        if (barVisibility) {
+            gageBarRect.left = borderPaint.strokeWidth
+            gageBarRect.top = gageRectYPos
+            gageBarRect.right = gageWidth - borderPaint.strokeWidth/2
+            gageBarRect.bottom = gageZeroLineYPos
+
+            gageBorder.moveTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
+            gageBorder.lineTo(borderPaint.strokeWidth/2, viewHeight - borderPaint.strokeWidth/2)
+            gageBorder.lineTo(gageWidth, viewHeight - borderPaint.strokeWidth/2)
+            gageBorder.lineTo(gageWidth, borderPaint.strokeWidth/2)
+            gageBorder.lineTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
+
+            if (minValue >= 0) gageZeroLineYPos += borderPaint.strokeWidth/2
+            gageZeroLine.moveTo(0f, gageZeroLineYPos)
+            gageZeroLine.lineTo(gageWidth + borderPaint.strokeWidth/2, gageZeroLineYPos)
 
 
-        // canvas.drawRect(0f, 0f, gageWidth, valueYPos, posPaint)
-        canvas.drawPath(gageBorder, borderPaint)
-        canvas.drawText(gageName, gageWidth + xTextMargin, nameYPos, namePaint)
-        canvas.drawText(gageUnit, gageWidth + xTextMargin * 1.5f + gageNameWidth, nameYPos, unitPaint)
-        canvas.drawText(gageValue(), gageWidth + xTextMargin, valueYPos, valuePaint)
+            canvas.drawRect(gageBarRect, gagePaint)
+            canvas.drawPath(gageBorder, borderPaint)
+            canvas.drawPath(gageZeroLine, zeroLinePaint)
+        }
 
-        if (minValue >= 0) gageZeroLineYPos += borderPaint.strokeWidth/2
-        gageZeroLine.moveTo(0f, gageZeroLineYPos)
-        gageZeroLine.lineTo(gageWidth + borderPaint.strokeWidth/2, gageZeroLineYPos)
-        canvas.drawPath(gageZeroLine, zeroLinePaint)
+        canvas.drawText(gageName, textXStart, nameYPos, namePaint)
+        canvas.drawText(gageUnit, textXStart * 1.5f + gageNameWidth, nameYPos, unitPaint)
+        canvas.drawText(gageValue(), textXStart, valueYPos, valuePaint)
+
         //}
     }
 
