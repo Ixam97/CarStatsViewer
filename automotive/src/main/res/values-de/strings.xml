@@ -27,8 +27,10 @@
     <string name="settings_consumption_unit">Wh/km als Verbrauchseinheit</string>
     <string name="settings_debug">Debug-Informationen</string>
     <string name="settings_experimental_layout">Zeige experimentelles Layout</string>
-    <string name="settings_consumption_plot">Einstellungen für Verbrauchsanzeige</string>
+    <string name="settings_consumption_plot">Einstellungen für Verbrauchskurve</string>
     <string name="settings_charge_plot">Einstellungen für Ladekurve</string>
+    <string name="settings_plot_secondary_color">Grau als sekundäre Diagrammfarbe</string>
+    <string name="settings_consumption_plot_visible_gages">Zeige Leistungsbalken</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">App beenden?</string>

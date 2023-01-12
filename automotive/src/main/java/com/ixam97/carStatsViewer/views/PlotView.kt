@@ -12,7 +12,7 @@ import kotlin.math.ceil
 
 
 class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
-    private val textSize = 26f
+    val textSize = 26f
 
     var xMargin: Int = 100
         set(value) {
@@ -87,7 +87,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         val plotColors = listOf(
             null,
-            Color.parseColor("#00BF00"), // Green
+            //Color.parseColor("#00BF00"), // Green
             Color.GREEN,
             Color.CYAN,
             Color.BLUE,

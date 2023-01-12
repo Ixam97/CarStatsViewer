@@ -63,7 +63,20 @@ class AppPreferences(context: Context) {
         set(value) {
             setPreference(AppPreference.PLOT_DISTANCE, value)
         }
-
+    var consumptionPlotSecondaryColor: Boolean
+        get() {
+            return getPreference(AppPreference.PLOT_SHOW_SPEED) as Boolean
+        }
+        set(value) {
+            setPreference(AppPreference.PLOT_SHOW_SPEED, value)
+        }
+    var consumptionPlotVisibleGages: Boolean
+        get() {
+            return getPreference(AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES) as Boolean
+        }
+        set(value) {
+            setPreference(AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES, value)
+        }
 
 
     private val keyMap = hashMapOf<AppPreference, String>(
@@ -73,32 +86,36 @@ class AppPreferences(context: Context) {
         AppPreference.EXPERIMENTAL_LAYOUT to context.getString(R.string.preferences_experimental_layout_key),
         AppPreference.DEEP_LOG to context.getString(R.string.preferences_deep_log_key),
         AppPreference.PLOT_SHOW_SPEED to context.getString(R.string.preferences_plot_speed_key),
-        AppPreference.PLOT_DISTANCE to context.getString(R.string.preferences_plot_distance_key)
+        AppPreference.PLOT_DISTANCE to context.getString(R.string.preferences_plot_distance_key),
+        AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR to context.getString(R.string.preference_consumption_plot_secondary_color_key),
+        AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to context.getString(R.string.preference_consumption_plot_visible_gages_key)
     )
 
-    private var typeMap = mapOf<AppPreference, Any>(
+    private var typeMap = mapOf<AppPreference, Any>( // Also contains default values
         AppPreference.DEBUG to false,
         AppPreference.NOTIFICATIONS to false,
         AppPreference.CONSUMPTION_UNIT to false,
         AppPreference.EXPERIMENTAL_LAYOUT to false,
         AppPreference.DEEP_LOG to false,
         AppPreference.PLOT_SHOW_SPEED to false,
-        AppPreference.PLOT_DISTANCE to 1
+        AppPreference.PLOT_DISTANCE to 1,
+        AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR to false,
+        AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to true
     )
 
-    fun getPreference(appPreference: AppPreference): Any? {
+    private fun getPreference(appPreference: AppPreference): Any {
         if (typeMap.containsKey(appPreference)) {
             if (typeMap[appPreference] is Boolean) {
-                return sharedPref.getBoolean(keyMap[appPreference], false)
+                return sharedPref.getBoolean(keyMap[appPreference], typeMap[appPreference] as Boolean)
             }
             if (typeMap[appPreference] is Int) {
-                return sharedPref.getInt(keyMap[appPreference], 1)
+                return sharedPref.getInt(keyMap[appPreference], typeMap[appPreference] as Int)
             }
         }
         throw java.lang.Exception("AppPreferences.setPreference: Unknown Preference!")
     }
 
-    fun setPreference(appPreference: AppPreference, value: Any) {
+    private fun setPreference(appPreference: AppPreference, value: Any) {
         if (typeMap.containsKey(appPreference)) {
             if (typeMap[appPreference] is Boolean && value is Boolean) {
                 sharedPref.edit().putBoolean(keyMap[appPreference], value).apply()
@@ -121,5 +138,7 @@ enum class AppPreference {
     EXPERIMENTAL_LAYOUT,
     DEEP_LOG,
     PLOT_SHOW_SPEED,
-    PLOT_DISTANCE
+    PLOT_DISTANCE,
+    CONSUMPTION_PLOT_SECONDARY_COLOR,
+    CONSUMPTION_PLOT_VISIBLE_GAGES
 }

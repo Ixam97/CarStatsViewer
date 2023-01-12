@@ -13,6 +13,8 @@
     <string name="preferences_plot_distance_key" translatable="false">preferences_plot_distance</string>
     <string name="preferences_plot_speed_key" translatable="false">preferences_plot_speed</string>
     <string name="preferences_experimental_layout_key" translatable="false">preferences_experimental_layout</string>
+    <string name="preference_consumption_plot_visible_gages_key" translatable="false">preference_consumption_plot_visible_gages</string>
+    <string name="preference_consumption_plot_secondary_color_key" translatable="false">preference_consumption_plot_secondary_color</string>
 
     <!-- MainActivity -->
     <string name="main_port_connected">Charge port connected:</string>
@@ -42,6 +44,8 @@
     <string name="settings_experimental_layout">Show experimental Layout</string>
     <string name="settings_consumption_plot">Consumption plot settings</string>
     <string name="settings_charge_plot">Charge plot settings</string>
+    <string name="settings_plot_secondary_color">Gray as secondary plot color</string>
+    <string name="settings_consumption_plot_visible_gages">Show power gages</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">Quit App?</string>

@@ -227,9 +227,6 @@ class DataCollector : Service() {
         if (timeTriggered) {
             timeTriggerStore[value.propertyId] = timestamp
         }
-
-        Log.d("timerTriggered", "$timeTriggered")
-
         return timeTriggered
     }
 
@@ -291,8 +288,6 @@ class DataCollector : Service() {
                 VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
                 VehiclePropertyIds.GEAR_SELECTION -> {
                     if (!emulatorMode) DataHolder.currentGear = value.value as Int
-                    // if (value.value as Int == VehicleGear.GEAR_PARK) DataHolder.parkTimestamp = System.nanoTime()
-                    // else DataHolder.resetTimestamp += (System.nanoTime() - DataHolder.parkTimestamp)
                 }
                 VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> DataHolder.chargePortConnected = value.value as Boolean
             }
@@ -307,8 +302,6 @@ class DataCollector : Service() {
             true -> (value.value as Float) * emulatorPowerSign
             else -> - (value.value as Float)
         }
-
-        InAppLogger.log("new Power value: ${value.value as Float}, $timestamp")
 
         val timeDifference = timeDifference(value, 10_000, timestamp)
         // Log.d("powerUpdater", "Time Difference: $timeDifference")

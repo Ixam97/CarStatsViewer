@@ -8,6 +8,7 @@ import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_settings.*
 import android.content.Context
 import android.content.Intent
+import android.view.View
 import kotlin.system.exitProcess
 
 class SettingsActivity : Activity() {
@@ -20,20 +21,25 @@ class SettingsActivity : Activity() {
 
         InAppLogger.log("SettingsActivity.onCreate")
 
-        setContentView(R.layout.activity_settings)
-
         context = applicationContext
-
-        // val sharedPref = context.getSharedPreferences(
-        //     getString(R.string.preferences_file_key), Context.MODE_PRIVATE
-        // )
-
         appPreferences = AppPreferences(context)
 
+        setContentView(R.layout.activity_settings)
+
+        setupSettingsMaster()
+        setupSettingsConsumptionPlot()
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        InAppLogger.log("SettingsActivity.onDestroy")
+    }
+
+    private fun setupSettingsMaster() {
         settings_switch_notifications.isChecked = appPreferences.notifications
         settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
         settings_switch_experimental_layout.isChecked = appPreferences.experimentalLayout
-        // settings_switch_consumption_plot.isChecked = AppPreferences.consumptionPlot
 
         settings_version_text.text = String.format("Car Stats Viewer Version %s (Build %d)",
             BuildConfig.VERSION_NAME,
@@ -64,49 +70,56 @@ class SettingsActivity : Activity() {
         }
 
         settings_switch_notifications.setOnClickListener {
-            // sharedPref.edit()
-            //     .putBoolean(getString(R.string.preferences_notifications_key), settings_switch_notifications.isChecked)
-            //     .apply()
             appPreferences.notifications = settings_switch_notifications.isChecked
         }
 
         settings_switch_consumption_unit.setOnClickListener {
-            // sharedPref.edit()
-            //     .putBoolean(getString(R.string.preferences_consumption_unit_key), settings_switch_consumption_unit.isChecked)
-            //     .apply()
             appPreferences.consumptionUnit = settings_switch_consumption_unit.isChecked
         }
 
-        settings_switch_debug.setOnClickListener {
-            // sharedPref.edit()
-            //     .putBoolean(getString(R.string.preferences_debug_key), settings_switch_debug.isChecked)
-            //     .apply()
-            appPreferences.debug = settings_switch_debug.isChecked
-        }
-
         settings_switch_experimental_layout.setOnClickListener {
-            // sharedPref.edit()
-            //     .putBoolean(getString(R.string.preferences_experimental_layout_key), settings_switch_experimental_layout.isChecked)
-            //     .apply()
             appPreferences.experimentalLayout = settings_switch_experimental_layout.isChecked
         }
-/*
-        settings_switch_consumption_plot.setOnClickListener {
-            sharedPref.edit()
-                .putBoolean(getString(R.string.preferences_consumption_plot_key), settings_switch_consumption_plot.isChecked)
-                .apply()
-            AppPreferences.consumptionPlot = settings_switch_consumption_plot.isChecked
+
+        settings_consumption_plot.setOnClickListener {
+            gotoConsumptionPlot()
         }
-*/
+
         settings_version_text.setOnClickListener {
             startActivity(Intent(this, LogActivity::class.java))
         }
+    }
+
+    private fun setupSettingsConsumptionPlot() {
+
+        settings_consumption_plot_switch_secondary_color.isChecked = appPreferences.consumptionPlotSecondaryColor
+        settings_consumption_plot_switch_visible_gages.isChecked = appPreferences.consumptionPlotVisibleGages
+
+        settings_consumption_plot_button_back.setOnClickListener {
+            gotoMaster()
+        }
+
+        settings_consumption_plot_switch_secondary_color.setOnClickListener {
+            appPreferences.consumptionPlotSecondaryColor = settings_consumption_plot_switch_secondary_color.isChecked
+        }
+
+        settings_consumption_plot_switch_visible_gages.setOnClickListener {
+            appPreferences.consumptionPlotVisibleGages = settings_consumption_plot_switch_visible_gages.isChecked
+        }
+    }
+
+    private fun setupSettingsChargePlot() {
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        InAppLogger.log("SettingsActivity.onDestroy")
+    private fun gotoMaster(){
+        settings_consumption_plot_layout.visibility = View.GONE
+        settings_master_layout.visibility = View.VISIBLE
+    }
+
+    private fun gotoConsumptionPlot() {
+        settings_master_layout.visibility = View.GONE
+        settings_consumption_plot_layout.visibility = View.VISIBLE
     }
 
 }

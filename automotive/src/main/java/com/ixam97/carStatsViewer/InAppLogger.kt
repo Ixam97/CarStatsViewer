@@ -35,10 +35,6 @@ object InAppLogger {
         logArray.add(logMessage)
     }
 
-    // fun deepLog(message: String, doDeepLog: Boolean) {
-    //     if (doDeepLog) log("DEEP LOG: $message")
-    // }
-
     fun logVHALCallback() {
         numVHALCallbacks++
         lastVHALCallback = SimpleDateFormat("dd.MM.yyyy hh:mm:ss").format(Date())
@@ -99,29 +95,21 @@ class LogActivity : Activity() {
 
         appPreferences = AppPreferences(applicationContext)
 
-        // val sharedPref = applicationContext.getSharedPreferences(
-        //     getString(R.string.preferences_file_key), Context.MODE_PRIVATE
-        // )
-
         setContentView(R.layout.activity_log)
 
         log_switch_deep_log.isChecked = appPreferences.deepLog
 
+        var logString = ""
+
         for (i in 0 until InAppLogger.logArray.size) {
-            val logTextView = TextView(this)
-            logTextView.text = InAppLogger.logArray[i]
-            log_log.addView(logTextView)
+            logString += "${InAppLogger.logArray[i]}\n"
         }
 
-        val logVHALTextView = TextView(this)
-        val logUIUpdatesTextView = TextView(this)
-        val logNotificationUpdatesTextView = TextView(this)
-        logVHALTextView.text = InAppLogger.getVHALLog()
-        logUIUpdatesTextView.text = InAppLogger.getUILog()
-        logNotificationUpdatesTextView.text = InAppLogger.getNotificationLog()
-        log_log.addView(logVHALTextView)
-        log_log.addView(logUIUpdatesTextView)
-        log_log.addView(logNotificationUpdatesTextView)
+        logString += "${InAppLogger.getVHALLog()}\n${InAppLogger.getUILog()}\n${InAppLogger.getNotificationLog()}"
+
+        val logTextView = TextView(this)
+        logTextView.text = logString
+        log_log.addView(logTextView)
 
         log_button_back.setOnClickListener {
             finish()
@@ -144,9 +132,6 @@ class LogActivity : Activity() {
         }
 
         log_switch_deep_log.setOnClickListener {
-            // sharedPref.edit()
-            //     .putBoolean(getString(R.string.preferences_deep_log_key), log_switch_deep_log.isChecked)
-            //     .apply()
             appPreferences.deepLog = log_switch_deep_log.isChecked
         }
 
