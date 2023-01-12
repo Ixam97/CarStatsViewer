@@ -42,8 +42,6 @@ class SettingsActivity : Activity() {
         )
 
         settings_button_back.setOnClickListener() {
-            intent = Intent()
-            setResult(RESULT_OK, intent);
             finish()
         }
 

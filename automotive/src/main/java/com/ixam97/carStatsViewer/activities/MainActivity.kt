@@ -71,6 +71,9 @@ class MainActivity : Activity() {
             DataHolder.consumptionPlotLine.Divider = 10f
         }
 
+        main_power_gage.maxValue = if (appPreferences.singleMotor) 170f else 300f
+        main_power_gage.minValue = if (appPreferences.singleMotor) -100f else -150f
+
         enableUiUpdates()
     }
 
@@ -490,11 +493,4 @@ class MainActivity : Activity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == SETTINGS_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            InAppLogger.log("Settings changed, refresh MainActivity")
-            finish()
-            startActivity(intent)
-        }
-    }
 }
