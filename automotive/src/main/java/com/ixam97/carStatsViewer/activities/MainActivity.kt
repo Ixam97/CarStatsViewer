@@ -19,6 +19,8 @@ import android.os.SystemClock
 import android.view.View
 import android.widget.Toast
 import com.ixam97.carStatsViewer.plot.PlotDimension
+import com.ixam97.carStatsViewer.plot.PlotPaint
+import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -71,8 +73,18 @@ class MainActivity : Activity() {
             DataHolder.consumptionPlotLine.Divider = 10f
         }
 
+
+        if (appPreferences.consumptionPlotSecondaryColor) {
+            DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(Color.LTGRAY, main_consumption_plot.textSize)
+        } else {
+            DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(Color.parseColor("#00BF00"), main_consumption_plot.textSize)
+        }
+        
         main_power_gage.maxValue = if (appPreferences.singleMotor) 170f else 300f
         main_power_gage.minValue = if (appPreferences.singleMotor) -100f else -150f
+
+        main_power_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
+        main_consumption_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
 
         enableUiUpdates()
     }
@@ -397,8 +409,6 @@ class MainActivity : Activity() {
                 else -1
             }
         }
-
-
 
         main_button_reset.setOnClickListener {
 
