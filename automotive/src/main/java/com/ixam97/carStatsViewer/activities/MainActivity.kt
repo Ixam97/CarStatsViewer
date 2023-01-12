@@ -80,8 +80,8 @@ class MainActivity : Activity() {
             DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(Color.parseColor("#00BF00"), main_consumption_plot.textSize)
         }
         
-        main_power_gage.maxValue = if (appPreferences.singleMotor) 170f else 300f
-        main_power_gage.minValue = if (appPreferences.singleMotor) -100f else -150f
+        main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
+        main_power_gage.minValue = if (appPreferences.consumptionPlotSingleMotor) -100f else -150f
 
         main_power_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
         main_consumption_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
@@ -374,8 +374,8 @@ class MainActivity : Activity() {
 
         main_power_gage.gageName = getString(R.string.main_gage_power)
         main_power_gage.gageUnit = "kW"
-        main_power_gage.maxValue = if (appPreferences.singleMotor) 170f else 300f
-        main_power_gage.minValue = if (appPreferences.singleMotor) -100f else -150f
+        main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
+        main_power_gage.minValue = if (appPreferences.consumptionPlotSingleMotor) -100f else -150f
         main_power_gage.setValue(0f)
 
         main_consumption_gage.gageName = getString(R.string.main_gage_consumption)

@@ -109,7 +109,7 @@ class SettingsActivity : Activity() {
         }
         
         settings_consumption_plot_switch_single_motor.setOnClickListener {
-            appPreferences.singleMotor = settings_switch_single_motor.isChecked
+            appPreferences.consumptionPlotSingleMotor = settings_consumption_plot_switch_single_motor.isChecked
         }
     }
 

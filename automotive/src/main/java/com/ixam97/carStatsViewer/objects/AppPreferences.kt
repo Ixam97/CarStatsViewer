@@ -66,10 +66,10 @@ class AppPreferences(context: Context) {
         }
     var consumptionPlotSingleMotor: Boolean
         get() {
-            return getPreference(AppPreference.SINGLE_MOTOR) as Boolean
+            return getPreference(AppPreference.CONSUMPTION_PLOT_SINGLE_MOTOR) as Boolean
         }
         set(value) {
-            setPreference(AppPreference.SINGLE_MOTOR, value)
+            setPreference(AppPreference.CONSUMPTION_PLOT_SINGLE_MOTOR, value)
         }
     var consumptionPlotSecondaryColor: Boolean
         get() {
