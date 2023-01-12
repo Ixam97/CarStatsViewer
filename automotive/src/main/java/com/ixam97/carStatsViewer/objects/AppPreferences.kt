@@ -2,7 +2,6 @@ package com.ixam97.carStatsViewer.objects
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import com.ixam97.carStatsViewer.R
 
 class AppPreferences(context: Context) {

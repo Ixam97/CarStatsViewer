@@ -20,7 +20,6 @@ import android.view.View
 import android.widget.Toast
 import com.ixam97.carStatsViewer.plot.PlotDimension
 import com.ixam97.carStatsViewer.plot.PlotPaint
-import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -32,8 +31,11 @@ const val SETTINGS_REQUEST_CODE = 1
 
 class MainActivity : Activity() {
     companion object {
-        private val permissions = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED)
-        private const val uiUpdateDelayMillis = 200L
+        private val PERMISSIONS = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED)
+        private const val UI_UPDATE_INTERVAL = 200L
+        private const val DISTANCE_1 =  5_001L
+        private const val DISTANCE_2 = 15_001L
+        private const val DISTANCE_TRIP_DIVIDER = 5_000L
     }
 
     /** values and variables */
@@ -50,7 +52,7 @@ class MainActivity : Activity() {
     private val updateActivityTask = object : Runnable {
         override fun run() {
             updateActivity()
-            if (updateUi) timerHandler.postDelayed(this, uiUpdateDelayMillis)
+            if (updateUi) timerHandler.postDelayed(this, UI_UPDATE_INTERVAL)
         }
     }
 
@@ -305,28 +307,28 @@ class MainActivity : Activity() {
 
     private fun dimensionRestrictionById(id : Int) : Long {
         return when (id) {
-            1 -> 5_001L
-            2 -> 15_001L
-            3 -> ((DataHolder.traveledDistance / 5_000).toInt() + 1) * 5_000L + 1
-            else -> 10_001L
+            1 -> DISTANCE_1
+            2 -> DISTANCE_2
+            3 -> ((DataHolder.traveledDistance / DISTANCE_TRIP_DIVIDER).toInt() + 1) * DISTANCE_TRIP_DIVIDER + 1
+            else -> DISTANCE_2
         }
     }
 
     private fun dimensionSmoothingById(id : Int) : Long {
         return when (id) {
-            1 -> 100L
-            2 -> 500L
-            3 -> 1_000L
-            else -> 100L
+            1 -> (DISTANCE_1 - 1) / 50
+            2 -> (DISTANCE_2 - 1) / 50
+            3 -> (((DataHolder.traveledDistance / DISTANCE_TRIP_DIVIDER).toInt() + 1) * DISTANCE_TRIP_DIVIDER) / 50
+            else -> (DISTANCE_1 - 1) / 50
         }
     }
 
     private fun checkPermissions() {
         if(checkSelfPermission(Car.PERMISSION_ENERGY) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(permissions, 0)
+            requestPermissions(PERMISSIONS, 0)
         }
         if(checkSelfPermission(Car.PERMISSION_SPEED) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(permissions, 1)
+            requestPermissions(PERMISSIONS, 1)
         }
     }
 
