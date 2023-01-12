@@ -33,7 +33,7 @@ const val SETTINGS_REQUEST_CODE = 1
 class MainActivity : Activity() {
     companion object {
         private val permissions = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED)
-        private const val uiUpdateDelayMillis = 40L
+        private const val uiUpdateDelayMillis = 200L
     }
 
     /** values and variables */

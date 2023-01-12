@@ -1,5 +1,7 @@
 package com.ixam97.carStatsViewer.activities
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.objects.*
 import android.app.Activity
@@ -118,13 +120,39 @@ class SettingsActivity : Activity() {
     }
 
     private fun gotoMaster(){
-        settings_consumption_plot_layout.visibility = View.GONE
-        settings_master_layout.visibility = View.VISIBLE
+        animateTransition(settings_consumption_plot_layout, settings_master_layout)
+        // settings_consumption_plot_layout.visibility = View.GONE
+        // settings_master_layout.visibility = View.VISIBLE
     }
 
     private fun gotoConsumptionPlot() {
-        settings_master_layout.visibility = View.GONE
-        settings_consumption_plot_layout.visibility = View.VISIBLE
+        animateTransition(settings_master_layout, settings_consumption_plot_layout)
+        // settings_master_layout.visibility = View.GONE
+        // settings_consumption_plot_layout.visibility = View.VISIBLE
+    }
+
+    private fun animateTransition(fromView: View, toView: View) {
+        toView.apply{
+            alpha = 0f
+            visibility = View.VISIBLE
+            animate()
+                .alpha(1f)
+                .setDuration(200)
+                .setListener(null)
+        }
+        fromView.apply {
+            animate()
+                .alpha(0f)
+                .setDuration(200)
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        fromView.visibility = View.GONE
+                        fromView.alpha = 1f
+                    }
+                })
+        }
+
+        InAppLogger.log(resources.getInteger(android.R.integer.config_shortAnimTime).toString())
     }
 
 }

@@ -1,146 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.SettingsActivity">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="110dp"
+        android:background="?android:attr/colorControlActivated"/>
+
     <LinearLayout android:id="@+id/settings_master_layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/settings_button_back"
-            style="@style/title_back_button_style"/>
-
-        <TextView
-            style="@style/title_text_style"
-            android:text="@string/settings_title" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
-        <ImageButton
-            android:id="@+id/settings_button_kill"
-            android:src="@drawable/ic_kill"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:layout_margin="15dp"/>
-
-    </LinearLayout>
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="?android:attr/colorControlActivated"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="10dp"
-        android:orientation="vertical">
-
-        <Switch
-            android:id="@+id/settings_switch_notifications"
-            style="@style/menu_standard_switch_style"
-            android:text="@string/settings_notifications"/>
-
-        <View
-            style="@style/menu_divider_style"
-            android:background="?android:attr/listDivider"/>
-
-        <Switch
-            android:id="@+id/settings_switch_consumption_unit"
-            style="@style/menu_standard_switch_style"
-            android:text="@string/settings_consumption_unit"/>
-
-        <View
-            style="@style/menu_divider_style"
-            android:background="?android:attr/listDivider"/>
-
-        <Switch
-            android:id="@+id/settings_switch_experimental_layout"
-            style="@style/menu_standard_switch_style"
-            android:text="@string/settings_experimental_layout"/>
-
-        <View
-            style="@style/menu_divider_style"
-            android:background="?android:attr/listDivider"/>
-
-
-        <TextView
-            android:id="@+id/settings_consumption_plot"
-            android:text="@string/settings_consumption_plot"
-            style="@style/menu_button_row_style"
-            />
-
-        <View
-            style="@style/menu_divider_style"
-            android:background="?android:attr/listDivider"/>
-<!--
-        <TextView
-            android:id="@+id/settings_charge_plot"
-            android:text="@string/settings_charge_plot"
-            style="@style/menu_button_row_style"
-            />
-
-        <View
-            style="@style/menu_divider_style"
-            android:background="?android:attr/listDivider"/>
--->
-
-        <!-- Example layout for a menu row with two radio buttons -->
-        <!--
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="101dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/settings_button_back"
+                style="@style/title_back_button_style"/>
+
             <TextView
-                style="@style/menu_standard_row_label"
-                android:text="Radio Buttons" />
-            <View style="@style/filler"/>
-            <RadioGroup
+                style="@style/title_text_style"
+                android:text="@string/settings_title" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <ImageButton
+                android:id="@+id/settings_button_kill"
+                android:src="@drawable/ic_kill"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-                <RadioButton
-                    android:text="Option 1"
-                    style="@style/menu_standard_row_label" />
-                <RadioButton
-                    android:text="Option 2"
-                    android:layout_marginStart="20dp"
-                    style="@style/menu_standard_row_label" />
-            </RadioGroup>
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:layout_margin="15dp"/>
 
         </LinearLayout>
-
         <View
-            style="@style/menu_divider_style"
-            android:background="?android:attr/listDivider"/>
-        -->
-
-        <View
+            android:id="@+id/divider"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_height="2dp"
+            android:background="?android:attr/colorControlActivated"/>
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/settings_version_text"/>
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <Switch
+                android:id="@+id/settings_switch_notifications"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_notifications"/>
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <Switch
+                android:id="@+id/settings_switch_consumption_unit"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_consumption_unit"/>
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <Switch
+                android:id="@+id/settings_switch_experimental_layout"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_experimental_layout"/>
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+
+            <TextView
+                android:id="@+id/settings_consumption_plot"
+                android:text="@string/settings_consumption_plot"
+                style="@style/menu_button_row_style"
+                />
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+    <!--
+            <TextView
+                android:id="@+id/settings_charge_plot"
+                android:text="@string/settings_charge_plot"
+                style="@style/menu_button_row_style"
+                />
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+    -->
+
+            <!-- Example layout for a menu row with two radio buttons -->
+            <!--
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="101dp"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/menu_standard_row_label"
+                    android:text="Radio Buttons" />
+                <View style="@style/filler"/>
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:text="Option 1"
+                        style="@style/menu_standard_row_label" />
+                    <RadioButton
+                        android:text="Option 2"
+                        android:layout_marginStart="20dp"
+                        style="@style/menu_standard_row_label" />
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+            -->
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/settings_version_text"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -212,4 +218,4 @@
         </LinearLayout>
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
