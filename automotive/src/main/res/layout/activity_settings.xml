@@ -78,6 +78,7 @@
             style="@style/menu_divider_style"
             android:background="?android:attr/listDivider"/>
 
+
         <TextView
             android:id="@+id/settings_consumption_plot"
             android:text="@string/settings_consumption_plot"
@@ -97,7 +98,6 @@
         <View
             style="@style/menu_divider_style"
             android:background="?android:attr/listDivider"/>
-        -->
 
         <!-- Example layout for a menu row with two radio buttons -->
         <!--
@@ -194,6 +194,15 @@
                 android:id="@+id/settings_consumption_plot_switch_visible_gages"
                 style="@style/menu_standard_switch_style"
                 android:text="@string/settings_consumption_plot_visible_gages"/>
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+                
+            <Switch
+                android:id="@+id/settings_consumption_plot_switch_single_motor"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_consumption_plot_single_motor" />
 
             <View
                 style="@style/menu_divider_style"

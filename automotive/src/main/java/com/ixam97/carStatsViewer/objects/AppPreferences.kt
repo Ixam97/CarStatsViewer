@@ -2,6 +2,7 @@ package com.ixam97.carStatsViewer.objects
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.ixam97.carStatsViewer.R
 
 class AppPreferences(context: Context) {
@@ -63,6 +64,13 @@ class AppPreferences(context: Context) {
         set(value) {
             setPreference(AppPreference.PLOT_DISTANCE, value)
         }
+    var consumptionPlotSingleMotor: Boolean
+        get() {
+            return getPreference(AppPreference.SINGLE_MOTOR) as Boolean
+        }
+        set(value) {
+            setPreference(AppPreference.SINGLE_MOTOR, value)
+        }
     var consumptionPlotSecondaryColor: Boolean
         get() {
             return getPreference(AppPreference.PLOT_SHOW_SPEED) as Boolean
@@ -87,6 +95,7 @@ class AppPreferences(context: Context) {
         AppPreference.DEEP_LOG to context.getString(R.string.preferences_deep_log_key),
         AppPreference.PLOT_SHOW_SPEED to context.getString(R.string.preferences_plot_speed_key),
         AppPreference.PLOT_DISTANCE to context.getString(R.string.preferences_plot_distance_key),
+        AppPreference.CONSUMPTION_PLOT_SINGLE_MOTOR to context.getString(R.string.preferences_consumption_plot_single_motor_key),
         AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR to context.getString(R.string.preference_consumption_plot_secondary_color_key),
         AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to context.getString(R.string.preference_consumption_plot_visible_gages_key)
     )
@@ -99,6 +108,7 @@ class AppPreferences(context: Context) {
         AppPreference.DEEP_LOG to false,
         AppPreference.PLOT_SHOW_SPEED to false,
         AppPreference.PLOT_DISTANCE to 1,
+        AppPreference.CONSUMPTION_PLOT_SINGLE_MOTOR to false,
         AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR to false,
         AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to true
     )
@@ -139,6 +149,7 @@ enum class AppPreference {
     DEEP_LOG,
     PLOT_SHOW_SPEED,
     PLOT_DISTANCE,
+    CONSUMPTION_PLOT_SINGLE_MOTOR,
     CONSUMPTION_PLOT_SECONDARY_COLOR,
     CONSUMPTION_PLOT_VISIBLE_GAGES
 }

@@ -80,7 +80,7 @@ class SettingsActivity : Activity() {
         settings_switch_experimental_layout.setOnClickListener {
             appPreferences.experimentalLayout = settings_switch_experimental_layout.isChecked
         }
-
+        
         settings_consumption_plot.setOnClickListener {
             gotoConsumptionPlot()
         }
@@ -94,6 +94,7 @@ class SettingsActivity : Activity() {
 
         settings_consumption_plot_switch_secondary_color.isChecked = appPreferences.consumptionPlotSecondaryColor
         settings_consumption_plot_switch_visible_gages.isChecked = appPreferences.consumptionPlotVisibleGages
+        settings_consumption_plot_switch_single_motor.isChecked = appPreferences.consumptionPlotSingleMotor
 
         settings_consumption_plot_button_back.setOnClickListener {
             gotoMaster()
@@ -105,6 +106,10 @@ class SettingsActivity : Activity() {
 
         settings_consumption_plot_switch_visible_gages.setOnClickListener {
             appPreferences.consumptionPlotVisibleGages = settings_consumption_plot_switch_visible_gages.isChecked
+        }
+        
+        settings_consumption_plot_switch_single_motor.setOnClickListener {
+            appPreferences.singleMotor = settings_switch_single_motor.isChecked
         }
     }
 

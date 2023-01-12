@@ -147,6 +147,7 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             gageBorder.lineTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
 
             if (minValue >= 0) gageZeroLineYPos += borderPaint.strokeWidth/2
+            gageZeroLine.reset() // Reset the path to not draw zero line multiple times
             gageZeroLine.moveTo(0f, gageZeroLineYPos)
             gageZeroLine.lineTo(gageWidth + borderPaint.strokeWidth/2, gageZeroLineYPos)
 

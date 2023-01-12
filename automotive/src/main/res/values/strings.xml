@@ -13,6 +13,7 @@
     <string name="preferences_plot_distance_key" translatable="false">preferences_plot_distance</string>
     <string name="preferences_plot_speed_key" translatable="false">preferences_plot_speed</string>
     <string name="preferences_experimental_layout_key" translatable="false">preferences_experimental_layout</string>
+    <string name="preferences_consumption_plot_single_motor_key" translatable="false">preferences_consumption_plot_single_motor_key</string>
     <string name="preference_consumption_plot_visible_gages_key" translatable="false">preference_consumption_plot_visible_gages</string>
     <string name="preference_consumption_plot_secondary_color_key" translatable="false">preference_consumption_plot_secondary_color</string>
 
@@ -45,6 +46,7 @@
     <string name="settings_consumption_plot">Consumption plot settings</string>
     <string name="settings_charge_plot">Charge plot settings</string>
     <string name="settings_plot_secondary_color">Gray as secondary plot color</string>
+    <string name="settings_consumption_plot_single_motor">Single motor model</string>
     <string name="settings_consumption_plot_visible_gages">Show power gages</string>
 
     <!-- Quit Dialog -->
