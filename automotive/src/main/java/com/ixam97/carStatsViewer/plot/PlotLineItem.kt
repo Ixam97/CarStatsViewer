@@ -11,6 +11,20 @@ class PlotLineItem (
 
     val Marker: PlotMarker?
 ){
+    fun group(index: Int, dimension: PlotDimension, dimensionSmoothing: Long?): Long {
+        val value = when(dimension) {
+            PlotDimension.INDEX -> index.toLong()
+            PlotDimension.DISTANCE -> Distance.toLong()
+            PlotDimension.TIME -> Time
+        }
+
+        return when (dimensionSmoothing) {
+            null -> value
+            0L -> value
+            else -> value / dimensionSmoothing
+        }
+    }
+
     companion object {
         fun cord(index: Float?, min: Float, max: Float) : Float? {
             return when (index) {
