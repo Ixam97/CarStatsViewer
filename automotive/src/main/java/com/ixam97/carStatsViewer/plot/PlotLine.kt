@@ -42,24 +42,29 @@ class PlotLine(
         dataPoints.clear()
     }
 
-    fun getDataPoints(dimension: PlotDimension, dimensionRestriction: Long?): List<PlotLineItem> {
-        val clone = dataPoints.map { it.value }
-
+    fun getDataPoints(dimension: PlotDimension, dimensionRestriction: Long?, dimensionSmoothing: Long? = null): List<PlotLineItem> {
         return when {
-            clone.isEmpty() -> clone
-            dimensionRestriction == null -> clone
+            dataPoints.isEmpty() || dimensionRestriction == null -> dataPoints.map { it.value }
             else -> when (dimension) {
                 PlotDimension.INDEX -> when {
-                    clone.size > dimensionRestriction -> clone.filterIndexed { index, _ -> index >= dimensionRestriction }
-                    else -> clone
+                    dataPoints.size > dimensionRestriction -> dataPoints.filter { x -> x.key >= dimensionRestriction }.map { it.value }
+                    else -> dataPoints.map { it.value }
                 }
                 PlotDimension.DISTANCE -> {
-                    val min = clone.last().Distance - dimensionRestriction
-                    return clone.filter { it.Distance >= min }
+                    var min = dataPoints[dataPoints.size - 1]!!.Distance - dimensionRestriction
+                    if (dimensionSmoothing != null) {
+                        min -= 2 * dimensionSmoothing
+                    }
+
+                    return dataPoints.filter { it.value.Distance >= min }.map { it.value }
                 }
                 PlotDimension.TIME -> {
-                    val min = clone.last().Time - dimensionRestriction
-                    return clone.filter { it.Time >= min }
+                    var min = dataPoints[dataPoints.size - 1]!!.Time - dimensionRestriction
+                    if (dimensionSmoothing != null) {
+                        min -= 2 * dimensionSmoothing
+                    }
+
+                    return dataPoints.filter { it.value.Time >= min }.map { it.value }
                 }
             }
         }
@@ -108,6 +113,12 @@ class PlotLine(
         }
     }
 
+    fun distanceDimension(dimension: PlotDimension, dimensionRestriction: Long?, dataPoints: List<PlotLineItem>): Float {
+        return when (dimension) {
+            PlotDimension.TIME -> (maxDimension(dimension, dataPoints) as Long - minDimension(dimension, dimensionRestriction, dataPoints) as Long).toFloat()
+            else -> maxDimension(dimension, dataPoints) as Float - minDimension(dimension, dimensionRestriction, dataPoints) as Float
+        }
+    }
 
     fun maxValue(dataPoints: List<PlotLineItem>): Float? {
         val max : Float? = when {
@@ -219,6 +230,38 @@ class PlotLine(
             PlotDimension.TIME -> PlotLineItem.cord(index, minDimension(dimension, dimensionRestriction, dataPoints) as Long, maxDimension(dimension, dataPoints) as Long)
             else -> 0f
         }
+    }
+
+    fun toPlotLineItemPointCollection(dataPoints: List<PlotLineItem>, dimension: PlotDimension, dimensionRestriction: Long?, dimensionSmoothing: Long?): ArrayList<ArrayList<PlotLineItemPoint>> {
+        val result = ArrayList<ArrayList<PlotLineItemPoint>>()
+        var group = ArrayList<PlotLineItemPoint>()
+
+        for (index in dataPoints.indices) {
+            val item = dataPoints[index]
+
+            group.add(
+                PlotLineItemPoint(
+                    when (dimension) {
+                        PlotDimension.INDEX -> x(index.toFloat(), dimension, dimensionRestriction, dataPoints)
+                        PlotDimension.DISTANCE -> x(item.Distance, dimension, dimensionRestriction, dataPoints)
+                        PlotDimension.TIME -> x(item.Time, dimension, dimensionRestriction, dataPoints)
+                    },
+                    item,
+                    item.group(index, dimension, dimensionSmoothing)
+                )
+            )
+
+            if ((item.Marker ?: PlotMarker.BEGIN_SESSION) != PlotMarker.BEGIN_SESSION) {
+                result.add(group)
+                group = ArrayList()
+            }
+        }
+
+        if (!group.isEmpty()) {
+            result.add(group)
+        }
+
+        return result
     }
 }
 

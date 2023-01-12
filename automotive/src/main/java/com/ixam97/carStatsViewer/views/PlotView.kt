@@ -8,7 +8,6 @@ import android.util.TypedValue
 import android.view.View
 import com.ixam97.carStatsViewer.plot.*
 import java.util.concurrent.TimeUnit
-import kotlin.math.ceil
 
 
 class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -47,7 +46,24 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         }
 
     var dimension: PlotDimension = PlotDimension.INDEX
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     var dimensionRestriction: Long? = null
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    var dimensionSmoothing: Long? = null
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    var dimensionSmoothingPercentage: Float? = null
         set(value) {
             field = value
             invalidate()
@@ -160,54 +176,35 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private fun drawPlot(canvas: Canvas) {
         val maxX = canvas.width.toFloat()
         val maxY = canvas.height.toFloat()
-        val areaX = maxX - 2 * xMargin
 
         for (line in plotLines) {
             if (line.isEmpty() || !line.Visible) continue
 
-            val dataPoints = line.getDataPoints(dimension, dimensionRestriction)
+            val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionSmoothing)
             if (dataPoints.isEmpty()) continue
 
             val minValue = line.minValue(dataPoints)!!
             val maxValue = line.maxValue(dataPoints)!!
 
+            val smoothing = when {
+                dimensionSmoothing != null -> dimensionSmoothing
+                dimensionSmoothingPercentage != null -> (line.distanceDimension(dimension, dimensionRestriction, dataPoints) * dimensionSmoothingPercentage!!).toLong()
+                else -> null
+            }
+
             val backgroundZeroCord = y(line.Range.backgroundZero, minValue, maxValue, maxY)
 
-            val prePlotPointCollections = ArrayList<ArrayList<PlotLineItemPoint>>()
-            var prePlotPoints = ArrayList<PlotLineItemPoint>()
+            val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPoints, dimension, dimensionRestriction, smoothing)
 
-            for (index in dataPoints.indices) {
-                val item = dataPoints[index]
+            val plotPointCollection = ArrayList<ArrayList<PlotPoint>>()
+            for (collection in plotLineItemPointCollection) {
+                if (collection.isEmpty()) continue
 
-                prePlotPoints.add(
-                    PlotLineItemPoint(
-                        when (dimension) {
-                            PlotDimension.INDEX -> line.x(index.toFloat(), dimension, dimensionRestriction, dataPoints)
-                            PlotDimension.DISTANCE -> line.x(item.Distance, dimension, dimensionRestriction, dataPoints)
-                            PlotDimension.TIME -> line.x(item.Time, dimension, dimensionRestriction, dataPoints)
-                        },
-                        item
-                    )
-                )
+                val plotPoints = ArrayList<PlotPoint>()
 
-                if ((item.Marker ?: PlotMarker.BEGIN_SESSION) != PlotMarker.BEGIN_SESSION) {
-                    prePlotPointCollections.add(prePlotPoints)
-                    prePlotPoints = ArrayList()
-                }
-            }
-            prePlotPointCollections.add(prePlotPoints)
-
-            val postPlotPointCollections = ArrayList<ArrayList<PlotPoint>>()
-            for (midPlotPoints in prePlotPointCollections) {
-                if (midPlotPoints.isEmpty()) continue
-
-                val postPlotPoints = ArrayList<PlotPoint>()
-                val min = midPlotPoints.minBy { it.x }?.x!!
-                val groupBy = 5 / areaX
-
-                for (group in midPlotPoints.groupBy { ceil((it.x - min) / groupBy).toInt() }) {
-                    val postPoint = when (group.value.size > 1) {
-                        false -> {
+                for (group in collection.groupBy { it.group }) {
+                    val plotPoint = when {
+                        group.value.size <= 1 -> {
                             val point = group.value.first()
                             PlotPoint(
                                 x(point.x, 0f, 1f, maxX)!!,
@@ -215,7 +212,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                             )
                         }
                         else -> {
-                            val x = when (group.key) {
+                            val x = when (plotPoints.size) {
                                 0 -> group.value.minBy { it.x }?.x!!
                                 else -> group.value.maxBy { it.x }?.x!!
                             }
@@ -227,22 +224,29 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                         }
                     }
 
-                    postPlotPoints.add(postPoint)
+                    plotPoints.add(plotPoint)
                 }
-                postPlotPointCollections.add(postPlotPoints)
+
+                plotPointCollection.add(plotPoints)
             }
 
             canvas.save()
 
+            // TOP
             canvas.clipOutRect(0f, 0f, maxX, yMargin.toFloat())
+            // BOTTOM
             canvas.clipOutRect(0f, maxY - yMargin, maxX, maxY)
+            // LEFT
+            canvas.clipOutRect(0f, 0f, xMargin.toFloat(), maxY)
+            // RIGHT
+            canvas.clipOutRect(maxX - xMargin, 0f, maxX, maxY)
 
-            for (points in postPlotPointCollections) {
+            for (plotPoints in plotPointCollection) {
                 if (backgroundZeroCord != null) {
-                    drawPlot(canvas, line.plotPaint!!.PlotBackground, points, backgroundZeroCord)
+                    drawPlot(canvas, line.plotPaint!!.PlotBackground, plotPoints, backgroundZeroCord)
                 }
 
-                drawPlot(canvas, line.plotPaint!!.Plot, points)
+                drawPlot(canvas, line.plotPaint!!.Plot, plotPoints)
             }
 
             canvas.restore()
@@ -308,7 +312,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     rightZero < 1000 -> String.format("%d m", (rightZero - (rightZero % 100)).toInt())
                     else -> String.format("%d km", (rightZero / 1000).toInt())
                 }
-                PlotDimension.TIME -> String.format("%02d:%02d", TimeUnit.MINUTES.convert(rightZero.toLong(), TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(rightZero.toLong(), TimeUnit.NANOSECONDS))
+                PlotDimension.TIME -> String.format("%02d:%02d", TimeUnit.MINUTES.convert(leftZero.toLong(), TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(leftZero.toLong(), TimeUnit.NANOSECONDS) % 60)
             }
 
             val bounds = Rect()
@@ -348,86 +352,87 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val bounds = Rect()
         labelPaint.getTextBounds("Dummy", 0, "Dummy".length, bounds)
 
-        for (drawHighlightLabelOnly in listOf(false, true))
-        for (line in plotLines) {
-            if (line.isEmpty() || !line.Visible) continue
+        for (drawHighlightLabelOnly in listOf(false, true)) {
+            for (line in plotLines) {
+                if (line.isEmpty() || !line.Visible) continue
 
-            val dataPoints = line.getDataPoints(dimension, dimensionRestriction)
-            if (dataPoints.isEmpty()) continue
+                val dataPoints = line.getDataPoints(dimension, dimensionRestriction)
+                if (dataPoints.isEmpty()) continue
 
-            val minValue = line.minValue(dataPoints)!!
-            val maxValue = line.maxValue(dataPoints)!!
-            val highlight = line.byHighlightMethod(dataPoints)
+                val minValue = line.minValue(dataPoints)!!
+                val maxValue = line.maxValue(dataPoints)!!
+                val highlight = line.byHighlightMethod(dataPoints)
 
-            val labelShiftY = (bounds.height() / 2).toFloat()
-            val valueShiftY = (maxValue - minValue) / (yLineCount - 1)
+                val labelShiftY = (bounds.height() / 2).toFloat()
+                val valueShiftY = (maxValue - minValue) / (yLineCount - 1)
 
-            val labelUnitXOffset = when (line.LabelPosition) {
-                PlotLabelPosition.LEFT -> 0f
-                PlotLabelPosition.RIGHT -> -labelPaint.measureText(line.Unit)/2
-                else -> 0f
-            }
-
-            val labelCordX = when (line.LabelPosition) {
-                PlotLabelPosition.LEFT -> textSize
-                PlotLabelPosition.RIGHT -> maxX - xMargin + textSize/2
-                else -> null
-            }
-
-            val highlightCordY = y(highlight, minValue, maxValue, maxY)
-
-            if (!drawHighlightLabelOnly) {
-                if (!drawHighlightLabelOnly && line.LabelPosition !== PlotLabelPosition.NONE && labelCordX != null) {
-                    if (line.Unit.isNotEmpty()) {
-                        canvas.drawText(line.Unit, labelCordX + labelUnitXOffset,yMargin - (yMargin / 3f), labelPaint)
-                    }
-
-                    for (i in 0 until yLineCount) {
-                        val valueY = maxValue - i * valueShiftY
-                        val cordY = y(valueY, minValue, maxValue, maxY)!!
-                        val label = String.format(line.LabelFormat, valueY / line.Divider)
-
-                        canvas.drawText(label, labelCordX, cordY + labelShiftY, labelPaint)
-                    }
+                val labelUnitXOffset = when (line.LabelPosition) {
+                    PlotLabelPosition.LEFT -> 0f
+                    PlotLabelPosition.RIGHT -> -labelPaint.measureText(line.Unit)/2
+                    else -> 0f
                 }
 
-                when (line.HighlightMethod) {
-                    PlotHighlightMethod.AVG_BY_INDEX -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
-                    PlotHighlightMethod.AVG_BY_DISTANCE -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
-                    PlotHighlightMethod.AVG_BY_TIME -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
-                    else -> {
-                        // Don't draw
+                val labelCordX = when (line.LabelPosition) {
+                    PlotLabelPosition.LEFT -> textSize
+                    PlotLabelPosition.RIGHT -> maxX - xMargin + textSize/2
+                    else -> null
+                }
+
+                val highlightCordY = y(highlight, minValue, maxValue, maxY)
+
+                if (!drawHighlightLabelOnly) {
+                    if (line.LabelPosition !== PlotLabelPosition.NONE && labelCordX != null) {
+                        if (line.Unit.isNotEmpty()) {
+                            canvas.drawText(line.Unit, labelCordX + labelUnitXOffset,yMargin - (yMargin / 3f), labelPaint)
+                        }
+
+                        for (i in 0 until yLineCount) {
+                            val valueY = maxValue - i * valueShiftY
+                            val cordY = y(valueY, minValue, maxValue, maxY)!!
+                            val label = String.format(line.LabelFormat, valueY / line.Divider)
+
+                            canvas.drawText(label, labelCordX, cordY + labelShiftY, labelPaint)
+                        }
                     }
-                }
 
-                for (baseLineAt in line.baseLineAt) {
-                    drawYLine(canvas, y(baseLineAt, minValue, maxValue, maxY), maxX, baseLinePaint)
-                }
-            } else {
-                if (labelCordX != null && highlightCordY != null) {
-                    val label = String.format(line.HighlightFormat, highlight!! / line.Divider)
-                    line.plotPaint!!.HighlightLabel.textSize = 35f
-                    val labelWidth = line.plotPaint!!.HighlightLabel.measureText(label)
-                    val labelHeight = line.plotPaint!!.HighlightLabel.textSize
-                    val textBoxMargin = line.plotPaint!!.HighlightLabel.textSize / 3.5f
+                    when (line.HighlightMethod) {
+                        PlotHighlightMethod.AVG_BY_INDEX -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
+                        PlotHighlightMethod.AVG_BY_DISTANCE -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
+                        PlotHighlightMethod.AVG_BY_TIME -> drawYLine(canvas, highlightCordY, maxX, line.plotPaint!!.HighlightLabelLine)
+                        else -> {
+                            // Don't draw
+                        }
+                    }
 
-                    canvas.drawRect(
-                        labelCordX + labelUnitXOffset - textBoxMargin,
-                        highlightCordY - labelHeight + labelShiftY,
-                        labelCordX + labelUnitXOffset + labelWidth + textBoxMargin,
-                        highlightCordY + labelShiftY + textBoxMargin,
-                        backgroundPaint
-                    )
+                    for (baseLineAt in line.baseLineAt) {
+                        drawYLine(canvas, y(baseLineAt, minValue, maxValue, maxY), maxX, baseLinePaint)
+                    }
+                } else {
+                    if (labelCordX != null && highlightCordY != null) {
+                        val label = String.format(line.HighlightFormat, highlight!! / line.Divider)
+                        line.plotPaint!!.HighlightLabel.textSize = 35f
+                        val labelWidth = line.plotPaint!!.HighlightLabel.measureText(label)
+                        val labelHeight = line.plotPaint!!.HighlightLabel.textSize
+                        val textBoxMargin = line.plotPaint!!.HighlightLabel.textSize / 3.5f
 
-                    canvas.drawRect(
-                        labelCordX + labelUnitXOffset - textBoxMargin,
-                        highlightCordY - labelHeight + labelShiftY,
-                        labelCordX + labelUnitXOffset + labelWidth + textBoxMargin,
-                        highlightCordY + labelShiftY + textBoxMargin,
-                        line.plotPaint!!.Plot
-                    )
+                        canvas.drawRect(
+                            labelCordX + labelUnitXOffset - textBoxMargin,
+                            highlightCordY - labelHeight + labelShiftY,
+                            labelCordX + labelUnitXOffset + labelWidth + textBoxMargin,
+                            highlightCordY + labelShiftY + textBoxMargin,
+                            backgroundPaint
+                        )
 
-                    canvas.drawText(label, labelCordX + labelUnitXOffset, highlightCordY + labelShiftY, line.plotPaint!!.HighlightLabel)
+                        canvas.drawRect(
+                            labelCordX + labelUnitXOffset - textBoxMargin,
+                            highlightCordY - labelHeight + labelShiftY,
+                            labelCordX + labelUnitXOffset + labelWidth + textBoxMargin,
+                            highlightCordY + labelShiftY + textBoxMargin,
+                            line.plotPaint!!.Plot
+                        )
+
+                        canvas.drawText(label, labelCordX + labelUnitXOffset, highlightCordY + labelShiftY, line.plotPaint!!.HighlightLabel)
+                    }
                 }
             }
         }
