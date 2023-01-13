@@ -8,7 +8,13 @@ Based on https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerK
 
 ## Changelog [DE]:
 
-### 0.17 (11.01.2023)#
+### 0.18.0 (13.01.2023)
+ - Neues Icon
+ - Optische verbesserungen am Diagramm
+ - Neue Diagrammoptionen (vorerst beschränkt auf das Verbrauchsdiagramm)
+ - Allgemeine Stabilitätsverbresserung, insbesondere bei der Rundung und Zeiterfassung
+
+### 0.17 (11.01.2023)
  - Diagrammachsen aufgehellt
  - Versuchsweise hellgrauer statt grüner Graph für die Geschwindigkeit
  - Min- und Max-Grenzen für die Diagrammskalierung (WIP)
