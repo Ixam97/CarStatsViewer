@@ -167,10 +167,35 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        alignZero()
         drawXLines(canvas)
         drawYBaseLines(canvas)
         drawPlot(canvas)
         drawYLines(canvas)
+    }
+
+    private fun alignZero() {
+        var zeroAt : Float? = null
+        for (index in plotLines.indices) {
+            val line = plotLines[index]
+
+            if (index == 0) {
+                if (line.isEmpty() || !line.Visible) return
+
+                val dataPoints = line.getDataPoints(dimension, dimensionRestriction)
+                if (dataPoints.isEmpty()) return
+
+                val minValue = line.minValue(dataPoints)!!
+                val maxValue = line.maxValue(dataPoints)!!
+
+                zeroAt = PlotLineItem.cord(0f, minValue, maxValue)
+                continue
+            }
+
+            if (line.alignZero) {
+                line.zeroAt = zeroAt
+            }
+        }
     }
 
     private fun drawPlot(canvas: Canvas) {
