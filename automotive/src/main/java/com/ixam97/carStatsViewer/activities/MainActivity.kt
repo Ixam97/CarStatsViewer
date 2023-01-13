@@ -172,10 +172,19 @@ class MainActivity : Activity() {
         main_gage_distance_text_view.text = "  %s".format(getTraveledDistanceString())
         main_gage_used_power_text_view.text = "  %s".format(getUsedEnergyString())
         main_gage_time_text_view.text = "  %s".format(getElapsedTimeString())
+
+        if(DataHolder.activeTrip && DataHolder.currentGear == VehicleGear.GEAR_PARK){
+            InAppLogger.log("Show TripResult now")
+            showTripResults()
+        }
     }
 
     private fun getCurrentSpeedString(): String {
         return "${(DataHolder.currentSpeedSmooth * 3.6).toInt()} km/h"
+    }
+
+    private fun getMaxSpeedString(): String {
+        return "${(DataHolder.maxSpeed* 3.6).toInt()} km/h"
     }
 
     private fun getAvgSpeedString(): String {
@@ -187,6 +196,20 @@ class MainActivity : Activity() {
         return "%.1f kW".format(
             Locale.ENGLISH,
             DataHolder.currentPowerSmooth / 1_000_000)
+    }
+
+    private fun getMaxPowerString(
+        positive: Boolean
+    ): String {
+        var powervalue = if(positive){
+            DataHolder.maxPowerPositive / 1_000_000
+        } else {
+            DataHolder.maxPowerNegative / 1_000_000
+        }
+
+        return "%.1f kW".format(
+            Locale.ENGLISH,
+            powervalue)
     }
 
     private fun getUsedEnergyString(): String {
@@ -339,6 +362,39 @@ class MainActivity : Activity() {
         }
     }
 
+    private fun showTripResults(){
+        DataHolder.activeTrip = false //set always false, will changed to true if speed is changed
+
+        val builder = AlertDialog.Builder(this@MainActivity)
+        builder.setTitle(getString(R.string.trip_dialog_reset_title))
+            .setMessage(
+                getString(R.string.trip_dialog_averageconsumption) + "\t" +
+                        getAvgConsumptionString() + "\n" +
+                getString(R.string.main_used_energy) + "\t" +
+                        getUsedEnergyString() + "\n"+
+                getString(R.string.main_traveled_distance) + "\t" +
+                        getTraveledDistanceString() + "\n" +
+                getString(R.string.trip_dialog_power) + "\t" +
+                        getMaxPowerString(true) + "\n" +
+                getString(R.string.trip_dialog_reku) + "\t" +
+                        getMaxPowerString(false) + "\n" +
+                getString(R.string.trip_dialog_speed) + "\t" +
+                        getMaxSpeedString() + "\n\n" +
+                getString(R.string.trip_dialog_reset_message))
+            .setCancelable(true)
+            .setPositiveButton(getString(R.string.trip_dialog_end)) { dialog, id ->
+                resetStats()
+            }
+            .setNegativeButton(getString(R.string.trip_dialog_continue)) { dialog, id ->
+                // Dismiss the dialog
+                InAppLogger.log("Dismiss tripreset but refresh MainActivity")
+                finish()
+                startActivity(intent)
+            }
+        val alert = builder.create()
+        alert.show()
+    }
+
     private fun resetStats() {
         finish()
         startActivity(intent)
@@ -353,6 +409,9 @@ class MainActivity : Activity() {
         averageConsumptionTextView.text = String.format("%d Wh/km", DataHolder.averageConsumption.toInt())
         DataHolder.travelTimeMillis = 0L
 
+        DataHolder.maxSpeed = 0F
+        DataHolder.maxPowerPositive = 0F
+        DataHolder.maxPowerNegative = 0F
     }
 
     private fun setupDefaultUi() {

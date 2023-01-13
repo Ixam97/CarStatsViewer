@@ -53,7 +53,7 @@ class SettingsActivity : Activity() {
 
             val builder = AlertDialog.Builder(this@SettingsActivity)
             builder.setTitle(getString(R.string.quit_dialog_title))
-                .setMessage(getString(R.string.quit_dialog_message))
+                .setMessage(getString(R.string.quit_dialog_message) + "Max Power: " + DataHolder.maxPowerPositive/1000)
                 .setCancelable(true)
                 .setPositiveButton(getString(R.string.dialog_confirm)) { dialog, id ->
                     InAppLogger.log("App killed from Settings")

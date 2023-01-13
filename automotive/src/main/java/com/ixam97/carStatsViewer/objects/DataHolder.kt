@@ -71,6 +71,12 @@ object DataHolder {
     // var parkTimestamp = 0L
     var travelTimeMillis = 0L
 
+    // Data for extreme values to show on report
+    var activeTrip = false
+    var maxPowerPositive = 0F
+    var maxPowerNegative = 0F
+    var maxSpeed = 0F
+
     var consumptionPlotLine = PlotLine(
         PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
         1f,

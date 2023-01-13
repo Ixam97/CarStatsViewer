@@ -19,6 +19,16 @@
     <string name="main_gage_power">Leistung</string>
     <string name="main_gage_consumption">Momentanverbrauch</string>
 
+    <!-- Trip Exit Dialog -->
+    <string name="trip_dialog_reset_title">Aktuelle Fahrt beenden?</string>
+    <string name="trip_dialog_power">Maximale Leistung abgerufen:</string>
+    <string name="trip_dialog_averageconsumption">Durchschnittsverbrauch:</string>
+    <string name="trip_dialog_speed">Maximale Geschwindigkeit:</string>
+    <string name="trip_dialog_reku">Maximale Leistung rekuperiert:</string>
+    <string name="trip_dialog_end">Ja, anhalten</string>
+    <string name="trip_dialog_continue">Nein, weiterfahren</string>
+    <string name="trip_dialog_reset_message">Alle gespeicherten Fahrdaten werden auf Null zurückgesetzt</string>
+
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
     <string name="settings_button_back">Zurück</string>

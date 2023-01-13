@@ -35,6 +35,17 @@
     <string name="main_gage_power">Power</string>
     <string name="main_gage_consumption">Inst. consumption</string>
 
+    <!-- Trip Exit Dialog -->
+    <string name="trip_dialog_reset_title">Stop current trip?</string>
+    <string name="trip_dialog_power">Maximum power draw: </string>
+    <string name="trip_dialog_averageconsumption">Average consumption: </string>
+    <string name="trip_dialog_speed">Maximum speed driven: </string>
+    <string name="trip_dialog_reku">Maximum power gain: </string>
+    <string name="trip_dialog_end">Yes, stop</string>
+    <string name="trip_dialog_continue">No, continue</string>
+    <string name="trip_dialog_reset_message">All saved trip data will be reset to zero.</string>
+
+
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
     <string name="settings_button_back">Back</string>

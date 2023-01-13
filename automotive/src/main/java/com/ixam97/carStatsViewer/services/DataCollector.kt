@@ -257,6 +257,7 @@ class DataCollector : Service() {
             InAppLogger.logVHALCallback()
 
             speedUpdater(value)
+            setActiveTrip()
 
             if (emulatorMode) {
                 // Also get power in emulator
@@ -316,6 +317,13 @@ class DataCollector : Service() {
         if (timerTriggered(value, 2_000f, timestamp) && DataHolder.chargePortConnected && DataHolder.currentPowermW < 0) {
             DataHolder.chargePlotLine.addDataPoint(- (DataHolder.currentPowermW / 1_000_000), timestamp,0f)
             DataHolder.stateOfChargePlotLine.addDataPoint(100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity, timestamp, 0f)
+        }
+        // Update Power min/max values
+        if (DataHolder.currentPowermW > DataHolder.maxPowerPositive){
+            DataHolder.maxPowerPositive = DataHolder.currentPowermW
+        }
+        if (DataHolder.currentPowermW < DataHolder.maxPowerNegative){
+            DataHolder.maxPowerNegative = DataHolder.currentPowermW
         }
     }
 
@@ -389,6 +397,17 @@ class DataCollector : Service() {
 
                 InAppLogger.log("newSpeedPlotValue: $newSpeedPlotValue, currentSpeed: ${DataHolder.currentSpeed * 3.6f}")
             }
+        }
+
+        // Update Speed max value
+        if (DataHolder.currentSpeed > DataHolder.maxSpeed){
+            DataHolder.maxSpeed = DataHolder.currentSpeed
+        }
+    }
+
+    private fun setActiveTrip(){
+        if(DataHolder.currentGear != VehicleGear.GEAR_PARK){
+            DataHolder.activeTrip = true
         }
     }
 
