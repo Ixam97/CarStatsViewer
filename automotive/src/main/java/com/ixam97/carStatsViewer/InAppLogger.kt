@@ -105,7 +105,8 @@ class LogActivity : Activity() {
             logString += "${InAppLogger.logArray[i]}\n"
         }
 
-        logString += "${InAppLogger.getVHALLog()}\n${InAppLogger.getUILog()}\n${InAppLogger.getNotificationLog()}"
+        logString += "${InAppLogger.getVHALLog()}\n${InAppLogger.getUILog()}\n${InAppLogger.getNotificationLog()}\n"
+        logString += "v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
 
         val logTextView = TextView(this)
         logTextView.text = logString

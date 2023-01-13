@@ -168,10 +168,18 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         alignZero()
+        drawBackground(canvas)
         drawXLines(canvas)
         drawYBaseLines(canvas)
         drawPlot(canvas)
         drawYLines(canvas)
+    }
+
+    private fun drawBackground(canvas: Canvas) {
+        val maxX = canvas.width.toFloat()
+        val maxY = canvas.height.toFloat()
+
+        canvas.drawRect(xMargin.toFloat(), yMargin.toFloat(), maxX - xMargin, maxY - yMargin, backgroundPaint)
     }
 
     private fun alignZero() {

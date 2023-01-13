@@ -43,10 +43,7 @@ class SettingsActivity : Activity() {
         settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
         settings_switch_experimental_layout.isChecked = appPreferences.experimentalLayout
 
-        settings_version_text.text = String.format("Car Stats Viewer Version %s (Build %d)",
-            BuildConfig.VERSION_NAME,
-            BuildConfig.VERSION_CODE
-        )
+        settings_version_text.text = "Car Stats Viewer Version %s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 
         settings_button_back.setOnClickListener() {
             finish()

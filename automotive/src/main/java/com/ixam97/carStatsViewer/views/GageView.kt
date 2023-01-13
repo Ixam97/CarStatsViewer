@@ -80,6 +80,11 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         strokeWidth = 2f
         style = Paint.Style.STROKE
     }
+
+    private val backgroundPaint = Paint().apply {
+        color = Color.BLACK
+        style = Paint.Style.FILL
+    }
     private val zeroLinePaint = Paint().apply {
         color = Color.GRAY
         strokeWidth = 2f
@@ -144,7 +149,8 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             gageBorder.lineTo(borderPaint.strokeWidth/2, viewHeight - borderPaint.strokeWidth/2)
             gageBorder.lineTo(gageWidth, viewHeight - borderPaint.strokeWidth/2)
             gageBorder.lineTo(gageWidth, borderPaint.strokeWidth/2)
-            gageBorder.lineTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
+            gageBorder.close()
+            // gageBorder.lineTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
 
             if (minValue >= 0) gageZeroLineYPos += borderPaint.strokeWidth/2
             gageZeroLine.reset() // Reset the path to not draw zero line multiple times
@@ -152,9 +158,15 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             gageZeroLine.lineTo(gageWidth + borderPaint.strokeWidth/2, gageZeroLineYPos)
 
 
-            canvas.drawRect(gageBarRect, gagePaint)
-            canvas.drawPath(gageBorder, borderPaint)
-            canvas.drawPath(gageZeroLine, zeroLinePaint)
+            canvas.drawRect(
+                borderPaint.strokeWidth,
+                borderPaint.strokeWidth,
+                gageWidth - borderPaint.strokeWidth/2,
+                viewHeight-borderPaint.strokeWidth,
+                backgroundPaint)
+            canvas.drawRect(gageBarRect, gagePaint) // actual gage
+            canvas.drawPath(gageBorder, borderPaint) // gage border
+            canvas.drawPath(gageZeroLine, zeroLinePaint) // zero Line
         }
 
         canvas.drawText(gageName, textXStart, nameYPos, namePaint)

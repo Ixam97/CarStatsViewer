@@ -32,7 +32,7 @@ const val SETTINGS_REQUEST_CODE = 1
 class MainActivity : Activity() {
     companion object {
         private val PERMISSIONS = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED)
-        private const val UI_UPDATE_INTERVAL = 200L
+        private const val UI_UPDATE_INTERVAL = 100L
         private const val DISTANCE_1 =  5_001L
         private const val DISTANCE_2 = 15_001L
         private const val DISTANCE_TRIP_DIVIDER = 5_000L
@@ -162,7 +162,12 @@ class MainActivity : Activity() {
         traveledDistanceTextView.text = getTraveledDistanceString()
         currentInstConsTextView.text = getInstConsumptionString()
         averageConsumptionTextView.text = getAvgConsumptionString()
-
+/*
+        if (DataHolder.currentGear != VehicleGear.GEAR_PARK)
+            main_button_settings.setColorFilter(R.color.disabled_tint)
+        else
+            main_button_settings.colorFilter = null
+*/
         main_gage_avg_consumption_text_view.text = "  Ø %s".format(getAvgConsumptionString())
         main_gage_distance_text_view.text = "  %s".format(getTraveledDistanceString())
         main_gage_used_power_text_view.text = "  %s".format(getUsedEnergyString())
@@ -206,15 +211,17 @@ class MainActivity : Activity() {
     }
 
     private fun getAvgConsumptionString(): String {
+        val unitString = if (appPreferences.consumptionUnit) "Wh/km" else "kWh/100km"
         if (DataHolder.traveledDistance <= 0) {
-            return "-/-"
+            return "-/- $unitString"
         }
         if (!appPreferences.consumptionUnit) {
-            return "%.1f kWh/100km".format(
+            return "%.1f %s".format(
                 Locale.ENGLISH,
-                (DataHolder.usedEnergy /(DataHolder.traveledDistance /1000))/10)
+                (DataHolder.usedEnergy /(DataHolder.traveledDistance /1000))/10,
+                unitString)
         }
-        return "${(DataHolder.usedEnergy /(DataHolder.traveledDistance /1000)).toInt()} Wh/km"
+        return "${(DataHolder.usedEnergy /(DataHolder.traveledDistance /1000)).toInt()} $unitString"
     }
 
     private fun getTraveledDistanceString(): String {
@@ -420,6 +427,7 @@ class MainActivity : Activity() {
             if (emulatorMode) {
                 emulatorPowerSign = if (emulatorPowerSign < 0) 1
                 else -1
+                Toast.makeText(this, "Power sign: ${if(emulatorPowerSign<0) "-" else "+"}", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -443,7 +451,8 @@ class MainActivity : Activity() {
         }
 
         main_button_settings.setOnClickListener {
-            startActivityForResult(Intent(this, SettingsActivity::class.java), SETTINGS_REQUEST_CODE)
+            // if (DataHolder.currentGear == VehicleGear.GEAR_PARK)
+                startActivity(Intent(this, SettingsActivity::class.java))
         }
 
         /** cycle through consumption plot distances when tapping the plot */
