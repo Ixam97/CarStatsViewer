@@ -8,7 +8,9 @@ Based on https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerK
 
 ## Changelog [DE]:
 
-### 0.18.0 (13.01.2023)
+### 0.18.1 (13.01.2023)
+ - Aktualisierungsrate der Hauptansicht reduziert
+### 0.18.0
  - Neues Icon
  - Optische verbesserungen am Diagramm
  - Neue Diagrammoptionen (vorerst beschränkt auf das Verbrauchsdiagramm)
