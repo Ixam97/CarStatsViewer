@@ -32,7 +32,7 @@ const val SETTINGS_REQUEST_CODE = 1
 class MainActivity : Activity() {
     companion object {
         private val PERMISSIONS = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED)
-        private const val UI_UPDATE_INTERVAL = 100L
+        private const val UI_UPDATE_INTERVAL = 500L
         private const val DISTANCE_1 =  5_001L
         private const val DISTANCE_2 = 15_001L
         private const val DISTANCE_TRIP_DIVIDER = 5_000L
@@ -79,7 +79,7 @@ class MainActivity : Activity() {
         if (appPreferences.consumptionPlotSecondaryColor) {
             DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(Color.LTGRAY, main_consumption_plot.textSize)
         } else {
-            DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(Color.parseColor("#00BF00"), main_consumption_plot.textSize)
+            DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_green), main_consumption_plot.textSize)
         }
         
         main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
