@@ -2,4 +2,5 @@
 <resources>
     <color name="polestar_orange">#FFD96C00</color>
     <color name="disabled_tint">#FF4C4C4C</color>
+    <color name="secondary_green">#FF00BF00</color>
 </resources>
