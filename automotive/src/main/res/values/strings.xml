@@ -17,6 +17,10 @@
     <string name="preference_consumption_plot_visible_gages_key" translatable="false">preference_consumption_plot_visible_gages</string>
     <string name="preference_consumption_plot_secondary_color_key" translatable="false">preference_consumption_plot_secondary_color</string>
 
+    <!-- Broadcast -->
+    <string name="ui_update_plot_broadcast" translatable="false">ui_update_plot_broadcast</string>
+    <string name="ui_update_gages_broadcast" translatable="false">ui_update_gages_broadcast</string>
+
     <!-- MainActivity -->
     <string name="main_port_connected">Charge port connected:</string>
     <string name="main_current_power">Current power draw:</string>

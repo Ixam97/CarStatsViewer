@@ -6,7 +6,7 @@ import com.ixam97.carStatsViewer.plot.*
 object DataHolder {
 
     private const val maxSmoothSize = 20
-    private const val FTC = 2f
+    private const val FTC = 10f
 
     var currentGear: Int = VehicleGear.GEAR_PARK
 

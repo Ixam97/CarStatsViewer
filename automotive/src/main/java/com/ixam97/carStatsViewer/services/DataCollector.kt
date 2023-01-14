@@ -313,9 +313,10 @@ class DataCollector : Service() {
             }
         }
 
-        if (timerTriggered(value, 2_000f, timestamp) && DataHolder.chargePortConnected && DataHolder.currentPowermW < 0) {
+        if (timerTriggered(value, 2_000f, timestamp) && DataHolder.chargePortConnected) { // && DataHolder.currentPowermW < 0) {
             DataHolder.chargePlotLine.addDataPoint(- (DataHolder.currentPowermW / 1_000_000), timestamp,0f)
             DataHolder.stateOfChargePlotLine.addDataPoint(100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity, timestamp, 0f)
+            sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
         }
     }
 
@@ -386,10 +387,10 @@ class DataCollector : Service() {
 
                 DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
                 DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
-
-                InAppLogger.log("newSpeedPlotValue: $newSpeedPlotValue, currentSpeed: ${DataHolder.currentSpeed * 3.6f}")
+                sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             }
         }
+        sendBroadcast(Intent(getString(R.string.ui_update_gages_broadcast)))
     }
 
     private fun resetPlotVar(currentPlotTimestampMilliseconds: Long) {

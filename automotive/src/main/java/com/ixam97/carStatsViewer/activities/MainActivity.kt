@@ -8,8 +8,10 @@ import android.app.AlertDialog
 import android.app.PendingIntent
 import android.car.Car
 import android.car.VehicleGear
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
@@ -56,6 +58,15 @@ class MainActivity : Activity() {
         }
     }
 
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            when (intent.action) {
+                getString(R.string.ui_update_plot_broadcast) -> updatePlots()
+                getString(R.string.ui_update_gages_broadcast) -> updateGages()
+            }
+        }
+    }
+
     /** Overrides */
 
     override fun onResume() {
@@ -77,9 +88,9 @@ class MainActivity : Activity() {
 
 
         if (appPreferences.consumptionPlotSecondaryColor) {
-            DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(Color.LTGRAY, main_consumption_plot.textSize)
+            DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.decondary_plot_color_alt), main_consumption_plot.textSize)
         } else {
-            DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_green), main_consumption_plot.textSize)
+            DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color), main_consumption_plot.textSize)
         }
         
         main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
@@ -113,6 +124,10 @@ class MainActivity : Activity() {
         setUiEventListeners()
 
         timerHandler = Handler(Looper.getMainLooper())
+
+        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.ui_update_plot_broadcast)))
+        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.ui_update_gages_broadcast)))
+
         enableUiUpdates()
     }
 
@@ -151,7 +166,7 @@ class MainActivity : Activity() {
 
         setUiVisibilities()
 
-        updatePlots()
+        // updatePlots() // moved to Broadcast receiver
         updateGages()
 
         setValueColors()

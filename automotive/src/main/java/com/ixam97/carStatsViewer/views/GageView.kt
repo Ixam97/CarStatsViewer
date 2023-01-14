@@ -167,6 +167,9 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             canvas.drawRect(gageBarRect, gagePaint) // actual gage
             canvas.drawPath(gageBorder, borderPaint) // gage border
             canvas.drawPath(gageZeroLine, zeroLinePaint) // zero Line
+
+            gageBorder.reset()
+            gageZeroLine.reset()
         }
 
         canvas.drawText(gageName, textXStart, nameYPos, namePaint)

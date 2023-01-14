@@ -416,7 +416,10 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 if (!drawHighlightLabelOnly) {
                     if (line.LabelPosition !== PlotLabelPosition.NONE && labelCordX != null) {
                         if (line.Unit.isNotEmpty()) {
+                            // val labelPaintColor = labelPaint.color
+                            // labelPaint.color = line.plotPaint!!.Plot.color
                             canvas.drawText(line.Unit, labelCordX + labelUnitXOffset,yMargin - (yMargin / 3f), labelPaint)
+                            // labelPaint.color = labelPaintColor
                         }
 
                         for (i in 0 until yLineCount) {
@@ -424,7 +427,10 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                             val cordY = y(valueY, minValue, maxValue, maxY)!!
                             val label = String.format(line.LabelFormat, valueY / line.Divider)
 
+                            // val labelPaintColor = labelPaint.color
+                            // labelPaint.color = line.plotPaint!!.Plot.color
                             canvas.drawText(label, labelCordX, cordY + labelShiftY, labelPaint)
+                            // labelPaint.color = labelPaintColor
                         }
                     }
 
