@@ -37,6 +37,7 @@
     <string name="settings_consumption_unit">Wh/km als Verbrauchseinheit</string>
     <string name="settings_debug">Debug-Informationen</string>
     <string name="settings_experimental_layout">Zeige experimentelles Layout</string>
+    <string name="settings_tripresults">Zeige Zusammenfassung nach Abstellen(P)</string>
     <string name="settings_consumption_plot">Einstellungen für Verbrauchskurve</string>
     <string name="settings_charge_plot">Einstellungen für Ladekurve</string>
     <string name="settings_consumption_plot_single_motor">Single Motor Modell</string>

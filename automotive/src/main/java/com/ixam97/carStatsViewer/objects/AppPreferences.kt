@@ -42,6 +42,14 @@ class AppPreferences(context: Context) {
         set(value) {
             setPreference(AppPreference.EXPERIMENTAL_LAYOUT, value)
         }
+
+    var tripResult: Boolean
+        get() {
+            return getPreference(AppPreference.TRIPRESULT) as Boolean
+        }
+        set(value) {
+            setPreference(AppPreference.TRIPRESULT, value)
+    }
     var deepLog: Boolean
         get() {
             return getPreference(AppPreference.DEEP_LOG) as Boolean
@@ -91,6 +99,7 @@ class AppPreferences(context: Context) {
         AppPreference.NOTIFICATIONS to context.getString(R.string.preferences_notifications_key),
         AppPreference.CONSUMPTION_UNIT to context.getString(R.string.preferences_consumption_unit_key),
         AppPreference.EXPERIMENTAL_LAYOUT to context.getString(R.string.preferences_experimental_layout_key),
+        AppPreference.TRIPRESULT to context.getString(R.string.preferences_tripresult_key),
         AppPreference.DEEP_LOG to context.getString(R.string.preferences_deep_log_key),
         AppPreference.PLOT_SHOW_SPEED to context.getString(R.string.preferences_plot_speed_key),
         AppPreference.PLOT_DISTANCE to context.getString(R.string.preferences_plot_distance_key),
@@ -104,6 +113,7 @@ class AppPreferences(context: Context) {
         AppPreference.NOTIFICATIONS to false,
         AppPreference.CONSUMPTION_UNIT to false,
         AppPreference.EXPERIMENTAL_LAYOUT to false,
+        AppPreference.TRIPRESULT to false,
         AppPreference.DEEP_LOG to false,
         AppPreference.PLOT_SHOW_SPEED to false,
         AppPreference.PLOT_DISTANCE to 1,
@@ -145,6 +155,7 @@ enum class AppPreference {
     NOTIFICATIONS,
     CONSUMPTION_UNIT,
     EXPERIMENTAL_LAYOUT,
+    TRIPRESULT,
     DEEP_LOG,
     PLOT_SHOW_SPEED,
     PLOT_DISTANCE,

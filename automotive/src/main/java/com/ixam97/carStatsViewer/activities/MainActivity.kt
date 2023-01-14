@@ -173,7 +173,7 @@ class MainActivity : Activity() {
         main_gage_used_power_text_view.text = "  %s".format(getUsedEnergyString())
         main_gage_time_text_view.text = "  %s".format(getElapsedTimeString())
 
-        if(DataHolder.activeTrip && DataHolder.currentGear == VehicleGear.GEAR_PARK){
+        if(appPreferences.tripResult && DataHolder.activeTrip && DataHolder.currentGear == VehicleGear.GEAR_PARK){
             InAppLogger.log("Show TripResult now")
             showTripResults()
         }
