@@ -38,6 +38,7 @@
 
     <!-- Trip Exit Dialog -->
     <string name="trip_dialog_reset_title">Stop current trip?</string>
+    <string name="trip_dialog_time">Trip duration: </string>
     <string name="trip_dialog_power">Maximum power draw: </string>
     <string name="trip_dialog_averageconsumption">Average consumption: </string>
     <string name="trip_dialog_speed">Maximum speed driven: </string>

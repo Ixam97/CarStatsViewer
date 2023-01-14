@@ -21,6 +21,7 @@
 
     <!-- Trip Exit Dialog -->
     <string name="trip_dialog_reset_title">Aktuelle Fahrt beenden?</string>
+    <string name="trip_dialog_time">Fahrtzeit:</string>
     <string name="trip_dialog_power">Maximale Leistung abgerufen:</string>
     <string name="trip_dialog_averageconsumption">Durchschnittsverbrauch:</string>
     <string name="trip_dialog_speed">Maximale Geschwindigkeit:</string>

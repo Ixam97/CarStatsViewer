@@ -368,12 +368,14 @@ class MainActivity : Activity() {
         val builder = AlertDialog.Builder(this@MainActivity)
         builder.setTitle(getString(R.string.trip_dialog_reset_title))
             .setMessage(
+                getString(R.string.trip_dialog_time) + "\t" +
+                        getElapsedTimeString() + "\n" +
+                getString(R.string.main_traveled_distance) + "\t" +
+                        getTraveledDistanceString() + "\n" +
                 getString(R.string.trip_dialog_averageconsumption) + "\t" +
                         getAvgConsumptionString() + "\n" +
                 getString(R.string.main_used_energy) + "\t" +
                         getUsedEnergyString() + "\n"+
-                getString(R.string.main_traveled_distance) + "\t" +
-                        getTraveledDistanceString() + "\n" +
                 getString(R.string.trip_dialog_power) + "\t" +
                         getMaxPowerString(true) + "\n" +
                 getString(R.string.trip_dialog_reku) + "\t" +
