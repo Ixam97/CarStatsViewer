@@ -88,23 +88,24 @@
             <TextView
                 android:id="@+id/settings_consumption_plot"
                 android:text="@string/settings_consumption_plot"
+                android:drawableStart="@drawable/ic_diagram"
                 style="@style/menu_button_row_style"
                 />
 
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
-    <!--
+
             <TextView
                 android:id="@+id/settings_charge_plot"
                 android:text="@string/settings_charge_plot"
+                android:drawableStart="@drawable/ic_charger"
                 style="@style/menu_button_row_style"
                 />
 
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
-    -->
 
             <!-- Example layout for a menu row with two radio buttons -->
             <!--
@@ -187,6 +188,14 @@
             android:layout_marginHorizontal="20dp"
             android:layout_marginVertical="10dp"
             android:orientation="vertical">
+
+            <com.ixam97.carStatsViewer.views.PlotView
+                android:id="@+id/settings_consumption_plot_view"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"/>
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
 
             <Switch
                 android:id="@+id/settings_consumption_plot_switch_secondary_color"

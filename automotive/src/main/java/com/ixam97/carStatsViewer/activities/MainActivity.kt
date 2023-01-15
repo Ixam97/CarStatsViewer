@@ -37,7 +37,7 @@ class MainActivity : Activity() {
         private const val UI_UPDATE_INTERVAL = 500L
         private const val DISTANCE_1 =  5_001L
         private const val DISTANCE_2 = 15_001L
-        private const val DISTANCE_TRIP_DIVIDER = 5_000L
+        const val DISTANCE_TRIP_DIVIDER = 5_000L
     }
 
     /** values and variables */
@@ -252,19 +252,11 @@ class MainActivity : Activity() {
             legacy_layout.visibility = View.VISIBLE
         }
 
-        if (main_consumption_plot_container.visibility == View.GONE && !DataHolder.chargePortConnected) {
-            main_consumption_plot_container.visibility = View.VISIBLE
-        }
-        else if (main_consumption_plot_container.visibility == View.VISIBLE && DataHolder.chargePortConnected) {
-            main_consumption_plot_container.visibility = View.GONE
-        }
+        main_button_dismiss_charge_plot.isEnabled = !DataHolder.chargePortConnected
 
         if (main_charge_plot_container.visibility == View.GONE && DataHolder.chargePortConnected) {
-            main_charge_plot.reset()
+            main_consumption_plot_container.visibility = View.GONE
             main_charge_plot_container.visibility = View.VISIBLE
-        }
-        else if (main_charge_plot_container.visibility == View.VISIBLE && !DataHolder.chargePortConnected) {
-            main_charge_plot_container.visibility = View.GONE
         }
     }
 
@@ -520,6 +512,15 @@ class MainActivity : Activity() {
             // appPreferences.plotSpeed = main_checkbox_speed.isChecked
 
             main_consumption_plot.invalidate()
+        }
+
+        main_button_dismiss_charge_plot.setOnClickListener {
+            main_charge_plot_container.visibility = View.GONE
+            main_consumption_plot_container.visibility = View.VISIBLE
+        }
+
+        main_button_reset_charge_plot.setOnClickListener {
+            main_charge_plot.reset()
         }
     }
 

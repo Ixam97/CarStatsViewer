@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_settings.*
 import android.content.Context
 import android.content.Intent
 import android.view.View
+import com.ixam97.carStatsViewer.plot.PlotDimension
 import kotlin.system.exitProcess
 
 class SettingsActivity : Activity() {
@@ -90,6 +91,16 @@ class SettingsActivity : Activity() {
     }
 
     private fun setupSettingsConsumptionPlot() {
+
+        settings_consumption_plot_view.addPlotLine(DataHolder.consumptionPlotLine)
+        settings_consumption_plot_view.addPlotLine(DataHolder.speedPlotLine)
+        settings_consumption_plot_view.dimension
+
+        settings_consumption_plot_view.dimension = PlotDimension.DISTANCE
+        settings_consumption_plot_view.dimensionRestriction = ((DataHolder.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1
+        settings_consumption_plot_view.dimensionSmoothing = (((DataHolder.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) / 50
+
+        settings_consumption_plot_view.invalidate()
 
         settings_consumption_plot_switch_secondary_color.isChecked = appPreferences.consumptionPlotSecondaryColor
         settings_consumption_plot_switch_visible_gages.isChecked = appPreferences.consumptionPlotVisibleGages

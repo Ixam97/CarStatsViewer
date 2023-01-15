@@ -38,6 +38,8 @@
     <string name="main_gage_speed">Speed</string>
     <string name="main_gage_power">Power</string>
     <string name="main_gage_consumption">Inst. consumption</string>
+    <string name="main_dismiss_charge_plot">Dismiss charge plot</string>
+    <string name="main_button_reset_charge_plot">Reset charge plot</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
@@ -47,8 +49,8 @@
     <string name="settings_consumption_unit">Wh/km as consumption unit</string>
     <string name="settings_debug">Debug information</string>
     <string name="settings_experimental_layout">Show experimental Layout</string>
-    <string name="settings_consumption_plot">Consumption plot settings</string>
-    <string name="settings_charge_plot">Charge plot settings</string>
+    <string name="settings_consumption_plot">  Consumption plot</string>
+    <string name="settings_charge_plot">  Charge plot</string>
     <string name="settings_plot_secondary_color">Gray as secondary plot color</string>
     <string name="settings_consumption_plot_single_motor">Single motor model</string>
     <string name="settings_consumption_plot_visible_gages">Show power gages</string>

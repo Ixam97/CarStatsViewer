@@ -313,7 +313,7 @@ class DataCollector : Service() {
             }
         }
 
-        if (timerTriggered(value, 2_000f, timestamp) && DataHolder.chargePortConnected) { // && DataHolder.currentPowermW < 0) {
+        if (timerTriggered(value, 2_000f, timestamp) && DataHolder.chargePortConnected && DataHolder.currentPowermW < 0) {
             DataHolder.chargePlotLine.addDataPoint(- (DataHolder.currentPowermW / 1_000_000), timestamp,0f)
             DataHolder.stateOfChargePlotLine.addDataPoint(100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity, timestamp, 0f)
             sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
