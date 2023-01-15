@@ -16,6 +16,7 @@
     <string name="preferences_consumption_plot_single_motor_key" translatable="false">preferences_consumption_plot_single_motor_key</string>
     <string name="preference_consumption_plot_visible_gages_key" translatable="false">preference_consumption_plot_visible_gages</string>
     <string name="preference_consumption_plot_secondary_color_key" translatable="false">preference_consumption_plot_secondary_color</string>
+    <string name="preference_charge_plot_secondary_color_key" translatable="false">preference_charge_plot_secondary_color</string>
 
     <!-- Broadcast -->
     <string name="ui_update_plot_broadcast" translatable="false">ui_update_plot_broadcast</string>
@@ -54,6 +55,7 @@
     <string name="settings_plot_secondary_color">Gray as secondary plot color</string>
     <string name="settings_consumption_plot_single_motor">Single motor model</string>
     <string name="settings_consumption_plot_visible_gages">Show power gages</string>
+    <string name="settings_consumption_plot_speed">Show speed plot</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">Quit App?</string>

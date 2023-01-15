@@ -6,18 +6,33 @@ import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.objects.*
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.BroadcastReceiver
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_settings.*
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.view.View
 import com.ixam97.carStatsViewer.plot.PlotDimension
+import com.ixam97.carStatsViewer.plot.PlotPaint
+import com.ixam97.carStatsViewer.views.PlotView
 import kotlin.system.exitProcess
 
 class SettingsActivity : Activity() {
 
     private lateinit var context : Context
     private lateinit var appPreferences: AppPreferences
+
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            when (intent.action) {
+                getString(R.string.ui_update_plot_broadcast) -> {
+                    settings_consumption_plot_view.invalidate()
+                    settings_charge_plot_view.invalidate()
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +46,9 @@ class SettingsActivity : Activity() {
 
         setupSettingsMaster()
         setupSettingsConsumptionPlot()
+        setupSettingsChargePlot()
 
+        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.ui_update_plot_broadcast)))
     }
 
     override fun onDestroy() {
@@ -85,6 +102,10 @@ class SettingsActivity : Activity() {
             gotoConsumptionPlot()
         }
 
+        settings_charge_plot.setOnClickListener {
+            gotoChargePlot()
+        }
+
         settings_version_text.setOnClickListener {
             startActivity(Intent(this, LogActivity::class.java))
         }
@@ -105,13 +126,26 @@ class SettingsActivity : Activity() {
         settings_consumption_plot_switch_secondary_color.isChecked = appPreferences.consumptionPlotSecondaryColor
         settings_consumption_plot_switch_visible_gages.isChecked = appPreferences.consumptionPlotVisibleGages
         settings_consumption_plot_switch_single_motor.isChecked = appPreferences.consumptionPlotSingleMotor
+        settings_consumption_plot_speed_switch.isChecked = appPreferences.plotSpeed
 
         settings_consumption_plot_button_back.setOnClickListener {
-            gotoMaster()
+            gotoMaster(settings_consumption_plot_layout)
         }
 
         settings_consumption_plot_switch_secondary_color.setOnClickListener {
             appPreferences.consumptionPlotSecondaryColor = settings_consumption_plot_switch_secondary_color.isChecked
+            if (appPreferences.consumptionPlotSecondaryColor) {
+                DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+            } else {
+                DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+            }
+            settings_consumption_plot_view.invalidate()
+        }
+
+        settings_consumption_plot_speed_switch.setOnClickListener {
+            appPreferences.plotSpeed = settings_consumption_plot_speed_switch.isChecked
+            DataHolder.speedPlotLine.Visible = settings_consumption_plot_speed_switch.isChecked
+            settings_consumption_plot_view.invalidate()
         }
 
         settings_consumption_plot_switch_visible_gages.setOnClickListener {
@@ -124,22 +158,44 @@ class SettingsActivity : Activity() {
     }
 
     private fun setupSettingsChargePlot() {
+        settings_charge_plot_view.addPlotLine(DataHolder.chargePlotLine)
+        settings_charge_plot_view.addPlotLine(DataHolder.stateOfChargePlotLine)
 
+        settings_charge_plot_view.dimension = PlotDimension.TIME
+        settings_charge_plot_view.dimensionRestriction = null
+        settings_charge_plot_view.dimensionSmoothingPercentage = 0.01f
+        settings_charge_plot_view.invalidate()
+
+        settings_charge_plot_switch_secondary_color.isChecked = appPreferences.chargePlotSecondaryColor
+
+        settings_charge_plot_button_back.setOnClickListener {
+            gotoMaster(settings_charge_plot_layout)
+        }
+
+        settings_charge_plot_switch_secondary_color.setOnClickListener {
+            appPreferences.chargePlotSecondaryColor = settings_charge_plot_switch_secondary_color.isChecked
+            if (appPreferences.chargePlotSecondaryColor) {
+                DataHolder.stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+            } else {
+                DataHolder.stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+            }
+            settings_charge_plot_view.invalidate()
+        }
     }
 
-    private fun gotoMaster(){
-        animateTransition(settings_consumption_plot_layout, settings_master_layout)
-        // settings_consumption_plot_layout.visibility = View.GONE
-        // settings_master_layout.visibility = View.VISIBLE
+    private fun gotoMaster(fromLayout: View){
+        animateTransition(fromLayout, settings_master_layout)
     }
 
     private fun gotoConsumptionPlot() {
         animateTransition(settings_master_layout, settings_consumption_plot_layout)
-        // settings_master_layout.visibility = View.GONE
-        // settings_consumption_plot_layout.visibility = View.VISIBLE
     }
 
-    private fun animateTransition(fromView: View, toView: View) {
+    private fun gotoChargePlot() {
+        animateTransition(settings_master_layout, settings_charge_plot_layout)
+    }
+
+    private fun animateTransition(fromLayout: View, toView: View) {
         toView.apply{
             alpha = 0f
             visibility = View.VISIBLE
@@ -148,14 +204,14 @@ class SettingsActivity : Activity() {
                 .setDuration(200)
                 .setListener(null)
         }
-        fromView.apply {
+        fromLayout.apply {
             animate()
                 .alpha(0f)
                 .setDuration(200)
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
-                        fromView.visibility = View.GONE
-                        fromView.alpha = 1f
+                        fromLayout.visibility = View.GONE
+                        fromLayout.alpha = 1f
                     }
                 })
         }

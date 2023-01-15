@@ -8,6 +8,11 @@ Based on https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerK
 
 ## Changelog [DE]:
 
+### 0.19.0 (15.01.2023)
+ - Die Ladekurve wird solange angezeigt, bis sie manuell geschlossen wird, nachdem das Ladekabel abgezogen wurde
+ - Die Lade- und Verbrauchskurven sind in ihrem jemweiligen Einstellungsmenü sichtbar
+ - DIe Ladekurve ist nun (versuchsweise) blau eingefärbt 
+
 ### 0.18.2 (14.01.2023)
  - UI-Updates optimiert
 

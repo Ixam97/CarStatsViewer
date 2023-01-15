@@ -84,6 +84,13 @@ class AppPreferences(context: Context) {
         set(value) {
             setPreference(AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES, value)
         }
+    var chargePlotSecondaryColor: Boolean
+        get() {
+            return getPreference(AppPreference.CHARGE_PLOT_SECONDARY_COLOR) as Boolean
+        }
+        set(value) {
+            setPreference(AppPreference.CHARGE_PLOT_SECONDARY_COLOR, value)
+        }
 
 
     private val keyMap = hashMapOf<AppPreference, String>(
@@ -96,7 +103,8 @@ class AppPreferences(context: Context) {
         AppPreference.PLOT_DISTANCE to context.getString(R.string.preferences_plot_distance_key),
         AppPreference.CONSUMPTION_PLOT_SINGLE_MOTOR to context.getString(R.string.preferences_consumption_plot_single_motor_key),
         AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR to context.getString(R.string.preference_consumption_plot_secondary_color_key),
-        AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to context.getString(R.string.preference_consumption_plot_visible_gages_key)
+        AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to context.getString(R.string.preference_consumption_plot_visible_gages_key),
+        AppPreference.CHARGE_PLOT_SECONDARY_COLOR to context.getString(R.string.preference_charge_plot_secondary_color_key)
     )
 
     private var typeMap = mapOf<AppPreference, Any>( // Also contains default values
@@ -109,7 +117,8 @@ class AppPreferences(context: Context) {
         AppPreference.PLOT_DISTANCE to 1,
         AppPreference.CONSUMPTION_PLOT_SINGLE_MOTOR to false,
         AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR to false,
-        AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to true
+        AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to true,
+        AppPreference.CHARGE_PLOT_SECONDARY_COLOR to false
     )
 
     private fun getPreference(appPreference: AppPreference): Any {
@@ -150,5 +159,6 @@ enum class AppPreference {
     PLOT_DISTANCE,
     CONSUMPTION_PLOT_SINGLE_MOTOR,
     CONSUMPTION_PLOT_SECONDARY_COLOR,
-    CONSUMPTION_PLOT_VISIBLE_GAGES
+    CONSUMPTION_PLOT_VISIBLE_GAGES,
+    CHARGE_PLOT_SECONDARY_COLOR,
 }

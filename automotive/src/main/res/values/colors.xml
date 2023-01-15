@@ -4,5 +4,6 @@
     <color name="disabled_tint">#FF757575</color>
     <color name="primary_plot_color">#FFD96C00</color>
     <color name="secondary_plot_color">#FF00C400</color>
-    <color name="decondary_plot_color_alt">#FFCCCCCC</color>
+    <color name="secondary_plot_color_alt">#FFCCCCCC</color>
+    <color name="charge_plot_color">#2174DA</color>
 </resources>

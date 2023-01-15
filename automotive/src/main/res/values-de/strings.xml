@@ -34,6 +34,7 @@
     <string name="settings_consumption_plot_single_motor">Single Motor Modell</string>
     <string name="settings_plot_secondary_color">Grau als sekundäre Diagrammfarbe</string>
     <string name="settings_consumption_plot_visible_gages">Zeige Leistungsbalken</string>
+    <string name="settings_consumption_plot_speed">Zeige Geschwindigkeitsverlauf</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">App beenden?</string>

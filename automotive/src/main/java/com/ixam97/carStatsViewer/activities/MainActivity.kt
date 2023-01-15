@@ -22,6 +22,7 @@ import android.view.View
 import android.widget.Toast
 import com.ixam97.carStatsViewer.plot.PlotDimension
 import com.ixam97.carStatsViewer.plot.PlotPaint
+import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -86,18 +87,16 @@ class MainActivity : Activity() {
             DataHolder.consumptionPlotLine.Divider = 10f
         }
 
-
-        if (appPreferences.consumptionPlotSecondaryColor) {
-            DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.decondary_plot_color_alt), main_consumption_plot.textSize)
-        } else {
-            DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color), main_consumption_plot.textSize)
-        }
-        
         main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
         main_power_gage.minValue = if (appPreferences.consumptionPlotSingleMotor) -100f else -150f
 
         main_power_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
         main_consumption_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
+
+        main_checkbox_speed.isChecked = appPreferences.plotSpeed
+        DataHolder.speedPlotLine.Visible = appPreferences.plotSpeed
+        DataHolder.chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
+        main_consumption_plot.invalidate()
 
         enableUiUpdates()
     }
@@ -365,7 +364,6 @@ class MainActivity : Activity() {
 
     private fun setupDefaultUi() {
 
-        main_checkbox_speed.isChecked = appPreferences.plotSpeed
         var plotDistanceId = when (appPreferences.plotDistance) {
             1 -> main_radio_10.id
             2 -> main_radio_25.id
@@ -386,6 +384,10 @@ class MainActivity : Activity() {
 
         DataHolder.speedPlotLine.Visible = main_checkbox_speed.isChecked
 
+        if (appPreferences.consumptionPlotSecondaryColor) {
+            DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+        }
+
         main_consumption_plot.dimension = PlotDimension.DISTANCE
         main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
         main_consumption_plot.dimensionSmoothing = dimensionSmoothingById(appPreferences.plotDistance)
@@ -394,6 +396,10 @@ class MainActivity : Activity() {
         main_charge_plot.reset()
         main_charge_plot.addPlotLine(DataHolder.chargePlotLine)
         main_charge_plot.addPlotLine(DataHolder.stateOfChargePlotLine)
+
+        if (appPreferences.chargePlotSecondaryColor) {
+            DataHolder.stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+        }
 
         main_charge_plot.dimension = PlotDimension.TIME
         main_charge_plot.dimensionRestriction = null

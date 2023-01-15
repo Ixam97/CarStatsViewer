@@ -95,8 +95,8 @@ object DataHolder {
     var chargePlotLine = PlotLine(
         PlotRange(0f, 20f, 0f, 160f, 20f),
         1f,
-        "%.1f",
-        "%.1f",
+        "%.0f",
+        "Ø %.0f",
         "kW",
         PlotLabelPosition.LEFT,
         PlotHighlightMethod.AVG_BY_TIME
@@ -106,7 +106,7 @@ object DataHolder {
         PlotRange(0f, 100f, 0f, 100f, 20f, 0f),
         1f,
         "%.0f",
-        "%.0f",
+        "%.0f %%",
         "% SoC",
         PlotLabelPosition.RIGHT,
         PlotHighlightMethod.LAST

@@ -11,7 +11,10 @@ import java.util.concurrent.TimeUnit
 
 
 class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
-    val textSize = 26f
+    companion object {
+        const val textSize = 26f
+    }
+
 
     var xMargin: Int = 100
         set(value) {

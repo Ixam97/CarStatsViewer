@@ -316,9 +316,46 @@ class DataCollector : Service() {
         }
 
         if (timerTriggered(value, 5_000f, timestamp) && DataHolder.chargePortConnected) {
-            DataHolder.stateOfChargePlotLine.addDataPoint(100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity, timestamp, 0f)
-            DataHolder.chargePlotLine.addDataPoint(- (DataHolder.currentPowermW / 1_000_000), timestamp,0f)
-            if ((DataHolder.currentPowermW < 0 || lastChargePower < 0)) {
+            if (DataHolder.currentPowermW < 0 && lastChargePower >= 0) {
+                DataHolder.chargePlotLine.addDataPoint(0f, timestamp - 1_000_000, 0f)
+                DataHolder.chargePlotLine.addDataPoint(
+                    -(DataHolder.currentPowermW / 1_000_000),
+                    timestamp,
+                    0f,
+                    null,
+                    null,
+                    PlotMarker.BEGIN_SESSION
+                )
+                DataHolder.stateOfChargePlotLine.addDataPoint(
+                    100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity,
+                    timestamp,
+                    0f,
+                    null,
+                    null,
+                    PlotMarker.BEGIN_SESSION
+                )
+                sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
+            } else if (DataHolder.currentPowermW >= 0 && lastChargePower < 0) {
+                DataHolder.chargePlotLine.addDataPoint(
+                    -(DataHolder.currentPowermW / 1_000_000),
+                    timestamp,
+                    0f,
+                    null,
+                    null,
+                    PlotMarker.END_SESSION
+                )
+                DataHolder.stateOfChargePlotLine.addDataPoint(
+                    100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity,
+                    timestamp,
+                    0f,
+                    null,
+                    null,
+                    PlotMarker.END_SESSION
+                )
+                sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
+            } else if (DataHolder.currentPowermW < 0) {
+                DataHolder.stateOfChargePlotLine.addDataPoint(100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity, timestamp, 0f)
+                DataHolder.chargePlotLine.addDataPoint(- (DataHolder.currentPowermW / 1_000_000), timestamp,0f)
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             }
             lastChargePower = DataHolder.currentPowermW

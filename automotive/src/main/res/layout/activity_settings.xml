@@ -99,7 +99,7 @@
                 android:id="@+id/settings_charge_plot"
                 android:text="@string/settings_charge_plot"
                 android:drawableStart="@drawable/ic_charger"
-                style="@style/menu_button_row_style_disabled"
+                style="@style/menu_button_row_style"
                 />
 
             <View
@@ -150,8 +150,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/settings_consumption_plot_layout"
+    <LinearLayout android:id="@+id/settings_consumption_plot_layout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -165,10 +164,15 @@
             <ImageButton
                 android:id="@+id/settings_consumption_plot_button_back"
                 style="@style/title_back_button_style" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_diagram" />
 
             <TextView
                 style="@style/title_text_style"
-                android:text="@string/settings_consumption_plot" />
+                android:layout_marginStart="0dp"
+                android:text="@string/settings_consumption_plot"/>
 
             <View
                 android:layout_width="0dp"
@@ -209,6 +213,15 @@
                     android:background="?android:attr/listDivider"/>
 
                 <Switch
+                    android:id="@+id/settings_consumption_plot_speed_switch"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_consumption_plot_speed"/>
+
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+
+                <Switch
                     android:id="@+id/settings_consumption_plot_switch_visible_gages"
                     style="@style/menu_standard_switch_style"
                     android:text="@string/settings_consumption_plot_visible_gages"/>
@@ -221,6 +234,69 @@
                     android:id="@+id/settings_consumption_plot_switch_single_motor"
                     style="@style/menu_standard_switch_style"
                     android:text="@string/settings_consumption_plot_single_motor" />
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+    <LinearLayout android:id="@+id/settings_charge_plot_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/settings_charge_plot_button_back"
+                style="@style/title_back_button_style" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_charger" />
+
+            <TextView
+                style="@style/title_text_style"
+                android:layout_marginStart="0dp"
+                android:text="@string/settings_charge_plot"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="?android:attr/colorControlActivated"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="10dp"
+                android:orientation="vertical">
+
+                <com.ixam97.carStatsViewer.views.PlotView
+                    android:id="@+id/settings_charge_plot_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="500dp"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+
+                <Switch
+                    android:id="@+id/settings_charge_plot_switch_secondary_color"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_plot_secondary_color"/>
 
                 <View
                     style="@style/menu_divider_style"
