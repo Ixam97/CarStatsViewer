@@ -365,36 +365,41 @@ class MainActivity : Activity() {
     private fun showTripResults(){
         DataHolder.activeTrip = false //set always false, will changed to true if speed is changed
 
-        val builder = AlertDialog.Builder(this@MainActivity)
-        builder.setTitle(getString(R.string.trip_dialog_reset_title))
-            .setMessage(
-                getString(R.string.trip_dialog_time) + "\t" +
-                        getElapsedTimeString() + "\n" +
-                getString(R.string.main_traveled_distance) + "\t" +
-                        getTraveledDistanceString() + "\n" +
-                getString(R.string.trip_dialog_averageconsumption) + "\t" +
-                        getAvgConsumptionString() + "\n" +
-                getString(R.string.main_used_energy) + "\t" +
-                        getUsedEnergyString() + "\n"+
-                getString(R.string.trip_dialog_power) + "\t" +
-                        getMaxPowerString(true) + "\n" +
-                getString(R.string.trip_dialog_reku) + "\t" +
-                        getMaxPowerString(false) + "\n" +
-                getString(R.string.trip_dialog_speed) + "\t" +
-                        getMaxSpeedString() + "\n\n" +
-                getString(R.string.trip_dialog_reset_message))
-            .setCancelable(true)
-            .setPositiveButton(getString(R.string.trip_dialog_end)) { dialog, id ->
-                resetStats()
+        tripresult_time_value.text = getElapsedTimeString()
+        tripresult_distance_value.text = getTraveledDistanceString()
+        tripresult_usedenergy_value.text = getUsedEnergyString()
+        tripresult_averageconsumption_value.text = getAvgConsumptionString()
+        tripresult_maxpowerdraw_value.text = getMaxPowerString(true)
+        tripresult_maxpowerdraw_value.text = getMaxPowerString(false)
+        tripresult_speed_value.text = getMaxSpeedString()
+        tripresult_avgspeed_value.text = getAvgSpeedString()
+
+        // show only trip results view
+        disableUiUpdates()
+        legacy_layout.visibility = View.GONE
+        gage_layout.visibility = View.GONE
+        main_consumption_plot_container.visibility = View.GONE
+        main_charge_plot_container.visibility = View.GONE
+        trip_layout.visibility = View.VISIBLE
+
+        // wait for user input
+        trip_button_reset.setOnClickListener {
+            resetStats()
+            enableUiUpdates()
+            setupDefaultUi()
+        }
+        trip_button_continue.setOnClickListener {
+            trip_layout.visibility = View.GONE
+            enableUiUpdates()
+
+            if (appPreferences.experimentalLayout) {
+                legacy_layout.visibility = View.GONE
+                gage_layout.visibility = View.VISIBLE
+            }else{
+                legacy_layout.visibility = View.VISIBLE
             }
-            .setNegativeButton(getString(R.string.trip_dialog_continue)) { dialog, id ->
-                // Dismiss the dialog
-                InAppLogger.log("Dismiss tripreset but refresh MainActivity")
-                finish()
-                startActivity(intent)
-            }
-        val alert = builder.create()
-        alert.show()
+
+        }
     }
 
     private fun resetStats() {

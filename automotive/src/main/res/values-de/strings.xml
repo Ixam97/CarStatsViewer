@@ -20,11 +20,13 @@
     <string name="main_gage_consumption">Momentanverbrauch</string>
 
     <!-- Trip Exit Dialog -->
+    <string name="tripresult_title_text">Informationen zur aktuellen Fahrt:</string>
     <string name="trip_dialog_reset_title">Aktuelle Fahrt beenden?</string>
     <string name="trip_dialog_time">Fahrtzeit:</string>
     <string name="trip_dialog_power">Maximale Leistung abgerufen:</string>
     <string name="trip_dialog_averageconsumption">Durchschnittsverbrauch:</string>
     <string name="trip_dialog_speed">Maximale Geschwindigkeit:</string>
+    <string name="trip_dialog_avgspeed">Durchschnittsgeschwindigkeit:</string>
     <string name="trip_dialog_reku">Maximale Leistung rekuperiert:</string>
     <string name="trip_dialog_end">Ja, anhalten</string>
     <string name="trip_dialog_continue">Nein, weiterfahren</string>

@@ -312,7 +312,8 @@
         android:id="@+id/main_consumption_plot_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <View
             android:layout_width="match_parent"
@@ -389,8 +390,7 @@
         android:id="@+id/main_charge_plot_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="visible">
+        android:orientation="vertical">
 
         <View
             android:layout_width="match_parent"
@@ -404,6 +404,229 @@
             android:layout_height="fill_parent"
             android:layout_margin="0dp"
             android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/trip_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <View
+            android:id="@+id/view2"
+            style="divid"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_weight="0"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:id="@+id/tripresult_title_text"
+            style="@style/title_text_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/tripresult_title_text" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tripresult_time_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trip_dialog_time" />
+
+                <TextView
+                    android:id="@+id/tripresult_time_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:01:00" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tripresult_distance_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_traveled_distance" />
+
+                <TextView
+                    android:id="@+id/tripresult_distance_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5km" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tripresult_usedenergy_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_used_energy" />
+
+                <TextView
+                    android:id="@+id/tripresult_usedenergy_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="20 kWh" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tripresult_averageconsumption_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trip_dialog_averageconsumption" />
+
+                <TextView
+                    android:id="@+id/tripresult_averageconsumption_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="20.3 kWh/100km" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tripresult_maxpowerdraw_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="@string/trip_dialog_power" />
+
+                <TextView
+                    android:id="@+id/tripresult_maxpowerdraw_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="150 kWh" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tripresult_maxpowergain_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trip_dialog_reku" />
+
+                <TextView
+                    android:id="@+id/tripresult_maxpowergain_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-90 kWh" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0">
+
+                <TextView
+                    android:id="@+id/tripresult_speed_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trip_dialog_speed" />
+
+                <TextView
+                    android:id="@+id/tripresult_speed_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="205 km/h" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tripresult_avgspeed_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trip_dialog_avgspeed" />
+
+                <TextView
+                    android:id="@+id/tripresult_avgspeed_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-/-" />
+
+            </TableRow>
+
+        </TableLayout>
+
+        <View
+            android:id="@+id/view3"
+            style="@style/menu_divider_style"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_weight="0" />
+
+        <TextView
+            android:id="@+id/textView18"
+            style="@style/title_text_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="@string/trip_dialog_reset_message" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0">
+
+            <Button
+                android:id="@+id/trip_button_reset"
+                style="@style/menu_button_row_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/trip_dialog_end" />
+
+            <Button
+                android:id="@+id/trip_button_continue"
+                style="@style/menu_button_row_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/trip_dialog_continue" />
+        </TableRow>
 
     </LinearLayout>
 
