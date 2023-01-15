@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="polestar_orange">#FFD96C00</color>
-    <color name="disabled_tint">#FF4C4C4C</color>
+    <color name="disabled_tint">#FF757575</color>
     <color name="primary_plot_color">#FFD96C00</color>
     <color name="secondary_plot_color">#FF00C400</color>
     <color name="decondary_plot_color_alt">#FFCCCCCC</color>

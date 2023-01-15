@@ -252,7 +252,8 @@ class MainActivity : Activity() {
             legacy_layout.visibility = View.VISIBLE
         }
 
-        main_button_dismiss_charge_plot.isEnabled = !DataHolder.chargePortConnected
+        if (main_button_dismiss_charge_plot.isEnabled == DataHolder.chargePortConnected)
+            main_button_dismiss_charge_plot.isEnabled = !DataHolder.chargePortConnected
 
         if (main_charge_plot_container.visibility == View.GONE && DataHolder.chargePortConnected) {
             main_consumption_plot_container.visibility = View.GONE

@@ -45,7 +45,6 @@
 
         </LinearLayout>
         <View
-            android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="?android:attr/colorControlActivated"/>
@@ -100,7 +99,7 @@
                 android:id="@+id/settings_charge_plot"
                 android:text="@string/settings_charge_plot"
                 android:drawableStart="@drawable/ic_charger"
-                style="@style/menu_button_row_style"
+                style="@style/menu_button_row_style_disabled"
                 />
 
             <View
@@ -182,49 +181,54 @@
             android:layout_height="2dp"
             android:background="?android:attr/colorControlActivated"/>
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginVertical="10dp"
-            android:orientation="vertical">
-
-            <com.ixam97.carStatsViewer.views.PlotView
-                android:id="@+id/settings_consumption_plot_view"
+            android:layout_height="wrap_content">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="500dp"/>
-            <View
-                style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="10dp"
+                android:orientation="vertical">
 
-            <Switch
-                android:id="@+id/settings_consumption_plot_switch_secondary_color"
-                style="@style/menu_standard_switch_style"
-                android:text="@string/settings_plot_secondary_color"/>
+                <com.ixam97.carStatsViewer.views.PlotView
+                    android:id="@+id/settings_consumption_plot_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="500dp"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
 
-            <View
-                style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
+                <Switch
+                    android:id="@+id/settings_consumption_plot_switch_secondary_color"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_plot_secondary_color"/>
 
-            <Switch
-                android:id="@+id/settings_consumption_plot_switch_visible_gages"
-                style="@style/menu_standard_switch_style"
-                android:text="@string/settings_consumption_plot_visible_gages"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
 
-            <View
-                style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
-                
-            <Switch
-                android:id="@+id/settings_consumption_plot_switch_single_motor"
-                style="@style/menu_standard_switch_style"
-                android:text="@string/settings_consumption_plot_single_motor" />
+                <Switch
+                    android:id="@+id/settings_consumption_plot_switch_visible_gages"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_consumption_plot_visible_gages"/>
 
-            <View
-                style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
 
-        </LinearLayout>
+                <Switch
+                    android:id="@+id/settings_consumption_plot_switch_single_motor"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_consumption_plot_single_motor" />
+
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+
+            </LinearLayout>
+        </ScrollView>
+
     </LinearLayout>
 
 </RelativeLayout>
