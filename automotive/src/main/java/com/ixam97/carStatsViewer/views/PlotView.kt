@@ -60,6 +60,12 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             invalidate()
         }
 
+    var dimensionShift: Long? = null
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     var dimensionSmoothing: Long? = null
         set(value) {
             field = value
@@ -186,6 +192,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     private fun alignZero() {
+        if (plotLines.none { it.alignZero }) return
+
         var zeroAt : Float? = null
         for (index in plotLines.indices) {
             val line = plotLines[index]
@@ -193,7 +201,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             if (index == 0) {
                 if (line.isEmpty() || !line.Visible) return
 
-                val dataPoints = line.getDataPoints(dimension, dimensionRestriction)
+                val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift)
                 if (dataPoints.isEmpty()) return
 
                 val minValue = line.minValue(dataPoints)!!
@@ -216,21 +224,25 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         for (line in plotLines) {
             if (line.isEmpty() || !line.Visible) continue
 
-            val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionSmoothing)
+            val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift)
             if (dataPoints.isEmpty()) continue
 
             val minValue = line.minValue(dataPoints)!!
             val maxValue = line.maxValue(dataPoints)!!
 
+            val minDimension = line.minDimension(dataPoints, dimension)
+            val maxDimension = line.maxDimension(dataPoints, dimension)
+
             val smoothing = when {
                 dimensionSmoothing != null -> dimensionSmoothing
-                dimensionSmoothingPercentage != null -> (line.distanceDimension(dimension, dimensionRestriction, dataPoints) * dimensionSmoothingPercentage!!).toLong()
+                dimensionSmoothingPercentage != null -> (line.distanceDimension(dataPoints, dimension) * dimensionSmoothingPercentage!!).toLong()
                 else -> null
             }
 
             val backgroundZeroCord = y(line.Range.backgroundZero, minValue, maxValue, maxY)
 
-            val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPoints, dimension, dimensionRestriction, smoothing)
+            val dataPointsUnrestricted = line.getDataPoints(dimension)
+            val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPointsUnrestricted, dimension, smoothing, minDimension, maxDimension)
 
             val plotPointCollection = ArrayList<ArrayList<PlotPoint>>()
             for (collection in plotLineItemPointCollection) {
@@ -331,14 +343,17 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val maxX = canvas.width.toFloat()
         val maxY = canvas.height.toFloat()
 
-        val distanceDimension = plotLines.mapNotNull { it.distanceDimension(dimension, dimensionRestriction) }.max()?:0f
+        val distanceDimension = when {
+            dimensionRestriction != null -> dimensionRestriction!!.toFloat()
+            else -> plotLines.mapNotNull { it.distanceDimension(dimension) }.max()?:0f
+        }
 
         for (i in 0 until xLineCount) {
             val cordX = x(i.toFloat(), 0f, xLineCount.toFloat() - 1, maxX)!!
             val cordY = maxY - yMargin
 
-            val leftZero = distanceDimension / (xLineCount - 1) * i
-            val rightZero = distanceDimension - leftZero
+            val leftZero = (distanceDimension / (xLineCount - 1) * i) + (dimensionShift ?: 0L)
+            val rightZero = distanceDimension - leftZero + (2 * (dimensionShift ?: 0L))
 
             drawXLine(canvas, cordX, maxY, labelLinePaint)
 
@@ -389,11 +404,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         labelPaint.getTextBounds("Dummy", 0, "Dummy".length, bounds)
 
         for (drawHighlightLabelOnly in listOf(false, true)) {
-            for (line in plotLines) {
-                if (line.isEmpty() || !line.Visible) continue
-
-                val dataPoints = line.getDataPoints(dimension, dimensionRestriction)
-                if (dataPoints.isEmpty()) continue
+            for (line in plotLines.filter { it.Visible }) {
+                val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift)
 
                 val minValue = line.minValue(dataPoints)!!
                 val maxValue = line.maxValue(dataPoints)!!
@@ -404,13 +416,13 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                 val labelUnitXOffset = when (line.LabelPosition) {
                     PlotLabelPosition.LEFT -> 0f
-                    PlotLabelPosition.RIGHT -> -labelPaint.measureText(line.Unit)/2
+                    PlotLabelPosition.RIGHT -> -labelPaint.measureText(line.Unit) / 2
                     else -> 0f
                 }
 
                 val labelCordX = when (line.LabelPosition) {
                     PlotLabelPosition.LEFT -> textSize
-                    PlotLabelPosition.RIGHT -> maxX - xMargin + textSize/2
+                    PlotLabelPosition.RIGHT -> maxX - xMargin + textSize / 2
                     else -> null
                 }
 
@@ -419,10 +431,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 if (!drawHighlightLabelOnly) {
                     if (line.LabelPosition !== PlotLabelPosition.NONE && labelCordX != null) {
                         if (line.Unit.isNotEmpty()) {
-                            // val labelPaintColor = labelPaint.color
-                            // labelPaint.color = line.plotPaint!!.Plot.color
                             canvas.drawText(line.Unit, labelCordX + labelUnitXOffset,yMargin - (yMargin / 3f), labelPaint)
-                            // labelPaint.color = labelPaintColor
                         }
 
                         for (i in 0 until yLineCount) {
@@ -430,10 +439,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                             val cordY = y(valueY, minValue, maxValue, maxY)!!
                             val label = String.format(line.LabelFormat, valueY / line.Divider)
 
-                            // val labelPaintColor = labelPaint.color
-                            // labelPaint.color = line.plotPaint!!.Plot.color
                             canvas.drawText(label, labelCordX, cordY + labelShiftY, labelPaint)
-                            // labelPaint.color = labelPaintColor
                         }
                     }
 
