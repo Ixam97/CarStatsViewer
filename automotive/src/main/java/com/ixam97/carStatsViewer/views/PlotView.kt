@@ -5,8 +5,11 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
 import com.ixam97.carStatsViewer.plot.*
+import java.lang.Long.max
 import java.util.concurrent.TimeUnit
 
 
@@ -18,58 +21,75 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     var xMargin: Int = 100
         set(value) {
+            val diff = value != field
             if (value > 0) {
                 field = value
-                invalidate()
+                if (diff) invalidate()
             }
         }
 
     var xLineCount: Int = 6
         set(value) {
+            val diff = value != field
             if (value > 1) {
                 field = value
-                invalidate()
+                if (diff) invalidate()
             }
         }
 
     var yMargin: Int = 60
         set(value) {
+            val diff = value != field
             if (value > 0) {
                 field = value
-                invalidate()
+                if (diff) invalidate()
             }
         }
 
     var yLineCount: Int = 5
         set(value) {
+            val diff = value != field
             if (value > 1) {
                 field = value
-                invalidate()
+                if (diff) invalidate()
             }
         }
 
     var dimension: PlotDimension = PlotDimension.INDEX
         set(value) {
+            val diff = value != field
             field = value
-            invalidate()
+            if (diff) invalidate()
         }
 
+    var dimensionRestrictionTouchInterval: Long? = null
     var dimensionRestriction: Long? = null
         set(value) {
+            val diff = value != field
             field = value
-            invalidate()
+            if (diff) invalidate()
+        }
+
+    var dimensionShiftTouchInterval: Long? = null
+    var dimensionShift: Long? = null
+        set(value) {
+            val diff = value != field
+            field = value
+            if (diff) invalidate()
         }
 
     var dimensionSmoothing: Long? = null
         set(value) {
+            val diff = value != field
             field = value
-            invalidate()
+            if (diff) invalidate()
         }
 
     var dimensionSmoothingPercentage: Float? = null
         set(value) {
+            val diff = value != field
             field = value
-            invalidate()
+            if (diff) invalidate()
         }
 
     private val plotLines = ArrayList<PlotLine>()
@@ -168,8 +188,54 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         }
     }
 
+    private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
+        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+            if (dimensionShiftTouchInterval != null) {
+                touchDimensionShiftDistance += - distanceX
+                dimensionShift = max(0L, touchDimensionShift + (touchDimensionShiftDistance / max(1L, touchActionDistance)).toLong() * (dimensionShiftTouchInterval ?: 0L))
+            }
+
+            if (dimensionRestrictionTouchInterval != null) {
+                touchDimensionRestrictionDistance += - distanceY
+                dimensionRestriction = max(dimensionRestrictionTouchInterval!!, touchDimensionRestriction + (touchDimensionRestrictionDistance / max(1L, touchActionDistance)).toLong() * (dimensionRestrictionTouchInterval ?: 0L))
+            }
+
+            return true
+        }
+    }
+
+    private val mScaleDetector = GestureDetector(context, mGestureListener)
+
+    private var touchDimensionShift : Long = 0L
+    private var touchDimensionShiftDistance : Float = 0f
+
+    private var touchDimensionRestriction : Long = 0L
+    private var touchDimensionRestrictionDistance : Float = 0f
+
+    private var touchActionDistance : Long = 1L
+
+    override fun onTouchEvent(ev: MotionEvent): Boolean {
+        if (dimensionShiftTouchInterval == null || dimensionRestrictionTouchInterval == null) return true
+
+        when (ev.action) {
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                touchDimensionShiftDistance = 0f
+                touchDimensionRestrictionDistance = 0f
+
+                touchDimensionShift = dimensionShift ?: 0L
+                touchDimensionRestriction = dimensionRestriction ?: 0L
+            }
+        }
+
+        mScaleDetector.onTouchEvent(ev)
+        return true
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        touchActionDistance = (((canvas.width - 2 * xMargin).toFloat() / xLineCount.toFloat()) * 0.75f).toLong()
+
         alignZero()
         drawBackground(canvas)
         drawXLines(canvas)
@@ -186,6 +252,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     private fun alignZero() {
+        if (plotLines.none { it.alignZero }) return
+
         var zeroAt : Float? = null
         for (index in plotLines.indices) {
             val line = plotLines[index]
@@ -193,7 +261,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             if (index == 0) {
                 if (line.isEmpty() || !line.Visible) return
 
-                val dataPoints = line.getDataPoints(dimension, dimensionRestriction)
+                val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift)
                 if (dataPoints.isEmpty()) return
 
                 val minValue = line.minValue(dataPoints)!!
@@ -216,21 +284,25 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         for (line in plotLines) {
             if (line.isEmpty() || !line.Visible) continue
 
-            val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionSmoothing)
+            val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift)
             if (dataPoints.isEmpty()) continue
 
             val minValue = line.minValue(dataPoints)!!
             val maxValue = line.maxValue(dataPoints)!!
 
+            val minDimension = line.minDimension(dataPoints, dimension, dimensionRestriction)
+            val maxDimension = line.maxDimension(dataPoints, dimension)
+
             val smoothing = when {
                 dimensionSmoothing != null -> dimensionSmoothing
-                dimensionSmoothingPercentage != null -> (line.distanceDimension(dimension, dimensionRestriction, dataPoints) * dimensionSmoothingPercentage!!).toLong()
+                dimensionSmoothingPercentage != null -> (line.distanceDimension(dataPoints, dimension, dimensionRestriction) * dimensionSmoothingPercentage!!).toLong()
                 else -> null
             }
 
             val backgroundZeroCord = y(line.Range.backgroundZero, minValue, maxValue, maxY)
 
-            val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPoints, dimension, dimensionRestriction, smoothing)
+            val dataPointsUnrestricted = line.getDataPoints(dimension)
+            val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPointsUnrestricted, dimension, smoothing, minDimension, maxDimension)
 
             val plotPointCollection = ArrayList<ArrayList<PlotPoint>>()
             for (collection in plotLineItemPointCollection) {
@@ -331,14 +403,17 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val maxX = canvas.width.toFloat()
         val maxY = canvas.height.toFloat()
 
-        val distanceDimension = plotLines.mapNotNull { it.distanceDimension(dimension, dimensionRestriction) }.max()?:0f
+        val distanceDimension = when {
+            dimensionRestriction != null -> dimensionRestriction!!.toFloat()
+            else -> plotLines.mapNotNull { it.distanceDimension(dimension, dimensionRestriction) }.max()?:0f
+        }
 
         for (i in 0 until xLineCount) {
             val cordX = x(i.toFloat(), 0f, xLineCount.toFloat() - 1, maxX)!!
             val cordY = maxY - yMargin
 
-            val leftZero = distanceDimension / (xLineCount - 1) * i
-            val rightZero = distanceDimension - leftZero
+            val leftZero = (distanceDimension / (xLineCount - 1) * i) + (dimensionShift ?: 0L)
+            val rightZero = distanceDimension - leftZero + (2 * (dimensionShift ?: 0L))
 
             drawXLine(canvas, cordX, maxY, labelLinePaint)
 
@@ -389,11 +464,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         labelPaint.getTextBounds("Dummy", 0, "Dummy".length, bounds)
 
         for (drawHighlightLabelOnly in listOf(false, true)) {
-            for (line in plotLines) {
-                if (line.isEmpty() || !line.Visible) continue
-
-                val dataPoints = line.getDataPoints(dimension, dimensionRestriction)
-                if (dataPoints.isEmpty()) continue
+            for (line in plotLines.filter { it.Visible }) {
+                val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift)
 
                 val minValue = line.minValue(dataPoints)!!
                 val maxValue = line.maxValue(dataPoints)!!
@@ -404,13 +476,13 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                 val labelUnitXOffset = when (line.LabelPosition) {
                     PlotLabelPosition.LEFT -> 0f
-                    PlotLabelPosition.RIGHT -> -labelPaint.measureText(line.Unit)/2
+                    PlotLabelPosition.RIGHT -> -labelPaint.measureText(line.Unit) / 2
                     else -> 0f
                 }
 
                 val labelCordX = when (line.LabelPosition) {
                     PlotLabelPosition.LEFT -> textSize
-                    PlotLabelPosition.RIGHT -> maxX - xMargin + textSize/2
+                    PlotLabelPosition.RIGHT -> maxX - xMargin + textSize / 2
                     else -> null
                 }
 
@@ -419,10 +491,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 if (!drawHighlightLabelOnly) {
                     if (line.LabelPosition !== PlotLabelPosition.NONE && labelCordX != null) {
                         if (line.Unit.isNotEmpty()) {
-                            // val labelPaintColor = labelPaint.color
-                            // labelPaint.color = line.plotPaint!!.Plot.color
                             canvas.drawText(line.Unit, labelCordX + labelUnitXOffset,yMargin - (yMargin / 3f), labelPaint)
-                            // labelPaint.color = labelPaintColor
                         }
 
                         for (i in 0 until yLineCount) {
@@ -430,10 +499,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                             val cordY = y(valueY, minValue, maxValue, maxY)!!
                             val label = String.format(line.LabelFormat, valueY / line.Divider)
 
-                            // val labelPaintColor = labelPaint.color
-                            // labelPaint.color = line.plotPaint!!.Plot.color
                             canvas.drawText(label, labelCordX, cordY + labelShiftY, labelPaint)
-                            // labelPaint.color = labelPaintColor
                         }
                     }
 
@@ -487,4 +553,6 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         path.lineTo(maxX - xMargin, cord)
         canvas.drawPath(path, paint ?: labelLinePaint)
     }
+
+
 }
