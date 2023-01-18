@@ -425,6 +425,10 @@ class MainActivity : Activity() {
         averageConsumptionTextView.text = String.format("%d Wh/km", DataHolder.averageConsumption.toInt())
         DataHolder.travelTimeMillis = 0L
 
+        DataHolder.maxPowerNegative = 0F
+        DataHolder.maxPowerPositive = 0F
+        DataHolder.maxSpeed = 0F
+
         sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
     }
 
