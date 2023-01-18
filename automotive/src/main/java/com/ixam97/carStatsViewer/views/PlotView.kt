@@ -5,8 +5,11 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
 import com.ixam97.carStatsViewer.plot.*
+import java.lang.Long.max
 import java.util.concurrent.TimeUnit
 
 
@@ -18,64 +21,75 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     var xMargin: Int = 100
         set(value) {
+            val diff = value != field
             if (value > 0) {
                 field = value
-                invalidate()
+                if (diff) invalidate()
             }
         }
 
     var xLineCount: Int = 6
         set(value) {
+            val diff = value != field
             if (value > 1) {
                 field = value
-                invalidate()
+                if (diff) invalidate()
             }
         }
 
     var yMargin: Int = 60
         set(value) {
+            val diff = value != field
             if (value > 0) {
                 field = value
-                invalidate()
+                if (diff) invalidate()
             }
         }
 
     var yLineCount: Int = 5
         set(value) {
+            val diff = value != field
             if (value > 1) {
                 field = value
-                invalidate()
+                if (diff) invalidate()
             }
         }
 
     var dimension: PlotDimension = PlotDimension.INDEX
         set(value) {
+            val diff = value != field
             field = value
-            invalidate()
+            if (diff) invalidate()
         }
 
+    var dimensionRestrictionTouchInterval: Long? = null
     var dimensionRestriction: Long? = null
         set(value) {
+            val diff = value != field
             field = value
-            invalidate()
+            if (diff) invalidate()
         }
 
+    var dimensionShiftTouchInterval: Long? = null
     var dimensionShift: Long? = null
         set(value) {
+            val diff = value != field
             field = value
-            invalidate()
+            if (diff) invalidate()
         }
 
     var dimensionSmoothing: Long? = null
         set(value) {
+            val diff = value != field
             field = value
-            invalidate()
+            if (diff) invalidate()
         }
 
     var dimensionSmoothingPercentage: Float? = null
         set(value) {
+            val diff = value != field
             field = value
-            invalidate()
+            if (diff) invalidate()
         }
 
     private val plotLines = ArrayList<PlotLine>()
@@ -174,8 +188,54 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         }
     }
 
+    private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
+        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+            if (dimensionShiftTouchInterval != null) {
+                touchDimensionShiftDistance += - distanceX
+                dimensionShift = max(0L, touchDimensionShift + (touchDimensionShiftDistance / max(1L, touchActionDistance)).toLong() * (dimensionShiftTouchInterval ?: 0L))
+            }
+
+            if (dimensionRestrictionTouchInterval != null) {
+                touchDimensionRestrictionDistance += - distanceY
+                dimensionRestriction = max(dimensionRestrictionTouchInterval!!, touchDimensionRestriction + (touchDimensionRestrictionDistance / max(1L, touchActionDistance)).toLong() * (dimensionRestrictionTouchInterval ?: 0L))
+            }
+
+            return true
+        }
+    }
+
+    private val mScaleDetector = GestureDetector(context, mGestureListener)
+
+    private var touchDimensionShift : Long = 0L
+    private var touchDimensionShiftDistance : Float = 0f
+
+    private var touchDimensionRestriction : Long = 0L
+    private var touchDimensionRestrictionDistance : Float = 0f
+
+    private var touchActionDistance : Long = 1L
+
+    override fun onTouchEvent(ev: MotionEvent): Boolean {
+        if (dimensionShiftTouchInterval == null || dimensionRestrictionTouchInterval == null) return true
+
+        when (ev.action) {
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                touchDimensionShiftDistance = 0f
+                touchDimensionRestrictionDistance = 0f
+
+                touchDimensionShift = dimensionShift ?: 0L
+                touchDimensionRestriction = dimensionRestriction ?: 0L
+            }
+        }
+
+        mScaleDetector.onTouchEvent(ev)
+        return true
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        touchActionDistance = (((canvas.width - 2 * xMargin).toFloat() / xLineCount.toFloat()) * 0.75f).toLong()
+
         alignZero()
         drawBackground(canvas)
         drawXLines(canvas)
@@ -230,12 +290,12 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             val minValue = line.minValue(dataPoints)!!
             val maxValue = line.maxValue(dataPoints)!!
 
-            val minDimension = line.minDimension(dataPoints, dimension)
+            val minDimension = line.minDimension(dataPoints, dimension, dimensionRestriction)
             val maxDimension = line.maxDimension(dataPoints, dimension)
 
             val smoothing = when {
                 dimensionSmoothing != null -> dimensionSmoothing
-                dimensionSmoothingPercentage != null -> (line.distanceDimension(dataPoints, dimension) * dimensionSmoothingPercentage!!).toLong()
+                dimensionSmoothingPercentage != null -> (line.distanceDimension(dataPoints, dimension, dimensionRestriction) * dimensionSmoothingPercentage!!).toLong()
                 else -> null
             }
 
@@ -345,7 +405,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         val distanceDimension = when {
             dimensionRestriction != null -> dimensionRestriction!!.toFloat()
-            else -> plotLines.mapNotNull { it.distanceDimension(dimension) }.max()?:0f
+            else -> plotLines.mapNotNull { it.distanceDimension(dimension, dimensionRestriction) }.max()?:0f
         }
 
         for (i in 0 until xLineCount) {
@@ -493,4 +553,6 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         path.lineTo(maxX - xMargin, cord)
         canvas.drawPath(path, paint ?: labelLinePaint)
     }
+
+
 }

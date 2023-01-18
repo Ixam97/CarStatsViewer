@@ -82,16 +82,16 @@ class PlotLine(
         }
     }
 
-    internal fun minDimension(dataPoints: List<PlotLineItem>, dimension: PlotDimension): Any {
+    internal fun minDimension(dataPoints: List<PlotLineItem>, dimension: PlotDimension, dimensionRestriction: Long?): Any {
         return when (dimension) {
             PlotDimension.INDEX -> 0f
             PlotDimension.DISTANCE -> when {
                 dataPoints.isEmpty() -> return 0f
-                else -> dataPoints.first().Distance
+                else -> min(dataPoints.first().Distance, maxDimension(dataPoints, dimension) as Float - (dimensionRestriction ?: 0L))
             }
             PlotDimension.TIME -> when {
                 dataPoints.isEmpty() -> return 0L
-                else -> dataPoints.first().Time
+                else -> min(dataPoints.first().Time, maxDimension(dataPoints, dimension) as Long - (dimensionRestriction ?: 0L))
             }
         }
     }
@@ -110,14 +110,14 @@ class PlotLine(
         }
     }
 
-    fun distanceDimension(dimension: PlotDimension): Float {
-        return distanceDimension(getDataPoints(dimension), dimension)
+    fun distanceDimension(dimension: PlotDimension, dimensionRestriction: Long?): Float {
+        return distanceDimension(getDataPoints(dimension), dimension, dimensionRestriction)
     }
 
-    fun distanceDimension(dataPoints: List<PlotLineItem>, dimension: PlotDimension): Float {
+    fun distanceDimension(dataPoints: List<PlotLineItem>, dimension: PlotDimension, dimensionRestriction: Long?): Float {
         return when (dimension) {
-            PlotDimension.TIME -> (maxDimension(dataPoints, dimension) as Long - minDimension(dataPoints, dimension) as Long).toFloat()
-            else -> maxDimension(dataPoints, dimension) as Float - minDimension(dataPoints, dimension) as Float
+            PlotDimension.TIME -> (maxDimension(dataPoints, dimension) as Long - minDimension(dataPoints, dimension, dimensionRestriction) as Long).toFloat()
+            else -> maxDimension(dataPoints, dimension) as Float - minDimension(dataPoints, dimension, dimensionRestriction) as Float
         }
     }
 
@@ -215,6 +215,8 @@ class PlotLine(
     }
 
     fun byHighlightMethod(dataPoints: List<PlotLineItem>): Float? {
+        if (dataPoints.isEmpty()) return null
+
         return when (HighlightMethod) {
             PlotHighlightMethod.MIN -> minValue(dataPoints)
             PlotHighlightMethod.MAX -> maxValue(dataPoints)
