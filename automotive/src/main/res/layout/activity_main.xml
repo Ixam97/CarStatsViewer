@@ -395,7 +395,7 @@
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_marginEnd="7.5dp"
-                android:text="Trip zurücksetzen"/>
+                android:text="Anpassen"/>
             <Button
                 android:layout_weight="1"
                 android:layout_width="0dp"

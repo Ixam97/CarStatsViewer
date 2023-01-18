@@ -18,9 +18,14 @@
     <string name="preference_consumption_plot_secondary_color_key" translatable="false">preference_consumption_plot_secondary_color</string>
     <string name="preference_charge_plot_secondary_color_key" translatable="false">preference_charge_plot_secondary_color</string>
 
+    <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
+
     <!-- Broadcast -->
     <string name="ui_update_plot_broadcast" translatable="false">ui_update_plot_broadcast</string>
     <string name="ui_update_gages_broadcast" translatable="false">ui_update_gages_broadcast</string>
+    <string name="gear_update_broadcast" translatable="false">gear_update_broadcast</string>
+    <string name="wake_lock_broadcast" translatable="false">wake_lock_broadcast</string>
+    <string name="save_trip_data_broadcast" translatable="false">save_trip_data_broadcast</string>
 
     <!-- MainActivity -->
     <string name="main_port_connected">Charge port connected:</string>
@@ -69,4 +74,5 @@
     <!-- Notifications -->
     <string name="notification_title">Current stats:</string>
     <string name="foreground_service_info">Data collection service running</string>
+    <string name="toast_file_read_error">Error reading trip file</string>
 </resources>

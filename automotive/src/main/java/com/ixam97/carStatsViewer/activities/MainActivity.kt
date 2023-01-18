@@ -24,13 +24,12 @@ import com.ixam97.carStatsViewer.plot.PlotDimension
 import com.ixam97.carStatsViewer.plot.PlotPaint
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
+import java.lang.Runnable
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 var emulatorMode = false
 var emulatorPowerSign = -1
-
-const val SETTINGS_REQUEST_CODE = 1
 
 class MainActivity : Activity() {
     companion object {
@@ -133,6 +132,7 @@ class MainActivity : Activity() {
     override fun onDestroy() {
         super.onDestroy()
         disableUiUpdates()
+        unregisterReceiver(broadcastReceiver)
         InAppLogger.log("MainActivity.onDestroy")
     }
 
@@ -176,12 +176,7 @@ class MainActivity : Activity() {
         traveledDistanceTextView.text = getTraveledDistanceString()
         currentInstConsTextView.text = getInstConsumptionString()
         averageConsumptionTextView.text = getAvgConsumptionString()
-/*
-        if (DataHolder.currentGear != VehicleGear.GEAR_PARK)
-            main_button_settings.setColorFilter(R.color.disabled_tint)
-        else
-            main_button_settings.colorFilter = null
-*/
+
         main_gage_avg_consumption_text_view.text = "  Ø %s".format(getAvgConsumptionString())
         main_gage_distance_text_view.text = "  %s".format(getTraveledDistanceString())
         main_gage_used_power_text_view.text = "  %s".format(getUsedEnergyString())
@@ -300,6 +295,7 @@ class MainActivity : Activity() {
 
             lastPlotUpdate = SystemClock.elapsedRealtime()
         }
+        main_consumption_plot.dimensionSmoothing = dimensionSmoothingById(appPreferences.plotDistance)
     }
 
     private fun getElapsedTimeString(): String {
@@ -360,6 +356,7 @@ class MainActivity : Activity() {
         averageConsumptionTextView.text = String.format("%d Wh/km", DataHolder.averageConsumption.toInt())
         DataHolder.travelTimeMillis = 0L
 
+        sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
     }
 
     private fun setupDefaultUi() {
@@ -391,6 +388,7 @@ class MainActivity : Activity() {
         main_consumption_plot.dimension = PlotDimension.DISTANCE
         main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
         main_consumption_plot.dimensionSmoothing = dimensionSmoothingById(appPreferences.plotDistance)
+        main_consumption_plot.dimensionShiftTouchInterval = 1_000L
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
@@ -435,6 +433,8 @@ class MainActivity : Activity() {
                         VehicleGear.GEAR_PARK
                     }
                 }
+                sendBroadcast(Intent(getString(R.string.gear_update_broadcast)))
+                if (DataHolder.currentGear == VehicleGear.GEAR_PARK) sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
             }
         }
         main_title_icon.setOnClickListener {
@@ -465,8 +465,7 @@ class MainActivity : Activity() {
         }
 
         main_button_settings.setOnClickListener {
-            // if (DataHolder.currentGear == VehicleGear.GEAR_PARK)
-                startActivity(Intent(this, SettingsActivity::class.java))
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
 
         /** cycle through consumption plot distances when tapping the plot */
@@ -497,11 +496,6 @@ class MainActivity : Activity() {
             main_consumption_plot.dimensionSmoothing = dimensionSmoothingById(id)
 
             appPreferences.plotDistance = id
-
-            // sharedPref.edit()
-            //     .putInt(getString(R.string.preferences_plot_distance_key), id)
-            //     .apply()
-            // appPreferences.plotDistance = id
         }
 
         main_checkbox_speed.setOnClickListener {
@@ -512,12 +506,6 @@ class MainActivity : Activity() {
             }
 
             appPreferences.plotSpeed = main_checkbox_speed.isChecked
-
-            // sharedPref.edit()
-            //     .putBoolean(getString(R.string.preferences_plot_speed_key), main_checkbox_speed.isChecked)
-            //     .apply()
-            // appPreferences.plotSpeed = main_checkbox_speed.isChecked
-
             main_consumption_plot.invalidate()
         }
 

@@ -2,6 +2,8 @@ package com.ixam97.carStatsViewer.objects
 
 import android.car.VehicleGear
 import com.ixam97.carStatsViewer.plot.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 object DataHolder {
 
@@ -111,4 +113,36 @@ object DataHolder {
         PlotLabelPosition.RIGHT,
         PlotHighlightMethod.LAST
     )
+
+    data class ChargeCurve(
+        var chargePlotLine: List<PlotLineItem>,
+        var stateOfChargePlotLine: List<PlotLineItem>
+    ) {}
+
+    var chargeCurves: ArrayList<ChargeCurve> = ArrayList()
+
+    fun applyTripData(tripData: TripData) {
+        traveledDistance = if (tripData.traveledDistance != null) tripData.traveledDistance else 0f
+        usedEnergy = if (tripData.usedEnergy != null) tripData.usedEnergy else 0f
+        averageConsumption = if(tripData.averageConsumption != null) tripData.averageConsumption else 0f
+        travelTimeMillis = if(tripData.travelTimeMillis != null) tripData.travelTimeMillis else 0L
+        consumptionPlotLine.reset()
+        speedPlotLine.reset()
+        if (tripData.consumptionPlotLine != null) consumptionPlotLine.addDataPoints(tripData.consumptionPlotLine)
+        if (tripData.speedPlotLine != null) speedPlotLine.addDataPoints(tripData.speedPlotLine)
+        chargeCurves = if (tripData.chargeCurves != null) ArrayList(tripData.chargeCurves) else ArrayList()
+    }
+
+    fun getTripData(): TripData {
+        return TripData(
+            Date(),
+            traveledDistance,
+            usedEnergy,
+            averageConsumption,
+            travelTimeMillis,
+            consumptionPlotLine.getDataPoints(PlotDimension.DISTANCE, null),
+            speedPlotLine.getDataPoints(PlotDimension.DISTANCE, null),
+            chargeCurves.toList()
+        )
+    }
 }

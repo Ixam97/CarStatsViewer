@@ -10,16 +10,21 @@ import android.car.VehicleGear
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.graphics.BitmapFactory
 import android.os.*
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
+import com.google.gson.Gson
 import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.activities.emulatorPowerSign
+import kotlinx.coroutines.*
+import java.io.File
+import java.io.FileWriter
+import java.lang.Runnable
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
 
@@ -30,7 +35,8 @@ class DataCollector : Service() {
         private const val CHANNEL_ID = "TestChannel"
         private const val STATS_NOTIFICATION_ID = 1
         private const val FOREGROUND_NOTIFICATION_ID = 2
-        private const val TIMER_HANDLER_DELAY_MILLIS = 1000L
+        private const val NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS = 1_000L
+        private const val SAVE_TRIP_DATA_TIMER_HANDLER_DELAY_MILLIS = 30_000L
     }
 
     private var consumptionPlotTracking = false
@@ -39,12 +45,12 @@ class DataCollector : Service() {
     private var lastPlotTime = 0L
     private var lastPlotGear = VehicleGear.GEAR_PARK
     private var lastPlotMarker : PlotMarker? = null
+    private var lastNotificationTimeMillis = 0L
 
     private var lastChargePower = 0f
 
     private var notificationCounter = 0
 
-    // private lateinit var sharedPref: SharedPreferences
     private lateinit var appPreferences: AppPreferences
 
     private val mBinder: LocalBinder = LocalBinder()
@@ -56,14 +62,50 @@ class DataCollector : Service() {
 
     private lateinit var notificationTitleString: String
 
-    private lateinit var timerHandler: Handler
+    private lateinit var notificationTimerHandler: Handler
+    private lateinit var saveTripDataTimerHandler: Handler
+
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            when (intent.action) {
+                getString(R.string.save_trip_data_broadcast) -> {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        writeTripDataToFile(DataHolder.getTripData(), getString(R.string.file_name_current_trip_data))
+                    }
+                }
+                else -> {}
+            }
+        }
+    }
+
+    private val saveTripDataTask = object : Runnable {
+        override fun run() {
+            sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+            saveTripDataTimerHandler.postDelayed(this, SAVE_TRIP_DATA_TIMER_HANDLER_DELAY_MILLIS)
+        }
+    }
 
     private val updateStatsNotificationTask = object : Runnable {
         override fun run() {
             updateStatsNotification()
             InAppLogger.logNotificationUpdate()
-            if (DataHolder.currentGear != VehicleGear.GEAR_PARK) DataHolder.travelTimeMillis += TIMER_HANDLER_DELAY_MILLIS
-            timerHandler.postDelayed(this, TIMER_HANDLER_DELAY_MILLIS)
+
+            val currentNotificationTimeMillis = System.currentTimeMillis()
+            if (DataHolder.currentGear != VehicleGear.GEAR_PARK && lastNotificationTimeMillis > 0) DataHolder.travelTimeMillis += currentNotificationTimeMillis - lastNotificationTimeMillis
+            lastNotificationTimeMillis = currentNotificationTimeMillis
+
+            // val ignitionState = carPropertyManager.getIntProperty(VehiclePropertyIds.IGNITION_STATE, 0)
+            // val ignitionString = when (ignitionState) {
+            //     VehicleIgnitionState.LOCK -> "LOCK"
+            //     VehicleIgnitionState.OFF -> "OFF"
+            //     VehicleIgnitionState.ACC -> "ACC"
+            //     VehicleIgnitionState.ON -> "ON"
+            //     VehicleIgnitionState.START -> "START"
+            //     else -> "UNDEFINED"
+            // }
+            // InAppLogger.log(String.format("IAmAlive - Ignition state: %s, current power: %f W", ignitionString, DataHolder.currentPowermW / 1_000))
+
+            notificationTimerHandler.postDelayed(this, NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS)
         }
     }
 
@@ -95,6 +137,19 @@ class DataCollector : Service() {
             .setStyle(Notification.MediaStyle())
             .setCategory(Notification.CATEGORY_TRANSPORT)
             .setOngoing(true)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val mPrevTripData = readTripDataFromFile(getString(R.string.file_name_current_trip_data))
+            runBlocking {
+                if (mPrevTripData != null) {
+                    DataHolder.applyTripData(mPrevTripData)
+                    sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
+                } else {
+                    InAppLogger.log("No trip file read!")
+                    // Toast.makeText(applicationContext ,R.string.toast_file_read_error, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
 
         startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
 
@@ -147,13 +202,19 @@ class DataCollector : Service() {
 
         registerCarPropertyCallbacks()
 
-        timerHandler = Handler(Looper.getMainLooper())
-        timerHandler.post(updateStatsNotificationTask)
+        notificationTimerHandler = Handler(Looper.getMainLooper())
+        notificationTimerHandler.post(updateStatsNotificationTask)
+        saveTripDataTimerHandler = Handler(Looper.getMainLooper())
+        saveTripDataTimerHandler.postDelayed(saveTripDataTask, SAVE_TRIP_DATA_TIMER_HANDLER_DELAY_MILLIS)
+
+        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.save_trip_data_broadcast)))
     }
 
     override fun onDestroy() {
         super.onDestroy()
         InAppLogger.log("DataCollector.onDestroy")
+        sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+        unregisterReceiver(broadcastReceiver)
         car.disconnect()
     }
 
@@ -288,9 +349,7 @@ class DataCollector : Service() {
 
             when (value.propertyId) {
                 VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
-                VehiclePropertyIds.GEAR_SELECTION -> {
-                    if (!emulatorMode) DataHolder.currentGear = value.value as Int
-                }
+                VehiclePropertyIds.GEAR_SELECTION -> if (!emulatorMode) gearUpdater(value.value as Int)
                 VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> DataHolder.chargePortConnected = value.value as Boolean
             }
         }
@@ -299,19 +358,26 @@ class DataCollector : Service() {
         }
     }
 
+    private fun gearUpdater(gear: Int) {
+        DataHolder.currentGear = gear
+        sendBroadcast(Intent(getString(R.string.gear_update_broadcast)))
+        if (DataHolder.currentGear == VehicleGear.GEAR_PARK) sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+    }
+
     private fun powerUpdater(value: CarPropertyValue<*>, timestamp: Long) {
         DataHolder.currentPowermW = when (emulatorMode) {
             true -> (value.value as Float) * emulatorPowerSign
             else -> - (value.value as Float)
         }
 
-        val timeDifference = timeDifference(value, 10_000, timestamp)
-        // Log.d("powerUpdater", "Time Difference: $timeDifference")
-        if (timeDifference != null && !DataHolder.chargePortConnected) {
-            DataHolder.usedEnergy += (DataHolder.lastPowermW / 1000) * (timeDifference.toFloat() / (1000 * 60 * 60))
-            DataHolder.averageConsumption = when {
-                DataHolder.traveledDistance <= 0 -> 0F
-                else -> DataHolder.usedEnergy / (DataHolder.traveledDistance / 1_000)
+        if (DataHolder.currentGear != VehicleGear.GEAR_PARK) {
+            val timeDifference = timeDifference(value, 10_000, timestamp)
+            if (timeDifference != null && !DataHolder.chargePortConnected) {
+                DataHolder.usedEnergy += (DataHolder.lastPowermW / 1000) * (timeDifference.toFloat() / (1000 * 60 * 60))
+                DataHolder.averageConsumption = when {
+                    DataHolder.traveledDistance <= 0 -> 0F
+                    else -> DataHolder.usedEnergy / (DataHolder.traveledDistance / 1_000)
+                }
             }
         }
 
@@ -491,4 +557,54 @@ class DataCollector : Service() {
         }
     }
 
+    private fun writeTripDataToFile(tripData: TripData, fileName: String) {
+        val dir = File(applicationContext.filesDir, "TripData")
+        if (!dir.exists()) {
+            dir.mkdir()
+        }
+
+        try {
+            val gpxFile = File(dir, "$fileName.json")
+            val writer = FileWriter(gpxFile)
+            writer.append(Gson().toJson(tripData))
+            writer.flush()
+            writer.close()
+            InAppLogger.log("TRIP DATA: Saved $fileName.json in Thread ${Thread.currentThread().name}")
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun readTripDataFromFile(fileName: String): TripData? {
+
+        InAppLogger.log("TRIP DATA: Reading $fileName.json in Thread ${Thread.currentThread().name}")
+        val startTime = System.currentTimeMillis()
+        val dir = File(applicationContext.filesDir, "TripData")
+        if (!dir.exists()) {
+            InAppLogger.log("TRIP DATA: Directory TripData does not exist!")
+            return null
+        }
+
+        val gpxFile = File(dir, "$fileName.json")
+        if (!gpxFile.exists() && gpxFile.length() > 0) {
+            InAppLogger.log("TRIP_DATA File $fileName.json does not exist!")
+            return null
+        }
+
+        return try {
+            InAppLogger.log("TRIP DATA: File size: %.1f kB".format(gpxFile.length() / 1024f))
+
+            // val fileReader = FileReader(gpxFile)
+            val tripData: TripData = Gson().fromJson(gpxFile.readText(), TripData::class.java)
+            // fileReader.close()
+
+            InAppLogger.log("TRIP DATA: Time to read: ${System.currentTimeMillis() - startTime} ms")
+
+            tripData
+
+        } catch (e: java.lang.Exception) {
+            InAppLogger.log(e.toString())
+            null
+        }
+    }
 }

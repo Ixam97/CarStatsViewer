@@ -6,13 +6,17 @@ import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.objects.*
 import android.app.Activity
 import android.app.AlertDialog
+import android.car.VehicleGear
 import android.content.BroadcastReceiver
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_settings.*
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.view.View
+import android.widget.TextView
 import com.ixam97.carStatsViewer.plot.PlotDimension
 import com.ixam97.carStatsViewer.plot.PlotPaint
 import com.ixam97.carStatsViewer.views.PlotView
@@ -30,6 +34,7 @@ class SettingsActivity : Activity() {
                     settings_consumption_plot_view.invalidate()
                     settings_charge_plot_view.invalidate()
                 }
+                getString(R.string.gear_update_broadcast) -> setEnableByGear(DataHolder.currentGear)
             }
         }
     }
@@ -49,11 +54,27 @@ class SettingsActivity : Activity() {
         setupSettingsChargePlot()
 
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.ui_update_plot_broadcast)))
+        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.gear_update_broadcast)))
+
+        setEnableByGear(DataHolder.currentGear)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        unregisterReceiver(broadcastReceiver)
         InAppLogger.log("SettingsActivity.onDestroy")
+    }
+
+    private fun setEnableByGear(gear: Int) {
+        if (gear != VehicleGear.GEAR_PARK) {
+            if (settings_charge_plot_layout.visibility == View.VISIBLE) animateTransition(settings_charge_plot_layout, settings_master_layout)
+            if (settings_consumption_plot_layout.visibility == View.VISIBLE) animateTransition(settings_consumption_plot_layout, settings_master_layout)
+            setMenuRowIsEnabled(false, settings_charge_plot)
+            setMenuRowIsEnabled(false, settings_consumption_plot)
+        } else {
+            setMenuRowIsEnabled(true, settings_charge_plot)
+            setMenuRowIsEnabled(true, settings_consumption_plot)
+        }
     }
 
     private fun setupSettingsMaster() {
@@ -217,6 +238,27 @@ class SettingsActivity : Activity() {
         }
 
         InAppLogger.log(resources.getInteger(android.R.integer.config_shortAnimTime).toString())
+    }
+
+    private fun setMenuRowIsEnabled(enabled: Boolean, view: View) {
+        view.isEnabled = enabled
+        if (view is TextView) {
+            if(!enabled){
+                view.setTextAppearance(R.style.menu_button_row_style_disabled)
+                for (drawable in view.compoundDrawablesRelative) {
+                    if (drawable != null) {
+                        drawable.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+                    }
+                }
+            } else {
+                view.setTextAppearance(R.style.menu_button_row_style)
+                for (drawable in view.compoundDrawablesRelative) {
+                    if (drawable != null) {
+                        drawable.colorFilter = PorterDuffColorFilter(getColor(android.R.color.white), PorterDuff.Mode.SRC_IN)
+                    }
+                }
+            }
+        }
     }
 
 }

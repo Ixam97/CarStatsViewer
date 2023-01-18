@@ -28,10 +28,10 @@ object InAppLogger {
     private var numNotificationUpdates = 0
 
     fun log(message: String) {
-        var messageTime = SimpleDateFormat("dd.MM.yyyy hh:mm:ss").format(Date())
+        var messageTime = SimpleDateFormat("dd.MM.yyyy hh:mm:ss.SSS").format(Date())
         val logMessage = String.format("%s: %s", messageTime, message)
         android.util.Log.d("InAppLogger:", logMessage)
-        if (logArray.size > 10000) logArray.removeAt(0)
+        if (logArray.size > 1_000) logArray.removeAt(0)
         logArray.add(logMessage)
     }
 

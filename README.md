@@ -8,10 +8,25 @@ Based on https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerK
 
 ## Changelog [DE]:
 
+### 0.20.0 (18.01.2023)
+ - Wake Lock wieder entfernt.
+ - Debug Logging für Zündungsstatus wieder entfernt
+ - Der Energiezähler erfasst nur noch Werte, wenn das Fahrzug nicht in Fahrstufe P ist
+ - Trips werden auch nach vollständigem Beenden der App fortgesetzt
+ - Es kann nun durch den Verbrauchsplot gescrollt werden
+
+### 0.19.2 (16.01.2023)
+ - Wake Lock hinzugefügt
+
+### 0.19.1 (16.01.2023)
+ - Zusätzliches Debug-Logging für den Zündungsstatus
+ - Zeiterfassung korrigiert
+ - Untermenüs werden während der Fahrt deaktiviert
+
 ### 0.19.0 (15.01.2023)
  - Die Ladekurve wird solange angezeigt, bis sie manuell geschlossen wird, nachdem das Ladekabel abgezogen wurde
  - Die Lade- und Verbrauchskurven sind in ihrem jemweiligen Einstellungsmenü sichtbar
- - DIe Ladekurve ist nun (versuchsweise) blau eingefärbt 
+ - Die Ladekurve ist nun (versuchsweise) blau eingefärbt 
 
 ### 0.18.2 (14.01.2023)
  - UI-Updates optimiert
