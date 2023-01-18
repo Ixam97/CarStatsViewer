@@ -81,6 +81,7 @@ class SettingsActivity : Activity() {
         settings_switch_notifications.isChecked = appPreferences.notifications
         settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
         settings_switch_experimental_layout.isChecked = appPreferences.experimentalLayout
+        settings_switch_tripresult.isChecked = appPreferences.tripResult
 
         settings_version_text.text = "Car Stats Viewer Version %s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 
@@ -117,6 +118,10 @@ class SettingsActivity : Activity() {
 
         settings_switch_experimental_layout.setOnClickListener {
             appPreferences.experimentalLayout = settings_switch_experimental_layout.isChecked
+        }
+
+        settings_switch_tripresult.setOnClickListener {
+            appPreferences.tripResult = settings_switch_tripresult.isChecked
         }
         
         settings_consumption_plot.setOnClickListener {

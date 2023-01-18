@@ -314,30 +314,31 @@
 
     <LinearLayout
         android:id="@+id/main_consumption_plot_container"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:visibility="gone">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_weight="0"
-            android:background="?android:attr/listDivider"/>
+            android:background="?android:attr/listDivider" />
 
         <com.ixam97.carStatsViewer.views.PlotView
+            android:id="@+id/main_consumption_plot"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
             android:layout_margin="0dp"
-            android:id="@+id/main_consumption_plot"/>
+            android:layout_weight="1" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginHorizontal="15dp"
             android:layout_marginTop="0dp"
-            android:layout_marginBottom="5dp">
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal">
 
             <RadioGroup
                 android:id="@+id/main_radio_group_distance"
@@ -345,63 +346,69 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:orientation="horizontal">
+
                 <RadioButton
                     android:id="@+id/main_radio_10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
-                    android:textSize="35sp"
-                    android:text="5 km"/>
+                    android:text="5 km"
+                    android:textSize="35sp" />
+
                 <RadioButton
                     android:id="@+id/main_radio_25"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
-                    android:textSize="35sp"
-                    android:text="15 km"/>
+                    android:text="15 km"
+                    android:textSize="35sp" />
+
                 <RadioButton
                     android:id="@+id/main_radio_50"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="35sp"
-                    android:text="Trip"/>
+                    android:text="Trip"
+                    android:textSize="35sp" />
             </RadioGroup>
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
             <CheckBox
                 android:id="@+id/main_checkbox_speed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/main_checkbox_speed"
-                android:textSize="35sp"
+                android:layout_marginHorizontal="15dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="5dp"
-                android:layout_marginHorizontal="15dp"/>
+                android:text="@string/main_checkbox_speed"
+                android:textSize="35sp" />
         </LinearLayout>
+
         <LinearLayout
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="2"
-            android:layout_marginBottom="15dp"
             android:layout_marginHorizontal="15dp"
-            android:orientation="horizontal">
+            android:layout_marginBottom="15dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="2">
+
             <Button
-                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_marginEnd="7.5dp"
-                android:text="Anpassen"/>
-            <Button
                 android:layout_weight="1"
+                android:text="Anpassen" />
+
+            <Button
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_marginStart="7.5dp"
-                android:text="Tripzusammenfassung"/>
+                android:layout_weight="1"
+                android:text="Tripzusammenfassung" />
         </LinearLayout>
 
     </LinearLayout>
@@ -448,6 +455,228 @@
                 android:layout_marginStart="7.5dp"
                 android:text="@string/main_button_reset_charge_plot"/>
         </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/trip_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/view2"
+            style="divid"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_weight="0"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:id="@+id/tripresult_title_text"
+            style="@style/title_text_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/tripresult_title_text" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tripresult_time_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trip_dialog_time" />
+
+                <TextView
+                    android:id="@+id/tripresult_time_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:01:00" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tripresult_distance_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_traveled_distance" />
+
+                <TextView
+                    android:id="@+id/tripresult_distance_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5km" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tripresult_usedenergy_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_used_energy" />
+
+                <TextView
+                    android:id="@+id/tripresult_usedenergy_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="20 kWh" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tripresult_averageconsumption_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trip_dialog_averageconsumption" />
+
+                <TextView
+                    android:id="@+id/tripresult_averageconsumption_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="20.3 kWh/100km" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tripresult_maxpowerdraw_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="@string/trip_dialog_power" />
+
+                <TextView
+                    android:id="@+id/tripresult_maxpowerdraw_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="150 kWh" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tripresult_maxpowergain_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trip_dialog_reku" />
+
+                <TextView
+                    android:id="@+id/tripresult_maxpowergain_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-90 kWh" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0">
+
+                <TextView
+                    android:id="@+id/tripresult_speed_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trip_dialog_speed" />
+
+                <TextView
+                    android:id="@+id/tripresult_speed_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="205 km/h" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tripresult_avgspeed_text"
+                    style="@style/LabelCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trip_dialog_avgspeed" />
+
+                <TextView
+                    android:id="@+id/tripresult_avgspeed_value"
+                    style="@style/ValueCell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-/-" />
+
+            </TableRow>
+
+        </TableLayout>
+
+        <View
+            android:id="@+id/view3"
+            style="@style/menu_divider_style"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_weight="0" />
+
+        <TextView
+            android:id="@+id/textView18"
+            style="@style/title_text_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="@string/trip_dialog_reset_message" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0">
+
+            <Button
+                android:id="@+id/trip_button_reset"
+                style="@style/menu_button_row_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/trip_dialog_end" />
+
+            <Button
+                android:id="@+id/trip_button_continue"
+                style="@style/menu_button_row_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="@string/trip_dialog_continue" />
+        </TableRow>
 
     </LinearLayout>
 

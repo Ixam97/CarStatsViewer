@@ -181,14 +181,28 @@ class MainActivity : Activity() {
         main_gage_distance_text_view.text = "  %s".format(getTraveledDistanceString())
         main_gage_used_power_text_view.text = "  %s".format(getUsedEnergyString())
         main_gage_time_text_view.text = "  %s".format(getElapsedTimeString())
+
+        if(appPreferences.tripResult &&
+            DataHolder.activeTrip &&
+            DataHolder.currentGear == VehicleGear.GEAR_PARK)
+        {
+            InAppLogger.log("Show TripResult now")
+            showTripResults()
+        }
+
     }
 
     private fun getCurrentSpeedString(): String {
         return "${(DataHolder.currentSpeedSmooth * 3.6).toInt()} km/h"
     }
 
+    private fun getMaxSpeedString(): String {
+        return "${(DataHolder.maxSpeed* 3.6).toInt()} km/h"
+    }
+
+
     private fun getAvgSpeedString(): String {
-        return " %d km/h".format(
+        return "%d km/h".format(
             ((DataHolder.traveledDistance / 1000) / (DataHolder.travelTimeMillis.toFloat() / 3_600_000)).toInt())
     }
 
@@ -196,6 +210,20 @@ class MainActivity : Activity() {
         return "%.1f kW".format(
             Locale.ENGLISH,
             DataHolder.currentPowerSmooth / 1_000_000)
+    }
+
+    private fun getMaxPowerString(
+        positive: Boolean
+    ): String {
+        var powervalue = if(positive){
+            DataHolder.maxPowerPositive / 1_000_000
+        } else {
+            DataHolder.maxPowerNegative / 1_000_000
+        }
+
+        return "%.1f kW".format(
+            Locale.ENGLISH,
+            powervalue)
     }
 
     private fun getUsedEnergyString(): String {
@@ -296,6 +324,47 @@ class MainActivity : Activity() {
             lastPlotUpdate = SystemClock.elapsedRealtime()
         }
         main_consumption_plot.dimensionSmoothing = dimensionSmoothingById(appPreferences.plotDistance)
+    }
+
+    private fun showTripResults(){
+        DataHolder.activeTrip = false //set always false, will changed to true if speed is changed
+
+        tripresult_time_value.text = getElapsedTimeString()
+        tripresult_distance_value.text = getTraveledDistanceString()
+        tripresult_usedenergy_value.text = getUsedEnergyString()
+        tripresult_averageconsumption_value.text = getAvgConsumptionString()
+        tripresult_maxpowerdraw_value.text = getMaxPowerString(true)
+        tripresult_maxpowergain_value.text = getMaxPowerString(false)
+        tripresult_speed_value.text = getMaxSpeedString()
+        tripresult_avgspeed_value.text = getAvgSpeedString()
+
+        // show only trip results view
+        disableUiUpdates()
+        legacy_layout.visibility = View.GONE
+        gage_layout.visibility = View.GONE
+        main_consumption_plot_container.visibility = View.GONE
+        main_charge_plot_container.visibility = View.GONE
+        trip_layout.visibility = View.VISIBLE
+
+        // wait for user input
+        trip_button_reset.setOnClickListener {
+            resetStats()
+            enableUiUpdates()
+            setupDefaultUi()
+        }
+        trip_button_continue.setOnClickListener {
+            main_consumption_plot_container.visibility = View.VISIBLE
+            trip_layout.visibility = View.GONE
+            enableUiUpdates()
+
+            if (appPreferences.experimentalLayout) {
+                legacy_layout.visibility = View.GONE
+                gage_layout.visibility = View.VISIBLE
+            }else{
+                legacy_layout.visibility = View.VISIBLE
+            }
+
+        }
     }
 
     private fun getElapsedTimeString(): String {

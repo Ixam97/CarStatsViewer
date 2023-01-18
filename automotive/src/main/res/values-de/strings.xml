@@ -35,6 +35,20 @@
     <string name="settings_plot_secondary_color">Grau als sekundäre Diagrammfarbe</string>
     <string name="settings_consumption_plot_visible_gages">Zeige Leistungsbalken</string>
     <string name="settings_consumption_plot_speed">Zeige Geschwindigkeitsverlauf</string>
+    <string name="settings_tripresults">Zeige Fahrtinformationen nach Parken</string>
+
+    <!-- Trip Exit Dialog -->
+    <string name="tripresult_title_text">Informationen zur aktuellen Fahrt:</string>
+    <string name="trip_dialog_reset_title">Aktuelle Fahrt beenden?</string>
+    <string name="trip_dialog_time">Fahrtzeit:</string>
+    <string name="trip_dialog_power">Maximale Leistung abgerufen:</string>
+    <string name="trip_dialog_averageconsumption">Durchschnittsverbrauch:</string>
+    <string name="trip_dialog_speed">Maximale Geschwindigkeit:</string>
+    <string name="trip_dialog_avgspeed">Durchschnittsgeschwindigkeit:</string>
+    <string name="trip_dialog_reku">Maximale Leistung rekuperiert:</string>
+    <string name="trip_dialog_end">Ja, anhalten</string>
+    <string name="trip_dialog_continue">Nein, weiterfahren</string>
+    <string name="trip_dialog_reset_message">Alle gespeicherten Fahrdaten werden auf Null zurückgesetzt</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">App beenden?</string>

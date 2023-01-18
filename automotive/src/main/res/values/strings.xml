@@ -13,6 +13,7 @@
     <string name="preferences_plot_distance_key" translatable="false">preferences_plot_distance</string>
     <string name="preferences_plot_speed_key" translatable="false">preferences_plot_speed</string>
     <string name="preferences_experimental_layout_key" translatable="false">preferences_experimental_layout</string>
+    <string name="preferences_tripresult_key" translatable="false">preferences_tripresult</string>
     <string name="preferences_consumption_plot_single_motor_key" translatable="false">preferences_consumption_plot_single_motor_key</string>
     <string name="preference_consumption_plot_visible_gages_key" translatable="false">preference_consumption_plot_visible_gages</string>
     <string name="preference_consumption_plot_secondary_color_key" translatable="false">preference_consumption_plot_secondary_color</string>
@@ -61,6 +62,20 @@
     <string name="settings_consumption_plot_single_motor">Single motor model</string>
     <string name="settings_consumption_plot_visible_gages">Show power gages</string>
     <string name="settings_consumption_plot_speed">Show speed plot</string>
+    <string name="settings_tripresults">Show trip results after parking</string>
+
+    <!-- Trip Exit Dialog -->
+    <string name="tripresult_title_text">Trip data:</string>
+    <string name="trip_dialog_reset_title">Stop current trip?</string>
+    <string name="trip_dialog_time">Trip duration:</string>
+    <string name="trip_dialog_power">Maximum power draw:</string>
+    <string name="trip_dialog_averageconsumption">Average consumption:</string>
+    <string name="trip_dialog_speed">Maximum speed driven:</string>
+    <string name="trip_dialog_avgspeed">Avg. speed:</string>
+    <string name="trip_dialog_reku">Maximum power gain:</string>
+    <string name="trip_dialog_end">Yes, stop</string>
+    <string name="trip_dialog_continue">No, continue</string>
+    <string name="trip_dialog_reset_message">All saved trip data will be reset to zero.</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">Quit App?</string>

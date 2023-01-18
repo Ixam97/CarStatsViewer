@@ -80,6 +80,18 @@
                 android:text="@string/settings_experimental_layout"/>
 
             <View
+                android:id="@+id/view"
+                style="@style/menu_divider_style"
+                android:layout_width="match_parent" />
+
+            <Switch
+                android:id="@+id/settings_switch_tripresult"
+                style="@style/menu_standard_switch_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_tripresults" />
+
+            <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 

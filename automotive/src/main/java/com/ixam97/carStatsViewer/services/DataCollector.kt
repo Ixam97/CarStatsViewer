@@ -426,6 +426,14 @@ class DataCollector : Service() {
             }
             lastChargePower = DataHolder.currentPowermW
         }
+
+        // Update Power min/max values
+        if (DataHolder.currentPowermW > DataHolder.maxPowerPositive){
+            DataHolder.maxPowerPositive = DataHolder.currentPowermW
+        }
+        if (DataHolder.currentPowermW < DataHolder.maxPowerNegative){
+            DataHolder.maxPowerNegative = DataHolder.currentPowermW
+        }
     }
 
     private fun powerUpdater(value: CarPropertyValue<*>) {
@@ -437,6 +445,9 @@ class DataCollector : Service() {
         DataHolder.currentSpeed = when (DataHolder.currentGear) {
             VehicleGear.GEAR_PARK -> 0f
             else -> (value.value as Float).absoluteValue
+        }
+        if(DataHolder.currentGear != VehicleGear.GEAR_PARK){
+            DataHolder.activeTrip = true
         }
 
         // after reset
@@ -498,6 +509,11 @@ class DataCollector : Service() {
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             }
         }
+        // Update Speed max value
+        if (DataHolder.currentSpeed > DataHolder.maxSpeed){
+            DataHolder.maxSpeed = DataHolder.currentSpeed
+        }
+
         sendBroadcast(Intent(getString(R.string.ui_update_gages_broadcast)))
     }
 
