@@ -110,7 +110,7 @@ class PlotLine(
         }
     }
 
-    fun distanceDimension(dimension: PlotDimension, dimensionRestriction: Long?): Float {
+    fun distanceDimension(dimension: PlotDimension, dimensionRestriction: Long? = null): Float {
         return distanceDimension(getDataPoints(dimension), dimension, dimensionRestriction)
     }
 

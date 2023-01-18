@@ -190,14 +190,20 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
-            if (dimensionShiftTouchInterval != null) {
+            val shiftInterval = dimensionShiftTouchInterval
+            if (shiftInterval != null) {
                 touchDimensionShiftDistance += - distanceX
-                dimensionShift = max(0L, touchDimensionShift + (touchDimensionShiftDistance / max(1L, touchActionDistance)).toLong() * (dimensionShiftTouchInterval ?: 0L))
+                dimensionShift = (touchDimensionShift + (touchDimensionShiftDistance / max(1L, touchActionDistance)).toLong() * shiftInterval)
+                    .coerceAtMost(touchDimensionMax - (touchDimensionMax % shiftInterval))
+                    .coerceAtLeast(0L)
             }
 
-            if (dimensionRestrictionTouchInterval != null) {
+            val restrictionInterval = dimensionRestrictionTouchInterval
+            if (restrictionInterval != null) {
                 touchDimensionRestrictionDistance += - distanceY
-                dimensionRestriction = max(dimensionRestrictionTouchInterval!!, touchDimensionRestriction + (touchDimensionRestrictionDistance / max(1L, touchActionDistance)).toLong() * (dimensionRestrictionTouchInterval ?: 0L))
+                dimensionRestriction = (touchDimensionRestriction + (touchDimensionRestrictionDistance / max(1L, touchActionDistance)).toLong() * restrictionInterval)
+                    .coerceAtMost(touchDimensionMax + (restrictionInterval - touchDimensionMax % restrictionInterval))
+                    .coerceAtLeast(restrictionInterval)
             }
 
             return true
@@ -214,8 +220,11 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private var touchActionDistance : Long = 1L
 
+    private var touchDimensionMax : Long = 0L
+
     override fun onTouchEvent(ev: MotionEvent): Boolean {
-        if (dimensionShiftTouchInterval == null || dimensionRestrictionTouchInterval == null) return true
+        if (dimensionRestriction == null) return true
+        if (dimensionShiftTouchInterval == null && dimensionRestrictionTouchInterval == null) return true
 
         when (ev.action) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -224,6 +233,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                 touchDimensionShift = dimensionShift ?: 0L
                 touchDimensionRestriction = dimensionRestriction ?: 0L
+
+                touchDimensionMax = (plotLines.mapNotNull { it.distanceDimension(dimension) }.max() ?: 0f).toLong()
             }
         }
 
