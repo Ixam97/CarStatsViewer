@@ -194,7 +194,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             if (shiftInterval != null) {
                 touchDimensionShiftDistance += - distanceX
                 dimensionShift = (touchDimensionShift + (touchDimensionShiftDistance / max(1L, touchActionDistance)).toLong() * shiftInterval)
-                    .coerceAtMost(touchDimensionMax - (touchDimensionMax % shiftInterval))
+                    .coerceAtMost(touchDimensionMax + (shiftInterval - touchDimensionMax % shiftInterval) - (dimensionRestriction!! - 1))
                     .coerceAtLeast(0L)
             }
 
