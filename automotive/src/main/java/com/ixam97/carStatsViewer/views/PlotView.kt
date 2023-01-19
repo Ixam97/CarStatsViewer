@@ -310,7 +310,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 else -> null
             }
 
-            val backgroundZeroCord = y(line.Range.backgroundZero, minValue, maxValue, maxY)
+            val zeroCord = y(line.Range.backgroundZero, minValue, maxValue, maxY)
 
             val dataPointsUnrestricted = line.getDataPoints(dimension)
             val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPointsUnrestricted, dimension, smoothing, minDimension, maxDimension)
@@ -360,19 +360,33 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             // RIGHT
             canvas.clipOutRect(maxX - xMargin, 0f, maxX, maxY)
 
-            for (plotPoints in plotPointCollection) {
-                if (backgroundZeroCord != null) {
-                    drawPlot(canvas, line.plotPaint!!.PlotBackground, plotPoints, backgroundZeroCord)
+            for (plotPointIndex in plotPointCollection.indices) {
+                val plotPoints = plotPointCollection[plotPointIndex]
+
+                val lastPlot = plotPointIndex == plotLineItemPointCollection.size - 1
+
+                val backgroundPaint = when (lastPlot) {
+                    true -> line.plotPaint!!.PlotBackground
+                    else -> line.plotPaint!!.PlotBackgroundSecondary
                 }
 
-                drawPlot(canvas, line.plotPaint!!.Plot, plotPoints)
+                if (zeroCord != null) {
+                    drawPlot(canvas, backgroundPaint, plotPoints, zeroCord, true)
+                }
+
+                val plotPaint = when (lastPlot) {
+                    true -> line.plotPaint!!.Plot
+                    else -> line.plotPaint!!.PlotSecondary
+                }
+
+                drawPlot(canvas, plotPaint, plotPoints, zeroCord)
             }
 
             canvas.restore()
         }
     }
 
-    private fun drawPlot(canvas : Canvas, paint : Paint, plotPoints : ArrayList<PlotPoint>, backgroundZeroCord: Float? = null) {
+    private fun drawPlot(canvas : Canvas, paint : Paint, plotPoints : ArrayList<PlotPoint>, zeroCord: Float?, background: Boolean = false) {
         if (plotPoints.isEmpty()) return
 
         val path = Path()
@@ -383,17 +397,20 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         for (i in plotPoints.indices) {
             val point = plotPoints[i]
 
-            if (prevPoint === null) {
-                firstPoint = point
-                path.moveTo(point.x, point.y)
-            } else {
-                val midX = (prevPoint.x + point.x) / 2
-                val midY = (prevPoint.y + point.y) / 2
+            when {
+                prevPoint === null -> {
+                    firstPoint = point
+                    path.moveTo(point.x, point.y)
+                }
+                else -> {
+                    val midX = (prevPoint.x + point.x) / 2
+                    val midY = (prevPoint.y + point.y) / 2
 
-                if (i == 1) {
-                    path.lineTo(midX, midY)
-                } else {
-                    path.quadTo(prevPoint.x, prevPoint.y, midX, midY)
+                    if (i == 1) {
+                        path.lineTo(midX, midY)
+                    } else {
+                        path.quadTo(prevPoint.x, prevPoint.y, midX, midY)
+                    }
                 }
             }
 
@@ -402,12 +419,22 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         path.lineTo(prevPoint!!.x, prevPoint.y)
 
-        if (backgroundZeroCord != null) {
-            path.lineTo(prevPoint.x, backgroundZeroCord)
-            path.lineTo(firstPoint!!.x, backgroundZeroCord)
+        if (background && zeroCord != null) {
+            path.lineTo(prevPoint.x, zeroCord)
+            path.lineTo(firstPoint!!.x, zeroCord)
+        }
+
+        if (!background){
+            //drawMarker(canvas, firstPoint, paint)
+            //drawMarker(canvas, prevPoint, paint)
         }
 
         canvas.drawPath(path, paint)
+    }
+
+    private fun drawMarker(canvas: Canvas, point: PlotPoint?, paint: Paint) {
+        if (point == null) return
+        canvas.drawCircle(point.x, point.y, 3f, paint)
     }
 
     private fun drawXLines(canvas: Canvas) {
