@@ -33,7 +33,6 @@ var emulatorPowerSign = -1
 
 class MainActivity : Activity() {
     companion object {
-        private val PERMISSIONS = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED)
         private const val UI_UPDATE_INTERVAL = 500L
         private const val DISTANCE_1 =  5_001L
         private const val DISTANCE_2 = 15_001L
@@ -49,7 +48,6 @@ class MainActivity : Activity() {
 
     private var updateUi = false
     private var lastPlotUpdate: Long = 0L
-    private var lastTimeString = "00:00:00"
 
     private val updateActivityTask = object : Runnable {
         override fun run() {
@@ -112,19 +110,23 @@ class MainActivity : Activity() {
         startForegroundService(Intent(this, DataCollector::class.java))
 
         mainActivityPendingIntent = PendingIntent.getActivity(
-            this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            this, 0, intent, PendingIntent.FLAG_IMMUTABLE
+        )
 
-        starterIntent = intent
-
-        checkPermissions()
         setContentView(R.layout.activity_main)
         setupDefaultUi()
         setUiEventListeners()
 
         timerHandler = Handler(Looper.getMainLooper())
 
-        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.ui_update_plot_broadcast)))
-        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.ui_update_gages_broadcast)))
+        registerReceiver(
+            broadcastReceiver,
+            IntentFilter(getString(R.string.ui_update_plot_broadcast))
+        )
+        registerReceiver(
+            broadcastReceiver,
+            IntentFilter(getString(R.string.ui_update_gages_broadcast))
+        )
 
         enableUiUpdates()
     }
@@ -140,21 +142,6 @@ class MainActivity : Activity() {
         super.onPause()
         disableUiUpdates()
         InAppLogger.log("MainActivity.onPause")
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        InAppLogger.log("onRequestPermissionResult")
-        if(grantResults[0]==PackageManager.PERMISSION_GRANTED)
-        {
-            finish()
-            startActivity(starterIntent)
-            resetStats()
-        }
     }
 
     /** Private functions */
@@ -333,15 +320,6 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun checkPermissions() {
-        if(checkSelfPermission(Car.PERMISSION_ENERGY) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(PERMISSIONS, 0)
-        }
-        if(checkSelfPermission(Car.PERMISSION_SPEED) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(PERMISSIONS, 1)
-        }
-    }
-
     private fun resetStats() {
         finish()
         startActivity(intent)
@@ -389,6 +367,7 @@ class MainActivity : Activity() {
         main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
         main_consumption_plot.dimensionSmoothing = dimensionSmoothingById(appPreferences.plotDistance)
         main_consumption_plot.dimensionShiftTouchInterval = 1_000L
+        main_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
@@ -469,7 +448,7 @@ class MainActivity : Activity() {
         }
 
         /** cycle through consumption plot distances when tapping the plot */
-        main_consumption_plot.setOnClickListener {
+        /* main_consumption_plot.setOnClickListener {
             var plotDistanceId = main_radio_10.id
 
             appPreferences.plotDistance++
@@ -482,7 +461,7 @@ class MainActivity : Activity() {
                 3 -> plotDistanceId = main_radio_50.id
             }
             main_radio_group_distance.check(plotDistanceId)
-        }
+        } */
 
         main_radio_group_distance.setOnCheckedChangeListener { group, checkedId ->
             var id = when (checkedId) {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Car Stats Viewer (Dev)</string>
+    <string name="app_name" translatable="false">Car Stats Viewer (Dev)</string>
 
     <!-- Preferences -->
     <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer_dev.preferences</string>
@@ -26,6 +26,12 @@
     <string name="gear_update_broadcast" translatable="false">gear_update_broadcast</string>
     <string name="wake_lock_broadcast" translatable="false">wake_lock_broadcast</string>
     <string name="save_trip_data_broadcast" translatable="false">save_trip_data_broadcast</string>
+
+    <!-- PermissionsActivity -->
+    <string name="permissions_dialog_title">Permissions required for use</string>
+    <string name="permissions_dialog_text">This app requires Permissions to be used. Without the required permissions the app cannot read any data from the car.</string>
+    <string name="permissions_dialog_quit">Quit Car Stats Viewer</string>
+    <string name="permissions_dialog_grant">Grant permissions</string>
 
     <!-- MainActivity -->
     <string name="main_port_connected">Charge port connected:</string>

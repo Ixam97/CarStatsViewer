@@ -23,8 +23,6 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileWriter
 import java.lang.Runnable
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
 
@@ -46,6 +44,9 @@ class DataCollector : Service() {
     private var lastPlotGear = VehicleGear.GEAR_PARK
     private var lastPlotMarker : PlotMarker? = null
     private var lastNotificationTimeMillis = 0L
+
+    private var chargeStartTimeNanos = 0L;
+    private var chargedEnergyWh = 0f
 
     private var lastChargePower = 0f
 
@@ -123,7 +124,9 @@ class DataCollector : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        foregroundServiceNotification = Notification.Builder(this, CHANNEL_ID)
+        createNotificationChannel()
+
+        foregroundServiceNotification = Notification.Builder(applicationContext, CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(getString(R.string.foreground_service_info))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -150,8 +153,6 @@ class DataCollector : Service() {
                 }
             }
         }
-
-        startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
 
         InAppLogger.log(String.format(
             "DataCollector.onCreate in Thread: %s",
@@ -189,8 +190,6 @@ class DataCollector : Service() {
         notificationTitleString = resources.getString(R.string.notification_title)
         statsNotification.setContentTitle(notificationTitleString).setContentIntent(mainActivityPendingIntent)
 
-        createNotificationChannel()
-
         if (notificationsEnabled) {
             with(NotificationManagerCompat.from(this)) {
                 notify(STATS_NOTIFICATION_ID, statsNotification.build())
@@ -220,6 +219,7 @@ class DataCollector : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         InAppLogger.log("DataCollector.onStartCommand")
+        startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
         return START_STICKY
     }
 
@@ -350,7 +350,7 @@ class DataCollector : Service() {
             when (value.propertyId) {
                 VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
                 VehiclePropertyIds.GEAR_SELECTION -> if (!emulatorMode) gearUpdater(value.value as Int)
-                VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> DataHolder.chargePortConnected = value.value as Boolean
+                VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> portUpdater(value.value as Boolean)
             }
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
@@ -362,6 +362,26 @@ class DataCollector : Service() {
         DataHolder.currentGear = gear
         sendBroadcast(Intent(getString(R.string.gear_update_broadcast)))
         if (DataHolder.currentGear == VehicleGear.GEAR_PARK) sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+    }
+
+    private fun portUpdater(connected: Boolean) {
+        DataHolder.chargePortConnected = connected
+
+        if (connected) chargeStartTimeNanos = System.nanoTime()
+
+        if (!connected) {
+            DataHolder.chargeCurves.add(
+                ChargeCurve(
+                    DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME, null),
+                    DataHolder.stateOfChargePlotLine.getDataPoints(PlotDimension.TIME, null),
+                    chargeStartTimeNanos,
+                    System.nanoTime(),
+                    chargedEnergyWh,
+                    0f,0f
+                )
+            )
+        }
+
     }
 
     private fun powerUpdater(value: CarPropertyValue<*>, timestamp: Long) {

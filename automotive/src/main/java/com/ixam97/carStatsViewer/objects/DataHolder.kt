@@ -1,6 +1,8 @@
 package com.ixam97.carStatsViewer.objects
 
 import android.car.VehicleGear
+import com.ixam97.carStatsViewer.BuildConfig
+import com.ixam97.carStatsViewer.InAppLogger
 import com.ixam97.carStatsViewer.plot.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -114,14 +116,10 @@ object DataHolder {
         PlotHighlightMethod.LAST
     )
 
-    data class ChargeCurve(
-        var chargePlotLine: List<PlotLineItem>,
-        var stateOfChargePlotLine: List<PlotLineItem>
-    ) {}
-
     var chargeCurves: ArrayList<ChargeCurve> = ArrayList()
 
     fun applyTripData(tripData: TripData) {
+        if (tripData.appVersion != BuildConfig.VERSION_NAME) InAppLogger.log("File saved with older app version, trying to convert ...")
         traveledDistance = if (tripData.traveledDistance != null) tripData.traveledDistance else 0f
         usedEnergy = if (tripData.usedEnergy != null) tripData.usedEnergy else 0f
         averageConsumption = if(tripData.averageConsumption != null) tripData.averageConsumption else 0f
@@ -135,6 +133,7 @@ object DataHolder {
 
     fun getTripData(): TripData {
         return TripData(
+            BuildConfig.VERSION_NAME,
             Date(),
             traveledDistance,
             usedEnergy,
