@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Car Stats Viewer</string>
+
+    <!-- PermissionsActivity -->
+    <string name="permissions_dialog_title">Berechtigungen notwendig</string>
+    <string name="permissions_dialog_text">Diese App benötigt Berechtigungen, um genuzt zu werden. Ohne die angeforderten Berechtigungen können keine Daten des Fahrzugs erfasst werden.</string>
+    <string name="permissions_dialog_quit">Car Stats Viewer beenden</string>
+    <string name="permissions_dialog_grant">Berechtigungen erteilen</string>
 
     <!-- MainActivity -->
     <string name="main_port_connected">Ladekabel angeschlossen:</string>

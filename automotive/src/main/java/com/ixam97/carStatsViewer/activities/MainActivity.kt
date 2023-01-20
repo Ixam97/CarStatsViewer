@@ -33,7 +33,6 @@ var emulatorPowerSign = -1
 
 class MainActivity : Activity() {
     companion object {
-        private val PERMISSIONS = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED)
         private const val UI_UPDATE_INTERVAL = 500L
         private const val DISTANCE_1 =  5_001L
         private const val DISTANCE_2 = 15_001L
@@ -49,7 +48,6 @@ class MainActivity : Activity() {
 
     private var updateUi = false
     private var lastPlotUpdate: Long = 0L
-    private var lastTimeString = "00:00:00"
 
     private val updateActivityTask = object : Runnable {
         override fun run() {
@@ -112,19 +110,23 @@ class MainActivity : Activity() {
         startForegroundService(Intent(this, DataCollector::class.java))
 
         mainActivityPendingIntent = PendingIntent.getActivity(
-            this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            this, 0, intent, PendingIntent.FLAG_IMMUTABLE
+        )
 
-        starterIntent = intent
-
-        checkPermissions()
         setContentView(R.layout.activity_main)
         setupDefaultUi()
         setUiEventListeners()
 
         timerHandler = Handler(Looper.getMainLooper())
 
-        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.ui_update_plot_broadcast)))
-        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.ui_update_gages_broadcast)))
+        registerReceiver(
+            broadcastReceiver,
+            IntentFilter(getString(R.string.ui_update_plot_broadcast))
+        )
+        registerReceiver(
+            broadcastReceiver,
+            IntentFilter(getString(R.string.ui_update_gages_broadcast))
+        )
 
         enableUiUpdates()
     }
@@ -140,21 +142,6 @@ class MainActivity : Activity() {
         super.onPause()
         disableUiUpdates()
         InAppLogger.log("MainActivity.onPause")
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        InAppLogger.log("onRequestPermissionResult")
-        if(grantResults[0]==PackageManager.PERMISSION_GRANTED)
-        {
-            finish()
-            startActivity(starterIntent)
-            resetStats()
-        }
     }
 
     /** Private functions */
@@ -330,15 +317,6 @@ class MainActivity : Activity() {
             2 -> (DISTANCE_2 - 1) / 50
             3 -> (((DataHolder.traveledDistance / DISTANCE_TRIP_DIVIDER).toInt() + 1) * DISTANCE_TRIP_DIVIDER) / 50
             else -> (DISTANCE_1 - 1) / 50
-        }
-    }
-
-    private fun checkPermissions() {
-        if(checkSelfPermission(Car.PERMISSION_ENERGY) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(PERMISSIONS, 0)
-        }
-        if(checkSelfPermission(Car.PERMISSION_SPEED) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(PERMISSIONS, 1)
         }
     }
 

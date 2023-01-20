@@ -97,7 +97,7 @@ class SettingsActivity : Activity() {
                 .setPositiveButton(getString(R.string.dialog_confirm)) { dialog, id ->
                     InAppLogger.log("App killed from Settings")
                     InAppLogger.copyToClipboard(this)
-                    exitProcess(-1)
+                    exitProcess(0)
                 }
                 .setNegativeButton(getString(R.string.dialog_dismiss)) { dialog, id ->
                     // Dismiss the dialog

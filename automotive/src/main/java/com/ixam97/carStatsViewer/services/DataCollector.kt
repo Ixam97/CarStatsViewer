@@ -23,8 +23,6 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileWriter
 import java.lang.Runnable
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
 
@@ -123,7 +121,9 @@ class DataCollector : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        foregroundServiceNotification = Notification.Builder(this, CHANNEL_ID)
+        createNotificationChannel()
+
+        foregroundServiceNotification = Notification.Builder(applicationContext, CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(getString(R.string.foreground_service_info))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -150,8 +150,6 @@ class DataCollector : Service() {
                 }
             }
         }
-
-        startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
 
         InAppLogger.log(String.format(
             "DataCollector.onCreate in Thread: %s",
@@ -189,8 +187,6 @@ class DataCollector : Service() {
         notificationTitleString = resources.getString(R.string.notification_title)
         statsNotification.setContentTitle(notificationTitleString).setContentIntent(mainActivityPendingIntent)
 
-        createNotificationChannel()
-
         if (notificationsEnabled) {
             with(NotificationManagerCompat.from(this)) {
                 notify(STATS_NOTIFICATION_ID, statsNotification.build())
@@ -220,6 +216,7 @@ class DataCollector : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         InAppLogger.log("DataCollector.onStartCommand")
+        startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
         return START_STICKY
     }
 
