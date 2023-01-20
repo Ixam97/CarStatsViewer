@@ -6,13 +6,11 @@ import com.ixam97.carStatsViewer.services.*
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.PendingIntent
-import android.car.Car
 import android.car.VehicleGear
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -151,10 +149,7 @@ class MainActivity : Activity() {
         /** Use data from DataHolder to Update MainActivity text */
 
         setUiVisibilities()
-
-        // updatePlots() // moved to Broadcast receiver
         updateGages()
-
         setValueColors()
 
         currentPowerTextView.text = getCurrentPowerString()
@@ -282,7 +277,6 @@ class MainActivity : Activity() {
 
             lastPlotUpdate = SystemClock.elapsedRealtime()
         }
-        main_consumption_plot.dimensionSmoothing = dimensionSmoothingById(appPreferences.plotDistance)
     }
 
     private fun getElapsedTimeString(): String {
@@ -308,15 +302,6 @@ class MainActivity : Activity() {
             2 -> DISTANCE_2
             3 -> ((DataHolder.traveledDistance / DISTANCE_TRIP_DIVIDER).toInt() + 1) * DISTANCE_TRIP_DIVIDER + 1
             else -> DISTANCE_2
-        }
-    }
-
-    private fun dimensionSmoothingById(id : Int) : Long {
-        return when (id) {
-            1 -> (DISTANCE_1 - 1) / 50
-            2 -> (DISTANCE_2 - 1) / 50
-            3 -> (((DataHolder.traveledDistance / DISTANCE_TRIP_DIVIDER).toInt() + 1) * DISTANCE_TRIP_DIVIDER) / 50
-            else -> (DISTANCE_1 - 1) / 50
         }
     }
 
@@ -357,7 +342,8 @@ class MainActivity : Activity() {
         main_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
         main_consumption_plot.addPlotLine(DataHolder.speedPlotLine)
 
-        DataHolder.speedPlotLine.Visible = main_checkbox_speed.isChecked
+        DataHolder.speedPlotLine.Visible = appPreferences.plotSpeed
+        main_button_speed.text = if (DataHolder.speedPlotLine.Visible) "Geschwindigkeit verbergen" else "Geschwindigkeit einblenden"
 
         if (appPreferences.consumptionPlotSecondaryColor) {
             DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
@@ -365,7 +351,7 @@ class MainActivity : Activity() {
 
         main_consumption_plot.dimension = PlotDimension.DISTANCE
         main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
-        main_consumption_plot.dimensionSmoothing = dimensionSmoothingById(appPreferences.plotDistance)
+        main_consumption_plot.dimensionSmoothingPercentage = 0.02f
         main_consumption_plot.dimensionShiftTouchInterval = 1_000L
         main_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
         main_consumption_plot.invalidate()
@@ -448,22 +434,11 @@ class MainActivity : Activity() {
         }
 
         /** cycle through consumption plot distances when tapping the plot */
-        /* main_consumption_plot.setOnClickListener {
-            var plotDistanceId = main_radio_10.id
+        main_consumption_plot.setOnClickListener {
+            main_consumption_plot.dimensionRestriction = 5_000L
+        }
 
-            appPreferences.plotDistance++
-
-            if (appPreferences.plotDistance >= 4) appPreferences.plotDistance = 1
-
-            when (appPreferences.plotDistance) {
-                1 -> plotDistanceId = main_radio_10.id
-                2 -> plotDistanceId = main_radio_25.id
-                3 -> plotDistanceId = main_radio_50.id
-            }
-            main_radio_group_distance.check(plotDistanceId)
-        } */
-
-        main_radio_group_distance.setOnCheckedChangeListener { group, checkedId ->
+        /* main_radio_group_distance.setOnCheckedChangeListener { group, checkedId ->
             var id = when (checkedId) {
                 main_radio_10.id -> 1
                 main_radio_25.id -> 2
@@ -472,7 +447,6 @@ class MainActivity : Activity() {
             }
 
             main_consumption_plot.dimensionRestriction = dimensionRestrictionById(id)
-            main_consumption_plot.dimensionSmoothing = dimensionSmoothingById(id)
 
             appPreferences.plotDistance = id
         }
@@ -486,6 +460,13 @@ class MainActivity : Activity() {
 
             appPreferences.plotSpeed = main_checkbox_speed.isChecked
             main_consumption_plot.invalidate()
+        } */
+
+        main_button_speed.setOnClickListener {
+            DataHolder.speedPlotLine.Visible = !DataHolder.speedPlotLine.Visible
+            appPreferences.plotSpeed = DataHolder.speedPlotLine.Visible
+            main_consumption_plot.invalidate()
+            main_button_speed.text = if (DataHolder.speedPlotLine.Visible) "Geschwindigkeit verbergen" else "Geschwindigkeit einblenden"
         }
 
         main_button_dismiss_charge_plot.setOnClickListener {
