@@ -21,6 +21,7 @@ import android.os.SystemClock
 import android.view.View
 import android.widget.Toast
 import com.ixam97.carStatsViewer.plot.PlotDimension
+import com.ixam97.carStatsViewer.plot.PlotMarkerType
 import com.ixam97.carStatsViewer.plot.PlotPaint
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -356,6 +357,9 @@ class MainActivity : Activity() {
         main_consumption_plot.reset()
         main_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
         main_consumption_plot.addPlotLine(DataHolder.speedPlotLine)
+        main_consumption_plot.setPlotMarkers(DataHolder.plotMarkers)
+        main_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
+        main_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
 
         DataHolder.speedPlotLine.Visible = main_checkbox_speed.isChecked
 
