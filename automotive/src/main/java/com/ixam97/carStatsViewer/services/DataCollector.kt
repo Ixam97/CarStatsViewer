@@ -45,6 +45,9 @@ class DataCollector : Service() {
     private var lastPlotMarker : PlotMarker? = null
     private var lastNotificationTimeMillis = 0L
 
+    private var chargeStartTimeNanos = 0L;
+    private var chargedEnergyWh = 0f
+
     private var lastChargePower = 0f
 
     private var notificationCounter = 0
@@ -347,7 +350,7 @@ class DataCollector : Service() {
             when (value.propertyId) {
                 VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
                 VehiclePropertyIds.GEAR_SELECTION -> if (!emulatorMode) gearUpdater(value.value as Int)
-                VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> DataHolder.chargePortConnected = value.value as Boolean
+                VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> portUpdater(value.value as Boolean)
             }
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
@@ -359,6 +362,26 @@ class DataCollector : Service() {
         DataHolder.currentGear = gear
         sendBroadcast(Intent(getString(R.string.gear_update_broadcast)))
         if (DataHolder.currentGear == VehicleGear.GEAR_PARK) sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+    }
+
+    private fun portUpdater(connected: Boolean) {
+        DataHolder.chargePortConnected = connected
+
+        if (connected) chargeStartTimeNanos = System.nanoTime()
+
+        if (!connected) {
+            DataHolder.chargeCurves.add(
+                ChargeCurve(
+                    DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME, null),
+                    DataHolder.stateOfChargePlotLine.getDataPoints(PlotDimension.TIME, null),
+                    chargeStartTimeNanos,
+                    System.nanoTime(),
+                    chargedEnergyWh,
+                    0f,0f
+                )
+            )
+        }
+
     }
 
     private fun powerUpdater(value: CarPropertyValue<*>, timestamp: Long) {

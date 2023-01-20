@@ -1,11 +1,10 @@
 package com.ixam97.carStatsViewer.objects
 
-import com.ixam97.carStatsViewer.plot.PlotLine
 import com.ixam97.carStatsViewer.plot.PlotLineItem
 import java.util.*
-import kotlin.collections.ArrayList
 
 data class TripData(
+    var appVersion: String,
     var saveDate: Date,
     var traveledDistance: Float,
     var usedEnergy: Float,
@@ -13,7 +12,7 @@ data class TripData(
     var travelTimeMillis: Long,
     var consumptionPlotLine: List<PlotLineItem>,
     var speedPlotLine: List<PlotLineItem>,
-    var chargeCurves: List<DataHolder.ChargeCurve>
+    var chargeCurves: List<ChargeCurve>
 ) {
 
 }

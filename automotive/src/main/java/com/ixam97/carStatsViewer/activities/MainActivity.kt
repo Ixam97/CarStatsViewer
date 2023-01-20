@@ -367,6 +367,7 @@ class MainActivity : Activity() {
         main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
         main_consumption_plot.dimensionSmoothing = dimensionSmoothingById(appPreferences.plotDistance)
         main_consumption_plot.dimensionShiftTouchInterval = 1_000L
+        main_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
@@ -447,7 +448,7 @@ class MainActivity : Activity() {
         }
 
         /** cycle through consumption plot distances when tapping the plot */
-        main_consumption_plot.setOnClickListener {
+        /* main_consumption_plot.setOnClickListener {
             var plotDistanceId = main_radio_10.id
 
             appPreferences.plotDistance++
@@ -460,7 +461,7 @@ class MainActivity : Activity() {
                 3 -> plotDistanceId = main_radio_50.id
             }
             main_radio_group_distance.check(plotDistanceId)
-        }
+        } */
 
         main_radio_group_distance.setOnCheckedChangeListener { group, checkedId ->
             var id = when (checkedId) {
