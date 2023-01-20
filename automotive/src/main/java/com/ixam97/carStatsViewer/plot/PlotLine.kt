@@ -235,6 +235,8 @@ class PlotLine(
         return when (targetDimension) {
             PlotDimension.DISTANCE -> when (valueDimension) {
                 PlotDimension.TIME -> {
+                    if (value !in dataPoints.first().Time .. dataPoints.last().Time) return null
+
                     val closePoint = dataPoints.minBy { abs(it.Time - value) }
                     when (closePoint.Marker) {
                         PlotLineMarkerType.BEGIN_SESSION -> x(closePoint.Distance - (closePoint.DistanceDelta ?: 0f), min, max)
@@ -247,6 +249,8 @@ class PlotLine(
             PlotDimension.TIME -> when (valueDimension) {
                 PlotDimension.TIME -> x(value.toFloat(), min, max)
                 PlotDimension.DISTANCE -> {
+                    if (value.toFloat() !in dataPoints.first().Distance .. dataPoints.last().Distance) return null
+
                     val closePoint = dataPoints.minBy { abs(it.Distance - value) }
                     when (closePoint.Marker) {
                         PlotLineMarkerType.BEGIN_SESSION -> x(closePoint.Time - (closePoint.TimeDelta ?: 0L), min, max)

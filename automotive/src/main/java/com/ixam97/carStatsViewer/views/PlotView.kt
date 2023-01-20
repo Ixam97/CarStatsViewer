@@ -410,6 +410,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 val markers = plotMarkers!!.markers.filter { visibleMarkerTypes.contains(it.MarkerType) }
 
                 for (markerGroup in markers.groupBy { line.x(dataPoints, it.StartTime, PlotDimension.TIME, dimension, minDimension, maxDimension) }) {
+                    if (markerGroup.key == null) continue
+
                     val markerSorted = markerGroup.value.sortedBy { it.MarkerType }
                     val markerTypeGroup = markerSorted.groupBy { it.MarkerType }
                     val markerType = markerSorted.first().MarkerType
