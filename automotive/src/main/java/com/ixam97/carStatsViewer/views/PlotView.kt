@@ -182,7 +182,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 drawable.setBounds(0, 0, canvas.width, canvas.height)
                 drawable.draw(canvas)
 
-                val factor = 18f / canvas.width
+                val factor = textSize / canvas.width
 
                 return Bitmap.createScaledBitmap(
                     bitmap,
@@ -468,7 +468,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                         canvas.drawBitmap(
                             markerIcon[markerType]!!,
-                            x1 - (labelPaint.measureText(label) / 2f),
+                            x1 - (textSize / 2f),
                             (yMargin / 3f),
                             labelPaint
                         )
