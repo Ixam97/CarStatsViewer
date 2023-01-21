@@ -202,8 +202,8 @@ class PlotLine(
         return when (averageMethod) {
             PlotHighlightMethod.AVG_BY_INDEX -> dataPoints.map { it.Value }.average().toFloat()
             PlotHighlightMethod.AVG_BY_DISTANCE -> {
-                val value = dataPoints.map { (it.DistanceDelta?:0f) * it.Value }.sum()
-                val distance = dataPoints.map { (it.DistanceDelta?:0f) }.sum()
+                val value = dataPoints.filter { it.DistanceDelta != null }.map { (it.DistanceDelta?:0f) * it.Value }.sum()
+                val distance = dataPoints.filter { it.DistanceDelta != null }.map { (it.DistanceDelta?:0f) }.sum()
 
                 return when {
                     distance != 0f -> value / distance
@@ -211,8 +211,8 @@ class PlotLine(
                 }
             }
             PlotHighlightMethod.AVG_BY_TIME -> {
-                val value = dataPoints.map { (it.TimeDelta?:0L) * it.Value }.sum()
-                val distance = dataPoints.map { (it.TimeDelta?:0L) }.sum()
+                val value = dataPoints.filter { it.TimeDelta != null }.map { (it.TimeDelta?:0L) * it.Value }.sum()
+                val distance = dataPoints.filter { it.TimeDelta != null }.map { (it.TimeDelta?:0L) }.sum()
 
                 return when {
                     distance != 0L -> value / distance

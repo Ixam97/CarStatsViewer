@@ -406,7 +406,6 @@ class DataCollector : Service() {
 
         if (timerTriggered(value, 5_000f, timestamp) && DataHolder.chargePortConnected && DataHolder.currentGear == VehicleGear.GEAR_PARK) {
             if (DataHolder.currentPowermW < 0 && DataHolder.lastChargePower >= 0) {
-                DataHolder.chargePlotLine.addDataPoint(0f, timestamp - 1_000_000, 0f)
                 addChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
                 addStateOfChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
                 DataHolder.plotMarkers.addMarker(PlotMarkerType.CHARGE, timestamp)
