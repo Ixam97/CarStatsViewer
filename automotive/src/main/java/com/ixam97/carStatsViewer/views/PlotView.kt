@@ -463,13 +463,20 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                     if (x1 != null && markers.last().EndTime != null) {
                         val diff = markers.sumOf { it.EndTime!! - it.StartTime }
-                        val label = markerType.toString()[0].toString() // String.format("%02d:%02d", TimeUnit.MINUTES.convert(diff, TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(diff, TimeUnit.NANOSECONDS) % 60)
+                        val label = String.format("%02d:%02d", TimeUnit.MINUTES.convert(diff, TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(diff, TimeUnit.NANOSECONDS) % 60)
                         val labelPaint = markerPaint[markerType]!!.Label
 
                         canvas.drawBitmap(
                             markerIcon[markerType]!!,
                             x1 - (textSize / 2f),
                             (yMargin / 3f),
+                            labelPaint
+                        )
+
+                        canvas.drawText(
+                            label,
+                            x1 + labelPaint.textSize,
+                            yMargin - labelPaint.textSize + 2f,
                             labelPaint
                         )
                     }
