@@ -285,6 +285,40 @@
                 android:layout_marginVertical="10dp"
                 android:orientation="vertical">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:src="@drawable/ic_chevron_right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" />
+
+                    <!--<TextView
+                        android:layout_width="0dp"
+                        android:textSize="35sp"
+                        android:textColor="@android:color/white"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="Ladekurve 1/5"/>-->
+                    <SeekBar
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
+
+                    <ImageButton
+                        android:src="@drawable/ic_chevron_right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" />
+
+                </LinearLayout>
+
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider" />
+
                 <com.ixam97.carStatsViewer.views.PlotView
                     android:id="@+id/settings_charge_plot_view"
                     android:layout_width="match_parent"

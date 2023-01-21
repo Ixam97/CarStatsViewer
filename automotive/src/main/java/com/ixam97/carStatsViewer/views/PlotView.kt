@@ -190,7 +190,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     bitmap,
                     (canvas.width * factor).roundToInt(),
                     (canvas.height * factor).roundToInt(),
-                    false
+                    true
                 )
             }
         }
@@ -271,7 +271,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
             val restrictionInterval = dimensionRestrictionTouchInterval
             if (restrictionInterval != null && lastRestriction != null && !(lastSpanX/spanX).isInfinite()) {
-                dimensionRestriction = ((lastRestriction!!.toFloat() * (lastSpanX / spanX)).toLong()/restrictionInterval) * restrictionInterval
+                dimensionRestriction = (((lastRestriction!!.toFloat() * (lastSpanX / spanX)).toLong()/restrictionInterval) * restrictionInterval)
                     .coerceAtMost(touchDimensionMax + (restrictionInterval - touchDimensionMax % restrictionInterval))
                     .coerceAtLeast(restrictionInterval)
             }

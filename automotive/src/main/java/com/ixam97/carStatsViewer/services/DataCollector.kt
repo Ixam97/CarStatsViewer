@@ -356,6 +356,7 @@ class DataCollector : Service() {
     }
 
     private fun gearUpdater(gear: Int, timestamp: Long) {
+        if (DataHolder.currentGear == gear) return
         DataHolder.currentGear = gear
 
         when (gear) {
