@@ -18,6 +18,7 @@ import android.graphics.PorterDuffColorFilter
 import android.view.View
 import android.widget.TextView
 import com.ixam97.carStatsViewer.plot.PlotDimension
+import com.ixam97.carStatsViewer.plot.PlotMarkerType
 import com.ixam97.carStatsViewer.plot.PlotPaint
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlin.system.exitProcess
@@ -141,6 +142,9 @@ class SettingsActivity : Activity() {
         settings_consumption_plot_view.dimension = PlotDimension.DISTANCE
         settings_consumption_plot_view.dimensionRestriction = ((DataHolder.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1
         settings_consumption_plot_view.dimensionSmoothing = (((DataHolder.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) / 50
+        settings_consumption_plot_view.setPlotMarkers(DataHolder.plotMarkers)
+        settings_consumption_plot_view.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
+        settings_consumption_plot_view.visibleMarkerTypes.add(PlotMarkerType.PARK)
 
         settings_consumption_plot_view.invalidate()
 

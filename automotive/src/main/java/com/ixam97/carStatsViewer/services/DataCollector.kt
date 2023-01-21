@@ -74,7 +74,7 @@ class DataCollector : Service() {
 
     private val saveTripDataTask = object : Runnable {
         override fun run() {
-            sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+            // sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
             saveTripDataTimerHandler.postDelayed(this, SAVE_TRIP_DATA_TIMER_HANDLER_DELAY_MILLIS)
         }
     }
@@ -488,7 +488,7 @@ class DataCollector : Service() {
                 val timeDifference = value.timestamp - DataHolder.lastPlotTime
                 val powerDifference = DataHolder.usedEnergy - DataHolder.lastPlotEnergy
 
-                val newConsumptionPlotValue = powerDifference / (distanceDifference / 1000)
+                val newConsumptionPlotValue = if (distanceDifference > 0) powerDifference / (distanceDifference / 1000) else 0f
                 val newSpeedPlotValue = distanceDifference / (timeDifference.toFloat() / 1_000_000_000 / 3.6f)
 
                 val plotMarker = when(DataHolder.lastPlotGear) {

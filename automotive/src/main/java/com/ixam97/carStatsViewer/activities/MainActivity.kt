@@ -342,9 +342,9 @@ class MainActivity : Activity() {
         main_consumption_plot.reset()
         main_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
         main_consumption_plot.addPlotLine(DataHolder.speedPlotLine)
-        main_consumption_plot.setPlotMarkers(DataHolder.plotMarkers)
-        main_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
-        main_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
+        // main_consumption_plot.setPlotMarkers(DataHolder.plotMarkers)
+        // main_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
+        // main_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
 
         DataHolder.speedPlotLine.Visible = appPreferences.plotSpeed
         main_button_speed.text = if (DataHolder.speedPlotLine.Visible) "Geschwindigkeit verbergen" else "Geschwindigkeit einblenden"
