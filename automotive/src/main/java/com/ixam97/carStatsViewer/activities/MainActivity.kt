@@ -475,9 +475,14 @@ class MainActivity : Activity() {
             main_button_speed.text = if (DataHolder.speedPlotLine.Visible) "Geschwindigkeit verbergen" else "Geschwindigkeit einblenden"
         }
 
+        main_button_summary.setOnClickListener {
+            sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+        }
+
         main_button_dismiss_charge_plot.setOnClickListener {
             main_charge_plot_container.visibility = View.GONE
             main_consumption_plot_container.visibility = View.VISIBLE
+            main_consumption_plot.invalidate()
         }
 
         main_button_reset_charge_plot.setOnClickListener {

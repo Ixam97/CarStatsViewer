@@ -65,9 +65,7 @@ class DataCollector : Service() {
             when (intent.action) {
                 getString(R.string.save_trip_data_broadcast) -> {
                     val tripDataToSave = DataHolder.getTripData()
-                    CoroutineScope(Dispatchers.IO).launch {
-                        writeTripDataToFile(tripDataToSave, getString(R.string.file_name_current_trip_data))
-                    }
+                    writeTripDataToFile(tripDataToSave, getString(R.string.file_name_current_trip_data))
                 }
                 else -> {}
             }
@@ -119,6 +117,25 @@ class DataCollector : Service() {
     override fun onCreate() {
         super.onCreate()
 
+        var tripRestoreComplete = false
+        CoroutineScope(Dispatchers.IO).launch {
+            val mPrevTripData = readTripDataFromFile(getString(R.string.file_name_current_trip_data))
+            runBlocking {
+                if (mPrevTripData != null) {
+                    DataHolder.applyTripData(mPrevTripData)
+                    sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
+                } else {
+                    InAppLogger.log("No trip file read!")
+                    // Toast.makeText(applicationContext ,R.string.toast_file_read_error, Toast.LENGTH_LONG).show()
+                }
+                tripRestoreComplete = true
+            }
+        }
+
+        while (!tripRestoreComplete) {
+            // Wait for completed restore before doing anything
+        }
+
         createNotificationChannel()
 
         foregroundServiceNotification = Notification.Builder(applicationContext, CHANNEL_ID)
@@ -135,19 +152,6 @@ class DataCollector : Service() {
             .setStyle(Notification.MediaStyle())
             .setCategory(Notification.CATEGORY_TRANSPORT)
             .setOngoing(true)
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val mPrevTripData = readTripDataFromFile(getString(R.string.file_name_current_trip_data))
-            runBlocking {
-                if (mPrevTripData != null) {
-                    DataHolder.applyTripData(mPrevTripData)
-                    sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
-                } else {
-                    InAppLogger.log("No trip file read!")
-                    // Toast.makeText(applicationContext ,R.string.toast_file_read_error, Toast.LENGTH_LONG).show()
-                }
-            }
-        }
 
         InAppLogger.log(String.format(
             "DataCollector.onCreate in Thread: %s",
