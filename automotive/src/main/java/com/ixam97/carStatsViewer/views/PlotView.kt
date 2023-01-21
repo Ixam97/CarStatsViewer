@@ -457,12 +457,15 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     val markers = markerTypeGroup[markerType]!!
 
                     val x1 = x(markerGroup.key, 0f, 1f, maxX)
-                    val x2 = x(line.x(dataPoints, markers.last().EndTime, PlotDimension.TIME, dimension, minDimension, maxDimension), 0f, 1f, maxX)
+                    val x2 = when (dimension) {
+                        PlotDimension.DISTANCE-> x1
+                        else -> x(line.x(dataPoints, markers.last().EndTime, PlotDimension.TIME, dimension, minDimension, maxDimension), 0f, 1f, maxX)
+                    }
 
-                    drawMarker(canvas, markerType, x1, -1)
-                    drawMarker(canvas, markerType, x2, 1)
+                    if (x1 != null && markers.none { it.EndTime == null }) {
+                        drawMarker(canvas, markerType, x1, -1)
+                        drawMarker(canvas, markerType, x2, 1)
 
-                    if (x1 != null && markers.last().EndTime != null) {
                         val diff = markers.sumOf { (it.EndTime ?: it.StartTime) - it.StartTime }
                         val label = String.format("%02d:%02d", TimeUnit.MINUTES.convert(diff, TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(diff, TimeUnit.NANOSECONDS) % 60)
                         val labelPaint = markerPaint[markerType]!!.Label
