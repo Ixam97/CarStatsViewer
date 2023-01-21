@@ -42,8 +42,18 @@ class PlotLine(
     }
 
     fun addDataPoint(dataPoint: PlotLineItem) {
-        if (dataPoint.Value.isFinite()) {
-            dataPoints[dataPoints.size] = dataPoint
+        when {
+            dataPoint.Value.isFinite() -> {
+                dataPoints[dataPoints.size] = dataPoint
+            }
+            dataPoint.Marker == PlotLineMarkerType.END_SESSION -> {
+                val lastPoint = dataPoints[dataPoints.size - 1]
+                when {
+                    lastPoint != null && lastPoint.Marker == null -> {
+                        lastPoint.Marker = dataPoint.Marker
+                    }
+                }
+            }
         }
     }
 
