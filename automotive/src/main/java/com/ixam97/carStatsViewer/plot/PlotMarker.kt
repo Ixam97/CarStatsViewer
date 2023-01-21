@@ -22,7 +22,16 @@ class PlotMarkers {
     }
 
     fun addMarkers(markers: List<PlotMarker>) {
-        this.markers.addAll(markers)
+        val current = this.markers.map { it }
+
+        if (current.isNotEmpty()) {
+            for (marker in markers.filter { it.EndTime == null }) {
+                marker.EndTime = marker.StartTime
+            }
+        }
+
+        this.markers.clear()
+        this.markers.addAll(current.union(markers).sortedBy { it.StartTime })
     }
 
     fun endMarker(time: Long) {

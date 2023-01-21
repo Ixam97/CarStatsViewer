@@ -358,6 +358,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val maxX = canvas.width.toFloat()
         val maxY = canvas.height.toFloat()
 
+        var index = 0
         for (line in plotLines) {
             if (line.isEmpty() || !line.Visible) continue
 
@@ -443,7 +444,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
             canvas.restore()
 
-            if (plotMarkers?.markers?.isNotEmpty() ?: false) {
+            if (index == 0 && plotMarkers?.markers?.isNotEmpty() ?: false) {
                 val markers = plotMarkers!!.markers.filter { visibleMarkerTypes.contains(it.MarkerType) }
 
                 for (markerGroup in markers.groupBy { line.x(dataPoints, it.StartTime, PlotDimension.TIME, dimension, minDimension, maxDimension) }) {
@@ -462,7 +463,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     drawMarker(canvas, markerType, x2, 1)
 
                     if (x1 != null && markers.last().EndTime != null) {
-                        val diff = markers.sumOf { it.EndTime!! - it.StartTime }
+                        val diff = markers.sumOf { (it.EndTime ?: it.StartTime) - it.StartTime }
                         val label = String.format("%02d:%02d", TimeUnit.MINUTES.convert(diff, TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(diff, TimeUnit.NANOSECONDS) % 60)
                         val labelPaint = markerPaint[markerType]!!.Label
 
@@ -482,6 +483,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     }
                 }
             }
+
+            index++
         }
     }
 
