@@ -13,6 +13,7 @@ import android.car.hardware.property.CarPropertyManager
 import android.content.*
 import android.graphics.BitmapFactory
 import android.os.*
+import android.provider.ContactsContract.Data
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
@@ -176,10 +177,8 @@ class DataCollector : Service() {
         if (carName == "Speedy Model") {
             Toast.makeText(this, "Emulator Mode", Toast.LENGTH_LONG).show()
             emulatorMode = true
-            gearUpdater(VehicleGear.GEAR_PARK, SystemClock.elapsedRealtimeNanos())
+            DataHolder.currentGear = VehicleGear.GEAR_PARK
         }
-
-
 
         notificationTitleString = resources.getString(R.string.notification_title)
         statsNotification.setContentTitle(notificationTitleString).setContentIntent(mainActivityPendingIntent)
