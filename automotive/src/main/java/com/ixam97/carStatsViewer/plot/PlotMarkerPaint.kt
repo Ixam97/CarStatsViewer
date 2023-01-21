@@ -23,6 +23,7 @@ class PlotMarkerPaint(
 
             val labelPaint = Paint(basePaint)
             labelPaint.color = color
+            labelPaint.typeface = Typeface.DEFAULT_BOLD
 
             return PlotMarkerPaint(linePaint, markerPaint, labelPaint)
         }

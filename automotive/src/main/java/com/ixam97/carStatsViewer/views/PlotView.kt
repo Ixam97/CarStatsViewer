@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.views
 
-import android.R
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
@@ -9,6 +8,8 @@ import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.content.ContextCompat.getColor
+import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.plot.*
 import java.util.concurrent.TimeUnit
 
@@ -121,7 +122,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     // Setup paint with color and stroke styles
     private fun setupPaint() {
         val typedValue = TypedValue()
-        context.theme.resolveAttribute(R.attr.colorControlActivated, typedValue, true)
+        context.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
 
         val basePaint = PlotPaint.basePaint(textSize)
 
@@ -151,12 +152,14 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             plotPaint.add(PlotPaint.byColor(color ?: typedValue.data, textSize))
         }
 
-        markerPaint[PlotMarkerType.CHARGE] = PlotMarkerPaint.byColor(Color.rgb(237, 218, 75), textSize - 4)
-        markerIcon[PlotMarkerType.CHARGE] = context.resources.getDrawable(com.ixam97.carStatsViewer.R.drawable.ic_power, null)
+        // markerPaint[PlotMarkerType.CHARGE] = PlotMarkerPaint.byColor(Color.rgb(237, 218, 75), textSize)
+        markerPaint[PlotMarkerType.CHARGE] = PlotMarkerPaint.byColor(getColor(context, R.color.charge_marker), textSize)
+        markerIcon[PlotMarkerType.CHARGE] = context.resources.getDrawable(R.drawable.ic_power, null)
 
-        markerPaint[PlotMarkerType.PARK] = PlotMarkerPaint.byColor(Color.rgb(93, 110,204), textSize - 4)
+        // markerPaint[PlotMarkerType.PARK] = PlotMarkerPaint.byColor(Color.rgb(93, 110,204), textSize)
+        markerPaint[PlotMarkerType.PARK] = PlotMarkerPaint.byColor(getColor(context, R.color.park_marker), textSize)
         //TODO: ParkingIcon
-        markerIcon[PlotMarkerType.PARK] = context.resources.getDrawable(com.ixam97.carStatsViewer.R.drawable.ic_kill, null)
+        markerIcon[PlotMarkerType.PARK] = context.resources.getDrawable(R.drawable.ic_kill, null)
     }
 
     fun reset() {

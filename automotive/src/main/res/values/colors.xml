@@ -5,5 +5,7 @@
     <color name="primary_plot_color">#FFD96C00</color>
     <color name="secondary_plot_color">#FF00C400</color>
     <color name="secondary_plot_color_alt">#FFCCCCCC</color>
-    <color name="charge_plot_color">#2174DA</color>
+    <color name="charge_plot_color">#EACF00</color>
+    <color name="charge_marker">#EACF00</color>
+    <color name="park_marker">#2174DA</color>
 </resources>
