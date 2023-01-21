@@ -358,6 +358,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val maxX = canvas.width.toFloat()
         val maxY = canvas.height.toFloat()
 
+        var index = 0
         for (line in plotLines) {
             if (line.isEmpty() || !line.Visible) continue
 
@@ -443,7 +444,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
             canvas.restore()
 
-            if (plotMarkers?.markers?.isNotEmpty() ?: false) {
+            if (index == 0 && plotMarkers?.markers?.isNotEmpty() ?: false) {
                 val markers = plotMarkers!!.markers.filter { visibleMarkerTypes.contains(it.MarkerType) }
 
                 for (markerGroup in markers.groupBy { line.x(dataPoints, it.StartTime, PlotDimension.TIME, dimension, minDimension, maxDimension) }) {
@@ -482,6 +483,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     }
                 }
             }
+
+            index++
         }
     }
 
