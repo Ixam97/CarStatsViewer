@@ -42,7 +42,7 @@ class DataCollector : Service() {
     private var lastPlotEnergy = 0F
     private var lastPlotTime = 0L
     private var lastPlotGear = VehicleGear.GEAR_PARK
-    private var lastPlotMarker : PlotMarker? = null
+    private var lastPlotMarker : PlotLineMarkerType? = null
     private var lastNotificationTimeMillis = 0L
 
     private var chargeStartTimeNanos = 0L;
@@ -404,48 +404,39 @@ class DataCollector : Service() {
         if (timerTriggered(value, 5_000f, timestamp) && DataHolder.chargePortConnected) {
             if (DataHolder.currentPowermW < 0 && lastChargePower >= 0) {
                 DataHolder.chargePlotLine.addDataPoint(0f, timestamp - 1_000_000, 0f)
-                DataHolder.chargePlotLine.addDataPoint(
-                    -(DataHolder.currentPowermW / 1_000_000),
-                    timestamp,
-                    0f,
-                    null,
-                    null,
-                    PlotMarker.BEGIN_SESSION
-                )
-                DataHolder.stateOfChargePlotLine.addDataPoint(
-                    100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity,
-                    timestamp,
-                    0f,
-                    null,
-                    null,
-                    PlotMarker.BEGIN_SESSION
-                )
+                addChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
+                addStateOfChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
+                DataHolder.plotMarkers.addMarker(PlotMarkerType.CHARGE, timestamp)
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             } else if (DataHolder.currentPowermW >= 0 && lastChargePower < 0) {
-                DataHolder.chargePlotLine.addDataPoint(
-                    -(DataHolder.currentPowermW / 1_000_000),
-                    timestamp,
-                    0f,
-                    null,
-                    null,
-                    PlotMarker.END_SESSION
-                )
-                DataHolder.stateOfChargePlotLine.addDataPoint(
-                    100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity,
-                    timestamp,
-                    0f,
-                    null,
-                    null,
-                    PlotMarker.END_SESSION
-                )
+                addChargePlotLine(timestamp, PlotLineMarkerType.END_SESSION)
+                addStateOfChargePlotLine(timestamp, PlotLineMarkerType.END_SESSION)
+                DataHolder.plotMarkers.endMarker(timestamp)
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             } else if (DataHolder.currentPowermW < 0) {
-                DataHolder.stateOfChargePlotLine.addDataPoint(100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity, timestamp, 0f)
-                DataHolder.chargePlotLine.addDataPoint(- (DataHolder.currentPowermW / 1_000_000), timestamp,0f)
+                addChargePlotLine(timestamp)
+                addStateOfChargePlotLine(timestamp)
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             }
             lastChargePower = DataHolder.currentPowermW
         }
+    }
+
+    private fun addChargePlotLine(timestamp: Long, marker: PlotLineMarkerType? = null) {
+        DataHolder.chargePlotLine.addDataPoint(
+            -(DataHolder.currentPowermW / 1_000_000),
+            timestamp,
+            0f,
+            plotLineMarkerType = marker
+        )
+    }
+    private fun addStateOfChargePlotLine(timestamp: Long, marker: PlotLineMarkerType? = null) {
+        DataHolder.stateOfChargePlotLine.addDataPoint(
+            100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity,
+            timestamp,
+            0f,
+            plotLineMarkerType = marker
+        )
     }
 
     private fun powerUpdater(value: CarPropertyValue<*>) {
@@ -481,7 +472,7 @@ class DataCollector : Service() {
             val consumptionPlotTrigger = when {
                 consumptionPlotTracking -> when {
                     DataHolder.traveledDistance >= lastPlotDistance + 100 -> true
-                    DataHolder.currentGear == VehicleGear.GEAR_PARK -> (lastPlotMarker?:PlotMarker.BEGIN_SESSION) == PlotMarker.BEGIN_SESSION || DataHolder.traveledDistance != lastPlotDistance
+                    DataHolder.currentGear == VehicleGear.GEAR_PARK -> (lastPlotMarker?:PlotLineMarkerType.BEGIN_SESSION) == PlotLineMarkerType.BEGIN_SESSION || DataHolder.traveledDistance != lastPlotDistance
                     else -> false
                 }
                 else -> false
@@ -499,11 +490,11 @@ class DataCollector : Service() {
 
                 val plotMarker = when(lastPlotGear) {
                     VehicleGear.GEAR_PARK -> when (DataHolder.currentGear) {
-                        VehicleGear.GEAR_PARK -> PlotMarker.SINGLE_SESSION
-                        else -> PlotMarker.BEGIN_SESSION
+                        VehicleGear.GEAR_PARK -> PlotLineMarkerType.SINGLE_SESSION
+                        else -> PlotLineMarkerType.BEGIN_SESSION
                     }
                     else -> when (DataHolder.currentGear) {
-                        VehicleGear.GEAR_PARK -> PlotMarker.END_SESSION
+                        VehicleGear.GEAR_PARK -> PlotLineMarkerType.END_SESSION
                         else -> null
                     }
                 }
@@ -515,6 +506,10 @@ class DataCollector : Service() {
 
                 DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
                 DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
+                when (plotMarker)    {
+                    PlotLineMarkerType.SINGLE_SESSION, PlotLineMarkerType.END_SESSION -> DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, value.timestamp)
+                    else -> DataHolder.plotMarkers.endMarker(value.timestamp)
+                }
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             }
         }

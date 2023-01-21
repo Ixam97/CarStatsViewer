@@ -75,6 +75,8 @@ object DataHolder {
     // var parkTimestamp = 0L
     var travelTimeMillis = 0L
 
+    var plotMarkers = PlotMarkers()
+
     var consumptionPlotLine = PlotLine(
         PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
         1f,
@@ -129,6 +131,7 @@ object DataHolder {
         if (tripData.consumptionPlotLine != null) consumptionPlotLine.addDataPoints(tripData.consumptionPlotLine)
         if (tripData.speedPlotLine != null) speedPlotLine.addDataPoints(tripData.speedPlotLine)
         chargeCurves = if (tripData.chargeCurves != null) ArrayList(tripData.chargeCurves) else ArrayList()
+        if (tripData.markers != null) plotMarkers.addMarkers(tripData.markers)
     }
 
     fun getTripData(): TripData {
@@ -141,7 +144,8 @@ object DataHolder {
             travelTimeMillis,
             consumptionPlotLine.getDataPoints(PlotDimension.DISTANCE, null),
             speedPlotLine.getDataPoints(PlotDimension.DISTANCE, null),
-            chargeCurves.toList()
+            chargeCurves.toList(),
+            plotMarkers.markers.toList()
         )
     }
 }
