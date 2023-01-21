@@ -257,37 +257,26 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     private val mScaleGestureDetector = object : SimpleOnScaleGestureListener() {
-        private val viewportFocus = PointF()
         private var lastSpanX: Float = 0f
+        private var lastRestriction: Long? = 0L
 
         override fun onScaleBegin(scaleGestureDetector: ScaleGestureDetector): Boolean {
             lastSpanX = scaleGestureDetector.currentSpanX
+            lastRestriction = dimensionRestriction
             return true
         }
 
-        // override fun onScaleEnd(scaleGestureDetector: ScaleGestureDetector) {
-        //     lastSpanX = scaleGestureDetector.currentSpanX
-        // }
-
         override fun onScale(scaleGestureDetector: ScaleGestureDetector): Boolean {
             val spanX: Float = scaleGestureDetector.currentSpanX
-            val spanXDelta= spanX - lastSpanX
-            Log.d("SPAN-X", (lastSpanX/spanXDelta).toString())
 
             val restrictionInterval = dimensionRestrictionTouchInterval
-            var restriction = dimensionRestriction
-            if (restrictionInterval != null && restriction != null && !(lastSpanX/spanXDelta).isInfinite()) {
-                touchDimensionRestrictionDistance = (lastSpanX/spanXDelta) / 2.5f
-                restriction += restrictionInterval * touchDimensionRestrictionDistance.toLong()
-                Log.d("SCALE", "restriction = $restriction, touchDimensionRestrictionDistance = ${touchDimensionRestrictionDistance.toLong()}")
-                dimensionRestriction = restriction
+            if (restrictionInterval != null && lastRestriction != null && !(lastSpanX/spanX).isInfinite()) {
+                dimensionRestriction = ((lastRestriction!!.toFloat() * (lastSpanX / spanX)).toLong()/restrictionInterval) * restrictionInterval
                     .coerceAtMost(touchDimensionMax + (restrictionInterval - touchDimensionMax % restrictionInterval))
                     .coerceAtLeast(restrictionInterval)
             }
 
             this@PlotView.invalidate()
-
-            // lastSpanX = spanX
             return true
         }
     }
