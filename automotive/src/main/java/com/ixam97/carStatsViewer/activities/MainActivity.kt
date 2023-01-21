@@ -265,7 +265,7 @@ class MainActivity : Activity() {
     }
 
     private fun updatePlots(){
-        if (appPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
+        // if (appPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
 
         if (SystemClock.elapsedRealtime() - lastPlotUpdate > 1_000L) {
             if (main_consumption_plot_container.visibility == View.VISIBLE) {
@@ -297,14 +297,14 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun dimensionRestrictionById(id : Int) : Long {
-        return when (id) {
-            1 -> DISTANCE_1
-            2 -> DISTANCE_2
-            3 -> ((DataHolder.traveledDistance / DISTANCE_TRIP_DIVIDER).toInt() + 1) * DISTANCE_TRIP_DIVIDER + 1
-            else -> DISTANCE_2
-        }
-    }
+    // private fun dimensionRestrictionById(id : Int) : Long {
+    //     return when (id) {
+    //         1 -> DISTANCE_1
+    //         2 -> DISTANCE_2
+    //         3 -> ((DataHolder.traveledDistance / DISTANCE_TRIP_DIVIDER).toInt() + 1) * DISTANCE_TRIP_DIVIDER + 1
+    //         else -> DISTANCE_2
+    //     }
+    // }
 
     private fun resetStats() {
         finish()
@@ -354,10 +354,8 @@ class MainActivity : Activity() {
         }
 
         main_consumption_plot.dimension = PlotDimension.DISTANCE
-        main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
+        main_consumption_plot.dimensionRestriction = 10_001L
         main_consumption_plot.dimensionSmoothingPercentage = 0.02f
-        main_consumption_plot.dimensionShiftTouchInterval = 1_000L
-        main_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
@@ -440,9 +438,9 @@ class MainActivity : Activity() {
         }
 
         /** cycle through consumption plot distances when tapping the plot */
-        main_consumption_plot.setOnClickListener {
-            main_consumption_plot.dimensionRestriction = 5_000L
-        }
+        // main_consumption_plot.setOnClickListener {
+        //     main_consumption_plot.dimensionRestriction = 5_000L
+        // }
 
         /* main_radio_group_distance.setOnCheckedChangeListener { group, checkedId ->
             var id = when (checkedId) {

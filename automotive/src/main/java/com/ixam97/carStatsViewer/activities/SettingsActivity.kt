@@ -21,6 +21,7 @@ import com.ixam97.carStatsViewer.plot.PlotDimension
 import com.ixam97.carStatsViewer.plot.PlotMarkerType
 import com.ixam97.carStatsViewer.plot.PlotPaint
 import com.ixam97.carStatsViewer.views.PlotView
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.system.exitProcess
 
 class SettingsActivity : Activity() {
@@ -141,10 +142,12 @@ class SettingsActivity : Activity() {
 
         settings_consumption_plot_view.dimension = PlotDimension.DISTANCE
         settings_consumption_plot_view.dimensionRestriction = ((DataHolder.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1
-        settings_consumption_plot_view.dimensionSmoothing = (((DataHolder.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) / 50
+        settings_consumption_plot_view.dimensionSmoothingPercentage = 0.02f
         settings_consumption_plot_view.setPlotMarkers(DataHolder.plotMarkers)
         settings_consumption_plot_view.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
         settings_consumption_plot_view.visibleMarkerTypes.add(PlotMarkerType.PARK)
+        settings_consumption_plot_view.dimensionShiftTouchInterval = 1_000L
+        settings_consumption_plot_view.dimensionRestrictionTouchInterval = 5_000L
 
         settings_consumption_plot_view.invalidate()
 

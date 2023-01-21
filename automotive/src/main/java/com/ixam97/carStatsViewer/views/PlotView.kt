@@ -5,9 +5,12 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
+import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
@@ -254,6 +257,42 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         }
     }
 
+    private val mScaleGestureDetector = object : SimpleOnScaleGestureListener() {
+        private val viewportFocus = PointF()
+        private var lastSpanX: Float = 0f
+
+        override fun onScaleBegin(scaleGestureDetector: ScaleGestureDetector): Boolean {
+            lastSpanX = scaleGestureDetector.currentSpanX
+            return true
+        }
+
+        // override fun onScaleEnd(scaleGestureDetector: ScaleGestureDetector) {
+        //     lastSpanX = scaleGestureDetector.currentSpanX
+        // }
+
+        override fun onScale(scaleGestureDetector: ScaleGestureDetector): Boolean {
+            val spanX: Float = scaleGestureDetector.currentSpanX
+            val spanXDelta= spanX - lastSpanX
+            Log.d("SPAN-X", (lastSpanX/spanXDelta).toString())
+
+            val restrictionInterval = dimensionRestrictionTouchInterval
+            var restriction = dimensionRestriction
+            if (restrictionInterval != null && restriction != null && !(lastSpanX/spanXDelta).isInfinite()) {
+                touchDimensionRestrictionDistance = (lastSpanX/spanXDelta) / 2.5f
+                restriction += restrictionInterval * touchDimensionRestrictionDistance.toLong()
+                Log.d("SCALE", "restriction = $restriction, touchDimensionRestrictionDistance = ${touchDimensionRestrictionDistance.toLong()}")
+                dimensionRestriction = restriction
+                    .coerceAtMost(touchDimensionMax + (restrictionInterval - touchDimensionMax % restrictionInterval))
+                    .coerceAtLeast(restrictionInterval)
+            }
+
+            this@PlotView.invalidate()
+
+            // lastSpanX = spanX
+            return true
+        }
+    }
+
     private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             val shiftInterval = dimensionShiftTouchInterval
@@ -263,7 +302,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     .coerceAtMost(touchDimensionMax + (shiftInterval - touchDimensionMax % shiftInterval) - (dimensionRestriction!! - 1))
                     .coerceAtLeast(0L)
             }
-
+/*
             val restrictionInterval = dimensionRestrictionTouchInterval
             if (restrictionInterval != null) {
                 touchDimensionRestrictionDistance += - distanceY
@@ -271,12 +310,13 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     .coerceAtMost(touchDimensionMax + (restrictionInterval - touchDimensionMax % restrictionInterval))
                     .coerceAtLeast(restrictionInterval)
             }
-
+*/
             return true
         }
     }
 
-    private val mScaleDetector = GestureDetector(context, mGestureListener)
+    private val mScrollDetector = GestureDetector(context, mGestureListener)
+    private val mScaleDetector = ScaleGestureDetector(context!!, mScaleGestureDetector)
 
     private var touchDimensionShift : Long = 0L
     private var touchDimensionShiftDistance : Float = 0f
@@ -304,6 +344,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             }
         }
 
+        mScrollDetector.onTouchEvent(ev)
         mScaleDetector.onTouchEvent(ev)
         return true
     }
