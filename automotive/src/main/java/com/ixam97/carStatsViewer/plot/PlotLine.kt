@@ -31,18 +31,30 @@ class PlotLine(
     fun addDataPoint(item: Float, time: Long, distance: Float, timeDelta: Long? = null, distanceDelta: Float? = null, plotLineMarkerType: PlotLineMarkerType? = null) {
         val prev = dataPoints[dataPoints.size - 1]
 
-        dataPoints[dataPoints.size] = PlotLineItem(
+        addDataPoint(PlotLineItem(
             item,
             time,
             distance,
             timeDelta?:(time - (prev?.Time ?: time)),
             distanceDelta?:(distance - (prev?.Distance ?: distance)),
             plotLineMarkerType
-        )
+        ))
     }
 
     fun addDataPoint(dataPoint: PlotLineItem) {
-        dataPoints[dataPoints.size] = dataPoint
+        when {
+            dataPoint.Value.isFinite() -> {
+                dataPoints[dataPoints.size] = dataPoint
+            }
+            dataPoint.Marker == PlotLineMarkerType.END_SESSION -> {
+                val lastPoint = dataPoints[dataPoints.size - 1]
+                when {
+                    lastPoint != null && lastPoint.Marker == null -> {
+                        lastPoint.Marker = dataPoint.Marker
+                    }
+                }
+            }
+        }
     }
 
     fun addDataPoints(dataPoints: List<PlotLineItem>) {
