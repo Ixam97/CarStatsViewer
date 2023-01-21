@@ -161,7 +161,6 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         // markerPaint[PlotMarkerType.PARK] = PlotMarkerPaint.byColor(Color.rgb(93, 110,204), textSize)
         markerPaint[PlotMarkerType.PARK] = PlotMarkerPaint.byColor(getColor(context, R.color.park_marker), textSize)
-        //TODO: ParkingIcon
         markerIcon[PlotMarkerType.PARK] = getVectorBitmap(context, R.drawable.ic_marker_park)
     }
 
@@ -447,6 +446,9 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             if (index == 0 && plotMarkers?.markers?.isNotEmpty() ?: false) {
                 val markers = plotMarkers!!.markers.filter { visibleMarkerTypes.contains(it.MarkerType) }
 
+                var markerXLimit = 0f
+                val markerTimes = HashMap<PlotMarkerType, Long>()
+
                 for (markerGroup in markers.groupBy { line.x(dataPoints, it.StartTime, PlotDimension.TIME, dimension, minDimension, maxDimension) }) {
                     if (markerGroup.key == null) continue
 
@@ -463,32 +465,61 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     }
 
                     if (x1 != null && markers.none { it.EndTime == null }) {
+                        if (markerXLimit == 0f) {
+                            markerXLimit = x1
+                        }
+
+                        markerXLimit = drawMarkerLabel(canvas, markerTimes, markerXLimit, x1)
+
                         drawMarker(canvas, markerType, x1, -1)
                         drawMarker(canvas, markerType, x2, 1)
 
                         val diff = markers.sumOf { (it.EndTime ?: it.StartTime) - it.StartTime }
-                        val label = String.format("%02d:%02d", TimeUnit.MINUTES.convert(diff, TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(diff, TimeUnit.NANOSECONDS) % 60)
-                        val labelPaint = markerPaint[markerType]!!.Label
 
-                        canvas.drawBitmap(
-                            markerIcon[markerType]!!,
-                            x1 - (textSize / 2f),
-                            (yMargin / 3f),
-                            labelPaint
-                        )
-
-                        canvas.drawText(
-                            label,
-                            x1 + labelPaint.textSize,
-                            yMargin - labelPaint.textSize + 2f,
-                            labelPaint
-                        )
+                        markerTimes[markerType] = (markerTimes[markerType] ?: 0L) + diff
                     }
                 }
+
+                drawMarkerLabel(canvas, markerTimes, markerXLimit, maxX)
             }
 
             index++
         }
+    }
+
+    private fun timeLabel(time: Long): String {
+        return String.format("%02d:%02d", TimeUnit.MINUTES.convert(time, TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(time, TimeUnit.NANOSECONDS) % 60)
+    }
+
+    private fun drawMarkerLabel(canvas: Canvas, markerTimes: HashMap<PlotMarkerType, Long>, xMin: Float, xCurrent: Float): Float {
+        if (markerTimes.isNotEmpty() && xCurrent > xMin + markerTimes.map { 36 + labelPaint.measureText(timeLabel(it.value)) }.sum()) {
+            var shift = 0
+            for (item in markerTimes) {
+                val label = timeLabel(item.value)
+                val labelPaint = markerPaint[item.key]!!.Label
+
+                canvas.drawBitmap(
+                    markerIcon[item.key]!!,
+                    xMin - (textSize / 2f) + shift,
+                    (yMargin / 3f),
+                    labelPaint
+                )
+
+                canvas.drawText(
+                    label,
+                    xMin + labelPaint.textSize + shift,
+                    yMargin - labelPaint.textSize + 2f,
+                    labelPaint
+                )
+                shift += 36 + labelPaint.measureText(timeLabel(item.value)).roundToInt()
+            }
+
+            markerTimes.clear()
+
+            return xCurrent
+        }
+
+        return xMin
     }
 
     private fun drawMarker(canvas: Canvas, markerType: PlotMarkerType, x: Float?, multiplier: Int) {
