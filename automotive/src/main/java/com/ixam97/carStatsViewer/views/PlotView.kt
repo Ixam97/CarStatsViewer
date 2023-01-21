@@ -2,16 +2,19 @@ package com.ixam97.carStatsViewer.views
 
 import android.content.Context
 import android.graphics.*
-import android.graphics.drawable.Drawable
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.VectorDrawable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.plot.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 
 class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -113,7 +116,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private lateinit var backgroundPaint: Paint
 
     private var markerPaint = HashMap<PlotMarkerType, PlotMarkerPaint>()
-    private var markerIcon = HashMap<PlotMarkerType, Drawable>()
+    private var markerIcon = HashMap<PlotMarkerType, Bitmap?>()
 
     init {
         setupPaint()
@@ -154,12 +157,43 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         // markerPaint[PlotMarkerType.CHARGE] = PlotMarkerPaint.byColor(Color.rgb(237, 218, 75), textSize)
         markerPaint[PlotMarkerType.CHARGE] = PlotMarkerPaint.byColor(getColor(context, R.color.charge_marker), textSize)
-        markerIcon[PlotMarkerType.CHARGE] = context.resources.getDrawable(R.drawable.ic_power, null)
+        markerIcon[PlotMarkerType.CHARGE] = getVectorBitmap(context, R.drawable.ic_marker_charge)
 
         // markerPaint[PlotMarkerType.PARK] = PlotMarkerPaint.byColor(Color.rgb(93, 110,204), textSize)
         markerPaint[PlotMarkerType.PARK] = PlotMarkerPaint.byColor(getColor(context, R.color.park_marker), textSize)
         //TODO: ParkingIcon
-        markerIcon[PlotMarkerType.PARK] = context.resources.getDrawable(R.drawable.ic_kill, null)
+        markerIcon[PlotMarkerType.PARK] = getVectorBitmap(context, R.drawable.ic_marker_park)
+    }
+
+    private fun getVectorBitmap(context: Context, drawableId: Int): Bitmap? {
+        when (val drawable = ContextCompat.getDrawable(context, drawableId)) {
+            is BitmapDrawable -> {
+                return drawable.bitmap
+            }
+
+            is VectorDrawable -> {
+                val bitmap = Bitmap.createBitmap(
+                    drawable.intrinsicWidth,
+                    drawable.intrinsicHeight,
+                    Bitmap.Config.ARGB_8888
+                )
+
+                val canvas = Canvas(bitmap)
+                drawable.setBounds(0, 0, canvas.width, canvas.height)
+                drawable.draw(canvas)
+
+                val factor = 18f / canvas.width
+
+                return Bitmap.createScaledBitmap(
+                    bitmap,
+                    (canvas.width * factor).roundToInt(),
+                    (canvas.height * factor).roundToInt(),
+                    false
+                )
+            }
+        }
+
+        return null
     }
 
     fun reset() {
@@ -432,10 +466,10 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                         val label = markerType.toString()[0].toString() // String.format("%02d:%02d", TimeUnit.MINUTES.convert(diff, TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(diff, TimeUnit.NANOSECONDS) % 60)
                         val labelPaint = markerPaint[markerType]!!.Label
 
-                        canvas.drawText(
-                            label,
+                        canvas.drawBitmap(
+                            markerIcon[markerType]!!,
                             x1 - (labelPaint.measureText(label) / 2f),
-                            yMargin - (yMargin / 3f),
+                            (yMargin / 3f),
                             labelPaint
                         )
                     }
