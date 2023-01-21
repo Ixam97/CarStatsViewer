@@ -394,11 +394,13 @@ class MainActivity : Activity() {
                     VehicleGear.GEAR_PARK -> {
                         Toast.makeText(this, "Drive", Toast.LENGTH_SHORT).show()
                         // DataHolder.resetTimestamp += (System.nanoTime() - DataHolder.parkTimestamp)
+                        DataHolder.plotMarkers.endMarker(SystemClock.elapsedRealtimeNanos())
                         VehicleGear.GEAR_DRIVE
                     }
                     else -> {
                         Toast.makeText(this, "Park", Toast.LENGTH_SHORT).show()
                         // DataHolder.parkTimestamp = System.nanoTime()
+                        DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, SystemClock.elapsedRealtimeNanos())
                         VehicleGear.GEAR_PARK
                     }
                 }

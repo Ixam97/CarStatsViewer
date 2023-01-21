@@ -176,7 +176,7 @@ class DataCollector : Service() {
         if (carName == "Speedy Model") {
             Toast.makeText(this, "Emulator Mode", Toast.LENGTH_LONG).show()
             emulatorMode = true
-            DataHolder.currentGear = VehicleGear.GEAR_PARK
+            gearUpdater(VehicleGear.GEAR_PARK, SystemClock.elapsedRealtimeNanos())
         }
 
 
@@ -343,7 +343,7 @@ class DataCollector : Service() {
 
             when (value.propertyId) {
                 VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
-                VehiclePropertyIds.GEAR_SELECTION -> gearUpdater(value.value as Int)
+                VehiclePropertyIds.GEAR_SELECTION -> gearUpdater(value.value as Int, value.timestamp)
                 VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> portUpdater(value.value as Boolean)
             }
         }
@@ -352,8 +352,14 @@ class DataCollector : Service() {
         }
     }
 
-    private fun gearUpdater(gear: Int) {
+    private fun gearUpdater(gear: Int, timestamp: Long) {
         DataHolder.currentGear = gear
+
+        when (gear) {
+            VehicleGear.GEAR_PARK -> DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, timestamp)
+            else -> DataHolder.plotMarkers.endMarker(timestamp)
+        }
+
         sendBroadcast(Intent(getString(R.string.gear_update_broadcast)))
         if (DataHolder.currentGear == VehicleGear.GEAR_PARK) sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
     }
@@ -395,7 +401,7 @@ class DataCollector : Service() {
             }
         }
 
-        if (timerTriggered(value, 5_000f, timestamp) && DataHolder.chargePortConnected) {
+        if (timerTriggered(value, 5_000f, timestamp) && DataHolder.chargePortConnected && DataHolder.currentGear == VehicleGear.GEAR_PARK) {
             if (DataHolder.currentPowermW < 0 && DataHolder.lastChargePower >= 0) {
                 DataHolder.chargePlotLine.addDataPoint(0f, timestamp - 1_000_000, 0f)
                 addChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
@@ -405,7 +411,7 @@ class DataCollector : Service() {
             } else if (DataHolder.currentPowermW >= 0 && DataHolder.lastChargePower < 0) {
                 addChargePlotLine(timestamp, PlotLineMarkerType.END_SESSION)
                 addStateOfChargePlotLine(timestamp, PlotLineMarkerType.END_SESSION)
-                DataHolder.plotMarkers.endMarker(timestamp)
+                DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, timestamp)
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             } else if (DataHolder.currentPowermW < 0) {
                 addChargePlotLine(timestamp)
@@ -500,10 +506,7 @@ class DataCollector : Service() {
 
                 DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
                 DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
-                when (plotMarker)    {
-                    PlotLineMarkerType.SINGLE_SESSION, PlotLineMarkerType.END_SESSION -> DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, value.timestamp)
-                    else -> DataHolder.plotMarkers.endMarker(value.timestamp)
-                }
+
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             }
         }
