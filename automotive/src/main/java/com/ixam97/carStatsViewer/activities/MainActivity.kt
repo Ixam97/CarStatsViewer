@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.Runnable
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 var emulatorMode = false
@@ -159,7 +160,7 @@ class MainActivity : Activity() {
         updateGages()
         setValueColors()
 
-        currentPowerTextView.text = getCurrentPowerString(False)
+        currentPowerTextView.text = getCurrentPowerString(false)
         currentSpeedTextView.text = getCurrentSpeedString()
         usedEnergyTextView.text = getUsedEnergyString()
         traveledDistanceTextView.text = getTraveledDistanceString()
@@ -184,10 +185,10 @@ class MainActivity : Activity() {
             ((DataHolder.traveledDistance / 1000) / (DataHolder.travelTimeMillis.toFloat() / 3_600_000)).toInt())
     }
 
-    private fun getCurrentPowerString(detailed : Boolean): String {
+    private fun getCurrentPowerString(detailed : Boolean = true): String {
         val rawPower = DataHolder.currentPowerSmooth / 1_000_000
 
-        if (!detailed && rawPower >= 10) {return "%d kW".format(
+        if (!detailed && rawPower.absoluteValue >= 10) {return "%d kW".format(
             Locale.ENGLISH,
             rawPower.roundToInt())}
         
