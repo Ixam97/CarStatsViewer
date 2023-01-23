@@ -186,6 +186,10 @@ class SettingsActivity : Activity() {
     }
 
     private fun setupSettingsChargePlot() {
+        settings_charge_plot_sub_title_curve.text = "%s (%d/%d)".format(
+            getString(R.string.settings_sub_title_last_charge_plot),
+            DataHolder.chargeCurves.size,
+            DataHolder.chargeCurves.size)
         settings_charge_plot_view.addPlotLine(DataHolder.chargePlotLine)
         settings_charge_plot_view.addPlotLine(DataHolder.stateOfChargePlotLine)
 

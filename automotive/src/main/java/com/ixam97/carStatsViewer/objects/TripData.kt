@@ -22,7 +22,7 @@ data class TripData(
     var lastChargePower:Float,
     var consumptionPlotLine: List<PlotLineItem>,
     var speedPlotLine: List<PlotLineItem>,
-    // var chargeCurves: List<ChargeCurve>,
+    var chargeCurves: List<ChargeCurve>,
     var markers: List<PlotMarker>
 ) {
 

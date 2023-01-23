@@ -115,6 +115,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private lateinit var labelPaint: Paint
     private lateinit var labelLinePaint: Paint
+    private lateinit var borderLinePaint: Paint
     private lateinit var baseLinePaint: Paint
     private lateinit var backgroundPaint: Paint
 
@@ -133,9 +134,13 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val basePaint = PlotPaint.basePaint(textSize)
 
         labelLinePaint = Paint(basePaint)
-        labelLinePaint.color = Color.GRAY
+        labelLinePaint.color = Color.parseColor("#151515")
+
+        borderLinePaint = Paint(basePaint)
+        borderLinePaint.color = Color.GRAY
 
         labelPaint = Paint(labelLinePaint)
+        labelPaint.color = Color.GRAY
         labelPaint.style = Paint.Style.FILL
 
         baseLinePaint = Paint(labelLinePaint)
@@ -656,7 +661,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             val leftZero = (distanceDimension / (xLineCount - 1) * i) + (dimensionShift ?: 0L)
             val rightZero = distanceDimension - leftZero + (2 * (dimensionShift ?: 0L))
 
-            drawXLine(canvas, cordX, maxY, labelLinePaint)
+            if (i in 1 until xLineCount-1) drawXLine(canvas, cordX, maxY, labelLinePaint)
+            else drawXLine(canvas, cordX, maxY, borderLinePaint)
 
             val label = when (dimension) {
                 PlotDimension.INDEX -> String.format("%d", leftZero.toInt())
@@ -693,7 +699,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         for (i in 0 until yLineCount) {
             val cordY = y(i.toFloat(), 0f, yLineCount.toFloat() - 1, maxY)!!
-            drawYLine(canvas, cordY, maxX, labelLinePaint)
+            if (i in 1 until yLineCount-1) drawYLine(canvas, cordY, maxX, labelLinePaint)
+            else drawYLine(canvas, cordY, maxX, borderLinePaint)
         }
     }
 

@@ -34,12 +34,15 @@
     <string name="settings_consumption_unit">Wh/km als Verbrauchseinheit</string>
     <string name="settings_debug">Debug-Informationen</string>
     <string name="settings_experimental_layout">Zeige experimentelles Layout</string>
-    <string name="settings_consumption_plot">  Verbrauchskurve</string>
-    <string name="settings_charge_plot">  Ladekurve</string>
+    <string name="settings_consumption_plot">  Verbrauchsansicht</string>
+    <string name="settings_charge_plot">  Ladeansicht</string>
     <string name="settings_consumption_plot_single_motor">Single Motor Modell</string>
     <string name="settings_plot_secondary_color">Grau als sekundäre Diagrammfarbe</string>
     <string name="settings_consumption_plot_visible_gages">Zeige Leistungsbalken</string>
     <string name="settings_consumption_plot_speed">Zeige Geschwindigkeitsverlauf</string>
+    <string name="settings_sub_title_settings">Einstellungen:</string>
+    <string name="settings_sub_title_current_cons_plot">Aktuelle Verbrauchskurve:</string>
+    <string name="settings_sub_title_last_charge_plot">Letzte Ladekurven:</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">App beenden?</string>

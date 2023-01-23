@@ -86,6 +86,7 @@ class DataCollector : Service() {
 
             val currentNotificationTimeMillis = System.currentTimeMillis()
             if (DataHolder.currentGear != VehicleGear.GEAR_PARK && lastNotificationTimeMillis > 0) DataHolder.travelTimeMillis += currentNotificationTimeMillis - lastNotificationTimeMillis
+            if (DataHolder.chargePortConnected && lastNotificationTimeMillis > 0) DataHolder.chargeTimeMillis += currentNotificationTimeMillis - lastNotificationTimeMillis
             lastNotificationTimeMillis = currentNotificationTimeMillis
 
             // val ignitionState = carPropertyManager.getIntProperty(VehiclePropertyIds.IGNITION_STATE, 0)
@@ -371,9 +372,13 @@ class DataCollector : Service() {
     private fun portUpdater(connected: Boolean) {
         DataHolder.chargePortConnected = connected
 
-        if (connected) chargeStartTimeNanos = System.nanoTime()
+        if (connected) {
+            DataHolder.stateOfChargePlotLine.reset()
+            DataHolder.chargePlotLine.reset()
+            chargeStartTimeNanos = System.nanoTime()
+        }
 
-        if (!connected) {
+        if (!connected && chargeStartTimeNanos > 0 && chargedEnergyWh > 0) {
             DataHolder.chargeCurves.add(
                 ChargeCurve(
                     DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME, null),
@@ -384,6 +389,12 @@ class DataCollector : Service() {
                     0f,0f
                 )
             )
+            sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+        } else if (!connected && DataHolder.chargeCurves.isNotEmpty()) {
+            DataHolder.chargePlotLine.reset()
+            DataHolder.stateOfChargePlotLine.reset()
+            DataHolder.chargePlotLine.addDataPoints(DataHolder.chargeCurves.last().chargePlotLine)
+            DataHolder.stateOfChargePlotLine.addDataPoints(DataHolder.chargeCurves.last().stateOfChargePlotLine)
         }
 
     }
@@ -394,15 +405,15 @@ class DataCollector : Service() {
             else -> - (value.value as Float)
         }
 
-        if (DataHolder.currentGear != VehicleGear.GEAR_PARK) {
-            val timeDifference = timeDifference(value, 10_000, timestamp)
-            if (timeDifference != null && !DataHolder.chargePortConnected) {
-                DataHolder.usedEnergy += (DataHolder.lastPowermW / 1000) * (timeDifference.toFloat() / (1000 * 60 * 60))
-                DataHolder.averageConsumption = when {
-                    DataHolder.traveledDistance <= 0 -> 0F
-                    else -> DataHolder.usedEnergy / (DataHolder.traveledDistance / 1_000)
-                }
+        val timeDifference = timeDifference(value, 10_000, timestamp)
+        if (timeDifference != null && !DataHolder.chargePortConnected && DataHolder.currentGear != VehicleGear.GEAR_PARK) {
+            DataHolder.usedEnergy += (DataHolder.lastPowermW / 1000) * (timeDifference.toFloat() / (1000 * 60 * 60))
+            DataHolder.averageConsumption = when {
+                DataHolder.traveledDistance <= 0 -> 0F
+                else -> DataHolder.usedEnergy / (DataHolder.traveledDistance / 1_000)
             }
+        } else if (timeDifference != null && DataHolder.chargePortConnected) {
+            DataHolder.chargedEnergy += -(DataHolder.lastPowermW / 1000) * (timeDifference.toFloat() / (1000 * 60 * 60))
         }
 
         if (timerTriggered(value, 5_000f, timestamp) && DataHolder.chargePortConnected && DataHolder.currentGear == VehicleGear.GEAR_PARK) {

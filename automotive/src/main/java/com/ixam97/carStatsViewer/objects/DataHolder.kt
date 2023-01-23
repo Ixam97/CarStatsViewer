@@ -72,6 +72,7 @@ object DataHolder {
     var averageConsumption = 0F
     var chargePortConnected = false
     var travelTimeMillis = 0L
+    var chargeTimeMillis = 0L
 
     var lastPlotDistance = 0F
     var lastPlotEnergy = 0F
@@ -139,9 +140,17 @@ object DataHolder {
         lastChargePower = if(tripData.lastChargePower != null) tripData.lastChargePower else 0F
         consumptionPlotLine.reset()
         speedPlotLine.reset()
+        chargePlotLine.reset()
+        stateOfChargePlotLine.reset()
         if (tripData.consumptionPlotLine != null) consumptionPlotLine.addDataPoints(tripData.consumptionPlotLine)
         if (tripData.speedPlotLine != null) speedPlotLine.addDataPoints(tripData.speedPlotLine)
-        // chargeCurves = if (tripData.chargeCurves != null) ArrayList(tripData.chargeCurves) else ArrayList()
+        chargeCurves = if (tripData.chargeCurves != null) {
+            if (tripData.chargeCurves.isNotEmpty()){
+                chargePlotLine.addDataPoints(tripData.chargeCurves.last().chargePlotLine)
+                stateOfChargePlotLine.addDataPoints(tripData.chargeCurves.last().stateOfChargePlotLine)
+            }
+            ArrayList(tripData.chargeCurves)
+        } else ArrayList()
         if (tripData.markers != null) plotMarkers.addMarkers(tripData.markers)
     }
 
@@ -161,8 +170,27 @@ object DataHolder {
             lastChargePower,
             consumptionPlotLine.getDataPoints(PlotDimension.DISTANCE),
             speedPlotLine.getDataPoints(PlotDimension.DISTANCE),
-            // chargeCurves.toList()
+            chargeCurves.toList(),
             plotMarkers.markers.toList()
         )
+    }
+
+    fun resetDataHolder() {
+        traveledDistance = 0f
+        usedEnergy = 0f
+        averageConsumption = 0f
+        travelTimeMillis = 0L
+        lastPlotDistance = 0F
+        lastPlotEnergy = 0F
+        lastPlotTime = 0L
+        lastPlotGear = VehicleGear.GEAR_PARK
+        lastPlotMarker = null
+        lastChargePower = 0F
+        consumptionPlotLine.reset()
+        speedPlotLine.reset()
+        chargePlotLine.reset()
+        stateOfChargePlotLine.reset()
+        chargeCurves = ArrayList()
+        plotMarkers = PlotMarkers()
     }
 }

@@ -12,6 +12,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -26,6 +28,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.Runnable
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 var emulatorMode = false
 var emulatorPowerSign = -1
@@ -127,6 +130,9 @@ class MainActivity : Activity() {
             IntentFilter(getString(R.string.ui_update_gages_broadcast))
         )
 
+        main_button_performance.isEnabled = false
+        main_button_performance.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+
         enableUiUpdates()
     }
 
@@ -163,7 +169,10 @@ class MainActivity : Activity() {
         main_gage_avg_consumption_text_view.text = "  Ø %s".format(getAvgConsumptionString())
         main_gage_distance_text_view.text = "  %s".format(getTraveledDistanceString())
         main_gage_used_power_text_view.text = "  %s".format(getUsedEnergyString())
-        main_gage_time_text_view.text = "  %s".format(getElapsedTimeString())
+        main_gage_time_text_view.text = "  %s".format(getElapsedTimeString(DataHolder.travelTimeMillis))
+
+        main_gage_charged_energy_text_view.text = "  %s".format(getChargedEnergyString())
+        main_gage_charge_time_text_view.text = "  %s".format(getElapsedTimeString(DataHolder.chargeTimeMillis))
     }
 
     private fun getCurrentSpeedString(): String {
@@ -188,6 +197,15 @@ class MainActivity : Activity() {
                 DataHolder.usedEnergy / 1000)
         }
         return "${DataHolder.usedEnergy.toInt()} Wh"
+    }
+
+    private fun getChargedEnergyString(): String {
+        if (!appPreferences.consumptionUnit) {
+            return "%.1f kWh".format(
+                Locale.ENGLISH,
+                DataHolder.chargedEnergy / 1000)
+        }
+        return "${DataHolder.chargedEnergy.toInt()} Wh"
     }
 
     private fun getInstConsumptionString(): String {
@@ -232,14 +250,17 @@ class MainActivity : Activity() {
         if (main_button_dismiss_charge_plot.isEnabled == DataHolder.chargePortConnected)
             main_button_dismiss_charge_plot.isEnabled = !DataHolder.chargePortConnected
 
-        if (main_charge_plot_container.visibility == View.GONE && DataHolder.chargePortConnected) {
-            main_consumption_plot_container.visibility = View.GONE
-            main_charge_plot_container.visibility = View.VISIBLE
+        if (main_charge_layout.visibility == View.GONE && DataHolder.chargePortConnected) {
+            main_consumption_layout.visibility = View.GONE
+            main_charge_layout.visibility = View.VISIBLE
         }
     }
 
     private fun updateGages() {
-        main_power_gage.setValue(DataHolder.currentPowerSmooth / 1000000)
+        main_power_gage.setValue(DataHolder.currentPowerSmooth / 1_000_000)
+        main_charge_gage.setValue(-DataHolder.currentPowerSmooth / 1_000_000)
+        main_SoC_gage.setValue((100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity).roundToInt())
+
         var consumptionValue: Float? = null
 
         if (appPreferences.consumptionUnit) {
@@ -268,11 +289,11 @@ class MainActivity : Activity() {
         // if (appPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
 
         if (SystemClock.elapsedRealtime() - lastPlotUpdate > 1_000L) {
-            if (main_consumption_plot_container.visibility == View.VISIBLE) {
+            if (main_consumption_layout.visibility == View.VISIBLE) {
                 main_consumption_plot.invalidate()
             }
 
-            if (main_charge_plot_container.visibility == View.VISIBLE) {
+            if (main_charge_layout.visibility == View.VISIBLE) {
                 main_charge_plot.invalidate()
             }
 
@@ -280,10 +301,11 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun getElapsedTimeString(): String {
-        return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(DataHolder.travelTimeMillis),
-            TimeUnit.MILLISECONDS.toMinutes(DataHolder.travelTimeMillis) % TimeUnit.HOURS.toMinutes(1),
-            TimeUnit.MILLISECONDS.toSeconds(DataHolder.travelTimeMillis) % TimeUnit.MINUTES.toSeconds(1))
+    private fun getElapsedTimeString(elapsedTime: Long): String {
+        return String.format("%02d:%02d:%02d",
+            TimeUnit.MILLISECONDS.toHours(elapsedTime),
+            TimeUnit.MILLISECONDS.toMinutes(elapsedTime) % TimeUnit.HOURS.toMinutes(1),
+            TimeUnit.MILLISECONDS.toSeconds(elapsedTime) % TimeUnit.MINUTES.toSeconds(1))
     }
 
     private fun setValueColors() {
@@ -310,16 +332,11 @@ class MainActivity : Activity() {
         finish()
         startActivity(intent)
         InAppLogger.log("MainActivity.resetStats")
-        main_consumption_plot.reset()
 
-        DataHolder.traveledDistance = 0F
         traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)
-        DataHolder.usedEnergy = 0F
         usedEnergyTextView.text = String.format("%d Wh", DataHolder.usedEnergy.toInt())
-        DataHolder.averageConsumption = 0F
         averageConsumptionTextView.text = String.format("%d Wh/km", DataHolder.averageConsumption.toInt())
-        DataHolder.travelTimeMillis = 0L
-
+        DataHolder.resetDataHolder()
         sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
     }
 
@@ -382,6 +399,20 @@ class MainActivity : Activity() {
         main_consumption_gage.minValue = -30f
         main_consumption_gage.maxValue = 60f
         main_consumption_gage.setValue(0f)
+
+        main_charge_gage.gageName = "Charge power"
+        main_charge_gage.gageUnit = "kW"
+        main_charge_gage.primaryColor = getColor(R.color.charge_plot_color)
+        main_charge_gage.minValue = 0f
+        main_charge_gage.maxValue = 160f
+        main_charge_gage.setValue(0f)
+
+        main_SoC_gage.gageName = "State of charge"
+        main_SoC_gage.gageUnit = "%"
+        main_SoC_gage.primaryColor = getColor(R.color.charge_plot_color)
+        main_SoC_gage.minValue = 0f
+        main_SoC_gage.maxValue = 100f
+        main_SoC_gage.setValue(0f)
     }
 
     private fun setUiEventListeners() {
@@ -474,13 +505,16 @@ class MainActivity : Activity() {
         }
 
         main_button_summary.setOnClickListener {
-            sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+            // sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+            startActivity(Intent(this, SummaryActivity::class.java))
         }
 
         main_button_dismiss_charge_plot.setOnClickListener {
-            main_charge_plot_container.visibility = View.GONE
-            main_consumption_plot_container.visibility = View.VISIBLE
+            main_charge_layout.visibility = View.GONE
+            main_consumption_layout.visibility = View.VISIBLE
             main_consumption_plot.invalidate()
+            DataHolder.chargedEnergy = 0f
+            DataHolder.chargeTimeMillis = 0L
         }
 
         main_button_reset_charge_plot.setOnClickListener {
