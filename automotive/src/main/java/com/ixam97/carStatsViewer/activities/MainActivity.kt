@@ -159,7 +159,7 @@ class MainActivity : Activity() {
         updateGages()
         setValueColors()
 
-        currentPowerTextView.text = getCurrentPowerString()
+        currentPowerTextView.text = getCurrentPowerString(False)
         currentSpeedTextView.text = getCurrentSpeedString()
         usedEnergyTextView.text = getUsedEnergyString()
         traveledDistanceTextView.text = getTraveledDistanceString()
@@ -184,10 +184,16 @@ class MainActivity : Activity() {
             ((DataHolder.traveledDistance / 1000) / (DataHolder.travelTimeMillis.toFloat() / 3_600_000)).toInt())
     }
 
-    private fun getCurrentPowerString(): String {
+    private fun getCurrentPowerString(detailed : Boolean): String {
+        val rawPower = DataHolder.currentPowerSmooth / 1_000_000
+
+        if (!detailed && rawPower >= 10) {return "%d kW".format(
+            Locale.ENGLISH,
+            rawPower.roundToInt())}
+        
         return "%.1f kW".format(
             Locale.ENGLISH,
-            DataHolder.currentPowerSmooth / 1_000_000)
+            rawPower)
     }
 
     private fun getUsedEnergyString(): String {
