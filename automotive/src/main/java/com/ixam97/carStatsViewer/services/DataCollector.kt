@@ -41,8 +41,7 @@ class DataCollector : Service() {
     private var consumptionPlotTracking = false
     private var lastNotificationTimeMillis = 0L
 
-    private var chargeStartTimeNanos = 0L;
-    private var chargedEnergyWh = 0f
+    private var chargeStartTimeNanos = 0L
 
     private var notificationCounter = 0
 
@@ -378,24 +377,25 @@ class DataCollector : Service() {
             chargeStartTimeNanos = System.nanoTime()
         }
 
-        if (!connected && chargeStartTimeNanos > 0 && chargedEnergyWh > 0) {
+        if (!connected && chargeStartTimeNanos > 0 && DataHolder.chargedEnergy > 0) {
             DataHolder.chargeCurves.add(
                 ChargeCurve(
                     DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME, null),
                     DataHolder.stateOfChargePlotLine.getDataPoints(PlotDimension.TIME, null),
                     chargeStartTimeNanos,
                     System.nanoTime(),
-                    chargedEnergyWh,
-                    0f,0f
+                    DataHolder.chargedEnergy,
+                    0f, 0f
                 )
             )
             sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
-        } else if (!connected && DataHolder.chargeCurves.isNotEmpty()) {
-            DataHolder.chargePlotLine.reset()
-            DataHolder.stateOfChargePlotLine.reset()
-            DataHolder.chargePlotLine.addDataPoints(DataHolder.chargeCurves.last().chargePlotLine)
-            DataHolder.stateOfChargePlotLine.addDataPoints(DataHolder.chargeCurves.last().stateOfChargePlotLine)
         }
+        // } else if (!connected && DataHolder.chargeCurves.isNotEmpty()) {
+        //     DataHolder.chargePlotLine.reset()
+        //     DataHolder.stateOfChargePlotLine.reset()
+        //     DataHolder.chargePlotLine.addDataPoints(DataHolder.chargeCurves.last().chargePlotLine)
+        //     DataHolder.stateOfChargePlotLine.addDataPoints(DataHolder.chargeCurves.last().stateOfChargePlotLine)
+        // }
 
     }
 
@@ -419,6 +419,10 @@ class DataCollector : Service() {
         if (timerTriggered(value, 5_000f, timestamp) && DataHolder.chargePortConnected && DataHolder.currentGear == VehicleGear.GEAR_PARK) {
             if (DataHolder.currentPowermW < 0 && DataHolder.lastChargePower >= 0) {
                 DataHolder.chargePlotLine.addDataPoint(0f, timestamp - 1_000_000, 0f)
+                DataHolder.stateOfChargePlotLine.addDataPoint(
+                    100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity,
+                timestamp - 1_000_000,
+                    0f)
                 addChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
                 addStateOfChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
                 DataHolder.plotMarkers.addMarker(PlotMarkerType.CHARGE, timestamp)

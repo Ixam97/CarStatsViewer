@@ -340,24 +340,19 @@
                     android:orientation="horizontal">
 
                     <ImageButton
-                        android:src="@drawable/ic_chevron_right"
+                        android:id="@+id/settings_charge_plot_button_prev"
+                        android:src="@drawable/ic_chevron_left"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent" />
 
-                    <!--<TextView
-                        android:layout_width="0dp"
-                        android:textSize="35sp"
-                        android:textColor="@android:color/white"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="Ladekurve 1/5"/>-->
                     <SeekBar
+                        android:id="@+id/settings_charge_plot_seek_bar"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"/>
 
                     <ImageButton
+                        android:id="@+id/settings_charge_plot_button_next"
                         android:src="@drawable/ic_chevron_right"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent" />
