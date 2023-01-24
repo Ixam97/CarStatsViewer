@@ -19,7 +19,7 @@
         <TextView
             android:id="@+id/summary_title"
             style="@style/title_text_style"
-            android:text="Trip Summary"/>
+            android:text="@string/summary_title"/>
 
         <View style="@style/filler"/>
 
@@ -28,7 +28,7 @@
             android:id="@+id/summary_button_reset"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Reset Trip"
+            android:text="@string/summary_button_reset_trip"
             />
 
     </LinearLayout>

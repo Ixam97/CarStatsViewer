@@ -52,6 +52,13 @@
     <string name="main_gage_consumption">Inst. consumption</string>
     <string name="main_dismiss_charge_plot">Dismiss charge plot</string>
     <string name="main_button_reset_charge_plot">Reset charge plot</string>
+    <string name="main_button_trip_summary">Trip summary</string>
+    <string name="main_button_hide_speed">Hide speed</string>
+    <string name="main_button_show_speed">Show speed</string>
+
+    <!-- SummaryActivity -->
+    <string name="summary_title">Trip summary</string>
+    <string name="summary_button_reset_trip">Reset trip</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>

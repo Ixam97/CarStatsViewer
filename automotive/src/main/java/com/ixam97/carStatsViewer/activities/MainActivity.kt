@@ -98,6 +98,12 @@ class MainActivity : Activity() {
         DataHolder.chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
         main_consumption_plot.invalidate()
 
+        main_button_speed.text = if (DataHolder.speedPlotLine.Visible) {
+            getString(R.string.main_button_hide_speed)
+        } else {
+            getString(R.string.main_button_show_speed)
+        }
+
         enableUiUpdates()
     }
 
@@ -371,7 +377,11 @@ class MainActivity : Activity() {
         // main_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
 
         DataHolder.speedPlotLine.Visible = appPreferences.plotSpeed
-        main_button_speed.text = if (DataHolder.speedPlotLine.Visible) "Geschwindigkeit verbergen" else "Geschwindigkeit einblenden"
+        main_button_speed.text = if (DataHolder.speedPlotLine.Visible) {
+            getString(R.string.main_button_hide_speed)
+        } else {
+            getString(R.string.main_button_show_speed)
+        }
 
         if (appPreferences.consumptionPlotSecondaryColor) {
             DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)

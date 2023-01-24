@@ -25,6 +25,13 @@
     <string name="main_gage_consumption">Momentanverbrauch</string>
     <string name="main_dismiss_charge_plot">Ladekurve schließen</string>
     <string name="main_button_reset_charge_plot">Ladekurve zurücksetzen</string>
+    <string name="main_button_trip_summary">Tripzusammenfassung</string>
+    <string name="main_button_hide_speed">Geschwindigkeit verbergen</string>
+    <string name="main_button_show_speed">Geschwindigkeit anzeigen</string>
+
+    <!-- SummaryActivity -->
+    <string name="summary_title">Tripzusammenfassung</string>
+    <string name="summary_button_reset_trip">Trip zurücksetzen</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>

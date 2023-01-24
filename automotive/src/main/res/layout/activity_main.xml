@@ -233,13 +233,6 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginHorizontal="20dp"/>
 
-                <!--<com.ixam97.carStatsViewer.views.GageView
-                    android:id="@+id/main_speed_gage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_margin="20dp"/>-->
-
                 <com.ixam97.carStatsViewer.views.GageView
                     android:id="@+id/main_consumption_gage"
                     android:layout_width="wrap_content"
@@ -403,14 +396,14 @@
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_marginEnd="7.5dp"
-                android:text="Tripzusammenfassung"/>
+                android:text="@string/main_button_trip_summary"/>
             <Button
                 android:id="@+id/main_button_speed"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_marginStart="7.5dp"
-                android:text="Geschwindigkeit einblenden"/>
+                android:text=""/>
         </LinearLayout>
 
     </LinearLayout>
