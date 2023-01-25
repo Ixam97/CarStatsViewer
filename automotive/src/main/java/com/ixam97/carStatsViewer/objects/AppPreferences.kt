@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.objects
 import android.content.Context
 import android.content.SharedPreferences
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.plot.PlotDimension
 
 class AppPreferences(context: Context) {
 
@@ -92,6 +93,14 @@ class AppPreferences(context: Context) {
             setPreference(AppPreference.CHARGE_PLOT_SECONDARY_COLOR, value)
         }
 
+    var chargePlotDimension: PlotDimension
+        get() {
+            return getPreference(AppPreference.CHARGE_PLOT_DIMENSION) as PlotDimension
+        }
+        set(value) {
+            setPreference(AppPreference.CHARGE_PLOT_DIMENSION, value)
+        }
+
 
     private val keyMap = hashMapOf<AppPreference, String>(
         AppPreference.DEBUG to context.getString(R.string.preferences_debug_key),
@@ -104,7 +113,8 @@ class AppPreferences(context: Context) {
         AppPreference.CONSUMPTION_PLOT_SINGLE_MOTOR to context.getString(R.string.preferences_consumption_plot_single_motor_key),
         AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR to context.getString(R.string.preference_consumption_plot_secondary_color_key),
         AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to context.getString(R.string.preference_consumption_plot_visible_gages_key),
-        AppPreference.CHARGE_PLOT_SECONDARY_COLOR to context.getString(R.string.preference_charge_plot_secondary_color_key)
+        AppPreference.CHARGE_PLOT_SECONDARY_COLOR to context.getString(R.string.preference_charge_plot_secondary_color_key),
+        AppPreference.CHARGE_PLOT_DIMENSION to context.getString(R.string.preference_charge_plot_dimension_key)
     )
 
     private var typeMap = mapOf<AppPreference, Any>( // Also contains default values
@@ -118,7 +128,8 @@ class AppPreferences(context: Context) {
         AppPreference.CONSUMPTION_PLOT_SINGLE_MOTOR to false,
         AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR to false,
         AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to true,
-        AppPreference.CHARGE_PLOT_SECONDARY_COLOR to false
+        AppPreference.CHARGE_PLOT_SECONDARY_COLOR to false,
+        AppPreference.CHARGE_PLOT_DIMENSION to PlotDimension.TIME
     )
 
     private fun getPreference(appPreference: AppPreference): Any {
@@ -128,6 +139,9 @@ class AppPreferences(context: Context) {
             }
             if (typeMap[appPreference] is Int) {
                 return sharedPref.getInt(keyMap[appPreference], typeMap[appPreference] as Int)
+            }
+            if (typeMap[appPreference] is PlotDimension) {
+                return PlotDimension.valueOf(sharedPref.getString(keyMap[appPreference], (typeMap[appPreference] as PlotDimension).name) ?: PlotDimension.TIME.name)
             }
         }
         throw java.lang.Exception("AppPreferences.setPreference: Unknown Preference!")
@@ -141,6 +155,10 @@ class AppPreferences(context: Context) {
             }
             if (typeMap[appPreference] is Int && value is Int) {
                 sharedPref.edit().putInt(keyMap[appPreference], value).apply()
+                return
+            }
+            if (typeMap[appPreference] is PlotDimension && value is PlotDimension) {
+                sharedPref.edit().putString(keyMap[appPreference], value.name).apply()
                 return
             }
             throw java.lang.Exception("AppPreferences.setPreference: Unsupported type!")
@@ -161,4 +179,5 @@ enum class AppPreference {
     CONSUMPTION_PLOT_SECONDARY_COLOR,
     CONSUMPTION_PLOT_VISIBLE_GAGES,
     CHARGE_PLOT_SECONDARY_COLOR,
+    CHARGE_PLOT_DIMENSION
 }

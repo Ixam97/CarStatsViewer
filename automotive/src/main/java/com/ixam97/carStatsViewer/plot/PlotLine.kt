@@ -154,7 +154,7 @@ class PlotLine(
             else -> {
                 var maxByData = dataPoints.maxOf { it.bySecondaryDimension(secondaryDimension) }
 
-                if (!applyRange) maxByData
+                if (!applyRange) return maxByData
 
                 if (baseConfiguration.Range.minPositive != null) maxByData = maxByData.coerceAtLeast(baseConfiguration.Range.minPositive)
                 if (baseConfiguration.Range.maxPositive != null) maxByData.coerceAtMost(baseConfiguration.Range.maxPositive)
@@ -182,7 +182,7 @@ class PlotLine(
             else -> {
                 var minByData = dataPoints.minOf { it.bySecondaryDimension(secondaryDimension) }
 
-                if (!applyRange) minByData
+                if (!applyRange) return minByData
 
                 if (baseConfiguration.Range.minNegative != null) minByData = minByData.coerceAtMost(baseConfiguration.Range.minNegative)
                 if (baseConfiguration.Range.maxNegative != null) minByData.coerceAtLeast(baseConfiguration.Range.maxNegative)

@@ -22,7 +22,6 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import com.ixam97.carStatsViewer.plot.*
 import com.ixam97.carStatsViewer.views.PlotView
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.system.exitProcess
 
 class SettingsActivity : Activity() {
@@ -35,7 +34,7 @@ class SettingsActivity : Activity() {
 
     var chargePlotLine = PlotLine(
         PlotLineConfiguration(
-            PlotRange(0f, 20f, 0f, 160f, 20f, 0f),
+            PlotRange(0f, 20f, 0f, 160f, 20f),
             PlotLineLabelFormat.NUMBER,
             PlotLabelPosition.LEFT,
             PlotHighlightMethod.AVG_BY_TIME,
@@ -43,14 +42,14 @@ class SettingsActivity : Activity() {
         ),
         hashMapOf(
             PlotSecondaryDimension.TIME to PlotLineConfiguration(
-                PlotRange(),
+                PlotRange(backgroundZero = 0f),
                 PlotLineLabelFormat.TIME,
                 PlotLabelPosition.RIGHT,
                 PlotHighlightMethod.MAX,
                 "Time"
             ),
             PlotSecondaryDimension.STATE_OF_CHARGE to PlotLineConfiguration(
-                PlotRange(0f, 100f),
+                PlotRange(0f, 100f, backgroundZero = 0f),
                 PlotLineLabelFormat.PERCENTAGE,
                 PlotLabelPosition.RIGHT,
                 PlotHighlightMethod.MAX,
@@ -241,6 +240,11 @@ class SettingsActivity : Activity() {
             DataHolder.chargeCurves.size)
 
         chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
+        chargePlotLine.secondaryPlotPaint = when {
+            appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+        }
+
         chargePlotLine.reset()
         if (DataHolder.chargeCurves.isNotEmpty()) {
             chargePlotLine.addDataPoints(DataHolder.chargeCurves[DataHolder.chargeCurves.size - 1].chargePlotLine)
@@ -257,12 +261,18 @@ class SettingsActivity : Activity() {
         }
         settings_charge_plot_view.addPlotLine(chargePlotLine)
 
-        settings_charge_plot_view.dimension = PlotDimension.TIME
+        settings_charge_plot_view.dimension = appPreferences.chargePlotDimension
         settings_charge_plot_view.dimensionRestriction = null
         settings_charge_plot_view.dimensionSmoothingPercentage = 0.01f
+        settings_charge_plot_view.secondaryDimension = when (appPreferences.chargePlotDimension) {
+            PlotDimension.TIME -> PlotSecondaryDimension.STATE_OF_CHARGE
+            else -> null
+        }
+
         settings_charge_plot_view.invalidate()
 
         settings_charge_plot_switch_secondary_color.isChecked = appPreferences.chargePlotSecondaryColor
+        settings_charge_plot_switch_state_of_charge_dimension.isChecked = appPreferences.chargePlotDimension == PlotDimension.STATE_OF_CHARGE
 
         settings_charge_plot_button_back.setOnClickListener {
             gotoMaster(settings_charge_plot_layout)
@@ -289,9 +299,24 @@ class SettingsActivity : Activity() {
 
         settings_charge_plot_switch_secondary_color.setOnClickListener {
             appPreferences.chargePlotSecondaryColor = settings_charge_plot_switch_secondary_color.isChecked
-            DataHolder.chargePlotLine.secondaryPlotPaint = when {
+            val plotPaint = when {
                 appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-                else ->PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+                else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+            }
+            chargePlotLine.secondaryPlotPaint = plotPaint
+            DataHolder.chargePlotLine.secondaryPlotPaint = plotPaint
+            settings_charge_plot_view.invalidate()
+        }
+
+        settings_charge_plot_switch_state_of_charge_dimension.setOnClickListener {
+            appPreferences.chargePlotDimension = when (settings_charge_plot_switch_state_of_charge_dimension.isChecked) {
+                true -> PlotDimension.STATE_OF_CHARGE
+                else -> PlotDimension.TIME
+            }
+            settings_charge_plot_view.dimension = appPreferences.chargePlotDimension
+            settings_charge_plot_view.secondaryDimension = when (appPreferences.chargePlotDimension) {
+                PlotDimension.TIME -> PlotSecondaryDimension.STATE_OF_CHARGE
+                else -> null
             }
             settings_charge_plot_view.invalidate()
         }
