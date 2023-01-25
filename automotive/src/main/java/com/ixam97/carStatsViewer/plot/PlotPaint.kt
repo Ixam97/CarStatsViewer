@@ -13,7 +13,13 @@ class PlotPaint(
     val HighlightLabelLine: Paint
 ) {
     companion object {
+        private val paintCache : HashMap<Int, HashMap<Float, PlotPaint>> = HashMap()
+
         fun byColor(color : Int, textSize: Float): PlotPaint {
+
+            val cached = paintCache[color]?.get(textSize)
+            if (cached != null) return cached
+
             val basePaint = basePaint(textSize);
 
             val plotPaint = Paint(basePaint)
@@ -40,7 +46,13 @@ class PlotPaint(
             highlightLabelLinePaint.strokeWidth = 3f
             highlightLabelLinePaint.pathEffect = DashPathEffect(floatArrayOf(5f, 10f), 0f)
 
-            return PlotPaint(plotPaint, plotSecondaryPaint, plotBackgroundPaint, plotBackgroundSecondaryPaint, highlightLabelPaint, highlightLabelLinePaint)
+            val paint = PlotPaint(plotPaint, plotSecondaryPaint, plotBackgroundPaint, plotBackgroundSecondaryPaint, highlightLabelPaint, highlightLabelLinePaint)
+
+            if (paintCache[color] == null) paintCache[color] = HashMap()
+
+            paintCache[color]?.set(textSize, paint)
+
+            return paint
         }
 
         fun basePaint(textSize: Float): Paint {

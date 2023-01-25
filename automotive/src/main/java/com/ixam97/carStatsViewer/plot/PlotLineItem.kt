@@ -1,27 +1,42 @@
 package com.ixam97.carStatsViewer.plot
 
+import kotlin.math.roundToInt
+
 class PlotLineItem (
     val Value: Float,
 
     val Time: Long,
     val Distance: Float,
+    var StateOfCharge: Float,
 
     val TimeDelta: Long?,
     val DistanceDelta: Float?,
+    var StateOfChargeDelta: Float?,
 
     var Marker: PlotLineMarkerType?
 ){
-    fun group(index: Int, dimension: PlotDimension, dimensionSmoothing: Long?): Long {
+    fun group(index: Int, dimension: PlotDimension, dimensionSmoothing: Float?): Float {
         val value = when(dimension) {
-            PlotDimension.INDEX -> index.toLong()
-            PlotDimension.DISTANCE -> Distance.toLong()
-            PlotDimension.TIME -> Time
+            PlotDimension.INDEX -> index.toFloat()
+            PlotDimension.DISTANCE -> Distance
+            PlotDimension.TIME -> Time.toFloat()
+            PlotDimension.STATE_OF_CHARGE -> StateOfCharge
         }
 
         return when (dimensionSmoothing) {
             null -> value
-            0L -> value
-            else -> value / dimensionSmoothing
+            0f -> value
+            else -> (value / dimensionSmoothing).roundToInt().toFloat()
+        }
+    }
+
+    fun bySecondaryDimension(secondaryDimension: PlotSecondaryDimension? = null): Float {
+        return when (secondaryDimension) {
+            PlotSecondaryDimension.SPEED -> (DistanceDelta ?: 0f) / ((TimeDelta ?: 1L) / 1_000_000_000f) * 3.6f
+            PlotSecondaryDimension.DISTANCE -> Distance
+            PlotSecondaryDimension.TIME -> Time.toFloat()
+            PlotSecondaryDimension.STATE_OF_CHARGE -> StateOfCharge ?: 0f
+            else -> Value
         }
     }
 
