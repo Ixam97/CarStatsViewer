@@ -369,26 +369,28 @@ class DataCollector : Service() {
     }
 
     private fun portUpdater(connected: Boolean) {
-        DataHolder.chargePortConnected = connected
+        if (connected != DataHolder.chargePortConnected) {
+            DataHolder.chargePortConnected = connected
 
-        if (connected) {
-            DataHolder.stateOfChargePlotLine.reset()
-            DataHolder.chargePlotLine.reset()
-            chargeStartTimeNanos = System.nanoTime()
-        }
+            if (connected) {
+                DataHolder.stateOfChargePlotLine.reset()
+                DataHolder.chargePlotLine.reset()
+                chargeStartTimeNanos = System.nanoTime()
+            }
 
-        if (!connected && chargeStartTimeNanos > 0 && DataHolder.chargedEnergy > 0) {
-            DataHolder.chargeCurves.add(
-                ChargeCurve(
-                    DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME, null),
-                    DataHolder.stateOfChargePlotLine.getDataPoints(PlotDimension.TIME, null),
-                    chargeStartTimeNanos,
-                    System.nanoTime(),
-                    DataHolder.chargedEnergy,
-                    0f, 0f
+            if (!connected && chargeStartTimeNanos > 0 && DataHolder.chargedEnergy > 0) {
+                DataHolder.chargeCurves.add(
+                    ChargeCurve(
+                        DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME, null),
+                        DataHolder.stateOfChargePlotLine.getDataPoints(PlotDimension.TIME, null),
+                        chargeStartTimeNanos,
+                        System.nanoTime(),
+                        DataHolder.chargedEnergy,
+                        0f, 0f
+                    )
                 )
-            )
-            sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+                sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+            }
         }
         // } else if (!connected && DataHolder.chargeCurves.isNotEmpty()) {
         //     DataHolder.chargePlotLine.reset()
