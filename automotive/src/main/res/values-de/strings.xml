@@ -47,6 +47,7 @@
     <string name="settings_charge_plot">  Ladeansicht</string>
     <string name="settings_consumption_plot_single_motor">Single Motor Modell</string>
     <string name="settings_plot_secondary_color">Grau als sekundäre Diagrammfarbe</string>
+    <string name="settings_plot_state_of_charge_dimension">Experimentelle Ladezustand Achse</string>
     <string name="settings_consumption_plot_visible_gages">Zeige Leistungsbalken</string>
     <string name="settings_consumption_plot_speed">Zeige Geschwindigkeitsverlauf</string>
     <string name="settings_sub_title_settings">Einstellungen:</string>

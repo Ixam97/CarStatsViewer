@@ -145,10 +145,10 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         borderLinePaint = Paint(basePaint)
         borderLinePaint.color = Color.GRAY
 
-        labelPaint = Paint(labelLinePaint)
+        labelPaint = Paint(borderLinePaint)
         labelPaint.style = Paint.Style.FILL
 
-        baseLinePaint = Paint(labelLinePaint)
+        baseLinePaint = Paint(borderLinePaint)
         baseLinePaint.color = Color.LTGRAY
 
         backgroundPaint = Paint(basePaint)
@@ -189,15 +189,15 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 )
 
                 val canvas = Canvas(bitmap)
-                drawable.setBounds(0, 0, width, height)
+                drawable.setBounds(0, 0, canvas.width, canvas.height)
                 drawable.draw(canvas)
 
-                val factor = textSize / width
+                val factor = textSize / canvas.width
 
                 return Bitmap.createScaledBitmap(
                     bitmap,
-                    (width * factor).roundToInt(),
-                    (height * factor).roundToInt(),
+                    (canvas.width * factor).roundToInt(),
+                    (canvas.height * factor).roundToInt(),
                     true
                 )
             }

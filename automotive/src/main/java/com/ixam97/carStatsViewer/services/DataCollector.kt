@@ -405,12 +405,15 @@ class DataCollector : Service() {
 
         val timeDifference = timeDifference(value, 10_000, timestamp)
         if (timeDifference != null) {
+            val energy = (DataHolder.lastPowermW / 1_000) * (timeDifference.toFloat() / (1_000 * 60 * 60))
             if (DataHolder.currentGear != VehicleGear.GEAR_PARK && !DataHolder.chargePortConnected) {
-                DataHolder.usedEnergy += (DataHolder.lastPowermW / 1_000) * (timeDifference.toFloat() / (1_000 * 60 * 60))
+                DataHolder.usedEnergy += energy
                 DataHolder.averageConsumption = when {
                     DataHolder.traveledDistance <= 0 -> 0F
                     else -> DataHolder.usedEnergy / (DataHolder.traveledDistance / 1_000)
                 }
+            } else if (DataHolder.chargePortConnected) {
+                DataHolder.chargedEnergy += -energy
             }
 
             if (emulatorMode) {
