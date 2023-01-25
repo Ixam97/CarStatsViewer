@@ -270,7 +270,12 @@ class MainActivity : Activity() {
     }
 
     private fun updateGages() {
-        main_power_gage.setValue(DataHolder.currentPowerSmooth / 1_000_000)
+        if ((DataHolder.currentPowerSmooth / 1_000_000).absoluteValue > 10 && true) { // Add Setting!
+            val newValue = (DataHolder.currentPowerSmooth / 1_000_000).toInt()
+            main_power_gage.setValue(newValue)
+        } else {
+            main_power_gage.setValue(DataHolder.currentPowerSmooth / 1_000_000)
+        }
         main_charge_gage.setValue(-DataHolder.currentPowerSmooth / 1_000_000)
         main_SoC_gage.setValue((100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity).roundToInt())
 
