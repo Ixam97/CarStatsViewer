@@ -7,4 +7,4 @@ class PlotPoint(
 class PlotLineItemPoint(
     val x: Float,
     val y: PlotLineItem,
-    val group: Long)
+    val group: Float)

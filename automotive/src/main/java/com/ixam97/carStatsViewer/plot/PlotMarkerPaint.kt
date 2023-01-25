@@ -15,10 +15,11 @@ class PlotMarkerPaint(
 
             val linePaint = Paint(basePaint)
             linePaint.strokeWidth = 2f
-            linePaint.color = color
+            linePaint.color = Color.argb(64, Color.red(color), Color.green(color), Color.blue(color))
             linePaint.style = Paint.Style.STROKE
 
             val markerPaint = Paint(linePaint)
+            markerPaint.color = color
             markerPaint.style = Paint.Style.FILL_AND_STROKE
 
             val labelPaint = Paint(basePaint)

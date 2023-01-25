@@ -33,24 +33,30 @@ class SettingsActivity : Activity() {
     private lateinit var disabledTint: PorterDuffColorFilter
     private lateinit var enabledTint: PorterDuffColorFilter
 
-    private var chargePlotLine = PlotLine(
-        PlotRange(0f, 20f, 0f, 160f, 20f),
-        1f,
-        "%.0f",
-        "Ø %.0f",
-        "kW",
-        PlotLabelPosition.LEFT,
-        PlotHighlightMethod.AVG_BY_TIME
-    )
-
-    private var stateOfChargePlotLine = PlotLine(
-        PlotRange(0f, 100f, 0f, 100f, 20f, 0f),
-        1f,
-        "%.0f",
-        "%.0f %%",
-        "% SoC",
-        PlotLabelPosition.RIGHT,
-        PlotHighlightMethod.LAST
+    var chargePlotLine = PlotLine(
+        PlotLineConfiguration(
+            PlotRange(0f, 20f, 0f, 160f, 20f, 0f),
+            PlotLineLabelFormat.NUMBER,
+            PlotLabelPosition.LEFT,
+            PlotHighlightMethod.AVG_BY_TIME,
+            "kW"
+        ),
+        hashMapOf(
+            PlotSecondaryDimension.TIME to PlotLineConfiguration(
+                PlotRange(),
+                PlotLineLabelFormat.TIME,
+                PlotLabelPosition.RIGHT,
+                PlotHighlightMethod.MAX,
+                "Time"
+            ),
+            PlotSecondaryDimension.STATE_OF_CHARGE to PlotLineConfiguration(
+                PlotRange(0f, 100f),
+                PlotLineLabelFormat.PERCENTAGE,
+                PlotLabelPosition.RIGHT,
+                PlotHighlightMethod.MAX,
+                "% SoC"
+            )
+        )
     )
 
     private val broadcastReceiver = object : BroadcastReceiver() {
@@ -179,7 +185,6 @@ class SettingsActivity : Activity() {
     private fun setupSettingsConsumptionPlot() {
 
         settings_consumption_plot_view.addPlotLine(DataHolder.consumptionPlotLine)
-        settings_consumption_plot_view.addPlotLine(DataHolder.speedPlotLine)
         settings_consumption_plot_view.dimension
 
         settings_consumption_plot_view.dimension = PlotDimension.DISTANCE
@@ -204,17 +209,19 @@ class SettingsActivity : Activity() {
 
         settings_consumption_plot_switch_secondary_color.setOnClickListener {
             appPreferences.consumptionPlotSecondaryColor = settings_consumption_plot_switch_secondary_color.isChecked
-            if (appPreferences.consumptionPlotSecondaryColor) {
-                DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-            } else {
-                DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+            DataHolder.consumptionPlotLine.secondaryPlotPaint = when {
+                appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+                else ->PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
             }
             settings_consumption_plot_view.invalidate()
         }
 
         settings_consumption_plot_speed_switch.setOnClickListener {
             appPreferences.plotSpeed = settings_consumption_plot_speed_switch.isChecked
-            DataHolder.speedPlotLine.Visible = settings_consumption_plot_speed_switch.isChecked
+            settings_consumption_plot_view.secondaryDimension = when (settings_consumption_plot_speed_switch.isChecked) {
+                true -> PlotSecondaryDimension.SPEED
+                else -> null
+            }
             settings_consumption_plot_view.invalidate()
         }
 
@@ -232,11 +239,10 @@ class SettingsActivity : Activity() {
             getString(R.string.settings_sub_title_last_charge_plot),
             DataHolder.chargeCurves.size,
             DataHolder.chargeCurves.size)
+
         chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
         chargePlotLine.reset()
-        stateOfChargePlotLine.reset()
         if (DataHolder.chargeCurves.isNotEmpty()) {
-            stateOfChargePlotLine.addDataPoints(DataHolder.chargeCurves[DataHolder.chargeCurves.size - 1].stateOfChargePlotLine)
             chargePlotLine.addDataPoints(DataHolder.chargeCurves[DataHolder.chargeCurves.size - 1].chargePlotLine)
             settings_charge_plot_button_next.isEnabled = false
             settings_charge_plot_button_next.colorFilter = disabledTint
@@ -250,7 +256,6 @@ class SettingsActivity : Activity() {
             settings_charge_plot_button_prev.colorFilter = disabledTint
         }
         settings_charge_plot_view.addPlotLine(chargePlotLine)
-        settings_charge_plot_view.addPlotLine(stateOfChargePlotLine)
 
         settings_charge_plot_view.dimension = PlotDimension.TIME
         settings_charge_plot_view.dimensionRestriction = null
@@ -258,7 +263,6 @@ class SettingsActivity : Activity() {
         settings_charge_plot_view.invalidate()
 
         settings_charge_plot_switch_secondary_color.isChecked = appPreferences.chargePlotSecondaryColor
-        if (appPreferences.chargePlotSecondaryColor) stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
 
         settings_charge_plot_button_back.setOnClickListener {
             gotoMaster(settings_charge_plot_layout)
@@ -285,12 +289,9 @@ class SettingsActivity : Activity() {
 
         settings_charge_plot_switch_secondary_color.setOnClickListener {
             appPreferences.chargePlotSecondaryColor = settings_charge_plot_switch_secondary_color.isChecked
-            if (appPreferences.chargePlotSecondaryColor) {
-                DataHolder.stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-                stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-            } else {
-                DataHolder.stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
-                stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+            DataHolder.chargePlotLine.secondaryPlotPaint = when {
+                appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+                else ->PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
             }
             settings_charge_plot_view.invalidate()
         }
@@ -399,9 +400,6 @@ class SettingsActivity : Activity() {
 
         chargePlotLine.reset()
         chargePlotLine.addDataPoints(DataHolder.chargeCurves[progress].chargePlotLine)
-        stateOfChargePlotLine.reset()
-        stateOfChargePlotLine.addDataPoints(DataHolder.chargeCurves[progress].stateOfChargePlotLine)
         settings_charge_plot_view.invalidate()
-
     }
 }
