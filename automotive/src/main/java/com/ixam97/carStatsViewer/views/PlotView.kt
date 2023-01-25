@@ -279,6 +279,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 dimensionRestriction = (((lastRestriction!!.toFloat() * (lastSpanX / spanX)).toLong()/restrictionInterval) * restrictionInterval)
                     .coerceAtMost(touchDimensionMax + (restrictionInterval - touchDimensionMax % restrictionInterval))
                     .coerceAtLeast(restrictionInterval)
+                dimensionShiftTouchInterval = dimensionRestriction!! / dimensionRestrictionTouchInterval!! * 1_000L
             }
 
             this@PlotView.invalidate()
@@ -523,7 +524,10 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     private fun timeLabel(time: Long): String {
-        return String.format("%02d:%02d", TimeUnit.MINUTES.convert(time, TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(time, TimeUnit.NANOSECONDS) % 60)
+        return String.format("%02d:%02dh",
+            TimeUnit.NANOSECONDS.toHours(time),
+            TimeUnit.NANOSECONDS.toMinutes(time) % TimeUnit.HOURS.toMinutes(1)
+        )
     }
 
     private fun drawMarkerLabel(canvas: Canvas, markerTimes: HashMap<PlotMarkerType, Long>, xMin: Float, xCurrent: Float): Float {
@@ -670,7 +674,10 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     rightZero < 1000 -> String.format("%d m", (rightZero - (rightZero % 100)).toInt())
                     else -> String.format("%d km", (rightZero / 1000).toInt())
                 }
-                PlotDimension.TIME -> String.format("%02d:%02d", TimeUnit.MINUTES.convert(leftZero.toLong(), TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(leftZero.toLong(), TimeUnit.NANOSECONDS) % 60)
+                PlotDimension.TIME -> {
+                    if (TimeUnit.NANOSECONDS.toHours(leftZero.toLong()) < 1)  String.format("%02d:%02dm", TimeUnit.MINUTES.convert(leftZero.toLong(), TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(leftZero.toLong(), TimeUnit.NANOSECONDS) % 60)
+                    else timeLabel(leftZero.toLong())
+                }
             }
 
             val bounds = Rect()
