@@ -2,6 +2,8 @@ package com.ixam97.carStatsViewer.activities
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -95,15 +97,17 @@ class SummaryActivity: Activity() {
                 DataHolder.resetDataHolder()
                 sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
             }
-            .setNeutralButton(R.string.dialog_reset_no_save) { _, _ ->
+            .setNegativeButton(R.string.dialog_reset_no_save) { _, _ ->
                 DataHolder.resetDataHolder()
                 sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
             }
-            .setNegativeButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
+            .setNeutralButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
                 dialog.cancel()
             }
         val alert = builder.create()
         alert.show()
+        alert.getButton(DialogInterface.BUTTON_NEGATIVE).setBackgroundColor(getColor(R.color.bad_red))
+
     }
 
 }

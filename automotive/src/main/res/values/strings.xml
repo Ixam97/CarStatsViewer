@@ -85,8 +85,8 @@
     <string name="quit_dialog_message">Log will be copied to clipboard.</string>
     <string name="dialog_reset_title">Reset trip data?</string>
     <string name="dialog_reset_message">The current trip data will be reset to zero. Do you want to save the trip?</string>
-    <string name="dialog_reset_do_save">Reset and save trip</string>
-    <string name="dialog_reset_no_save">Reset without save</string>
+    <string name="dialog_reset_do_save">Save</string>
+    <string name="dialog_reset_no_save">"Don't save"</string>
     <string name="dialog_reset_cancel">Cancel</string>
     <string name="dialog_confirm">Yes</string>
     <string name="dialog_dismiss">No</string>

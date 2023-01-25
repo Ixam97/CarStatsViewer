@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_settings.*
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PorterDuff
@@ -147,6 +148,7 @@ class SettingsActivity : Activity() {
                 }
             val alert = builder.create()
             alert.show()
+            alert.getButton(DialogInterface.BUTTON_POSITIVE).setBackgroundColor(getColor(R.color.bad_red))
         }
 
         settings_switch_notifications.setOnClickListener {

@@ -12,4 +12,5 @@
     <color name="charge_plot_color">#2693ff</color>
     <color name="charge_marker">#2693ff</color>
     <color name="park_marker">@color/disabled_tint</color>
+    <color name="bad_red">#5E1515</color>
 </resources>
