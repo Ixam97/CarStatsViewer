@@ -49,6 +49,8 @@
     <string name="main_dialog_reset_message">All saved trip data will be reset to zero.</string>
     <string name="main_gage_speed">Speed</string>
     <string name="main_gage_power">Power</string>
+    <string name="main_gage_charging_power">Charging power</string>
+    <string name="main_gage_SoC">State of charge</string>
     <string name="main_gage_consumption">Inst. consumption</string>
     <string name="main_dismiss_charge_plot">Dismiss charge plot</string>
     <string name="main_button_reset_charge_plot">Reset charge plot</string>

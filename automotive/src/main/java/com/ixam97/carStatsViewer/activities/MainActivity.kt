@@ -422,14 +422,14 @@ class MainActivity : Activity() {
         main_consumption_gage.maxValue = 60f
         main_consumption_gage.setValue(0f)
 
-        main_charge_gage.gageName = "Charge power"
+        main_charge_gage.gageName = getString(R.string.main_gage_charging_power)
         main_charge_gage.gageUnit = "kW"
         main_charge_gage.primaryColor = getColor(R.color.charge_plot_color)
         main_charge_gage.minValue = 0f
         main_charge_gage.maxValue = 160f
         main_charge_gage.setValue(0f)
 
-        main_SoC_gage.gageName = "State of charge"
+        main_SoC_gage.gageName = getString(R.string.main_gage_SoC)
         main_SoC_gage.gageUnit = "%"
         main_SoC_gage.primaryColor = getColor(R.color.charge_plot_color)
         main_SoC_gage.minValue = 0f

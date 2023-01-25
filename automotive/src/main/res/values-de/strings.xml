@@ -22,6 +22,8 @@
     <string name="main_dialog_reset_message">Alle gespeicherten Fahrdaten werden auf Null zurückgesetzt</string>
     <string name="main_gage_speed">Geschwindigkeit</string>
     <string name="main_gage_power">Leistung</string>
+    <string name="main_gage_charging_power">Ladeleistung</string>
+    <string name="main_gage_SoC">Ladezustand</string>
     <string name="main_gage_consumption">Momentanverbrauch</string>
     <string name="main_dismiss_charge_plot">Ladekurve schließen</string>
     <string name="main_button_reset_charge_plot">Ladekurve zurücksetzen</string>
