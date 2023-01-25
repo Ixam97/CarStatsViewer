@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name" translatable="false">Car Stats Viewer (Dev)</string>
+    <string name="app_name" translatable="false">Car Stats Viewer</string>
 
     <!-- Preferences -->
-    <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer_dev.preferences</string>
+    <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer.preferences</string>
     <string name="preferences_notifications_key" translatable="false">notifications</string>
     <string name="preferences_consumption_unit_key" translatable="false">consumption_unit</string>
     <string name="preferences_debug_key" translatable="false">debug</string>
@@ -21,11 +21,11 @@
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
 
     <!-- Broadcast -->
-    <string name="ui_update_plot_broadcast" translatable="false">ui_update_plot_broadcast</string>
-    <string name="ui_update_gages_broadcast" translatable="false">ui_update_gages_broadcast</string>
-    <string name="gear_update_broadcast" translatable="false">gear_update_broadcast</string>
-    <string name="wake_lock_broadcast" translatable="false">wake_lock_broadcast</string>
-    <string name="save_trip_data_broadcast" translatable="false">save_trip_data_broadcast</string>
+    <string name="ui_update_plot_broadcast" translatable="false">com.ixam97.carStatsViewer.ui_update_plot_broadcast</string>
+    <string name="ui_update_gages_broadcast" translatable="false">com.ixam97.carStatsViewer.ui_update_gages_broadcast</string>
+    <string name="gear_update_broadcast" translatable="false">com.ixam97.carStatsViewer.gear_update_broadcast</string>
+    <string name="wake_lock_broadcast" translatable="false">com.ixam97.carStatsViewer.wake_lock_broadcast</string>
+    <string name="save_trip_data_broadcast" translatable="false">com.ixam97.carStatsViewer.save_trip_data_broadcast</string>
 
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Permissions required for use</string>
