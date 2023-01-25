@@ -53,7 +53,7 @@
         <Button
             android:id="@+id/summary_button_show_consumption_container"
             android:layout_width="0dp"
-            android:layout_height="101dp"
+            android:layout_height="80dp"
             android:layout_weight="1"
             android:textSize="35sp"
             android:background="@color/polestar_orange"
@@ -61,7 +61,7 @@
         <Button
             android:id="@+id/summary_button_show_charge_container"
             android:layout_width="0dp"
-            android:layout_height="101dp"
+            android:layout_height="80dp"
             android:layout_weight="1"
             android:textSize="35sp"
             android:text="Ladevorgänge"/>
@@ -123,8 +123,37 @@
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
-</LinearLayout>
+    </LinearLayout>
 </ScrollView>
 
+    <ScrollView
+        android:id="@+id/summary_charge_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:orientation="vertical">
+
+            <com.ixam97.carStatsViewer.views.PlotView
+                android:id="@+id/summary_charge_plot"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                style="@style/menu_row_top_text"
+                android:text="0 kWh"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="Geladene Energie"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

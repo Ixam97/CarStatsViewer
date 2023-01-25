@@ -2,16 +2,14 @@ package com.ixam97.carStatsViewer.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
-import androidx.core.graphics.drawable.DrawableCompat
-import com.ixam97.carStatsViewer.InAppLogger
+import android.view.View
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.objects.DataHolder
 import com.ixam97.carStatsViewer.plot.PlotDimension
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_summary.*
 
 class SummaryActivity: Activity() {
@@ -46,24 +44,46 @@ class SummaryActivity: Activity() {
         }
 
         setupConsumptionLayout()
+        setupChargeLayout()
     }
 
     private fun setupConsumptionLayout() {
         summary_consumption_plot.dimension = PlotDimension.DISTANCE
         summary_consumption_plot.dimensionRestriction = 10_001L
         summary_consumption_plot.dimensionSmoothingPercentage = 0.02f
+
+        summary_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
+        summary_consumption_plot.addPlotLine(DataHolder.speedPlotLine)
     }
 
     private fun setupChargeLayout() {
+        summary_charge_plot.dimension = PlotDimension.TIME
+        summary_charge_plot.dimensionRestriction = null
+        summary_charge_plot.dimensionSmoothingPercentage = 0.01f
 
+        summary_charge_plot.addPlotLine(DataHolder.chargePlotLine)
+        summary_charge_plot.addPlotLine(DataHolder.stateOfChargePlotLine)
     }
 
     private fun switchToConsumptionLayout() {
+        summary_consumption_container.visibility = View.VISIBLE
+        summary_charge_container.visibility = View.GONE
+        summary_consumption_container.scrollTo(0,0)
+        summary_button_show_charge_container.background = getDrawable(R.color.button_background_inactive)
+        summary_button_show_charge_container.setTextColor(getColor(R.color.button_text_inactive))
+        summary_button_show_consumption_container.setBackgroundColor(primaryColor!!)
+        summary_button_show_consumption_container.setTextColor(Color.WHITE)
 
     }
 
     private fun switchToChargeLayout() {
-
+        summary_consumption_container.visibility = View.GONE
+        summary_charge_container.visibility = View.VISIBLE
+        summary_charge_container.scrollTo(0,0)
+        summary_button_show_consumption_container.background = getDrawable(R.color.button_background_inactive)
+        summary_button_show_consumption_container.setTextColor(getColor(R.color.button_text_inactive))
+        summary_button_show_charge_container.setBackgroundColor(primaryColor!!)
+        summary_button_show_charge_container.setTextColor(Color.WHITE)
     }
 
     private fun createResetDialog() {
