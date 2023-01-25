@@ -95,6 +95,7 @@ class MainActivity : Activity() {
 
         main_checkbox_speed.isChecked = appPreferences.plotSpeed
         DataHolder.speedPlotLine.Visible = appPreferences.plotSpeed
+        DataHolder.consumptionPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.polestar_orange), PlotView.textSize)
         DataHolder.chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
         main_consumption_plot.invalidate()
 
@@ -412,12 +413,14 @@ class MainActivity : Activity() {
 
         main_power_gage.gageName = getString(R.string.main_gage_power)
         main_power_gage.gageUnit = "kW"
+        main_power_gage.primaryColor = getColor(R.color.polestar_orange)
         main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
         main_power_gage.minValue = if (appPreferences.consumptionPlotSingleMotor) -100f else -150f
         main_power_gage.setValue(0f)
 
         main_consumption_gage.gageName = getString(R.string.main_gage_consumption)
         main_consumption_gage.gageUnit = "kWh/100km"
+        main_consumption_gage.primaryColor = getColor(R.color.polestar_orange)
         main_consumption_gage.minValue = -30f
         main_consumption_gage.maxValue = 60f
         main_consumption_gage.setValue(0f)
@@ -466,12 +469,12 @@ class MainActivity : Activity() {
                 Toast.makeText(this, "Power sign: ${if(emulatorPowerSign<0) "-" else "+"}", Toast.LENGTH_SHORT).show()
             }
         }
-
+/*
         main_button_reset.setOnClickListener {
 
             val builder = AlertDialog.Builder(this@MainActivity)
-            builder.setTitle(getString(R.string.main_dialog_reset_title))
-                .setMessage(getString(R.string.main_dialog_reset_message))
+            builder.setTitle(getString(R.string.dialog_reset_title))
+                .setMessage(getString(R.string.dialog_reset_message))
                 .setCancelable(true)
                 .setPositiveButton(getString(R.string.dialog_confirm)) { dialog, id ->
                     resetStats()
@@ -485,6 +488,8 @@ class MainActivity : Activity() {
             val alert = builder.create()
             alert.show()
         }
+
+ */
 
         main_button_settings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))

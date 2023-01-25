@@ -18,8 +18,8 @@
     <string name="main_button_reset_stats">Statistiken zurücksetzen</string>
     <string name="main_consumption">Verbrauch über die letzten 3 km:</string>
     <string name="main_checkbox_speed">Geschwindigkeit</string>
-    <string name="main_dialog_reset_title">Statistik zurücksetzen?</string>
-    <string name="main_dialog_reset_message">Alle gespeicherten Fahrdaten werden auf Null zurückgesetzt</string>
+    <string name="dialog_reset_title">Statistik zurücksetzen?</string>
+    <string name="dialog_reset_message">Alle gespeicherten Fahrdaten werden auf Null zurückgesetzt</string>
     <string name="main_gage_speed">Geschwindigkeit</string>
     <string name="main_gage_power">Leistung</string>
     <string name="main_gage_charging_power">Ladeleistung</string>

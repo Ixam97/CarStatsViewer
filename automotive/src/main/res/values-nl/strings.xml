@@ -18,8 +18,8 @@
     <string name="main_button_reset_stats">Statistieken resetten</string>
     <string name="main_consumption">Verbruik over de laatste 3 km:</string>
     <string name="main_checkbox_speed">Snelheid</string>
-    <string name="main_dialog_reset_title">Statistieken resetten?</string>
-    <string name="main_dialog_reset_message">Alle bewaarde ritgegevens zullen naar nul worden gezet.</string>
+    <string name="dialog_reset_title">Statistieken resetten?</string>
+    <string name="dialog_reset_message">Alle bewaarde ritgegevens zullen naar nul worden gezet.</string>
     <string name="main_gage_speed">Snelheid</string>
     <string name="main_gage_power">Power</string>
     <string name="main_gage_charging_power">Laadvermogen</string>

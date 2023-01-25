@@ -394,14 +394,14 @@
                 android:id="@+id/main_button_summary"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="70dp"
+                android:layout_height="80dp"
                 android:layout_marginEnd="7.5dp"
                 android:text="@string/main_button_trip_summary"/>
             <Button
                 android:id="@+id/main_button_speed"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="70dp"
+                android:layout_height="80dp"
                 android:layout_marginStart="7.5dp"
                 android:text=""/>
         </LinearLayout>
@@ -526,14 +526,14 @@
                 android:id="@+id/main_button_dismiss_charge_plot"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="70dp"
+                android:layout_height="80dp"
                 android:layout_marginEnd="7.5dp"
                 android:text="@string/main_dismiss_charge_plot"/>
             <Button
                 android:id="@+id/main_button_reset_charge_plot"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="70dp"
+                android:layout_height="80dp"
                 android:layout_marginStart="7.5dp"
                 android:text="@string/main_button_reset_charge_plot"/>
         </LinearLayout>

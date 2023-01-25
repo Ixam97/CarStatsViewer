@@ -38,4 +38,93 @@
         android:layout_height="2dp"
         android:background="@color/polestar_orange"/>
 
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="20dp"
+        style="@style/menu_section_title_style"
+        android:text="Trip begonnen am: 01.01.2000 00:00"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:layout_margin="20dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/summary_button_show_consumption_container"
+            android:layout_width="0dp"
+            android:layout_height="101dp"
+            android:layout_weight="1"
+            android:textSize="35sp"
+            android:background="@color/polestar_orange"
+            android:text="Fahrtverlauf"/>
+        <Button
+            android:id="@+id/summary_button_show_charge_container"
+            android:layout_width="0dp"
+            android:layout_height="101dp"
+            android:layout_weight="1"
+            android:textSize="35sp"
+            android:text="Ladevorgänge"/>
+    </LinearLayout>
+    <View style="@style/menu_divider_style_no_margin"
+        android:background="?android:attr/listDivider"/>
+
+    <ScrollView
+        android:id="@+id/summary_consumption_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:orientation="vertical">
+
+            <com.ixam97.carStatsViewer.views.PlotView
+                android:id="@+id/summary_consumption_plot"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                style="@style/menu_row_top_text"
+                android:text="0.0 km"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="Fahrstrecke"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                style="@style/menu_row_top_text"
+                android:text="0.0 kWh"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="Verbrauchte Energie"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                style="@style/menu_row_top_text"
+                android:text="0.0 kWh/100km"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="Durchschnittsverbrauch"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                style="@style/menu_row_top_text"
+                android:text="00:00:00"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="Fahrzeit"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+</LinearLayout>
+</ScrollView>
+
+
 </LinearLayout>
