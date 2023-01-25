@@ -523,7 +523,9 @@ class MainActivity : Activity() {
             DataHolder.speedPlotLine.Visible = !DataHolder.speedPlotLine.Visible
             appPreferences.plotSpeed = DataHolder.speedPlotLine.Visible
             main_consumption_plot.invalidate()
-            main_button_speed.text = if (DataHolder.speedPlotLine.Visible) "Geschwindigkeit verbergen" else "Geschwindigkeit einblenden"
+            main_button_speed.text = if (DataHolder.speedPlotLine.Visible)
+                getString(R.string.main_button_hide_speed)
+            else getString(R.string.main_button_show_speed)
         }
 
         main_button_summary.setOnClickListener {
