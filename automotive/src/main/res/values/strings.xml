@@ -17,6 +17,7 @@
     <string name="preference_consumption_plot_visible_gages_key" translatable="false">preference_consumption_plot_visible_gages</string>
     <string name="preference_consumption_plot_secondary_color_key" translatable="false">preference_consumption_plot_secondary_color</string>
     <string name="preference_charge_plot_secondary_color_key" translatable="false">preference_charge_plot_secondary_color</string>
+    <string name="preference_charge_plot_dimension_key" translatable="false">preference_charge_plot_dimension</string>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
 
@@ -73,6 +74,7 @@
     <string name="settings_consumption_plot">  Consumption view</string>
     <string name="settings_charge_plot">  Charge view</string>
     <string name="settings_plot_secondary_color">Gray as secondary plot color</string>
+    <string name="settings_plot_state_of_charge_dimension">Experimental State Of Charge Axis</string>
     <string name="settings_consumption_plot_single_motor">Single motor model</string>
     <string name="settings_consumption_plot_visible_gages">Show power gages</string>
     <string name="settings_consumption_plot_speed">Show speed plot</string>

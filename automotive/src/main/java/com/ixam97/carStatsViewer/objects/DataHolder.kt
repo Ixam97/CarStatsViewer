@@ -55,16 +55,16 @@ object DataHolder {
     var lastSpeed = 0F
         private set
 
-    var currentBatteryCapacity = 0
+    var currentBatteryCapacity = 0f
         set(value) {
             lastBatteryCapacity = field
             field = value
         }
 
-    var lastBatteryCapacity = 0
+    var lastBatteryCapacity = 0f
         private set
 
-    var maxBatteryCapacity = 0
+    var maxBatteryCapacity = 0f
 
     var traveledDistance = 0F
     var usedEnergy = 0F
@@ -84,74 +84,101 @@ object DataHolder {
     var plotMarkers = PlotMarkers()
 
     var consumptionPlotLine = PlotLine(
-        PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
-        1f,
-        "%.0f",
-        "%.0f",
-        "Wh/km",
-        PlotLabelPosition.LEFT,
-        PlotHighlightMethod.AVG_BY_DISTANCE
-    )
-
-    var speedPlotLine = PlotLine(
-        PlotRange(0f, 40f, 0f, 240f, 40f),
-        1f,
-        "%.0f",
-        "Ø %.0f",
-        "km/h",
-        PlotLabelPosition.RIGHT,
-        PlotHighlightMethod.AVG_BY_TIME,
-        false
+        PlotLineConfiguration(
+            PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
+            PlotLineLabelFormat.NUMBER,
+            PlotLabelPosition.LEFT,
+            PlotHighlightMethod.AVG_BY_DISTANCE,
+            "Wh/km"
+        ),
+        hashMapOf(
+            PlotSecondaryDimension.SPEED to PlotLineConfiguration(
+                PlotRange(0f, 40f, 0f, 240f, 40f),
+                PlotLineLabelFormat.NUMBER,
+                PlotLabelPosition.RIGHT,
+                PlotHighlightMethod.AVG_BY_TIME,
+                "km/h"
+            )
+        )
     )
 
     var chargePlotLine = PlotLine(
-        PlotRange(0f, 20f, 0f, 160f, 20f),
-        1f,
-        "%.0f",
-        "Ø %.0f",
-        "kW",
-        PlotLabelPosition.LEFT,
-        PlotHighlightMethod.AVG_BY_TIME
-    )
-
-    var stateOfChargePlotLine = PlotLine(
-        PlotRange(0f, 100f, 0f, 100f, 20f, 0f),
-        1f,
-        "%.0f",
-        "%.0f %%",
-        "% SoC",
-        PlotLabelPosition.RIGHT,
-        PlotHighlightMethod.LAST
+        PlotLineConfiguration(
+            PlotRange(0f, 20f, 0f, 160f, 20f),
+            PlotLineLabelFormat.NUMBER,
+            PlotLabelPosition.LEFT,
+            PlotHighlightMethod.AVG_BY_TIME,
+            "kW"
+        ),
+        hashMapOf(
+            PlotSecondaryDimension.TIME to PlotLineConfiguration(
+                PlotRange(),
+                PlotLineLabelFormat.TIME,
+                PlotLabelPosition.RIGHT,
+                PlotHighlightMethod.MAX,
+                "Time"
+            ),
+            PlotSecondaryDimension.STATE_OF_CHARGE to PlotLineConfiguration(
+                PlotRange(0f, 100f, backgroundZero = 0f),
+                PlotLineLabelFormat.PERCENTAGE,
+                PlotLabelPosition.RIGHT,
+                PlotHighlightMethod.MAX,
+                "% SoC"
+            )
+        )
     )
 
     var chargeCurves: ArrayList<ChargeCurve> = ArrayList()
 
+    fun stateOfCharge(): Float {
+        return 100f / maxBatteryCapacity * currentBatteryCapacity
+    }
+
     fun applyTripData(tripData: TripData) {
-        if (tripData.appVersion != BuildConfig.VERSION_NAME) InAppLogger.log("File saved with older app version, trying to convert ...")
-        traveledDistance = if (tripData.traveledDistance != null) tripData.traveledDistance else 0f
-        usedEnergy = if (tripData.usedEnergy != null) tripData.usedEnergy else 0f
-        averageConsumption = if(tripData.averageConsumption != null) tripData.averageConsumption else 0f
-        travelTimeMillis = if(tripData.travelTimeMillis != null) tripData.travelTimeMillis else 0L
-        lastPlotDistance = if(tripData.lastPlotDistance != null) tripData.lastPlotDistance else 0F
-        lastPlotEnergy = if(tripData.lastPlotEnergy != null) tripData.lastPlotEnergy else 0F
-        lastPlotTime = if(tripData.lastPlotTime != null) tripData.lastPlotTime else 0L
-        lastPlotGear = if(tripData.lastPlotGear != null) tripData.lastPlotGear else VehicleGear.GEAR_PARK
+        if (tripData.appVersion != BuildConfig.VERSION_NAME) {
+            InAppLogger.log("File saved with older app version, trying to convert ...")
+        }
+
+        traveledDistance = tripData.traveledDistance ?: 0f
+        usedEnergy = tripData.usedEnergy ?: 0f
+        averageConsumption = tripData.averageConsumption ?: 0f
+        travelTimeMillis = tripData.travelTimeMillis ?: 0L
+        lastPlotDistance = tripData.lastPlotDistance ?: 0F
+        lastPlotEnergy = tripData.lastPlotEnergy ?: 0F
+        lastPlotTime = tripData.lastPlotTime ?: 0L
+        lastPlotGear = tripData.lastPlotGear ?: VehicleGear.GEAR_PARK
         lastPlotMarker = tripData.lastPlotMarker
-        lastChargePower = if(tripData.lastChargePower != null) tripData.lastChargePower else 0F
+        lastChargePower = tripData.lastChargePower ?: 0F
         consumptionPlotLine.reset()
-        speedPlotLine.reset()
         chargePlotLine.reset()
-        stateOfChargePlotLine.reset()
-        if (tripData.consumptionPlotLine != null) consumptionPlotLine.addDataPoints(tripData.consumptionPlotLine)
-        if (tripData.speedPlotLine != null) speedPlotLine.addDataPoints(tripData.speedPlotLine)
-        chargeCurves = if (tripData.chargeCurves != null) {
-            if (tripData.chargeCurves.isNotEmpty()){
-                chargePlotLine.addDataPoints(tripData.chargeCurves.last().chargePlotLine)
-                stateOfChargePlotLine.addDataPoints(tripData.chargeCurves.last().stateOfChargePlotLine)
+
+        if (tripData.consumptionPlotLine?.isNotEmpty() == true) {
+            consumptionPlotLine.addDataPoints(tripData.consumptionPlotLine)
+        }
+
+        chargeCurves = ArrayList()
+        if (tripData.chargeCurves?.isNotEmpty() == true) {
+            // move StateOfCharge PlotLine to charge PlotLine STateOfCharge Value
+            for (curve in tripData.chargeCurves) {
+                if (curve.stateOfChargePlotLine?.isNotEmpty() == true) {
+                    var lastStateOfCharge = curve.stateOfChargePlotLine!!.first().Value
+                    for (index in curve.stateOfChargePlotLine!!.indices) {
+                        val stateOfCharge = curve.stateOfChargePlotLine!![index].Value
+                        curve.chargePlotLine[index].StateOfCharge = stateOfCharge
+                        curve.chargePlotLine[index].StateOfChargeDelta = lastStateOfCharge - stateOfCharge
+                        lastStateOfCharge = stateOfCharge
+                    }
+                    curve.stateOfChargePlotLine = null
+                }
+                chargeCurves.add(curve)
             }
-            ArrayList(tripData.chargeCurves)
-        } else ArrayList()
-        if (tripData.markers != null) plotMarkers.addMarkers(tripData.markers)
+
+            chargePlotLine.addDataPoints(tripData.chargeCurves.last().chargePlotLine)
+        }
+
+        if (tripData.markers?.isNotEmpty() == true){
+            plotMarkers.addMarkers(tripData.markers)
+        }
     }
 
     fun getTripData(): TripData {
@@ -169,7 +196,6 @@ object DataHolder {
             lastPlotMarker,
             lastChargePower,
             consumptionPlotLine.getDataPoints(PlotDimension.DISTANCE),
-            speedPlotLine.getDataPoints(PlotDimension.DISTANCE),
             chargeCurves.toList(),
             plotMarkers.markers.toList()
         )
@@ -187,9 +213,7 @@ object DataHolder {
         lastPlotMarker = null
         lastChargePower = 0F
         consumptionPlotLine.reset()
-        speedPlotLine.reset()
         chargePlotLine.reset()
-        stateOfChargePlotLine.reset()
         chargeCurves = ArrayList()
         plotMarkers = PlotMarkers()
     }
