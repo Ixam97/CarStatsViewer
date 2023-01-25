@@ -8,6 +8,15 @@ Based on https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerK
 
 ## Changelog [DE]:
 
+### 0.21.0 (25.01.2023)
+ - Optische Differenzierung der Ladekurvenansicht
+ - Mehrere Ladekurven in einem Trip gespeichert und können in den Einstellungen betrachtet werden
+ - Die Verbrauchsanzeige in der Hauptansicht ist fest auf 10 km eingestellt
+ - Die Verbrauchsanzeige in den Einstellungen kann mit einer Zoom-Geste vergrößert und seitlich verschoben werden.
+ - Die Verbrauchsanzeige in den Einstellungen beinhaltet nun Markierungen fürs Parken und Laden
+ - Grundstein für Tripzusammenfassung gelegt (Work in Progrss, momentan nur zum Zurücksetzen des Trips)
+ - Niederländische Übersetzung hinzugefügt
+
 ### 0.20.0 (18.01.2023)
  - Wake Lock wieder entfernt.
  - Debug Logging für Zündungsstatus wieder entfernt

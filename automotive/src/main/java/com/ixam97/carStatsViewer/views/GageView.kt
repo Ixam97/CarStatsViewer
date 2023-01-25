@@ -31,6 +31,13 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             this.invalidate()
         }
 
+    var primaryColor: Int? = null
+        set(value) {
+            field = value
+            unitPaint.color = getPrimaryColor()
+            posPaint.color = getPrimaryColor()
+        }
+
     private var gageValueInt : Int? = null
     private var gageValueFloat: Float? = null
 
@@ -207,8 +214,11 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     private fun getPrimaryColor(): Int {
-        val typedValue = TypedValue()
-        context.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
-        return typedValue.data
+        if (primaryColor == null) {
+            val typedValue = TypedValue()
+            context.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
+            return typedValue.data
+        }
+        return primaryColor!!
     }
 }

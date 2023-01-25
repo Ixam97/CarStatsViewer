@@ -1,8 +1,7 @@
 package com.ixam97.carStatsViewer.plot
 
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.abs
 
 class PlotLine(
     internal val Range: PlotRange,
@@ -29,21 +28,33 @@ class PlotLine(
 
     var zeroAt: Float? = null
 
-    fun addDataPoint(item: Float, time: Long, distance: Float, timeDelta: Long? = null, distanceDelta: Float? = null, plotMarker: PlotMarker? = null) {
+    fun addDataPoint(item: Float, time: Long, distance: Float, timeDelta: Long? = null, distanceDelta: Float? = null, plotLineMarkerType: PlotLineMarkerType? = null) {
         val prev = dataPoints[dataPoints.size - 1]
 
-        dataPoints[dataPoints.size] = PlotLineItem(
+        addDataPoint(PlotLineItem(
             item,
             time,
             distance,
             timeDelta?:(time - (prev?.Time ?: time)),
             distanceDelta?:(distance - (prev?.Distance ?: distance)),
-            plotMarker
-        )
+            plotLineMarkerType
+        ))
     }
 
     fun addDataPoint(dataPoint: PlotLineItem) {
-        dataPoints[dataPoints.size] = dataPoint
+        when {
+            dataPoint.Value.isFinite() -> {
+                dataPoints[dataPoints.size] = dataPoint
+            }
+            dataPoint.Marker == PlotLineMarkerType.END_SESSION -> {
+                val lastPoint = dataPoints[dataPoints.size - 1]
+                when {
+                    lastPoint != null && lastPoint.Marker == null -> {
+                        lastPoint.Marker = dataPoint.Marker
+                    }
+                }
+            }
+        }
     }
 
     fun addDataPoints(dataPoints: List<PlotLineItem>) {
@@ -87,11 +98,13 @@ class PlotLine(
             PlotDimension.INDEX -> 0f
             PlotDimension.DISTANCE -> when {
                 dataPoints.isEmpty() -> return 0f
-                else -> min(dataPoints.first().Distance, maxDimension(dataPoints, dimension) as Float - (dimensionRestriction ?: 0L))
+                else -> (maxDimension(dataPoints, dimension) as Float - (dimensionRestriction ?: 0L))
+                    .coerceAtMost(dataPoints.first().Distance)
             }
             PlotDimension.TIME -> when {
                 dataPoints.isEmpty() -> return 0L
-                else -> min(dataPoints.first().Time, maxDimension(dataPoints, dimension) as Long - (dimensionRestriction ?: 0L))
+                else -> (maxDimension(dataPoints, dimension) as Long - (dimensionRestriction ?: 0L))
+                    .coerceAtMost(dataPoints.first().Time)
             }
         }
     }
@@ -189,8 +202,8 @@ class PlotLine(
         return when (averageMethod) {
             PlotHighlightMethod.AVG_BY_INDEX -> dataPoints.map { it.Value }.average().toFloat()
             PlotHighlightMethod.AVG_BY_DISTANCE -> {
-                val value = dataPoints.map { (it.DistanceDelta?:0f) * it.Value }.sum()
-                val distance = dataPoints.map { (it.DistanceDelta?:0f) }.sum()
+                val value = dataPoints.filter { it.DistanceDelta != null }.map { (it.DistanceDelta?:0f) * it.Value }.sum()
+                val distance = dataPoints.filter { it.DistanceDelta != null }.map { (it.DistanceDelta?:0f) }.sum()
 
                 return when {
                     distance != 0f -> value / distance
@@ -198,8 +211,8 @@ class PlotLine(
                 }
             }
             PlotHighlightMethod.AVG_BY_TIME -> {
-                val value = dataPoints.map { (it.TimeDelta?:0L) * it.Value }.sum()
-                val distance = dataPoints.map { (it.TimeDelta?:0L) }.sum()
+                val value = dataPoints.filter { it.TimeDelta != null }.map { (it.TimeDelta?:0L) * it.Value }.sum()
+                val distance = dataPoints.filter { it.TimeDelta != null }.map { (it.TimeDelta?:0L) }.sum()
 
                 return when {
                     distance != 0L -> value / distance
@@ -229,6 +242,39 @@ class PlotLine(
         }
     }
 
+    fun x(dataPoints: List<PlotLineItem>, value: Long?, valueDimension: PlotDimension, targetDimension: PlotDimension, min: Any, max: Any) : Float? {
+        if (dataPoints.isEmpty() || value == null) return null
+        return when (targetDimension) {
+            PlotDimension.DISTANCE -> when (valueDimension) {
+                PlotDimension.TIME -> {
+                    if (value !in dataPoints.first().Time .. dataPoints.last().Time) return null
+
+                    val closePoint = dataPoints.minBy { abs(it.Time - value) }
+                    when (closePoint.Marker) {
+                        PlotLineMarkerType.BEGIN_SESSION -> x(closePoint.Distance - (closePoint.DistanceDelta ?: 0f), min, max)
+                        else -> x(closePoint.Distance, min, max)
+                    }
+                }
+                PlotDimension.DISTANCE -> x(value.toFloat(), min, max)
+                else -> null
+            }
+            PlotDimension.TIME -> when (valueDimension) {
+                PlotDimension.TIME -> x(value.toFloat(), min, max)
+                PlotDimension.DISTANCE -> {
+                    if (value.toFloat() !in dataPoints.first().Distance .. dataPoints.last().Distance) return null
+
+                    val closePoint = dataPoints.minBy { abs(it.Distance - value) }
+                    when (closePoint.Marker) {
+                        PlotLineMarkerType.BEGIN_SESSION -> x(closePoint.Time - (closePoint.TimeDelta ?: 0L), min, max)
+                        else -> x(closePoint.Distance, min, max)
+                    }
+                }
+                else -> null
+            }
+            else -> null
+        }
+    }
+
     fun x(index: Float, min: Any, max: Any) : Float {
         return PlotLineItem.cord(
             index,
@@ -252,6 +298,20 @@ class PlotLine(
         for (index in dataPoints.indices) {
             val item = dataPoints[index]
 
+            if (item.Marker == PlotLineMarkerType.BEGIN_SESSION) {
+                group.add(
+                    PlotLineItemPoint(
+                        when (dimension) {
+                            PlotDimension.INDEX -> x(index.toFloat(), min, max)
+                            PlotDimension.DISTANCE -> x(item.Distance - (item.DistanceDelta ?: 0f), min, max)
+                            PlotDimension.TIME -> x(item.Time - (item.TimeDelta ?: 0L), min, max)
+                        },
+                        item,
+                        item.group(index, dimension, dimensionSmoothing)
+                    )
+                )
+            }
+
             group.add(
                 PlotLineItemPoint(
                     when (dimension) {
@@ -264,7 +324,7 @@ class PlotLine(
                 )
             )
 
-            if ((item.Marker ?: PlotMarker.BEGIN_SESSION) != PlotMarker.BEGIN_SESSION) {
+            if ((item.Marker ?: PlotLineMarkerType.BEGIN_SESSION) != PlotLineMarkerType.BEGIN_SESSION) {
                 result.add(group)
                 group = ArrayList()
             }

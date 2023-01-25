@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- PermissionsActivity -->
+    <string name="permissions_dialog_title">Noodzakelijke permissies</string>
+    <string name="permissions_dialog_text">Deze app heeft bepaalde toelatingen nodig om te kunnen werken. Zonder de aangegeven toelatingen, kunnen de gegevens van het voertuig niet worden verzameld.</string>
+    <string name="permissions_dialog_quit">Car Stats Viewer afsluiten</string>
+    <string name="permissions_dialog_grant">Toelatingen goedkeuren</string>
+    
+    <!-- MainActivity -->
+    <string name="main_port_connected">Laadkabel aangesloten:</string>
+    <string name="main_current_power">Huidig stroomverbruik:</string>
+    <string name="main_used_energy">Verbruikte energie:</string>
+    <string name="main_current_speed">Huidige snelheid:</string>
+    <string name="main_traveled_distance">Afgelegde afstand:</string>
+    <string name="main_inst_consumption">Momenteel verbruik:</string>
+    <string name="main_average_consumption">Gemiddeld verbruik:</string>
+    <string name="main_button_reset_stats">Statistieken resetten</string>
+    <string name="main_consumption">Verbruik over de laatste 3 km:</string>
+    <string name="main_checkbox_speed">Snelheid</string>
+    <string name="main_dialog_reset_title">Statistieken resetten?</string>
+    <string name="main_dialog_reset_message">Alle bewaarde ritgegevens zullen naar nul worden gezet.</string>
+    <string name="main_gage_speed">Snelheid</string>
+    <string name="main_gage_power">Power</string>
+    <string name="main_gage_charging_power">Laadvermogen</string>
+    <string name="main_gage_SoC">Staat van het opladen</string>
+    <string name="main_gage_consumption">Momenteel verbruik</string>
+    <string name="main_dismiss_charge_plot">Laadcurve sluiten</string>
+    <string name="main_button_reset_charge_plot">Laadcurve resetten</string>
+    <string name="main_button_trip_summary">Samenvatting trip</string>
+    <string name="main_button_hide_speed">Snelheid verbergen</string>
+    <string name="main_button_show_speed">Snelheid tonen</string>
+
+    <!-- SummaryActivity -->
+    <string name="summary_title">Samenvatting trip</string>
+    <string name="summary_button_reset_trip">Trip resetten</string>
+    
+    <!-- SettingsActivity -->
+    <string name="settings_title">Instellingen</string>
+    <string name="settings_button_back">Terug</string>
+    <string name="settings_button_quit">App afsluiten</string>
+    <string name="settings_notifications">Meldingen</string>
+    <string name="settings_consumption_unit">Wh/km als eenheid van verbruik</string>
+    <string name="settings_debug">Debug-informatie</string>
+    <string name="settings_experimental_layout">Toon experimentele layout</string>
+    <string name="settings_consumption_plot">  Verbruikscurve</string>
+    <string name="settings_charge_plot">  Laadcurve</string>
+    <string name="settings_consumption_plot_single_motor">Single Motor model</string>
+    <string name="settings_plot_secondary_color">Grijs als secundaire tekenkleur</string>
+    <string name="settings_consumption_plot_visible_gages">Toon stroommeters</string>
+    <string name="settings_consumption_plot_speed">Toon snelheidscurve</string>
+    <string name="settings_sub_title_settings">Instellingen:</string>
+    <string name="settings_sub_title_current_cons_plot">Actuele verbruikscurve:</string>
+    <string name="settings_sub_title_last_charge_plot">Laatste laadcurven:</string>
+    
+    <!-- Quit Dialog -->
+    <string name="quit_dialog_title">App afsluiten?</string>
+    <string name="quit_dialog_message">Log wordt gekopieerd naar het klembord.</string>
+    <string name="dialog_confirm">Ja</string>
+    <string name="dialog_dismiss">Neen</string>
+
+    <!-- LogActivity -->
+    <string name="log_title">Debug</string>
+
+    <!-- Notifications -->
+    <string name="notification_title">Huidige statistieken:</string>
+    <string name="foreground_service_info">Gegevensverzameling is bezig</string>
+    <string name="toast_file_read_error">Fout bij het inlezen van de ritgegevens</string>
+</resources>

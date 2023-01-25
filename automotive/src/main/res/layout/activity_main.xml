@@ -9,14 +9,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/black"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/main_title_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginVertical="15dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_margin="15dp"
             android:src="@mipmap/ic_launcher"/>
 
         <TextView
@@ -28,12 +28,22 @@
 
         <ImageButton
             android:id="@+id/main_button_reset"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="15dp"
             android:layout_marginEnd="10dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_reset"/>
+
+        <ImageButton
+            android:id="@+id/main_button_performance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="15dp"
+            android:layout_marginEnd="15dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_performance"/>
 
         <ImageButton
             android:id="@+id/main_button_settings"
@@ -46,277 +56,266 @@
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="?android:attr/colorControlActivated"/>
-
     <LinearLayout
-        android:id="@+id/gage_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="14"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="8">
-
-            <com.ixam97.carStatsViewer.views.GageView
-                android:id="@+id/main_power_gage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginHorizontal="20dp"/>
-
-            <!--<com.ixam97.carStatsViewer.views.GageView
-                android:id="@+id/main_speed_gage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="20dp"/>-->
-
-            <com.ixam97.carStatsViewer.views.GageView
-                android:id="@+id/main_consumption_gage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="6">
-
-            <View
-                android:layout_width="2dp"
-                android:layout_height="match_parent"
-                android:background="?android:attr/listDivider"
-                android:layout_margin="15dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/main_gage_distance_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="35sp"
-                    android:drawableStart="@drawable/ic_distance"
-                    />
-
-
-                <TextView
-                    android:id="@+id/main_gage_used_power_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="35sp"
-                    android:drawableStart="@drawable/ic_power"
-                    />
-
-                <TextView
-                    android:id="@+id/main_gage_avg_consumption_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="35sp"
-                    android:drawableStart="@drawable/ic_avg_consumption"
-                    />
-
-                <TextView
-                    android:id="@+id/main_gage_time_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="35sp"
-                    android:text="  00:00:00"
-                    android:drawableStart="@drawable/ic_time"
-                    />
-
-                <TextView
-                    android:id="@+id/main_gage_remaining_range_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="10dp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="35sp"
-                    android:text="  -/- km"
-                    android:drawableStart="@drawable/ic_remaining_range"
-                    />
-
-            </LinearLayout>
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <TableLayout
         android:id="@+id/legacy_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="10dp"
-        android:layout_marginStart="20dp">
+        android:orientation="vertical">
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:visibility="gone"
-            android:weightSum="2">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/polestar_orange"/>
 
-            <TextView
-                style="@style/LabelCell"
-                android:text="@string/main_port_connected" />
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:layout_marginStart="20dp">
 
-            <TextView
-                android:id="@+id/chargePortConnectedTextView"
-                style="@style/ValueCell"
-                tools:text="false" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:weightSum="2">
-
-            <TextView
-                style="@style/LabelCell"
-                android:text="@string/main_current_power" />
-
-            <TextView
-                android:id="@+id/currentPowerTextView"
-                style="@style/ValueCell"
-                tools:text="3kWh" />
-
-        </TableRow>
-        <!--<TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:weightSum="2">
-
-            <TextView
-                style="@style/LabelCell" />
-
-            <com.ixam97.carStatsViewer.views.PlotView
+            <TableRow
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:id="@+id/plot1"/>
+                android:visibility="gone"
+                android:weightSum="2">
 
-        </TableRow>-->
+                <TextView
+                    style="@style/LabelCell"
+                    android:text="@string/main_port_connected" />
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:weightSum="2">
+                <TextView
+                    android:id="@+id/chargePortConnectedTextView"
+                    style="@style/ValueCell"
+                    tools:text="false" />
 
-            <TextView
-                style="@style/LabelCell"
-                android:text="@string/main_used_energy" />
+            </TableRow>
 
-            <TextView
-                android:id="@+id/usedEnergyTextView"
-                style="@style/ValueCell"
-                tools:text="@tools:sample/lorem" />
-        </TableRow>
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:weightSum="2">
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:visibility="gone"
-            android:weightSum="2">
+                <TextView
+                    style="@style/LabelCell"
+                    android:text="@string/main_current_power" />
 
-            <TextView
-                style="@style/LabelCell"
-                android:text="@string/main_SoC" />
+                <TextView
+                    android:id="@+id/currentPowerTextView"
+                    style="@style/ValueCell"
+                    tools:text="3kWh" />
 
-            <TextView
-                android:id="@+id/batteryEnergyTextView"
-                style="@style/ValueCell"
-                tools:text="@tools:sample/lorem" />
+            </TableRow>
 
-        </TableRow>
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:weightSum="2">
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:weightSum="2">
+                <TextView
+                    style="@style/LabelCell"
+                    android:text="@string/main_used_energy" />
 
-            <TextView
-                style="@style/LabelCell"
-                android:text="@string/main_current_speed" />
+                <TextView
+                    android:id="@+id/usedEnergyTextView"
+                    style="@style/ValueCell"
+                    tools:text="@tools:sample/lorem" />
+            </TableRow>
 
-            <TextView
-                android:id="@+id/currentSpeedTextView"
-                style="@style/ValueCell"
-                tools:text="@tools:sample/lorem" />
-        </TableRow>
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:visibility="gone"
+                android:weightSum="2">
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:weightSum="2">
+                <TextView
+                    style="@style/LabelCell"
+                    android:text="@string/main_SoC" />
 
-            <TextView
-                style="@style/LabelCell"
-                android:text="@string/main_traveled_distance" />
+                <TextView
+                    android:id="@+id/batteryEnergyTextView"
+                    style="@style/ValueCell"
+                    tools:text="@tools:sample/lorem" />
 
-            <TextView
-                android:id="@+id/traveledDistanceTextView"
-                style="@style/ValueCell"
-                tools:text="@tools:sample/lorem" />
-        </TableRow>
+            </TableRow>
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:weightSum="2">
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:weightSum="2">
 
-            <TextView
-                style="@style/LabelCell"
-                android:text="@string/main_inst_consumption" />
+                <TextView
+                    style="@style/LabelCell"
+                    android:text="@string/main_current_speed" />
 
-            <TextView
-                android:id="@+id/currentInstConsTextView"
-                style="@style/ValueCell"
-                tools:text="@tools:sample/lorem" />
-        </TableRow>
+                <TextView
+                    android:id="@+id/currentSpeedTextView"
+                    style="@style/ValueCell"
+                    tools:text="@tools:sample/lorem" />
+            </TableRow>
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:weightSum="2">
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:weightSum="2">
 
-            <TextView
-                style="@style/LabelCell"
-                android:text="@string/main_average_consumption" />
+                <TextView
+                    style="@style/LabelCell"
+                    android:text="@string/main_traveled_distance" />
 
-            <TextView
-                android:id="@+id/averageConsumptionTextView"
-                style="@style/ValueCell"
-                tools:text="@tools:sample/lorem" />
+                <TextView
+                    android:id="@+id/traveledDistanceTextView"
+                    style="@style/ValueCell"
+                    tools:text="@tools:sample/lorem" />
+            </TableRow>
 
-        </TableRow>
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:weightSum="2">
 
-    </TableLayout>
+                <TextView
+                    style="@style/LabelCell"
+                    android:text="@string/main_inst_consumption" />
+
+                <TextView
+                    android:id="@+id/currentInstConsTextView"
+                    style="@style/ValueCell"
+                    tools:text="@tools:sample/lorem" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:weightSum="2">
+
+                <TextView
+                    style="@style/LabelCell"
+                    android:text="@string/main_average_consumption" />
+
+                <TextView
+                    android:id="@+id/averageConsumptionTextView"
+                    style="@style/ValueCell"
+                    tools:text="@tools:sample/lorem" />
+
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/main_consumption_plot_container"
+        android:id="@+id/main_consumption_layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/polestar_orange"/>
+
+        <LinearLayout
+            android:id="@+id/gage_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="14"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="8">
+
+                <com.ixam97.carStatsViewer.views.GageView
+                    android:id="@+id/main_power_gage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginHorizontal="20dp"/>
+
+                <com.ixam97.carStatsViewer.views.GageView
+                    android:id="@+id/main_consumption_gage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="6">
+
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="?android:attr/listDivider"
+                    android:layout_margin="15dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/main_gage_distance_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="35sp"
+                        android:drawableStart="@drawable/ic_distance"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/main_gage_used_power_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="35sp"
+                        android:drawableStart="@drawable/ic_power"
+                        />
+
+                    <TextView
+                        android:id="@+id/main_gage_avg_consumption_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="35sp"
+                        android:drawableStart="@drawable/ic_avg_consumption"
+                        />
+
+                    <TextView
+                        android:id="@+id/main_gage_time_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="35sp"
+                        android:text="  00:00:00"
+                        android:drawableStart="@drawable/ic_time"
+                        />
+
+                    <TextView
+                        android:id="@+id/main_gage_remaining_range_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="35sp"
+                        android:text="  -/- km"
+                        android:drawableStart="@drawable/ic_remaining_range"
+                        />
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -332,6 +331,7 @@
             android:id="@+id/main_consumption_plot"/>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -382,8 +382,8 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginHorizontal="15dp"/>
         </LinearLayout>
+
         <LinearLayout
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="2"
@@ -391,27 +391,116 @@
             android:layout_marginHorizontal="15dp"
             android:orientation="horizontal">
             <Button
+                android:id="@+id/main_button_summary"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_marginEnd="7.5dp"
-                android:text="Anpassen"/>
+                android:text="@string/main_button_trip_summary"/>
             <Button
+                android:id="@+id/main_button_speed"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_marginStart="7.5dp"
-                android:text="Tripzusammenfassung"/>
+                android:text=""/>
         </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/main_charge_plot_container"
+        android:id="@+id/main_charge_layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/charge_plot_color"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="14">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="8">
+
+                <com.ixam97.carStatsViewer.views.GageView
+                    android:id="@+id/main_charge_gage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginHorizontal="20dp"/>
+
+                <com.ixam97.carStatsViewer.views.GageView
+                    android:id="@+id/main_SoC_gage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="6">
+
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="?android:attr/listDivider"
+                    android:layout_margin="15dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/main_gage_charged_energy_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="35sp"
+                        android:drawableStart="@drawable/ic_power"
+                        />
+
+
+                    <TextView
+                        android:id="@+id/main_gage_charge_time_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="35sp"
+                        android:drawableStart="@drawable/ic_time"
+                        />
+
+                    <TextView
+                        android:id="@+id/main_gage_remaining_range_text_view2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="35sp"
+                        android:text="  -/- km"
+                        android:drawableStart="@drawable/ic_remaining_range"
+                    />
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"

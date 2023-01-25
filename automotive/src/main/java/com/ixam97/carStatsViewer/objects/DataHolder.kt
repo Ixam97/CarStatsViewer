@@ -1,6 +1,8 @@
 package com.ixam97.carStatsViewer.objects
 
 import android.car.VehicleGear
+import com.ixam97.carStatsViewer.BuildConfig
+import com.ixam97.carStatsViewer.InAppLogger
 import com.ixam97.carStatsViewer.plot.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -66,12 +68,20 @@ object DataHolder {
 
     var traveledDistance = 0F
     var usedEnergy = 0F
+    var chargedEnergy = 0F
     var averageConsumption = 0F
     var chargePortConnected = false
-
-    // var resetTimestamp = 0L
-    // var parkTimestamp = 0L
     var travelTimeMillis = 0L
+    var chargeTimeMillis = 0L
+
+    var lastPlotDistance = 0F
+    var lastPlotEnergy = 0F
+    var lastPlotTime = 0L
+    var lastPlotGear = VehicleGear.GEAR_PARK
+    var lastPlotMarker : PlotLineMarkerType? = null
+    var lastChargePower = 0f
+
+    var plotMarkers = PlotMarkers()
 
     var consumptionPlotLine = PlotLine(
         PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
@@ -114,35 +124,73 @@ object DataHolder {
         PlotHighlightMethod.LAST
     )
 
-    data class ChargeCurve(
-        var chargePlotLine: List<PlotLineItem>,
-        var stateOfChargePlotLine: List<PlotLineItem>
-    ) {}
-
     var chargeCurves: ArrayList<ChargeCurve> = ArrayList()
 
     fun applyTripData(tripData: TripData) {
+        if (tripData.appVersion != BuildConfig.VERSION_NAME) InAppLogger.log("File saved with older app version, trying to convert ...")
         traveledDistance = if (tripData.traveledDistance != null) tripData.traveledDistance else 0f
         usedEnergy = if (tripData.usedEnergy != null) tripData.usedEnergy else 0f
         averageConsumption = if(tripData.averageConsumption != null) tripData.averageConsumption else 0f
         travelTimeMillis = if(tripData.travelTimeMillis != null) tripData.travelTimeMillis else 0L
+        lastPlotDistance = if(tripData.lastPlotDistance != null) tripData.lastPlotDistance else 0F
+        lastPlotEnergy = if(tripData.lastPlotEnergy != null) tripData.lastPlotEnergy else 0F
+        lastPlotTime = if(tripData.lastPlotTime != null) tripData.lastPlotTime else 0L
+        lastPlotGear = if(tripData.lastPlotGear != null) tripData.lastPlotGear else VehicleGear.GEAR_PARK
+        lastPlotMarker = tripData.lastPlotMarker
+        lastChargePower = if(tripData.lastChargePower != null) tripData.lastChargePower else 0F
         consumptionPlotLine.reset()
         speedPlotLine.reset()
+        chargePlotLine.reset()
+        stateOfChargePlotLine.reset()
         if (tripData.consumptionPlotLine != null) consumptionPlotLine.addDataPoints(tripData.consumptionPlotLine)
         if (tripData.speedPlotLine != null) speedPlotLine.addDataPoints(tripData.speedPlotLine)
-        chargeCurves = if (tripData.chargeCurves != null) ArrayList(tripData.chargeCurves) else ArrayList()
+        chargeCurves = if (tripData.chargeCurves != null) {
+            if (tripData.chargeCurves.isNotEmpty()){
+                chargePlotLine.addDataPoints(tripData.chargeCurves.last().chargePlotLine)
+                stateOfChargePlotLine.addDataPoints(tripData.chargeCurves.last().stateOfChargePlotLine)
+            }
+            ArrayList(tripData.chargeCurves)
+        } else ArrayList()
+        if (tripData.markers != null) plotMarkers.addMarkers(tripData.markers)
     }
 
     fun getTripData(): TripData {
         return TripData(
+            BuildConfig.VERSION_NAME,
             Date(),
             traveledDistance,
             usedEnergy,
             averageConsumption,
             travelTimeMillis,
-            consumptionPlotLine.getDataPoints(PlotDimension.DISTANCE, null),
-            speedPlotLine.getDataPoints(PlotDimension.DISTANCE, null),
-            chargeCurves.toList()
+            lastPlotDistance,
+            lastPlotEnergy,
+            lastPlotTime,
+            lastPlotGear,
+            lastPlotMarker,
+            lastChargePower,
+            consumptionPlotLine.getDataPoints(PlotDimension.DISTANCE),
+            speedPlotLine.getDataPoints(PlotDimension.DISTANCE),
+            chargeCurves.toList(),
+            plotMarkers.markers.toList()
         )
+    }
+
+    fun resetDataHolder() {
+        traveledDistance = 0f
+        usedEnergy = 0f
+        averageConsumption = 0f
+        travelTimeMillis = 0L
+        lastPlotDistance = 0F
+        lastPlotEnergy = 0F
+        lastPlotTime = 0L
+        lastPlotGear = VehicleGear.GEAR_PARK
+        lastPlotMarker = null
+        lastChargePower = 0F
+        consumptionPlotLine.reset()
+        speedPlotLine.reset()
+        chargePlotLine.reset()
+        stateOfChargePlotLine.reset()
+        chargeCurves = ArrayList()
+        plotMarkers = PlotMarkers()
     }
 }

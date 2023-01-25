@@ -24,7 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
-        <activity android:name=".activities.MainActivity"
+        <activity android:name=".activities.PermissionsActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,6 +32,12 @@
             </intent-filter>
             <meta-data android:name="distractionOptimized" android:value="true"/>
         </activity>
+        <activity android:name=".activities.MainActivity"
+            android:exported="false">
+            <meta-data android:name="distractionOptimized" android:value="true"/>
+        </activity>
+        <activity android:name=".activities.SummaryActivity"
+            android:exported="false"/>
         <activity android:name=".activities.SettingsActivity"
             android:exported="false">
             <meta-data android:name="distractionOptimized" android:value="true"/>

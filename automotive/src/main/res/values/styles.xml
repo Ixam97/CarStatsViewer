@@ -28,6 +28,7 @@
     <style name="title_text_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_margin">20dp</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">47sp</item>
@@ -39,6 +40,13 @@
         <item name="android:layout_margin">15dp</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:src">@drawable/ic_arrow_back</item>
+    </style>
+    <style name="menu_section_title_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:textColor">@color/secondary_text_color</item>
     </style>
     <style name="menu_standard_switch_style">
         <item name="android:layout_width">match_parent</item>

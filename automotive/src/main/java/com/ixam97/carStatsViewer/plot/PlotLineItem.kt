@@ -9,7 +9,7 @@ class PlotLineItem (
     val TimeDelta: Long?,
     val DistanceDelta: Float?,
 
-    val Marker: PlotMarker?
+    var Marker: PlotLineMarkerType?
 ){
     fun group(index: Int, dimension: PlotDimension, dimensionSmoothing: Long?): Long {
         val value = when(dimension) {

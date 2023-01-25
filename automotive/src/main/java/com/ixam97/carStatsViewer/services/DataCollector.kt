@@ -13,6 +13,7 @@ import android.car.hardware.property.CarPropertyManager
 import android.content.*
 import android.graphics.BitmapFactory
 import android.os.*
+import android.provider.ContactsContract.Data
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
@@ -23,8 +24,6 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileWriter
 import java.lang.Runnable
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
 
@@ -40,14 +39,9 @@ class DataCollector : Service() {
     }
 
     private var consumptionPlotTracking = false
-    private var lastPlotDistance = 0F
-    private var lastPlotEnergy = 0F
-    private var lastPlotTime = 0L
-    private var lastPlotGear = VehicleGear.GEAR_PARK
-    private var lastPlotMarker : PlotMarker? = null
     private var lastNotificationTimeMillis = 0L
 
-    private var lastChargePower = 0f
+    private var chargeStartTimeNanos = 0L
 
     private var notificationCounter = 0
 
@@ -69,9 +63,8 @@ class DataCollector : Service() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 getString(R.string.save_trip_data_broadcast) -> {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        writeTripDataToFile(DataHolder.getTripData(), getString(R.string.file_name_current_trip_data))
-                    }
+                    val tripDataToSave = DataHolder.getTripData()
+                    writeTripDataToFile(tripDataToSave, getString(R.string.file_name_current_trip_data))
                 }
                 else -> {}
             }
@@ -80,7 +73,7 @@ class DataCollector : Service() {
 
     private val saveTripDataTask = object : Runnable {
         override fun run() {
-            sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+            // sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
             saveTripDataTimerHandler.postDelayed(this, SAVE_TRIP_DATA_TIMER_HANDLER_DELAY_MILLIS)
         }
     }
@@ -92,6 +85,7 @@ class DataCollector : Service() {
 
             val currentNotificationTimeMillis = System.currentTimeMillis()
             if (DataHolder.currentGear != VehicleGear.GEAR_PARK && lastNotificationTimeMillis > 0) DataHolder.travelTimeMillis += currentNotificationTimeMillis - lastNotificationTimeMillis
+            if (DataHolder.chargePortConnected && lastNotificationTimeMillis > 0) DataHolder.chargeTimeMillis += currentNotificationTimeMillis - lastNotificationTimeMillis
             lastNotificationTimeMillis = currentNotificationTimeMillis
 
             // val ignitionState = carPropertyManager.getIntProperty(VehiclePropertyIds.IGNITION_STATE, 0)
@@ -123,7 +117,28 @@ class DataCollector : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        foregroundServiceNotification = Notification.Builder(this, CHANNEL_ID)
+        var tripRestoreComplete = false
+        CoroutineScope(Dispatchers.IO).launch {
+            val mPrevTripData = readTripDataFromFile(getString(R.string.file_name_current_trip_data))
+            runBlocking {
+                if (mPrevTripData != null) {
+                    DataHolder.applyTripData(mPrevTripData)
+                    sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
+                } else {
+                    InAppLogger.log("No trip file read!")
+                    // Toast.makeText(applicationContext ,R.string.toast_file_read_error, Toast.LENGTH_LONG).show()
+                }
+                tripRestoreComplete = true
+            }
+        }
+
+        while (!tripRestoreComplete) {
+            // Wait for completed restore before doing anything
+        }
+
+        createNotificationChannel()
+
+        foregroundServiceNotification = Notification.Builder(applicationContext, CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(getString(R.string.foreground_service_info))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -137,21 +152,6 @@ class DataCollector : Service() {
             .setStyle(Notification.MediaStyle())
             .setCategory(Notification.CATEGORY_TRANSPORT)
             .setOngoing(true)
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val mPrevTripData = readTripDataFromFile(getString(R.string.file_name_current_trip_data))
-            runBlocking {
-                if (mPrevTripData != null) {
-                    DataHolder.applyTripData(mPrevTripData)
-                    sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
-                } else {
-                    InAppLogger.log("No trip file read!")
-                    // Toast.makeText(applicationContext ,R.string.toast_file_read_error, Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-
-        startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
 
         InAppLogger.log(String.format(
             "DataCollector.onCreate in Thread: %s",
@@ -184,12 +184,8 @@ class DataCollector : Service() {
             DataHolder.currentGear = VehicleGear.GEAR_PARK
         }
 
-
-
         notificationTitleString = resources.getString(R.string.notification_title)
         statsNotification.setContentTitle(notificationTitleString).setContentIntent(mainActivityPendingIntent)
-
-        createNotificationChannel()
 
         if (notificationsEnabled) {
             with(NotificationManagerCompat.from(this)) {
@@ -220,6 +216,7 @@ class DataCollector : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         InAppLogger.log("DataCollector.onStartCommand")
+        startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
         return START_STICKY
     }
 
@@ -349,8 +346,8 @@ class DataCollector : Service() {
 
             when (value.propertyId) {
                 VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
-                VehiclePropertyIds.GEAR_SELECTION -> if (!emulatorMode) gearUpdater(value.value as Int)
-                VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> DataHolder.chargePortConnected = value.value as Boolean
+                VehiclePropertyIds.GEAR_SELECTION -> gearUpdater(value.value as Int, value.timestamp)
+                VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> portUpdater(value.value as Boolean)
             }
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
@@ -358,10 +355,48 @@ class DataCollector : Service() {
         }
     }
 
-    private fun gearUpdater(gear: Int) {
+    private fun gearUpdater(gear: Int, timestamp: Long) {
+        if (DataHolder.currentGear == gear) return
         DataHolder.currentGear = gear
+
+        when (gear) {
+            VehicleGear.GEAR_PARK -> DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, timestamp)
+            else -> DataHolder.plotMarkers.endMarker(timestamp)
+        }
+
         sendBroadcast(Intent(getString(R.string.gear_update_broadcast)))
         if (DataHolder.currentGear == VehicleGear.GEAR_PARK) sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+    }
+
+    private fun portUpdater(connected: Boolean) {
+        DataHolder.chargePortConnected = connected
+
+        if (connected) {
+            DataHolder.stateOfChargePlotLine.reset()
+            DataHolder.chargePlotLine.reset()
+            chargeStartTimeNanos = System.nanoTime()
+        }
+
+        if (!connected && chargeStartTimeNanos > 0 && DataHolder.chargedEnergy > 0) {
+            DataHolder.chargeCurves.add(
+                ChargeCurve(
+                    DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME, null),
+                    DataHolder.stateOfChargePlotLine.getDataPoints(PlotDimension.TIME, null),
+                    chargeStartTimeNanos,
+                    System.nanoTime(),
+                    DataHolder.chargedEnergy,
+                    0f, 0f
+                )
+            )
+            sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+        }
+        // } else if (!connected && DataHolder.chargeCurves.isNotEmpty()) {
+        //     DataHolder.chargePlotLine.reset()
+        //     DataHolder.stateOfChargePlotLine.reset()
+        //     DataHolder.chargePlotLine.addDataPoints(DataHolder.chargeCurves.last().chargePlotLine)
+        //     DataHolder.stateOfChargePlotLine.addDataPoints(DataHolder.chargeCurves.last().stateOfChargePlotLine)
+        // }
+
     }
 
     private fun powerUpdater(value: CarPropertyValue<*>, timestamp: Long) {
@@ -370,62 +405,57 @@ class DataCollector : Service() {
             else -> - (value.value as Float)
         }
 
-        if (DataHolder.currentGear != VehicleGear.GEAR_PARK) {
-            val timeDifference = timeDifference(value, 10_000, timestamp)
-            if (timeDifference != null && !DataHolder.chargePortConnected) {
-                DataHolder.usedEnergy += (DataHolder.lastPowermW / 1000) * (timeDifference.toFloat() / (1000 * 60 * 60))
-                DataHolder.averageConsumption = when {
-                    DataHolder.traveledDistance <= 0 -> 0F
-                    else -> DataHolder.usedEnergy / (DataHolder.traveledDistance / 1_000)
-                }
+        val timeDifference = timeDifference(value, 10_000, timestamp)
+        if (timeDifference != null && !DataHolder.chargePortConnected && DataHolder.currentGear != VehicleGear.GEAR_PARK) {
+            DataHolder.usedEnergy += (DataHolder.lastPowermW / 1000) * (timeDifference.toFloat() / (1000 * 60 * 60))
+            DataHolder.averageConsumption = when {
+                DataHolder.traveledDistance <= 0 -> 0F
+                else -> DataHolder.usedEnergy / (DataHolder.traveledDistance / 1_000)
             }
+        } else if (timeDifference != null && DataHolder.chargePortConnected) {
+            DataHolder.chargedEnergy += -(DataHolder.lastPowermW / 1000) * (timeDifference.toFloat() / (1000 * 60 * 60))
         }
 
-        if (timerTriggered(value, 5_000f, timestamp) && DataHolder.chargePortConnected) {
-            if (DataHolder.currentPowermW < 0 && lastChargePower >= 0) {
+        if (timerTriggered(value, 5_000f, timestamp) && DataHolder.chargePortConnected && DataHolder.currentGear == VehicleGear.GEAR_PARK) {
+            if (DataHolder.currentPowermW < 0 && DataHolder.lastChargePower >= 0) {
                 DataHolder.chargePlotLine.addDataPoint(0f, timestamp - 1_000_000, 0f)
-                DataHolder.chargePlotLine.addDataPoint(
-                    -(DataHolder.currentPowermW / 1_000_000),
-                    timestamp,
-                    0f,
-                    null,
-                    null,
-                    PlotMarker.BEGIN_SESSION
-                )
                 DataHolder.stateOfChargePlotLine.addDataPoint(
                     100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity,
-                    timestamp,
-                    0f,
-                    null,
-                    null,
-                    PlotMarker.BEGIN_SESSION
-                )
+                timestamp - 1_000_000,
+                    0f)
+                addChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
+                addStateOfChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
+                DataHolder.plotMarkers.addMarker(PlotMarkerType.CHARGE, timestamp)
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
-            } else if (DataHolder.currentPowermW >= 0 && lastChargePower < 0) {
-                DataHolder.chargePlotLine.addDataPoint(
-                    -(DataHolder.currentPowermW / 1_000_000),
-                    timestamp,
-                    0f,
-                    null,
-                    null,
-                    PlotMarker.END_SESSION
-                )
-                DataHolder.stateOfChargePlotLine.addDataPoint(
-                    100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity,
-                    timestamp,
-                    0f,
-                    null,
-                    null,
-                    PlotMarker.END_SESSION
-                )
+            } else if (DataHolder.currentPowermW >= 0 && DataHolder.lastChargePower < 0) {
+                addChargePlotLine(timestamp, PlotLineMarkerType.END_SESSION)
+                addStateOfChargePlotLine(timestamp, PlotLineMarkerType.END_SESSION)
+                DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, timestamp)
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             } else if (DataHolder.currentPowermW < 0) {
-                DataHolder.stateOfChargePlotLine.addDataPoint(100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity, timestamp, 0f)
-                DataHolder.chargePlotLine.addDataPoint(- (DataHolder.currentPowermW / 1_000_000), timestamp,0f)
+                addChargePlotLine(timestamp)
+                addStateOfChargePlotLine(timestamp)
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             }
-            lastChargePower = DataHolder.currentPowermW
+            DataHolder.lastChargePower = DataHolder.currentPowermW
         }
+    }
+
+    private fun addChargePlotLine(timestamp: Long, marker: PlotLineMarkerType? = null) {
+        DataHolder.chargePlotLine.addDataPoint(
+            -(DataHolder.currentPowermW / 1_000_000),
+            timestamp,
+            0f,
+            plotLineMarkerType = marker
+        )
+    }
+    private fun addStateOfChargePlotLine(timestamp: Long, marker: PlotLineMarkerType? = null) {
+        DataHolder.stateOfChargePlotLine.addDataPoint(
+            100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity,
+            timestamp,
+            0f,
+            plotLineMarkerType = marker
+        )
     }
 
     private fun powerUpdater(value: CarPropertyValue<*>) {
@@ -460,8 +490,8 @@ class DataCollector : Service() {
 
             val consumptionPlotTrigger = when {
                 consumptionPlotTracking -> when {
-                    DataHolder.traveledDistance >= lastPlotDistance + 100 -> true
-                    DataHolder.currentGear == VehicleGear.GEAR_PARK -> (lastPlotMarker?:PlotMarker.BEGIN_SESSION) == PlotMarker.BEGIN_SESSION || DataHolder.traveledDistance != lastPlotDistance
+                    DataHolder.traveledDistance >= DataHolder.lastPlotDistance + 100 -> true
+                    DataHolder.currentGear == VehicleGear.GEAR_PARK -> (DataHolder.lastPlotMarker?:PlotLineMarkerType.BEGIN_SESSION) == PlotLineMarkerType.BEGIN_SESSION || DataHolder.traveledDistance != DataHolder.lastPlotDistance
                     else -> false
                 }
                 else -> false
@@ -470,31 +500,32 @@ class DataCollector : Service() {
             if (consumptionPlotTrigger) {
                 consumptionPlotTracking = DataHolder.currentGear != VehicleGear.GEAR_PARK
 
-                val distanceDifference = DataHolder.traveledDistance - lastPlotDistance
-                val timeDifference = value.timestamp - lastPlotTime
-                val powerDifference = DataHolder.usedEnergy - lastPlotEnergy
+                val distanceDifference = DataHolder.traveledDistance - DataHolder.lastPlotDistance
+                val timeDifference = value.timestamp - DataHolder.lastPlotTime
+                val powerDifference = DataHolder.usedEnergy - DataHolder.lastPlotEnergy
 
-                val newConsumptionPlotValue = powerDifference / (distanceDifference / 1000)
+                val newConsumptionPlotValue = if (distanceDifference > 0) powerDifference / (distanceDifference / 1000) else 0f
                 val newSpeedPlotValue = distanceDifference / (timeDifference.toFloat() / 1_000_000_000 / 3.6f)
 
-                val plotMarker = when(lastPlotGear) {
+                val plotMarker = when(DataHolder.lastPlotGear) {
                     VehicleGear.GEAR_PARK -> when (DataHolder.currentGear) {
-                        VehicleGear.GEAR_PARK -> PlotMarker.SINGLE_SESSION
-                        else -> PlotMarker.BEGIN_SESSION
+                        VehicleGear.GEAR_PARK -> PlotLineMarkerType.SINGLE_SESSION
+                        else -> PlotLineMarkerType.BEGIN_SESSION
                     }
                     else -> when (DataHolder.currentGear) {
-                        VehicleGear.GEAR_PARK -> PlotMarker.END_SESSION
+                        VehicleGear.GEAR_PARK -> PlotLineMarkerType.END_SESSION
                         else -> null
                     }
                 }
 
-                lastPlotMarker = plotMarker
-                lastPlotGear = DataHolder.currentGear
+                DataHolder.lastPlotMarker = plotMarker
+                DataHolder.lastPlotGear = DataHolder.currentGear
 
                 resetPlotVar(value.timestamp)
 
                 DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
                 DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
+
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             }
         }
@@ -502,9 +533,9 @@ class DataCollector : Service() {
     }
 
     private fun resetPlotVar(currentPlotTimestampMilliseconds: Long) {
-        lastPlotDistance = DataHolder.traveledDistance
-        lastPlotTime = currentPlotTimestampMilliseconds
-        lastPlotEnergy = DataHolder.usedEnergy
+        DataHolder.lastPlotDistance = DataHolder.traveledDistance
+        DataHolder.lastPlotTime = currentPlotTimestampMilliseconds
+        DataHolder.lastPlotEnergy = DataHolder.usedEnergy
     }
 
     private fun createNotificationChannel() {

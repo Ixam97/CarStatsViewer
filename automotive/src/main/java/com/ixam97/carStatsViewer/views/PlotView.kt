@@ -1,16 +1,23 @@
 package com.ixam97.carStatsViewer.views
 
-import android.R
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.VectorDrawable
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
+import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getColor
+import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.plot.*
-import java.lang.Long.max
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 
 class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -92,13 +99,28 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             if (diff) invalidate()
         }
 
+    var visibleMarkerTypes: HashSet<PlotMarkerType> = HashSet()
+
+    var sessionGapRendering : PlotSessionGapRendering = PlotSessionGapRendering.JOIN
+        set(value) {
+            val diff = value != field
+            field = value
+            if (diff) invalidate()
+        }
+
     private val plotLines = ArrayList<PlotLine>()
+    private var plotMarkers : PlotMarkers? = null
+
     private val plotPaint = ArrayList<PlotPaint>()
 
     private lateinit var labelPaint: Paint
     private lateinit var labelLinePaint: Paint
+    private lateinit var borderLinePaint: Paint
     private lateinit var baseLinePaint: Paint
     private lateinit var backgroundPaint: Paint
+
+    private var markerPaint = HashMap<PlotMarkerType, PlotMarkerPaint>()
+    private var markerIcon = HashMap<PlotMarkerType, Bitmap?>()
 
     init {
         setupPaint()
@@ -107,14 +129,18 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     // Setup paint with color and stroke styles
     private fun setupPaint() {
         val typedValue = TypedValue()
-        context.theme.resolveAttribute(R.attr.colorControlActivated, typedValue, true)
+        context.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
 
         val basePaint = PlotPaint.basePaint(textSize)
 
         labelLinePaint = Paint(basePaint)
-        labelLinePaint.color = Color.GRAY
+        labelLinePaint.color = Color.parseColor("#151515")
+
+        borderLinePaint = Paint(basePaint)
+        borderLinePaint.color = Color.GRAY
 
         labelPaint = Paint(labelLinePaint)
+        labelPaint.color = Color.GRAY
         labelPaint.style = Paint.Style.FILL
 
         baseLinePaint = Paint(labelLinePaint)
@@ -136,12 +162,54 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         for (color in plotColors) {
             plotPaint.add(PlotPaint.byColor(color ?: typedValue.data, textSize))
         }
+
+        // markerPaint[PlotMarkerType.CHARGE] = PlotMarkerPaint.byColor(Color.rgb(237, 218, 75), textSize)
+        markerPaint[PlotMarkerType.CHARGE] = PlotMarkerPaint.byColor(getColor(context, R.color.charge_marker), textSize)
+        markerIcon[PlotMarkerType.CHARGE] = getVectorBitmap(context, R.drawable.ic_marker_charge)
+
+        // markerPaint[PlotMarkerType.PARK] = PlotMarkerPaint.byColor(Color.rgb(93, 110,204), textSize)
+        markerPaint[PlotMarkerType.PARK] = PlotMarkerPaint.byColor(getColor(context, R.color.park_marker), textSize)
+        markerIcon[PlotMarkerType.PARK] = getVectorBitmap(context, R.drawable.ic_marker_park)
+    }
+
+    private fun getVectorBitmap(context: Context, drawableId: Int): Bitmap? {
+        when (val drawable = ContextCompat.getDrawable(context, drawableId)) {
+            is BitmapDrawable -> {
+                return drawable.bitmap
+            }
+
+            is VectorDrawable -> {
+                val bitmap = Bitmap.createBitmap(
+                    drawable.intrinsicWidth,
+                    drawable.intrinsicHeight,
+                    Bitmap.Config.ARGB_8888
+                )
+
+                val canvas = Canvas(bitmap)
+                drawable.setBounds(0, 0, canvas.width, canvas.height)
+                drawable.draw(canvas)
+
+                val factor = textSize / canvas.width
+
+                return Bitmap.createScaledBitmap(
+                    bitmap,
+                    (canvas.width * factor).roundToInt(),
+                    (canvas.height * factor).roundToInt(),
+                    true
+                )
+            }
+        }
+
+        return null
     }
 
     fun reset() {
         for (item in plotLines) {
             item.reset()
         }
+
+        plotMarkers?.markers?.clear()
+
         invalidate()
     }
 
@@ -160,6 +228,11 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     fun removeAllPlotLine() {
         plotLines.clear()
+        invalidate()
+    }
+
+    fun setPlotMarkers(plotMarkers: PlotMarkers) {
+        this.plotMarkers = plotMarkers
         invalidate()
     }
 
@@ -188,29 +261,56 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         }
     }
 
+    private val mScaleGestureDetector = object : SimpleOnScaleGestureListener() {
+        private var lastSpanX: Float = 0f
+        private var lastRestriction: Long? = 0L
+
+        override fun onScaleBegin(scaleGestureDetector: ScaleGestureDetector): Boolean {
+            lastSpanX = scaleGestureDetector.currentSpanX
+            lastRestriction = dimensionRestriction
+            return true
+        }
+
+        override fun onScale(scaleGestureDetector: ScaleGestureDetector): Boolean {
+            val spanX: Float = scaleGestureDetector.currentSpanX
+
+            val restrictionInterval = dimensionRestrictionTouchInterval
+            if (restrictionInterval != null && lastRestriction != null && !(lastSpanX/spanX).isInfinite()) {
+                dimensionRestriction = (((lastRestriction!!.toFloat() * (lastSpanX / spanX)).toLong()/restrictionInterval) * restrictionInterval)
+                    .coerceAtMost(touchDimensionMax + (restrictionInterval - touchDimensionMax % restrictionInterval))
+                    .coerceAtLeast(restrictionInterval)
+                dimensionShiftTouchInterval = dimensionRestriction!! / dimensionRestrictionTouchInterval!! * 1_000L
+            }
+
+            this@PlotView.invalidate()
+            return true
+        }
+    }
+
     private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             val shiftInterval = dimensionShiftTouchInterval
             if (shiftInterval != null) {
                 touchDimensionShiftDistance += - distanceX
-                dimensionShift = (touchDimensionShift + (touchDimensionShiftDistance / max(1L, touchActionDistance)).toLong() * shiftInterval)
+                dimensionShift = (touchDimensionShift + (touchDimensionShiftDistance / touchActionDistance.coerceAtLeast(1L)).toLong() * shiftInterval)
                     .coerceAtMost(touchDimensionMax + (shiftInterval - touchDimensionMax % shiftInterval) - (dimensionRestriction!! - 1))
                     .coerceAtLeast(0L)
             }
-
+/*
             val restrictionInterval = dimensionRestrictionTouchInterval
             if (restrictionInterval != null) {
                 touchDimensionRestrictionDistance += - distanceY
-                dimensionRestriction = (touchDimensionRestriction + (touchDimensionRestrictionDistance / max(1L, touchActionDistance)).toLong() * restrictionInterval)
+                dimensionRestriction = (touchDimensionRestriction + (touchDimensionRestrictionDistance / touchActionDistance.coerceAtLeast(1L)).toLong() * restrictionInterval)
                     .coerceAtMost(touchDimensionMax + (restrictionInterval - touchDimensionMax % restrictionInterval))
                     .coerceAtLeast(restrictionInterval)
             }
-
+*/
             return true
         }
     }
 
-    private val mScaleDetector = GestureDetector(context, mGestureListener)
+    private val mScrollDetector = GestureDetector(context, mGestureListener)
+    private val mScaleDetector = ScaleGestureDetector(context!!, mScaleGestureDetector)
 
     private var touchDimensionShift : Long = 0L
     private var touchDimensionShiftDistance : Float = 0f
@@ -238,6 +338,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             }
         }
 
+        mScrollDetector.onTouchEvent(ev)
         mScaleDetector.onTouchEvent(ev)
         return true
     }
@@ -292,6 +393,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val maxX = canvas.width.toFloat()
         val maxY = canvas.height.toFloat()
 
+        var index = 0
         for (line in plotLines) {
             if (line.isEmpty() || !line.Visible) continue
 
@@ -310,7 +412,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 else -> null
             }
 
-            val backgroundZeroCord = y(line.Range.backgroundZero, minValue, maxValue, maxY)
+            val zeroCord = y(line.Range.backgroundZero, minValue, maxValue, maxY)
 
             val dataPointsUnrestricted = line.getDataPoints(dimension)
             val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPointsUnrestricted, dimension, smoothing, minDimension, maxDimension)
@@ -332,8 +434,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                         }
                         else -> {
                             val x = when (plotPoints.size) {
-                                0 -> group.value.minBy { it.x }?.x!!
-                                else -> group.value.maxBy { it.x }?.x!!
+                                0 -> group.value.minBy { it.x }.x
+                                else -> group.value.maxBy { it.x }.x
                             }
 
                             PlotPoint(
@@ -360,19 +462,143 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             // RIGHT
             canvas.clipOutRect(maxX - xMargin, 0f, maxX, maxY)
 
-            for (plotPoints in plotPointCollection) {
-                if (backgroundZeroCord != null) {
-                    drawPlot(canvas, line.plotPaint!!.PlotBackground, plotPoints, backgroundZeroCord)
-                }
+            val joinedPlotPoints = ArrayList<PlotPoint>()
 
-                drawPlot(canvas, line.plotPaint!!.Plot, plotPoints)
+            for (plotPointIndex in plotPointCollection.indices) {
+                val plotPoints = plotPointCollection[plotPointIndex]
+
+                when (sessionGapRendering) {
+                    PlotSessionGapRendering.JOIN -> joinedPlotPoints.addAll(plotPoints)
+                    else -> drawPlot(canvas, line, plotPoints, zeroCord, plotPointIndex == plotLineItemPointCollection.size - 1)
+                }
+            }
+
+            if (!joinedPlotPoints.isEmpty()) {
+                drawPlot(canvas, line, joinedPlotPoints, zeroCord)
             }
 
             canvas.restore()
+
+            if (index == 0 && plotMarkers?.markers?.isNotEmpty() ?: false) {
+                val markers = plotMarkers!!.markers.filter { visibleMarkerTypes.contains(it.MarkerType) }
+
+                var markerXLimit = 0f
+                val markerTimes = HashMap<PlotMarkerType, Long>()
+
+                for (markerGroup in markers.groupBy { line.x(dataPoints, it.StartTime, PlotDimension.TIME, dimension, minDimension, maxDimension) }) {
+                    if (markerGroup.key == null) continue
+
+                    val markerSorted = markerGroup.value.sortedBy { it.MarkerType }
+                    val markerTypeGroup = markerSorted.groupBy { it.MarkerType }
+                    val markerType = markerSorted.first().MarkerType
+
+                    val markers = markerTypeGroup[markerType]!!
+
+                    val x1 = x(markerGroup.key, 0f, 1f, maxX)
+                    val x2 = when (dimension) {
+                        PlotDimension.DISTANCE-> x1
+                        else -> x(line.x(dataPoints, markers.last().EndTime, PlotDimension.TIME, dimension, minDimension, maxDimension), 0f, 1f, maxX)
+                    }
+
+                    if (x1 != null && markers.none { it.EndTime == null }) {
+                        if (markerXLimit == 0f) {
+                            markerXLimit = x1
+                        }
+
+                        markerXLimit = drawMarkerLabel(canvas, markerTimes, markerXLimit, x1)
+
+                        drawMarker(canvas, markerType, x1, -1)
+                        drawMarker(canvas, markerType, x2, 1)
+
+                        val diff = markers.sumOf { (it.EndTime ?: it.StartTime) - it.StartTime }
+
+                        markerTimes[markerType] = (markerTimes[markerType] ?: 0L) + diff
+                    }
+                }
+
+                drawMarkerLabel(canvas, markerTimes, markerXLimit, maxX)
+            }
+
+            index++
         }
     }
 
-    private fun drawPlot(canvas : Canvas, paint : Paint, plotPoints : ArrayList<PlotPoint>, backgroundZeroCord: Float? = null) {
+    private fun timeLabel(time: Long): String {
+        return String.format("%02d:%02dh",
+            TimeUnit.NANOSECONDS.toHours(time),
+            TimeUnit.NANOSECONDS.toMinutes(time) % TimeUnit.HOURS.toMinutes(1)
+        )
+    }
+
+    private fun drawMarkerLabel(canvas: Canvas, markerTimes: HashMap<PlotMarkerType, Long>, xMin: Float, xCurrent: Float): Float {
+        if (markerTimes.isNotEmpty() && xCurrent > xMin + markerTimes.map { 36 + labelPaint.measureText(timeLabel(it.value)) }.sum()) {
+            var shift = 0
+            for (item in markerTimes) {
+                val label = timeLabel(item.value)
+                val labelPaint = markerPaint[item.key]!!.Label
+
+                canvas.drawBitmap(
+                    markerIcon[item.key]!!,
+                    xMin - (textSize / 2f) + shift,
+                    (yMargin / 3f),
+                    labelPaint
+                )
+
+                canvas.drawText(
+                    label,
+                    xMin + labelPaint.textSize + shift,
+                    yMargin - labelPaint.textSize + 2f,
+                    labelPaint
+                )
+                shift += 36 + labelPaint.measureText(timeLabel(item.value)).roundToInt()
+            }
+
+            markerTimes.clear()
+
+            return xCurrent
+        }
+
+        return xMin
+    }
+
+    private fun drawMarker(canvas: Canvas, markerType: PlotMarkerType, x: Float?, multiplier: Int) {
+        if (x == null) return
+
+        val top = yMargin.toFloat() + 1
+        val bottom = canvas.height - yMargin.toFloat() - 1
+
+        val linePath = Path()
+        linePath.moveTo(x, top)
+        linePath.lineTo(x, bottom)
+        canvas.drawPath(linePath, markerPaint[markerType]!!.Line)
+
+        val trianglePath = Path()
+        trianglePath.moveTo(x, top)
+        trianglePath.lineTo(x, yMargin.toFloat() + 15f)
+        trianglePath.lineTo(x + (multiplier * 12f), top)
+        trianglePath.lineTo(x, top)
+        canvas.drawPath(trianglePath, markerPaint[markerType]!!.Mark)
+    }
+
+    private fun drawPlot(canvas: Canvas, line: PlotLine, plotPoints : ArrayList<PlotPoint>, zeroCord: Float?, lastPlot: Boolean = true) {
+         val backgroundPaint = when (lastPlot) {
+            true -> line.plotPaint!!.PlotBackground
+            else -> line.plotPaint!!.PlotBackgroundSecondary
+        }
+
+        if (zeroCord != null) {
+            drawPlot(canvas, backgroundPaint, plotPoints, zeroCord, true)
+        }
+
+        val plotPaint = when (lastPlot) {
+            true -> line.plotPaint!!.Plot
+            else -> line.plotPaint!!.PlotSecondary
+        }
+
+        drawPlot(canvas, plotPaint, plotPoints, zeroCord)
+    }
+
+    private fun drawPlot(canvas : Canvas, paint : Paint, plotPoints : ArrayList<PlotPoint>, zeroCord: Float?, background: Boolean = false) {
         if (plotPoints.isEmpty()) return
 
         val path = Path()
@@ -383,17 +609,20 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         for (i in plotPoints.indices) {
             val point = plotPoints[i]
 
-            if (prevPoint === null) {
-                firstPoint = point
-                path.moveTo(point.x, point.y)
-            } else {
-                val midX = (prevPoint.x + point.x) / 2
-                val midY = (prevPoint.y + point.y) / 2
+            when {
+                prevPoint === null -> {
+                    firstPoint = point
+                    path.moveTo(point.x, point.y)
+                }
+                else -> {
+                    val midX = (prevPoint.x + point.x) / 2
+                    val midY = (prevPoint.y + point.y) / 2
 
-                if (i == 1) {
-                    path.lineTo(midX, midY)
-                } else {
-                    path.quadTo(prevPoint.x, prevPoint.y, midX, midY)
+                    if (i == 1) {
+                        path.lineTo(midX, midY)
+                    } else {
+                        path.quadTo(prevPoint.x, prevPoint.y, midX, midY)
+                    }
                 }
             }
 
@@ -402,12 +631,22 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         path.lineTo(prevPoint!!.x, prevPoint.y)
 
-        if (backgroundZeroCord != null) {
-            path.lineTo(prevPoint.x, backgroundZeroCord)
-            path.lineTo(firstPoint!!.x, backgroundZeroCord)
+        if (background && zeroCord != null) {
+            path.lineTo(prevPoint.x, zeroCord)
+            path.lineTo(firstPoint!!.x, zeroCord)
+        }
+
+        if (!background && sessionGapRendering == PlotSessionGapRendering.CIRCLE){
+            drawPlotLineMarker(canvas, firstPoint, paint)
+            drawPlotLineMarker(canvas, prevPoint, paint)
         }
 
         canvas.drawPath(path, paint)
+    }
+
+    private fun drawPlotLineMarker(canvas: Canvas, point: PlotPoint?, paint: Paint) {
+        if (point == null) return
+        canvas.drawCircle(point.x, point.y, 3f, paint)
     }
 
     private fun drawXLines(canvas: Canvas) {
@@ -426,7 +665,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             val leftZero = (distanceDimension / (xLineCount - 1) * i) + (dimensionShift ?: 0L)
             val rightZero = distanceDimension - leftZero + (2 * (dimensionShift ?: 0L))
 
-            drawXLine(canvas, cordX, maxY, labelLinePaint)
+            if (i in 1 until xLineCount-1) drawXLine(canvas, cordX, maxY, labelLinePaint)
+            else drawXLine(canvas, cordX, maxY, borderLinePaint)
 
             val label = when (dimension) {
                 PlotDimension.INDEX -> String.format("%d", leftZero.toInt())
@@ -434,7 +674,10 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     rightZero < 1000 -> String.format("%d m", (rightZero - (rightZero % 100)).toInt())
                     else -> String.format("%d km", (rightZero / 1000).toInt())
                 }
-                PlotDimension.TIME -> String.format("%02d:%02d", TimeUnit.MINUTES.convert(leftZero.toLong(), TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(leftZero.toLong(), TimeUnit.NANOSECONDS) % 60)
+                PlotDimension.TIME -> {
+                    if (TimeUnit.NANOSECONDS.toHours(leftZero.toLong()) < 1)  String.format("%02d:%02dm", TimeUnit.MINUTES.convert(leftZero.toLong(), TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(leftZero.toLong(), TimeUnit.NANOSECONDS) % 60)
+                    else timeLabel(leftZero.toLong())
+                }
             }
 
             val bounds = Rect()
@@ -463,7 +706,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         for (i in 0 until yLineCount) {
             val cordY = y(i.toFloat(), 0f, yLineCount.toFloat() - 1, maxY)!!
-            drawYLine(canvas, cordY, maxX, labelLinePaint)
+            if (i in 1 until yLineCount-1) drawYLine(canvas, cordY, maxX, labelLinePaint)
+            else drawYLine(canvas, cordY, maxX, borderLinePaint)
         }
     }
 
@@ -564,6 +808,4 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         path.lineTo(maxX - xMargin, cord)
         canvas.drawPath(path, paint ?: labelLinePaint)
     }
-
-
 }

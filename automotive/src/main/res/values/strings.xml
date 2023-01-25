@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Car Stats Viewer</string>
+    <string name="app_name" translatable="false">Car Stats Viewer</string>
 
     <!-- Preferences -->
     <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer.preferences</string>
@@ -21,11 +21,17 @@
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
 
     <!-- Broadcast -->
-    <string name="ui_update_plot_broadcast" translatable="false">ui_update_plot_broadcast</string>
-    <string name="ui_update_gages_broadcast" translatable="false">ui_update_gages_broadcast</string>
-    <string name="gear_update_broadcast" translatable="false">gear_update_broadcast</string>
-    <string name="wake_lock_broadcast" translatable="false">wake_lock_broadcast</string>
-    <string name="save_trip_data_broadcast" translatable="false">save_trip_data_broadcast</string>
+    <string name="ui_update_plot_broadcast" translatable="false">com.ixam97.carStatsViewer.ui_update_plot_broadcast</string>
+    <string name="ui_update_gages_broadcast" translatable="false">com.ixam97.carStatsViewer.ui_update_gages_broadcast</string>
+    <string name="gear_update_broadcast" translatable="false">com.ixam97.carStatsViewer.gear_update_broadcast</string>
+    <string name="wake_lock_broadcast" translatable="false">com.ixam97.carStatsViewer.wake_lock_broadcast</string>
+    <string name="save_trip_data_broadcast" translatable="false">com.ixam97.carStatsViewer.save_trip_data_broadcast</string>
+
+    <!-- PermissionsActivity -->
+    <string name="permissions_dialog_title">Permissions required for use</string>
+    <string name="permissions_dialog_text">This app requires Permissions to be used. Without the required permissions the app cannot read any data from the car.</string>
+    <string name="permissions_dialog_quit">Quit Car Stats Viewer</string>
+    <string name="permissions_dialog_grant">Grant permissions</string>
 
     <!-- MainActivity -->
     <string name="main_port_connected">Charge port connected:</string>
@@ -43,9 +49,18 @@
     <string name="main_dialog_reset_message">All saved trip data will be reset to zero.</string>
     <string name="main_gage_speed">Speed</string>
     <string name="main_gage_power">Power</string>
+    <string name="main_gage_charging_power">Charging power</string>
+    <string name="main_gage_SoC">State of charge</string>
     <string name="main_gage_consumption">Inst. consumption</string>
     <string name="main_dismiss_charge_plot">Dismiss charge plot</string>
     <string name="main_button_reset_charge_plot">Reset charge plot</string>
+    <string name="main_button_trip_summary">Trip summary</string>
+    <string name="main_button_hide_speed">Hide speed</string>
+    <string name="main_button_show_speed">Show speed</string>
+
+    <!-- SummaryActivity -->
+    <string name="summary_title">Trip summary</string>
+    <string name="summary_button_reset_trip">Reset trip</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
@@ -55,12 +70,15 @@
     <string name="settings_consumption_unit">Wh/km as consumption unit</string>
     <string name="settings_debug">Debug information</string>
     <string name="settings_experimental_layout">Show experimental Layout</string>
-    <string name="settings_consumption_plot">  Consumption plot</string>
-    <string name="settings_charge_plot">  Charge plot</string>
+    <string name="settings_consumption_plot">  Consumption view</string>
+    <string name="settings_charge_plot">  Charge view</string>
     <string name="settings_plot_secondary_color">Gray as secondary plot color</string>
     <string name="settings_consumption_plot_single_motor">Single motor model</string>
     <string name="settings_consumption_plot_visible_gages">Show power gages</string>
     <string name="settings_consumption_plot_speed">Show speed plot</string>
+    <string name="settings_sub_title_settings">Settings:</string>
+    <string name="settings_sub_title_current_cons_plot">Current consumption plot:</string>
+    <string name="settings_sub_title_last_charge_plot">Last charging curves:</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">Quit App?</string>
