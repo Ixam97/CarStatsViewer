@@ -45,6 +45,8 @@
     <string name="main_button_reset_stats">Reset statistics</string>
     <string name="main_consumption">Consumption over the last 3 km:</string>
     <string name="main_checkbox_speed">Speed</string>
+    <string name="main_dialog_reset_title">Reset stats?</string>
+    <string name="main_dialog_reset_message">All saved trip data will be reset to zero.</string>
     <string name="main_gage_speed">Speed</string>
     <string name="main_gage_power">Power</string>
     <string name="main_gage_charging_power">Charging power</string>
