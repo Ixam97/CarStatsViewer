@@ -414,7 +414,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 val maxValue = line.maxValue(dataPoints, secondaryDimension)!!
 
                 val minDimension = line.minDimension(dataPoints, dimension, dimensionRestriction)
-                val maxDimension = line.maxDimension(dataPoints, dimension)
+                val maxDimension = line.maxDimension(dataPoints, dimension, dimensionRestriction)
 
                 val smoothing = when {
                     dimensionSmoothing != null -> dimensionSmoothing
@@ -479,12 +479,12 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                     when (sessionGapRendering) {
                         PlotSessionGapRendering.JOIN -> joinedPlotPoints.addAll(plotPoints)
-                        else -> drawPlot(canvas, plotPoints, paint, zeroCord, plotPointIndex == plotLineItemPointCollection.size - 1)
+                        else -> drawPlotLine(canvas, plotPoints, paint, zeroCord, plotPointIndex == plotLineItemPointCollection.size - 1)
                     }
                 }
 
                 if (joinedPlotPoints.isNotEmpty()) {
-                    drawPlot(canvas, joinedPlotPoints, paint, zeroCord)
+                    drawPlotLine(canvas, joinedPlotPoints, paint, zeroCord)
                 }
 
                 canvas.restore()
@@ -526,8 +526,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                 markerXLimit = drawMarkerLabel(canvas, markerTimes, markerXLimit, x1)
 
-                drawMarker(canvas, markerType, x1, -1)
-                drawMarker(canvas, markerType, x2, 1)
+                drawMarkerLine(canvas, markerType, x1, -1)
+                drawMarkerLine(canvas, markerType, x2, 1)
 
                 val diff = markers.sumOf { (it.EndTime ?: it.StartTime) - it.StartTime }
 
@@ -569,7 +569,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         return xMin
     }
 
-    private fun drawMarker(canvas: Canvas, markerType: PlotMarkerType, x: Float?, multiplier: Int) {
+    private fun drawMarkerLine(canvas: Canvas, markerType: PlotMarkerType, x: Float?, multiplier: Int) {
         if (x == null) return
 
         val top = yMargin.toFloat() + 1
@@ -588,14 +588,14 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         canvas.drawPath(trianglePath, markerPaint[markerType]!!.Mark)
     }
 
-    private fun drawPlot(canvas: Canvas, plotPoints : ArrayList<PlotPoint>, plotPaint: PlotPaint, zeroCord: Float?, lastPlot: Boolean = true) {
+    private fun drawPlotLine(canvas: Canvas, plotPoints : ArrayList<PlotPoint>, plotPaint: PlotPaint, zeroCord: Float?, lastPlot: Boolean = true) {
          val backgroundPaint = when (lastPlot) {
             true -> plotPaint.PlotBackground
             else -> plotPaint.PlotBackgroundSecondary
         }
 
         if (zeroCord != null) {
-            drawPlot(canvas, backgroundPaint, plotPoints, zeroCord, true)
+            drawPlotLine(canvas, backgroundPaint, plotPoints, zeroCord, true)
         }
 
         val plotPaint = when (lastPlot) {
@@ -603,10 +603,10 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             else -> plotPaint.PlotSecondary
         }
 
-        drawPlot(canvas, plotPaint, plotPoints, zeroCord)
+        drawPlotLine(canvas, plotPaint, plotPoints, zeroCord)
     }
 
-    private fun drawPlot(canvas : Canvas, paint : Paint, plotPoints : ArrayList<PlotPoint>, zeroCord: Float?, background: Boolean = false) {
+    private fun drawPlotLine(canvas : Canvas, paint : Paint, plotPoints : ArrayList<PlotPoint>, zeroCord: Float?, background: Boolean = false) {
         if (plotPoints.isEmpty()) return
 
         val path = Path()
