@@ -13,7 +13,6 @@ import android.car.hardware.property.CarPropertyManager
 import android.content.*
 import android.graphics.BitmapFactory
 import android.os.*
-import android.provider.ContactsContract.Data
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
@@ -39,7 +38,9 @@ class DataCollector : Service() {
         private const val CHARGE_CURVE_UPDATE_INTERVAL_MILLIS = 10_000L
     }
 
+    private var startupTimestamp: Long = 0L
     private var lastPowerValueTimestamp: Long = 0L
+    private var lastSpeedValueTimestamp: Long = 0L
 
     private var consumptionPlotTracking = false
     private var lastNotificationTimeMillis = 0L
@@ -61,6 +62,11 @@ class DataCollector : Service() {
 
     private lateinit var notificationTimerHandler: Handler
     private lateinit var saveTripDataTimerHandler: Handler
+
+
+    init {
+        startupTimestamp = System.nanoTime()
+    }
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -300,12 +306,7 @@ class DataCollector : Service() {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
             //InAppLogger.deepLog("DataCollector.carPropertyPowerListener", appPreferences.deepLog)
 
-            powerUpdater(value)
-            Log.d("carPropertyPowerListener",
-                String.format(
-                    "Received value %.0f on thread %s",
-                    value.value as Float,
-                    Thread.currentThread().name))
+            if (!emulatorMode) powerUpdater(value)
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
             Log.w("carPropertyPowerListener",
@@ -316,6 +317,7 @@ class DataCollector : Service() {
     private var carPropertySpeedListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<Any>) {
             //InAppLogger.deepLog("DataCollector.carPropertySpeedListener", appPreferences.deepLog)
+            if (value.timestamp < startupTimestamp) return
             InAppLogger.logVHALCallback()
 
             // DataManager.update(value)
@@ -325,6 +327,7 @@ class DataCollector : Service() {
             if (emulatorMode) {
                 // Also get power in emulator
                 var powerValue = carPropertyManager.getProperty<Float>(VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE,0)
+                lastSpeedValueTimestamp = value.timestamp
                 powerUpdater(powerValue, value.timestamp)
 
             }
@@ -376,7 +379,7 @@ class DataCollector : Service() {
         if (connected != DataHolder.chargePortConnected) {
             DataHolder.chargePortConnected = connected
 
-            if (connected) {
+            if (connected && lastPowerValueTimestamp > startupTimestamp) {
                 DataHolder.chargePlotLine.reset()
                 DataHolder.chargedEnergy = 0F
                 DataHolder.chargeTimeMillis = 0L
