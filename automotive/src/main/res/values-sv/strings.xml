@@ -1,0 +1,96 @@
+<resources>
+    <string name="app_name" translatable="false">Car Stats Viewer</string>
+
+    <!-- Preferences -->
+    <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer.preferences</string>
+    <string name="preferences_notifications_key" translatable="false">notifications</string>
+    <string name="preferences_consumption_unit_key" translatable="false">consumption_unit</string>
+    <string name="preferences_debug_key" translatable="false">debug</string>
+    <string name="preferences_consumption_plot_key" translatable="false">consumption_plot</string>
+    <string name="preferences_deep_log_key" translatable="false">deep_log</string>
+    <string name="userdata_consumption_plot_key" translatable="false">userdata_consumption_plot</string>
+    <string name="userdata_speed_plot_key" translatable="false">userdata_speed_plot</string>
+    <string name="preferences_plot_distance_key" translatable="false">preferences_plot_distance</string>
+    <string name="preferences_plot_speed_key" translatable="false">preferences_plot_speed</string>
+    <string name="preferences_experimental_layout_key" translatable="false">preferences_experimental_layout</string>
+    <string name="preferences_consumption_plot_single_motor_key" translatable="false">preferences_consumption_plot_single_motor_key</string>
+    <string name="preference_consumption_plot_visible_gages_key" translatable="false">preference_consumption_plot_visible_gages</string>
+    <string name="preference_consumption_plot_secondary_color_key" translatable="false">preference_consumption_plot_secondary_color</string>
+    <string name="preference_charge_plot_secondary_color_key" translatable="false">preference_charge_plot_secondary_color</string>
+
+    <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
+
+    <!-- Broadcast -->
+    <string name="ui_update_plot_broadcast" translatable="false">com.ixam97.carStatsViewer.ui_update_plot_broadcast</string>
+    <string name="ui_update_gages_broadcast" translatable="false">com.ixam97.carStatsViewer.ui_update_gages_broadcast</string>
+    <string name="gear_update_broadcast" translatable="false">com.ixam97.carStatsViewer.gear_update_broadcast</string>
+    <string name="wake_lock_broadcast" translatable="false">com.ixam97.carStatsViewer.wake_lock_broadcast</string>
+    <string name="save_trip_data_broadcast" translatable="false">com.ixam97.carStatsViewer.save_trip_data_broadcast</string>
+
+    <!-- PermissionsActivity -->
+    <string name="permissions_dialog_title">Behörigheter krävs för användning</string>
+    <string name="permissions_dialog_text">Denna app kräver behörigheter för att kunna användas. Utan de nödvändiga behörigheterna kan appen inte läsa någon data från bilen.</string>
+    <string name="permissions_dialog_quit">Avsluta Car Stats Viewer</string>
+    <string name="permissions_dialog_grant">Bevilja behörigheter</string>
+
+    <!-- MainActivity -->
+    <string name="main_port_connected">Laddare ansluten:</string>
+    <string name="main_current_power">Aktuell strömförbrukning:</string>
+    <string name="main_used_energy">Använd energi:</string>
+    <string name="main_SoC" translatable="false">SoC:</string>
+    <string name="main_current_speed">Aktuell hastighet:</string>
+    <string name="main_traveled_distance">Tripp avstånd:</string>
+    <string name="main_inst_consumption">Aktuell förbrukning:</string>
+    <string name="main_average_consumption">Genomsnittlig förbrukning:</string>
+    <string name="main_button_reset_stats">Återställ statistik</string>
+    <string name="main_consumption">Förbrukning under de senaste 3 km:</string>
+    <string name="main_checkbox_speed">Hastighet</string>
+    <string name="main_dialog_reset_title">Återställa statistik?</string>
+    <string name="main_dialog_reset_message">Alla sparade tripdata kommer att nollställas.</string>
+    <string name="main_gage_speed">Hastighet</string>
+    <string name="main_gage_power">Effekt</string>
+    <string name="main_gage_charging_power">Laddningseffekt</string>
+    <string name="main_gage_SoC">Laddningsnivå</string>
+    <string name="main_gage_consumption">Akt. förbrukning</string>
+    <string name="main_dismiss_charge_plot">Stäng laddningsdiagram</string>
+    <string name="main_button_reset_charge_plot">Återställ laddningsdiagram</string>
+    <string name="main_button_trip_summary">Reseöversikt</string>
+    <string name="main_button_hide_speed">Dölj hastighet</string>
+    <string name="main_button_show_speed">Visa hastighet</string>
+
+    <!-- SummaryActivity -->
+    <string name="summary_title">Reseöversikt</string>
+    <string name="summary_button_reset_trip">Återställ trippmätare</string>
+
+    <!-- SettingsActivity -->
+    <string name="settings_title">Inställningar</string>
+    <string name="settings_button_back">Tillbaka</string>
+    <string name="settings_button_quit">Avsluta appen</string>
+    <string name="settings_notifications">Aviseringar</string>
+    <string name="settings_consumption_unit">Wh/km som förbrukningsenhet</string>
+    <string name="settings_debug">Felsökningsinformation</string>
+    <string name="settings_experimental_layout">Visa experimentell layout</string>
+    <string name="settings_consumption_plot"> Förbrukningsvy</string>
+    <string name="settings_charge_plot"> Laddningsvy</string>
+    <string name="settings_plot_secondary_color">Grå som sekundär plotfärg</string>
+    <string name="settings_consumption_plot_single_motor">Single motor modell</string>
+    <string name="settings_consumption_plot_visible_gages">Visa effektmätare</string>
+    <string name="settings_consumption_plot_speed">Visa hastighetsdiagram</string>
+    <string name="settings_sub_title_settings">Inställningar:</string>
+    <string name="settings_sub_title_current_cons_plot">Plott för nuvarande förbrukning:</string>
+    <string name="settings_sub_title_last_charge_plot">Senaste laddningskurvor:</string>
+
+    <!-- Avsluta dialogrutan -->
+    <string name="quit_dialog_title">Avsluta appen?</string>
+    <string name="quit_dialog_message">Logg kommer att kopieras till urklipp.</string>
+    <string name="dialog_confirm">Ja</string>
+    <string name="dialog_dismiss">Nej</string>
+
+    <!-- LogActivity -->
+    <string name="log_title">Felsök</string>
+
+    <!-- Aviseringar -->
+    <string name="notification_title">Aktuell statistik:</string>
+    <string name="foreground_service_info">Datainsamlingstjänst körs</string>
+    <string name="toast_file_read_error">Fel vid läsning av tripp-fil</string>
+</resources>
