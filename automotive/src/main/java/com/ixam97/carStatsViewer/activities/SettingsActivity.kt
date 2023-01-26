@@ -195,6 +195,8 @@ class SettingsActivity : Activity() {
         settings_consumption_plot_view.dimensionShiftTouchInterval = 1_000L
         settings_consumption_plot_view.dimensionRestrictionTouchInterval = 5_000L
 
+        settings_consumption_plot_view.secondaryDimension = if (appPreferences.plotSpeed) PlotSecondaryDimension.SPEED else null
+
         settings_consumption_plot_view.invalidate()
 
         settings_consumption_plot_switch_secondary_color.isChecked = appPreferences.consumptionPlotSecondaryColor

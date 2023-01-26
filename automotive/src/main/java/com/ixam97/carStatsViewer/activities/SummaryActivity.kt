@@ -12,6 +12,8 @@ import android.view.View
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.objects.DataHolder
 import com.ixam97.carStatsViewer.plot.PlotDimension
+import com.ixam97.carStatsViewer.plot.PlotMarkerType
+import com.ixam97.carStatsViewer.plot.PlotSecondaryDimension
 import kotlinx.android.synthetic.main.activity_summary.*
 
 class SummaryActivity: Activity() {
@@ -50,12 +52,18 @@ class SummaryActivity: Activity() {
     }
 
     private fun setupConsumptionLayout() {
-        summary_consumption_plot.dimension = PlotDimension.DISTANCE
-        summary_consumption_plot.dimensionRestriction = 10_001L
-        summary_consumption_plot.dimensionSmoothingPercentage = 0.02f
-
         summary_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
-        summary_consumption_plot.addPlotLine(DataHolder.speedPlotLine)
+        summary_consumption_plot.secondaryDimension = PlotSecondaryDimension.SPEED
+        summary_consumption_plot.dimension = PlotDimension.DISTANCE
+        summary_consumption_plot.dimensionRestriction = ((DataHolder.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1
+        summary_consumption_plot.dimensionSmoothingPercentage = 0.02f
+        summary_consumption_plot.setPlotMarkers(DataHolder.plotMarkers)
+        summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
+        summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
+        summary_consumption_plot.dimensionShiftTouchInterval = 1_000L
+        summary_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
+
+        summary_consumption_plot.invalidate()
     }
 
     private fun setupChargeLayout() {
@@ -64,7 +72,7 @@ class SummaryActivity: Activity() {
         summary_charge_plot.dimensionSmoothingPercentage = 0.01f
 
         summary_charge_plot.addPlotLine(DataHolder.chargePlotLine)
-        summary_charge_plot.addPlotLine(DataHolder.stateOfChargePlotLine)
+        summary_charge_plot.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
     }
 
     private fun switchToConsumptionLayout() {

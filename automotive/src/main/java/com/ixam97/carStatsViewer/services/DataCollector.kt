@@ -36,7 +36,10 @@ class DataCollector : Service() {
         private const val FOREGROUND_NOTIFICATION_ID = 2
         private const val NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS = 1_000L
         private const val SAVE_TRIP_DATA_TIMER_HANDLER_DELAY_MILLIS = 30_000L
+        private const val CHARGE_CURVE_UPDATE_INTERVAL_MILLIS = 10_000L
     }
+
+    private var lastPowerValueTimestamp: Long = 0L
 
     private var consumptionPlotTracking = false
     private var lastNotificationTimeMillis = 0L
@@ -311,9 +314,11 @@ class DataCollector : Service() {
     }
 
     private var carPropertySpeedListener = object : CarPropertyManager.CarPropertyEventCallback {
-        override fun onChangeEvent(value: CarPropertyValue<*>) {
+        override fun onChangeEvent(value: CarPropertyValue<Any>) {
             //InAppLogger.deepLog("DataCollector.carPropertySpeedListener", appPreferences.deepLog)
             InAppLogger.logVHALCallback()
+
+            // DataManager.update(value)
 
             speedUpdater(value)
 
@@ -373,10 +378,20 @@ class DataCollector : Service() {
 
             if (connected) {
                 DataHolder.chargePlotLine.reset()
+                DataHolder.chargedEnergy = 0F
+                DataHolder.chargeTimeMillis = 0L
                 chargeStartTimeNanos = System.nanoTime()
+                addChargePlotLine(lastPowerValueTimestamp, PlotLineMarkerType.BEGIN_SESSION)
+                DataHolder.plotMarkers.addMarker(PlotMarkerType.CHARGE, lastPowerValueTimestamp)
+                sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             }
 
-            if (!connected && chargeStartTimeNanos > 0 && DataHolder.chargedEnergy > 0) {
+            if (!connected) { // && chargeStartTimeNanos > 0 && DataHolder.chargedEnergy > 0) {
+                if (DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME).last().Marker != PlotLineMarkerType.END_SESSION){
+                    addChargePlotLine(lastPowerValueTimestamp, PlotLineMarkerType.END_SESSION)
+                    DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, lastPowerValueTimestamp)
+                    sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
+                }
                 DataHolder.chargeCurves.add(
                     ChargeCurve(
                         DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME, null),
@@ -400,6 +415,7 @@ class DataCollector : Service() {
     }
 
     private fun powerUpdater(value: CarPropertyValue<*>, timestamp: Long) {
+        lastPowerValueTimestamp = timestamp
         DataHolder.currentPowermW = when (emulatorMode) {
             true -> (value.value as Float) * emulatorPowerSign
             else -> - (value.value as Float)
@@ -423,19 +439,24 @@ class DataCollector : Service() {
             }
         }
 
-        if (timerTriggered(value, 5_000f, timestamp) && DataHolder.chargePortConnected && DataHolder.currentGear == VehicleGear.GEAR_PARK) {
-            if (DataHolder.currentPowermW < 0 && DataHolder.lastChargePower >= 0) {
+        if (timerTriggered(value, CHARGE_CURVE_UPDATE_INTERVAL_MILLIS.toFloat(), timestamp) && DataHolder.chargePortConnected && DataHolder.currentGear == VehicleGear.GEAR_PARK) {
+            // if (DataHolder.currentPowermW < 0 && DataHolder.lastChargePower >= 0) {
+            //     addChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
+            //     DataHolder.plotMarkers.addMarker(PlotMarkerType.CHARGE, timestamp)
+            //     sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
+            // } else if (DataHolder.currentPowermW >= 0 && DataHolder.lastChargePower < 0) {
+            //     addChargePlotLine(timestamp, PlotLineMarkerType.END_SESSION)
+            //     DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, timestamp)
+            //     sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
+            // } else if (DataHolder.currentPowermW < 0) {
+            //     addChargePlotLine(timestamp)
+            //     sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
+            // }
+            if (DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME).isEmpty()) {
                 addChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
-                DataHolder.plotMarkers.addMarker(PlotMarkerType.CHARGE, timestamp)
-                sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
-            } else if (DataHolder.currentPowermW >= 0 && DataHolder.lastChargePower < 0) {
-                addChargePlotLine(timestamp, PlotLineMarkerType.END_SESSION)
-                DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, timestamp)
-                sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
-            } else if (DataHolder.currentPowermW < 0) {
-                addChargePlotLine(timestamp)
-                sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
-            }
+                //     DataHolder.plotMarkers.addMarker(PlotMarkerType.CHARGE, timestamp)
+            } else addChargePlotLine(timestamp)
+            sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             DataHolder.lastChargePower = DataHolder.currentPowermW
         }
     }
