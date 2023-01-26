@@ -310,7 +310,7 @@ class MainActivity : Activity() {
     private fun updatePlots(){
         // if (appPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
 
-        main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(DataHolder.chargeTimeMillis) / 5) + 1) * 5 + TimeUnit.SECONDS.toNanos(1)
+        main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(DataHolder.chargeTimeMillis) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
 
         if (SystemClock.elapsedRealtime() - lastPlotUpdate > 1_000L) {
             if (main_consumption_layout.visibility == View.VISIBLE) {

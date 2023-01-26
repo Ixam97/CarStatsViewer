@@ -316,7 +316,6 @@ class DataCollector : Service() {
 
     private var carPropertySpeedListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(value: CarPropertyValue<Any>) {
-            //InAppLogger.deepLog("DataCollector.carPropertySpeedListener", appPreferences.deepLog)
             if (value.timestamp < startupTimestamp) return
             InAppLogger.logVHALCallback()
 
@@ -379,7 +378,9 @@ class DataCollector : Service() {
         if (connected != DataHolder.chargePortConnected) {
             DataHolder.chargePortConnected = connected
 
-            if (connected && lastPowerValueTimestamp > startupTimestamp) {
+            if (lastPowerValueTimestamp < startupTimestamp) lastPowerValueTimestamp = startupTimestamp
+
+            if (connected) {
                 DataHolder.chargePlotLine.reset()
                 DataHolder.chargedEnergy = 0F
                 DataHolder.chargeTimeMillis = 0L
