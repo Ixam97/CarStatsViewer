@@ -3,19 +3,22 @@ package com.ixam97.carStatsViewer.activities
 import android.app.Activity
 import android.app.AlertDialog
 import android.car.VehicleGear
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
+import android.widget.SeekBar
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.objects.AppPreferences
 import com.ixam97.carStatsViewer.objects.DataHolder
 import com.ixam97.carStatsViewer.objects.TripData
-import com.ixam97.carStatsViewer.plot.PlotDimension
-import com.ixam97.carStatsViewer.plot.PlotMarkerType
-import com.ixam97.carStatsViewer.plot.PlotSecondaryDimension
+import com.ixam97.carStatsViewer.plot.*
+import com.ixam97.carStatsViewer.views.PlotView
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_summary.*
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -23,45 +26,56 @@ class SummaryActivity: Activity() {
 
     private var primaryColor: Int? = null
 
+    private var chargePlotLine = PlotLine(
+        PlotLineConfiguration(
+            PlotRange(0f, 20f, 0f, 160f, 20f),
+            PlotLineLabelFormat.NUMBER,
+            PlotLabelPosition.LEFT,
+            PlotHighlightMethod.AVG_BY_TIME,
+            "kW"
+        ),
+        hashMapOf(
+            PlotSecondaryDimension.TIME to PlotLineConfiguration(
+                PlotRange(backgroundZero = 0f),
+                PlotLineLabelFormat.TIME,
+                PlotLabelPosition.RIGHT,
+                PlotHighlightMethod.MAX,
+                "Time"
+            ),
+            PlotSecondaryDimension.STATE_OF_CHARGE to PlotLineConfiguration(
+                PlotRange(0f, 100f, backgroundZero = 0f),
+                PlotLineLabelFormat.PERCENTAGE,
+                PlotLabelPosition.RIGHT,
+                PlotHighlightMethod.MAX,
+                "% SoC"
+            )
+        )
+    )
+
     private lateinit var tripData: TripData
 
     private lateinit var appPreferences: AppPreferences
 
-    init {
-    }
+    private lateinit var disabledTint: PorterDuffColorFilter
+    private lateinit var enabledTint: PorterDuffColorFilter
 
-    private fun getUsedEnergyString(): String {
-        if (!appPreferences.consumptionUnit) {
-            return "%.1f kWh".format(
-                Locale.ENGLISH,
-                DataHolder.usedEnergy / 1000)
+    private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            setVisibleChargeCurve(progress)
         }
-        return "${DataHolder.usedEnergy.toInt()} Wh"
+        override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+        override fun onStopTrackingTouch(seekBar: SeekBar?) {}
     }
 
-    private fun getTraveledDistanceString(): String {
-        return "%.1f km".format(Locale.ENGLISH, DataHolder.traveledDistance / 1000)
-    }
-
-    private fun getAvgConsumptionString(): String {
-        val unitString = if (appPreferences.consumptionUnit) "Wh/km" else "kWh/100km"
-        if (DataHolder.traveledDistance <= 0) {
-            return "-/- $unitString"
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            when (intent.action) {
+                getString(R.string.gear_update_broadcast) -> {
+                    updateDistractionOptimization(true)
+                }
+                else -> {}
+            }
         }
-        if (!appPreferences.consumptionUnit) {
-            return "%.1f %s".format(
-                Locale.ENGLISH,
-                (DataHolder.usedEnergy /(DataHolder.traveledDistance /1000))/10,
-                unitString)
-        }
-        return "${(DataHolder.usedEnergy /(DataHolder.traveledDistance /1000)).toInt()} $unitString"
-    }
-
-    private fun getElapsedTimeString(elapsedTime: Long): String {
-        return String.format("%02d:%02d:%02d",
-            TimeUnit.MILLISECONDS.toHours(elapsedTime),
-            TimeUnit.MILLISECONDS.toMinutes(elapsedTime) % TimeUnit.HOURS.toMinutes(1),
-            TimeUnit.MILLISECONDS.toSeconds(elapsedTime) % TimeUnit.MINUTES.toSeconds(1))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,10 +92,8 @@ class SummaryActivity: Activity() {
         applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
         primaryColor = typedValue.data
 
-        summary_distance_value_text.text = getTraveledDistanceString()
-        summary_used_energy_value_text.text = getUsedEnergyString()
-        summary_avg_consumption_value_text.text = getAvgConsumptionString()
-        summary_travel_time_value_text.text = getElapsedTimeString(DataHolder.travelTimeMillis)
+        disabledTint = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+        enabledTint = PorterDuffColorFilter(getColor(android.R.color.white), PorterDuff.Mode.SRC_IN)
 
         summary_button_back.setOnClickListener {
             finish()
@@ -91,14 +103,11 @@ class SummaryActivity: Activity() {
             createResetDialog()
         }
 
-        if (DataHolder.currentGear != VehicleGear.GEAR_PARK) {
-            summary_consumption_container.visibility = View.GONE
-            summary_button_show_consumption_container.isEnabled = false
-            summary_button_show_charge_container.isEnabled = false
-            summary_parked_warning.visibility = View.VISIBLE
-        } else {
-            summary_button_show_consumption_container.isSelected = true
-        }
+        summary_trip_date_text.text = "Trip begonnen am: %s".format(SimpleDateFormat("dd.MM.yyyy hh:mm").format(tripData.saveDate))
+
+        summary_button_show_consumption_container.isSelected = true
+
+        updateDistractionOptimization()
 
         summary_button_show_consumption_container.setOnClickListener {
             switchToConsumptionLayout()
@@ -110,6 +119,8 @@ class SummaryActivity: Activity() {
 
         setupConsumptionLayout()
         setupChargeLayout()
+
+        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.gear_update_broadcast)))
     }
 
     private fun setupConsumptionLayout() {
@@ -125,15 +136,122 @@ class SummaryActivity: Activity() {
         summary_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
 
         summary_consumption_plot.invalidate()
+
+        summary_distance_value_text.text = getTraveledDistanceString()
+        summary_used_energy_value_text.text = getUsedEnergyString()
+        summary_avg_consumption_value_text.text = getAvgConsumptionString()
+        summary_travel_time_value_text.text = getElapsedTimeString(DataHolder.travelTimeMillis)
     }
 
     private fun setupChargeLayout() {
-        summary_charge_plot.dimension = PlotDimension.TIME
-        summary_charge_plot.dimensionRestriction = null
-        summary_charge_plot.dimensionSmoothingPercentage = 0.01f
+        summary_charge_plot_sub_title_curve.text = "%s (%d/%d)".format(
+            getString(R.string.settings_sub_title_last_charge_plot),
+            DataHolder.chargeCurves.size,
+            DataHolder.chargeCurves.size)
 
-        summary_charge_plot.addPlotLine(DataHolder.chargePlotLine)
-        summary_charge_plot.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
+        chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
+        chargePlotLine.secondaryPlotPaint = when {
+            appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+        }
+        chargePlotLine.reset()
+        if (DataHolder.chargeCurves.isNotEmpty()) {
+            chargePlotLine.addDataPoints(DataHolder.chargeCurves[DataHolder.chargeCurves.size - 1].chargePlotLine)
+            summary_charge_plot_button_next.isEnabled = false
+            summary_charge_plot_button_next.colorFilter = disabledTint
+            summary_charge_plot_button_prev.isEnabled = true
+            summary_charge_plot_button_prev.colorFilter = enabledTint
+
+            summary_charged_energy_value_text.text = getChargedEnergyString(summary_charge_plot_seek_bar.progress)
+            summary_charge_time_value_text.text = getElapsedTimeString(tripData.chargeCurves[summary_charge_plot_seek_bar.progress].chargeTime)
+            summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves[summary_charge_plot_seek_bar.progress].chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
+
+        }
+        if (DataHolder.chargeCurves.size < 2){
+            summary_charge_plot_button_next.isEnabled = false
+            summary_charge_plot_button_next.colorFilter = disabledTint
+            summary_charge_plot_button_prev.isEnabled = false
+            summary_charge_plot_button_prev.colorFilter = disabledTint
+        }
+        summary_charge_plot_view.addPlotLine(chargePlotLine)
+
+        summary_charge_plot_view.dimension = appPreferences.chargePlotDimension
+        summary_charge_plot_view.dimensionSmoothingPercentage = 0.01f
+        summary_charge_plot_view.secondaryDimension = when (appPreferences.chargePlotDimension) {
+            PlotDimension.TIME -> PlotSecondaryDimension.STATE_OF_CHARGE
+            else -> null
+        }
+        summary_charge_plot_view.invalidate()
+
+        summary_charge_plot_seek_bar.max = (DataHolder.chargeCurves.size - 1).coerceAtLeast(0)
+        summary_charge_plot_seek_bar.progress = (DataHolder.chargeCurves.size - 1).coerceAtLeast(0)
+        summary_charge_plot_seek_bar.setOnSeekBarChangeListener(seekBarChangeListener)
+
+        summary_charge_plot_button_next.setOnClickListener {
+            val newProgress = summary_charge_plot_seek_bar.progress + 1
+            if (newProgress <= (DataHolder.chargeCurves.size - 1)) {
+                summary_charge_plot_seek_bar.progress = newProgress
+            }
+        }
+
+        summary_charge_plot_button_prev.setOnClickListener {
+            val newProgress = summary_charge_plot_seek_bar.progress - 1
+            if (newProgress >= 0) {
+                summary_charge_plot_seek_bar.progress = newProgress
+            }
+        }
+    }
+
+    private fun setVisibleChargeCurve(progress: Int) {
+        summary_charge_plot_sub_title_curve.text = "%s (%d/%d)".format(
+            getString(R.string.settings_sub_title_last_charge_plot),
+            DataHolder.chargeCurves.size,
+            DataHolder.chargeCurves.size)
+
+        if (DataHolder.chargeCurves.size - 1 == 0) {
+            summary_charge_plot_sub_title_curve.text = "%s (0/0)".format(
+                getString(R.string.settings_sub_title_last_charge_plot))
+
+            summary_charge_plot_button_next.isEnabled = false
+            summary_charge_plot_button_next.colorFilter = disabledTint
+            summary_charge_plot_button_prev.isEnabled = false
+            summary_charge_plot_button_prev.colorFilter = disabledTint
+
+        } else {
+            summary_charge_plot_sub_title_curve.text = "%s (%d/%d)".format(
+                getString(R.string.settings_sub_title_last_charge_plot),
+                progress + 1,
+                DataHolder.chargeCurves.size)
+
+            when (progress) {
+                0 -> {
+                    summary_charge_plot_button_prev.isEnabled = false
+                    summary_charge_plot_button_prev.colorFilter = disabledTint
+                    summary_charge_plot_button_next.isEnabled = true
+                    summary_charge_plot_button_next.colorFilter = enabledTint
+                }
+                DataHolder.chargeCurves.size - 1 -> {
+                    summary_charge_plot_button_next.isEnabled = false
+                    summary_charge_plot_button_next.colorFilter = disabledTint
+                    summary_charge_plot_button_prev.isEnabled = true
+                    summary_charge_plot_button_prev.colorFilter = enabledTint
+                }
+                else -> {
+                    summary_charge_plot_button_next.isEnabled = true
+                    summary_charge_plot_button_next.colorFilter = enabledTint
+                    summary_charge_plot_button_prev.isEnabled = true
+                    summary_charge_plot_button_prev.colorFilter = enabledTint
+                }
+            }
+        }
+
+        summary_charged_energy_value_text.text = getChargedEnergyString(progress)
+        summary_charge_time_value_text.text = getElapsedTimeString(tripData.chargeCurves[progress].chargeTime)
+
+        chargePlotLine.reset()
+        chargePlotLine.addDataPoints(DataHolder.chargeCurves[progress].chargePlotLine)
+        summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves[progress].chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
+        summary_charge_plot_view.invalidate()
     }
 
     private fun switchToConsumptionLayout() {
@@ -173,8 +291,62 @@ class SummaryActivity: Activity() {
             }
         val alert = builder.create()
         alert.show()
+        alert.getButton(DialogInterface.BUTTON_POSITIVE).isEnabled = false
         alert.getButton(DialogInterface.BUTTON_NEGATIVE).setBackgroundColor(getColor(R.color.bad_red))
 
     }
 
+    private fun getUsedEnergyString(): String {
+        if (!appPreferences.consumptionUnit) {
+            return "%.1f kWh".format(
+                Locale.ENGLISH,
+                DataHolder.usedEnergy / 1000)
+        }
+        return "${DataHolder.usedEnergy.toInt()} Wh"
+    }
+
+    private fun getChargedEnergyString(index: Int): String {
+        if (!appPreferences.consumptionUnit) {
+            return "%.1f kWh".format(
+                Locale.ENGLISH,
+                DataHolder.chargeCurves[index].chargedEnergyWh / 1000)
+        }
+        return "${DataHolder.chargeCurves[index].chargedEnergyWh.toInt()} Wh"
+    }
+
+    private fun getTraveledDistanceString(): String {
+        return "%.1f km".format(Locale.ENGLISH, DataHolder.traveledDistance / 1000)
+    }
+
+    private fun getAvgConsumptionString(): String {
+        val unitString = if (appPreferences.consumptionUnit) "Wh/km" else "kWh/100km"
+        if (DataHolder.traveledDistance <= 0) {
+            return "-/- $unitString"
+        }
+        if (!appPreferences.consumptionUnit) {
+            return "%.1f %s".format(
+                Locale.ENGLISH,
+                (DataHolder.usedEnergy /(DataHolder.traveledDistance /1000))/10,
+                unitString)
+        }
+        return "${(DataHolder.usedEnergy /(DataHolder.traveledDistance /1000)).toInt()} $unitString"
+    }
+
+    private fun getElapsedTimeString(elapsedTime: Long): String {
+        return String.format("%02d:%02d:%02d",
+            TimeUnit.MILLISECONDS.toHours(elapsedTime),
+            TimeUnit.MILLISECONDS.toMinutes(elapsedTime) % TimeUnit.HOURS.toMinutes(1),
+            TimeUnit.MILLISECONDS.toSeconds(elapsedTime) % TimeUnit.MINUTES.toSeconds(1))
+    }
+
+    private fun updateDistractionOptimization(update: Boolean = false) {
+        if (update) {
+            finish()
+            startActivity(intent)
+            return
+        }
+        summary_parked_warning.visibility =
+            if (DataHolder.currentGear != VehicleGear.GEAR_PARK) View.VISIBLE
+            else View.GONE
+    }
 }

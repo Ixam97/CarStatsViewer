@@ -67,6 +67,7 @@ object DataHolder {
 
     var maxBatteryCapacity = 0f
 
+    var tripStartDate = Date()
     var traveledDistance = 0F
     var usedEnergy = 0F
     var chargedEnergy = 0F
@@ -116,6 +117,7 @@ object DataHolder {
         }
 
         traveledDistance = tripData.traveledDistance ?: 0f
+        tripStartDate = tripData.saveDate ?: Date()
         usedEnergy = tripData.usedEnergy ?: 0f
         averageConsumption = tripData.averageConsumption ?: 0f
         travelTimeMillis = tripData.travelTimeMillis ?: 0L
@@ -164,7 +166,7 @@ object DataHolder {
     fun getTripData(): TripData {
         return TripData(
             BuildConfig.VERSION_NAME,
-            Date(),
+            tripStartDate,
             traveledDistance,
             usedEnergy,
             averageConsumption,
@@ -183,6 +185,7 @@ object DataHolder {
 
     fun resetDataHolder() {
         traveledDistance = 0f
+        tripStartDate = Date()
         usedEnergy = 0f
         averageConsumption = 0f
         travelTimeMillis = 0L
