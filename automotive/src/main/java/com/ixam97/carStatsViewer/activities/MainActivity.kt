@@ -171,14 +171,6 @@ class MainActivity : Activity() {
 
         setUiVisibilities()
         updateGages()
-        setValueColors()
-
-        currentPowerTextView.text = getCurrentPowerString(false)
-        currentSpeedTextView.text = getCurrentSpeedString()
-        usedEnergyTextView.text = getUsedEnergyString()
-        traveledDistanceTextView.text = getTraveledDistanceString()
-        currentInstConsTextView.text = getInstConsumptionString()
-        averageConsumptionTextView.text = getAvgConsumptionString()
 
         main_gage_avg_consumption_text_view.text = "  Ø %s".format(getAvgConsumptionString())
         main_gage_distance_text_view.text = "  %s".format(getTraveledDistanceString())
@@ -256,13 +248,6 @@ class MainActivity : Activity() {
     }
 
     private fun setUiVisibilities() {
-        if (appPreferences.experimentalLayout && legacy_layout.visibility == View.VISIBLE) {
-            gage_layout.visibility = View.VISIBLE
-            legacy_layout.visibility = View.GONE
-        } else if (!appPreferences.experimentalLayout && legacy_layout.visibility == View.GONE) {
-            gage_layout.visibility = View.GONE
-            legacy_layout.visibility = View.VISIBLE
-        }
 
         if (main_button_dismiss_charge_plot.isEnabled == DataHolder.chargePortConnected)
             main_button_dismiss_charge_plot.isEnabled = !DataHolder.chargePortConnected
@@ -332,17 +317,6 @@ class MainActivity : Activity() {
             TimeUnit.MILLISECONDS.toSeconds(elapsedTime) % TimeUnit.MINUTES.toSeconds(1))
     }
 
-    private fun setValueColors() {
-        if (DataHolder.currentPowerSmooth > 0) {
-            currentPowerTextView.setTextColor(Color.RED)
-            currentInstConsTextView.setTextColor(Color.RED)
-        }
-        else {
-            currentPowerTextView.setTextColor(Color.GREEN)
-            currentInstConsTextView.setTextColor(Color.GREEN)
-        }
-    }
-
     // private fun dimensionRestrictionById(id : Int) : Long {
     //     return when (id) {
     //         1 -> DISTANCE_1
@@ -356,10 +330,6 @@ class MainActivity : Activity() {
         finish()
         startActivity(intent)
         InAppLogger.log("MainActivity.resetStats")
-
-        traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)
-        usedEnergyTextView.text = String.format("%d Wh", DataHolder.usedEnergy.toInt())
-        averageConsumptionTextView.text = String.format("%d Wh/km", DataHolder.averageConsumption.toInt())
         DataHolder.resetDataHolder()
         sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
     }
@@ -374,11 +344,6 @@ class MainActivity : Activity() {
         }
 
         main_radio_group_distance.check(plotDistanceId)
-
-        if (appPreferences.experimentalLayout) {
-            legacy_layout.visibility = View.GONE
-            gage_layout.visibility = View.VISIBLE
-        }
 
         main_consumption_plot.reset()
         main_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
@@ -555,6 +520,11 @@ class MainActivity : Activity() {
             startActivity(Intent(this, SummaryActivity::class.java))
         }
 
+        main_button_summary_charge.setOnClickListener {
+            // sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+            startActivity(Intent(this, SummaryActivity::class.java))
+        }
+
         main_button_dismiss_charge_plot.setOnClickListener {
             main_charge_layout.visibility = View.GONE
             main_consumption_layout.visibility = View.VISIBLE
@@ -562,11 +532,12 @@ class MainActivity : Activity() {
             DataHolder.chargedEnergy = 0f
             DataHolder.chargeTimeMillis = 0L
         }
-
+/*
         main_button_reset_charge_plot.setOnClickListener {
             //main_charge_plot.reset()
             DataHolder.chargePlotLine.reset()
         }
+*/
     }
 
     private fun enableUiUpdates() {

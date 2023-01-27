@@ -57,151 +57,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/legacy_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/polestar_orange"/>
-
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
-            android:layout_marginStart="20dp">
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:visibility="gone"
-                android:weightSum="2">
-
-                <TextView
-                    style="@style/LabelCell"
-                    android:text="@string/main_port_connected" />
-
-                <TextView
-                    android:id="@+id/chargePortConnectedTextView"
-                    style="@style/ValueCell"
-                    tools:text="false" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:weightSum="2">
-
-                <TextView
-                    style="@style/LabelCell"
-                    android:text="@string/main_current_power" />
-
-                <TextView
-                    android:id="@+id/currentPowerTextView"
-                    style="@style/ValueCell"
-                    tools:text="3kWh" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:weightSum="2">
-
-                <TextView
-                    style="@style/LabelCell"
-                    android:text="@string/main_used_energy" />
-
-                <TextView
-                    android:id="@+id/usedEnergyTextView"
-                    style="@style/ValueCell"
-                    tools:text="@tools:sample/lorem" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:visibility="gone"
-                android:weightSum="2">
-
-                <TextView
-                    style="@style/LabelCell"
-                    android:text="@string/main_SoC" />
-
-                <TextView
-                    android:id="@+id/batteryEnergyTextView"
-                    style="@style/ValueCell"
-                    tools:text="@tools:sample/lorem" />
-
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:weightSum="2">
-
-                <TextView
-                    style="@style/LabelCell"
-                    android:text="@string/main_current_speed" />
-
-                <TextView
-                    android:id="@+id/currentSpeedTextView"
-                    style="@style/ValueCell"
-                    tools:text="@tools:sample/lorem" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:weightSum="2">
-
-                <TextView
-                    style="@style/LabelCell"
-                    android:text="@string/main_traveled_distance" />
-
-                <TextView
-                    android:id="@+id/traveledDistanceTextView"
-                    style="@style/ValueCell"
-                    tools:text="@tools:sample/lorem" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:weightSum="2">
-
-                <TextView
-                    style="@style/LabelCell"
-                    android:text="@string/main_inst_consumption" />
-
-                <TextView
-                    android:id="@+id/currentInstConsTextView"
-                    style="@style/ValueCell"
-                    tools:text="@tools:sample/lorem" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:weightSum="2">
-
-                <TextView
-                    style="@style/LabelCell"
-                    android:text="@string/main_average_consumption" />
-
-                <TextView
-                    android:id="@+id/averageConsumptionTextView"
-                    style="@style/ValueCell"
-                    tools:text="@tools:sample/lorem" />
-
-            </TableRow>
-        </TableLayout>
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/main_consumption_layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -213,12 +68,10 @@
             android:background="@color/polestar_orange"/>
 
         <LinearLayout
-            android:id="@+id/gage_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="14"
-            android:visibility="gone">
+            android:weightSum="14">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -523,19 +376,19 @@
             android:layout_marginHorizontal="15dp"
             android:orientation="horizontal">
             <Button
-                android:id="@+id/main_button_dismiss_charge_plot"
+                android:id="@+id/main_button_summary_charge"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="80dp"
                 android:layout_marginEnd="7.5dp"
-                android:text="@string/main_dismiss_charge_plot"/>
+                android:text="@string/main_button_trip_summary"/>
             <Button
-                android:id="@+id/main_button_reset_charge_plot"
+                android:id="@+id/main_button_dismiss_charge_plot"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="80dp"
                 android:layout_marginStart="7.5dp"
-                android:text="@string/main_button_reset_charge_plot"/>
+            android:text="@string/main_dismiss_charge_plot"/>
         </LinearLayout>
 
     </LinearLayout>
