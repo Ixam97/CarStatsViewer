@@ -56,7 +56,6 @@
             android:layout_height="80dp"
             android:layout_weight="1"
             android:textSize="35sp"
-            android:background="@color/polestar_orange"
             android:text="Fahrtverlauf"/>
         <Button
             android:id="@+id/summary_button_show_charge_container"
@@ -68,6 +67,17 @@
     </LinearLayout>
     <View style="@style/menu_divider_style_no_margin"
         android:background="?android:attr/listDivider"/>
+
+    <TextView
+        android:id="@+id/summary_parked_warning"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        android:text="Ansicht nur im geparkten Zustand verfügbar."/>
 
     <ScrollView
         android:id="@+id/summary_consumption_container"
@@ -88,6 +98,7 @@
                 android:background="?android:attr/listDivider"/>
 
             <TextView
+                android:id="@+id/summary_distance_value_text"
                 style="@style/menu_row_top_text"
                 android:text="0.0 km"/>
             <TextView
@@ -97,6 +108,7 @@
                 android:background="?android:attr/listDivider"/>
 
             <TextView
+                android:id="@+id/summary_used_energy_value_text"
                 style="@style/menu_row_top_text"
                 android:text="0.0 kWh"/>
             <TextView
@@ -106,6 +118,7 @@
                 android:background="?android:attr/listDivider"/>
 
             <TextView
+                android:id="@+id/summary_avg_consumption_value_text"
                 style="@style/menu_row_top_text"
                 android:text="0.0 kWh/100km"/>
             <TextView
@@ -115,6 +128,7 @@
                 android:background="?android:attr/listDivider"/>
 
             <TextView
+                android:id="@+id/summary_travel_time_value_text"
                 style="@style/menu_row_top_text"
                 android:text="00:00:00"/>
             <TextView
@@ -128,6 +142,7 @@
 
     <ScrollView
         android:id="@+id/summary_charge_container"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

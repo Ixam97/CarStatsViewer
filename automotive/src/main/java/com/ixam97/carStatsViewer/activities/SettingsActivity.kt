@@ -62,7 +62,6 @@ class SettingsActivity : Activity() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 getString(R.string.ui_update_plot_broadcast) -> {
-                    settings_consumption_plot_view.invalidate()
                     settings_charge_plot_view.invalidate()
                 }
                 getString(R.string.gear_update_broadcast) -> setEnableByGear(DataHolder.currentGear)
@@ -128,7 +127,6 @@ class SettingsActivity : Activity() {
     private fun setupSettingsMaster() {
         settings_switch_notifications.isChecked = appPreferences.notifications
         settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
-        settings_switch_experimental_layout.isChecked = appPreferences.experimentalLayout
 
         settings_version_text.text = "Car Stats Viewer Version %s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 
@@ -163,10 +161,6 @@ class SettingsActivity : Activity() {
         settings_switch_consumption_unit.setOnClickListener {
             appPreferences.consumptionUnit = settings_switch_consumption_unit.isChecked
         }
-
-        settings_switch_experimental_layout.setOnClickListener {
-            appPreferences.experimentalLayout = settings_switch_experimental_layout.isChecked
-        }
         
         settings_consumption_plot.setOnClickListener {
             gotoConsumptionPlot()
@@ -183,22 +177,6 @@ class SettingsActivity : Activity() {
 
     private fun setupSettingsConsumptionPlot() {
 
-        settings_consumption_plot_view.addPlotLine(DataHolder.consumptionPlotLine)
-        settings_consumption_plot_view.dimension
-
-        settings_consumption_plot_view.dimension = PlotDimension.DISTANCE
-        settings_consumption_plot_view.dimensionRestriction = ((DataHolder.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1
-        settings_consumption_plot_view.dimensionSmoothingPercentage = 0.02f
-        settings_consumption_plot_view.setPlotMarkers(DataHolder.plotMarkers)
-        settings_consumption_plot_view.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
-        settings_consumption_plot_view.visibleMarkerTypes.add(PlotMarkerType.PARK)
-        settings_consumption_plot_view.dimensionShiftTouchInterval = 1_000L
-        settings_consumption_plot_view.dimensionRestrictionTouchInterval = 5_000L
-
-        settings_consumption_plot_view.secondaryDimension = if (appPreferences.plotSpeed) PlotSecondaryDimension.SPEED else null
-
-        settings_consumption_plot_view.invalidate()
-
         settings_consumption_plot_switch_secondary_color.isChecked = appPreferences.consumptionPlotSecondaryColor
         settings_consumption_plot_switch_visible_gages.isChecked = appPreferences.consumptionPlotVisibleGages
         settings_consumption_plot_switch_single_motor.isChecked = appPreferences.consumptionPlotSingleMotor
@@ -214,16 +192,10 @@ class SettingsActivity : Activity() {
                 appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
                 else ->PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
             }
-            settings_consumption_plot_view.invalidate()
         }
 
         settings_consumption_plot_speed_switch.setOnClickListener {
             appPreferences.plotSpeed = settings_consumption_plot_speed_switch.isChecked
-            settings_consumption_plot_view.secondaryDimension = when (settings_consumption_plot_speed_switch.isChecked) {
-                true -> PlotSecondaryDimension.SPEED
-                else -> null
-            }
-            settings_consumption_plot_view.invalidate()
         }
 
         settings_consumption_plot_switch_visible_gages.setOnClickListener {
