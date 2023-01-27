@@ -161,12 +161,9 @@ class SummaryActivity: Activity() {
         }
         summary_charge_plot_view.addPlotLine(chargePlotLine)
 
-        summary_charge_plot_view.dimension = appPreferences.chargePlotDimension
+        summary_charge_plot_view.dimension = PlotDimension.TIME
         summary_charge_plot_view.dimensionSmoothingPercentage = 0.01f
-        summary_charge_plot_view.secondaryDimension = when (appPreferences.chargePlotDimension) {
-            PlotDimension.TIME -> PlotSecondaryDimension.STATE_OF_CHARGE
-            else -> null
-        }
+        summary_charge_plot_view.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
         summary_charge_plot_view.invalidate()
 
         summary_charge_plot_seek_bar.max = (DataHolder.chargeCurves.size - 1).coerceAtLeast(0)
