@@ -7,7 +7,7 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "org.doubleyouel.carStatsViewer"
+        applicationId "com.Ixam97.carStatsViewer"
         minSdkVersion 28
         targetSdkVersion 33
         versionCode 36
