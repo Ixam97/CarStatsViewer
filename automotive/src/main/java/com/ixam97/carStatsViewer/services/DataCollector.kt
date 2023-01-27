@@ -444,22 +444,7 @@ class DataCollector : Service() {
         }
 
         if (timerTriggered(value, CHARGE_CURVE_UPDATE_INTERVAL_MILLIS.toFloat(), timestamp) && DataHolder.chargePortConnected && DataHolder.currentGear == VehicleGear.GEAR_PARK) {
-            // if (DataHolder.currentPowermW < 0 && DataHolder.lastChargePower >= 0) {
-            //     addChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
-            //     DataHolder.plotMarkers.addMarker(PlotMarkerType.CHARGE, timestamp)
-            //     sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
-            // } else if (DataHolder.currentPowermW >= 0 && DataHolder.lastChargePower < 0) {
-            //     addChargePlotLine(timestamp, PlotLineMarkerType.END_SESSION)
-            //     DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, timestamp)
-            //     sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
-            // } else if (DataHolder.currentPowermW < 0) {
-            //     addChargePlotLine(timestamp)
-            //     sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
-            // }
-            if (DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME).isEmpty()) {
-                addChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
-                //     DataHolder.plotMarkers.addMarker(PlotMarkerType.CHARGE, timestamp)
-            } else addChargePlotLine(timestamp)
+            addChargePlotLine(timestamp)
             sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             DataHolder.lastChargePower = DataHolder.currentPowermW
         }
@@ -469,7 +454,7 @@ class DataCollector : Service() {
         DataHolder.chargePlotLine.addDataPoint(
             -(DataHolder.currentPowermW / 1_000_000f),
             timestamp,
-            0f,
+            DataHolder.traveledDistance,
             DataHolder.stateOfCharge(),
             plotLineMarkerType = marker
         )

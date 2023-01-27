@@ -65,26 +65,26 @@ class PlotLine(
             dataPoints.isEmpty() || dimensionRestriction == null -> dataPoints.map { it.value }
             else -> when (dimension) {
                 PlotDimension.INDEX -> {
-                    var max = dataPoints.size - 1 - (dimensionShift ?: 0L)
-                    var min = max - dimensionRestriction
+                    val max = dataPoints.size - 1 - (dimensionShift ?: 0L)
+                    val min = max - dimensionRestriction
 
                     dataPoints.filter { it.key in min..max }.map { it.value }
                 }
                 PlotDimension.DISTANCE -> {
-                    var max = dataPoints[dataPoints.size - 1]!!.Distance - (dimensionShift ?: 0L)
-                    var min = max - dimensionRestriction
+                    val max = dataPoints[dataPoints.size - 1]!!.Distance - (dimensionShift ?: 0L)
+                    val min = max - dimensionRestriction
 
                     dataPoints.filter { it.value.Distance in min..max }.map { it.value }
                 }
                 PlotDimension.TIME -> {
-                    var max = dataPoints[dataPoints.size - 1]!!.Time - (dimensionShift ?: 0L)
-                    var min = max - dimensionRestriction
+                    val min = dataPoints[0]!!.Time + (dimensionShift ?: 0L)
+                    val max = min + dimensionRestriction
 
                     dataPoints.filter { it.value.Time in min..max }.map { it.value }
                 }
                 PlotDimension.STATE_OF_CHARGE -> {
-                    var max = dataPoints[dataPoints.size - 1]!!.StateOfCharge - (dimensionShift ?: 0L)
-                    var min = max - dimensionRestriction
+                    val max = dataPoints[dataPoints.size - 1]!!.StateOfCharge - (dimensionShift ?: 0L)
+                    val min = max - dimensionRestriction
 
                     dataPoints.filter { it.value.StateOfCharge in min..max }.map { it.value }
                 }
@@ -97,25 +97,18 @@ class PlotLine(
             PlotDimension.INDEX -> 0f
             PlotDimension.DISTANCE -> when {
                 dataPoints.isEmpty() -> 0f
-                else -> (maxDimension(dataPoints, dimension) as Float - (dimensionRestriction ?: 0L))
+                else -> (maxDimension(dataPoints, dimension, dimensionRestriction) as Float - (dimensionRestriction ?: 0L))
                     .coerceAtMost(dataPoints.minOf { it.Distance })
             }
             PlotDimension.TIME -> when {
                 dataPoints.isEmpty() -> 0L
-                else -> (maxDimension(dataPoints, dimension) as Long - (dimensionRestriction ?: 0L))
-                    .coerceAtMost(dataPoints.minOf { it.Time })
+                else -> dataPoints.minOf { it.Time }
             }
-            PlotDimension.STATE_OF_CHARGE -> when {
-                dataPoints.isEmpty() -> 0f
-                else -> {
-                    val min = dataPoints.minOf { it.StateOfCharge }
-                    (min - (min % 10f)).coerceAtLeast(0f)
-                }
-            }
+            PlotDimension.STATE_OF_CHARGE -> 0f
         }
     }
 
-    internal fun maxDimension(dataPoints: List<PlotLineItem>, dimension: PlotDimension): Any {
+    internal fun maxDimension(dataPoints: List<PlotLineItem>, dimension: PlotDimension, dimensionRestriction: Long?): Any {
         return when (dimension) {
             PlotDimension.INDEX -> (dataPoints.size - 1).toFloat()
             PlotDimension.DISTANCE -> when {
@@ -124,15 +117,10 @@ class PlotLine(
             }
             PlotDimension.TIME -> when {
                 dataPoints.isEmpty() -> 0L
-                else -> dataPoints.maxOf { it.Time }
+                else -> (minDimension(dataPoints, dimension, dimensionRestriction) as Long + (dimensionRestriction ?: 0L))
+                    .coerceAtLeast(dataPoints.maxOf { it.Time })
             }
-            PlotDimension.STATE_OF_CHARGE -> when {
-                dataPoints.isEmpty() -> 0f
-                else -> {
-                    val max = dataPoints.maxOf { it.StateOfCharge }
-                    max + (10f - max % 10f)
-                }
-            }
+            PlotDimension.STATE_OF_CHARGE -> 100f
         }
     }
 
@@ -142,8 +130,8 @@ class PlotLine(
 
     fun distanceDimension(dataPoints: List<PlotLineItem>, dimension: PlotDimension, dimensionRestriction: Long?): Float {
         return when (dimension) {
-            PlotDimension.TIME -> (maxDimension(dataPoints, dimension) as Long - minDimension(dataPoints, dimension, dimensionRestriction) as Long).toFloat()
-            else -> maxDimension(dataPoints, dimension) as Float - minDimension(dataPoints, dimension, dimensionRestriction) as Float
+            PlotDimension.TIME -> (maxDimension(dataPoints, dimension, dimensionRestriction) as Long - minDimension(dataPoints, dimension, dimensionRestriction) as Long).toFloat()
+            else -> maxDimension(dataPoints, dimension, dimensionRestriction) as Float - minDimension(dataPoints, dimension, dimensionRestriction) as Float
         }
     }
 
@@ -338,21 +326,6 @@ class PlotLine(
 
         for (index in dataPoints.indices) {
             val item = dataPoints[index]
-
-            if (item.Marker == PlotLineMarkerType.BEGIN_SESSION && index != 0) {
-                group.add(
-                    PlotLineItemPoint(
-                        when (dimension) {
-                            PlotDimension.INDEX -> x(index.toFloat(), min, max)
-                            PlotDimension.DISTANCE -> x(item.Distance - (item.DistanceDelta ?: 0f), min, max)
-                            PlotDimension.TIME -> x(item.Time - (item.TimeDelta ?: 0L), min, max)
-                            PlotDimension.STATE_OF_CHARGE -> x(item.StateOfCharge - (item.StateOfChargeDelta ?: 0f), min, max)
-                        },
-                        item,
-                        item.group(index, dimension, dimensionSmoothing)
-                    )
-                )
-            }
 
             group.add(
                 PlotLineItemPoint(
