@@ -319,8 +319,6 @@ class DataCollector : Service() {
             if (value.timestamp < startupTimestamp) return
             InAppLogger.logVHALCallback()
 
-            // DataManager.update(value)
-
             speedUpdater(value)
 
             if (emulatorMode) {

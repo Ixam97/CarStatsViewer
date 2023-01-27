@@ -157,6 +157,10 @@ object DataHolder {
         }
     }
 
+    fun getTripData(fileName: String): TripData {
+        return getTripData()
+    }
+
     fun getTripData(): TripData {
         return TripData(
             BuildConfig.VERSION_NAME,
