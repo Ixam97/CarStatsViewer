@@ -1,8 +1,7 @@
-package com.ixam97.carStatsViewer.plot
+package com.ixam97.carStatsViewer.plot.graphics
 
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Typeface
 
 class PlotMarkerPaint(
     val Line: Paint,
@@ -11,7 +10,7 @@ class PlotMarkerPaint(
 ){
     companion object {
         fun byColor(color : Int, textSize: Float): PlotMarkerPaint {
-            val basePaint = basePaint(textSize);
+            val basePaint = basePaint(textSize)
 
             val linePaint = Paint(basePaint)
             linePaint.strokeWidth = 2f

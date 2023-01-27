@@ -20,7 +20,11 @@ import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
-import com.ixam97.carStatsViewer.plot.*
+import com.ixam97.carStatsViewer.plot.enums.*
+import com.ixam97.carStatsViewer.plot.objects.PlotLine
+import com.ixam97.carStatsViewer.plot.objects.PlotLineConfiguration
+import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
+import com.ixam97.carStatsViewer.plot.objects.PlotRange
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlin.system.exitProcess
 
@@ -212,7 +216,7 @@ class SettingsActivity : Activity() {
             appPreferences.consumptionPlotSecondaryColor = settings_consumption_plot_switch_secondary_color.isChecked
             DataHolder.consumptionPlotLine.secondaryPlotPaint = when {
                 appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-                else ->PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+                else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
             }
             settings_consumption_plot_view.invalidate()
         }

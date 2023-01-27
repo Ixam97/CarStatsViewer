@@ -3,7 +3,7 @@ package com.ixam97.carStatsViewer.objects
 import android.content.Context
 import android.content.SharedPreferences
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.plot.PlotDimension
+import com.ixam97.carStatsViewer.plot.enums.PlotDimension
 
 class AppPreferences(context: Context) {
 

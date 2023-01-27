@@ -2,7 +2,6 @@ package com.ixam97.carStatsViewer.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
@@ -11,9 +10,7 @@ import android.util.TypedValue
 import android.view.View
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.objects.DataHolder
-import com.ixam97.carStatsViewer.plot.PlotDimension
-import com.ixam97.carStatsViewer.plot.PlotMarkerType
-import com.ixam97.carStatsViewer.plot.PlotSecondaryDimension
+import com.ixam97.carStatsViewer.plot.enums.*
 import kotlinx.android.synthetic.main.activity_summary.*
 
 class SummaryActivity: Activity() {

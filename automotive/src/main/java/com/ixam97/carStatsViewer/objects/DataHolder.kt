@@ -3,7 +3,8 @@ package com.ixam97.carStatsViewer.objects
 import android.car.VehicleGear
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.InAppLogger
-import com.ixam97.carStatsViewer.plot.*
+import com.ixam97.carStatsViewer.plot.enums.*
+import com.ixam97.carStatsViewer.plot.objects.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -91,15 +92,6 @@ object DataHolder {
             PlotHighlightMethod.AVG_BY_DISTANCE,
             "Wh/km"
         ),
-        hashMapOf(
-            PlotSecondaryDimension.SPEED to PlotLineConfiguration(
-                PlotRange(0f, 40f, 0f, 240f, 40f),
-                PlotLineLabelFormat.NUMBER,
-                PlotLabelPosition.RIGHT,
-                PlotHighlightMethod.AVG_BY_TIME,
-                "km/h"
-            )
-        )
     )
 
     var chargePlotLine = PlotLine(
@@ -110,22 +102,6 @@ object DataHolder {
             PlotHighlightMethod.AVG_BY_TIME,
             "kW"
         ),
-        hashMapOf(
-            PlotSecondaryDimension.TIME to PlotLineConfiguration(
-                PlotRange(),
-                PlotLineLabelFormat.TIME,
-                PlotLabelPosition.RIGHT,
-                PlotHighlightMethod.MAX,
-                "Time"
-            ),
-            PlotSecondaryDimension.STATE_OF_CHARGE to PlotLineConfiguration(
-                PlotRange(0f, 100f, backgroundZero = 0f),
-                PlotLineLabelFormat.PERCENTAGE,
-                PlotLabelPosition.RIGHT,
-                PlotHighlightMethod.MAX,
-                "% SoC"
-            )
-        )
     )
 
     var chargeCurves: ArrayList<ChargeCurve> = ArrayList()
