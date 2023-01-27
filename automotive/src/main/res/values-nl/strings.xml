@@ -23,7 +23,7 @@
     <string name="main_gage_speed">Snelheid</string>
     <string name="main_gage_power">Power</string>
     <string name="main_gage_charging_power">Laadvermogen</string>
-    <string name="main_gage_SoC">Staat van het opladen</string>
+    <string name="main_gage_SoC">SoC (batterijpercentage)</string>
     <string name="main_gage_consumption">Momenteel verbruik</string>
     <string name="main_dismiss_charge_plot">Laadcurve sluiten</string>
     <string name="main_button_reset_charge_plot">Laadcurve resetten</string>
