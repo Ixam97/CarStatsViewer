@@ -14,7 +14,9 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.objects.AppPreferences
 import com.ixam97.carStatsViewer.objects.DataHolder
 import com.ixam97.carStatsViewer.objects.TripData
-import com.ixam97.carStatsViewer.plot.*
+import com.ixam97.carStatsViewer.plot.enums.*
+import com.ixam97.carStatsViewer.plot.graphics.*
+import com.ixam97.carStatsViewer.plot.objects.*
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_summary.*
@@ -33,22 +35,6 @@ class SummaryActivity: Activity() {
             PlotLabelPosition.LEFT,
             PlotHighlightMethod.AVG_BY_TIME,
             "kW"
-        ),
-        hashMapOf(
-            PlotSecondaryDimension.TIME to PlotLineConfiguration(
-                PlotRange(backgroundZero = 0f),
-                PlotLineLabelFormat.TIME,
-                PlotLabelPosition.RIGHT,
-                PlotHighlightMethod.MAX,
-                "Time"
-            ),
-            PlotSecondaryDimension.STATE_OF_CHARGE to PlotLineConfiguration(
-                PlotRange(0f, 100f, backgroundZero = 0f),
-                PlotLineLabelFormat.PERCENTAGE,
-                PlotLabelPosition.RIGHT,
-                PlotHighlightMethod.MAX,
-                "% SoC"
-            )
         )
     )
 
