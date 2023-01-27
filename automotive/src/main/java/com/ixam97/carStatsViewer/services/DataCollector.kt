@@ -398,8 +398,7 @@ class DataCollector : Service() {
                     ChargeCurve(
                         DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME, null),
                         null,
-                        chargeStartTimeNanos,
-                        System.nanoTime(),
+                        DataHolder.chargeTimeMillis,
                         DataHolder.chargedEnergy,
                         0f, 0f
                     )
