@@ -187,6 +187,8 @@ object DataHolder {
         traveledDistance = 0f
         tripStartDate = Date()
         usedEnergy = 0f
+        chargedEnergy = 0f
+        chargeTimeMillis = 0L
         averageConsumption = 0f
         travelTimeMillis = 0L
         lastPlotDistance = 0F
