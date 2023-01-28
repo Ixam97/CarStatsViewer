@@ -1,34 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">Car Stats Viewer (Dev)</string>
-
-    <!-- Preferences -->
-    <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer_dev.preferences</string>
-    <string name="preferences_notifications_key" translatable="false">notifications</string>
-    <string name="preferences_consumption_unit_key" translatable="false">consumption_unit</string>
-    <string name="preferences_debug_key" translatable="false">debug</string>
-    <string name="preferences_consumption_plot_key" translatable="false">consumption_plot</string>
-    <string name="preferences_deep_log_key" translatable="false">deep_log</string>
-    <string name="userdata_consumption_plot_key" translatable="false">userdata_consumption_plot</string>
-    <string name="userdata_speed_plot_key" translatable="false">userdata_speed_plot</string>
-    <string name="preferences_plot_distance_key" translatable="false">preferences_plot_distance</string>
-    <string name="preferences_plot_speed_key" translatable="false">preferences_plot_speed</string>
-    <string name="preferences_experimental_layout_key" translatable="false">preferences_experimental_layout</string>
-    <string name="preferences_consumption_plot_single_motor_key" translatable="false">preferences_consumption_plot_single_motor_key</string>
-    <string name="preference_consumption_plot_visible_gages_key" translatable="false">preference_consumption_plot_visible_gages</string>
-    <string name="preference_consumption_plot_secondary_color_key" translatable="false">preference_consumption_plot_secondary_color</string>
-    <string name="preference_charge_plot_secondary_color_key" translatable="false">preference_charge_plot_secondary_color</string>
-    <string name="preference_charge_plot_visible_gages_key" translatable="false">preference_charge_plot_visible_gages</string>
-    <string name="preference_charge_plot_dimension_key" translatable="false">preference_charge_plot_dimension</string>
-    
-    <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
-
-    <!-- Broadcast -->
-    <string name="ui_update_plot_broadcast" translatable="false">com.ixam97.carStatsViewer.ui_update_plot_broadcast</string>
-    <string name="ui_update_gages_broadcast" translatable="false">com.ixam97.carStatsViewer.ui_update_gages_broadcast</string>
-    <string name="gear_update_broadcast" translatable="false">com.ixam97.carStatsViewer.gear_update_broadcast</string>
-    <string name="wake_lock_broadcast" translatable="false">com.ixam97.carStatsViewer.wake_lock_broadcast</string>
-    <string name="save_trip_data_broadcast" translatable="false">com.ixam97.carStatsViewer.save_trip_data_broadcast</string>
-
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Behörigheter krävs för användning</string>
     <string name="permissions_dialog_text">Denna app kräver behörigheter för att kunna användas. Utan de nödvändiga behörigheterna kan appen inte läsa någon data från bilen.</string>
@@ -39,7 +9,6 @@
     <string name="main_port_connected">Laddare ansluten:</string>
     <string name="main_current_power">Aktuell strömförbrukning:</string>
     <string name="main_used_energy">Använd energi:</string>
-    <string name="main_SoC" translatable="false">SoC:</string>
     <string name="main_current_speed">Aktuell hastighet:</string>
     <string name="main_traveled_distance">Tripp avstånd:</string>
     <string name="main_inst_consumption">Aktuell förbrukning:</string>
