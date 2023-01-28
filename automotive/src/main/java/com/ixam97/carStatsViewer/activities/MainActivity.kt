@@ -3,9 +3,7 @@ package com.ixam97.carStatsViewer.activities
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.objects.*
 import com.ixam97.carStatsViewer.services.*
-import com.ixam97.carStatsViewer.plot.*
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.PendingIntent
 import android.car.VehicleGear
 import android.content.BroadcastReceiver
@@ -21,6 +19,8 @@ import android.os.Looper
 import android.os.SystemClock
 import android.view.View
 import android.widget.Toast
+import com.ixam97.carStatsViewer.plot.enums.*
+import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
@@ -100,13 +100,13 @@ class MainActivity : Activity() {
         DataHolder.consumptionPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.primary_plot_color), PlotView.textSize)
         DataHolder.consumptionPlotLine.secondaryPlotPaint = when {
             appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-            else ->PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
 
         DataHolder.chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
         DataHolder.chargePlotLine.secondaryPlotPaint = when {
             appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-            else ->PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
 
         main_consumption_plot.invalidate()
@@ -358,7 +358,7 @@ class MainActivity : Activity() {
 
         DataHolder.consumptionPlotLine.secondaryPlotPaint = when {
             appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-            else ->PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
 
         main_consumption_plot.dimension = PlotDimension.DISTANCE
@@ -378,7 +378,7 @@ class MainActivity : Activity() {
 
         DataHolder.chargePlotLine.secondaryPlotPaint = when {
             appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-            else ->PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
 
         main_charge_plot.dimension = PlotDimension.TIME

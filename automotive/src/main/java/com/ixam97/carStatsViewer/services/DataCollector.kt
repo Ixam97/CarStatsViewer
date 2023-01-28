@@ -1,7 +1,6 @@
 package com.ixam97.carStatsViewer.services
 
 
-import com.ixam97.carStatsViewer.plot.*
 import com.ixam97.carStatsViewer.objects.*
 import com.ixam97.carStatsViewer.*
 import android.app.*
@@ -19,6 +18,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
 import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.activities.emulatorPowerSign
+import com.ixam97.carStatsViewer.plot.enums.*
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileWriter
@@ -490,7 +490,7 @@ class DataCollector : Service() {
             val consumptionPlotTrigger = when {
                 consumptionPlotTracking -> when {
                     DataHolder.traveledDistance >= DataHolder.lastPlotDistance + 100 -> true
-                    DataHolder.currentGear == VehicleGear.GEAR_PARK -> (DataHolder.lastPlotMarker?:PlotLineMarkerType.BEGIN_SESSION) == PlotLineMarkerType.BEGIN_SESSION || DataHolder.traveledDistance != DataHolder.lastPlotDistance
+                    DataHolder.currentGear == VehicleGear.GEAR_PARK -> (DataHolder.lastPlotMarker?: PlotLineMarkerType.BEGIN_SESSION) == PlotLineMarkerType.BEGIN_SESSION || DataHolder.traveledDistance != DataHolder.lastPlotDistance
                     else -> false
                 }
                 else -> false

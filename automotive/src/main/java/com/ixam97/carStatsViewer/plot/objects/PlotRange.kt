@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.plot
+package com.ixam97.carStatsViewer.plot.objects
 
 class PlotRange(
     val minNegative: Float? = null,

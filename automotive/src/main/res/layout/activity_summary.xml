@@ -79,6 +79,17 @@
     <View style="@style/menu_divider_style_no_margin"
         android:background="?android:attr/listDivider"/>
 
+    <TextView
+        android:id="@+id/summary_parked_warning"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        android:text="Ansicht nur im geparkten Zustand verfügbar."/>
+
     <ScrollView
         android:id="@+id/summary_consumption_container"
         android:layout_width="match_parent"

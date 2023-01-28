@@ -14,7 +14,9 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.objects.AppPreferences
 import com.ixam97.carStatsViewer.objects.DataHolder
 import com.ixam97.carStatsViewer.objects.TripData
-import com.ixam97.carStatsViewer.plot.*
+import com.ixam97.carStatsViewer.plot.enums.*
+import com.ixam97.carStatsViewer.plot.graphics.*
+import com.ixam97.carStatsViewer.plot.objects.*
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_summary.*
@@ -33,22 +35,6 @@ class SummaryActivity: Activity() {
             PlotLabelPosition.LEFT,
             PlotHighlightMethod.AVG_BY_TIME,
             "kW"
-        ),
-        hashMapOf(
-            PlotSecondaryDimension.TIME to PlotLineConfiguration(
-                PlotRange(backgroundZero = 0f),
-                PlotLineLabelFormat.TIME,
-                PlotLabelPosition.RIGHT,
-                PlotHighlightMethod.MAX,
-                "Time"
-            ),
-            PlotSecondaryDimension.STATE_OF_CHARGE to PlotLineConfiguration(
-                PlotRange(0f, 100f, backgroundZero = 0f),
-                PlotLineLabelFormat.PERCENTAGE,
-                PlotLabelPosition.RIGHT,
-                PlotHighlightMethod.MAX,
-                "% SoC"
-            )
         )
     )
 
@@ -175,12 +161,9 @@ class SummaryActivity: Activity() {
         }
         summary_charge_plot_view.addPlotLine(chargePlotLine)
 
-        summary_charge_plot_view.dimension = appPreferences.chargePlotDimension
+        summary_charge_plot_view.dimension = PlotDimension.TIME
         summary_charge_plot_view.dimensionSmoothingPercentage = 0.01f
-        summary_charge_plot_view.secondaryDimension = when (appPreferences.chargePlotDimension) {
-            PlotDimension.TIME -> PlotSecondaryDimension.STATE_OF_CHARGE
-            else -> null
-        }
+        summary_charge_plot_view.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
         summary_charge_plot_view.invalidate()
 
         summary_charge_plot_seek_bar.max = (DataHolder.chargeCurves.size - 1).coerceAtLeast(0)

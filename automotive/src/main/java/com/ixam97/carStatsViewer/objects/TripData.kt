@@ -1,8 +1,8 @@
 package com.ixam97.carStatsViewer.objects
 
-import com.ixam97.carStatsViewer.plot.PlotLineItem
-import com.ixam97.carStatsViewer.plot.PlotLineMarkerType
-import com.ixam97.carStatsViewer.plot.PlotMarker
+import com.ixam97.carStatsViewer.plot.objects.PlotLineItem
+import com.ixam97.carStatsViewer.plot.enums.PlotLineMarkerType
+import com.ixam97.carStatsViewer.plot.objects.PlotMarker
 import java.util.*
 
 data class TripData(

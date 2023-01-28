@@ -1,4 +1,6 @@
-package com.ixam97.carStatsViewer.plot
+package com.ixam97.carStatsViewer.plot.objects
+
+import com.ixam97.carStatsViewer.plot.enums.PlotMarkerType
 
 class PlotMarkers {
     val markers : ArrayList<PlotMarker> = ArrayList()

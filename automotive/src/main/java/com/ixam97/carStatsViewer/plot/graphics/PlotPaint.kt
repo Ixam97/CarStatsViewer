@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.plot
+package com.ixam97.carStatsViewer.plot.graphics
 
 import android.graphics.Color
 import android.graphics.DashPathEffect
@@ -20,7 +20,7 @@ class PlotPaint(
             val cached = paintCache[color]?.get(textSize)
             if (cached != null) return cached
 
-            val basePaint = basePaint(textSize);
+            val basePaint = basePaint(textSize)
 
             val plotPaint = Paint(basePaint)
             plotPaint.color = color

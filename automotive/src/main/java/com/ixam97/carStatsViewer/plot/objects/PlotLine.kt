@@ -1,11 +1,12 @@
-package com.ixam97.carStatsViewer.plot
+package com.ixam97.carStatsViewer.plot.objects
 
+import com.ixam97.carStatsViewer.plot.graphics.*
+import com.ixam97.carStatsViewer.plot.enums.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.abs
 
 class PlotLine(
     val Configuration: PlotLineConfiguration,
-    val SecondaryDimensionConfiguration: HashMap<PlotSecondaryDimension, PlotLineConfiguration> = HashMap(),
     var Visible: Boolean = true
 ) {
     private val dataPoints: ConcurrentHashMap<Int, PlotLineItem> = ConcurrentHashMap()
@@ -22,7 +23,8 @@ class PlotLine(
     fun addDataPoint(item: Float, time: Long, distance: Float, stateOfCharge: Float, timeDelta: Long? = null, distanceDelta: Float? = null, stateOfChargeDelta: Float? = null, plotLineMarkerType: PlotLineMarkerType? = null) {
         val prev = dataPoints[dataPoints.size - 1]
 
-        addDataPoint(PlotLineItem(
+        addDataPoint(
+            PlotLineItem(
             item,
             time,
             distance,
@@ -31,7 +33,8 @@ class PlotLine(
             distanceDelta?:(distance - (prev?.Distance ?: distance)),
             stateOfChargeDelta?:(stateOfCharge - (prev?.StateOfCharge ?: distance)),
             plotLineMarkerType
-        ))
+        )
+        )
     }
 
     fun addDataPoint(dataPoint: PlotLineItem) {
@@ -136,7 +139,7 @@ class PlotLine(
     }
 
     fun maxValue(dataPoints: List<PlotLineItem>, secondaryDimension: PlotSecondaryDimension? = null, applyRange: Boolean = true): Float? {
-        val baseConfiguration = SecondaryDimensionConfiguration[secondaryDimension] ?: Configuration
+        val baseConfiguration = PlotGlobalConfiguration.SecondaryDimensionConfiguration[secondaryDimension] ?: Configuration
         val max : Float? = when {
             dataPoints.isEmpty() -> baseConfiguration.Range.minPositive ?: 0f
             else -> {
@@ -164,7 +167,7 @@ class PlotLine(
     }
 
     fun minValue(dataPoints: List<PlotLineItem>, secondaryDimension: PlotSecondaryDimension? = null, applyRange: Boolean = true): Float? {
-        val baseConfiguration = SecondaryDimensionConfiguration[secondaryDimension] ?: Configuration
+        val baseConfiguration = PlotGlobalConfiguration.SecondaryDimensionConfiguration[secondaryDimension] ?: Configuration
         val min : Float? = when {
             dataPoints.isEmpty() -> baseConfiguration.Range.minNegative ?: 0f
             else -> {
@@ -254,7 +257,7 @@ class PlotLine(
         if (dataPoints.isEmpty()) return null
 
         val configuration = when {
-            secondaryDimension != null -> SecondaryDimensionConfiguration[secondaryDimension]
+            secondaryDimension != null -> PlotGlobalConfiguration.SecondaryDimensionConfiguration[secondaryDimension]
             else -> Configuration
         } ?: return null
 
