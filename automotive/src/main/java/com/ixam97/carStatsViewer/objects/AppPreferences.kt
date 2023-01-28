@@ -92,6 +92,13 @@ class AppPreferences(context: Context) {
         set(value) {
             setPreference(AppPreference.CHARGE_PLOT_SECONDARY_COLOR, value)
         }
+    var chargePlotVisibleGages: Boolean
+        get() {
+            return getPreference(AppPreference.CHARGE_PLOT_VISIBLE_GAGES) as Boolean
+        }
+        set(value) {
+            setPreference(AppPreference.CHARGE_PLOT_VISIBLE_GAGES, value)
+        }
 
     var chargePlotDimension: PlotDimension
         get() {
@@ -114,6 +121,7 @@ class AppPreferences(context: Context) {
         AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR to context.getString(R.string.preference_consumption_plot_secondary_color_key),
         AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to context.getString(R.string.preference_consumption_plot_visible_gages_key),
         AppPreference.CHARGE_PLOT_SECONDARY_COLOR to context.getString(R.string.preference_charge_plot_secondary_color_key),
+        AppPreference.CHARGE_PLOT_VISIBLE_GAGES to context.getString(R.string.preference_charge_plot_visible_gages_key),
         AppPreference.CHARGE_PLOT_DIMENSION to context.getString(R.string.preference_charge_plot_dimension_key)
     )
 
@@ -129,6 +137,7 @@ class AppPreferences(context: Context) {
         AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR to false,
         AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to true,
         AppPreference.CHARGE_PLOT_SECONDARY_COLOR to false,
+        AppPreference.CHARGE_PLOT_VISIBLE_GAGES to true,
         AppPreference.CHARGE_PLOT_DIMENSION to PlotDimension.TIME
     )
 
@@ -179,5 +188,6 @@ enum class AppPreference {
     CONSUMPTION_PLOT_SECONDARY_COLOR,
     CONSUMPTION_PLOT_VISIBLE_GAGES,
     CHARGE_PLOT_SECONDARY_COLOR,
+    CHARGE_PLOT_VISIBLE_GAGES,
     CHARGE_PLOT_DIMENSION
 }

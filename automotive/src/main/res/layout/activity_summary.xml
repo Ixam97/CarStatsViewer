@@ -53,7 +53,7 @@
         android:textSize="40sp"
         android:textColor="@android:color/white"
         android:visibility="gone"
-        android:text="Ansicht nur im geparkten Zustand verfügbar."/>
+        android:text="@string/summary_parked_warning"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -67,28 +67,17 @@
             android:layout_height="80dp"
             android:layout_weight="1"
             android:textSize="35sp"
-            android:text="Fahrtverlauf"/>
+            android:text="@string/summary_trip_history"/>
         <Button
             android:id="@+id/summary_button_show_charge_container"
             android:layout_width="0dp"
             android:layout_height="80dp"
             android:layout_weight="1"
             android:textSize="35sp"
-            android:text="Ladevorgänge"/>
+            android:text="@string/summary_charging_sessions"/>
     </LinearLayout>
     <View style="@style/menu_divider_style_no_margin"
         android:background="?android:attr/listDivider"/>
-
-    <TextView
-        android:id="@+id/summary_parked_warning"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textAlignment="center"
-        android:gravity="center"
-        android:textSize="40sp"
-        android:textColor="@android:color/white"
-        android:visibility="gone"
-        android:text="Ansicht nur im geparkten Zustand verfügbar."/>
 
     <ScrollView
         android:id="@+id/summary_consumption_container"
@@ -110,41 +99,37 @@
 
             <TextView
                 android:id="@+id/summary_distance_value_text"
-                style="@style/menu_row_top_text"
-                android:text="0.0 km"/>
+                style="@style/menu_row_top_text"/>
             <TextView
                 style="@style/menu_row_content_text"
-                android:text="Fahrstrecke"/>
+                android:text="@string/summary_traveled_distance"/>
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
             <TextView
                 android:id="@+id/summary_used_energy_value_text"
-                style="@style/menu_row_top_text"
-                android:text="0.0 kWh"/>
+                style="@style/menu_row_top_text"/>
             <TextView
                 style="@style/menu_row_content_text"
-                android:text="Verbrauchte Energie"/>
+                android:text="@string/summary_used_energy"/>
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
             <TextView
                 android:id="@+id/summary_avg_consumption_value_text"
-                style="@style/menu_row_top_text"
-                android:text="0.0 kWh/100km"/>
+                style="@style/menu_row_top_text"/>
             <TextView
                 style="@style/menu_row_content_text"
-                android:text="Durchschnittsverbrauch"/>
+                android:text="@string/summary_average_consumption"/>
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
             <TextView
                 android:id="@+id/summary_travel_time_value_text"
-                style="@style/menu_row_top_text"
-                android:text="00:00:00"/>
+                style="@style/menu_row_top_text"/>
             <TextView
                 style="@style/menu_row_content_text"
-                android:text="Fahrzeit"/>
+                android:text="@string/summary_travel_time"/>
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
@@ -211,7 +196,7 @@
                 android:text="-/-"/>
             <TextView
                 style="@style/menu_row_content_text"
-                android:text="Geladene Energie"/>
+                android:text="@string/summary_charged_energy"/>
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
@@ -221,7 +206,7 @@
                 android:text="-/-"/>
             <TextView
                 style="@style/menu_row_content_text"
-                android:text="Ladedauer"/>
+                android:text="@string/summary_charge_time"/>
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 

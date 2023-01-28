@@ -85,6 +85,8 @@ class MainActivity : Activity() {
 
         main_power_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
         main_consumption_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
+        main_SoC_gage.barVisibility = appPreferences.chargePlotVisibleGages
+        main_charge_gage.barVisibility = appPreferences.chargePlotVisibleGages
 
         main_checkbox_speed.isChecked = appPreferences.plotSpeed
         main_consumption_plot.secondaryDimension = when (appPreferences.plotSpeed) {

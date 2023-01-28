@@ -117,7 +117,7 @@ object DataHolder {
         }
 
         traveledDistance = tripData.traveledDistance ?: 0f
-        tripStartDate = tripData.saveDate ?: Date()
+        tripStartDate = tripData.tripStartDate ?: Date()
         usedEnergy = tripData.usedEnergy ?: 0f
         averageConsumption = tripData.averageConsumption ?: 0f
         travelTimeMillis = tripData.travelTimeMillis ?: 0L

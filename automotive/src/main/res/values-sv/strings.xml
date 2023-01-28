@@ -74,7 +74,7 @@
     <string name="settings_charge_plot"> Laddningsvy</string>
     <string name="settings_plot_secondary_color">Grå som sekundär plotfärg</string>
     <string name="settings_consumption_plot_single_motor">Single motor modell</string>
-    <string name="settings_consumption_plot_visible_gages">Visa effektmätare</string>
+    <string name="settings_visible_gages">Visa effektmätare</string>
     <string name="settings_consumption_plot_speed">Visa hastighetsdiagram</string>
     <string name="settings_sub_title_settings">Inställningar:</string>
     <string name="settings_sub_title_current_cons_plot">Plott för nuvarande förbrukning:</string>

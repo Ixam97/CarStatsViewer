@@ -7,6 +7,7 @@ import android.content.*
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.TypedValue
 import android.view.View
 import android.widget.SeekBar
@@ -18,9 +19,7 @@ import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.*
 import com.ixam97.carStatsViewer.plot.objects.*
 import com.ixam97.carStatsViewer.views.PlotView
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_summary.*
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -89,7 +88,7 @@ class SummaryActivity: Activity() {
             createResetDialog()
         }
 
-        summary_trip_date_text.text = "Trip begonnen am: %s".format(SimpleDateFormat("dd.MM.yyyy hh:mm").format(tripData.saveDate))
+        summary_trip_date_text.text = getDateString(tripData.tripStartDate)
 
         summary_button_show_consumption_container.isSelected = true
 
@@ -277,6 +276,12 @@ class SummaryActivity: Activity() {
         alert.getButton(DialogInterface.BUTTON_POSITIVE).isEnabled = false
         alert.getButton(DialogInterface.BUTTON_NEGATIVE).setBackgroundColor(getColor(R.color.bad_red))
 
+    }
+
+    private fun getDateString(tripStartDate: Date): String {
+        val dateFormat = DateFormat.getDateFormat(applicationContext)
+        val timeFormat = DateFormat.getTimeFormat(applicationContext)
+        return "${getString(R.string.summary_trip_start_date)} ${dateFormat.format(tripStartDate)}, ${timeFormat.format(tripStartDate)}"
     }
 
     private fun getUsedEnergyString(): String {

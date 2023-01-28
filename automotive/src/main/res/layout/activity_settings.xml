@@ -169,7 +169,7 @@
                 <Switch
                     android:id="@+id/settings_consumption_plot_switch_visible_gages"
                     style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_consumption_plot_visible_gages"/>
+                    android:text="@string/settings_visible_gages"/>
 
                 <View
                     style="@style/menu_divider_style"
@@ -238,7 +238,14 @@
                 <View
                     style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>
+
                 <Switch
+                    android:id="@+id/settings_charge_plot_switch_visible_gages"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_visible_gages"/>
+
+                <Switch
+                    android:visibility="gone"
                     android:id="@+id/settings_charge_plot_switch_state_of_charge_dimension"
                     style="@style/menu_standard_switch_style"
                     android:text="@string/settings_plot_state_of_charge_dimension"/>

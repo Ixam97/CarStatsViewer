@@ -7,7 +7,7 @@ import java.util.*
 
 data class TripData(
     var appVersion: String,
-    var saveDate: Date,
+    var tripStartDate: Date,
     var traveledDistance: Float,
     var usedEnergy: Float,
     var averageConsumption: Float,
