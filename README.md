@@ -8,6 +8,17 @@ Based on https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerK
 
 ## Changelog [DE]:
 
+### 0.22.0 ()
+ - Tripzusammenfassung für den aktuellen Trip hinzugefügt. (Um einen Trip-Reset durchzuführen kann es erforderlich sein, die App neu zu installieren, da Änderungen im Manifest vorgnommen wurden)
+ - Stabilitätsverbresserungen bei der Abfrage und Verarbeitung von Fahrzeugdaten
+ - Schwedische Übersetzung hinzugefügt
+
+### 0.21.2
+ - Zurücksetzen der Ladekurve beim erneuten Betreten des Fahrzeugs wurde behoben
+
+### 0.21.1
+ - Hardcoded Text durch variablen String ersetzt
+
 ### 0.21.0 (25.01.2023)
  - Optische Differenzierung der Ladekurvenansicht
  - Mehrere Ladekurven in einem Trip gespeichert und können in den Einstellungen betrachtet werden
