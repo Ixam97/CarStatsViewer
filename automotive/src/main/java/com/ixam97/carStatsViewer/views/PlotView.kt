@@ -140,7 +140,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val basePaint = PlotPaint.basePaint(textSize)
 
         labelLinePaint = Paint(basePaint)
-        labelLinePaint.color = Color.parseColor("#151515")
+        labelLinePaint.color = getColor(context, R.color.grid_line_color)
 
         borderLinePaint = Paint(basePaint)
         borderLinePaint.color = Color.GRAY

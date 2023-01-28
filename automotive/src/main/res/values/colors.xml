@@ -13,4 +13,5 @@
     <color name="charge_marker">#2693ff</color>
     <color name="park_marker">@color/disabled_tint</color>
     <color name="bad_red">#5E1515</color>
+    <color name="grid_line_color">#272727</color>
 </resources>
