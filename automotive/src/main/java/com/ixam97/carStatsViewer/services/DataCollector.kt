@@ -315,9 +315,16 @@ class DataCollector : Service() {
     }
 
     private var carPropertySpeedListener = object : CarPropertyManager.CarPropertyEventCallback {
-        override fun onChangeEvent(value: CarPropertyValue<Any>) {
+        override fun onChangeEvent(value: CarPropertyValue<*>) {
             if (value.timestamp < startupTimestamp) return
             InAppLogger.logVHALCallback()
+
+            when (DataManager.update(value)){
+                DataManager.VALID -> InAppLogger.log("Valid update of DataManager: ${DataManager.currentSpeed}")
+                DataManager.INVALID_PROPERTY_ID -> InAppLogger.log("PropertyID not managed in DataManager")
+                DataManager.INVALID_TIMESTAMP -> InAppLogger.log("DataManager received invalid timestamp")
+                DataManager.INVALID_TYPE -> InAppLogger.log("DataManger received invalid type")
+            }
 
             speedUpdater(value)
 
