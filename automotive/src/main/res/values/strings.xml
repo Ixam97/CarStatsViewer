@@ -63,7 +63,7 @@
     <!-- SummaryActivity -->
     <string name="summary_title">Trip summary</string>
     <string name="summary_button_reset_trip">Reset trip</string>
-    <string name="summary_parked_warning">View ony available when parked.</string>
+    <string name="summary_parked_warning">View only available when parked.</string>
     <string name="summary_trip_history">Trip history</string>
     <string name="summary_charging_sessions">Charging sessions</string>
     <string name="summary_trip_start_date">Trip started on:</string>
