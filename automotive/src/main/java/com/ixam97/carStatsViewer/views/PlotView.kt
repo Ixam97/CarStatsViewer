@@ -83,7 +83,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             if (diff) invalidate()
         }
 
-    var dimensionShiftTouchInterval: Long? = null
+    var dimensionShiftTouchEnabled: Boolean = false
     var dimensionShift: Long? = null
         set(value) {
             val diff = value != field
@@ -287,7 +287,6 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 dimensionRestriction = (((lastRestriction!!.toFloat() * (lastSpanX / spanX)).toLong()/restrictionInterval) * restrictionInterval)
                     .coerceAtMost(touchDimensionMax + (restrictionInterval - touchDimensionMax % restrictionInterval))
                     .coerceAtLeast(restrictionInterval)
-                dimensionShiftTouchInterval = dimensionRestriction!! / dimensionRestrictionTouchInterval!! * 1_000L
             }
 
             return true
@@ -296,14 +295,11 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
-            val shiftInterval = dimensionShiftTouchInterval
-            if (shiftInterval != null) {
-                touchDimensionShiftDistance += - distanceX
-                dimensionShift = (touchDimensionShift + (touchDimensionShiftDistance / touchActionDistance.coerceAtLeast(1L)).toLong() * shiftInterval)
-                    .coerceAtMost(touchDimensionMax + (shiftInterval - touchDimensionMax % shiftInterval) - (dimensionRestriction!! - 1))
+            if (dimensionShiftTouchEnabled) {
+                dimensionShift = ((dimensionShift ?: 0L) + -distanceX * touchDimensionShiftByPixel).toLong()
+                    .coerceAtMost(touchDimensionMax - (dimensionRestriction ?: 0L))
                     .coerceAtLeast(0L)
             }
-
             return true
         }
     }
@@ -311,28 +307,15 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private val mScrollDetector = GestureDetector(context, mGestureListener)
     private val mScaleDetector = ScaleGestureDetector(context!!, mScaleGestureDetector)
 
-    private var touchDimensionShift : Long = 0L
-    private var touchDimensionShiftDistance : Float = 0f
-
-    private var touchDimensionRestriction : Long = 0L
-    private var touchDimensionRestrictionDistance : Float = 0f
-
-    private var touchActionDistance : Long = 1L
-
+    private var touchDimensionShiftByPixel : Float = 0f
     private var touchDimensionMax : Long = 0L
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
-        if (dimensionRestriction == null) return true
-        if (dimensionShiftTouchInterval == null && dimensionRestrictionTouchInterval == null) return true
+        val restriction = dimensionRestriction ?: return true
 
         when (ev.action) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                touchDimensionShiftDistance = 0f
-                touchDimensionRestrictionDistance = 0f
-
-                touchDimensionShift = dimensionShift ?: 0L
-                touchDimensionRestriction = dimensionRestriction ?: 0L
-
+                touchDimensionShiftByPixel = restriction.toFloat() / width.toFloat()
                 touchDimensionMax = (plotLines.mapNotNull { it.distanceDimension(dimension) }.max() ?: 0f).toLong()
             }
         }
@@ -344,9 +327,6 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-
-        touchActionDistance = (((width - 2 * xMargin).toFloat() / xLineCount.toFloat()) * 0.75f).toLong()
-
         alignZero()
         drawBackground(canvas)
         drawXLines(canvas)
