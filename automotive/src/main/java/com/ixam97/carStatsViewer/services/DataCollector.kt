@@ -30,6 +30,7 @@ lateinit var mainActivityPendingIntent: PendingIntent
 
 class DataCollector : Service() {
     companion object {
+        private const val DO_LOG = true
         private const val CHANNEL_ID = "TestChannel"
         private const val STATS_NOTIFICATION_ID = 1
         private const val FOREGROUND_NOTIFICATION_ID = 2
@@ -227,9 +228,89 @@ class DataCollector : Service() {
         return START_STICKY
     }
 
+/*
+STARTING NEW DATA MANAGER HERE
+ */
+
+    private val carPropertyListener = object : CarPropertyManager.CarPropertyEventCallback {
+        override fun onChangeEvent(carPropertyValue: CarPropertyValue<*>) {
+            if (DataManager.update(carPropertyValue, DO_LOG, valueMustChange = true, allowInvalidTimestamps = true) == DataManager.VALID) {
+                handleCarPropertyListenerEvent(carPropertyValue.propertyId)
+            }
+        }
+        override fun onErrorEvent(propertyId: Int, zone: Int) {
+            Log.w("carPropertyGenericListener","Received error car property event, propId=$propertyId")
+        }
+    }
+
+    private val carPropertyEmulatorReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val propertyId = intent.getIntExtra("propertyId", 0)
+            val valueType = intent.getStringExtra("valueType")
+            val timestamp = System.nanoTime()
+            val value: Any? = when (valueType) {
+                "Float"   -> intent.getFloatExtra("value", 0.0f)
+                "Int"     -> intent.getIntExtra("value", 0)
+                "Boolean" -> intent.getBooleanExtra("value", false)
+                "String"  -> intent.getStringExtra("value")
+                else -> null
+            }
+            if (value != null) {
+                if (DataManager.update(value, timestamp, propertyId, DO_LOG, valueMustChange = true) == DataManager.VALID) {
+                    handleCarPropertyListenerEvent(propertyId)
+                }
+            }
+        }
+    }
+
+    /** Handle incoming property changes by property ID */
+    private fun handleCarPropertyListenerEvent(propertyId: Int) {
+        when (propertyId) {
+            DataManager.CurrentPower.propertyId         -> powerUpdater()
+            DataManager.CurrentSpeed.propertyId         -> speedUpdater()
+            // DataManager.CurrentGear.propertyId          -> gearUpdater()
+            // DataManager.BatteryLevel.propertyId         -> stateOfChargeUpdater()
+            // DataManager.ChargePortConnected.propertyId  -> portUpdater()
+        }
+    }
+
+
+    private fun powerUpdater() {
+
+    }
+
+    private fun speedUpdater() {
+        if (emulatorMode) {
+            // In emulator also update power, as it is not updated continuously
+            if (DataManager.update(
+                    carPropertyManager.getFloatProperty(DataManager.CurrentPower.propertyId, 0),
+                    DataManager.CurrentSpeed.timestamp,
+                    DataManager.CurrentPower.propertyId,
+                    DO_LOG
+                ) == DataManager.VALID) powerUpdater()
+        }
+        if (!DataManager.CurrentSpeed.isInitialValue) {
+            DataManager.traveledDistance = DataManager.traveledDistance + ((DataManager.CurrentSpeed.lastValue as Float).absoluteValue * DataManager.CurrentSpeed.timeDelta.toFloat()) / 1_000_000_000F
+            Log.i("DataHolder", "${System.nanoTime()}: traveledDistance, value=${DataHolder.traveledDistance} / ${DataManager.traveledDistance}")
+        }
+    }
+
+/*
+END OF NEW DATA MANAGER
+ */
+
     private fun registerCarPropertyCallbacks() {
 
         InAppLogger.log("DataCollector.registerCarPropertyCallbacks")
+
+        // Register all CarProperties contained in DataManager
+        for (propertyId in DataManager.getVehiclePropertyIds()) {
+            carPropertyManager.registerCallback(
+                carPropertyListener,
+                propertyId,
+                CarPropertyManager.SENSOR_RATE_ONCHANGE
+            )
+        }
 
         carPropertyManager.registerCallback(
             carPropertyPowerListener,
@@ -260,6 +341,7 @@ class DataCollector : Service() {
             VehiclePropertyIds.GEAR_SELECTION,
             CarPropertyManager.SENSOR_RATE_ONCHANGE
         )
+
     }
 
     private val timeDifferenceStore: HashMap<Int, Long> = HashMap()
@@ -318,13 +400,6 @@ class DataCollector : Service() {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
             if (value.timestamp < startupTimestamp) return
             InAppLogger.logVHALCallback()
-
-            when (DataManager.update(value)){
-                DataManager.VALID -> InAppLogger.log("Valid update of DataManager: ${DataManager.currentSpeed}")
-                DataManager.INVALID_PROPERTY_ID -> InAppLogger.log("PropertyID not managed in DataManager")
-                DataManager.INVALID_TIMESTAMP -> InAppLogger.log("DataManager received invalid timestamp")
-                DataManager.INVALID_TYPE -> InAppLogger.log("DataManger received invalid type")
-            }
 
             speedUpdater(value)
 
