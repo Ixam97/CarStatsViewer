@@ -20,7 +20,7 @@ class PlotLine(
 
     var zeroAt: Float? = null
 
-    fun addDataPoint(item: Float, time: Long, distance: Float, stateOfCharge: Float, timeDelta: Long? = null, distanceDelta: Float? = null, stateOfChargeDelta: Float? = null, plotLineMarkerType: PlotLineMarkerType? = null) {
+    fun addDataPoint(item: Float, time: Long, distance: Float, stateOfCharge: Float, timeDelta: Long? = null, distanceDelta: Float? = null, stateOfChargeDelta: Float? = null, plotLineMarkerType: PlotLineMarkerType? = null, autoMarkerTimeDeltaMax: Long? = null) {
         val prev = dataPoints[dataPoints.size - 1]
 
         addDataPoint(
@@ -33,22 +33,28 @@ class PlotLine(
             distanceDelta?:(distance - (prev?.Distance ?: distance)),
             stateOfChargeDelta?:(stateOfCharge - (prev?.StateOfCharge ?: distance)),
             plotLineMarkerType
-        )
-        )
+        ), autoMarkerTimeDeltaMax)
     }
 
-    fun addDataPoint(dataPoint: PlotLineItem) {
+    fun addDataPoint(dataPoint: PlotLineItem, autoMarkerTimeDeltaMax: Long? = null) {
+        val prev = dataPoints[dataPoints.size - 1]
+
+        if (dataPoint.Marker == PlotLineMarkerType.BEGIN_SESSION && prev?.Marker == null){
+            prev?.Marker = PlotLineMarkerType.END_SESSION
+        }
+        
+        if (dataPoint.Marker == null && prev == null) {
+            dataPoint.Marker = PlotLineMarkerType.BEGIN_SESSION
+        }
+
+        if ((autoMarkerTimeDeltaMax ?: dataPoint.TimeDelta ?: 0L) < (dataPoint.TimeDelta ?: 0L)) {
+            prev?.Marker = PlotLineMarkerType.END_SESSION
+            dataPoint.Marker = PlotLineMarkerType.BEGIN_SESSION
+        }
+
         when {
             dataPoint.Value.isFinite() -> {
                 dataPoints[dataPoints.size] = dataPoint
-            }
-            dataPoint.Marker == PlotLineMarkerType.END_SESSION -> {
-                val lastPoint = dataPoints[dataPoints.size - 1]
-                when {
-                    lastPoint != null && lastPoint.Marker == null -> {
-                        lastPoint.Marker = dataPoint.Marker
-                    }
-                }
             }
         }
     }
