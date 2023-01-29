@@ -28,6 +28,7 @@
     <string name="gear_update_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.gear_update_broadcast</string>
     <string name="wake_lock_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.wake_lock_broadcast</string>
     <string name="save_trip_data_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.save_trip_data_broadcast</string>
+    <string name="VHAL_emulator_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.VHAL_emulator_broadcast</string>
 
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Permissions required for use</string>

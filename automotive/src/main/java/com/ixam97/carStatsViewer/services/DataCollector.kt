@@ -28,6 +28,18 @@ import kotlin.math.absoluteValue
 
 lateinit var mainActivityPendingIntent: PendingIntent
 
+sealed class EmulatorIntentExtras {
+    companion object {
+        const val PROPERTY_ID = "propertyId"
+        const val TYPE = "valueType"
+        const val VALUE = "value"
+        const val TYPE_FLOAT = "Float"
+        const val TYPE_INT = "Int"
+        const val TYPE_BOOLEAN = "Boolean"
+        const val TYPE_STRING = "String"
+    }
+}
+
 class DataCollector : Service() {
     companion object {
         private const val DO_LOG = true
@@ -212,6 +224,7 @@ class DataCollector : Service() {
         saveTripDataTimerHandler.postDelayed(saveTripDataTask, SAVE_TRIP_DATA_TIMER_HANDLER_DELAY_MILLIS)
 
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.save_trip_data_broadcast)))
+        registerReceiver(carPropertyEmulatorReceiver, IntentFilter(getString(R.string.VHAL_emulator_broadcast)))
     }
 
     override fun onDestroy() {
@@ -245,19 +258,21 @@ STARTING NEW DATA MANAGER HERE
 
     private val carPropertyEmulatorReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val propertyId = intent.getIntExtra("propertyId", 0)
-            val valueType = intent.getStringExtra("valueType")
-            val timestamp = System.nanoTime()
-            val value: Any? = when (valueType) {
-                "Float"   -> intent.getFloatExtra("value", 0.0f)
-                "Int"     -> intent.getIntExtra("value", 0)
-                "Boolean" -> intent.getBooleanExtra("value", false)
-                "String"  -> intent.getStringExtra("value")
-                else -> null
-            }
-            if (value != null) {
-                if (DataManager.update(value, timestamp, propertyId, DO_LOG, valueMustChange = true) == DataManager.VALID) {
-                    handleCarPropertyListenerEvent(propertyId)
+            if (emulatorMode) {
+                if (DO_LOG) Log.i("EMULATOR","Received Emulated VHAL update")
+                val propertyId = intent.getIntExtra(EmulatorIntentExtras.PROPERTY_ID, 0)
+                val valueType = intent.getStringExtra(EmulatorIntentExtras.TYPE)
+                val timestamp = System.nanoTime()
+                val value: Any? = when (valueType) {
+                    EmulatorIntentExtras.TYPE_FLOAT -> intent.getFloatExtra(EmulatorIntentExtras.VALUE, 0.0f)
+                    EmulatorIntentExtras.TYPE_INT -> intent.getIntExtra(EmulatorIntentExtras.VALUE, 0)
+                    EmulatorIntentExtras.TYPE_BOOLEAN -> intent.getBooleanExtra(EmulatorIntentExtras.VALUE, false)
+                    EmulatorIntentExtras.TYPE_STRING -> intent.getStringExtra(EmulatorIntentExtras.VALUE)
+                    else -> null
+                }
+                if (value != null) {
+                    if (DataManager.update(value, timestamp, propertyId, DO_LOG, valueMustChange = false) == DataManager.VALID)
+                        handleCarPropertyListenerEvent(propertyId)
                 }
             }
         }
@@ -281,17 +296,15 @@ STARTING NEW DATA MANAGER HERE
 
     private fun speedUpdater() {
         if (emulatorMode) {
-            // In emulator also update power, as it is not updated continuously
-            if (DataManager.update(
-                    carPropertyManager.getFloatProperty(DataManager.CurrentPower.propertyId, 0),
-                    DataManager.CurrentSpeed.timestamp,
-                    DataManager.CurrentPower.propertyId,
-                    DO_LOG
-                ) == DataManager.VALID) powerUpdater()
+            val emulatePowerIntent = Intent(getString(R.string.VHAL_emulator_broadcast)).apply {
+                putExtra(EmulatorIntentExtras.PROPERTY_ID, DataManager.CurrentPower.propertyId)
+                putExtra(EmulatorIntentExtras.TYPE, EmulatorIntentExtras.TYPE_FLOAT)
+                putExtra(EmulatorIntentExtras.VALUE, carPropertyManager.getFloatProperty(DataManager.CurrentPower.propertyId, 0))
+            }
+            sendBroadcast(emulatePowerIntent)
         }
         if (!DataManager.CurrentSpeed.isInitialValue) {
             DataManager.traveledDistance = DataManager.traveledDistance + ((DataManager.CurrentSpeed.lastValue as Float).absoluteValue * DataManager.CurrentSpeed.timeDelta.toFloat()) / 1_000_000_000F
-            Log.i("DataHolder", "${System.nanoTime()}: traveledDistance, value=${DataHolder.traveledDistance} / ${DataManager.traveledDistance}")
         }
     }
 
