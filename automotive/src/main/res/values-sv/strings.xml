@@ -1,0 +1,68 @@
+<resources>
+
+    <!-- PermissionsActivity -->
+    <string name="permissions_dialog_title">Nödvändiga behörigheter</string>
+    <string name="permissions_dialog_text">Den här appen behöver vissa behörigheter för att fungera. Utan de angivna behörigheterna kan fordonets data inte samlas in.</string>
+    <string name="permissions_dialog_quit">Avsluta Car Stats Viewer</string>
+    <string name="permissions_dialog_grant">Ge behörighet</string>
+
+    <!-- MainActivity -->
+    <string name="main_port_connected">Laddkabeln ansluten:</string>
+    <string name="main_current_power">Nuvarande strömförbrukning:</string>
+    <string name="main_used_energy">Förbrukad energi:</string>
+    <string name="main_current_speed">Nuvarande hastighet:</string>
+    <string name="main_traveled_distance">Tillryggalagd sträcka:</string>
+    <string name="main_inst_consumption">Momentan förbrukning:</string>
+    <string name="main_average_consumption">Medelförbrukning:</string>
+    <string name="main_button_reset_stats">Återställ statistik</string>
+    <string name="main_consumption">Förbrukning de senaste 3 km:</string>
+    <string name="main_checkbox_speed">Hastighet</string>
+    <string name="main_dialog_reset_title">Återställ statistik?</string>
+    <string name="main_dialog_reset_message">Alla sparade resor kommer nollställas.</string>
+    <string name="main_gage_speed">Hastighet</string>
+    <string name="main_gage_power">Effekt</string>
+    <string name="main_gage_charging_power">Laddeffekt</string>
+    <string name="main_gage_SoC">Batterinivå</string>
+    <string name="main_gage_consumption">Momental förbrukning</string>
+    <string name="main_dismiss_charge_plot">Stäng laddningskurvan</string>
+    <string name="main_button_reset_charge_plot">Återställ laddningskurvan</string>
+    <string name="main_button_trip_summary">Sammanfattning resa</string>
+    <string name="main_button_hide_speed">Göm hastighet</string>
+    <string name="main_button_show_speed">Visa hastighet</string>
+
+    <!-- SummaryActivity -->
+    <string name="summary_title">Sammanfattning resa</string>
+    <string name="summary_button_reset_trip">Återställ resa</string>
+
+    <!-- SettingsActivity -->
+    <string name="settings_title">Inställningar</string>
+    <string name="settings_button_back">Tillbaka</string>
+    <string name="settings_button_quit">Avsluta app</string>
+    <string name="settings_notifications">Notifieringar</string>
+    <string name="settings_consumption_unit">Wh/km som enhet för förbrukning</string>
+    <string name="settings_debug">Felsökningsinformation</string>
+    <string name="settings_experimental_layout">Visa experimentell layout</string>
+    <string name="settings_consumption_plot">  Förbrukningskurva</string>
+    <string name="settings_charge_plot">  Laddkurva</string>
+    <string name="settings_plot_secondary_color">Grå som sekundär färg för kurva</string>
+    <string name="settings_consumption_plot_single_motor">Modell med en motor</string>
+    <string name="settings_consumption_plot_visible_gages">Visa effektmätare</string>
+    <string name="settings_consumption_plot_speed">Visa hastighetskurva</string>
+    <string name="settings_sub_title_settings">Inställningar:</string>
+    <string name="settings_sub_title_current_cons_plot">Aktuell förbrukningskurva:</string>
+    <string name="settings_sub_title_last_charge_plot">Senaste laddkurva:</string>
+
+    <!-- Quit Dialog -->
+    <string name="quit_dialog_title">Avsluta app?</string>
+    <string name="quit_dialog_message">Log kommer kopieras till utklipp.</string>
+    <string name="dialog_confirm">Ja</string>
+    <string name="dialog_dismiss">Nej</string>
+
+    <!-- LogActivity -->
+    <string name="log_title">Debug</string>
+
+    <!-- Notifications -->
+    <string name="notification_title">Nuvarande statistik:</string>
+    <string name="foreground_service_info">Tjänst för datainssamling aktiv</string>
+    <string name="toast_file_read_error">Fel vid läsning av resfil</string>
+</resources>
