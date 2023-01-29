@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_settings.*
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PorterDuff
@@ -19,9 +20,12 @@ import android.view.View
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
-import com.ixam97.carStatsViewer.plot.*
+import com.ixam97.carStatsViewer.plot.enums.*
+import com.ixam97.carStatsViewer.plot.objects.PlotLine
+import com.ixam97.carStatsViewer.plot.objects.PlotLineConfiguration
+import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
+import com.ixam97.carStatsViewer.plot.objects.PlotRange
 import com.ixam97.carStatsViewer.views.PlotView
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.system.exitProcess
 
 class SettingsActivity : Activity() {
@@ -29,53 +33,12 @@ class SettingsActivity : Activity() {
     private lateinit var context : Context
     private lateinit var appPreferences: AppPreferences
 
-    private lateinit var disabledTint: PorterDuffColorFilter
-    private lateinit var enabledTint: PorterDuffColorFilter
-
-    private var chargePlotLine = PlotLine(
-        PlotRange(0f, 20f, 0f, 160f, 20f),
-        1f,
-        "%.0f",
-        "Ø %.0f",
-        "kW",
-        PlotLabelPosition.LEFT,
-        PlotHighlightMethod.AVG_BY_TIME
-    )
-
-    private var stateOfChargePlotLine = PlotLine(
-        PlotRange(0f, 100f, 0f, 100f, 20f, 0f),
-        1f,
-        "%.0f",
-        "%.0f %%",
-        "% SoC",
-        PlotLabelPosition.RIGHT,
-        PlotHighlightMethod.LAST
-    )
-
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                getString(R.string.ui_update_plot_broadcast) -> {
-                    settings_consumption_plot_view.invalidate()
-                    settings_charge_plot_view.invalidate()
-                }
                 getString(R.string.gear_update_broadcast) -> setEnableByGear(DataHolder.currentGear)
             }
         }
-    }
-
-    private val seekBarChangeListener = object : OnSeekBarChangeListener {
-        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-            setVisibleChargeCurve(progress)
-        }
-
-        override fun onStartTrackingTouch(seekBar: SeekBar?) {
-        }
-
-        override fun onStopTrackingTouch(seekBar: SeekBar?) {
-        }
-
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,14 +51,10 @@ class SettingsActivity : Activity() {
 
         setContentView(R.layout.activity_settings)
 
-        disabledTint = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
-        enabledTint = PorterDuffColorFilter(getColor(android.R.color.white), PorterDuff.Mode.SRC_IN)
-
         setupSettingsMaster()
         setupSettingsConsumptionPlot()
         setupSettingsChargePlot()
 
-        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.ui_update_plot_broadcast)))
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.gear_update_broadcast)))
 
         setEnableByGear(DataHolder.currentGear)
@@ -122,7 +81,6 @@ class SettingsActivity : Activity() {
     private fun setupSettingsMaster() {
         settings_switch_notifications.isChecked = appPreferences.notifications
         settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
-        settings_switch_experimental_layout.isChecked = appPreferences.experimentalLayout
 
         settings_version_text.text = "Car Stats Viewer Version %s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 
@@ -147,6 +105,7 @@ class SettingsActivity : Activity() {
                 }
             val alert = builder.create()
             alert.show()
+            alert.getButton(DialogInterface.BUTTON_POSITIVE).setBackgroundColor(getColor(R.color.bad_red))
         }
 
         settings_switch_notifications.setOnClickListener {
@@ -155,10 +114,6 @@ class SettingsActivity : Activity() {
 
         settings_switch_consumption_unit.setOnClickListener {
             appPreferences.consumptionUnit = settings_switch_consumption_unit.isChecked
-        }
-
-        settings_switch_experimental_layout.setOnClickListener {
-            appPreferences.experimentalLayout = settings_switch_experimental_layout.isChecked
         }
         
         settings_consumption_plot.setOnClickListener {
@@ -176,21 +131,6 @@ class SettingsActivity : Activity() {
 
     private fun setupSettingsConsumptionPlot() {
 
-        settings_consumption_plot_view.addPlotLine(DataHolder.consumptionPlotLine)
-        settings_consumption_plot_view.addPlotLine(DataHolder.speedPlotLine)
-        settings_consumption_plot_view.dimension
-
-        settings_consumption_plot_view.dimension = PlotDimension.DISTANCE
-        settings_consumption_plot_view.dimensionRestriction = ((DataHolder.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1
-        settings_consumption_plot_view.dimensionSmoothingPercentage = 0.02f
-        settings_consumption_plot_view.setPlotMarkers(DataHolder.plotMarkers)
-        settings_consumption_plot_view.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
-        settings_consumption_plot_view.visibleMarkerTypes.add(PlotMarkerType.PARK)
-        settings_consumption_plot_view.dimensionShiftTouchInterval = 1_000L
-        settings_consumption_plot_view.dimensionRestrictionTouchInterval = 5_000L
-
-        settings_consumption_plot_view.invalidate()
-
         settings_consumption_plot_switch_secondary_color.isChecked = appPreferences.consumptionPlotSecondaryColor
         settings_consumption_plot_switch_visible_gages.isChecked = appPreferences.consumptionPlotVisibleGages
         settings_consumption_plot_switch_single_motor.isChecked = appPreferences.consumptionPlotSingleMotor
@@ -202,18 +142,14 @@ class SettingsActivity : Activity() {
 
         settings_consumption_plot_switch_secondary_color.setOnClickListener {
             appPreferences.consumptionPlotSecondaryColor = settings_consumption_plot_switch_secondary_color.isChecked
-            if (appPreferences.consumptionPlotSecondaryColor) {
-                DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-            } else {
-                DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+            DataHolder.consumptionPlotLine.secondaryPlotPaint = when {
+                appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+                else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
             }
-            settings_consumption_plot_view.invalidate()
         }
 
         settings_consumption_plot_speed_switch.setOnClickListener {
             appPreferences.plotSpeed = settings_consumption_plot_speed_switch.isChecked
-            DataHolder.speedPlotLine.Visible = settings_consumption_plot_speed_switch.isChecked
-            settings_consumption_plot_view.invalidate()
         }
 
         settings_consumption_plot_switch_visible_gages.setOnClickListener {
@@ -226,72 +162,36 @@ class SettingsActivity : Activity() {
     }
 
     private fun setupSettingsChargePlot() {
-        settings_charge_plot_sub_title_curve.text = "%s (%d/%d)".format(
-            getString(R.string.settings_sub_title_last_charge_plot),
-            DataHolder.chargeCurves.size,
-            DataHolder.chargeCurves.size)
-        chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
-        chargePlotLine.reset()
-        stateOfChargePlotLine.reset()
-        if (DataHolder.chargeCurves.isNotEmpty()) {
-            stateOfChargePlotLine.addDataPoints(DataHolder.chargeCurves[DataHolder.chargeCurves.size - 1].stateOfChargePlotLine)
-            chargePlotLine.addDataPoints(DataHolder.chargeCurves[DataHolder.chargeCurves.size - 1].chargePlotLine)
-            settings_charge_plot_button_next.isEnabled = false
-            settings_charge_plot_button_next.colorFilter = disabledTint
-            settings_charge_plot_button_prev.isEnabled = true
-            settings_charge_plot_button_prev.colorFilter = enabledTint
-        }
-        if (DataHolder.chargeCurves.size < 2){
-            settings_charge_plot_button_next.isEnabled = false
-            settings_charge_plot_button_next.colorFilter = disabledTint
-            settings_charge_plot_button_prev.isEnabled = false
-            settings_charge_plot_button_prev.colorFilter = disabledTint
-        }
-        settings_charge_plot_view.addPlotLine(chargePlotLine)
-        settings_charge_plot_view.addPlotLine(stateOfChargePlotLine)
-
-        settings_charge_plot_view.dimension = PlotDimension.TIME
-        settings_charge_plot_view.dimensionRestriction = null
-        settings_charge_plot_view.dimensionSmoothingPercentage = 0.01f
-        settings_charge_plot_view.invalidate()
 
         settings_charge_plot_switch_secondary_color.isChecked = appPreferences.chargePlotSecondaryColor
-        if (appPreferences.chargePlotSecondaryColor) stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+        settings_charge_plot_switch_state_of_charge_dimension.isChecked = appPreferences.chargePlotDimension == PlotDimension.STATE_OF_CHARGE
 
         settings_charge_plot_button_back.setOnClickListener {
             gotoMaster(settings_charge_plot_layout)
         }
 
-        settings_charge_plot_seek_bar.max = (DataHolder.chargeCurves.size - 1).coerceAtLeast(0)
-        settings_charge_plot_seek_bar.progress = (DataHolder.chargeCurves.size - 1).coerceAtLeast(0)
-
-        settings_charge_plot_seek_bar.setOnSeekBarChangeListener(seekBarChangeListener)
-
-        settings_charge_plot_button_next.setOnClickListener {
-            val newProgress = settings_charge_plot_seek_bar.progress + 1
-            if (newProgress <= (DataHolder.chargeCurves.size - 1)) {
-                settings_charge_plot_seek_bar.progress = newProgress
-            }
-        }
-
-        settings_charge_plot_button_prev.setOnClickListener {
-            val newProgress = settings_charge_plot_seek_bar.progress - 1
-            if (newProgress >= 0) {
-                settings_charge_plot_seek_bar.progress = newProgress
-            }
-        }
-
         settings_charge_plot_switch_secondary_color.setOnClickListener {
             appPreferences.chargePlotSecondaryColor = settings_charge_plot_switch_secondary_color.isChecked
-            if (appPreferences.chargePlotSecondaryColor) {
-                DataHolder.stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-                stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-            } else {
-                DataHolder.stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
-                stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+            val plotPaint = when {
+                appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+                else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+            }
+            DataHolder.chargePlotLine.secondaryPlotPaint = plotPaint
+        }
+/*
+        settings_charge_plot_switch_state_of_charge_dimension.setOnClickListener {
+            appPreferences.chargePlotDimension = when (settings_charge_plot_switch_state_of_charge_dimension.isChecked) {
+                true -> PlotDimension.STATE_OF_CHARGE
+                else -> PlotDimension.TIME
+            }
+            settings_charge_plot_view.dimension = appPreferences.chargePlotDimension
+            settings_charge_plot_view.secondaryDimension = when (appPreferences.chargePlotDimension) {
+                PlotDimension.TIME -> PlotSecondaryDimension.STATE_OF_CHARGE
+                else -> null
             }
             settings_charge_plot_view.invalidate()
         }
+ */
     }
 
     private fun gotoMaster(fromLayout: View){
@@ -349,57 +249,5 @@ class SettingsActivity : Activity() {
                 }
             }
         }
-    }
-
-    private fun setVisibleChargeCurve(progress: Int) {
-
-        settings_charge_plot_sub_title_curve.text = "%s (%d/%d)".format(
-            getString(R.string.settings_sub_title_last_charge_plot),
-            DataHolder.chargeCurves.size,
-            DataHolder.chargeCurves.size)
-
-        if (DataHolder.chargeCurves.size - 1 == 0) {
-            settings_charge_plot_sub_title_curve.text = "%s (0/0)".format(
-                getString(R.string.settings_sub_title_last_charge_plot))
-
-            settings_charge_plot_button_next.isEnabled = false
-            settings_charge_plot_button_next.colorFilter = disabledTint
-            settings_charge_plot_button_prev.isEnabled = false
-            settings_charge_plot_button_prev.colorFilter = disabledTint
-
-        } else {
-            settings_charge_plot_sub_title_curve.text = "%s (%d/%d)".format(
-                getString(R.string.settings_sub_title_last_charge_plot),
-                progress + 1,
-                DataHolder.chargeCurves.size)
-
-            when (progress) {
-                0 -> {
-                    settings_charge_plot_button_prev.isEnabled = false
-                    settings_charge_plot_button_prev.colorFilter = disabledTint
-                    settings_charge_plot_button_next.isEnabled = true
-                    settings_charge_plot_button_next.colorFilter = enabledTint
-                }
-                DataHolder.chargeCurves.size - 1 -> {
-                    settings_charge_plot_button_next.isEnabled = false
-                    settings_charge_plot_button_next.colorFilter = disabledTint
-                    settings_charge_plot_button_prev.isEnabled = true
-                    settings_charge_plot_button_prev.colorFilter = enabledTint
-                }
-                else -> {
-                    settings_charge_plot_button_next.isEnabled = true
-                    settings_charge_plot_button_next.colorFilter = enabledTint
-                    settings_charge_plot_button_prev.isEnabled = true
-                    settings_charge_plot_button_prev.colorFilter = enabledTint
-                }
-            }
-        }
-
-        chargePlotLine.reset()
-        chargePlotLine.addDataPoints(DataHolder.chargeCurves[progress].chargePlotLine)
-        stateOfChargePlotLine.reset()
-        stateOfChargePlotLine.addDataPoints(DataHolder.chargeCurves[progress].stateOfChargePlotLine)
-        settings_charge_plot_view.invalidate()
-
     }
 }

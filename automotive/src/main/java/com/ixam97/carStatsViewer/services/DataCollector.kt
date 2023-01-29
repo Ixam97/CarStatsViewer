@@ -1,7 +1,6 @@
 package com.ixam97.carStatsViewer.services
 
 
-import com.ixam97.carStatsViewer.plot.*
 import com.ixam97.carStatsViewer.objects.*
 import com.ixam97.carStatsViewer.*
 import android.app.*
@@ -13,13 +12,13 @@ import android.car.hardware.property.CarPropertyManager
 import android.content.*
 import android.graphics.BitmapFactory
 import android.os.*
-import android.provider.ContactsContract.Data
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
 import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.activities.emulatorPowerSign
+import com.ixam97.carStatsViewer.plot.enums.*
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileWriter
@@ -36,7 +35,12 @@ class DataCollector : Service() {
         private const val FOREGROUND_NOTIFICATION_ID = 2
         private const val NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS = 1_000L
         private const val SAVE_TRIP_DATA_TIMER_HANDLER_DELAY_MILLIS = 30_000L
+        private const val CHARGE_CURVE_UPDATE_INTERVAL_MILLIS = 10_000L
     }
+
+    private var startupTimestamp: Long = 0L
+    private var lastPowerValueTimestamp: Long = 0L
+    private var lastSpeedValueTimestamp: Long = 0L
 
     private var consumptionPlotTracking = false
     private var lastNotificationTimeMillis = 0L
@@ -58,6 +62,11 @@ class DataCollector : Service() {
 
     private lateinit var notificationTimerHandler: Handler
     private lateinit var saveTripDataTimerHandler: Handler
+
+
+    init {
+        startupTimestamp = System.nanoTime()
+    }
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -166,11 +175,10 @@ class DataCollector : Service() {
         notificationsEnabled = appPreferences.notifications
 
         car = Car.createCar(this)
-        carPropertyManager = car.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager;
-        DataHolder.maxBatteryCapacity = carPropertyManager
-            .getProperty<Float>(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
-            .value.toInt()
+        carPropertyManager = car.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager
 
+        DataHolder.maxBatteryCapacity = carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
+        DataHolder.currentBatteryCapacity = carPropertyManager.getFloatProperty(VehiclePropertyIds.EV_BATTERY_LEVEL, 0)
         DataHolder.currentGear = carPropertyManager.getIntProperty(VehiclePropertyIds.GEAR_SELECTION, 0)
 
         // if (DataHolder.resetTimestamp == 0L)  DataHolder.resetTimestamp = System.nanoTime()
@@ -194,7 +202,6 @@ class DataCollector : Service() {
         }
 
         DataHolder.consumptionPlotLine.baseLineAt.add(0f)
-        DataHolder.speedPlotLine.baseLineAt.add(0f)
 
         registerCarPropertyCallbacks()
 
@@ -224,12 +231,13 @@ class DataCollector : Service() {
 
         InAppLogger.log("DataCollector.registerCarPropertyCallbacks")
 
-        val powerRegistered = carPropertyManager.registerCallback(
+        carPropertyManager.registerCallback(
             carPropertyPowerListener,
             VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE,
             CarPropertyManager.SENSOR_RATE_FASTEST
         )
-        val speedRegistered = carPropertyManager.registerCallback(
+
+        carPropertyManager.registerCallback(
             carPropertySpeedListener,
             VehiclePropertyIds.PERF_VEHICLE_SPEED,
             CarPropertyManager.SENSOR_RATE_FASTEST
@@ -298,12 +306,7 @@ class DataCollector : Service() {
         override fun onChangeEvent(value: CarPropertyValue<*>) {
             //InAppLogger.deepLog("DataCollector.carPropertyPowerListener", appPreferences.deepLog)
 
-            powerUpdater(value)
-            Log.d("carPropertyPowerListener",
-                String.format(
-                    "Received value %.0f on thread %s",
-                    value.value as Float,
-                    Thread.currentThread().name))
+            if (!emulatorMode) powerUpdater(value)
         }
         override fun onErrorEvent(propId: Int, zone: Int) {
             Log.w("carPropertyPowerListener",
@@ -312,8 +315,8 @@ class DataCollector : Service() {
     }
 
     private var carPropertySpeedListener = object : CarPropertyManager.CarPropertyEventCallback {
-        override fun onChangeEvent(value: CarPropertyValue<*>) {
-            //InAppLogger.deepLog("DataCollector.carPropertySpeedListener", appPreferences.deepLog)
+        override fun onChangeEvent(value: CarPropertyValue<Any>) {
+            if (value.timestamp < startupTimestamp) return
             InAppLogger.logVHALCallback()
 
             speedUpdater(value)
@@ -321,6 +324,7 @@ class DataCollector : Service() {
             if (emulatorMode) {
                 // Also get power in emulator
                 var powerValue = carPropertyManager.getProperty<Float>(VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE,0)
+                lastSpeedValueTimestamp = value.timestamp
                 powerUpdater(powerValue, value.timestamp)
 
             }
@@ -345,7 +349,7 @@ class DataCollector : Service() {
             // InAppLogger.deepLog("DataCollector.carPropertyGenericListener", appPreferences.deepLog)
 
             when (value.propertyId) {
-                VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float).toInt()
+                VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float)
                 VehiclePropertyIds.GEAR_SELECTION -> gearUpdater(value.value as Int, value.timestamp)
                 VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> portUpdater(value.value as Boolean)
             }
@@ -372,19 +376,29 @@ class DataCollector : Service() {
         if (connected != DataHolder.chargePortConnected) {
             DataHolder.chargePortConnected = connected
 
+            if (lastPowerValueTimestamp < startupTimestamp) lastPowerValueTimestamp = startupTimestamp
+
             if (connected) {
-                DataHolder.stateOfChargePlotLine.reset()
                 DataHolder.chargePlotLine.reset()
+                DataHolder.chargedEnergy = 0F
+                DataHolder.chargeTimeMillis = 0L
                 chargeStartTimeNanos = System.nanoTime()
+                addChargePlotLine(lastPowerValueTimestamp, PlotLineMarkerType.BEGIN_SESSION)
+                DataHolder.plotMarkers.addMarker(PlotMarkerType.CHARGE, lastPowerValueTimestamp)
+                sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             }
 
-            if (!connected && chargeStartTimeNanos > 0 && DataHolder.chargedEnergy > 0) {
+            if (!connected) { // && chargeStartTimeNanos > 0 && DataHolder.chargedEnergy > 0) {
+                if (DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME).last().Marker != PlotLineMarkerType.END_SESSION){
+                    addChargePlotLine(lastPowerValueTimestamp, PlotLineMarkerType.END_SESSION)
+                    DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, lastPowerValueTimestamp)
+                    sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
+                }
                 DataHolder.chargeCurves.add(
                     ChargeCurve(
                         DataHolder.chargePlotLine.getDataPoints(PlotDimension.TIME, null),
-                        DataHolder.stateOfChargePlotLine.getDataPoints(PlotDimension.TIME, null),
-                        chargeStartTimeNanos,
-                        System.nanoTime(),
+                        null,
+                        DataHolder.chargeTimeMillis,
                         DataHolder.chargedEnergy,
                         0f, 0f
                     )
@@ -402,60 +416,43 @@ class DataCollector : Service() {
     }
 
     private fun powerUpdater(value: CarPropertyValue<*>, timestamp: Long) {
+        lastPowerValueTimestamp = timestamp
         DataHolder.currentPowermW = when (emulatorMode) {
             true -> (value.value as Float) * emulatorPowerSign
             else -> - (value.value as Float)
         }
 
         val timeDifference = timeDifference(value, 10_000, timestamp)
-        if (timeDifference != null && !DataHolder.chargePortConnected && DataHolder.currentGear != VehicleGear.GEAR_PARK) {
-            DataHolder.usedEnergy += (DataHolder.lastPowermW / 1000) * (timeDifference.toFloat() / (1000 * 60 * 60))
-            DataHolder.averageConsumption = when {
-                DataHolder.traveledDistance <= 0 -> 0F
-                else -> DataHolder.usedEnergy / (DataHolder.traveledDistance / 1_000)
+        if (timeDifference != null) {
+            val energy = (DataHolder.lastPowermW / 1_000) * (timeDifference.toFloat() / (1_000 * 60 * 60))
+            if (DataHolder.currentGear != VehicleGear.GEAR_PARK && !DataHolder.chargePortConnected) {
+                DataHolder.usedEnergy += energy
+                DataHolder.averageConsumption = when {
+                    DataHolder.traveledDistance <= 0 -> 0F
+                    else -> DataHolder.usedEnergy / (DataHolder.traveledDistance / 1_000)
+                }
+            } else if (DataHolder.chargePortConnected) {
+                DataHolder.chargedEnergy += -energy
             }
-        } else if (timeDifference != null && DataHolder.chargePortConnected) {
-            DataHolder.chargedEnergy += -(DataHolder.lastPowermW / 1000) * (timeDifference.toFloat() / (1000 * 60 * 60))
+
+            if (emulatorMode) {
+                DataHolder.currentBatteryCapacity = DataHolder.currentBatteryCapacity - ((DataHolder.lastPowermW / 1_000) * (timeDifference.toFloat() / (1_000 * 60 * 60)))
+            }
         }
 
-        if (timerTriggered(value, 5_000f, timestamp) && DataHolder.chargePortConnected && DataHolder.currentGear == VehicleGear.GEAR_PARK) {
-            if (DataHolder.currentPowermW < 0 && DataHolder.lastChargePower >= 0) {
-                DataHolder.chargePlotLine.addDataPoint(0f, timestamp - 1_000_000, 0f)
-                DataHolder.stateOfChargePlotLine.addDataPoint(
-                    100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity,
-                timestamp - 1_000_000,
-                    0f)
-                addChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
-                addStateOfChargePlotLine(timestamp, PlotLineMarkerType.BEGIN_SESSION)
-                DataHolder.plotMarkers.addMarker(PlotMarkerType.CHARGE, timestamp)
-                sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
-            } else if (DataHolder.currentPowermW >= 0 && DataHolder.lastChargePower < 0) {
-                addChargePlotLine(timestamp, PlotLineMarkerType.END_SESSION)
-                addStateOfChargePlotLine(timestamp, PlotLineMarkerType.END_SESSION)
-                DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, timestamp)
-                sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
-            } else if (DataHolder.currentPowermW < 0) {
-                addChargePlotLine(timestamp)
-                addStateOfChargePlotLine(timestamp)
-                sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
-            }
+        if (timerTriggered(value, CHARGE_CURVE_UPDATE_INTERVAL_MILLIS.toFloat(), timestamp) && DataHolder.chargePortConnected && DataHolder.currentGear == VehicleGear.GEAR_PARK) {
+            addChargePlotLine(timestamp)
+            sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             DataHolder.lastChargePower = DataHolder.currentPowermW
         }
     }
 
     private fun addChargePlotLine(timestamp: Long, marker: PlotLineMarkerType? = null) {
         DataHolder.chargePlotLine.addDataPoint(
-            -(DataHolder.currentPowermW / 1_000_000),
+            -(DataHolder.currentPowermW / 1_000_000f),
             timestamp,
-            0f,
-            plotLineMarkerType = marker
-        )
-    }
-    private fun addStateOfChargePlotLine(timestamp: Long, marker: PlotLineMarkerType? = null) {
-        DataHolder.stateOfChargePlotLine.addDataPoint(
-            100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity,
-            timestamp,
-            0f,
+            DataHolder.traveledDistance,
+            DataHolder.stateOfCharge(),
             plotLineMarkerType = marker
         )
     }
@@ -493,7 +490,7 @@ class DataCollector : Service() {
             val consumptionPlotTrigger = when {
                 consumptionPlotTracking -> when {
                     DataHolder.traveledDistance >= DataHolder.lastPlotDistance + 100 -> true
-                    DataHolder.currentGear == VehicleGear.GEAR_PARK -> (DataHolder.lastPlotMarker?:PlotLineMarkerType.BEGIN_SESSION) == PlotLineMarkerType.BEGIN_SESSION || DataHolder.traveledDistance != DataHolder.lastPlotDistance
+                    DataHolder.currentGear == VehicleGear.GEAR_PARK -> (DataHolder.lastPlotMarker?: PlotLineMarkerType.BEGIN_SESSION) == PlotLineMarkerType.BEGIN_SESSION || DataHolder.traveledDistance != DataHolder.lastPlotDistance
                     else -> false
                 }
                 else -> false
@@ -507,7 +504,6 @@ class DataCollector : Service() {
                 val powerDifference = DataHolder.usedEnergy - DataHolder.lastPlotEnergy
 
                 val newConsumptionPlotValue = if (distanceDifference > 0) powerDifference / (distanceDifference / 1000) else 0f
-                val newSpeedPlotValue = distanceDifference / (timeDifference.toFloat() / 1_000_000_000 / 3.6f)
 
                 val plotMarker = when(DataHolder.lastPlotGear) {
                     VehicleGear.GEAR_PARK -> when (DataHolder.currentGear) {
@@ -525,8 +521,7 @@ class DataCollector : Service() {
 
                 resetPlotVar(value.timestamp)
 
-                DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
-                DataHolder.speedPlotLine.addDataPoint(newSpeedPlotValue, value.timestamp, DataHolder.traveledDistance, timeDifference, distanceDifference, plotMarker)
+                DataHolder.consumptionPlotLine.addDataPoint(newConsumptionPlotValue, value.timestamp, DataHolder.traveledDistance, DataHolder.stateOfCharge(), timeDifference, distanceDifference, null, plotMarker)
 
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             }

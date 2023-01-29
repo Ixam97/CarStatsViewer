@@ -38,6 +38,7 @@
         </activity>
         <activity android:name=".activities.SummaryActivity"
             android:exported="false"/>
+            <meta-data android:name="distractionOptimized" android:value="true"/>
         <activity android:name=".activities.SettingsActivity"
             android:exported="false">
             <meta-data android:name="distractionOptimized" android:value="true"/>

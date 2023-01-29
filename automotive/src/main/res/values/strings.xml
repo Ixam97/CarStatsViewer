@@ -17,6 +17,8 @@
     <string name="preference_consumption_plot_visible_gages_key" translatable="false">preference_consumption_plot_visible_gages</string>
     <string name="preference_consumption_plot_secondary_color_key" translatable="false">preference_consumption_plot_secondary_color</string>
     <string name="preference_charge_plot_secondary_color_key" translatable="false">preference_charge_plot_secondary_color</string>
+    <string name="preference_charge_plot_visible_gages_key" translatable="false">preference_charge_plot_visible_gages</string>
+    <string name="preference_charge_plot_dimension_key" translatable="false">preference_charge_plot_dimension</string>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
 
@@ -61,6 +63,16 @@
     <!-- SummaryActivity -->
     <string name="summary_title">Trip summary</string>
     <string name="summary_button_reset_trip">Reset trip</string>
+    <string name="summary_parked_warning">View only available when parked.</string>
+    <string name="summary_trip_history">Trip history</string>
+    <string name="summary_charging_sessions">Charging sessions</string>
+    <string name="summary_trip_start_date">Trip started on:</string>
+    <string name="summary_used_energy">Used energy</string>
+    <string name="summary_traveled_distance">Traveled distance</string>
+    <string name="summary_average_consumption">Average consumption</string>
+    <string name="summary_travel_time">Travel time</string>
+    <string name="summary_charged_energy">Charged energy</string>
+    <string name="summary_charge_time">Charge time</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
@@ -73,8 +85,9 @@
     <string name="settings_consumption_plot">  Consumption view</string>
     <string name="settings_charge_plot">  Charge view</string>
     <string name="settings_plot_secondary_color">Gray as secondary plot color</string>
+    <string name="settings_plot_state_of_charge_dimension">Experimental State Of Charge Axis</string>
     <string name="settings_consumption_plot_single_motor">Single motor model</string>
-    <string name="settings_consumption_plot_visible_gages">Show power gages</string>
+    <string name="settings_visible_gages">Show power gages</string>
     <string name="settings_consumption_plot_speed">Show speed plot</string>
     <string name="settings_sub_title_settings">Settings:</string>
     <string name="settings_sub_title_current_cons_plot">Current consumption plot:</string>
@@ -83,6 +96,11 @@
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">Quit App?</string>
     <string name="quit_dialog_message">Log will be copied to clipboard.</string>
+    <string name="dialog_reset_title">Reset trip data?</string>
+    <string name="dialog_reset_message">The current trip data will be reset to zero. Do you want to save the trip?</string>
+    <string name="dialog_reset_do_save">Save</string>
+    <string name="dialog_reset_no_save">"Don't save"</string>
+    <string name="dialog_reset_cancel">Cancel</string>
     <string name="dialog_confirm">Yes</string>
     <string name="dialog_dismiss">No</string>
 

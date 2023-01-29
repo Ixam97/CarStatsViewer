@@ -18,8 +18,6 @@
     <string name="main_button_reset_stats">Statistiken zurücksetzen</string>
     <string name="main_consumption">Verbrauch über die letzten 3 km:</string>
     <string name="main_checkbox_speed">Geschwindigkeit</string>
-    <string name="main_dialog_reset_title">Statistik zurücksetzen?</string>
-    <string name="main_dialog_reset_message">Alle gespeicherten Fahrdaten werden auf Null zurückgesetzt</string>
     <string name="main_gage_speed">Geschwindigkeit</string>
     <string name="main_gage_power">Leistung</string>
     <string name="main_gage_charging_power">Ladeleistung</string>
@@ -34,6 +32,16 @@
     <!-- SummaryActivity -->
     <string name="summary_title">Tripzusammenfassung</string>
     <string name="summary_button_reset_trip">Trip zurücksetzen</string>
+    <string name="summary_parked_warning">Ansicht nur im geparkten Zustand verfügbar.</string>
+    <string name="summary_trip_history">Fahrtverlauf</string>
+    <string name="summary_charging_sessions">Ladevorgänge</string>
+    <string name="summary_trip_start_date">Trip begonnen am:</string>
+    <string name="summary_used_energy">Verbrauchte Energie</string>
+    <string name="summary_traveled_distance">Zurückgelegte Distanz</string>
+    <string name="summary_average_consumption">Durchschnittsverbrauch</string>
+    <string name="summary_travel_time">Fahrzeit</string>
+    <string name="summary_charged_energy">Geladene Energie</string>
+    <string name="summary_charge_time">Ladezeit</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
@@ -47,7 +55,8 @@
     <string name="settings_charge_plot">  Ladeansicht</string>
     <string name="settings_consumption_plot_single_motor">Single Motor Modell</string>
     <string name="settings_plot_secondary_color">Grau als sekundäre Diagrammfarbe</string>
-    <string name="settings_consumption_plot_visible_gages">Zeige Leistungsbalken</string>
+    <string name="settings_plot_state_of_charge_dimension">Experimentelle Ladezustand Achse</string>
+    <string name="settings_visible_gages">Zeige Leistungsbalken</string>
     <string name="settings_consumption_plot_speed">Zeige Geschwindigkeitsverlauf</string>
     <string name="settings_sub_title_settings">Einstellungen:</string>
     <string name="settings_sub_title_current_cons_plot">Aktuelle Verbrauchskurve:</string>
@@ -56,9 +65,13 @@
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">App beenden?</string>
     <string name="quit_dialog_message">Log wird in die Zwischenablage kopiert.</string>
+    <string name="dialog_reset_title">Tripdaten zurücksetzen?</string>
+    <string name="dialog_reset_message">Die aktuellen Tripdaten werden zurückgesetzt. Soll der Trip gespeichert werden?</string>
+    <string name="dialog_reset_do_save">Speichern</string>
+    <string name="dialog_reset_no_save">Nicht speichern</string>
+    <string name="dialog_reset_cancel">Abbrechen</string>
     <string name="dialog_confirm">Ja</string>
     <string name="dialog_dismiss">Nein</string>
-
     <!-- LogActivity -->
     <string name="log_title">Debug</string>
 

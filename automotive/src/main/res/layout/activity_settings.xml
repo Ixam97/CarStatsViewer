@@ -42,6 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
+                android:tint="@color/bad_red"
                 android:layout_margin="15dp"/>
 
         </LinearLayout>
@@ -61,87 +62,36 @@
                 android:id="@+id/settings_switch_notifications"
                 style="@style/menu_standard_switch_style"
                 android:text="@string/settings_notifications"/>
-
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
-
             <Switch
                 android:id="@+id/settings_switch_consumption_unit"
                 style="@style/menu_standard_switch_style"
                 android:text="@string/settings_consumption_unit"/>
-
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
-
-            <Switch
-                android:id="@+id/settings_switch_experimental_layout"
-                style="@style/menu_standard_switch_style"
-                android:text="@string/settings_experimental_layout"/>
-
-            <View
-                style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
-
-
             <TextView
                 android:id="@+id/settings_consumption_plot"
                 android:text="@string/settings_consumption_plot"
                 android:drawableStart="@drawable/ic_diagram"
-                style="@style/menu_button_row_style"
-                />
-
+                style="@style/menu_button_row_style" />
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
-
             <TextView
                 android:id="@+id/settings_charge_plot"
                 android:text="@string/settings_charge_plot"
                 android:drawableStart="@drawable/ic_charger"
-                style="@style/menu_button_row_style"
-                />
-
+                style="@style/menu_button_row_style" />
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
-
-            <!-- Example layout for a menu row with two radio buttons -->
-            <!--
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="101dp"
-                android:orientation="horizontal">
-                <TextView
-                    style="@style/menu_standard_row_label"
-                    android:text="Radio Buttons" />
-                <View style="@style/filler"/>
-                <RadioGroup
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-                    <RadioButton
-                        android:text="Option 1"
-                        style="@style/menu_standard_row_label" />
-                    <RadioButton
-                        android:text="Option 2"
-                        android:layout_marginStart="20dp"
-                        style="@style/menu_standard_row_label" />
-                </RadioGroup>
-
-            </LinearLayout>
-
-            <View
-                style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
-            -->
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"/>
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -198,50 +148,6 @@
                 android:layout_marginVertical="10dp"
                 android:orientation="vertical">
 
-                <TextView
-                    style="@style/menu_section_title_style"
-                    android:text="@string/settings_sub_title_current_cons_plot"/>
-
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-
-                <com.ixam97.carStatsViewer.views.PlotView
-                    android:id="@+id/settings_consumption_plot_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="500dp"/>
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-
-                <TextView
-                    style="@style/menu_section_title_style"
-                    android:text="@string/settings_sub_title_settings"/>
-
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-
-                <!--<TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:textSize="35sp"
-                    android:layout_marginTop="3.5dp"
-                    android:textColor="@android:color/white"
-                    android:text="12876238746 Wh/km"/>
-
-                <TextView
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:textSize="35sp"
-                    android:layout_marginBottom="3.5dp"
-                    android:textColor="@color/secondary_text_color"
-                    android:text="Durchschnittsverbrauch"/>
-
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>-->
-
                 <Switch
                     android:id="@+id/settings_consumption_plot_switch_secondary_color"
                     style="@style/menu_standard_switch_style"
@@ -263,7 +169,7 @@
                 <Switch
                     android:id="@+id/settings_consumption_plot_switch_visible_gages"
                     style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_consumption_plot_visible_gages"/>
+                    android:text="@string/settings_visible_gages"/>
 
                 <View
                     style="@style/menu_divider_style"
@@ -325,62 +231,24 @@
                 android:layout_marginVertical="10dp"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/settings_charge_plot_sub_title_curve"
-                    style="@style/menu_section_title_style"
-                    android:text="@string/settings_sub_title_last_charge_plot"/>
-
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:orientation="horizontal">
-
-                    <ImageButton
-                        android:id="@+id/settings_charge_plot_button_prev"
-                        android:src="@drawable/ic_chevron_left"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent" />
-
-                    <SeekBar
-                        android:id="@+id/settings_charge_plot_seek_bar"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"/>
-
-                    <ImageButton
-                        android:id="@+id/settings_charge_plot_button_next"
-                        android:src="@drawable/ic_chevron_right"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent" />
-
-                </LinearLayout>
-
-                <com.ixam97.carStatsViewer.views.PlotView
-                    android:id="@+id/settings_charge_plot_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="500dp"/>
-
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-
-                <TextView
-                    style="@style/menu_section_title_style"
-                    android:text="@string/settings_sub_title_settings"/>
-
+                <Switch
+                    android:id="@+id/settings_charge_plot_switch_secondary_color"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_plot_secondary_color"/>
                 <View
                     style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>
 
                 <Switch
-                    android:id="@+id/settings_charge_plot_switch_secondary_color"
+                    android:id="@+id/settings_charge_plot_switch_visible_gages"
                     style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_plot_secondary_color"/>
+                    android:text="@string/settings_visible_gages"/>
 
+                <Switch
+                    android:visibility="gone"
+                    android:id="@+id/settings_charge_plot_switch_state_of_charge_dimension"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_plot_state_of_charge_dimension"/>
                 <View
                     style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>

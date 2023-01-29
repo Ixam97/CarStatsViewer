@@ -36,6 +36,181 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/polestar_orange"/>
+        android:background="?android:attr/colorControlActivated"/>
+
+    <TextView
+        android:id="@+id/summary_trip_date_text"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="20dp"
+        style="@style/menu_section_title_style"/>
+
+    <TextView
+        android:id="@+id/summary_parked_warning"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        android:text="@string/summary_parked_warning"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:layout_margin="20dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/summary_button_show_consumption_container"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:textSize="35sp"
+            android:text="@string/summary_trip_history"/>
+        <Button
+            android:id="@+id/summary_button_show_charge_container"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:textSize="35sp"
+            android:text="@string/summary_charging_sessions"/>
+    </LinearLayout>
+    <View style="@style/menu_divider_style_no_margin"
+        android:background="?android:attr/listDivider"/>
+
+    <ScrollView
+        android:id="@+id/summary_consumption_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:orientation="vertical">
+
+            <com.ixam97.carStatsViewer.views.PlotView
+                android:id="@+id/summary_consumption_plot"
+                android:layout_width="match_parent"
+                android:layout_height="550dp"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/summary_distance_value_text"
+                style="@style/menu_row_top_text"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_traveled_distance"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/summary_used_energy_value_text"
+                style="@style/menu_row_top_text"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_used_energy"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/summary_avg_consumption_value_text"
+                style="@style/menu_row_top_text"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_average_consumption"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/summary_travel_time_value_text"
+                style="@style/menu_row_top_text"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_travel_time"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+    </LinearLayout>
+</ScrollView>
+
+    <ScrollView
+        android:id="@+id/summary_charge_container"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:id="@+id/summary_charge_plot_sub_title_curve"
+                style="@style/menu_row_content_text"
+                android:text="@string/settings_sub_title_last_charge_plot"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/summary_charge_plot_button_prev"
+                    android:src="@drawable/ic_chevron_left"
+                    android:background="@android:color/transparent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+                <SeekBar
+                    android:id="@+id/summary_charge_plot_seek_bar"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <ImageButton
+                    android:id="@+id/summary_charge_plot_button_next"
+                    android:src="@drawable/ic_chevron_right"
+                    android:background="@android:color/transparent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <com.ixam97.carStatsViewer.views.PlotView
+                android:id="@+id/summary_charge_plot_view"
+                android:layout_width="match_parent"
+                android:layout_height="550dp"/>
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/summary_charged_energy_value_text"
+                style="@style/menu_row_top_text"
+                android:text="-/-"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_charged_energy"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/summary_charge_time_value_text"
+                style="@style/menu_row_top_text"
+                android:text="-/-"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_charge_time"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

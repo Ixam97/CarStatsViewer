@@ -1,0 +1,83 @@
+<resources>
+    <!-- PermissionsActivity -->
+    <string name="permissions_dialog_title">Behörigheter krävs för användning</string>
+    <string name="permissions_dialog_text">Denna app kräver behörigheter för att kunna användas. Utan de nödvändiga behörigheterna kan appen inte läsa någon data från bilen.</string>
+    <string name="permissions_dialog_quit">Avsluta Car Stats Viewer</string>
+    <string name="permissions_dialog_grant">Bevilja behörigheter</string>
+
+    <!-- MainActivity -->
+    <string name="main_port_connected">Laddare ansluten:</string>
+    <string name="main_current_power">Aktuell strömförbrukning:</string>
+    <string name="main_used_energy">Använd energi:</string>
+    <string name="main_current_speed">Aktuell hastighet:</string>
+    <string name="main_traveled_distance">Tripp avstånd:</string>
+    <string name="main_inst_consumption">Aktuell förbrukning:</string>
+    <string name="main_average_consumption">Genomsnittlig förbrukning:</string>
+    <string name="main_button_reset_stats">Återställ statistik</string>
+    <string name="main_consumption">Förbrukning under de senaste 3 km:</string>
+    <string name="main_checkbox_speed">Hastighet</string>
+    <string name="main_dialog_reset_title">Återställa statistik?</string>
+    <string name="main_dialog_reset_message">Alla sparade tripdata kommer att nollställas.</string>
+    <string name="main_gage_speed">Hastighet</string>
+    <string name="main_gage_power">Effekt</string>
+    <string name="main_gage_charging_power">Laddningseffekt</string>
+    <string name="main_gage_SoC">Laddningsnivå</string>
+    <string name="main_gage_consumption">Akt. förbrukning</string>
+    <string name="main_dismiss_charge_plot">Stäng laddningsdiagram</string>
+    <string name="main_button_reset_charge_plot">Återställ laddningsdiagram</string>
+    <string name="main_button_trip_summary">Reseöversikt</string>
+    <string name="main_button_hide_speed">Dölj hastighet</string>
+    <string name="main_button_show_speed">Visa hastighet</string>
+
+    <!-- SummaryActivity -->
+    <string name="summary_title">Reseöversikt</string>
+    <string name="summary_button_reset_trip">Återställ trippmätare</string>
+    <string name="summary_parked_warning">Vyn enbart tillgänglig vid parkering.</string>
+    <string name="summary_trip_history">Tripp historisk</string>
+    <string name="summary_charging_sessions">Laddningstillfällen</string>
+    <string name="summary_trip_start_date">Tripp påbörjad:</string>
+    <string name="summary_used_energy">Använd energi</string>
+    <string name="summary_traveled_distance">Tripp distans</string>
+    <string name="summary_average_consumption">Genomsnittlig förbrukning</string>
+    <string name="summary_travel_time">Tripp tid</string>
+    <string name="summary_charged_energy">Laddad energi</string>
+    <string name="summary_charge_time">Laddtid</string>
+
+    <!-- SettingsActivity -->
+    <string name="settings_title">Inställningar</string>
+    <string name="settings_button_back">Tillbaka</string>
+    <string name="settings_button_quit">Avsluta appen</string>
+    <string name="settings_notifications">Aviseringar</string>
+    <string name="settings_consumption_unit">Wh/km som förbrukningsenhet</string>
+    <string name="settings_debug">Felsökningsinformation</string>
+    <string name="settings_experimental_layout">Visa experimentell layout</string>
+    <string name="settings_consumption_plot"> Förbrukningsvy</string>
+    <string name="settings_charge_plot"> Laddningsvy</string>
+    <string name="settings_plot_secondary_color">Grå som sekundär plotfärg</string>
+    <string name="settings_plot_state_of_charge_dimension">Experimentell Laddnivåstrend</string>
+    <string name="settings_consumption_plot_single_motor">Single motor modell</string>
+    <string name="settings_visible_gages">Visa effektmätare</string>
+    <string name="settings_consumption_plot_speed">Visa hastighetsdiagram</string>
+    <string name="settings_sub_title_settings">Inställningar:</string>
+    <string name="settings_sub_title_current_cons_plot">Plott för nuvarande förbrukning:</string>
+    <string name="settings_sub_title_last_charge_plot">Senaste laddningskurvor:</string>
+
+    <!-- Avsluta dialogrutan -->
+    <string name="quit_dialog_title">Avsluta appen?</string>
+    <string name="quit_dialog_message">Logg kommer att kopieras till urklipp.</string>
+    <string name="dialog_reset_title">Återställ trippdata?</string>
+    <string name="dialog_reset_message">Nuvarande trippdata kommer återställas till noll. Vill du spara trippen?</string>
+    <string name="dialog_reset_do_save">Spara</string>
+    <string name="dialog_reset_no_save">"Spara inte"</string>
+    <string name="dialog_reset_cancel">Avbryt</string>
+    <string name="dialog_confirm">Ja</string>
+    <string name="dialog_dismiss">Nej</string>
+
+    <!-- LogActivity -->
+    <string name="log_title">Felsök</string>
+
+    <!-- Aviseringar -->
+    <string name="notification_title">Aktuell statistik:</string>
+    <string name="foreground_service_info">Datainsamlingstjänst körs</string>
+    <string name="toast_file_read_error">Fel vid läsning av tripp-fil</string>
+</resources>

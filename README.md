@@ -2,11 +2,23 @@ AAOS Car Stats Viewer
 ===========================================
 Reads data from the VHAL of AAOS to provide more detailed car stats than the regular trip computer.
 
-currently being tested on Polestar 2
+Currently being tested on Polestar 2
 
-Based on https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerKotlin
+Inspired by https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerKotlin
 
 ## Changelog [DE]:
+
+### 0.22.0 (29.01.2023)
+ - Tripzusammenfassung für den aktuellen Trip hinzugefügt. (Um einen Trip-Reset während der Fahrt durchzuführen kann es erforderlich sein, die App neu zu installieren, da Änderungen im Manifest vorgnommen wurden)
+ - Stabilitätsverbresserungen bei der Abfrage und Verarbeitung von Fahrzeugdaten
+ - Schwedische Übersetzung hinzugefügt
+ - Norwegische Übersetzung hinzugefügt
+
+### 0.21.2
+ - Zurücksetzen der Ladekurve beim erneuten Betreten des Fahrzeugs wurde behoben
+
+### 0.21.1
+ - Hardcoded Text durch variablen String ersetzt
 
 ### 0.21.0 (25.01.2023)
  - Optische Differenzierung der Ladekurvenansicht

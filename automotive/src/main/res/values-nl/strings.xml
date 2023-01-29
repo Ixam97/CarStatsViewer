@@ -18,12 +18,10 @@
     <string name="main_button_reset_stats">Statistieken resetten</string>
     <string name="main_consumption">Verbruik over de laatste 3 km:</string>
     <string name="main_checkbox_speed">Snelheid</string>
-    <string name="main_dialog_reset_title">Statistieken resetten?</string>
-    <string name="main_dialog_reset_message">Alle bewaarde ritgegevens zullen naar nul worden gezet.</string>
     <string name="main_gage_speed">Snelheid</string>
     <string name="main_gage_power">Power</string>
     <string name="main_gage_charging_power">Laadvermogen</string>
-    <string name="main_gage_SoC">Staat van het opladen</string>
+    <string name="main_gage_SoC">SoC (batterijpercentage)</string>
     <string name="main_gage_consumption">Momenteel verbruik</string>
     <string name="main_dismiss_charge_plot">Laadcurve sluiten</string>
     <string name="main_button_reset_charge_plot">Laadcurve resetten</string>
@@ -34,7 +32,17 @@
     <!-- SummaryActivity -->
     <string name="summary_title">Samenvatting trip</string>
     <string name="summary_button_reset_trip">Trip resetten</string>
-    
+    <string name="summary_parked_warning">Enkel zichtbaar in parkeerstand.</string>
+    <string name="summary_trip_history">Tripverloop</string>
+    <string name="summary_charging_sessions">Laadsessies</string>
+    <string name="summary_trip_start_date">Trip begonnen op:</string>
+    <string name="summary_used_energy">Verbruikte energie</string>
+    <string name="summary_traveled_distance">Afgelegde afstand</string>
+    <string name="summary_average_consumption">Gemiddeld verbruik</string>
+    <string name="summary_travel_time">Tijdsduur</string>
+    <string name="summary_charged_energy">Geladen energie</string>
+    <string name="summary_charge_time">Laadtijd</string>
+
     <!-- SettingsActivity -->
     <string name="settings_title">Instellingen</string>
     <string name="settings_button_back">Terug</string>
@@ -46,8 +54,9 @@
     <string name="settings_consumption_plot">  Verbruikscurve</string>
     <string name="settings_charge_plot">  Laadcurve</string>
     <string name="settings_consumption_plot_single_motor">Single Motor model</string>
-    <string name="settings_plot_secondary_color">Grijs als secundaire tekenkleur</string>
-    <string name="settings_consumption_plot_visible_gages">Toon stroommeters</string>
+    <string name="settings_plot_secondary_color">Grijs als tweede tekenkleur</string>
+    <string name="settings_plot_state_of_charge_dimension">Experimental State Of Charge Axis</string>
+    <string name="settings_visible_gages">Toon stroommeters</string>
     <string name="settings_consumption_plot_speed">Toon snelheidscurve</string>
     <string name="settings_sub_title_settings">Instellingen:</string>
     <string name="settings_sub_title_current_cons_plot">Actuele verbruikscurve:</string>
@@ -56,6 +65,11 @@
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">App afsluiten?</string>
     <string name="quit_dialog_message">Log wordt gekopieerd naar het klembord.</string>
+    <string name="dialog_reset_title">Tripgegevens resetten?</string>
+    <string name="dialog_reset_message">De huidige tripgegevens worden gereset. Moet de trip opgeslagen worden?</string>
+    <string name="dialog_reset_do_save">Opslaan</string>
+    <string name="dialog_reset_no_save">Niet opslaan</string>
+    <string name="dialog_reset_cancel">Cancel</string>
     <string name="dialog_confirm">Ja</string>
     <string name="dialog_dismiss">Neen</string>
 

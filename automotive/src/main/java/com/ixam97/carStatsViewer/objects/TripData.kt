@@ -1,15 +1,13 @@
 package com.ixam97.carStatsViewer.objects
 
-import android.car.VehicleGear
-import com.ixam97.carStatsViewer.plot.PlotLineItem
-import com.ixam97.carStatsViewer.plot.PlotLineMarkerType
-import com.ixam97.carStatsViewer.plot.PlotMarker
-import com.ixam97.carStatsViewer.plot.PlotMarkers
+import com.ixam97.carStatsViewer.plot.objects.PlotLineItem
+import com.ixam97.carStatsViewer.plot.enums.PlotLineMarkerType
+import com.ixam97.carStatsViewer.plot.objects.PlotMarker
 import java.util.*
 
 data class TripData(
     var appVersion: String,
-    var saveDate: Date,
+    var tripStartDate: Date,
     var traveledDistance: Float,
     var usedEnergy: Float,
     var averageConsumption: Float,
@@ -21,7 +19,6 @@ data class TripData(
     var lastPlotMarker: PlotLineMarkerType?,
     var lastChargePower:Float,
     var consumptionPlotLine: List<PlotLineItem>,
-    var speedPlotLine: List<PlotLineItem>,
     var chargeCurves: List<ChargeCurve>,
     var markers: List<PlotMarker>
 ) {

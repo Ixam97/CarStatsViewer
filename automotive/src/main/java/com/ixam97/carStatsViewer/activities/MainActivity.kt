@@ -4,7 +4,6 @@ import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.objects.*
 import com.ixam97.carStatsViewer.services.*
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.PendingIntent
 import android.car.VehicleGear
 import android.content.BroadcastReceiver
@@ -20,12 +19,10 @@ import android.os.Looper
 import android.os.SystemClock
 import android.view.View
 import android.widget.Toast
-import com.ixam97.carStatsViewer.plot.PlotDimension
-import com.ixam97.carStatsViewer.plot.PlotMarkerType
-import com.ixam97.carStatsViewer.plot.PlotPaint
+import com.ixam97.carStatsViewer.plot.enums.*
+import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
-import java.lang.Runnable
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
@@ -37,8 +34,6 @@ var emulatorPowerSign = -1
 class MainActivity : Activity() {
     companion object {
         private const val UI_UPDATE_INTERVAL = 500L
-        private const val DISTANCE_1 =  5_001L
-        private const val DISTANCE_2 = 15_001L
         const val DISTANCE_TRIP_DIVIDER = 5_000L
     }
 
@@ -76,15 +71,13 @@ class MainActivity : Activity() {
         InAppLogger.log("MainActivity.onResume")
 
         if (appPreferences.consumptionUnit) {
-            DataHolder.consumptionPlotLine.Unit = "Wh/km"
-            DataHolder.consumptionPlotLine.HighlightFormat = "Ø %.0f"
-            DataHolder.consumptionPlotLine.LabelFormat = "%.0f"
-            DataHolder.consumptionPlotLine.Divider = 1f
+            DataHolder.consumptionPlotLine.Configuration.Unit = "Wh/km"
+            DataHolder.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
+            DataHolder.consumptionPlotLine.Configuration.Divider = 1f
         } else {
-            DataHolder.consumptionPlotLine.Unit = "kWh/100km"
-            DataHolder.consumptionPlotLine.HighlightFormat = "Ø %.1f"
-            DataHolder.consumptionPlotLine.LabelFormat = "%.1f"
-            DataHolder.consumptionPlotLine.Divider = 10f
+            DataHolder.consumptionPlotLine.Configuration.Unit = "kWh/100km"
+            DataHolder.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
+            DataHolder.consumptionPlotLine.Configuration.Divider = 10f
         }
 
         main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
@@ -92,17 +85,33 @@ class MainActivity : Activity() {
 
         main_power_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
         main_consumption_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
+        main_SoC_gage.barVisibility = appPreferences.chargePlotVisibleGages
+        main_charge_gage.barVisibility = appPreferences.chargePlotVisibleGages
 
         main_checkbox_speed.isChecked = appPreferences.plotSpeed
-        DataHolder.speedPlotLine.Visible = appPreferences.plotSpeed
-        DataHolder.chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
-        main_consumption_plot.invalidate()
-
-        main_button_speed.text = if (DataHolder.speedPlotLine.Visible) {
-            getString(R.string.main_button_hide_speed)
-        } else {
-            getString(R.string.main_button_show_speed)
+        main_consumption_plot.secondaryDimension = when (appPreferences.plotSpeed) {
+            true -> PlotSecondaryDimension.SPEED
+            else -> null
         }
+
+        main_button_speed.text = when {
+            main_consumption_plot.secondaryDimension != null -> getString(R.string.main_button_hide_speed)
+            else -> getString(R.string.main_button_show_speed)
+        }
+
+        DataHolder.consumptionPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.primary_plot_color), PlotView.textSize)
+        DataHolder.consumptionPlotLine.secondaryPlotPaint = when {
+            appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+        }
+
+        DataHolder.chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
+        DataHolder.chargePlotLine.secondaryPlotPaint = when {
+            appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
+        }
+
+        main_consumption_plot.invalidate()
 
         enableUiUpdates()
     }
@@ -164,14 +173,6 @@ class MainActivity : Activity() {
 
         setUiVisibilities()
         updateGages()
-        setValueColors()
-
-        currentPowerTextView.text = getCurrentPowerString(false)
-        currentSpeedTextView.text = getCurrentSpeedString()
-        usedEnergyTextView.text = getUsedEnergyString()
-        traveledDistanceTextView.text = getTraveledDistanceString()
-        currentInstConsTextView.text = getInstConsumptionString()
-        averageConsumptionTextView.text = getAvgConsumptionString()
 
         main_gage_avg_consumption_text_view.text = "  Ø %s".format(getAvgConsumptionString())
         main_gage_distance_text_view.text = "  %s".format(getTraveledDistanceString())
@@ -194,13 +195,10 @@ class MainActivity : Activity() {
     private fun getCurrentPowerString(detailed : Boolean = true): String {
         val rawPower = DataHolder.currentPowerSmooth / 1_000_000
 
-        if (!detailed && rawPower.absoluteValue >= 10) {return "%d kW".format(
-            Locale.ENGLISH,
-            rawPower.roundToInt())}
-        
-        return "%.1f kW".format(
-            Locale.ENGLISH,
-            rawPower)
+        return when {
+            !detailed && rawPower.absoluteValue >= 10 -> "%d kW".format(Locale.ENGLISH, rawPower.roundToInt())
+            else -> "%.1f kW".format(Locale.ENGLISH, rawPower)
+        }
     }
 
     private fun getUsedEnergyString(): String {
@@ -252,13 +250,6 @@ class MainActivity : Activity() {
     }
 
     private fun setUiVisibilities() {
-        if (appPreferences.experimentalLayout && legacy_layout.visibility == View.VISIBLE) {
-            gage_layout.visibility = View.VISIBLE
-            legacy_layout.visibility = View.GONE
-        } else if (!appPreferences.experimentalLayout && legacy_layout.visibility == View.GONE) {
-            gage_layout.visibility = View.GONE
-            legacy_layout.visibility = View.VISIBLE
-        }
 
         if (main_button_dismiss_charge_plot.isEnabled == DataHolder.chargePortConnected)
             main_button_dismiss_charge_plot.isEnabled = !DataHolder.chargePortConnected
@@ -306,6 +297,8 @@ class MainActivity : Activity() {
     private fun updatePlots(){
         // if (appPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
 
+        main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(DataHolder.chargeTimeMillis) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
+
         if (SystemClock.elapsedRealtime() - lastPlotUpdate > 1_000L) {
             if (main_consumption_layout.visibility == View.VISIBLE) {
                 main_consumption_plot.invalidate()
@@ -326,17 +319,6 @@ class MainActivity : Activity() {
             TimeUnit.MILLISECONDS.toSeconds(elapsedTime) % TimeUnit.MINUTES.toSeconds(1))
     }
 
-    private fun setValueColors() {
-        if (DataHolder.currentPowerSmooth > 0) {
-            currentPowerTextView.setTextColor(Color.RED)
-            currentInstConsTextView.setTextColor(Color.RED)
-        }
-        else {
-            currentPowerTextView.setTextColor(Color.GREEN)
-            currentInstConsTextView.setTextColor(Color.GREEN)
-        }
-    }
-
     // private fun dimensionRestrictionById(id : Int) : Long {
     //     return when (id) {
     //         1 -> DISTANCE_1
@@ -350,10 +332,6 @@ class MainActivity : Activity() {
         finish()
         startActivity(intent)
         InAppLogger.log("MainActivity.resetStats")
-
-        traveledDistanceTextView.text = String.format("%.3f km", DataHolder.traveledDistance / 1000)
-        usedEnergyTextView.text = String.format("%d Wh", DataHolder.usedEnergy.toInt())
-        averageConsumptionTextView.text = String.format("%d Wh/km", DataHolder.averageConsumption.toInt())
         DataHolder.resetDataHolder()
         sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
     }
@@ -369,55 +347,59 @@ class MainActivity : Activity() {
 
         main_radio_group_distance.check(plotDistanceId)
 
-        if (appPreferences.experimentalLayout) {
-            legacy_layout.visibility = View.GONE
-            gage_layout.visibility = View.VISIBLE
-        }
-
         main_consumption_plot.reset()
         main_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
-        main_consumption_plot.addPlotLine(DataHolder.speedPlotLine)
         // main_consumption_plot.setPlotMarkers(DataHolder.plotMarkers)
         // main_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
         // main_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
 
-        DataHolder.speedPlotLine.Visible = appPreferences.plotSpeed
-        main_button_speed.text = if (DataHolder.speedPlotLine.Visible) {
-            getString(R.string.main_button_hide_speed)
-        } else {
-            getString(R.string.main_button_show_speed)
+        main_button_speed.text = when {
+            main_consumption_plot.secondaryDimension != null -> getString(R.string.main_button_hide_speed)
+            else -> getString(R.string.main_button_show_speed)
         }
 
-        if (appPreferences.consumptionPlotSecondaryColor) {
-            DataHolder.speedPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+        DataHolder.consumptionPlotLine.secondaryPlotPaint = when {
+            appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
 
         main_consumption_plot.dimension = PlotDimension.DISTANCE
         main_consumption_plot.dimensionRestriction = 10_001L
         main_consumption_plot.dimensionSmoothingPercentage = 0.02f
+        //main_consumption_plot.dimensionShiftTouchInterval = 1_000L
+        //main_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
+        main_consumption_plot.secondaryDimension = when (appPreferences.plotSpeed) {
+            true -> PlotSecondaryDimension.SPEED
+            else -> null
+        }
+
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
         main_charge_plot.addPlotLine(DataHolder.chargePlotLine)
-        main_charge_plot.addPlotLine(DataHolder.stateOfChargePlotLine)
 
-        if (appPreferences.chargePlotSecondaryColor) {
-            DataHolder.stateOfChargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+        DataHolder.chargePlotLine.secondaryPlotPaint = when {
+            appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
 
         main_charge_plot.dimension = PlotDimension.TIME
         main_charge_plot.dimensionRestriction = null
         main_charge_plot.dimensionSmoothingPercentage = 0.01f
+        main_charge_plot.sessionGapRendering = PlotSessionGapRendering.NONE
+        main_charge_plot.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
         main_charge_plot.invalidate()
 
         main_power_gage.gageName = getString(R.string.main_gage_power)
         main_power_gage.gageUnit = "kW"
+        main_power_gage.primaryColor = getColor(R.color.polestar_orange)
         main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
         main_power_gage.minValue = if (appPreferences.consumptionPlotSingleMotor) -100f else -150f
         main_power_gage.setValue(0f)
 
         main_consumption_gage.gageName = getString(R.string.main_gage_consumption)
         main_consumption_gage.gageUnit = "kWh/100km"
+        main_consumption_gage.primaryColor = getColor(R.color.polestar_orange)
         main_consumption_gage.minValue = -30f
         main_consumption_gage.maxValue = 60f
         main_consumption_gage.setValue(0f)
@@ -466,12 +448,12 @@ class MainActivity : Activity() {
                 Toast.makeText(this, "Power sign: ${if(emulatorPowerSign<0) "-" else "+"}", Toast.LENGTH_SHORT).show()
             }
         }
-
+/*
         main_button_reset.setOnClickListener {
 
             val builder = AlertDialog.Builder(this@MainActivity)
-            builder.setTitle(getString(R.string.main_dialog_reset_title))
-                .setMessage(getString(R.string.main_dialog_reset_message))
+            builder.setTitle(getString(R.string.dialog_reset_title))
+                .setMessage(getString(R.string.dialog_reset_message))
                 .setCancelable(true)
                 .setPositiveButton(getString(R.string.dialog_confirm)) { dialog, id ->
                     resetStats()
@@ -485,6 +467,8 @@ class MainActivity : Activity() {
             val alert = builder.create()
             alert.show()
         }
+
+ */
 
         main_button_settings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
@@ -520,15 +504,25 @@ class MainActivity : Activity() {
         } */
 
         main_button_speed.setOnClickListener {
-            DataHolder.speedPlotLine.Visible = !DataHolder.speedPlotLine.Visible
-            appPreferences.plotSpeed = DataHolder.speedPlotLine.Visible
+            main_consumption_plot.secondaryDimension = when (main_consumption_plot.secondaryDimension) {
+                null -> PlotSecondaryDimension.SPEED
+                else -> null
+            }
+
+            appPreferences.plotSpeed = main_consumption_plot.secondaryDimension != null
             main_consumption_plot.invalidate()
-            main_button_speed.text = if (DataHolder.speedPlotLine.Visible)
-                getString(R.string.main_button_hide_speed)
-            else getString(R.string.main_button_show_speed)
+            main_button_speed.text = when {
+                main_consumption_plot.secondaryDimension != null -> getString(R.string.main_button_hide_speed)
+                else -> getString(R.string.main_button_show_speed)
+            }
         }
 
         main_button_summary.setOnClickListener {
+            // sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+            startActivity(Intent(this, SummaryActivity::class.java))
+        }
+
+        main_button_summary_charge.setOnClickListener {
             // sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
             startActivity(Intent(this, SummaryActivity::class.java))
         }
@@ -540,10 +534,12 @@ class MainActivity : Activity() {
             DataHolder.chargedEnergy = 0f
             DataHolder.chargeTimeMillis = 0L
         }
-
+/*
         main_button_reset_charge_plot.setOnClickListener {
-            main_charge_plot.reset()
+            //main_charge_plot.reset()
+            DataHolder.chargePlotLine.reset()
         }
+*/
     }
 
     private fun enableUiUpdates() {
