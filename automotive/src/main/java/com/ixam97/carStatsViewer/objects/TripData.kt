@@ -21,6 +21,14 @@ data class TripData(
     var consumptionPlotLine: List<PlotLineItem>,
     var chargeCurves: List<ChargeCurve>,
     var markers: List<PlotMarker>
-) {
+)
 
-}
+data class NewTripData(
+    var appVersion: String,
+    var tripStartDate: Date,
+    var usedEnergy: Float,
+    var traveledDistance: Float,
+    var travelTime: Long,
+    var chargedEnergy: Float,
+    var chargeTime: Long
+)

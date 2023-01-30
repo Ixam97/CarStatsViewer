@@ -3,10 +3,42 @@ package com.ixam97.carStatsViewer
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
 import android.util.Log
+import com.ixam97.carStatsViewer.objects.NewTripData
 import com.ixam97.carStatsViewer.objects.TripData
+import java.time.Period
+import java.util.Date
 import kotlin.math.absoluteValue
 
-sealed class VehicleData(val printableName: String) {
+sealed class TimeTracker() {
+    private var startDate: Date? = null
+    private var timeSpan: Long = 0
+
+    fun start() {
+        if (startDate == null) startDate = Date()
+    }
+
+    fun stop() {
+        startDate.let {
+            if (it != null) timeSpan += (Date().time - it.time)
+        }
+        startDate = null
+    }
+
+    internal fun reset() {
+        startDate = null
+        timeSpan = 0L
+    }
+
+    internal fun restore(pTimeSpan: Long) {
+        timeSpan = pTimeSpan
+    }
+
+    fun getTime(): Long {
+        return timeSpan + (Date().time - (startDate?.time?: Date().time))
+    }
+}
+
+sealed class VehicleProperty(val printableName: String, val propertyId: Int) {
     internal val startupTimestamp = System.nanoTime()
 
     /** Value of the Vehicle */
@@ -49,8 +81,17 @@ sealed class VehicleData(val printableName: String) {
         }
 }
 
-sealed class VehicleProperty(printableName: String, val propertyId: Int): VehicleData(printableName)
-
+/**
+ * The DataManager is responsible of holding and managing all data regarding driving and charging
+ * statistics of the vehicle.
+ *
+ * The start of a drive should be triggered by putting the car into drive (therefore putting the
+ * ignition state into "START". When the car is left and locked the ignition state changes to "OFF",
+ * marking the end of a drive. In between those events used energy and time may be tracked.
+ *
+ * A charging session is started by plugging in the charge cable, stopped by unplugging it. Like a
+ * drive, charging time and charged energy are tracked in between these events.
+ */
 sealed class DataManager {
     /** Current speed in m/s */
     object CurrentSpeed: VehicleProperty("CurrentSpeed", VehiclePropertyIds.PERF_VEHICLE_SPEED)
@@ -62,29 +103,42 @@ sealed class DataManager {
     object ChargePortConnected: VehicleProperty("ChargePortConnected", VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED)
     /** Battery level in Wh, only usable for calculating the SoC! */
     object BatteryLevel: VehicleProperty("BatteryLevel", VehiclePropertyIds.EV_BATTERY_LEVEL)
+    /** Ignition state of the vehicle */
+    object CurrentIgnitionState: VehicleProperty("CurrentIgnitionState",  VehiclePropertyIds.IGNITION_STATE)
 
-    /** Used energy in Wh **/
-    object UsedEnergy: VehicleData("UsedEnergy")
-    /** Traveled distance in m */
-    object TraveledDistance: VehicleData("TraveledDistance")
-    /** Travel time in nanoseconds */
-    object TravelTime: VehicleData("TravelTime")
+    /** Travel time in milliseconds */
+    object TravelTime: TimeTracker()
+    /** Charge time in milliseconds */
+    object ChargeTime: TimeTracker()
 
     companion object {
         const val TAG = "DataManager"
+        // Easier vehicle property access
         /** Current speed in m/s */
         val currentSpeed get() = ((CurrentSpeed.value?: 0F) as Float).absoluteValue
         /** Current power in mW */
         val currentPower get() = (CurrentPower.value?: 0F) as Float
+        /** Current gear selection */
+        val currentGear get() = (CurrentGear.value?: 0) as Int
+        /** Connection status of the charge port */
+        val chargePortConnected get() = (ChargePortConnected.value?: false) as Boolean
+        /** Battery level in Wh, only usable for calculating the SoC! */
+        val batteryLevel get() = (BatteryLevel.value?: 0F) as Float
+        /** Ignition state of the vehicle */
+        val currentIgnitionState get() = (CurrentIgnitionState.value?: 0) as Int
 
-        // Vehicle Data may be set directly using system time as timestamp since they are not
-        // relying on accurate timestamps for precise calculations.
+        // Vehicle statistics
+        var tripStartDate: Date = Date()
         /** Used energy in Wh **/
-        val usedEnergy get() = (UsedEnergy.value?: 0F) as Float
+        var usedEnergy: Float = 0F
         /** Traveled distance in m */
-        var traveledDistance get() = (TraveledDistance.value?: 0F) as Float; set(value) = setData(TraveledDistance, value)
-        /** Travel time in nanoseconds */
-        val travelTime get() = (TravelTime.value?: 0L) as Long
+        var traveledDistance: Float = 0F
+        /** Travel time in milliseconds */
+        val travelTime: Long get() = TravelTime.getTime()
+        /** Used energy in Wh **/
+        var chargedEnergy: Float = 0F
+        /** Charge time in milliseconds */
+        val chargeTime: Long get() = ChargeTime.getTime()
 
         /** Value was updated */
         const val VALID = 0
@@ -139,49 +193,27 @@ sealed class DataManager {
             return VALID
         }
 
-        /** Update data manager using a value of type Int, Boolean, Float or String, timestamp and dataID. Returns VALID when value was changed. */
-        fun update(value: Any?, pTimestamp: Long, dataId: VehicleDataIds, doLog: Boolean = false, valueMustChange: Boolean = false, allowInvalidTimestamps: Boolean = false): Int {
-            var timestamp = pTimestamp
-            if (!dataMap.containsKey(dataId)) {
-                if (doLog) Log.w(TAG, "${timestamp}: Failed to update data ID ${dataId}: Invalid data ID")
-                return INVALID_DATA_ID
-            }
-            val data: VehicleData = dataMap[dataId]!!
-            if (value !is Boolean? && value !is Float? && value !is Int? && value !is String?){
-                if (doLog) Log.w(TAG, "${timestamp}: Failed to update ${data.printableName}: Invalid data type")
-                return INVALID_TYPE
-            }
-            if (allowInvalidTimestamps && timestamp < data.timestamp){
-                timestamp = data.startupTimestamp
-            }
-            if (timestamp < data.timestamp) {
-                if (doLog) Log.w(TAG, "${timestamp}: Failed to update ${data.printableName}: Invalid timestamp")
-                return INVALID_TIMESTAMP
-            }
-            if (data.value == value && valueMustChange) {
-                if (doLog) Log.i(TAG, "${timestamp}: Skipped update for ${data.printableName}: Value not changed")
-                return SKIP_SAME_VALUE
-            }
-            data.value = value
-            data.timestamp = timestamp
-            if (doLog) Log.i(TAG, "${data.timestamp}: Updated ${data.printableName}, value=${data.value}, valueDelta=${data.valueDelta}, timeDelta=${data.timeDelta}")
-            return VALID
-        }
 
-        /*
         /** Get tripData for summary or saving. Set tripData to load current trip into DataManager */
-        var tripData
-            get() = TripData(
-                traveledDistance = traveledDistance,
+        var tripData: NewTripData?
+            get() = NewTripData(
+                appVersion = BuildConfig.VERSION_NAME,
+                tripStartDate = tripStartDate,
                 usedEnergy = usedEnergy,
-                travelTimeMillis = travelTime / 1_000_000
+                traveledDistance = traveledDistance,
+                travelTime = travelTime,
+                chargedEnergy = chargedEnergy,
+                chargeTime = chargeTime
             )
             set(value) {
-                TraveledDistance.value = value.traveledDistance
-                UsedEnergy.value = value.usedEnergy
-                TravelTime.value = value.travelTimeMillis * 1_000_000
+                tripStartDate = value?.tripStartDate?: Date()
+                traveledDistance = value?.traveledDistance?: 0F
+                usedEnergy = value?.usedEnergy?: 0F
+                TravelTime.restore(value?.travelTime?: 0L)
+                chargedEnergy = 0F
+                ChargeTime.restore(value?.chargeTime?: 0L)
             }
-        */
+
 
         fun getVehiclePropertyIds(): List<Int> {
             var idArrayList: ArrayList<Int> = arrayListOf()
@@ -196,16 +228,8 @@ sealed class DataManager {
             return propertiesMap[propertyId]
         }
 
-        fun getVehicleDataById(dataId: VehicleDataIds): VehicleData? {
-            if(!dataMap.containsKey(dataId)) return null
-            return dataMap[dataId]
-        }
-
-        private fun setData(data: VehicleData, value: Any?) {
-            data.lastTimestamp = data.timestamp
-            data.timestamp = System.nanoTime()
-            data.lastValue = data.value
-            data.value = value
+        fun reset() {
+            tripData = null
         }
 
         private val propertiesMap: Map<Int, VehicleProperty> = mapOf(
@@ -215,17 +239,5 @@ sealed class DataManager {
             ChargePortConnected.propertyId to ChargePortConnected,
             BatteryLevel.propertyId to BatteryLevel
         )
-
-        private val dataMap: Map<VehicleDataIds, VehicleData> = mapOf(
-            VehicleDataIds.USED_ENERGY to UsedEnergy,
-            VehicleDataIds.TRAVEL_TIME to TravelTime,
-            VehicleDataIds.TRAVELED_DISTANCE to TraveledDistance
-        )
     }
-}
-
-enum class VehicleDataIds {
-    USED_ENERGY,
-    TRAVEL_TIME,
-    TRAVELED_DISTANCE
 }

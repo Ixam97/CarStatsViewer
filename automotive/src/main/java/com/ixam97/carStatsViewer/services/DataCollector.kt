@@ -283,7 +283,7 @@ STARTING NEW DATA MANAGER HERE
         when (propertyId) {
             DataManager.CurrentPower.propertyId         -> powerUpdater()
             DataManager.CurrentSpeed.propertyId         -> speedUpdater()
-            // DataManager.CurrentGear.propertyId          -> gearUpdater()
+            DataManager.CurrentGear.propertyId          -> gearUpdater()
             // DataManager.BatteryLevel.propertyId         -> stateOfChargeUpdater()
             // DataManager.ChargePortConnected.propertyId  -> portUpdater()
         }
@@ -306,6 +306,11 @@ STARTING NEW DATA MANAGER HERE
         if (!DataManager.CurrentSpeed.isInitialValue) {
             DataManager.traveledDistance = DataManager.traveledDistance + ((DataManager.CurrentSpeed.lastValue as Float).absoluteValue * DataManager.CurrentSpeed.timeDelta.toFloat()) / 1_000_000_000F
         }
+    }
+
+    private fun gearUpdater() {
+        if (DataManager.currentGear == VehicleGear.GEAR_PARK) DataManager.TravelTime.stop()
+        else DataManager.TravelTime.start()
     }
 
 /*

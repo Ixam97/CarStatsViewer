@@ -6,6 +6,7 @@ import com.ixam97.carStatsViewer.services.*
 import android.app.Activity
 import android.app.PendingIntent
 import android.car.VehicleGear
+import android.car.VehiclePropertyIds
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -17,6 +18,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.ixam97.carStatsViewer.plot.enums.*
@@ -178,6 +180,7 @@ class MainActivity : Activity() {
         main_gage_distance_text_view.text = "  %s".format(getTraveledDistanceString())
         main_gage_used_power_text_view.text = "  %s".format(getUsedEnergyString())
         main_gage_time_text_view.text = "  %s".format(getElapsedTimeString(DataHolder.travelTimeMillis))
+        // Log.i("DataManager", getElapsedTimeString(DataManager.travelTime))
 
         main_gage_charged_energy_text_view.text = "  %s".format(getChargedEnergyString())
         main_gage_charge_time_text_view.text = "  %s".format(getElapsedTimeString(DataHolder.chargeTimeMillis))
@@ -440,6 +443,13 @@ class MainActivity : Activity() {
                 sendBroadcast(Intent(getString(R.string.gear_update_broadcast)))
                 if (DataHolder.currentGear == VehicleGear.GEAR_PARK) sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
             }
+            val gearSimulationIntent = Intent(getString(R.string.VHAL_emulator_broadcast)).apply {
+                putExtra(EmulatorIntentExtras.PROPERTY_ID, VehiclePropertyIds.GEAR_SELECTION)
+                putExtra(EmulatorIntentExtras.TYPE, EmulatorIntentExtras.TYPE_INT)
+                if (DataManager.currentGear == VehicleGear.GEAR_PARK) putExtra(EmulatorIntentExtras.VALUE, VehicleGear.GEAR_DRIVE)
+                else putExtra(EmulatorIntentExtras.VALUE, VehicleGear.GEAR_PARK)
+            }
+            sendBroadcast(gearSimulationIntent)
         }
         main_title_icon.setOnClickListener {
             if (emulatorMode) {
