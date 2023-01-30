@@ -320,6 +320,7 @@ STARTING NEW DATA MANAGER HERE
                 DrivingState.DRIVE -> {
                     resumeTrip()
                     if (previousDrivingState == DrivingState.CHARGE) stopChargingSession()
+                    if (previousDrivingState != DrivingState.UNKNOWN) DataManager.plotMarkers.endMarker(System.nanoTime())
                 }
                 DrivingState.CHARGE -> {
                     if (previousDrivingState == DrivingState.DRIVE) pauseTrip()

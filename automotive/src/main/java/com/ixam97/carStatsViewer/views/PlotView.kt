@@ -428,7 +428,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                 drawPlotPointCollection(canvas, plotPointCollection, maxX, maxY, paint, zeroCord)
 
-                if (index == 0 && plotMarkers?.markers?.isNotEmpty() ?: false) {
+                if (index == 0 && plotMarkers?.markers?.isNotEmpty() == true) {
                     drawMarker(canvas, dataPoints, line, minDimension, maxDimension, maxX)
                 }
 
