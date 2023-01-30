@@ -25,15 +25,15 @@ class PlotLine(
 
         addDataPoint(
             PlotLineItem(
-            item,
-            time,
-            distance,
-            stateOfCharge,
-            timeDelta?:(time - (prev?.Time ?: time)),
-            distanceDelta?:(distance - (prev?.Distance ?: distance)),
-            stateOfChargeDelta?:(stateOfCharge - (prev?.StateOfCharge ?: distance)),
-            plotLineMarkerType
-        )
+                item,
+                time,
+                distance,
+                stateOfCharge,
+                timeDelta?:(time - (prev?.Time ?: time)),
+                distanceDelta?:(distance - (prev?.Distance ?: distance)),
+                stateOfChargeDelta?:(stateOfCharge - (prev?.StateOfCharge ?: distance)),
+                plotLineMarkerType
+            )
         )
     }
 

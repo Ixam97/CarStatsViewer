@@ -8,27 +8,13 @@ import java.util.*
 data class TripData(
     var appVersion: String,
     var tripStartDate: Date,
-    var traveledDistance: Float,
-    var usedEnergy: Float,
-    var averageConsumption: Float,
-    var travelTimeMillis: Long,
-    var lastPlotDistance: Float,
-    var lastPlotEnergy: Float,
-    var lastPlotTime: Long,
-    var lastPlotGear: Int,
-    var lastPlotMarker: PlotLineMarkerType?,
-    var lastChargePower:Float,
-    var consumptionPlotLine: List<PlotLineItem>,
-    var chargeCurves: List<ChargeCurve>,
-    var markers: List<PlotMarker>
-)
-
-data class NewTripData(
-    var appVersion: String,
-    var tripStartDate: Date,
     var usedEnergy: Float,
     var traveledDistance: Float,
     var travelTime: Long,
     var chargedEnergy: Float,
-    var chargeTime: Long
+    var chargeTime: Long,
+    var consumptionPlotLine: List<PlotLineItem>,
+    var chargePlotLine: List<PlotLineItem>,
+    var chargeCurves: List<ChargeCurve>,
+    var markers: List<PlotMarker>
 )

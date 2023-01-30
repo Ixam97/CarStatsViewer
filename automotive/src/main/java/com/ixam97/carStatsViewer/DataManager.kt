@@ -1,22 +1,29 @@
 package com.ixam97.carStatsViewer
 
+import android.car.VehicleIgnitionState
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
 import android.util.Log
-import com.ixam97.carStatsViewer.objects.NewTripData
+import com.ixam97.carStatsViewer.objects.ChargeCurve
 import com.ixam97.carStatsViewer.objects.TripData
-import java.time.Period
+import com.ixam97.carStatsViewer.plot.enums.PlotDimension
+import com.ixam97.carStatsViewer.plot.enums.PlotHighlightMethod
+import com.ixam97.carStatsViewer.plot.enums.PlotLabelPosition
+import com.ixam97.carStatsViewer.plot.enums.PlotLineLabelFormat
+import com.ixam97.carStatsViewer.plot.objects.*
 import java.util.Date
 import kotlin.math.absoluteValue
 
-sealed class TimeTracker() {
+sealed class TimeTracker(val printableName: String = "", val doLog: Boolean = false) {
     private var startDate: Date? = null
     private var timeSpan: Long = 0
 
+    /** Start or resume time tracking */
     fun start() {
         if (startDate == null) startDate = Date()
     }
 
+    /** Stop time tracking */
     fun stop() {
         startDate.let {
             if (it != null) timeSpan += (Date().time - it.time)
@@ -24,17 +31,48 @@ sealed class TimeTracker() {
         startDate = null
     }
 
-    internal fun reset() {
+    /** Reset tracked time to zero */
+    fun reset() {
         startDate = null
         timeSpan = 0L
     }
 
-    internal fun restore(pTimeSpan: Long) {
+    /** Restore tracked time to defined base value */
+    fun restore(pTimeSpan: Long) {
         timeSpan = pTimeSpan
     }
 
+    /** returns the current tracked time in milliseconds */
     fun getTime(): Long {
         return timeSpan + (Date().time - (startDate?.time?: Date().time))
+    }
+}
+
+sealed class DrivingState() {
+    // States
+    companion object {
+        val UNKNOWN = -1
+        val PARKED = 0
+        val DRIVE = 1
+        val CHARGE = 2
+    }
+
+    var lastDriveState: Int = UNKNOWN
+
+    fun hasChanged(): Boolean {
+        if (getDriveState() != lastDriveState) {
+            lastDriveState = getDriveState()
+            return true
+        }
+        return false
+    }
+
+    fun getDriveState(): Int {
+        var newDriveState = UNKNOWN
+        if (DataManager.chargePortConnected) newDriveState = CHARGE
+        else if (DataManager.currentIgnitionState == VehicleIgnitionState.START) newDriveState = DRIVE
+        else if (!DataManager.chargePortConnected && (DataManager.currentIgnitionState == VehicleIgnitionState.OFF || DataManager.currentIgnitionState == VehicleIgnitionState.ON)) newDriveState = PARKED
+        return newDriveState
     }
 }
 
@@ -66,6 +104,7 @@ sealed class VehicleProperty(val printableName: String, val propertyId: Int) {
         return timestamp - lastTimestamp
     }
 
+    /** Returns true if the value difference is null, therefore the value is the initial value */
     val isInitialValue: Boolean get() = (valueDelta == null)
 
     /** Value difference since last value change */
@@ -111,9 +150,11 @@ sealed class DataManager {
     /** Charge time in milliseconds */
     object ChargeTime: TimeTracker()
 
+    object DriveState: DrivingState()
+
     companion object {
         const val TAG = "DataManager"
-        // Easier vehicle property access
+        // Easier vehicle property access and implicit values
         /** Current speed in m/s */
         val currentSpeed get() = ((CurrentSpeed.value?: 0F) as Float).absoluteValue
         /** Current power in mW */
@@ -124,22 +165,61 @@ sealed class DataManager {
         val chargePortConnected get() = (ChargePortConnected.value?: false) as Boolean
         /** Battery level in Wh, only usable for calculating the SoC! */
         val batteryLevel get() = (BatteryLevel.value?: 0F) as Float
+        /** Current state of charge */
+        val stateOfCharge: Int get() = ((batteryLevel / maxBatteryLevel) * 100F).toInt()
         /** Ignition state of the vehicle */
         val currentIgnitionState get() = (CurrentIgnitionState.value?: 0) as Int
+        /** instantaneous consumption in Wh/m */
+        val instConsumption: Float? get() = (currentPower / currentSpeed).run { if (this.isFinite()) return (this / 3_600_000) else return null }
+        /** Average consumption in Wh/m, null if distance is zero */
+        val avgConsumption: Float? get() = (usedEnergy / traveledDistance).run { if (this.isFinite()) return this else return null }
+        /** Average speed in m/s */
+        val avgSpeed: Float get() = (traveledDistance / (travelTime / 1_000)).run { if (this.isFinite()) return this else return 0F}
+        /** Travel time in milliseconds */
+        val travelTime: Long get() = TravelTime.getTime()
+        /** Charge time in milliseconds */
+        val chargeTime: Long get() = ChargeTime.getTime()
+
+        val driveState: Int get() = DriveState.getDriveState()
+
 
         // Vehicle statistics
+        /** Max battery level in Wh, only usable for calculating the SoC! */
+        var maxBatteryLevel: Float = 0F
+        /** Date on reset */
         var tripStartDate: Date = Date()
         /** Used energy in Wh **/
         var usedEnergy: Float = 0F
         /** Traveled distance in m */
         var traveledDistance: Float = 0F
-        /** Travel time in milliseconds */
-        val travelTime: Long get() = TravelTime.getTime()
         /** Used energy in Wh **/
         var chargedEnergy: Float = 0F
-        /** Charge time in milliseconds */
-        val chargeTime: Long get() = ChargeTime.getTime()
 
+        var plotMarkers = PlotMarkers()
+
+        var chargeCurves: ArrayList<ChargeCurve> = ArrayList()
+
+        var consumptionPlotLine = PlotLine(
+            PlotLineConfiguration(
+                PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
+                PlotLineLabelFormat.NUMBER,
+                PlotLabelPosition.LEFT,
+                PlotHighlightMethod.AVG_BY_DISTANCE,
+                "Wh/km"
+            ),
+        )
+
+        var chargePlotLine = PlotLine(
+            PlotLineConfiguration(
+                PlotRange(0f, 20f, 0f, 160f, 20f),
+                PlotLineLabelFormat.NUMBER,
+                PlotLabelPosition.LEFT,
+                PlotHighlightMethod.AVG_BY_TIME,
+                "kW"
+            ),
+        )
+
+        // Updater return values
         /** Value was updated */
         const val VALID = 0
         /** Timestamp of new value is invalid (smaller than current timestamp) */
@@ -148,10 +228,8 @@ sealed class DataManager {
         const val INVALID_PROPERTY_ID = 2
         /** The new Value is of an invalid Type */
         const val INVALID_TYPE = 3
-        /** The DataID is not implemented in the DataManager */
-        const val INVALID_DATA_ID = 4
         /** The new value is equal to the last value */
-        const val SKIP_SAME_VALUE = 5
+        const val SKIP_SAME_VALUE = 4
 
         /** Update data manager using a VehiclePropertyValue. Returns VALID when value was changed.
          * @param value The CarPropertyValue received by the CarPropertyManager.
@@ -195,23 +273,44 @@ sealed class DataManager {
 
 
         /** Get tripData for summary or saving. Set tripData to load current trip into DataManager */
-        var tripData: NewTripData?
-            get() = NewTripData(
+        var tripData: TripData?
+            get() = TripData(
                 appVersion = BuildConfig.VERSION_NAME,
                 tripStartDate = tripStartDate,
                 usedEnergy = usedEnergy,
                 traveledDistance = traveledDistance,
                 travelTime = travelTime,
                 chargedEnergy = chargedEnergy,
-                chargeTime = chargeTime
+                chargeTime = chargeTime,
+                markers = plotMarkers.markers.toList(),
+                chargeCurves = chargeCurves.toList(),
+                consumptionPlotLine = consumptionPlotLine.getDataPoints(PlotDimension.DISTANCE).toList(),
+                chargePlotLine = chargePlotLine.getDataPoints(PlotDimension.TIME).toList()
             )
             set(value) {
                 tripStartDate = value?.tripStartDate?: Date()
                 traveledDistance = value?.traveledDistance?: 0F
                 usedEnergy = value?.usedEnergy?: 0F
                 TravelTime.restore(value?.travelTime?: 0L)
-                chargedEnergy = 0F
+                chargedEnergy = value?.chargedEnergy?: 0F
                 ChargeTime.restore(value?.chargeTime?: 0L)
+                plotMarkers.addMarkers(value?.markers?: listOf())
+                chargeCurves = ArrayList()
+                consumptionPlotLine.reset()
+                chargePlotLine.reset()
+
+                if (value != null) {
+                    if(value.chargeCurves.isNotEmpty()) {
+                        for (curve in value.chargeCurves) {
+                            chargeCurves.add(curve)
+                        }
+                    }
+                    consumptionPlotLine.addDataPoints(value.consumptionPlotLine?: listOf())
+                    chargePlotLine.addDataPoints(value.chargePlotLine?: listOf())
+                } else {
+                    TravelTime.reset()
+                    ChargeTime.reset()
+                }
             }
 
 
@@ -237,7 +336,8 @@ sealed class DataManager {
             CurrentPower.propertyId to CurrentPower,
             CurrentGear.propertyId to CurrentGear,
             ChargePortConnected.propertyId to ChargePortConnected,
-            BatteryLevel.propertyId to BatteryLevel
+            BatteryLevel.propertyId to BatteryLevel,
+            CurrentIgnitionState.propertyId to CurrentIgnitionState
         )
     }
 }

@@ -6,6 +6,7 @@ import com.ixam97.carStatsViewer.*
 import android.app.*
 import android.car.Car
 import android.car.VehicleGear
+import android.car.VehicleIgnitionState
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
@@ -23,6 +24,7 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileWriter
 import java.lang.Runnable
+import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
 
@@ -42,7 +44,7 @@ sealed class EmulatorIntentExtras {
 
 class DataCollector : Service() {
     companion object {
-        private const val DO_LOG = true
+        private const val DO_LOG = false
         private const val CHANNEL_ID = "TestChannel"
         private const val STATS_NOTIFICATION_ID = 1
         private const val FOREGROUND_NOTIFICATION_ID = 2
@@ -52,19 +54,13 @@ class DataCollector : Service() {
     }
 
     private var startupTimestamp: Long = 0L
-    private var lastPowerValueTimestamp: Long = 0L
-    private var lastSpeedValueTimestamp: Long = 0L
 
     private var consumptionPlotTracking = false
     private var lastNotificationTimeMillis = 0L
 
-    private var chargeStartTimeNanos = 0L
-
     private var notificationCounter = 0
 
     private lateinit var appPreferences: AppPreferences
-
-    private val mBinder: LocalBinder = LocalBinder()
 
     private var notificationsEnabled = true
 
@@ -76,7 +72,6 @@ class DataCollector : Service() {
     private lateinit var notificationTimerHandler: Handler
     private lateinit var saveTripDataTimerHandler: Handler
 
-
     init {
         startupTimestamp = System.nanoTime()
     }
@@ -85,8 +80,8 @@ class DataCollector : Service() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 getString(R.string.save_trip_data_broadcast) -> {
-                    val tripDataToSave = DataHolder.getTripData()
-                    writeTripDataToFile(tripDataToSave, getString(R.string.file_name_current_trip_data))
+                    val tripDataToSave = DataManager.tripData
+                    writeTripDataToFile(tripDataToSave!!, getString(R.string.file_name_current_trip_data))
                 }
                 else -> {}
             }
@@ -104,23 +99,8 @@ class DataCollector : Service() {
         override fun run() {
             updateStatsNotification()
             InAppLogger.logNotificationUpdate()
-
             val currentNotificationTimeMillis = System.currentTimeMillis()
-            if (DataHolder.currentGear != VehicleGear.GEAR_PARK && lastNotificationTimeMillis > 0) DataHolder.travelTimeMillis += currentNotificationTimeMillis - lastNotificationTimeMillis
-            if (DataHolder.chargePortConnected && lastNotificationTimeMillis > 0) DataHolder.chargeTimeMillis += currentNotificationTimeMillis - lastNotificationTimeMillis
             lastNotificationTimeMillis = currentNotificationTimeMillis
-
-            // val ignitionState = carPropertyManager.getIntProperty(VehiclePropertyIds.IGNITION_STATE, 0)
-            // val ignitionString = when (ignitionState) {
-            //     VehicleIgnitionState.LOCK -> "LOCK"
-            //     VehicleIgnitionState.OFF -> "OFF"
-            //     VehicleIgnitionState.ACC -> "ACC"
-            //     VehicleIgnitionState.ON -> "ON"
-            //     VehicleIgnitionState.START -> "START"
-            //     else -> "UNDEFINED"
-            // }
-            // InAppLogger.log(String.format("IAmAlive - Ignition state: %s, current power: %f W", ignitionString, DataHolder.currentPowermW / 1_000))
-
             notificationTimerHandler.postDelayed(this, NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS)
         }
     }
@@ -128,12 +108,8 @@ class DataCollector : Service() {
     private lateinit var statsNotification: Notification.Builder
     private lateinit var foregroundServiceNotification: Notification.Builder
 
-    inner class LocalBinder : Binder() {
-        fun getService(): DataCollector = this@DataCollector
-    }
-
     override fun onBind(intent: Intent): IBinder? {
-        return mBinder
+        return null
     }
 
     override fun onCreate() {
@@ -144,7 +120,7 @@ class DataCollector : Service() {
             val mPrevTripData = readTripDataFromFile(getString(R.string.file_name_current_trip_data))
             runBlocking {
                 if (mPrevTripData != null) {
-                    DataHolder.applyTripData(mPrevTripData)
+                    DataManager.tripData = mPrevTripData
                     sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
                 } else {
                     InAppLogger.log("No trip file read!")
@@ -179,10 +155,6 @@ class DataCollector : Service() {
             "DataCollector.onCreate in Thread: %s",
             Thread.currentThread().name))
 
-        // sharedPref = this.getSharedPreferences(
-        //     getString(R.string.preferences_file_key),
-        //     Context.MODE_PRIVATE)
-
         appPreferences = AppPreferences(applicationContext)
 
         notificationsEnabled = appPreferences.notifications
@@ -190,19 +162,14 @@ class DataCollector : Service() {
         car = Car.createCar(this)
         carPropertyManager = car.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager
 
-        DataHolder.maxBatteryCapacity = carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
-        DataHolder.currentBatteryCapacity = carPropertyManager.getFloatProperty(VehiclePropertyIds.EV_BATTERY_LEVEL, 0)
-        DataHolder.currentGear = carPropertyManager.getIntProperty(VehiclePropertyIds.GEAR_SELECTION, 0)
-
-        // if (DataHolder.resetTimestamp == 0L)  DataHolder.resetTimestamp = System.nanoTime()
-        // if (DataHolder.currentGear == VehicleGear.GEAR_PARK) DataHolder.parkTimestamp = DataHolder.resetTimestamp
+        DataManager.maxBatteryLevel = carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
 
         /** Get vehicle name to enable dev mode in emulator */
         val carName = carPropertyManager.getProperty<String>(VehiclePropertyIds.INFO_MODEL, 0).value.toString()
         if (carName == "Speedy Model") {
             Toast.makeText(this, "Emulator Mode", Toast.LENGTH_LONG).show()
             emulatorMode = true
-            DataHolder.currentGear = VehicleGear.GEAR_PARK
+            DataManager.update(VehicleGear.GEAR_PARK, System.nanoTime(), DataManager.CurrentGear.propertyId)
         }
 
         notificationTitleString = resources.getString(R.string.notification_title)
@@ -214,7 +181,7 @@ class DataCollector : Service() {
             }
         }
 
-        DataHolder.consumptionPlotLine.baseLineAt.add(0f)
+        DataManager.consumptionPlotLine.baseLineAt.add(0f)
 
         registerCarPropertyCallbacks()
 
@@ -247,7 +214,7 @@ STARTING NEW DATA MANAGER HERE
 
     private val carPropertyListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(carPropertyValue: CarPropertyValue<*>) {
-            if (DataManager.update(carPropertyValue, DO_LOG, valueMustChange = true, allowInvalidTimestamps = true) == DataManager.VALID) {
+            if (DataManager.update(carPropertyValue, DO_LOG, valueMustChange = false, allowInvalidTimestamps = true) == DataManager.VALID) {
                 handleCarPropertyListenerEvent(carPropertyValue.propertyId)
             }
         }
@@ -283,15 +250,27 @@ STARTING NEW DATA MANAGER HERE
         when (propertyId) {
             DataManager.CurrentPower.propertyId         -> powerUpdater()
             DataManager.CurrentSpeed.propertyId         -> speedUpdater()
-            DataManager.CurrentGear.propertyId          -> gearUpdater()
-            // DataManager.BatteryLevel.propertyId         -> stateOfChargeUpdater()
-            // DataManager.ChargePortConnected.propertyId  -> portUpdater()
+            DataManager.CurrentIgnitionState.propertyId -> driveStateUpdater()
+            DataManager.ChargePortConnected.propertyId  -> driveStateUpdater()
         }
     }
 
-
     private fun powerUpdater() {
-
+        when (DataManager.driveState) {
+            DrivingState.DRIVE -> {
+                if (!DataManager.CurrentPower.isInitialValue) {
+                    DataManager.usedEnergy += (emulatorPowerSign * DataManager.currentPower / 1_000) * ((DataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
+                }
+            }
+            DrivingState.CHARGE -> {
+                if (!DataManager.CurrentPower.isInitialValue) {
+                    DataManager.chargedEnergy -= (emulatorPowerSign * DataManager.currentPower / 1_000) * ((DataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
+                }
+            }
+            else -> {
+                // Supplemental energy usage?
+            }
+        }
     }
 
     private fun speedUpdater() {
@@ -304,24 +283,84 @@ STARTING NEW DATA MANAGER HERE
             sendBroadcast(emulatePowerIntent)
         }
         if (!DataManager.CurrentSpeed.isInitialValue) {
-            DataManager.traveledDistance = DataManager.traveledDistance + ((DataManager.CurrentSpeed.lastValue as Float).absoluteValue * DataManager.CurrentSpeed.timeDelta.toFloat()) / 1_000_000_000F
+            DataManager.traveledDistance += (DataManager.currentSpeed.absoluteValue * DataManager.CurrentSpeed.timeDelta.toFloat()) / 1_000_000_000F
+            if (DataManager.currentSpeed.absoluteValue >= 1 && (DataManager.CurrentSpeed.lastValue as Float).absoluteValue < 1) {
+                // Drive started -> Distraction optimization
+                Log.i("Drive", "started")
+            } else if (DataManager.currentSpeed.absoluteValue < 1 && (DataManager.CurrentSpeed.lastValue as Float).absoluteValue > 1) {
+                // Drive ended
+                Log.i("Drive", "ended")
+            }
         }
     }
 
-    private fun gearUpdater() {
-        if (DataManager.currentGear == VehicleGear.GEAR_PARK) DataManager.TravelTime.stop()
-        else DataManager.TravelTime.start()
+    private fun driveStateUpdater() {
+        val previousDrivingState = DataManager.DriveState.lastDriveState
+        if (DataManager.DriveState.hasChanged()) {
+            when (DataManager.driveState) {
+                DrivingState.DRIVE -> {
+                    resumeTrip()
+                    if (previousDrivingState == DrivingState.CHARGE) stopChargingSession()
+                }
+                DrivingState.CHARGE -> {
+                    if (previousDrivingState == DrivingState.DRIVE) pauseTrip()
+                    if (previousDrivingState != DrivingState.UNKNOWN) startChargingSession()
+                }
+                DrivingState.PARKED -> {
+                    if (previousDrivingState == DrivingState.DRIVE) pauseTrip()
+                    if (previousDrivingState == DrivingState.CHARGE) stopChargingSession()
+                }
+            }
+        }
     }
 
+    private fun startChargingSession() {
+        DataManager.chargePlotLine.reset()
+        DataManager.chargedEnergy = 0F
+        DataManager.ChargeTime.reset()
+        DataManager.ChargeTime.start()
+
+        DataManager.chargePlotLine.addDataPoint(
+            DataManager.currentPower,
+            DataManager.CurrentPower.timestamp,
+            DataManager.traveledDistance,
+            DataManager.stateOfCharge.toFloat(),
+            plotLineMarkerType = PlotLineMarkerType.BEGIN_SESSION
+        )
+    }
+
+    private fun stopChargingSession() {
+        DataManager.ChargeTime.stop()
+        DataManager.chargePlotLine.addDataPoint(
+            DataManager.currentPower,
+            DataManager.CurrentPower.timestamp,
+            DataManager.traveledDistance,
+            DataManager.stateOfCharge.toFloat(),
+            plotLineMarkerType = PlotLineMarkerType.END_SESSION
+        )
+
+        DataManager.chargeCurves.add(
+            ChargeCurve(
+                DataManager.chargePlotLine.getDataPoints(PlotDimension.TIME),
+                DataManager.chargeTime,
+                DataManager.chargedEnergy
+            )
+        )
+    }
+
+    private fun pauseTrip() {
+        DataManager.TravelTime.stop()
+    }
+
+    private fun resumeTrip() {
+        DataManager.TravelTime.start()
+    }
 /*
 END OF NEW DATA MANAGER
  */
 
     private fun registerCarPropertyCallbacks() {
-
         InAppLogger.log("DataCollector.registerCarPropertyCallbacks")
-
-        // Register all CarProperties contained in DataManager
         for (propertyId in DataManager.getVehiclePropertyIds()) {
             carPropertyManager.registerCallback(
                 carPropertyListener,
@@ -329,136 +368,9 @@ END OF NEW DATA MANAGER
                 CarPropertyManager.SENSOR_RATE_ONCHANGE
             )
         }
-
-        carPropertyManager.registerCallback(
-            carPropertyPowerListener,
-            VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE,
-            CarPropertyManager.SENSOR_RATE_FASTEST
-        )
-
-        carPropertyManager.registerCallback(
-            carPropertySpeedListener,
-            VehiclePropertyIds.PERF_VEHICLE_SPEED,
-            CarPropertyManager.SENSOR_RATE_FASTEST
-        )
-
-        carPropertyManager.registerCallback(
-            carPropertyGenericListener,
-            VehiclePropertyIds.EV_BATTERY_LEVEL,
-            CarPropertyManager.SENSOR_RATE_ONCHANGE
-        )
-
-        carPropertyManager.registerCallback(
-            carPropertyGenericListener,
-            VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED,
-            CarPropertyManager.SENSOR_RATE_ONCHANGE
-        )
-
-        carPropertyManager.registerCallback(
-            carPropertyGenericListener,
-            VehiclePropertyIds.GEAR_SELECTION,
-            CarPropertyManager.SENSOR_RATE_ONCHANGE
-        )
-
     }
 
-    private val timeDifferenceStore: HashMap<Int, Long> = HashMap()
-
-    private fun timeDifference(value: CarPropertyValue<*>, maxDifferenceInMilliseconds: Int, timestamp: Long) : Float? {
-        var timeDifference : Long? = null
-
-        if (timeDifferenceStore.containsKey(value.propertyId)) {
-            timeDifference = timestamp - timeDifferenceStore[value.propertyId]!!
-        }
-
-        timeDifferenceStore[value.propertyId] = timestamp
-
-        return when {
-            timeDifference == null || timeDifference > (maxDifferenceInMilliseconds * 1_000_000) -> null
-            else -> timeDifference.toFloat() / 1_000_000
-        }
-    }
-
-    private fun timeDifference(value: CarPropertyValue<*>, maxDifferenceInMilliseconds: Int) : Float? {
-        return timeDifference(value, maxDifferenceInMilliseconds, value.timestamp)
-    }
-
-    private val timeTriggerStore: HashMap<Int, Long> = HashMap()
-
-    private fun timerTriggered(value: CarPropertyValue<*>, timerInMilliseconds: Float, timestamp: Long): Boolean {
-        var timeTriggered = true
-
-        if (timeTriggerStore.containsKey(value.propertyId)) {
-            timeTriggered = timeTriggerStore[value.propertyId]?.plus(timerInMilliseconds * 1_000_000)!! <= timestamp
-        }
-
-        if (timeTriggered) {
-            timeTriggerStore[value.propertyId] = timestamp
-        }
-        return timeTriggered
-    }
-
-    private fun timerTriggered(value: CarPropertyValue<*>, timerInMilliseconds: Float) : Boolean {
-        return timerTriggered(value, timerInMilliseconds, value.timestamp)
-    }
-
-    private var carPropertyPowerListener = object : CarPropertyManager.CarPropertyEventCallback {
-        override fun onChangeEvent(value: CarPropertyValue<*>) {
-            //InAppLogger.deepLog("DataCollector.carPropertyPowerListener", appPreferences.deepLog)
-
-            if (!emulatorMode) powerUpdater(value)
-        }
-        override fun onErrorEvent(propId: Int, zone: Int) {
-            Log.w("carPropertyPowerListener",
-                "Received error car property event, propId=$propId")
-        }
-    }
-
-    private var carPropertySpeedListener = object : CarPropertyManager.CarPropertyEventCallback {
-        override fun onChangeEvent(value: CarPropertyValue<*>) {
-            if (value.timestamp < startupTimestamp) return
-            InAppLogger.logVHALCallback()
-
-            speedUpdater(value)
-
-            if (emulatorMode) {
-                // Also get power in emulator
-                var powerValue = carPropertyManager.getProperty<Float>(VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE,0)
-                lastSpeedValueTimestamp = value.timestamp
-                powerUpdater(powerValue, value.timestamp)
-
-            }
 /*
-                val consumptionPlotLineJSON = Gson().toJson(DataHolder.consumptionPlotLine)
-                val speedPlotLineJSON = Gson().toJson(DataHolder.speedPlotLine)
-
-                sharedPref.edit()
-                    .putString(getString(R.string.userdata_consumption_plot_key), consumptionPlotLineJSON)
-                    .putString(getString(R.string.userdata_speed_plot_key), speedPlotLineJSON)
-                    .apply()
-*/
-        }
-        override fun onErrorEvent(propId: Int, zone: Int) {
-            Log.w("carPropertySpeedListener",
-                "Received error car property event, propId=$propId")
-        }
-    }
-
-    private var carPropertyGenericListener = object : CarPropertyManager.CarPropertyEventCallback {
-        override fun onChangeEvent(value: CarPropertyValue<*>) {
-            // InAppLogger.deepLog("DataCollector.carPropertyGenericListener", appPreferences.deepLog)
-
-            when (value.propertyId) {
-                VehiclePropertyIds.EV_BATTERY_LEVEL -> DataHolder.currentBatteryCapacity = (value.value as Float)
-                VehiclePropertyIds.GEAR_SELECTION -> gearUpdater(value.value as Int, value.timestamp)
-                VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED -> portUpdater(value.value as Boolean)
-            }
-        }
-        override fun onErrorEvent(propId: Int, zone: Int) {
-            Log.w("carPropertyGenericListener","Received error car property event, propId=$propId")
-        }
-    }
-
     private fun gearUpdater(gear: Int, timestamp: Long) {
         if (DataHolder.currentGear == gear) return
         DataHolder.currentGear = gear
@@ -634,6 +546,7 @@ END OF NEW DATA MANAGER
         DataHolder.lastPlotTime = currentPlotTimestampMilliseconds
         DataHolder.lastPlotEnergy = DataHolder.usedEnergy
     }
+    */
 
     private fun createNotificationChannel() {
         val name = "TestChannel"
@@ -649,7 +562,7 @@ END OF NEW DATA MANAGER
     private fun updateStatsNotification() {
         if (notificationsEnabled && appPreferences.notifications) {
             with(NotificationManagerCompat.from(this)) {
-                val averageConsumption = DataHolder.usedEnergy / (DataHolder.traveledDistance/1000)
+                val averageConsumption = DataManager.usedEnergy / (DataManager.traveledDistance/1000)
 
                 var averageConsumptionString = String.format("%d Wh/km", averageConsumption.toInt())
                 if (!appPreferences.consumptionUnit) {
@@ -657,14 +570,14 @@ END OF NEW DATA MANAGER
                         "%.1f kWh/100km",
                         averageConsumption / 10)
                 }
-                if ((DataHolder.traveledDistance <= 0)) averageConsumptionString = "N/A"
+                if ((DataManager.traveledDistance <= 0)) averageConsumptionString = "N/A"
 
                 notificationCounter++
 
                 val message = String.format(
                     "P:%.1f kW, D: %.3f km, Ø: %s",
-                    DataHolder.currentPowermW / 1_000_000,
-                    DataHolder.traveledDistance / 1000,
+                    DataManager.currentPower / 1_000_000,
+                    DataManager.traveledDistance / 1000,
                     averageConsumptionString
                 )
 
