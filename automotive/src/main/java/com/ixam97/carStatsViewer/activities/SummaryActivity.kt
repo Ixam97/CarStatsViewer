@@ -116,12 +116,14 @@ class SummaryActivity: Activity() {
     }
 
     private fun setupConsumptionLayout() {
+        val plotMarkers = PlotMarkers()
+        plotMarkers.addMarkers(tripData.markers)
         summary_consumption_plot.addPlotLine(DataManager.consumptionPlotLine)
         summary_consumption_plot.secondaryDimension = PlotSecondaryDimension.SPEED
         summary_consumption_plot.dimension = PlotDimension.DISTANCE
         summary_consumption_plot.dimensionRestriction = ((tripData.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1
         summary_consumption_plot.dimensionSmoothingPercentage = 0.02f
-        summary_consumption_plot.setPlotMarkers(PlotMarkers().apply{this.addMarkers(tripData.markers)})
+        summary_consumption_plot.setPlotMarkers(plotMarkers)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
         summary_consumption_plot.dimensionShiftTouchInterval = 1_000L
@@ -154,7 +156,7 @@ class SummaryActivity: Activity() {
             summary_charge_plot_button_prev.isEnabled = true
             summary_charge_plot_button_prev.colorFilter = enabledTint
 
-            summary_charged_energy_value_text.text = getChargedEnergyString(summary_charge_plot_seek_bar.progress)
+            summary_charged_energy_value_text.text = getChargedEnergyString(tripData.chargeCurves.size - 1)
             summary_charge_time_value_text.text = getElapsedTimeString(tripData.chargeCurves.last().chargeTime)
             summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves.last().chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
 

@@ -6,7 +6,6 @@ import com.ixam97.carStatsViewer.*
 import android.app.*
 import android.car.Car
 import android.car.VehicleGear
-import android.car.VehicleIgnitionState
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
@@ -24,8 +23,6 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileWriter
 import java.lang.Runnable
-import java.util.concurrent.TimeUnit
-import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
 
 lateinit var mainActivityPendingIntent: PendingIntent
@@ -71,6 +68,9 @@ class DataCollector : Service() {
 
     private lateinit var notificationTimerHandler: Handler
     private lateinit var saveTripDataTimerHandler: Handler
+
+    private var plotEnergyDelta = 0F
+    private var plotDistanceDelta = 0F
 
     init {
         startupTimestamp = System.nanoTime()
@@ -259,7 +259,9 @@ STARTING NEW DATA MANAGER HERE
         when (DataManager.driveState) {
             DrivingState.DRIVE -> {
                 if (!DataManager.CurrentPower.isInitialValue) {
-                    DataManager.usedEnergy += (emulatorPowerSign * DataManager.currentPower / 1_000) * ((DataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
+                    val usedEnergyDelta = (emulatorPowerSign * DataManager.currentPower / 1_000) * ((DataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
+                    DataManager.usedEnergy += usedEnergyDelta
+                    plotEnergyDelta += usedEnergyDelta
                 }
             }
             DrivingState.CHARGE -> {
@@ -282,14 +284,31 @@ STARTING NEW DATA MANAGER HERE
             }
             sendBroadcast(emulatePowerIntent)
         }
-        if (!DataManager.CurrentSpeed.isInitialValue) {
-            DataManager.traveledDistance += (DataManager.currentSpeed.absoluteValue * DataManager.CurrentSpeed.timeDelta.toFloat()) / 1_000_000_000F
+        if (!DataManager.CurrentSpeed.isInitialValue && DataManager.driveState == DrivingState.DRIVE) {
+            val traveledDistanceDelta = (DataManager.currentSpeed.absoluteValue * DataManager.CurrentSpeed.timeDelta.toFloat()) / 1_000_000_000F
+            DataManager.traveledDistance += traveledDistanceDelta
             if (DataManager.currentSpeed.absoluteValue >= 1 && (DataManager.CurrentSpeed.lastValue as Float).absoluteValue < 1) {
                 // Drive started -> Distraction optimization
                 Log.i("Drive", "started")
             } else if (DataManager.currentSpeed.absoluteValue < 1 && (DataManager.CurrentSpeed.lastValue as Float).absoluteValue > 1) {
                 // Drive ended
                 Log.i("Drive", "ended")
+            }
+
+            if (plotDistanceDelta < 100) {
+                plotDistanceDelta += traveledDistanceDelta
+            } else {
+                if (DataManager.driveState == DrivingState.DRIVE) {
+                    DataManager.consumptionPlotLine.addDataPoint(
+                        if(plotDistanceDelta > 0) plotEnergyDelta / (plotDistanceDelta / 1000) else 0F,
+                        DataManager.CurrentSpeed.timestamp,
+                        DataManager.traveledDistance,
+                        DataManager.stateOfCharge.toFloat()
+                    )
+                }
+                plotDistanceDelta = 0F
+                plotEnergyDelta = 0F
+                sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
             }
         }
     }
@@ -304,13 +323,22 @@ STARTING NEW DATA MANAGER HERE
                 }
                 DrivingState.CHARGE -> {
                     if (previousDrivingState == DrivingState.DRIVE) pauseTrip()
-                    if (previousDrivingState != DrivingState.UNKNOWN) startChargingSession()
+                    if (previousDrivingState != DrivingState.UNKNOWN){
+                        startChargingSession()
+                        DataManager.plotMarkers.addMarker(PlotMarkerType.CHARGE, System.nanoTime())
+                    }
+                    else DataManager.ChargeTime.start()
                 }
                 DrivingState.PARKED -> {
-                    if (previousDrivingState == DrivingState.DRIVE) pauseTrip()
+                    if (previousDrivingState == DrivingState.DRIVE){
+                        pauseTrip()
+                        DataManager.plotMarkers.addMarker(PlotMarkerType.PARK, System.nanoTime())
+                    }
                     if (previousDrivingState == DrivingState.CHARGE) stopChargingSession()
+
                 }
             }
+            sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
         }
     }
 
@@ -350,10 +378,25 @@ STARTING NEW DATA MANAGER HERE
 
     private fun pauseTrip() {
         DataManager.TravelTime.stop()
+        val newPlotItem = if (plotDistanceDelta > 0) plotEnergyDelta / (plotDistanceDelta / 1000) else 0F
+        DataManager.consumptionPlotLine.addDataPoint(
+            newPlotItem,
+            DataManager.CurrentSpeed.timestamp,
+            DataManager.traveledDistance,
+            DataManager.stateOfCharge.toFloat(),
+            plotLineMarkerType = PlotLineMarkerType.END_SESSION
+        )
     }
 
     private fun resumeTrip() {
         DataManager.TravelTime.start()
+        DataManager.consumptionPlotLine.addDataPoint(
+            0F,
+            DataManager.CurrentSpeed.timestamp,
+            DataManager.traveledDistance,
+            DataManager.stateOfCharge.toFloat(),
+            plotLineMarkerType = PlotLineMarkerType.BEGIN_SESSION
+        )
     }
 /*
 END OF NEW DATA MANAGER

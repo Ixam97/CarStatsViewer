@@ -33,7 +33,10 @@ class PlotLineItem (
 
     fun bySecondaryDimension(secondaryDimension: PlotSecondaryDimension? = null): Float {
         return when (secondaryDimension) {
-            PlotSecondaryDimension.SPEED -> (DistanceDelta ?: 0f) / ((TimeDelta ?: 1L) / 1_000_000_000f) * 3.6f
+            PlotSecondaryDimension.SPEED -> {
+                if ((TimeDelta?: 0L) <= 0) 0F
+                else (DistanceDelta ?: 0f) / ((TimeDelta ?: 1L) / 1_000_000_000f) * 3.6f
+            }
             PlotSecondaryDimension.DISTANCE -> Distance
             PlotSecondaryDimension.TIME -> Time.toFloat()
             PlotSecondaryDimension.STATE_OF_CHARGE -> StateOfCharge ?: 0f
