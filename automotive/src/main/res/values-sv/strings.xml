@@ -22,9 +22,9 @@
     <string name="main_gage_power">Effekt</string>
     <string name="main_gage_charging_power">Laddningseffekt</string>
     <string name="main_gage_SoC">Laddningsnivå</string>
-    <string name="main_gage_consumption">Akt. förbrukning</string>
-    <string name="main_dismiss_charge_plot">Stäng laddningsdiagram</string>
-    <string name="main_button_reset_charge_plot">Återställ laddningsdiagram</string>
+    <string name="main_gage_consumption">Momentanförbrukning</string>
+    <string name="main_dismiss_charge_plot">Stäng laddningskurva</string>
+    <string name="main_button_reset_charge_plot">Återställ laddningskurva</string>
     <string name="main_button_trip_summary">Reseöversikt</string>
     <string name="main_button_hide_speed">Dölj hastighet</string>
     <string name="main_button_show_speed">Visa hastighet</string>
@@ -57,7 +57,7 @@
     <string name="settings_plot_state_of_charge_dimension">Experimentell Laddnivåstrend</string>
     <string name="settings_consumption_plot_single_motor">Single motor modell</string>
     <string name="settings_visible_gages">Visa effektmätare</string>
-    <string name="settings_consumption_plot_speed">Visa hastighetsdiagram</string>
+    <string name="settings_consumption_plot_speed">Visa hastighetskurva</string>
     <string name="settings_sub_title_settings">Inställningar:</string>
     <string name="settings_sub_title_current_cons_plot">Plott för nuvarande förbrukning:</string>
     <string name="settings_sub_title_last_charge_plot">Senaste laddningskurvor:</string>
