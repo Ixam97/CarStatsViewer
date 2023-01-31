@@ -31,7 +31,7 @@ class PlotLine(
             stateOfCharge,
             timeDelta?:(time - (prev?.Time ?: time)),
             distanceDelta?:(distance - (prev?.Distance ?: distance)),
-            stateOfChargeDelta?:(stateOfCharge - (prev?.StateOfCharge ?: distance)),
+            stateOfChargeDelta?:(stateOfCharge - (prev?.StateOfCharge ?: stateOfCharge)),
             plotLineMarkerType
         ), autoMarkerTimeDeltaMax)
     }
