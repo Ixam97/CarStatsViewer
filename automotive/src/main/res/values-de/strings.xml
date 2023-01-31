@@ -78,5 +78,5 @@
     <!-- Notifications -->
     <string name="notification_title">Aktuelle Fahrdaten:</string>
     <string name="foreground_service_info">Fahrdatenerfassung aktiv</string>
-    <string name="toast_file_read_error">Fehler beim Binlesen der Trip-Datei</string>
+    <string name="toast_file_read_error">Fehler beim Einlesen der Trip-Datei</string>
 </resources>
