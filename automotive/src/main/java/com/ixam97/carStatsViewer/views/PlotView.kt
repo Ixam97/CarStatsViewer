@@ -565,6 +565,17 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             drawPlotPoints(canvas, joinedPlotPoints, paint, zeroCord)
         }
 
+        if (sessionGapRendering == PlotSessionGapRendering.GAP) {
+            var last: PlotPoint? = null
+            for (collection in plotPointCollection) {
+                if (last != null) {
+                    val first = collection.first()
+                    drawLine(canvas, last.x, last.y, first.x, first.y, paint.PlotGapSecondary)
+                }
+                last = collection.last()
+            }
+        }
+
         canvas.restore()
     }
 
@@ -713,10 +724,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val top = yMargin.toFloat() + 1
         val bottom = canvas.height - yMargin.toFloat() - 1
 
-        val linePath = Path()
-        linePath.moveTo(x, top)
-        linePath.lineTo(x, bottom)
-        canvas.drawPath(linePath, markerPaint[markerType]!!.Line)
+        drawLine(canvas, x, top, x, bottom, markerPaint[markerType]!!.Line)
 
         val trianglePath = Path()
         trianglePath.moveTo(x, top)
@@ -726,6 +734,67 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         canvas.drawPath(trianglePath, markerPaint[markerType]!!.Mark)
     }
 
+    private fun drawXLines(canvas: Canvas) {
+        val maxX = width.toFloat()
+        val maxY = height.toFloat()
+
+        val distanceDimension = when {
+            dimensionRestriction != null -> dimensionRestriction!!.toFloat()
+            else -> plotLines.mapNotNull { it.distanceDimension(dimension, dimensionRestriction) }.max()?:0f
+        }
+
+        for (i in 0 until xLineCount) {
+            val cordX = x(i.toFloat(), 0f, xLineCount.toFloat() - 1, maxX)!!
+            val cordY = maxY - yMargin
+
+            val leftZero = (distanceDimension / (xLineCount - 1) * i) + (dimensionShift ?: 0L)
+            val rightZero = distanceDimension - leftZero + (2 * (dimensionShift ?: 0L))
+
+            if (i in 1 until xLineCount - 1) {
+                drawXLine(canvas, cordX, maxY, labelLinePaint)
+            } else {
+                drawXLine(canvas, cordX, maxY, borderLinePaint)
+            }
+
+            val label = when (dimension) {
+                PlotDimension.INDEX -> label(leftZero, PlotLineLabelFormat.NUMBER)
+                PlotDimension.DISTANCE -> label(rightZero, PlotLineLabelFormat.DISTANCE)
+                PlotDimension.TIME -> label(leftZero, PlotLineLabelFormat.TIME)
+                PlotDimension.STATE_OF_CHARGE -> label(leftZero, PlotLineLabelFormat.NUMBER)
+            }
+
+            val bounds = Rect()
+            labelPaint.getTextBounds(label, 0, label.length, bounds)
+
+            canvas.drawText(
+                label,
+                cordX - bounds.width() / 2,
+                cordY + yMargin / 2 + bounds.height() / 2,
+                labelPaint
+            )
+        }
+    }
+
+    private fun drawXLine(canvas: Canvas, cord: Float?, maxY: Float, paint: Paint?) {
+        if (cord == null) return
+        drawLine(canvas, cord, yMargin.toFloat(), cord, maxY - yMargin, paint ?: labelLinePaint)
+    }
+
+    private fun drawYBaseLines(canvas: Canvas) {
+        val maxX = width.toFloat()
+        val maxY = height.toFloat()
+
+        for (i in 0 until yLineCount) {
+            val cordY = y(i.toFloat(), 0f, yLineCount.toFloat() - 1, maxY)!!
+
+            if (i in 1 until yLineCount - 1) {
+                drawYLine(canvas, cordY, maxX, labelLinePaint)
+            } else {
+                drawYLine(canvas, cordY, maxX, borderLinePaint)
+            }
+        }
+    }
+    
     private fun drawYLines(canvas: Canvas) {
         val maxX = width.toFloat()
         val maxY = height.toFloat()
@@ -837,10 +906,14 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private fun drawYLine(canvas: Canvas, cord: Float?, maxX: Float, paint: Paint?) {
         if (cord == null) return
+        drawLine(canvas, xMargin.toFloat(), cord, maxX - xMargin, cord, paint ?: labelLinePaint)
+    }
+
+    private fun drawLine(canvas: Canvas, x1: Float, y1: Float, x2: Float, y2: Float, paint: Paint) {
         val path = Path()
-        path.moveTo(xMargin.toFloat(), cord)
-        path.lineTo(maxX - xMargin, cord)
-        canvas.drawPath(path, paint ?: labelLinePaint)
+        path.moveTo(x1, y1)
+        path.lineTo(x2, y2)
+        canvas.drawPath(path, paint)
     }
 
     private fun timeLabel(time: Long): String {

@@ -23,6 +23,7 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileWriter
 import java.lang.Runnable
+import java.util.concurrent.TimeUnit
 import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
 
@@ -453,7 +454,8 @@ class DataCollector : Service() {
             timestamp,
             DataHolder.traveledDistance,
             DataHolder.stateOfCharge(),
-            plotLineMarkerType = marker
+            plotLineMarkerType = marker,
+            autoMarkerTimeDeltaThreshold = TimeUnit.MILLISECONDS.toNanos(CHARGE_CURVE_UPDATE_INTERVAL_MILLIS) * 2
         )
     }
 

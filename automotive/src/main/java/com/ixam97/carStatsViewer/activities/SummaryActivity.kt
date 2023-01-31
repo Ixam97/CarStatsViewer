@@ -119,6 +119,7 @@ class SummaryActivity: Activity() {
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
         summary_consumption_plot.dimensionShiftTouchEnabled = true
         summary_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
+        summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.GAP
 
         summary_consumption_plot.invalidate()
 
