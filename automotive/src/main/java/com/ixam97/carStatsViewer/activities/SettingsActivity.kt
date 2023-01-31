@@ -25,6 +25,7 @@ import com.ixam97.carStatsViewer.plot.objects.PlotLine
 import com.ixam97.carStatsViewer.plot.objects.PlotLineConfiguration
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.plot.objects.PlotRange
+import com.ixam97.carStatsViewer.services.DataCollector
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlin.system.exitProcess
 
@@ -36,7 +37,7 @@ class SettingsActivity : Activity() {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                getString(R.string.gear_update_broadcast) -> setEnableByGear(DataManager.currentGear)
+                getString(R.string.gear_update_broadcast) -> setEnableByGear(DataCollector.CurrentTripDataManager.currentGear)
             }
         }
     }
@@ -57,7 +58,7 @@ class SettingsActivity : Activity() {
 
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.gear_update_broadcast)))
 
-        setEnableByGear(DataManager.currentGear)
+        setEnableByGear(DataCollector.CurrentTripDataManager.currentGear)
     }
 
     override fun onDestroy() {
@@ -142,7 +143,7 @@ class SettingsActivity : Activity() {
 
         settings_consumption_plot_switch_secondary_color.setOnClickListener {
             appPreferences.consumptionPlotSecondaryColor = settings_consumption_plot_switch_secondary_color.isChecked
-            DataManager.consumptionPlotLine.secondaryPlotPaint = when {
+            DataCollector.CurrentTripDataManager.consumptionPlotLine.secondaryPlotPaint = when {
                 appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
                 else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
             }
@@ -176,7 +177,7 @@ class SettingsActivity : Activity() {
                 appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
                 else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
             }
-            DataManager.chargePlotLine.secondaryPlotPaint = plotPaint
+            DataCollector.CurrentTripDataManager.chargePlotLine.secondaryPlotPaint = plotPaint
         }
 /*
         settings_charge_plot_switch_state_of_charge_dimension.setOnClickListener {

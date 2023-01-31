@@ -18,6 +18,7 @@ import com.ixam97.carStatsViewer.objects.TripData
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.*
 import com.ixam97.carStatsViewer.plot.objects.*
+import com.ixam97.carStatsViewer.services.DataCollector
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_summary.*
 import java.util.*
@@ -73,7 +74,7 @@ class SummaryActivity: Activity() {
         // tripData = if (tripDataFileName != "null") DataManager.getTripData(tripDataFileName)
         // else DataManager.getTripData()
 
-        tripData = DataManager.tripData!!
+        tripData = DataCollector.CurrentTripDataManager.tripData!!
 
         val typedValue = TypedValue()
         applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
@@ -118,7 +119,7 @@ class SummaryActivity: Activity() {
     private fun setupConsumptionLayout() {
         val plotMarkers = PlotMarkers()
         plotMarkers.addMarkers(tripData.markers)
-        summary_consumption_plot.addPlotLine(DataManager.consumptionPlotLine)
+        summary_consumption_plot.addPlotLine(DataCollector.CurrentTripDataManager.consumptionPlotLine)
         summary_consumption_plot.secondaryDimension = PlotSecondaryDimension.SPEED
         summary_consumption_plot.dimension = PlotDimension.DISTANCE
         summary_consumption_plot.dimensionRestriction = ((tripData.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1
@@ -268,12 +269,12 @@ class SummaryActivity: Activity() {
             .setMessage(getString(R.string.dialog_reset_message))
             .setCancelable(true)
             .setPositiveButton(getString(R.string.dialog_reset_do_save)) { _, _ ->
-                DataManager.reset()
+                DataCollector.CurrentTripDataManager.reset()
                 sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
                 this@SummaryActivity.finish()
             }
             .setNegativeButton(R.string.dialog_reset_no_save) { _, _ ->
-                DataManager.reset()
+                DataCollector.CurrentTripDataManager.reset()
                 sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
                 this@SummaryActivity.finish()
             }
@@ -343,7 +344,7 @@ class SummaryActivity: Activity() {
             return
         }
         summary_parked_warning.visibility =
-            if (DataManager.currentGear != VehicleGear.GEAR_PARK) View.VISIBLE
+            if (DataCollector.CurrentTripDataManager.currentGear != VehicleGear.GEAR_PARK) View.VISIBLE
             else View.GONE
     }
 }

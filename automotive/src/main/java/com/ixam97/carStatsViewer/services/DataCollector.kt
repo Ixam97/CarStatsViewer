@@ -41,6 +41,7 @@ sealed class EmulatorIntentExtras {
 
 class DataCollector : Service() {
     companion object {
+        val CurrentTripDataManager = DataManager()
         private const val DO_LOG = false
         private const val CHANNEL_ID = "TestChannel"
         private const val STATS_NOTIFICATION_ID = 1
@@ -81,7 +82,7 @@ class DataCollector : Service() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 getString(R.string.save_trip_data_broadcast) -> {
-                    writeTripDataToFile(DataManager.tripData!!, getString(R.string.file_name_current_trip_data))
+                    writeTripDataToFile(CurrentTripDataManager.tripData!!, getString(R.string.file_name_current_trip_data))
                 }
                 else -> {}
             }
@@ -90,7 +91,7 @@ class DataCollector : Service() {
 
     private val saveTripDataTask = object : Runnable {
         override fun run() {
-            writeTripDataToFile(DataManager.tripData!!, getString(R.string.file_name_current_trip_data))
+            writeTripDataToFile(CurrentTripDataManager.tripData!!, getString(R.string.file_name_current_trip_data))
             saveTripDataTimerHandler.postDelayed(this, AUTO_SAVE_INTERVAL_MILLIS)
         }
     }
@@ -120,7 +121,7 @@ class DataCollector : Service() {
             val mPrevTripData = readTripDataFromFile(getString(R.string.file_name_current_trip_data))
             runBlocking {
                 if (mPrevTripData != null) {
-                    DataManager.tripData = mPrevTripData
+                    CurrentTripDataManager.tripData = mPrevTripData
                     sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
                 } else {
                     InAppLogger.log("No trip file read!")
@@ -162,14 +163,14 @@ class DataCollector : Service() {
         car = Car.createCar(this)
         carPropertyManager = car.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager
 
-        DataManager.maxBatteryLevel = carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
+        CurrentTripDataManager.maxBatteryLevel = carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
 
         /** Get vehicle name to enable dev mode in emulator */
         val carName = carPropertyManager.getProperty<String>(VehiclePropertyIds.INFO_MODEL, 0).value.toString()
         if (carName == "Speedy Model") {
             Toast.makeText(this, "Emulator Mode", Toast.LENGTH_LONG).show()
             emulatorMode = true
-            DataManager.update(VehicleGear.GEAR_PARK, System.nanoTime(), DataManager.CurrentGear.propertyId)
+            CurrentTripDataManager.update(VehicleGear.GEAR_PARK, System.nanoTime(), CurrentTripDataManager.CurrentGear.propertyId)
         }
 
         notificationTitleString = resources.getString(R.string.notification_title)
@@ -181,7 +182,7 @@ class DataCollector : Service() {
             }
         }
 
-        DataManager.consumptionPlotLine.baseLineAt.add(0f)
+        CurrentTripDataManager.consumptionPlotLine.baseLineAt.add(0f)
 
         registerCarPropertyCallbacks()
 
@@ -214,7 +215,7 @@ STARTING NEW DATA MANAGER HERE
 
     private val carPropertyListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(carPropertyValue: CarPropertyValue<*>) {
-            if (DataManager.update(carPropertyValue, DO_LOG, valueMustChange = false, allowInvalidTimestamps = true) == DataManager.VALID) {
+            if (CurrentTripDataManager.update(carPropertyValue, DO_LOG, valueMustChange = false, allowInvalidTimestamps = true) == CurrentTripDataManager.VALID) {
                 handleCarPropertyListenerEvent(carPropertyValue.propertyId)
             }
         }
@@ -238,7 +239,7 @@ STARTING NEW DATA MANAGER HERE
                     else -> null
                 }
                 if (value != null) {
-                    if (DataManager.update(value, timestamp, propertyId, DO_LOG, valueMustChange = false) == DataManager.VALID)
+                    if (CurrentTripDataManager.update(value, timestamp, propertyId, DO_LOG, valueMustChange = false) == CurrentTripDataManager.VALID)
                         handleCarPropertyListenerEvent(propertyId)
                 }
             }
@@ -248,34 +249,34 @@ STARTING NEW DATA MANAGER HERE
     /** Handle incoming property changes by property ID */
     private fun handleCarPropertyListenerEvent(propertyId: Int) {
         when (propertyId) {
-            DataManager.CurrentPower.propertyId         -> powerUpdater()
-            DataManager.CurrentSpeed.propertyId         -> speedUpdater()
-            DataManager.CurrentIgnitionState.propertyId -> driveStateUpdater()
-            DataManager.ChargePortConnected.propertyId  -> driveStateUpdater()
+            CurrentTripDataManager.CurrentPower.propertyId         -> powerUpdater()
+            CurrentTripDataManager.CurrentSpeed.propertyId         -> speedUpdater()
+            CurrentTripDataManager.CurrentIgnitionState.propertyId -> driveStateUpdater()
+            CurrentTripDataManager.ChargePortConnected.propertyId  -> driveStateUpdater()
         }
     }
 
     private fun powerUpdater() {
-        when (DataManager.driveState) {
+        when (CurrentTripDataManager.driveState) {
             DrivingState.DRIVE -> {
-                if (!DataManager.CurrentPower.isInitialValue) {
-                    val usedEnergyDelta = (emulatorPowerSign * DataManager.currentPower / 1_000) * ((DataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
-                    DataManager.usedEnergy += usedEnergyDelta
+                if (!CurrentTripDataManager.CurrentPower.isInitialValue) {
+                    val usedEnergyDelta = (emulatorPowerSign * CurrentTripDataManager.currentPower / 1_000) * ((CurrentTripDataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
+                    CurrentTripDataManager.usedEnergy += usedEnergyDelta
                     consumptionPlotEnergyDelta += usedEnergyDelta
                 }
             }
             DrivingState.CHARGE -> {
-                if (!DataManager.CurrentPower.isInitialValue) {
-                    val chargedEnergyDelta = (DataManager.currentPower / 1_000) * ((DataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
-                    DataManager.chargedEnergy -= chargedEnergyDelta
+                if (!CurrentTripDataManager.CurrentPower.isInitialValue) {
+                    val chargedEnergyDelta = (CurrentTripDataManager.currentPower / 1_000) * ((CurrentTripDataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
+                    CurrentTripDataManager.chargedEnergy -= chargedEnergyDelta
                     if (chargePlotTimeDelta < CHARGE_PLOT_UPDATE_INTERVAL_MILLIS * 1_000_000) {
-                        chargePlotTimeDelta += DataManager.CurrentPower.timeDelta
+                        chargePlotTimeDelta += CurrentTripDataManager.CurrentPower.timeDelta
                     } else {
-                        DataManager.chargePlotLine.addDataPoint(
-                            -DataManager.currentPower / 1_000_000,
-                            DataManager.CurrentPower.timestamp,
-                            DataManager.traveledDistance,
-                            DataManager.stateOfCharge.toFloat()
+                        CurrentTripDataManager.chargePlotLine.addDataPoint(
+                            -CurrentTripDataManager.currentPower / 1_000_000,
+                            CurrentTripDataManager.CurrentPower.timestamp,
+                            CurrentTripDataManager.traveledDistance,
+                            CurrentTripDataManager.stateOfCharge.toFloat()
                         )
                         chargePlotTimeDelta = 0L
                         sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
@@ -292,19 +293,19 @@ STARTING NEW DATA MANAGER HERE
     private fun speedUpdater() {
         if (emulatorMode) {
             val emulatePowerIntent = Intent(getString(R.string.VHAL_emulator_broadcast)).apply {
-                putExtra(EmulatorIntentExtras.PROPERTY_ID, DataManager.CurrentPower.propertyId)
+                putExtra(EmulatorIntentExtras.PROPERTY_ID, CurrentTripDataManager.CurrentPower.propertyId)
                 putExtra(EmulatorIntentExtras.TYPE, EmulatorIntentExtras.TYPE_FLOAT)
-                putExtra(EmulatorIntentExtras.VALUE, carPropertyManager.getFloatProperty(DataManager.CurrentPower.propertyId, 0))
+                putExtra(EmulatorIntentExtras.VALUE, carPropertyManager.getFloatProperty(CurrentTripDataManager.CurrentPower.propertyId, 0))
             }
             sendBroadcast(emulatePowerIntent)
         }
-        if (!DataManager.CurrentSpeed.isInitialValue && DataManager.driveState == DrivingState.DRIVE) {
-            val traveledDistanceDelta = (DataManager.currentSpeed.absoluteValue * DataManager.CurrentSpeed.timeDelta.toFloat()) / 1_000_000_000F
-            DataManager.traveledDistance += traveledDistanceDelta
-            if (DataManager.currentSpeed.absoluteValue >= 1 && (DataManager.CurrentSpeed.lastValue as Float).absoluteValue < 1) {
+        if (!CurrentTripDataManager.CurrentSpeed.isInitialValue && CurrentTripDataManager.driveState == DrivingState.DRIVE) {
+            val traveledDistanceDelta = (CurrentTripDataManager.currentSpeed.absoluteValue * CurrentTripDataManager.CurrentSpeed.timeDelta.toFloat()) / 1_000_000_000F
+            CurrentTripDataManager.traveledDistance += traveledDistanceDelta
+            if (CurrentTripDataManager.currentSpeed.absoluteValue >= 1 && (CurrentTripDataManager.CurrentSpeed.lastValue as Float).absoluteValue < 1) {
                 // Drive started -> Distraction optimization
                 Log.i("Drive", "started")
-            } else if (DataManager.currentSpeed.absoluteValue < 1 && (DataManager.CurrentSpeed.lastValue as Float).absoluteValue > 1) {
+            } else if (CurrentTripDataManager.currentSpeed.absoluteValue < 1 && (CurrentTripDataManager.CurrentSpeed.lastValue as Float).absoluteValue > 1) {
                 // Drive ended
                 Log.i("Drive", "ended")
             }
@@ -312,12 +313,12 @@ STARTING NEW DATA MANAGER HERE
             if (consumptionPlotDistanceDelta < CONSUMPTION_PLOT_UPDATE_DISTANCE) {
                 consumptionPlotDistanceDelta += traveledDistanceDelta
             } else {
-                if (DataManager.driveState == DrivingState.DRIVE) {
-                    DataManager.consumptionPlotLine.addDataPoint(
+                if (CurrentTripDataManager.driveState == DrivingState.DRIVE) {
+                    CurrentTripDataManager.consumptionPlotLine.addDataPoint(
                         if(consumptionPlotDistanceDelta > 0) consumptionPlotEnergyDelta / (consumptionPlotDistanceDelta / 1000) else 0F,
-                        DataManager.CurrentSpeed.timestamp,
-                        DataManager.traveledDistance,
-                        DataManager.stateOfCharge.toFloat()
+                        CurrentTripDataManager.CurrentSpeed.timestamp,
+                        CurrentTripDataManager.traveledDistance,
+                        CurrentTripDataManager.stateOfCharge.toFloat()
                     )
                 }
                 consumptionPlotDistanceDelta = 0F
@@ -328,89 +329,89 @@ STARTING NEW DATA MANAGER HERE
     }
 
     private fun driveStateUpdater() {
-        val previousDrivingState = DataManager.DriveState.lastDriveState
-        if (DataManager.DriveState.hasChanged()) {
-            when (DataManager.driveState) {
+        val previousDrivingState = CurrentTripDataManager.DriveState.lastDriveState
+        if (CurrentTripDataManager.DriveState.hasChanged()) {
+            when (CurrentTripDataManager.driveState) {
                 DrivingState.DRIVE -> {
                     resumeTrip()
                     if (previousDrivingState == DrivingState.CHARGE) stopChargingSession()
-                    if (previousDrivingState != DrivingState.UNKNOWN) DataManager.plotMarkers.endMarker(System.nanoTime())
+                    if (previousDrivingState != DrivingState.UNKNOWN) CurrentTripDataManager.plotMarkers.endMarker(System.nanoTime())
                 }
                 DrivingState.CHARGE -> {
                     if (previousDrivingState == DrivingState.DRIVE) pauseTrip()
                     if (previousDrivingState != DrivingState.UNKNOWN){
                         startChargingSession()
-                        DataManager.plotMarkers.addMarker(PlotMarkerType.CHARGE, System.nanoTime())
+                        CurrentTripDataManager.plotMarkers.addMarker(PlotMarkerType.CHARGE, System.nanoTime())
                     }
-                    else DataManager.ChargeTime.start()
+                    else CurrentTripDataManager.ChargeTime.start()
                 }
                 DrivingState.PARKED -> {
                     if (previousDrivingState == DrivingState.DRIVE){
                         pauseTrip()
-                        DataManager.plotMarkers.addMarker(PlotMarkerType.PARK, System.nanoTime())
+                        CurrentTripDataManager.plotMarkers.addMarker(PlotMarkerType.PARK, System.nanoTime())
                     }
                     if (previousDrivingState == DrivingState.CHARGE) stopChargingSession()
 
                 }
             }
-            writeTripDataToFile(DataManager.tripData!!, getString(R.string.file_name_current_trip_data))
+            writeTripDataToFile(CurrentTripDataManager.tripData!!, getString(R.string.file_name_current_trip_data))
             sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
         }
     }
 
     private fun startChargingSession() {
-        DataManager.chargePlotLine.reset()
-        DataManager.chargedEnergy = 0F
-        DataManager.ChargeTime.reset()
-        DataManager.ChargeTime.start()
+        CurrentTripDataManager.chargePlotLine.reset()
+        CurrentTripDataManager.chargedEnergy = 0F
+        CurrentTripDataManager.ChargeTime.reset()
+        CurrentTripDataManager.ChargeTime.start()
 
-        DataManager.chargePlotLine.addDataPoint(
-            DataManager.currentPower,
-            DataManager.CurrentPower.timestamp,
-            DataManager.traveledDistance,
-            DataManager.stateOfCharge.toFloat(),
+        CurrentTripDataManager.chargePlotLine.addDataPoint(
+            CurrentTripDataManager.currentPower,
+            CurrentTripDataManager.CurrentPower.timestamp,
+            CurrentTripDataManager.traveledDistance,
+            CurrentTripDataManager.stateOfCharge.toFloat(),
             plotLineMarkerType = PlotLineMarkerType.BEGIN_SESSION
         )
     }
 
     private fun stopChargingSession() {
-        DataManager.ChargeTime.stop()
-        DataManager.chargePlotLine.addDataPoint(
-            DataManager.currentPower,
-            DataManager.CurrentPower.timestamp,
-            DataManager.traveledDistance,
-            DataManager.stateOfCharge.toFloat(),
+        CurrentTripDataManager.ChargeTime.stop()
+        CurrentTripDataManager.chargePlotLine.addDataPoint(
+            CurrentTripDataManager.currentPower,
+            CurrentTripDataManager.CurrentPower.timestamp,
+            CurrentTripDataManager.traveledDistance,
+            CurrentTripDataManager.stateOfCharge.toFloat(),
             plotLineMarkerType = PlotLineMarkerType.END_SESSION
         )
 
-        DataManager.chargeCurves.add(
+        CurrentTripDataManager.chargeCurves.add(
             ChargeCurve(
-                DataManager.chargePlotLine.getDataPoints(PlotDimension.TIME),
-                DataManager.chargeTime,
-                DataManager.chargedEnergy
+                CurrentTripDataManager.chargePlotLine.getDataPoints(PlotDimension.TIME),
+                CurrentTripDataManager.chargeTime,
+                CurrentTripDataManager.chargedEnergy
             )
         )
     }
 
     private fun pauseTrip() {
-        DataManager.TravelTime.stop()
+        CurrentTripDataManager.TravelTime.stop()
         val newPlotItem = if (consumptionPlotDistanceDelta > 0) consumptionPlotEnergyDelta / (consumptionPlotDistanceDelta / 1000) else 0F
-        DataManager.consumptionPlotLine.addDataPoint(
+        CurrentTripDataManager.consumptionPlotLine.addDataPoint(
             newPlotItem,
-            DataManager.CurrentSpeed.timestamp,
-            DataManager.traveledDistance,
-            DataManager.stateOfCharge.toFloat(),
+            CurrentTripDataManager.CurrentSpeed.timestamp,
+            CurrentTripDataManager.traveledDistance,
+            CurrentTripDataManager.stateOfCharge.toFloat(),
             plotLineMarkerType = PlotLineMarkerType.END_SESSION
         )
     }
 
     private fun resumeTrip() {
-        DataManager.TravelTime.start()
-        DataManager.consumptionPlotLine.addDataPoint(
+        CurrentTripDataManager.TravelTime.start()
+        CurrentTripDataManager.consumptionPlotLine.addDataPoint(
             0F,
-            DataManager.CurrentSpeed.timestamp,
-            DataManager.traveledDistance,
-            DataManager.stateOfCharge.toFloat(),
+            CurrentTripDataManager.CurrentSpeed.timestamp,
+            CurrentTripDataManager.traveledDistance,
+            CurrentTripDataManager.stateOfCharge.toFloat(),
             plotLineMarkerType = PlotLineMarkerType.BEGIN_SESSION
         )
     }
@@ -420,7 +421,7 @@ END OF NEW DATA MANAGER
 
     private fun registerCarPropertyCallbacks() {
         InAppLogger.log("DataCollector.registerCarPropertyCallbacks")
-        for (propertyId in DataManager.getVehiclePropertyIds()) {
+        for (propertyId in CurrentTripDataManager.getVehiclePropertyIds()) {
             carPropertyManager.registerCallback(
                 carPropertyListener,
                 propertyId,
@@ -621,7 +622,7 @@ END OF NEW DATA MANAGER
     private fun updateStatsNotification() {
         if (notificationsEnabled && appPreferences.notifications) {
             with(NotificationManagerCompat.from(this)) {
-                val averageConsumption = DataManager.usedEnergy / (DataManager.traveledDistance/1000)
+                val averageConsumption = CurrentTripDataManager.usedEnergy / (CurrentTripDataManager.traveledDistance/1000)
 
                 var averageConsumptionString = String.format("%d Wh/km", averageConsumption.toInt())
                 if (!appPreferences.consumptionUnit) {
@@ -629,14 +630,14 @@ END OF NEW DATA MANAGER
                         "%.1f kWh/100km",
                         averageConsumption / 10)
                 }
-                if ((DataManager.traveledDistance <= 0)) averageConsumptionString = "N/A"
+                if ((CurrentTripDataManager.traveledDistance <= 0)) averageConsumptionString = "N/A"
 
                 notificationCounter++
 
                 val message = String.format(
                     "P:%.1f kW, D: %.3f km, Ø: %s",
-                    DataManager.currentPower / 1_000_000,
-                    DataManager.traveledDistance / 1000,
+                    CurrentTripDataManager.currentPower / 1_000_000,
+                    CurrentTripDataManager.traveledDistance / 1000,
                     averageConsumptionString
                 )
 

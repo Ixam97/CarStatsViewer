@@ -11,14 +11,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.ixam97.carStatsViewer.plot.enums.*
@@ -73,13 +71,13 @@ class MainActivity : Activity() {
         InAppLogger.log("MainActivity.onResume")
 
         if (appPreferences.consumptionUnit) {
-            DataManager.consumptionPlotLine.Configuration.Unit = "Wh/km"
-            DataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
-            DataManager.consumptionPlotLine.Configuration.Divider = 1f
+            DataCollector.CurrentTripDataManager.consumptionPlotLine.Configuration.Unit = "Wh/km"
+            DataCollector.CurrentTripDataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
+            DataCollector.CurrentTripDataManager.consumptionPlotLine.Configuration.Divider = 1f
         } else {
-            DataManager.consumptionPlotLine.Configuration.Unit = "kWh/100km"
-            DataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
-            DataManager.consumptionPlotLine.Configuration.Divider = 10f
+            DataCollector.CurrentTripDataManager.consumptionPlotLine.Configuration.Unit = "kWh/100km"
+            DataCollector.CurrentTripDataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
+            DataCollector.CurrentTripDataManager.consumptionPlotLine.Configuration.Divider = 10f
         }
 
         main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
@@ -101,14 +99,14 @@ class MainActivity : Activity() {
             else -> getString(R.string.main_button_show_speed)
         }
 
-        DataManager.consumptionPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.primary_plot_color), PlotView.textSize)
-        DataManager.consumptionPlotLine.secondaryPlotPaint = when {
+        DataCollector.CurrentTripDataManager.consumptionPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.primary_plot_color), PlotView.textSize)
+        DataCollector.CurrentTripDataManager.consumptionPlotLine.secondaryPlotPaint = when {
             appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
             else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
 
-        DataManager.chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
-        DataManager.chargePlotLine.secondaryPlotPaint = when {
+        DataCollector.CurrentTripDataManager.chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
+        DataCollector.CurrentTripDataManager.chargePlotLine.secondaryPlotPaint = when {
             appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
             else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
@@ -177,24 +175,24 @@ class MainActivity : Activity() {
         updateGages()
 
         main_gage_avg_consumption_text_view.text = "  Ø %s".format(getAvgConsumptionString())
-        main_gage_distance_text_view.text = "  %s".format(getTraveledDistanceString(DataManager.traveledDistance))
-        main_gage_used_power_text_view.text = "  %s".format(getEnergyString(DataManager.usedEnergy))
-        main_gage_time_text_view.text = "  %s".format(getElapsedTimeString(DataManager.travelTime))
-        main_gage_charged_energy_text_view.text = "  %s".format(getEnergyString(DataManager.chargedEnergy))
-        main_gage_charge_time_text_view.text = "  %s".format(getElapsedTimeString(DataManager.chargeTime))
+        main_gage_distance_text_view.text = "  %s".format(getTraveledDistanceString(DataCollector.CurrentTripDataManager.traveledDistance))
+        main_gage_used_power_text_view.text = "  %s".format(getEnergyString(DataCollector.CurrentTripDataManager.usedEnergy))
+        main_gage_time_text_view.text = "  %s".format(getElapsedTimeString(DataCollector.CurrentTripDataManager.travelTime))
+        main_gage_charged_energy_text_view.text = "  %s".format(getEnergyString(DataCollector.CurrentTripDataManager.chargedEnergy))
+        main_gage_charge_time_text_view.text = "  %s".format(getElapsedTimeString(DataCollector.CurrentTripDataManager.chargeTime))
     }
 
     private fun getCurrentSpeedString(): String {
-        return "${(DataManager.currentSpeed * 3.6).toInt()} km/h"
+        return "${(DataCollector.CurrentTripDataManager.currentSpeed * 3.6).toInt()} km/h"
     }
 
     private fun getAvgSpeedString(): String {
         return " %d km/h".format(
-            ((DataManager.traveledDistance / 1000) / (DataManager.travelTime.toFloat() / 3_600_000)).toInt())
+            ((DataCollector.CurrentTripDataManager.traveledDistance / 1000) / (DataCollector.CurrentTripDataManager.travelTime.toFloat() / 3_600_000)).toInt())
     }
 
     private fun getCurrentPowerString(detailed : Boolean = true): String {
-        val rawPower = DataManager.currentPower / 1_000_000
+        val rawPower = DataCollector.CurrentTripDataManager.currentPower / 1_000_000
 
         return when {
             !detailed && rawPower.absoluteValue >= 10 -> "%d kW".format(Locale.ENGLISH, rawPower.roundToInt())
@@ -212,29 +210,29 @@ class MainActivity : Activity() {
     }
 
     private fun getInstConsumptionString(): String {
-        if (DataManager.currentSpeed <= 0) {
+        if (DataCollector.CurrentTripDataManager.currentSpeed <= 0) {
             return "-/-"
         }
         if (!appPreferences.consumptionUnit) {
             return "%.1f kWh/100km".format(
                 Locale.ENGLISH,
-                ((DataManager.currentPower / 1000) / (DataManager.currentSpeed * 3.6))/10)
+                ((DataCollector.CurrentTripDataManager.currentPower / 1000) / (DataCollector.CurrentTripDataManager.currentSpeed * 3.6))/10)
         }
-        return "${((DataManager.currentPower / 1000) / (DataManager.currentSpeed * 3.6)).toInt()} Wh/km"
+        return "${((DataCollector.CurrentTripDataManager.currentPower / 1000) / (DataCollector.CurrentTripDataManager.currentSpeed * 3.6)).toInt()} Wh/km"
     }
 
     private fun getAvgConsumptionString(): String {
         val unitString = if (appPreferences.consumptionUnit) "Wh/km" else "kWh/100km"
-        if (DataManager.traveledDistance <= 0) {
+        if (DataCollector.CurrentTripDataManager.traveledDistance <= 0) {
             return "-/- $unitString"
         }
         if (!appPreferences.consumptionUnit) {
             return "%.1f %s".format(
                 Locale.ENGLISH,
-                (DataManager.usedEnergy /(DataManager.traveledDistance /1000))/10,
+                (DataCollector.CurrentTripDataManager.usedEnergy /(DataCollector.CurrentTripDataManager.traveledDistance /1000))/10,
                 unitString)
         }
-        return "${(DataManager.usedEnergy /(DataManager.traveledDistance /1000)).toInt()} $unitString"
+        return "${(DataCollector.CurrentTripDataManager.usedEnergy /(DataCollector.CurrentTripDataManager.traveledDistance /1000)).toInt()} $unitString"
     }
 
     private fun getTraveledDistanceString(traveledDistance: Float): String {
@@ -243,24 +241,24 @@ class MainActivity : Activity() {
 
     private fun setUiVisibilities() {
 
-        if (main_button_dismiss_charge_plot.isEnabled == DataManager.chargePortConnected)
-            main_button_dismiss_charge_plot.isEnabled = !DataManager.chargePortConnected
+        if (main_button_dismiss_charge_plot.isEnabled == DataCollector.CurrentTripDataManager.chargePortConnected)
+            main_button_dismiss_charge_plot.isEnabled = !DataCollector.CurrentTripDataManager.chargePortConnected
 
-        if (main_charge_layout.visibility == View.GONE && DataManager.chargePortConnected) {
+        if (main_charge_layout.visibility == View.GONE && DataCollector.CurrentTripDataManager.chargePortConnected) {
             main_consumption_layout.visibility = View.GONE
             main_charge_layout.visibility = View.VISIBLE
         }
     }
 
     private fun updateGages() {
-        if ((DataManager.currentPower / 1_000_000).absoluteValue > 10 && true) { // Add Setting!
-            val newValue = (DataManager.currentPower / 1_000_000).toInt()
+        if ((DataCollector.CurrentTripDataManager.currentPower / 1_000_000).absoluteValue > 10 && true) { // Add Setting!
+            val newValue = (DataCollector.CurrentTripDataManager.currentPower / 1_000_000).toInt()
             main_power_gage.setValue(newValue)
         } else {
-            main_power_gage.setValue(DataManager.currentPower / 1_000_000)
+            main_power_gage.setValue(DataCollector.CurrentTripDataManager.currentPower / 1_000_000)
         }
-        main_charge_gage.setValue(-DataManager.currentPower / 1_000_000)
-        main_SoC_gage.setValue((100f / DataManager.maxBatteryLevel * DataManager.batteryLevel).roundToInt())
+        main_charge_gage.setValue(-DataCollector.CurrentTripDataManager.currentPower / 1_000_000)
+        main_SoC_gage.setValue((100f / DataCollector.CurrentTripDataManager.maxBatteryLevel * DataCollector.CurrentTripDataManager.batteryLevel).roundToInt())
 
         var consumptionValue: Float? = null
 
@@ -268,8 +266,8 @@ class MainActivity : Activity() {
             main_consumption_gage.gageUnit = "Wh/km"
             main_consumption_gage.minValue = -300f
             main_consumption_gage.maxValue = 600f
-            if (DataManager.currentSpeed * 3.6 > 3) {
-                main_consumption_gage.setValue(((DataManager.currentPower / 1000) / (DataManager.currentSpeed * 3.6)).toInt())
+            if (DataCollector.CurrentTripDataManager.currentSpeed * 3.6 > 3) {
+                main_consumption_gage.setValue(((DataCollector.CurrentTripDataManager.currentPower / 1000) / (DataCollector.CurrentTripDataManager.currentSpeed * 3.6)).toInt())
             } else {
                 main_consumption_gage.setValue(consumptionValue)
             }
@@ -278,8 +276,8 @@ class MainActivity : Activity() {
             main_consumption_gage.gageUnit = "kWh/100km"
             main_consumption_gage.minValue = -30f
             main_consumption_gage.maxValue = 60f
-            if (DataManager.currentSpeed * 3.6 > 3) {
-                main_consumption_gage.setValue(((DataManager.currentPower / 1000) / (DataManager.currentSpeed * 3.6f))/10)
+            if (DataCollector.CurrentTripDataManager.currentSpeed * 3.6 > 3) {
+                main_consumption_gage.setValue(((DataCollector.CurrentTripDataManager.currentPower / 1000) / (DataCollector.CurrentTripDataManager.currentSpeed * 3.6f))/10)
             } else {
                 main_consumption_gage.setValue(consumptionValue)
             }
@@ -289,7 +287,7 @@ class MainActivity : Activity() {
     private fun updatePlots(){
         // if (appPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
 
-        main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(DataManager.chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
+        main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(DataCollector.CurrentTripDataManager.chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
 
         if (SystemClock.elapsedRealtime() - lastPlotUpdate > 1_000L) {
             if (main_consumption_layout.visibility == View.VISIBLE) {
@@ -324,7 +322,7 @@ class MainActivity : Activity() {
         finish()
         startActivity(intent)
         InAppLogger.log("MainActivity.resetStats")
-        DataManager.reset()
+        DataCollector.CurrentTripDataManager.reset()
         sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
     }
 
@@ -340,7 +338,7 @@ class MainActivity : Activity() {
         main_radio_group_distance.check(plotDistanceId)
 
         main_consumption_plot.reset()
-        main_consumption_plot.addPlotLine(DataManager.consumptionPlotLine)
+        main_consumption_plot.addPlotLine(DataCollector.CurrentTripDataManager.consumptionPlotLine)
         // main_consumption_plot.setPlotMarkers(DataManager.plotMarkers)
         // main_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
         // main_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
@@ -350,7 +348,7 @@ class MainActivity : Activity() {
             else -> getString(R.string.main_button_show_speed)
         }
 
-        DataManager.consumptionPlotLine.secondaryPlotPaint = when {
+        DataCollector.CurrentTripDataManager.consumptionPlotLine.secondaryPlotPaint = when {
             appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
             else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
@@ -368,9 +366,9 @@ class MainActivity : Activity() {
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
-        main_charge_plot.addPlotLine(DataManager.chargePlotLine)
+        main_charge_plot.addPlotLine(DataCollector.CurrentTripDataManager.chargePlotLine)
 
-        DataManager.chargePlotLine.secondaryPlotPaint = when {
+        DataCollector.CurrentTripDataManager.chargePlotLine.secondaryPlotPaint = when {
             appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
             else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
@@ -421,7 +419,7 @@ class MainActivity : Activity() {
                         VehiclePropertyIds.GEAR_SELECTION
                     )
                     putExtra(EmulatorIntentExtras.TYPE, EmulatorIntentExtras.TYPE_INT)
-                    if (DataManager.currentGear == VehicleGear.GEAR_PARK) {
+                    if (DataCollector.CurrentTripDataManager.currentGear == VehicleGear.GEAR_PARK) {
                         putExtra(
                             EmulatorIntentExtras.VALUE,
                             VehicleGear.GEAR_DRIVE

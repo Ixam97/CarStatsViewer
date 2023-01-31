@@ -14,7 +14,7 @@ import com.ixam97.carStatsViewer.plot.objects.*
 import java.util.Date
 import kotlin.math.absoluteValue
 
-sealed class TimeTracker(val printableName: String = "", val doLog: Boolean = false) {
+class TimeTracker(val printableName: String = "", val doLog: Boolean = false) {
     private var startDate: Date? = null
     private var timeSpan: Long = 0
 
@@ -48,7 +48,7 @@ sealed class TimeTracker(val printableName: String = "", val doLog: Boolean = fa
     }
 }
 
-sealed class DrivingState() {
+class DrivingState(val ChargePortConnected: VehicleProperty, val CurrentIgnitionState: VehicleProperty) {
     // States
     companion object {
         val UNKNOWN = -1
@@ -69,14 +69,16 @@ sealed class DrivingState() {
 
     fun getDriveState(): Int {
         var newDriveState = UNKNOWN
-        if (DataManager.chargePortConnected) newDriveState = CHARGE
-        else if (DataManager.currentIgnitionState == VehicleIgnitionState.START) newDriveState = DRIVE
-        else if (!DataManager.chargePortConnected && (DataManager.currentIgnitionState == VehicleIgnitionState.OFF || DataManager.currentIgnitionState == VehicleIgnitionState.ON)) newDriveState = PARKED
+        val chargePortConnected = (ChargePortConnected.value?: false) as Boolean
+        val currentIgnitionState = (CurrentIgnitionState.value?: 0) as Int
+        if (chargePortConnected) newDriveState = CHARGE
+        else if (currentIgnitionState == VehicleIgnitionState.START) newDriveState = DRIVE
+        else if (currentIgnitionState == VehicleIgnitionState.OFF || currentIgnitionState == VehicleIgnitionState.ON) newDriveState = PARKED
         return newDriveState
     }
 }
 
-sealed class VehicleProperty(val printableName: String, val propertyId: Int) {
+class VehicleProperty(val printableName: String, val propertyId: Int) {
     internal val startupTimestamp = System.nanoTime()
 
     /** Value of the Vehicle */
@@ -131,29 +133,29 @@ sealed class VehicleProperty(val printableName: String, val propertyId: Int) {
  * A charging session is started by plugging in the charge cable, stopped by unplugging it. Like a
  * drive, charging time and charged energy are tracked in between these events.
  */
-sealed class DataManager {
+class DataManager {
     /** Current speed in m/s */
-    object CurrentSpeed: VehicleProperty("CurrentSpeed", VehiclePropertyIds.PERF_VEHICLE_SPEED)
+    val CurrentSpeed = VehicleProperty("CurrentSpeed", VehiclePropertyIds.PERF_VEHICLE_SPEED)
     /** Current power in mW */
-    object CurrentPower: VehicleProperty("CurrentPower", VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE)
+    val CurrentPower = VehicleProperty("CurrentPower", VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE)
     /** Current gear selection */
-    object CurrentGear: VehicleProperty("CurrentGear", VehiclePropertyIds.GEAR_SELECTION)
+    val CurrentGear = VehicleProperty("CurrentGear", VehiclePropertyIds.GEAR_SELECTION)
     /** Connection status of the charge port */
-    object ChargePortConnected: VehicleProperty("ChargePortConnected", VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED)
+    val ChargePortConnected = VehicleProperty("ChargePortConnected", VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED)
     /** Battery level in Wh, only usable for calculating the SoC! */
-    object BatteryLevel: VehicleProperty("BatteryLevel", VehiclePropertyIds.EV_BATTERY_LEVEL)
+    val BatteryLevel = VehicleProperty("BatteryLevel", VehiclePropertyIds.EV_BATTERY_LEVEL)
     /** Ignition state of the vehicle */
-    object CurrentIgnitionState: VehicleProperty("CurrentIgnitionState",  VehiclePropertyIds.IGNITION_STATE)
+    val CurrentIgnitionState = VehicleProperty("CurrentIgnitionState",  VehiclePropertyIds.IGNITION_STATE)
 
     /** Travel time in milliseconds */
-    object TravelTime: TimeTracker()
+    val TravelTime = TimeTracker()
     /** Charge time in milliseconds */
-    object ChargeTime: TimeTracker()
+    val ChargeTime = TimeTracker()
 
-    object DriveState: DrivingState()
+    val DriveState = DrivingState(ChargePortConnected, CurrentIgnitionState)
 
-    companion object {
-        const val TAG = "DataManager"
+    // companion object {
+        val TAG = "DataManager"
         // Easier vehicle property access and implicit values
         /** Current speed in m/s */
         val currentSpeed get() = ((CurrentSpeed.value?: 0F) as Float).absoluteValue
@@ -221,15 +223,15 @@ sealed class DataManager {
 
         // Updater return values
         /** Value was updated */
-        const val VALID = 0
+        val VALID = 0
         /** Timestamp of new value is invalid (smaller than current timestamp) */
-        const val INVALID_TIMESTAMP = 1
+        val INVALID_TIMESTAMP = 1
         /** The PropertyID is not implemented in the DataManager */
-        const val INVALID_PROPERTY_ID = 2
+        val INVALID_PROPERTY_ID = 2
         /** The new Value is of an invalid Type */
-        const val INVALID_TYPE = 3
+        val INVALID_TYPE = 3
         /** The new value is equal to the last value */
-        const val SKIP_SAME_VALUE = 4
+        val SKIP_SAME_VALUE = 4
 
         /** Update data manager using a VehiclePropertyValue. Returns VALID when value was changed.
          * @param value The CarPropertyValue received by the CarPropertyManager.
@@ -343,5 +345,5 @@ sealed class DataManager {
             BatteryLevel.propertyId to BatteryLevel,
             CurrentIgnitionState.propertyId to CurrentIgnitionState
         )
-    }
+
 }
