@@ -455,7 +455,7 @@ class DataCollector : Service() {
             DataHolder.traveledDistance,
             DataHolder.stateOfCharge(),
             plotLineMarkerType = marker,
-            autoMarkerTimeDeltaMax = TimeUnit.MILLISECONDS.toNanos(CHARGE_CURVE_UPDATE_INTERVAL_MILLIS) * 2
+            autoMarkerTimeDeltaThreshold = TimeUnit.MILLISECONDS.toNanos(CHARGE_CURVE_UPDATE_INTERVAL_MILLIS) * 2
         )
     }
 
