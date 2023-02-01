@@ -75,7 +75,7 @@ class DataManager {
         val chargeTime: Long get() = ChargeTime.getTime()
         /** Current DrivingState of the car */
         val driveState: Int get() = DriveState.getDriveState()
-        /** Current DrivingState of the car */
+        /** Current AmbientTemperature */
         val ambientTemperature: Float get() = (CurrentAmbientTemperature.value?: 0f) as Float
 
         // Vehicle statistics
