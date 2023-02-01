@@ -76,7 +76,7 @@ class DataManager {
         /** Current DrivingState of the car */
         val driveState: Int get() = DriveState.getDriveState()
         /** Current DrivingState of the car */
-        val ambientTemperature: Float get() = (CurrentAmbientTemperature.value?: 0) as Float
+        val ambientTemperature: Float get() = (CurrentAmbientTemperature.value?: 0f) as Float
 
         // Vehicle statistics
         /** Max battery level in Wh, only usable for calculating the SoC! */
