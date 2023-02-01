@@ -358,7 +358,8 @@
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="35sp"
                         android:drawableStart="@drawable/ic_temperature"
-                        />
+                        android:visibility="gone"
+                    />
 
                 </LinearLayout>
             </LinearLayout>
