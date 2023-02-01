@@ -119,6 +119,7 @@ class SummaryActivity: Activity() {
         val plotMarkers = PlotMarkers()
         plotMarkers.addMarkers(tripData.markers)
         summary_consumption_plot.addPlotLine(DataCollector.CurrentTripDataManager.consumptionPlotLine)
+        summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
         summary_consumption_plot.secondaryDimension = PlotSecondaryDimension.SPEED
         summary_consumption_plot.dimension = PlotDimension.DISTANCE
         summary_consumption_plot.dimensionRestriction = ((tripData.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1
@@ -126,7 +127,7 @@ class SummaryActivity: Activity() {
         summary_consumption_plot.setPlotMarkers(plotMarkers)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
-        summary_consumption_plot.dimensionShiftTouchInterval = 1_000L
+        summary_consumption_plot.dimensionShiftTouchEnabled = true
         summary_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
 
         summary_consumption_plot.invalidate()
@@ -171,6 +172,7 @@ class SummaryActivity: Activity() {
 
         summary_charge_plot_view.dimension = PlotDimension.TIME
         summary_charge_plot_view.dimensionSmoothingPercentage = 0.01f
+        summary_charge_plot_view.sessionGapRendering = PlotSessionGapRendering.GAP
         summary_charge_plot_view.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
         summary_charge_plot_view.invalidate()
 
