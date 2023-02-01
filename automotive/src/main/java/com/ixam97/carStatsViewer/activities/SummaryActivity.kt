@@ -119,7 +119,7 @@ class SummaryActivity: Activity() {
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
         summary_consumption_plot.dimensionShiftTouchEnabled = true
         summary_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
-        summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.GAP
+        summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
 
         summary_consumption_plot.invalidate()
 
@@ -164,6 +164,7 @@ class SummaryActivity: Activity() {
         summary_charge_plot_view.dimension = PlotDimension.TIME
         summary_charge_plot_view.dimensionSmoothingPercentage = 0.01f
         summary_charge_plot_view.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
+        summary_charge_plot_view.sessionGapRendering = PlotSessionGapRendering.GAP
         summary_charge_plot_view.invalidate()
 
         summary_charge_plot_seek_bar.max = (DataHolder.chargeCurves.size - 1).coerceAtLeast(0)
