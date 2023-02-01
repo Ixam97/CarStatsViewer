@@ -377,7 +377,8 @@ STARTING NEW DATA MANAGER HERE
             ChargeCurve(
                 CurrentTripDataManager.chargePlotLine.getDataPoints(PlotDimension.TIME),
                 CurrentTripDataManager.chargeTime,
-                CurrentTripDataManager.chargedEnergy
+                CurrentTripDataManager.chargedEnergy,
+                CurrentTripDataManager.ambientTemperature
             )
         )
     }
