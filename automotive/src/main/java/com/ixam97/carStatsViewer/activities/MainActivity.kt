@@ -360,6 +360,7 @@ class MainActivity : Activity() {
         main_consumption_plot.dimensionSmoothingPercentage = 0.02f
         //main_consumption_plot.dimensionShiftTouchInterval = 1_000L
         //main_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
+        main_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
         main_consumption_plot.secondaryDimension = when (appPreferences.plotSpeed) {
             true -> PlotSecondaryDimension.SPEED
             else -> null
@@ -378,7 +379,7 @@ class MainActivity : Activity() {
         main_charge_plot.dimension = PlotDimension.TIME
         main_charge_plot.dimensionRestriction = null
         main_charge_plot.dimensionSmoothingPercentage = 0.01f
-        main_charge_plot.sessionGapRendering = PlotSessionGapRendering.NONE
+        main_charge_plot.sessionGapRendering = PlotSessionGapRendering.GAP
         main_charge_plot.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
         main_charge_plot.invalidate()
 

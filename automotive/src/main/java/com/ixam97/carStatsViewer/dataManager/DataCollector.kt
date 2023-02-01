@@ -34,6 +34,7 @@ class DataCollector : Service() {
         private const val NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS = 1_000L
         private const val CONSUMPTION_PLOT_UPDATE_DISTANCE = 100
         private const val CHARGE_PLOT_UPDATE_INTERVAL_MILLIS = 2_000L
+        private const val CHARGE_PLOT_MARKER_THRESHOLD_NANOS = 4_000_000_000L // 2 times CHARGE_PLOT_UPDATE_INTERVAL_MILLIS in nanos
         private const val AUTO_SAVE_INTERVAL_MILLIS = 30_000L
     }
 
@@ -261,7 +262,8 @@ STARTING NEW DATA MANAGER HERE
                             -CurrentTripDataManager.currentPower / 1_000_000,
                             CurrentTripDataManager.CurrentPower.timestamp,
                             CurrentTripDataManager.traveledDistance,
-                            CurrentTripDataManager.stateOfCharge.toFloat()
+                            CurrentTripDataManager.stateOfCharge.toFloat(),
+                            autoMarkerTimeDeltaThreshold = CHARGE_PLOT_MARKER_THRESHOLD_NANOS
                         )
                         chargePlotTimeDelta = 0L
                         sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
@@ -355,7 +357,8 @@ STARTING NEW DATA MANAGER HERE
             CurrentTripDataManager.CurrentPower.timestamp,
             CurrentTripDataManager.traveledDistance,
             CurrentTripDataManager.stateOfCharge.toFloat(),
-            plotLineMarkerType = PlotLineMarkerType.BEGIN_SESSION
+            plotLineMarkerType = PlotLineMarkerType.BEGIN_SESSION,
+            autoMarkerTimeDeltaThreshold = CHARGE_PLOT_MARKER_THRESHOLD_NANOS
         )
     }
 
@@ -366,7 +369,8 @@ STARTING NEW DATA MANAGER HERE
             CurrentTripDataManager.CurrentPower.timestamp,
             CurrentTripDataManager.traveledDistance,
             CurrentTripDataManager.stateOfCharge.toFloat(),
-            plotLineMarkerType = PlotLineMarkerType.END_SESSION
+            plotLineMarkerType = PlotLineMarkerType.END_SESSION,
+            autoMarkerTimeDeltaThreshold = CHARGE_PLOT_MARKER_THRESHOLD_NANOS
         )
 
         CurrentTripDataManager.chargeCurves.add(
