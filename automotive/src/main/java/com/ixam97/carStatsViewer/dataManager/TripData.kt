@@ -1,7 +1,6 @@
-package com.ixam97.carStatsViewer.objects
+package com.ixam97.carStatsViewer.dataManager
 
 import com.ixam97.carStatsViewer.plot.objects.PlotLineItem
-import com.ixam97.carStatsViewer.plot.enums.PlotLineMarkerType
 import com.ixam97.carStatsViewer.plot.objects.PlotMarker
 import java.util.*
 

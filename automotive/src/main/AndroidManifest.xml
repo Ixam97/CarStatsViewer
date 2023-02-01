@@ -47,7 +47,7 @@
             android:exported="false">
             <meta-data android:name="distractionOptimized" android:value="true"/>
         </activity>
-        <service android:name=".services.DataCollector"/>
+        <service android:name=".dataManager.DataCollector"/>
     </application>
 
 </manifest>

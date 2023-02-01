@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer
 
-import com.ixam97.carStatsViewer.objects.*
 import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -8,6 +7,7 @@ import android.content.Context
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import kotlinx.android.synthetic.main.activity_log.*
 import java.text.SimpleDateFormat
 import java.util.*

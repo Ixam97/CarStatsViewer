@@ -3,7 +3,6 @@ package com.ixam97.carStatsViewer.activities
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import com.ixam97.carStatsViewer.*
-import com.ixam97.carStatsViewer.objects.*
 import android.app.Activity
 import android.app.AlertDialog
 import android.car.VehicleGear
@@ -17,15 +16,11 @@ import android.content.IntentFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.view.View
-import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
+import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.plot.enums.*
-import com.ixam97.carStatsViewer.plot.objects.PlotLine
-import com.ixam97.carStatsViewer.plot.objects.PlotLineConfiguration
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
-import com.ixam97.carStatsViewer.plot.objects.PlotRange
-import com.ixam97.carStatsViewer.services.DataCollector
+import com.ixam97.carStatsViewer.dataManager.DataCollector
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlin.system.exitProcess
 

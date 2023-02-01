@@ -11,14 +11,13 @@ import android.text.format.DateFormat
 import android.util.TypedValue
 import android.view.View
 import android.widget.SeekBar
-import com.ixam97.carStatsViewer.DataManager
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.objects.AppPreferences
-import com.ixam97.carStatsViewer.objects.TripData
+import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.dataManager.TripData
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.*
 import com.ixam97.carStatsViewer.plot.objects.*
-import com.ixam97.carStatsViewer.services.DataCollector
+import com.ixam97.carStatsViewer.dataManager.DataCollector
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_summary.*
 import java.util.*

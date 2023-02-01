@@ -1,7 +1,5 @@
-package com.ixam97.carStatsViewer.services
+package com.ixam97.carStatsViewer.dataManager
 
-
-import com.ixam97.carStatsViewer.objects.*
 import com.ixam97.carStatsViewer.*
 import android.app.*
 import android.car.Car
@@ -17,7 +15,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
 import com.ixam97.carStatsViewer.activities.emulatorMode
-import com.ixam97.carStatsViewer.activities.emulatorPowerSign
+import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.plot.enums.*
 import kotlinx.coroutines.*
 import java.io.File
@@ -25,23 +23,10 @@ import java.io.FileWriter
 import java.lang.Runnable
 import kotlin.math.absoluteValue
 
-lateinit var mainActivityPendingIntent: PendingIntent
-
-sealed class EmulatorIntentExtras {
-    companion object {
-        const val PROPERTY_ID = "propertyId"
-        const val TYPE = "valueType"
-        const val VALUE = "value"
-        const val TYPE_FLOAT = "Float"
-        const val TYPE_INT = "Int"
-        const val TYPE_BOOLEAN = "Boolean"
-        const val TYPE_STRING = "String"
-    }
-}
-
 class DataCollector : Service() {
     companion object {
-        val CurrentTripDataManager = DataManager()
+        lateinit var mainActivityPendingIntent: PendingIntent
+        val CurrentTripDataManager = DataManagers.CURRENT_TRIP.dataManager
         private const val DO_LOG = false
         private const val CHANNEL_ID = "TestChannel"
         private const val STATS_NOTIFICATION_ID = 1
@@ -260,7 +245,7 @@ STARTING NEW DATA MANAGER HERE
         when (CurrentTripDataManager.driveState) {
             DrivingState.DRIVE -> {
                 if (!CurrentTripDataManager.CurrentPower.isInitialValue) {
-                    val usedEnergyDelta = (emulatorPowerSign * CurrentTripDataManager.currentPower / 1_000) * ((CurrentTripDataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
+                    val usedEnergyDelta = (CurrentTripDataManager.currentPower / 1_000) * ((CurrentTripDataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
                     CurrentTripDataManager.usedEnergy += usedEnergyDelta
                     consumptionPlotEnergyDelta += usedEnergyDelta
                 }

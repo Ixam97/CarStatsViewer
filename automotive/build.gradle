@@ -11,7 +11,7 @@ android {
         minSdkVersion 28
         targetSdkVersion 33
         versionCode 39
-        versionName "0.22.0_dev02"
+        versionName "DataManager_Prototype_01"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

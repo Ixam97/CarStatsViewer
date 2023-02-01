@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.objects
+package com.ixam97.carStatsViewer.appPreferences
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -174,20 +174,4 @@ class AppPreferences(context: Context) {
         }
         throw java.lang.Exception("AppPreferences.setPreference: Unknown Preference!")
     }
-}
-
-enum class AppPreference {
-    DEBUG,
-    NOTIFICATIONS,
-    CONSUMPTION_UNIT,
-    EXPERIMENTAL_LAYOUT,
-    DEEP_LOG,
-    PLOT_SHOW_SPEED,
-    PLOT_DISTANCE,
-    CONSUMPTION_PLOT_SINGLE_MOTOR,
-    CONSUMPTION_PLOT_SECONDARY_COLOR,
-    CONSUMPTION_PLOT_VISIBLE_GAGES,
-    CHARGE_PLOT_SECONDARY_COLOR,
-    CHARGE_PLOT_VISIBLE_GAGES,
-    CHARGE_PLOT_DIMENSION
 }
