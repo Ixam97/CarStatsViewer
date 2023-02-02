@@ -36,6 +36,8 @@ class DataManager {
     val BatteryLevel = VehicleProperty("BatteryLevel", VehiclePropertyIds.EV_BATTERY_LEVEL)
     /** Ignition state of the vehicle */
     val CurrentIgnitionState = VehicleProperty("CurrentIgnitionState",  VehiclePropertyIds.IGNITION_STATE)
+    /** Current ambientTemperature */
+    val CurrentAmbientTemperature = VehicleProperty("CurrentAmbientTemperature",  VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE)
 
     /** Travel time in milliseconds */
     val TravelTime = TimeTracker()
@@ -73,7 +75,8 @@ class DataManager {
         val chargeTime: Long get() = ChargeTime.getTime()
         /** Current DrivingState of the car */
         val driveState: Int get() = DriveState.getDriveState()
-
+        /** Current AmbientTemperature */
+        val ambientTemperature: Float get() = (CurrentAmbientTemperature.value?: 0f) as Float
 
         // Vehicle statistics
         /** Max battery level in Wh, only usable for calculating the SoC! */
@@ -247,7 +250,8 @@ class DataManager {
             CurrentGear.propertyId to CurrentGear,
             ChargePortConnected.propertyId to ChargePortConnected,
             BatteryLevel.propertyId to BatteryLevel,
-            CurrentIgnitionState.propertyId to CurrentIgnitionState
+            CurrentIgnitionState.propertyId to CurrentIgnitionState,
+            CurrentAmbientTemperature.propertyId to CurrentAmbientTemperature
         )
 
 }

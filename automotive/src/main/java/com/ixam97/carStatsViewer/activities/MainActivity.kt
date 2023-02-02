@@ -182,6 +182,7 @@ class MainActivity : Activity() {
         main_gage_time_text_view.text = "  %s".format(getElapsedTimeString(selectedDataManager.travelTime))
         main_gage_charged_energy_text_view.text = "  %s".format(getEnergyString(selectedDataManager.chargedEnergy))
         main_gage_charge_time_text_view.text = "  %s".format(getElapsedTimeString(selectedDataManager.chargeTime))
+        main_gage_ambient_temperature_text_view.text = "  %.1f° C".format(selectedDataManager.ambientTemperature)
     }
 
     private fun getCurrentSpeedString(): String {
