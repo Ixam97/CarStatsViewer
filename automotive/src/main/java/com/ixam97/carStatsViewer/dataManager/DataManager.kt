@@ -194,7 +194,7 @@ class DataManager {
                 TravelTime.restore(value?.travelTime?: 0L)
                 chargedEnergy = value?.chargedEnergy?: 0F
                 ChargeTime.restore(value?.chargeTime?: 0L)
-                plotMarkers.addMarkers(value?.markers?: listOf())
+                plotMarkers.reset()
                 chargeCurves = ArrayList()
                 consumptionPlotLine.reset()
                 chargePlotLine.reset()
@@ -205,8 +205,9 @@ class DataManager {
                             chargeCurves.add(curve)
                         }
                     }
-                    consumptionPlotLine.addDataPoints(value.consumptionPlotLine?: listOf())
-                    chargePlotLine.addDataPoints(value.chargePlotLine?: listOf())
+                    plotMarkers.addMarkers(value.markers?: emptyList())
+                    consumptionPlotLine.addDataPoints(value.consumptionPlotLine?: emptyList())
+                    chargePlotLine.addDataPoints(value.chargePlotLine?: emptyList())
                 } else {
                     TravelTime.reset()
                     ChargeTime.reset()

@@ -7,7 +7,10 @@ import android.content.Context
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.dataManager.DataManagers
 import kotlinx.android.synthetic.main.activity_log.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -108,12 +111,17 @@ class LogActivity : Activity() {
         logString += "${InAppLogger.getVHALLog()}\n${InAppLogger.getUILog()}\n${InAppLogger.getNotificationLog()}\n"
         logString += "v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
 
-        val logTextView = TextView(this)
-        logTextView.text = logString
-        log_log.addView(logTextView)
+        // val logTextView = TextView(this)
+        // logTextView.typeface
+        log_text_view.text = logString
 
         log_button_back.setOnClickListener {
             finish()
+        }
+
+        log_button_show_json.setOnClickListener {
+            val gson = GsonBuilder().setPrettyPrinting().create()
+            log_text_view.text = gson.toJson(DataManagers.CURRENT_TRIP.dataManager.tripData)
         }
 
         log_button_copy.setOnClickListener {
