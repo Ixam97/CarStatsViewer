@@ -366,7 +366,7 @@ STARTING NEW DATA MANAGER HERE
         CurrentTripDataManager.ChargeTime.stop()
         CurrentTripDataManager.chargePlotLine.addDataPoint(
             CurrentTripDataManager.currentPower,
-            CurrentTripDataManager.CurrentPower.timestamp,
+            System.nanoTime(),
             CurrentTripDataManager.traveledDistance,
             CurrentTripDataManager.stateOfCharge.toFloat(),
             plotLineMarkerType = PlotLineMarkerType.END_SESSION,

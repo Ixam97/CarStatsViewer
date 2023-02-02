@@ -160,6 +160,8 @@ class SummaryActivity: Activity() {
             summary_charged_energy_value_text.text = getChargedEnergyString(tripData.chargeCurves.size - 1)
             summary_charge_time_value_text.text = getElapsedTimeString(tripData.chargeCurves.last().chargeTime)
             summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves.last().chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
+            summary_charge_plot_view.dimensionShiftTouchEnabled = true
+            summary_charge_plot_view.dimensionRestrictionTouchInterval = TimeUnit.SECONDS.toNanos(10L)
 
         }
         if (tripData.chargeCurves.size < 2){

@@ -128,7 +128,7 @@ class LogActivity : Activity() {
         }
 
         log_button_copy.setOnClickListener {
-            InAppLogger.copyToClipboard(this)
+            copyToClipboard(log_text_view.text.toString())
         }
 
         log_button_reload.setOnClickListener {
@@ -153,7 +153,7 @@ class LogActivity : Activity() {
         InAppLogger.log("LogActivity.onDestroy")
     }
 
-    fun getLogString(): String {
+    private fun getLogString(): String {
         var logString = ""
 
         for (i in 0 until InAppLogger.logArray.size) {
@@ -164,5 +164,13 @@ class LogActivity : Activity() {
         logString += "v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
 
         return logString
+    }
+
+    private fun copyToClipboard(clipboardString: String) {
+        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("CarStatsViewerLog", clipboardString)
+        clipboardManager.setPrimaryClip(clipData)
+
+        Toast.makeText(this,"Copied to clipboard", Toast.LENGTH_LONG).show()
     }
 }

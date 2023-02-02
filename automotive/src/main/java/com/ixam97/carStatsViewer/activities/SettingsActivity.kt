@@ -17,7 +17,9 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.dataManager.ChargeCurve
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.dataManager.DataCollector
@@ -173,6 +175,23 @@ class SettingsActivity : Activity() {
                 else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
             }
             DataCollector.CurrentTripDataManager.chargePlotLine.secondaryPlotPaint = plotPaint
+        }
+
+        settings_save_charge_curve.setOnClickListener {
+            if (DataCollector.CurrentTripDataManager.chargePlotLine.getDataPoints(PlotDimension.TIME).isNotEmpty()) {
+                DataCollector.CurrentTripDataManager.chargeCurves.add(
+                    ChargeCurve(
+                        DataCollector.CurrentTripDataManager.chargePlotLine.getDataPoints(PlotDimension.TIME),
+                        DataCollector.CurrentTripDataManager.chargeTime,
+                        DataCollector.CurrentTripDataManager.chargedEnergy,
+                        DataCollector.CurrentTripDataManager.ambientTemperature
+                    )
+                )
+                sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+                Toast.makeText(this, "Saved charge curve", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "No charge curve to save", Toast.LENGTH_SHORT).show()
+            }
         }
 /*
         settings_charge_plot_switch_state_of_charge_dimension.setOnClickListener {
