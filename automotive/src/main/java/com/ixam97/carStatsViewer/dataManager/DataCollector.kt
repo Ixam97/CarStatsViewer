@@ -34,7 +34,7 @@ class DataCollector : Service() {
         private const val NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS = 1_000L
         private const val CONSUMPTION_PLOT_UPDATE_DISTANCE = 100
         private const val CHARGE_PLOT_UPDATE_INTERVAL_MILLIS = 2_000L
-        private const val CHARGE_PLOT_MARKER_THRESHOLD_NANOS = 4_000_000_000L // 2 times CHARGE_PLOT_UPDATE_INTERVAL_MILLIS in nanos
+        private const val CHARGE_PLOT_MARKER_THRESHOLD_NANOS = 10_000_000_000L // 2 times CHARGE_PLOT_UPDATE_INTERVAL_MILLIS in nanos
         private const val AUTO_SAVE_INTERVAL_MILLIS = 30_000L
     }
 
@@ -201,9 +201,10 @@ STARTING NEW DATA MANAGER HERE
 
     private val carPropertyListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(carPropertyValue: CarPropertyValue<*>) {
-            if (CurrentTripDataManager.update(carPropertyValue, DO_LOG, valueMustChange = false, allowInvalidTimestamps = true) == CurrentTripDataManager.VALID) {
-                handleCarPropertyListenerEvent(carPropertyValue.propertyId)
-            }
+            //if (CurrentTripDataManager.update(carPropertyValue, DO_LOG, valueMustChange = false, allowInvalidTimestamps = true) == CurrentTripDataManager.VALID) {
+            //    handleCarPropertyListenerEvent(carPropertyValue.propertyId)
+            //}
+            handleCarPropertyListenerEvent()
         }
         override fun onErrorEvent(propertyId: Int, zone: Int) {
             Log.w("carPropertyGenericListener","Received error car property event, propId=$propertyId")
@@ -240,6 +241,16 @@ STARTING NEW DATA MANAGER HERE
             CurrentTripDataManager.CurrentIgnitionState.propertyId -> driveStateUpdater()
             CurrentTripDataManager.ChargePortConnected.propertyId  -> driveStateUpdater()
         }
+    }
+
+    private fun handleCarPropertyListenerEvent() {
+        for (propertyId in CurrentTripDataManager.getVehiclePropertyIds()) {
+            val newValue = carPropertyManager.getProperty<Any>(propertyId, 0)
+            CurrentTripDataManager.update(newValue.value, System.nanoTime(), propertyId, doLog = true)
+        }
+        powerUpdater()
+        speedUpdater()
+        driveStateUpdater()
     }
 
     private fun powerUpdater() {
@@ -318,6 +329,7 @@ STARTING NEW DATA MANAGER HERE
     private fun driveStateUpdater() {
         val previousDrivingState = CurrentTripDataManager.DriveState.lastDriveState
         if (CurrentTripDataManager.DriveState.hasChanged()) {
+            InAppLogger.log("DRIVE STATE: ${DrivingState.nameMap[previousDrivingState]} -> ${DrivingState.nameMap[CurrentTripDataManager.driveState]}")
             when (CurrentTripDataManager.driveState) {
                 DrivingState.DRIVE -> {
                     resumeTrip()

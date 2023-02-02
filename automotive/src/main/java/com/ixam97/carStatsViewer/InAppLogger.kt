@@ -118,7 +118,7 @@ class LogActivity : Activity() {
                 "JSON" -> {
                     log_button_show_json.text = "LOG"
                     val gson = GsonBuilder().setPrettyPrinting().create()
-                    log_text_view.text = gson.toJson(DataManagers.CURRENT_TRIP.dataManager.tripData)
+                    log_text_view.text = gson.toJson(DataManagers.CURRENT_TRIP.dataManager.tripData?: "None")
                 }
                 "LOG" -> {
                     log_button_show_json.text = "JSON"

@@ -74,6 +74,7 @@
     <string name="summary_travel_time">Travel time</string>
     <string name="summary_charged_energy">Charged energy</string>
     <string name="summary_charge_time">Charge time</string>
+    <string name="summary_charge_ambient_temp">Ambient temperature</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>

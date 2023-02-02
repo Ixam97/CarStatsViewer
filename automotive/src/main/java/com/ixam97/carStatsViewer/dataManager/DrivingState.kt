@@ -9,6 +9,13 @@ class DrivingState(private val ChargePortConnected: VehicleProperty, private val
         val PARKED = 0
         val DRIVE = 1
         val CHARGE = 2
+
+        val nameMap = mapOf<Int, String>(
+            UNKNOWN to "UNKNOWN",
+            PARKED to "PARKED",
+            DRIVE to "DRIVE",
+            CHARGE to "CHARGE"
+        )
     }
 
     var lastDriveState: Int = UNKNOWN

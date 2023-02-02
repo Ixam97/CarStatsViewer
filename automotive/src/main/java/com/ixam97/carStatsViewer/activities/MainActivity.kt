@@ -379,7 +379,7 @@ class MainActivity : Activity() {
 
         main_charge_plot.dimension = PlotDimension.TIME
         main_charge_plot.dimensionRestriction = null
-        main_charge_plot.dimensionSmoothingPercentage = 0.01f
+        // main_charge_plot.dimensionSmoothingPercentage = 0.01f
         main_charge_plot.sessionGapRendering = PlotSessionGapRendering.GAP
         main_charge_plot.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
         main_charge_plot.invalidate()

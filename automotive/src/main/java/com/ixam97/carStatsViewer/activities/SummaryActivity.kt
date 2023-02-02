@@ -159,6 +159,7 @@ class SummaryActivity: Activity() {
 
             summary_charged_energy_value_text.text = getChargedEnergyString(tripData.chargeCurves.size - 1)
             summary_charge_time_value_text.text = getElapsedTimeString(tripData.chargeCurves.last().chargeTime)
+            summary_charge_ambient_temp.text = "%.0f °C".format(tripData.chargeCurves.last().ambientTemperature)
             summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves.last().chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
             summary_charge_plot_view.dimensionShiftTouchEnabled = true
             summary_charge_plot_view.dimensionRestrictionTouchInterval = TimeUnit.SECONDS.toNanos(10L)
@@ -173,7 +174,7 @@ class SummaryActivity: Activity() {
         summary_charge_plot_view.addPlotLine(chargePlotLine)
 
         summary_charge_plot_view.dimension = PlotDimension.TIME
-        summary_charge_plot_view.dimensionSmoothingPercentage = 0.01f
+        // summary_charge_plot_view.dimensionSmoothingPercentage = 0.01f
         summary_charge_plot_view.sessionGapRendering = PlotSessionGapRendering.GAP
         summary_charge_plot_view.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
         summary_charge_plot_view.invalidate()
@@ -242,6 +243,7 @@ class SummaryActivity: Activity() {
 
         summary_charged_energy_value_text.text = getChargedEnergyString(progress)
         summary_charge_time_value_text.text = getElapsedTimeString(tripData.chargeCurves[progress].chargeTime)
+        summary_charge_ambient_temp.text = "%.0f °C".format(tripData.chargeCurves[progress].ambientTemperature)
 
         chargePlotLine.reset()
         chargePlotLine.addDataPoints(tripData.chargeCurves[progress].chargePlotLine)
