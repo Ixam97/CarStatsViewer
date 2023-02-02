@@ -8,6 +8,9 @@ Inspired by https://github.com/android/car-samples/tree/main/car-lib/CarGearView
 
 ## Changelog [DE]:
 
+### 0.22.1 (02.02.2023)
+ - Falsche Lokalisierung für Norwegisch behoben.
+
 ### 0.22.0 (29.01.2023)
  - Tripzusammenfassung für den aktuellen Trip hinzugefügt. (Um einen Trip-Reset während der Fahrt durchzuführen kann es erforderlich sein, die App neu zu installieren, da Änderungen im Manifest vorgnommen wurden)
  - Stabilitätsverbresserungen bei der Abfrage und Verarbeitung von Fahrzeugdaten
