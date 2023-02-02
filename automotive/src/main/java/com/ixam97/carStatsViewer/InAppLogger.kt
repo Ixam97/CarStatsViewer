@@ -102,26 +102,29 @@ class LogActivity : Activity() {
 
         log_switch_deep_log.isChecked = appPreferences.deepLog
 
-        var logString = ""
 
-        for (i in 0 until InAppLogger.logArray.size) {
-            logString += "${InAppLogger.logArray[i]}\n"
-        }
-
-        logString += "${InAppLogger.getVHALLog()}\n${InAppLogger.getUILog()}\n${InAppLogger.getNotificationLog()}\n"
-        logString += "v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
 
         // val logTextView = TextView(this)
         // logTextView.typeface
-        log_text_view.text = logString
+        log_text_view.text = getLogString()
 
         log_button_back.setOnClickListener {
             finish()
         }
 
         log_button_show_json.setOnClickListener {
-            val gson = GsonBuilder().setPrettyPrinting().create()
-            log_text_view.text = gson.toJson(DataManagers.CURRENT_TRIP.dataManager.tripData)
+            val currentText = log_button_show_json.text
+            when (currentText) {
+                "JSON" -> {
+                    log_button_show_json.text = "LOG"
+                    val gson = GsonBuilder().setPrettyPrinting().create()
+                    log_text_view.text = gson.toJson(DataManagers.CURRENT_TRIP.dataManager.tripData)
+                }
+                "LOG" -> {
+                    log_button_show_json.text = "JSON"
+                    log_text_view.text = getLogString()
+                }
+            }
         }
 
         log_button_copy.setOnClickListener {
@@ -129,8 +132,7 @@ class LogActivity : Activity() {
         }
 
         log_button_reload.setOnClickListener {
-            finish()
-            startActivity(intent)
+            log_text_view.text = getLogString()
         }
 
         log_reset_log.setOnClickListener {
@@ -149,5 +151,18 @@ class LogActivity : Activity() {
     override fun onDestroy() {
         super.onDestroy()
         InAppLogger.log("LogActivity.onDestroy")
+    }
+
+    fun getLogString(): String {
+        var logString = ""
+
+        for (i in 0 until InAppLogger.logArray.size) {
+            logString += "${InAppLogger.logArray[i]}\n"
+        }
+
+        logString += "${InAppLogger.getVHALLog()}\n${InAppLogger.getUILog()}\n${InAppLogger.getNotificationLog()}\n"
+        logString += "v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
+
+        return logString
     }
 }
