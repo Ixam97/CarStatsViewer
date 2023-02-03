@@ -334,11 +334,6 @@ class DataCollector : Service() {
 
     private fun driveStateUpdater() {
         // Get real current properties to avoid old values after hibernation.
-        // for (propertyId in CurrentTripDataManager.getVehiclePropertyIds()) {
-        //     val newValue = carPropertyManager.getProperty<Any>(propertyId, 0)
-        //     CurrentTripDataManager.update(newValue.value, System.nanoTime(), propertyId, doLog = true)
-        // }
-
         refreshProperty(CurrentTripDataManager.CurrentIgnitionState.propertyId)
         refreshProperty(CurrentTripDataManager.ChargePortConnected.propertyId)
 
@@ -517,7 +512,7 @@ class DataCollector : Service() {
             writer.append(Gson().toJson(tripData))
             writer.flush()
             writer.close()
-            InAppLogger.log("TRIP DATA: Saved $fileName.json in Thread ${Thread.currentThread().name}")
+            // InAppLogger.log("TRIP DATA: Saved $fileName.json in Thread ${Thread.currentThread().name}")
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
