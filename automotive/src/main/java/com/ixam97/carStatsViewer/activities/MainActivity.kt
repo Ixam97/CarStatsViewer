@@ -128,6 +128,7 @@ class MainActivity : Activity() {
         appPreferences = AppPreferences(context)
 
         startForegroundService(Intent(this, DataCollector::class.java))
+        startService(Intent(this, LocCollector::class.java))
 
         DataCollector.mainActivityPendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_IMMUTABLE

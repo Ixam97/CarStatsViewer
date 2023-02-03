@@ -12,7 +12,9 @@
     <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROLS" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="manifest.permission.ACCESS_BACKGROUND_LOCATION"/>
     <!--<uses-feature
         android:name="android.hardware.type.automotive"
         android:required="true"/>-->
@@ -47,6 +49,7 @@
             android:exported="false">
             <meta-data android:name="distractionOptimized" android:value="true"/>
         </activity>
+        <service android:name=".services.LocCollector"/>
         <service android:name=".dataManager.DataCollector"/>
     </application>
 
