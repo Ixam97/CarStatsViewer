@@ -71,7 +71,7 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
 
-        InAppLogger.log("MainActivity.onResume")
+        // InAppLogger.log("MainActivity.onResume")
 
         if (appPreferences.consumptionUnit) {
             selectedDataManager.consumptionPlotLine.Configuration.Unit = "Wh/km"
@@ -121,7 +121,7 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        InAppLogger.log("MainActivity.onCreate")
+        // InAppLogger.log("MainActivity.onCreate")
 
         context = applicationContext
 
@@ -158,19 +158,19 @@ class MainActivity : Activity() {
         super.onDestroy()
         disableUiUpdates()
         unregisterReceiver(broadcastReceiver)
-        InAppLogger.log("MainActivity.onDestroy")
+        // InAppLogger.log("MainActivity.onDestroy")
     }
 
     override fun onPause() {
         super.onPause()
         disableUiUpdates()
-        InAppLogger.log("MainActivity.onPause")
+        // InAppLogger.log("MainActivity.onPause")
     }
 
     /** Private functions */
 
     private fun updateActivity() {
-        InAppLogger.logUIUpdate()
+        // InAppLogger.logUIUpdate()
         /** Use data from DataManager to Update MainActivity text */
 
         setUiVisibilities()
@@ -324,7 +324,7 @@ class MainActivity : Activity() {
     private fun resetStats() {
         finish()
         startActivity(intent)
-        InAppLogger.log("MainActivity.resetStats")
+        // InAppLogger.log("MainActivity.resetStats")
         selectedDataManager.reset()
         sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
     }
@@ -541,7 +541,7 @@ class MainActivity : Activity() {
     }
 
     private fun enableUiUpdates() {
-        InAppLogger.log("Enabling UI updates")
+        // InAppLogger.log("Enabling UI updates")
         updateUi = true
         if (this::timerHandler.isInitialized) {
             timerHandler.removeCallbacks(updateActivityTask)
@@ -551,7 +551,7 @@ class MainActivity : Activity() {
     }
 
     private fun disableUiUpdates() {
-        InAppLogger.log("Disabling UI Updates")
+        // InAppLogger.log("Disabling UI Updates")
         updateUi = false
         if (this::timerHandler.isInitialized) {
             timerHandler.removeCallbacks(updateActivityTask)

@@ -2,6 +2,7 @@ package com.ixam97.carStatsViewer.dataManager
 
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
+import android.car.hardware.property.CarPropertyManager
 import android.util.Log
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.plot.enums.PlotDimension
@@ -252,6 +253,16 @@ class DataManager {
             BatteryLevel.propertyId to BatteryLevel,
             CurrentIgnitionState.propertyId to CurrentIgnitionState,
             CurrentAmbientTemperature.propertyId to CurrentAmbientTemperature
+        )
+
+        val sensorRateMap: Map<Int, Float> = mapOf(
+            CurrentSpeed.propertyId to CarPropertyManager.SENSOR_RATE_ONCHANGE,
+            CurrentPower.propertyId to CarPropertyManager.SENSOR_RATE_ONCHANGE,
+            CurrentGear.propertyId to CarPropertyManager.SENSOR_RATE_ONCHANGE,
+            ChargePortConnected.propertyId to CarPropertyManager.SENSOR_RATE_FAST,
+            BatteryLevel.propertyId to CarPropertyManager.SENSOR_RATE_FAST,
+            CurrentIgnitionState.propertyId to CarPropertyManager.SENSOR_RATE_FAST,
+            CurrentAmbientTemperature.propertyId to CarPropertyManager.SENSOR_RATE_ONCHANGE
         )
 
 }

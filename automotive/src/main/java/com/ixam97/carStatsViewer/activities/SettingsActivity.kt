@@ -42,7 +42,7 @@ class SettingsActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        InAppLogger.log("SettingsActivity.onCreate")
+        // InAppLogger.log("SettingsActivity.onCreate")
 
         context = applicationContext
         appPreferences = AppPreferences(context)
@@ -61,7 +61,7 @@ class SettingsActivity : Activity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(broadcastReceiver)
-        InAppLogger.log("SettingsActivity.onDestroy")
+        // InAppLogger.log("SettingsActivity.onDestroy")
     }
 
     private fun setEnableByGear(gear: Int) {
@@ -241,8 +241,6 @@ class SettingsActivity : Activity() {
                     }
                 })
         }
-
-        InAppLogger.log(resources.getInteger(android.R.integer.config_shortAnimTime).toString())
     }
 
     private fun setMenuRowIsEnabled(enabled: Boolean, view: View) {
