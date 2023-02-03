@@ -36,6 +36,7 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.5.5'
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
 
     // to fix unresolved references to android.car
     def sdkDir = project.android.sdkDirectory.canonicalPath

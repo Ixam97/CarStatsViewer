@@ -12,7 +12,11 @@ import kotlin.system.exitProcess
 
 class PermissionsActivity: Activity() {
     companion object {
-        private val PERMISSIONS = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED)
+        private val PERMISSIONS = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED,
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,8 +57,12 @@ class PermissionsActivity: Activity() {
 
     private fun checkPermissions(): Boolean {
         InAppLogger.log("Checking permissions...")
-        if (checkSelfPermission(Car.PERMISSION_ENERGY) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
-                Car.PERMISSION_SPEED) != PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(Car.PERMISSION_ENERGY) != PackageManager.PERMISSION_GRANTED ||
+            checkSelfPermission(Car.PERMISSION_SPEED) != PackageManager.PERMISSION_GRANTED ||
+            checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+            checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+            checkSelfPermission(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ) {
             InAppLogger.log("Requesting missing Permissions...")
             requestPermissions(PERMISSIONS, 0)
             return false
