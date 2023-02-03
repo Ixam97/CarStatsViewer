@@ -78,7 +78,7 @@ object InAppLogger {
             clipboardString += (logArray[i] + "\n")
         }
 
-        clipboardString += getVHALLog() + "\n" + getUILog() + "\n" + getNotificationLog()
+        // clipboardString += getVHALLog() + "\n" + getUILog() + "\n" + getNotificationLog()
 
         val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText("CarStatsViewerLog", clipboardString)
@@ -161,7 +161,7 @@ class LogActivity : Activity() {
             logString += "${InAppLogger.logArray[i]}\n"
         }
 
-        logString += "${InAppLogger.getVHALLog()}\n${InAppLogger.getUILog()}\n${InAppLogger.getNotificationLog()}\n"
+        // logString += "${InAppLogger.getVHALLog()}\n${InAppLogger.getUILog()}\n${InAppLogger.getNotificationLog()}\n"
         logString += "v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
 
         return logString
