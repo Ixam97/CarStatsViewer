@@ -31,11 +31,11 @@
     </style>
     <style name="menu_standard_row_label">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">101dp</item>
         <item name="android:textSize">35sp</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
     <style name="menu_row_top_text">
         <item name="android:layout_height">wrap_content</item>

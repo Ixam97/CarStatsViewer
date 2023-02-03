@@ -11,14 +11,13 @@ import android.text.format.DateFormat
 import android.util.TypedValue
 import android.view.View
 import android.widget.SeekBar
-import com.ixam97.carStatsViewer.DataManager
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.objects.AppPreferences
-import com.ixam97.carStatsViewer.objects.TripData
+import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.dataManager.TripData
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.*
 import com.ixam97.carStatsViewer.plot.objects.*
-import com.ixam97.carStatsViewer.services.DataCollector
+import com.ixam97.carStatsViewer.dataManager.DataCollector
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_summary.*
 import java.util.*
@@ -120,6 +119,7 @@ class SummaryActivity: Activity() {
         val plotMarkers = PlotMarkers()
         plotMarkers.addMarkers(tripData.markers)
         summary_consumption_plot.addPlotLine(DataCollector.CurrentTripDataManager.consumptionPlotLine)
+        summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
         summary_consumption_plot.secondaryDimension = PlotSecondaryDimension.SPEED
         summary_consumption_plot.dimension = PlotDimension.DISTANCE
         summary_consumption_plot.dimensionRestriction = ((tripData.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1
@@ -127,7 +127,7 @@ class SummaryActivity: Activity() {
         summary_consumption_plot.setPlotMarkers(plotMarkers)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
-        summary_consumption_plot.dimensionShiftTouchInterval = 1_000L
+        summary_consumption_plot.dimensionShiftTouchEnabled = true
         summary_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
 
         summary_consumption_plot.invalidate()
@@ -159,7 +159,10 @@ class SummaryActivity: Activity() {
 
             summary_charged_energy_value_text.text = getChargedEnergyString(tripData.chargeCurves.size - 1)
             summary_charge_time_value_text.text = getElapsedTimeString(tripData.chargeCurves.last().chargeTime)
+            summary_charge_ambient_temp.text = "%.0f °C".format(tripData.chargeCurves.last().ambientTemperature)
             summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves.last().chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
+            summary_charge_plot_view.dimensionShiftTouchEnabled = true
+            summary_charge_plot_view.dimensionRestrictionTouchInterval = TimeUnit.SECONDS.toNanos(10L)
 
         }
         if (tripData.chargeCurves.size < 2){
@@ -171,7 +174,8 @@ class SummaryActivity: Activity() {
         summary_charge_plot_view.addPlotLine(chargePlotLine)
 
         summary_charge_plot_view.dimension = PlotDimension.TIME
-        summary_charge_plot_view.dimensionSmoothingPercentage = 0.01f
+        // summary_charge_plot_view.dimensionSmoothingPercentage = 0.01f
+        summary_charge_plot_view.sessionGapRendering = PlotSessionGapRendering.GAP
         summary_charge_plot_view.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
         summary_charge_plot_view.invalidate()
 
@@ -239,6 +243,7 @@ class SummaryActivity: Activity() {
 
         summary_charged_energy_value_text.text = getChargedEnergyString(progress)
         summary_charge_time_value_text.text = getElapsedTimeString(tripData.chargeCurves[progress].chargeTime)
+        summary_charge_ambient_temp.text = "%.0f °C".format(tripData.chargeCurves[progress].ambientTemperature)
 
         chargePlotLine.reset()
         chargePlotLine.addDataPoints(tripData.chargeCurves[progress].chargePlotLine)

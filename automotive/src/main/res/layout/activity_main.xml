@@ -343,11 +343,22 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:layout_marginBottom="10dp"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="35sp"
                         android:text="  -/- km"
                         android:drawableStart="@drawable/ic_remaining_range"
+                    />
+
+                    <TextView
+                        android:id="@+id/main_gage_ambient_temperature_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="35sp"
+                        android:drawableStart="@drawable/ic_temperature"
+                        android:visibility="gone"
                     />
 
                 </LinearLayout>

@@ -21,6 +21,15 @@
 
         <View style="@style/filler"/>
 
+        <Button
+            android:id="@+id/log_button_show_json"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:textSize="47sp"
+            android:textFontWeight="600"
+            android:text="JSON"
+            android:backgroundTint="@android:color/transparent"/>
+
         <ImageButton
             android:id="@+id/log_button_copy"
             android:src="@drawable/ic_copy"
@@ -54,11 +63,13 @@
         android:orientation="vertical">
 
         <Switch
+            android:visibility="gone"
             android:id="@+id/log_switch_deep_log"
             style="@style/menu_standard_switch_style"
             android:text="Deep Log"/>
 
         <View
+            android:visibility="gone"
             style="@style/menu_divider_style"
             android:background="?android:attr/listDivider" />
 
@@ -80,6 +91,11 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/log_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:typeface="monospace"/>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

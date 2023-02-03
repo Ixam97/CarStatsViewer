@@ -243,6 +243,16 @@
                     android:id="@+id/settings_charge_plot_switch_visible_gages"
                     style="@style/menu_standard_switch_style"
                     android:text="@string/settings_visible_gages"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+
+                <TextView
+                    android:layout_height="101dp"
+                    android:id="@+id/settings_save_charge_curve"
+                    android:drawableStart="@drawable/ic_save"
+                    style="@style/menu_standard_row_label"
+                    android:text="Manually save last charge curve"/>
 
                 <Switch
                     android:visibility="gone"

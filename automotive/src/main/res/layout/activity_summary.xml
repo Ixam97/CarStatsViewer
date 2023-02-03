@@ -209,6 +209,12 @@
                 android:text="@string/summary_charge_time"/>
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
+            <TextView
+                android:id="@+id/summary_charge_ambient_temp"
+                style="@style/menu_row_top_text"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_charge_ambient_temp"/>
 
         </LinearLayout>
     </ScrollView>

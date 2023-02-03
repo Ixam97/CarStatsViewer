@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer
 
-import com.ixam97.carStatsViewer.objects.*
 import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -8,6 +7,10 @@ import android.content.Context
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.dataManager.DataManagers
 import kotlinx.android.synthetic.main.activity_log.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -75,7 +78,7 @@ object InAppLogger {
             clipboardString += (logArray[i] + "\n")
         }
 
-        clipboardString += getVHALLog() + "\n" + getUILog() + "\n" + getNotificationLog()
+        // clipboardString += getVHALLog() + "\n" + getUILog() + "\n" + getNotificationLog()
 
         val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText("CarStatsViewerLog", clipboardString)
@@ -99,30 +102,38 @@ class LogActivity : Activity() {
 
         log_switch_deep_log.isChecked = appPreferences.deepLog
 
-        var logString = ""
 
-        for (i in 0 until InAppLogger.logArray.size) {
-            logString += "${InAppLogger.logArray[i]}\n"
-        }
 
-        logString += "${InAppLogger.getVHALLog()}\n${InAppLogger.getUILog()}\n${InAppLogger.getNotificationLog()}\n"
-        logString += "v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
-
-        val logTextView = TextView(this)
-        logTextView.text = logString
-        log_log.addView(logTextView)
+        // val logTextView = TextView(this)
+        // logTextView.typeface
+        log_text_view.text = getLogString()
 
         log_button_back.setOnClickListener {
             finish()
         }
 
+        log_button_show_json.setOnClickListener {
+            val currentText = log_button_show_json.text
+            when (currentText) {
+                "JSON" -> {
+                    log_button_show_json.text = "LOG"
+                    val gson = GsonBuilder().setPrettyPrinting().create()
+                    val textValue = "MARKERS: \n" + gson.toJson(DataManagers.CURRENT_TRIP.dataManager.tripData?.markers?: 0) + "\n\nCHARGE CURVE:\n" + gson.toJson(DataManagers.CURRENT_TRIP.dataManager.tripData?.chargePlotLine?: 0)
+                    log_text_view.text = textValue
+                }
+                "LOG" -> {
+                    log_button_show_json.text = "JSON"
+                    log_text_view.text = getLogString()
+                }
+            }
+        }
+
         log_button_copy.setOnClickListener {
-            InAppLogger.copyToClipboard(this)
+            copyToClipboard(log_text_view.text.toString())
         }
 
         log_button_reload.setOnClickListener {
-            finish()
-            startActivity(intent)
+            log_text_view.text = getLogString()
         }
 
         log_reset_log.setOnClickListener {
@@ -141,5 +152,26 @@ class LogActivity : Activity() {
     override fun onDestroy() {
         super.onDestroy()
         InAppLogger.log("LogActivity.onDestroy")
+    }
+
+    private fun getLogString(): String {
+        var logString = ""
+
+        for (i in 0 until InAppLogger.logArray.size) {
+            logString += "${InAppLogger.logArray[i]}\n"
+        }
+
+        // logString += "${InAppLogger.getVHALLog()}\n${InAppLogger.getUILog()}\n${InAppLogger.getNotificationLog()}\n"
+        logString += "v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
+
+        return logString
+    }
+
+    private fun copyToClipboard(clipboardString: String) {
+        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("CarStatsViewerLog", clipboardString)
+        clipboardManager.setPrimaryClip(clipData)
+
+        Toast.makeText(this,"Copied to clipboard", Toast.LENGTH_LONG).show()
     }
 }

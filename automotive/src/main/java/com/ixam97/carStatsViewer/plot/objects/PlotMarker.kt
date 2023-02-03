@@ -5,6 +5,10 @@ import com.ixam97.carStatsViewer.plot.enums.PlotMarkerType
 class PlotMarkers {
     val markers : ArrayList<PlotMarker> = ArrayList()
 
+    fun reset() {
+        markers.clear()
+    }
+
     fun addMarker(plotMarkerType: PlotMarkerType, time: Long) {
         when {
             markers.isNotEmpty() -> {
