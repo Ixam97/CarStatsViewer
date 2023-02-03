@@ -244,6 +244,22 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         invalidate()
     }
 
+    private fun x(index: Any?, min: Any, max: Any, maxX: Float): Float? {
+        if (min is Float) {
+            return x(index as Float?, min as Float, max as Float, maxX)
+        }
+
+        if (min is Long) {
+            return x(index as Long?, min as Long, max as Long, maxX)
+        }
+
+        return null
+    }
+
+    private fun x(index: Long?, min: Long, max: Long, maxX: Float): Float? {
+        return x(PlotLineItem.cord(index, min, max), maxX)
+    }
+
     private fun x(index: Float?, min: Float, max: Float, maxX: Float): Float? {
         return x(PlotLineItem.cord(index, min, max), maxX)
     }
@@ -492,8 +508,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                 drawPlotPointCollection(canvas, plotPointCollection, maxX, maxY, paint, zeroCord)
 
-                if (index == 0 && plotMarkers?.markers?.isNotEmpty() ?: false) {
-                    drawMarker(canvas, dataPoints, line, minDimension, maxDimension, maxX)
+                if (index == 0 && plotMarkers?.markers?.isNotEmpty() == true) {
+                    drawMarker(canvas, minDimension, maxDimension, maxX, maxY)
                 }
 
                 index++
@@ -543,12 +559,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     private fun drawPlotPointCollection(canvas: Canvas, plotPointCollection: ArrayList<ArrayList<PlotPoint>>, maxX: Float, maxY: Float, paint: PlotPaint, zeroCord: Float?) {
-        // restrict canvas drawing region
-        canvas.save()
-        canvas.clipOutRect(0f, 0f, maxX, yMargin.toFloat()) // TOP
-        canvas.clipOutRect(0f, maxY - yMargin, maxX, maxY)  // BOTTOM
-        canvas.clipOutRect(0f, 0f, xMargin.toFloat(), maxY) // LEFT
-        canvas.clipOutRect(maxX - xMargin, 0f, maxX, maxY)  // RIGHT
+
+        restrictCanvas(canvas, maxX, maxY)
 
         val joinedPlotPoints = ArrayList<PlotPoint>()
 
@@ -646,76 +658,75 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         canvas.drawCircle(point.x, point.y, 3f, paint)
     }
 
-    private fun drawMarker(canvas: Canvas, dataPoints: List<PlotLineItem>, line: PlotLine, minDimension: Any, maxDimension: Any, maxX: Float) {
-        val markers = plotMarkers!!.markers.filter { visibleMarkerTypes.contains(it.MarkerType) }
+    private fun drawMarker(canvas: Canvas, minDimension: Any, maxDimension: Any, maxX: Float, maxY: Float) {
+        val markers = plotMarkers?.markers?.filter { visibleMarkerTypes.contains(it.MarkerType) } ?: return
 
         var markerXLimit = 0f
         val markerTimes = HashMap<PlotMarkerType, Long>()
 
-        for (markerGroup in markers.groupBy { line.x(dataPoints, it.StartTime, PlotDimension.TIME, dimension, minDimension, maxDimension) }) {
+        restrictCanvas(canvas, maxX, maxY, yArea = false)
+
+        for (markerGroup in markers.groupBy { it.group(dimension, dimensionSmoothing) }) {
             if (markerGroup.key == null) continue
 
-            val markerSorted = markerGroup.value.sortedBy { it.MarkerType }
-            val markerTypeGroup = markerSorted.groupBy { it.MarkerType }
-            val markerType = markerSorted.first().MarkerType
+            val markerType = markerGroup.value.minOfOrNull { it.MarkerType } ?: continue
+            val markers = markerGroup.value.filter { it.MarkerType == markerType }
 
-            val markers = markerTypeGroup[markerType]!!
+            val startX = markerGroup.value.mapNotNull { x(it.startByDimension(dimension), minDimension, maxDimension, maxX) }.minOfOrNull { it } ?: continue
+            val endX = markerGroup.value.mapNotNull { x(it.endByDimension(dimension), minDimension, maxDimension, maxX) }.maxOfOrNull { it }
 
-            val x1 = x(markerGroup.key, 0f, 1f, maxX)
-            val x2 = when (dimension) {
-                PlotDimension.DISTANCE -> x1
-                else -> x(line.x( dataPoints, markers.last().EndTime, PlotDimension.TIME, dimension, minDimension, maxDimension), 0f, 1f, maxX)
+            if (startX < xMargin) continue
+
+            if (markerXLimit == 0f) {
+                markerXLimit = startX
             }
 
-            if (x1 != null && markers.none { it.EndTime == null }) {
-                if (markerXLimit == 0f) {
-                    markerXLimit = x1
-                }
+            markerXLimit = drawMarkerLabel(canvas, markerTimes, startX, markerXLimit)
 
-                markerXLimit = drawMarkerLabel(canvas, markerTimes, markerXLimit, x1)
+            drawMarkerLine(canvas, markerType, startX, -1)
+            drawMarkerLine(canvas, markerType, endX, 1)
 
-                drawMarkerLine(canvas, markerType, x1, -1)
-                drawMarkerLine(canvas, markerType, x2, 1)
+            val diff = markers.sumOf { (it.EndTime ?: it.StartTime) - it.StartTime }
 
-                val diff = markers.sumOf { (it.EndTime ?: it.StartTime) - it.StartTime }
-
-                markerTimes[markerType] = (markerTimes[markerType] ?: 0L) + diff
-            }
+            markerTimes[markerType] = (markerTimes[markerType] ?: 0L) + diff
         }
 
-        drawMarkerLabel(canvas, markerTimes, markerXLimit, maxX)
+        drawMarkerLabel(canvas, markerTimes, Float.MAX_VALUE, markerXLimit)
+
+        canvas.restore()
     }
 
-    private fun drawMarkerLabel(canvas: Canvas, markerTimes: HashMap<PlotMarkerType, Long>, xMin: Float, xCurrent: Float): Float {
-        if (markerTimes.isNotEmpty() && xCurrent > xMin + markerTimes.map { 36 + labelPaint.measureText(timeLabel(it.value)) }.sum()) {
-            var shift = 0
-            for (item in markerTimes) {
-                val label = timeLabel(item.value)
-                val labelPaint = markerPaint[item.key]!!.Label
+    private fun drawMarkerLabel(canvas: Canvas, markerTimes: HashMap<PlotMarkerType, Long>, xCurrent: Float, xLimit: Float): Float {
+        if (markerTimes.isEmpty()) return xLimit
 
-                canvas.drawBitmap(
-                    markerIcon[item.key]!!,
-                    xMin - (textSize / 2f) + shift,
-                    (yMargin / 3f),
-                    labelPaint
-                )
+        val marker = markerTimes.minByOrNull { it.key } ?: return xLimit
+        val icon = markerIcon[marker.key] ?: return xLimit
+        val paint = markerPaint[marker.key]?.Label ?: return xLimit
 
-                canvas.drawText(
-                    label,
-                    xMin + labelPaint.textSize + shift,
-                    yMargin - labelPaint.textSize + 2f,
-                    labelPaint
-                )
+        val label = timeLabel(marker.value)
 
-                shift += 36 + labelPaint.measureText(timeLabel(item.value)).roundToInt()
-            }
+        val padding = 8f
+        val spaceNeeded = icon.width + paint.measureText(label).roundToInt() + 2 * padding
 
-            markerTimes.clear()
+        if (xCurrent <= xLimit + spaceNeeded) return xLimit
 
-            return xCurrent
-        }
+        canvas.drawBitmap(
+            icon,
+            xLimit - (labelPaint.textSize / 2f),
+            (yMargin / 3f),
+            paint
+        )
 
-        return xMin
+        canvas.drawText(
+            label,
+            xLimit + (labelPaint.textSize / 2f) + padding,
+            yMargin - labelPaint.textSize + padding,
+            paint
+        )
+
+        markerTimes.clear()
+
+        return xCurrent
     }
 
     private fun drawMarkerLine(canvas: Canvas, markerType: PlotMarkerType, x: Float?, multiplier: Int) {
@@ -853,6 +864,20 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         path.moveTo(x1, y1)
         path.lineTo(x2, y2)
         canvas.drawPath(path, paint)
+    }
+
+    private fun restrictCanvas(canvas: Canvas, maxX: Float, maxY: Float, xArea: Boolean = true, yArea: Boolean = true) {
+        // restrict canvas drawing region
+        canvas.save()
+        if (yArea) {
+            canvas.clipOutRect(0f, 0f, maxX, yMargin.toFloat()) // TOP
+            canvas.clipOutRect(0f, maxY - yMargin, maxX, maxY)  // BOTTOM
+        }
+
+        if (xArea) {
+            canvas.clipOutRect(0f, 0f, xMargin.toFloat(), maxY) // LEFT
+            canvas.clipOutRect(maxX - xMargin, 0f, maxX, maxY)  // RIGHT
+        }
     }
 
     private fun timeLabel(time: Long): String {

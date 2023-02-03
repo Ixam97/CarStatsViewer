@@ -56,6 +56,13 @@ class PlotLineItem (
             return 1f / (max - min) * (index - min)
         }
 
+        fun cord(index: Long?, min: Long, max: Long) : Float? {
+            return when (index) {
+                null -> null
+                else -> cord(index, min, max)
+            }
+        }
+
         fun cord(index: Long, min: Long, max: Long) : Float {
             return 1f / (max - min) * (index - min)
         }
