@@ -29,6 +29,14 @@
             android:textFontWeight="600"
             android:text="JSON"
             android:backgroundTint="@android:color/transparent"/>
+        <ImageButton
+            android:id="@+id/log_button_send"
+            android:src="@drawable/ic_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_marginVertical="15dp"
+            android:layout_marginEnd="10dp"/>
 
         <ImageButton
             android:id="@+id/log_button_copy"

@@ -11,10 +11,14 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManagers
+import com.ixam97.carStatsViewer.mailSender.MailSender
 import kotlinx.android.synthetic.main.activity_log.*
+import kotlinx.coroutines.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.coroutines.CoroutineContext
 
 object InAppLogger {
 
@@ -110,6 +114,32 @@ class LogActivity : Activity() {
 
         log_button_back.setOnClickListener {
             finish()
+        }
+
+        log_button_send.setOnClickListener {
+
+            CoroutineScope(Dispatchers.Default).launch() {
+                try {
+                    val sender = MailSender(getString(R.string.email_address), getString(R.string.password))
+                    val dir = File(applicationContext.filesDir, "TripData")
+                    if (!dir.exists()) {
+                        InAppLogger.log("TRIP DATA: Directory TripData does not exist!")
+
+                    } else {
+                        val gpxFile = File(dir, "${getString(R.string.file_name_current_trip_data)}.json")
+                        if (!gpxFile.exists() && gpxFile.length() > 0) {
+                            InAppLogger.log("TRIP_DATA File ${getString(R.string.file_name_current_trip_data)}.json does not exist!")
+                        }
+                        else {
+                            sender.addAttachment(gpxFile)
+                        }
+                    }
+                    sender.sendMail("Debug Log ${Date()}", getLogString(), "CarStatsViewer@ixam97.de", "ixam97@ixam97.de")
+
+                } catch (e: java.lang.Exception) {
+                    InAppLogger.log(e.stackTraceToString())
+                }
+            }
         }
 
         log_button_show_json.setOnClickListener {

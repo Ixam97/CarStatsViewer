@@ -16,11 +16,13 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
 import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.mailSender.MailSender
 import com.ixam97.carStatsViewer.plot.enums.*
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileWriter
 import java.lang.Runnable
+import java.util.*
 import kotlin.math.absoluteValue
 
 class DataCollector : Service() {
@@ -339,7 +341,7 @@ class DataCollector : Service() {
 
         val previousDrivingState = CurrentTripDataManager.DriveState.lastDriveState
         if (CurrentTripDataManager.DriveState.hasChanged()) {
-            InAppLogger.log("DRIVE STATE: ${DrivingState.nameMap[previousDrivingState]} -> ${DrivingState.nameMap[CurrentTripDataManager.driveState]}")
+            InAppLogger.log("DRIVE STATE: ${DrivingState.nameMap[previousDrivingState]} -> ${DrivingState.nameMap[CurrentTripDataManager.driveState]} (${CurrentTripDataManager.CurrentIgnitionState.value}")
             when (CurrentTripDataManager.driveState) {
                 DrivingState.DRIVE -> {
                     resumeTrip()

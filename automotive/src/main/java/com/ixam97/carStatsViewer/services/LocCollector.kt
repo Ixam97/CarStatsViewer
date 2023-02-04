@@ -1,15 +1,11 @@
 package com.ixam97.carStatsViewer.services
 
-import com.ixam97.carStatsViewer.objects.*
 import com.ixam97.carStatsViewer.*
 import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.*
-import android.widget.Toast
-import androidx.core.app.ActivityCompat.requestPermissions
 import com.google.android.gms.location.*
-import com.ixam97.carStatsViewer.activities.PermissionsActivity
 
 
 class LocCollector : Service() {
