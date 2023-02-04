@@ -243,7 +243,7 @@ class PlotLine(
 
                 return when {
                     distance != 0f -> value / distance
-                    else -> 0f
+                    else -> null
                 }
             }
             PlotHighlightMethod.AVG_BY_TIME -> {
@@ -252,7 +252,7 @@ class PlotLine(
 
                 return when {
                     distance != 0L -> value / distance
-                    else -> 0f
+                    else -> null
                 }
             }
             PlotHighlightMethod.AVG_BY_STATE_OF_CHARGE -> {
@@ -261,7 +261,7 @@ class PlotLine(
 
                 return when {
                     distance != 0f -> value / distance
-                    else -> 0f
+                    else -> null
                 }
             }
             else -> null
