@@ -336,6 +336,7 @@ class DataCollector : Service() {
         // Get real current properties to avoid old values after hibernation.
         refreshProperty(CurrentTripDataManager.CurrentIgnitionState.propertyId)
         refreshProperty(CurrentTripDataManager.ChargePortConnected.propertyId)
+        refreshProperty(CurrentTripDataManager.BatteryLevel.propertyId)
 
         val previousDrivingState = CurrentTripDataManager.DriveState.lastDriveState
         if (CurrentTripDataManager.DriveState.hasChanged()) {
