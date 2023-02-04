@@ -659,8 +659,14 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     private fun drawMarker(canvas: Canvas, minDimension: Any, maxDimension: Any, maxX: Float, maxY: Float) {
+
         val markers = plotMarkers?.markers?.filter {
-                visibleMarkerTypes.contains(it.MarkerType) && it.EndTime != null && it.EndDistance != null
+            val isNotOnEdge = when (dimension) {
+                PlotDimension.DISTANCE -> plotLines[0].getDataPoints(PlotDimension.DISTANCE).last().Distance > it.StartDistance
+                PlotDimension.TIME -> plotLines[0].getDataPoints(PlotDimension.TIME).last().Time > it.StartTime
+                else -> false
+            }
+            visibleMarkerTypes.contains(it.MarkerType) && isNotOnEdge
         } ?: return
 
         var markerXLimit = 0f
