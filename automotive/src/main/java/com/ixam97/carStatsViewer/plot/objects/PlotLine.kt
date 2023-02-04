@@ -46,7 +46,7 @@ class PlotLine(
             prev?.Marker = PlotLineMarkerType.END_SESSION
         }
         
-        if (dataPoint.Marker == null && prev?.Marker == PlotLineMarkerType.END_SESSION) {
+        if (dataPoint.Marker == null && (prev?.Marker == null || prev?.Marker == PlotLineMarkerType.END_SESSION)) {
             dataPoint.Marker = PlotLineMarkerType.BEGIN_SESSION
         }
 
