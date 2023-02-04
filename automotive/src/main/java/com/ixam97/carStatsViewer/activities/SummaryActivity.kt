@@ -7,7 +7,6 @@ import android.content.*
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.util.TypedValue
 import android.view.View
 import android.widget.SeekBar
@@ -18,9 +17,9 @@ import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.*
 import com.ixam97.carStatsViewer.plot.objects.*
 import com.ixam97.carStatsViewer.dataManager.DataCollector
+import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_summary.*
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class SummaryActivity: Activity() {
@@ -90,7 +89,7 @@ class SummaryActivity: Activity() {
             createResetDialog()
         }
 
-        summary_trip_date_text.text = getDateString(tripData.tripStartDate)
+        summary_trip_date_text.text = getString(R.string.summary_trip_start_date, StringFormatters.getDateString(tripData.tripStartDate))
 
         summary_button_show_consumption_container.isSelected = true
 
@@ -132,10 +131,10 @@ class SummaryActivity: Activity() {
 
         summary_consumption_plot.invalidate()
 
-        summary_distance_value_text.text = getTraveledDistanceString()
-        summary_used_energy_value_text.text = getUsedEnergyString()
-        summary_avg_consumption_value_text.text = getAvgConsumptionString()
-        summary_travel_time_value_text.text = getElapsedTimeString(tripData.travelTime)
+        summary_distance_value_text.text = StringFormatters.getTraveledDistanceString(tripData.traveledDistance)
+        summary_used_energy_value_text.text = StringFormatters.getUsedEnergyString(tripData.usedEnergy)
+        summary_avg_consumption_value_text.text = StringFormatters.getAvgConsumptionString(tripData.traveledDistance, tripData.usedEnergy)
+        summary_travel_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.travelTime)
     }
 
     private fun setupChargeLayout() {
@@ -157,8 +156,8 @@ class SummaryActivity: Activity() {
             summary_charge_plot_button_prev.isEnabled = true
             summary_charge_plot_button_prev.colorFilter = enabledTint
 
-            summary_charged_energy_value_text.text = getChargedEnergyString(tripData.chargeCurves.size - 1)
-            summary_charge_time_value_text.text = getElapsedTimeString(tripData.chargeCurves.last().chargeTime)
+            summary_charged_energy_value_text.text = StringFormatters.getChargedEnergyString(tripData.chargeCurves.last().chargedEnergy)
+            summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.chargeCurves.last().chargeTime)
             summary_charge_ambient_temp.text = "%.0f °C".format(tripData.chargeCurves.last().ambientTemperature)
             summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves.last().chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
             summary_charge_plot_view.dimensionShiftTouchEnabled = true
@@ -241,8 +240,8 @@ class SummaryActivity: Activity() {
             }
         }
 
-        summary_charged_energy_value_text.text = getChargedEnergyString(progress)
-        summary_charge_time_value_text.text = getElapsedTimeString(tripData.chargeCurves[progress].chargeTime)
+        summary_charged_energy_value_text.text = StringFormatters.getChargedEnergyString(tripData.chargeCurves[progress].chargedEnergy)
+        summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.chargeCurves[progress].chargeTime)
         summary_charge_ambient_temp.text = "%.0f °C".format(tripData.chargeCurves[progress].ambientTemperature)
 
         chargePlotLine.reset()
@@ -291,55 +290,6 @@ class SummaryActivity: Activity() {
         alert.getButton(DialogInterface.BUTTON_POSITIVE).isEnabled = false
         alert.getButton(DialogInterface.BUTTON_NEGATIVE).setBackgroundColor(getColor(R.color.bad_red))
 
-    }
-
-    private fun getDateString(tripStartDate: Date): String {
-        val dateFormat = DateFormat.getDateFormat(applicationContext)
-        val timeFormat = DateFormat.getTimeFormat(applicationContext)
-        return "${getString(R.string.summary_trip_start_date)} ${dateFormat.format(tripStartDate)}, ${timeFormat.format(tripStartDate)}"
-    }
-
-    private fun getUsedEnergyString(): String {
-        if (!appPreferences.consumptionUnit) {
-            return "%.1f kWh".format(
-                Locale.ENGLISH,
-                tripData.usedEnergy / 1000)
-        }
-        return "${tripData.usedEnergy.toInt()} Wh"
-    }
-
-    private fun getChargedEnergyString(index: Int): String {
-        if (!appPreferences.consumptionUnit) {
-            return "%.1f kWh".format(
-                Locale.ENGLISH,
-                tripData.chargeCurves[index].chargedEnergy / 1000)
-        }
-        return "${tripData.chargeCurves[index].chargedEnergy.toInt()} Wh"
-    }
-
-    private fun getTraveledDistanceString(): String {
-        return "%.1f km".format(Locale.ENGLISH, tripData.traveledDistance / 1000)
-    }
-
-    private fun getAvgConsumptionString(): String {
-        val unitString = if (appPreferences.consumptionUnit) "Wh/km" else "kWh/100km"
-        if (tripData.traveledDistance <= 0) {
-            return "-/- $unitString"
-        }
-        if (!appPreferences.consumptionUnit) {
-            return "%.1f %s".format(
-                Locale.ENGLISH,
-                (tripData.usedEnergy /(tripData.traveledDistance /1000))/10,
-                unitString)
-        }
-        return "${(tripData.usedEnergy /(tripData.traveledDistance /1000)).toInt()} $unitString"
-    }
-
-    private fun getElapsedTimeString(elapsedTime: Long): String {
-        return String.format("%02d:%02d:%02d",
-            TimeUnit.MILLISECONDS.toHours(elapsedTime),
-            TimeUnit.MILLISECONDS.toMinutes(elapsedTime) % TimeUnit.HOURS.toMinutes(1),
-            TimeUnit.MILLISECONDS.toSeconds(elapsedTime) % TimeUnit.MINUTES.toSeconds(1))
     }
 
     private fun updateDistractionOptimization(update: Boolean = false) {

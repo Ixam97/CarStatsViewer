@@ -35,7 +35,7 @@
     <string name="summary_parked_warning">Visning er kun tilgjengelig når parkert.</string>
     <string name="summary_trip_history">Tur historie</string>
     <string name="summary_charging_sessions">Ladesesjoner</string>
-    <string name="summary_trip_start_date">Turen startet på:</string>
+    <string name="summary_trip_start_date">Turen startet på: %s</string>
     <string name="summary_used_energy">Energi brukt</string>
     <string name="summary_traveled_distance">Reist distanse</string>
     <string name="summary_average_consumption">Gjennomsnittlig forbruk</string>

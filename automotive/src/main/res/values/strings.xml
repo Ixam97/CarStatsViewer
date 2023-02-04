@@ -67,7 +67,7 @@
     <string name="summary_parked_warning">View only available when parked.</string>
     <string name="summary_trip_history">Trip history</string>
     <string name="summary_charging_sessions">Charging sessions</string>
-    <string name="summary_trip_start_date">Trip started on:</string>
+    <string name="summary_trip_start_date">Trip started on: %s</string>
     <string name="summary_used_energy">Used energy</string>
     <string name="summary_traveled_distance">Traveled distance</string>
     <string name="summary_average_consumption">Average consumption</string>

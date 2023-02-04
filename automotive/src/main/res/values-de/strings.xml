@@ -35,7 +35,7 @@
     <string name="summary_parked_warning">Ansicht nur im geparkten Zustand verfügbar.</string>
     <string name="summary_trip_history">Fahrtverlauf</string>
     <string name="summary_charging_sessions">Ladevorgänge</string>
-    <string name="summary_trip_start_date">Trip begonnen am:</string>
+    <string name="summary_trip_start_date">Trip begonnen am: %s</string>
     <string name="summary_used_energy">Verbrauchte Energie</string>
     <string name="summary_traveled_distance">Zurückgelegte Distanz</string>
     <string name="summary_average_consumption">Durchschnittsverbrauch</string>

@@ -35,7 +35,7 @@
     <string name="summary_parked_warning">Vyn enbart tillgänglig vid parkering.</string>
     <string name="summary_trip_history">Tripp historisk</string>
     <string name="summary_charging_sessions">Laddningstillfällen</string>
-    <string name="summary_trip_start_date">Tripp påbörjad:</string>
+    <string name="summary_trip_start_date">Tripp påbörjad: %s</string>
     <string name="summary_used_energy">Använd energi</string>
     <string name="summary_traveled_distance">Tripp distans</string>
     <string name="summary_average_consumption">Genomsnittlig förbrukning</string>
