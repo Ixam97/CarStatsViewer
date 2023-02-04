@@ -531,28 +531,28 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 val plotPoint = when {
                     group.value.size <= 1 -> {
                         val point = group.value.first()
-                        PlotPoint(
-                            x(point.x, 0f, 1f, maxX)!!,
-                            y(point.y.bySecondaryDimension(secondaryDimension), minValue, maxValue, maxY)!!
-                        )
+                        val x = x(point.x, 0f, 1f, maxX) ?: continue
+                        val y = y(point.y.bySecondaryDimension(secondaryDimension), minValue, maxValue, maxY) ?: continue
+
+                        PlotPoint(x, y)
                     }
                     else -> {
-                        val x = when (plotPoints.size) {
-                            0 -> group.value.minBy { it.x }.x
-                            else -> group.value.maxBy { it.x }.x
-                        }
+                        val xGroup = when (plotPoints.size) {
+                            0 -> group.value.minOfOrNull { it.x }
+                            else -> group.value.maxOfOrNull { it.x }
+                        } ?: continue
 
-                        PlotPoint(
-                            x(x, 0f, 1f, maxX)!!,
-                            y(line.averageValue(group.value.map { it.y }, dimension, secondaryDimension), minValue, maxValue, maxY)!!
-                        )
+                        val x = x(xGroup, 0f, 1f, maxX) ?: continue
+                        val y = y(line.averageValue(group.value.map { it.y }, dimension, secondaryDimension), minValue, maxValue, maxY) ?: continue
+
+                        PlotPoint(x, y)
                     }
                 }
 
                 plotPoints.add(plotPoint)
             }
 
-            plotPointCollection.add(plotPoints)
+            if (plotPoints.isNotEmpty()) plotPointCollection.add(plotPoints)
         }
 
         return plotPointCollection
