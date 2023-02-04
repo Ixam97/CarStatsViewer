@@ -5,9 +5,11 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import android.widget.TextView
+import android.util.Patterns
+import android.view.KeyEvent
+import android.view.inputmethod.InputMethodManager
+import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManagers
@@ -17,8 +19,7 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.coroutines.CoroutineContext
+
 
 object InAppLogger {
 
@@ -96,6 +97,8 @@ class LogActivity : Activity() {
 
     private lateinit var appPreferences: AppPreferences
 
+    fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         InAppLogger.log("LogActivity.onCreate")
@@ -118,26 +121,38 @@ class LogActivity : Activity() {
 
         log_button_send.setOnClickListener {
 
-            CoroutineScope(Dispatchers.Default).launch() {
-                try {
-                    val sender = MailSender(getString(R.string.email_address), getString(R.string.password))
-                    val dir = File(applicationContext.filesDir, "TripData")
-                    if (!dir.exists()) {
-                        InAppLogger.log("TRIP DATA: Directory TripData does not exist!")
+            val mailAdr = log_text_target_mail.text.toString()
 
-                    } else {
-                        val gpxFile = File(dir, "${getString(R.string.file_name_current_trip_data)}.json")
-                        if (!gpxFile.exists() && gpxFile.length() > 0) {
-                            InAppLogger.log("TRIP_DATA File ${getString(R.string.file_name_current_trip_data)}.json does not exist!")
+            if (!mailAdr.isValidEmail())
+                Toast.makeText(this, "Invalid mail address!", Toast.LENGTH_SHORT).show()
+            else {
+                CoroutineScope(Dispatchers.Default).launch() {
+                    try {
+                        val sender = MailSender(getString(R.string.email_address), getString(R.string.password))
+                        val dir = File(applicationContext.filesDir, "TripData")
+                        if (!dir.exists()) {
+                            InAppLogger.log("TRIP DATA: Directory TripData does not exist!")
+
+                        } else {
+                            val gpxFile = File(dir, "${getString(R.string.file_name_current_trip_data)}.json")
+                            if (!gpxFile.exists() && gpxFile.length() > 0) {
+                                InAppLogger.log("TRIP_DATA File ${getString(R.string.file_name_current_trip_data)}.json does not exist!")
+                            }
+                            else {
+                                sender.addAttachment(gpxFile)
+                            }
                         }
-                        else {
-                            sender.addAttachment(gpxFile)
+                        sender.sendMail("Debug Log ${Date()}", getLogString(), "CarStatsViewer@ixam97.de", mailAdr)
+                        runOnUiThread {
+                            Toast.makeText(this@LogActivity, "Log and JSON sent to $mailAdr", Toast.LENGTH_LONG).show()
+                        }
+                    } catch (e: java.lang.Exception) {
+                        InAppLogger.log(e.stackTraceToString())
+                    } finally {
+                        runOnUiThread {
+                            Toast.makeText(this@LogActivity, "Sending E-Mail failed. See log.", Toast.LENGTH_LONG).show()
                         }
                     }
-                    sender.sendMail("Debug Log ${Date()}", getLogString(), "CarStatsViewer@ixam97.de", "ixam97@ixam97.de")
-
-                } catch (e: java.lang.Exception) {
-                    InAppLogger.log(e.stackTraceToString())
                 }
             }
         }

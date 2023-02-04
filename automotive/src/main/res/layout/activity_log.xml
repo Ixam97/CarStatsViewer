@@ -29,14 +29,6 @@
             android:textFontWeight="600"
             android:text="JSON"
             android:backgroundTint="@android:color/transparent"/>
-        <ImageButton
-            android:id="@+id/log_button_send"
-            android:src="@drawable/ic_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:layout_marginVertical="15dp"
-            android:layout_marginEnd="10dp"/>
 
         <ImageButton
             android:id="@+id/log_button_copy"
@@ -86,6 +78,39 @@
             style="@style/menu_button_row_style"
             android:text="Empty Log"
             android:drawableEnd="@drawable/ic_delete"/>
+
+        <View
+            style="@style/menu_divider_style"
+            android:background="?android:attr/listDivider" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="101dp"
+                android:text="To:"
+                android:textSize="35sp"
+                android:textFontWeight="400"/>
+            <EditText
+                android:id="@+id/log_text_target_mail"
+                android:text="ixam97@ixam97.de"
+                android:textSize="35sp"
+                android:singleLine="true"
+                android:textFontWeight="400"
+                android:imeOptions="actionDone"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="101dp"
+                android:layout_marginHorizontal="25dp"/>
+            <ImageButton
+                android:id="@+id/log_button_send"
+                android:src="@drawable/ic_send"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:layout_marginEnd="10dp"/>
+        </LinearLayout>
 
         <View
             style="@style/menu_divider_style"
