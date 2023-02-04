@@ -338,6 +338,7 @@ class DataCollector : Service() {
         // Get real current properties to avoid old values after hibernation.
         refreshProperty(CurrentTripDataManager.CurrentIgnitionState.propertyId)
         refreshProperty(CurrentTripDataManager.ChargePortConnected.propertyId)
+        refreshProperty(CurrentTripDataManager.BatteryLevel.propertyId)
 
         val previousDrivingState = CurrentTripDataManager.DriveState.lastDriveState
         if (CurrentTripDataManager.DriveState.hasChanged()) {
@@ -346,20 +347,20 @@ class DataCollector : Service() {
                 DrivingState.DRIVE -> {
                     resumeTrip()
                     if (previousDrivingState == DrivingState.CHARGE) stopChargingSession()
-                    if (previousDrivingState != DrivingState.UNKNOWN) CurrentTripDataManager.plotMarkers.endMarker(System.nanoTime())
+                    if (previousDrivingState != DrivingState.UNKNOWN) CurrentTripDataManager.plotMarkers.endMarker(System.nanoTime(), CurrentTripDataManager.traveledDistance)
                 }
                 DrivingState.CHARGE -> {
                     if (previousDrivingState == DrivingState.DRIVE) pauseTrip()
                     if (previousDrivingState != DrivingState.UNKNOWN){
                         startChargingSession()
-                        CurrentTripDataManager.plotMarkers.addMarker(PlotMarkerType.CHARGE, System.nanoTime())
+                        CurrentTripDataManager.plotMarkers.addMarker(PlotMarkerType.CHARGE, System.nanoTime(), CurrentTripDataManager.traveledDistance)
                     }
                     else CurrentTripDataManager.ChargeTime.start()
                 }
                 DrivingState.PARKED -> {
                     if (previousDrivingState == DrivingState.DRIVE){
                         pauseTrip()
-                        CurrentTripDataManager.plotMarkers.addMarker(PlotMarkerType.PARK, System.nanoTime())
+                        CurrentTripDataManager.plotMarkers.addMarker(PlotMarkerType.PARK, System.nanoTime(), CurrentTripDataManager.traveledDistance)
                     }
                     if (previousDrivingState == DrivingState.CHARGE) stopChargingSession()
 

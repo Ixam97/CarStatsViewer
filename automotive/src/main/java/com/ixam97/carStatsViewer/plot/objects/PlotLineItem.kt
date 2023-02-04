@@ -31,15 +31,17 @@ class PlotLineItem (
         }
     }
 
-    fun bySecondaryDimension(secondaryDimension: PlotSecondaryDimension? = null): Float {
+    fun bySecondaryDimension(secondaryDimension: PlotSecondaryDimension? = null): Float? {
         return when (secondaryDimension) {
             PlotSecondaryDimension.SPEED -> {
-                if ((TimeDelta?: 0L) <= 0) 0F
-                else (DistanceDelta ?: 0f) / ((TimeDelta ?: 1L) / 1_000_000_000f) * 3.6f
+                when {
+                    (TimeDelta?:0L) <= 0 -> null
+                    else -> (DistanceDelta ?: 0f) / ((TimeDelta ?: 1L) / 1_000_000_000f) * 3.6f
+                }
             }
             PlotSecondaryDimension.DISTANCE -> Distance
             PlotSecondaryDimension.TIME -> Time.toFloat()
-            PlotSecondaryDimension.STATE_OF_CHARGE -> StateOfCharge ?: 0f
+            PlotSecondaryDimension.STATE_OF_CHARGE -> StateOfCharge?:0f
             else -> Value
         }
     }
@@ -54,6 +56,13 @@ class PlotLineItem (
 
         fun cord(index: Float, min: Float, max: Float) : Float {
             return 1f / (max - min) * (index - min)
+        }
+
+        fun cord(index: Long?, min: Long, max: Long) : Float? {
+            return when (index) {
+                null -> null
+                else -> cord(index, min, max)
+            }
         }
 
         fun cord(index: Long, min: Long, max: Long) : Float {
