@@ -1,9 +1,5 @@
 package com.ixam97.carStatsViewer.utils
 
-import android.text.format.DateFormat
-import android.content.Context
-import android.content.res.Resources
-import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -14,29 +10,26 @@ object StringFormatters {
     lateinit var dateFormat: java.text.DateFormat
     lateinit var timeFormat: java.text.DateFormat
 
+    /** Divides a Float by 1000 and rounds it up to one decimal point to be on par with board computer */
+    private fun kiloRounder(number: Float): Float {
+        return (number.toInt() / 100).toFloat() / 10
+    }
 
     fun getDateString(tripStartDate: Date): String {
         return "${dateFormat.format(tripStartDate)}, ${timeFormat.format(tripStartDate)}"
     }
 
-    fun getUsedEnergyString(usedEnergy: Float): String {
+    fun getEnergyString(usedEnergy: Float): String {
         if (!appPreferences.consumptionUnit) {
             return "%.1f kWh".format(
                 Locale.ENGLISH,
-                usedEnergy / 1000)
+                kiloRounder(usedEnergy))
         }
         return "${usedEnergy.toInt()} Wh"
     }
 
-    fun getChargedEnergyString(chargedEnergy: Float): String {
-        if (!appPreferences.consumptionUnit) {
-            return "%.1f kWh".format(Locale.ENGLISH, chargedEnergy / 1000)
-        }
-        return "${chargedEnergy.toInt()} Wh"
-    }
-
     fun getTraveledDistanceString(traveledDistance: Float): String {
-        return "%.1f km".format(Locale.ENGLISH, traveledDistance / 1000)
+        return "%.1f km".format(Locale.ENGLISH, kiloRounder(traveledDistance))
     }
 
     fun getAvgConsumptionString(usedEnergy: Float, traveledDistance: Float): String {

@@ -186,9 +186,9 @@ class MainActivity : Activity() {
 
         main_gage_avg_consumption_text_view.text = "  Ø %s".format(StringFormatters.getAvgConsumptionString(selectedDataManager.usedEnergy, selectedDataManager.traveledDistance))
         main_gage_distance_text_view.text = "  %s".format(StringFormatters.getTraveledDistanceString(selectedDataManager.traveledDistance))
-        main_gage_used_power_text_view.text = "  %s".format(StringFormatters.getUsedEnergyString(selectedDataManager.usedEnergy))
+        main_gage_used_power_text_view.text = "  %s".format(StringFormatters.getEnergyString(selectedDataManager.usedEnergy))
         main_gage_time_text_view.text = "  %s".format(getElapsedTimeString(selectedDataManager.travelTime))
-        main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getUsedEnergyString(selectedDataManager.chargedEnergy))
+        main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getEnergyString(selectedDataManager.chargedEnergy))
         main_gage_charge_time_text_view.text = "  %s".format(getElapsedTimeString(selectedDataManager.chargeTime))
         main_gage_ambient_temperature_text_view.text = "  %.1f° C".format(selectedDataManager.ambientTemperature)
     }

@@ -132,7 +132,7 @@ class SummaryActivity: Activity() {
         summary_consumption_plot.invalidate()
 
         summary_distance_value_text.text = StringFormatters.getTraveledDistanceString(tripData.traveledDistance)
-        summary_used_energy_value_text.text = StringFormatters.getUsedEnergyString(tripData.usedEnergy)
+        summary_used_energy_value_text.text = StringFormatters.getEnergyString(tripData.usedEnergy)
         summary_avg_consumption_value_text.text = StringFormatters.getAvgConsumptionString(tripData.traveledDistance, tripData.usedEnergy)
         summary_travel_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.travelTime)
     }
@@ -156,7 +156,7 @@ class SummaryActivity: Activity() {
             summary_charge_plot_button_prev.isEnabled = true
             summary_charge_plot_button_prev.colorFilter = enabledTint
 
-            summary_charged_energy_value_text.text = StringFormatters.getChargedEnergyString(tripData.chargeCurves.last().chargedEnergy)
+            summary_charged_energy_value_text.text = StringFormatters.getEnergyString(tripData.chargeCurves.last().chargedEnergy)
             summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.chargeCurves.last().chargeTime)
             summary_charge_ambient_temp.text = "%.0f °C".format(tripData.chargeCurves.last().ambientTemperature)
             summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves.last().chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
@@ -240,7 +240,7 @@ class SummaryActivity: Activity() {
             }
         }
 
-        summary_charged_energy_value_text.text = StringFormatters.getChargedEnergyString(tripData.chargeCurves[progress].chargedEnergy)
+        summary_charged_energy_value_text.text = StringFormatters.getEnergyString(tripData.chargeCurves[progress].chargedEnergy)
         summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.chargeCurves[progress].chargeTime)
         summary_charge_ambient_temp.text = "%.0f °C".format(tripData.chargeCurves[progress].ambientTemperature)
 
