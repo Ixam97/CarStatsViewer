@@ -179,6 +179,15 @@ class DataCollector : Service() {
 
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.save_trip_data_broadcast)))
         registerReceiver(carPropertyEmulatorReceiver, IntentFilter(getString(R.string.VHAL_emulator_broadcast)))
+
+        for (propertyId in CurrentTripDataManager.getVehiclePropertyIds()) {
+            refreshProperty(propertyId)
+        }
+
+        driveStateUpdater()
+        speedUpdater()
+        powerUpdater()
+
     }
 
     override fun onDestroy() {
@@ -236,16 +245,11 @@ class DataCollector : Service() {
 
     /** Handle incoming property changes by property ID */
     private fun handleCarPropertyListenerEvent(propertyId: Int) {
-        // Always update the drive state to not miss any changes
-        // driveStateUpdater()
         when (propertyId) {
             CurrentTripDataManager.CurrentPower.propertyId         -> powerUpdater()
-            CurrentTripDataManager.CurrentSpeed.propertyId         -> {
-                speedUpdater()
-                driveStateUpdater()
-            }
-            // CurrentTripDataManager.CurrentIgnitionState.propertyId -> driveStateUpdater()
-            // CurrentTripDataManager.ChargePortConnected.propertyId  -> driveStateUpdater()
+            CurrentTripDataManager.CurrentSpeed.propertyId         -> speedUpdater()
+            CurrentTripDataManager.CurrentIgnitionState.propertyId -> driveStateUpdater()
+            CurrentTripDataManager.ChargePortConnected.propertyId  -> driveStateUpdater()
         }
     }
 
@@ -275,6 +279,7 @@ class DataCollector : Service() {
                     if (chargePlotTimeDelta < CHARGE_PLOT_UPDATE_INTERVAL_MILLIS * 1_000_000) {
                         chargePlotTimeDelta += CurrentTripDataManager.CurrentPower.timeDelta
                     } else {
+                        refreshProperty(CurrentTripDataManager.BatteryLevel.propertyId)
                         addChargeDataPoint()
                         chargePlotTimeDelta = 0L
                         sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))

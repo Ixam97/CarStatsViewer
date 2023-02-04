@@ -31,12 +31,11 @@ class DrivingState(private val ChargePortConnected: VehicleProperty, private val
 
     /** Get the current DrivingState independent of hasChanged(). */
     fun getDriveState(): Int {
-        var newDriveState = UNKNOWN
-        val chargePortConnected = (ChargePortConnected.value?: false) as Boolean
-        val currentIgnitionState = (CurrentIgnitionState.value?: 0) as Int
-        if (chargePortConnected) newDriveState = CHARGE
-        else if (currentIgnitionState == VehicleIgnitionState.START) newDriveState = DRIVE
-        else if (currentIgnitionState == VehicleIgnitionState.OFF || currentIgnitionState == VehicleIgnitionState.ON) newDriveState = PARKED
-        return newDriveState
+        val chargePortConnected = (ChargePortConnected.value ?: false) as Boolean
+        val currentIgnitionState = (CurrentIgnitionState.value ?: 0) as Int
+        return if (chargePortConnected) CHARGE
+        else if (currentIgnitionState == VehicleIgnitionState.START) DRIVE
+        else if (currentIgnitionState != VehicleIgnitionState.UNDEFINED) PARKED
+        else UNKNOWN
     }
 }
