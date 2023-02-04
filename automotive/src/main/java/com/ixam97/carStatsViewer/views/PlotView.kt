@@ -659,7 +659,9 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     private fun drawMarker(canvas: Canvas, minDimension: Any, maxDimension: Any, maxX: Float, maxY: Float) {
-        val markers = plotMarkers?.markers?.filter { visibleMarkerTypes.contains(it.MarkerType) } ?: return
+        val markers = plotMarkers?.markers?.filter {
+                visibleMarkerTypes.contains(it.MarkerType) && it.EndTime != null && it.EndDistance != null
+        } ?: return
 
         var markerXLimit = 0f
         val markerTimes = HashMap<PlotMarkerType, Long>()
