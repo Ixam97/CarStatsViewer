@@ -160,13 +160,13 @@ class PlotLine(
     fun maxValue(dataPoints: List<PlotLineItem>, secondaryDimension: PlotSecondaryDimension? = null, applyRange: Boolean = true): Float? {
         val baseConfiguration = PlotGlobalConfiguration.SecondaryDimensionConfiguration[secondaryDimension] ?: Configuration
         val max : Float? = when {
-            dataPoints.isEmpty() -> baseConfiguration.Range.minPositive ?: 0f
+            dataPoints.isEmpty() -> baseConfiguration.Range.minPositive
             else -> {
-                var maxByData = dataPoints.maxOfOrNull { it.bySecondaryDimension(secondaryDimension) ?: 0f } ?: 0f
+                var maxByData = dataPoints.mapNotNull { it.bySecondaryDimension(secondaryDimension) }.maxOfOrNull { it }
 
                 if (applyRange) {
-                    if (baseConfiguration.Range.minPositive != null) maxByData = maxByData.coerceAtLeast(baseConfiguration.Range.minPositive)
-                    if (baseConfiguration.Range.maxPositive != null) maxByData = maxByData.coerceAtMost(baseConfiguration.Range.maxPositive)
+                    if (baseConfiguration.Range.minPositive != null) maxByData = (maxByData?:0f).coerceAtLeast(baseConfiguration.Range.minPositive)
+                    if (baseConfiguration.Range.maxPositive != null) maxByData = (maxByData?:0f).coerceAtMost(baseConfiguration.Range.maxPositive)
                 }
 
                 maxByData
@@ -188,13 +188,13 @@ class PlotLine(
     fun minValue(dataPoints: List<PlotLineItem>, secondaryDimension: PlotSecondaryDimension? = null, applyRange: Boolean = true): Float? {
         val baseConfiguration = PlotGlobalConfiguration.SecondaryDimensionConfiguration[secondaryDimension] ?: Configuration
         val min : Float? = when {
-            dataPoints.isEmpty() -> baseConfiguration.Range.minNegative ?: 0f
+            dataPoints.isEmpty() -> baseConfiguration.Range.minNegative
             else -> {
-                var minByData = dataPoints.minOfOrNull { it.bySecondaryDimension(secondaryDimension) ?: 0f } ?: 0f
+                var minByData = dataPoints.mapNotNull { it.bySecondaryDimension(secondaryDimension) }.minOfOrNull { it }
 
                 if (applyRange) {
-                    if (baseConfiguration.Range.minNegative != null) minByData = minByData.coerceAtMost(baseConfiguration.Range.minNegative)
-                    if (baseConfiguration.Range.maxNegative != null) minByData = minByData.coerceAtLeast(baseConfiguration.Range.maxNegative)
+                    if (baseConfiguration.Range.minNegative != null) minByData = (minByData?:0f).coerceAtMost(baseConfiguration.Range.minNegative)
+                    if (baseConfiguration.Range.maxNegative != null) minByData = (minByData?:0f).coerceAtLeast(baseConfiguration.Range.maxNegative)
                 }
 
                 minByData
