@@ -122,6 +122,7 @@ class LogActivity : Activity() {
         log_button_send.setOnClickListener {
 
             val mailAdr = log_text_target_mail.text.toString()
+            val senderName = log_text_sender.text.toString()
 
             if (!mailAdr.isValidEmail())
                 Toast.makeText(this, "Invalid mail address!", Toast.LENGTH_SHORT).show()
@@ -142,7 +143,7 @@ class LogActivity : Activity() {
                                 sender.addAttachment(gpxFile)
                             }
                         }
-                        sender.sendMail("Debug Log ${Date()}", getLogString(), "CarStatsViewer@ixam97.de", mailAdr)
+                        sender.sendMail("Debug Log ${Date()} from $senderName", getLogString(), "CarStatsViewer@ixam97.de", mailAdr)
                         runOnUiThread {
                             Toast.makeText(this@LogActivity, "Log and JSON sent to $mailAdr", Toast.LENGTH_LONG).show()
                         }
