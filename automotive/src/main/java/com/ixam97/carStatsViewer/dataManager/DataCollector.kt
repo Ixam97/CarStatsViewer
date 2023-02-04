@@ -273,13 +273,7 @@ class DataCollector : Service() {
                     if (chargePlotTimeDelta < CHARGE_PLOT_UPDATE_INTERVAL_MILLIS * 1_000_000) {
                         chargePlotTimeDelta += CurrentTripDataManager.CurrentPower.timeDelta
                     } else {
-                        CurrentTripDataManager.chargePlotLine.addDataPoint(
-                            -CurrentTripDataManager.currentPower / 1_000_000,
-                            CurrentTripDataManager.CurrentPower.timestamp,
-                            CurrentTripDataManager.traveledDistance,
-                            CurrentTripDataManager.stateOfCharge.toFloat(),
-                            autoMarkerTimeDeltaThreshold = CHARGE_PLOT_MARKER_THRESHOLD_NANOS
-                        )
+                        addChargeDataPoint()
                         chargePlotTimeDelta = 0L
                         sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
                     }
@@ -318,11 +312,8 @@ class DataCollector : Service() {
                 consumptionPlotDistanceDelta += traveledDistanceDelta
             } else {
                 if (CurrentTripDataManager.driveState == DrivingState.DRIVE) {
-                    CurrentTripDataManager.consumptionPlotLine.addDataPoint(
-                        if(consumptionPlotDistanceDelta > 0) consumptionPlotEnergyDelta / (consumptionPlotDistanceDelta / 1000) else 0F,
-                        CurrentTripDataManager.CurrentSpeed.timestamp,
-                        CurrentTripDataManager.traveledDistance,
-                        CurrentTripDataManager.stateOfCharge.toFloat()
+                    addConsumptionDataPoint(
+                        if(consumptionPlotDistanceDelta > 0) consumptionPlotEnergyDelta / (consumptionPlotDistanceDelta / 1000) else 0F
                     )
                 }
                 consumptionPlotDistanceDelta = 0F
@@ -375,14 +366,7 @@ class DataCollector : Service() {
         CurrentTripDataManager.ChargeTime.reset()
         CurrentTripDataManager.ChargeTime.start()
 
-        CurrentTripDataManager.chargePlotLine.addDataPoint(
-            CurrentTripDataManager.currentPower,
-            CurrentTripDataManager.CurrentPower.timestamp,
-            CurrentTripDataManager.traveledDistance,
-            CurrentTripDataManager.stateOfCharge.toFloat(),
-            plotLineMarkerType = PlotLineMarkerType.BEGIN_SESSION,
-            autoMarkerTimeDeltaThreshold = CHARGE_PLOT_MARKER_THRESHOLD_NANOS
-        )
+        addChargeDataPoint(PlotLineMarkerType.BEGIN_SESSION)
     }
 
     private fun stopChargingSession() {
@@ -390,14 +374,8 @@ class DataCollector : Service() {
         refreshProperty(CurrentTripDataManager.BatteryLevel.propertyId)
 
         CurrentTripDataManager.ChargeTime.stop()
-        CurrentTripDataManager.chargePlotLine.addDataPoint(
-            CurrentTripDataManager.currentPower,
-            System.nanoTime(),
-            CurrentTripDataManager.traveledDistance,
-            CurrentTripDataManager.stateOfCharge.toFloat(),
-            plotLineMarkerType = PlotLineMarkerType.END_SESSION,
-            autoMarkerTimeDeltaThreshold = CHARGE_PLOT_MARKER_THRESHOLD_NANOS
-        )
+
+        addChargeDataPoint(PlotLineMarkerType.END_SESSION)
 
         CurrentTripDataManager.chargeCurves.add(
             ChargeCurve(
@@ -409,26 +387,35 @@ class DataCollector : Service() {
         )
     }
 
+    private fun addChargeDataPoint(plotLineMarkerType: PlotLineMarkerType? = null) {
+        CurrentTripDataManager.chargePlotLine.addDataPoint(
+            -CurrentTripDataManager.currentPower / 1_000_000,
+            CurrentTripDataManager.CurrentPower.timestamp,
+            CurrentTripDataManager.traveledDistance,
+            CurrentTripDataManager.stateOfCharge.toFloat(),
+            plotLineMarkerType = plotLineMarkerType,
+            autoMarkerTimeDeltaThreshold = CHARGE_PLOT_MARKER_THRESHOLD_NANOS
+        )
+    }
+
     private fun pauseTrip() {
         CurrentTripDataManager.TravelTime.stop()
         val newPlotItem = if (consumptionPlotDistanceDelta > 0) consumptionPlotEnergyDelta / (consumptionPlotDistanceDelta / 1000) else 0F
-        CurrentTripDataManager.consumptionPlotLine.addDataPoint(
-            newPlotItem,
-            CurrentTripDataManager.CurrentSpeed.timestamp,
-            CurrentTripDataManager.traveledDistance,
-            CurrentTripDataManager.stateOfCharge.toFloat(),
-            plotLineMarkerType = PlotLineMarkerType.END_SESSION
-        )
+        addConsumptionDataPoint(newPlotItem, PlotLineMarkerType.END_SESSION)
     }
 
     private fun resumeTrip() {
         CurrentTripDataManager.TravelTime.start()
+        addConsumptionDataPoint(0F, PlotLineMarkerType.BEGIN_SESSION)
+    }
+
+    private fun addConsumptionDataPoint(item: Float, plotLineMarkerType: PlotLineMarkerType? = null) {
         CurrentTripDataManager.consumptionPlotLine.addDataPoint(
-            0F,
+            item,
             CurrentTripDataManager.CurrentSpeed.timestamp,
             CurrentTripDataManager.traveledDistance,
             CurrentTripDataManager.stateOfCharge.toFloat(),
-            plotLineMarkerType = PlotLineMarkerType.BEGIN_SESSION
+            plotLineMarkerType = plotLineMarkerType
         )
     }
 
