@@ -132,7 +132,7 @@ class SummaryActivity: Activity() {
 
         summary_distance_value_text.text = StringFormatters.getTraveledDistanceString(tripData.traveledDistance)
         summary_used_energy_value_text.text = StringFormatters.getEnergyString(tripData.usedEnergy)
-        summary_avg_consumption_value_text.text = StringFormatters.getAvgConsumptionString(tripData.traveledDistance, tripData.usedEnergy)
+        summary_avg_consumption_value_text.text = StringFormatters.getAvgConsumptionString(tripData.usedEnergy, tripData.traveledDistance)
         summary_travel_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.travelTime)
     }
 
