@@ -684,7 +684,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val markers = plotMarkers?.markers?.filter {
             val isNotOnEdge = when (dimension) {
                 PlotDimension.DISTANCE -> (minDimension as Float) < it.StartDistance && it.StartDistance < (maxDimension as Float)
-                PlotDimension.TIME -> (minDimension as Long) < it.StartTime && it.StartTime < (maxDimension as Long)
+                PlotDimension.TIME -> false // (minDimension as Long) < it.StartTime && it.StartTime < (maxDimension as Long)
                 else -> false
             }
             visibleMarkerTypes.contains(it.MarkerType) && isNotOnEdge
@@ -732,7 +732,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val icon = markerIcon[marker.key] ?: return xLimit
         val paint = markerPaint[marker.key]?.Label ?: return xLimit
 
-        val label = timeLabel(marker.value)
+        val label = timeLabel(TimeUnit.MILLISECONDS.toNanos(marker.value))
 
         val padding = 8f
         val spaceNeeded = icon.width + paint.measureText(label).roundToInt() + 2 * padding

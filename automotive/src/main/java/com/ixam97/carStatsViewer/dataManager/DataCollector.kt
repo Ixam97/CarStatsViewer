@@ -343,20 +343,20 @@ class DataCollector : Service() {
                 DrivingState.DRIVE -> {
                     resumeTrip()
                     if (previousDrivingState == DrivingState.CHARGE) stopChargingSession()
-                    if (previousDrivingState != DrivingState.UNKNOWN) CurrentTripDataManager.plotMarkers.endMarker(System.nanoTime(), CurrentTripDataManager.traveledDistance)
+                    if (previousDrivingState != DrivingState.UNKNOWN) CurrentTripDataManager.plotMarkers.endMarker(System.currentTimeMillis(), CurrentTripDataManager.traveledDistance)
                 }
                 DrivingState.CHARGE -> {
                     if (previousDrivingState == DrivingState.DRIVE) pauseTrip()
                     if (previousDrivingState != DrivingState.UNKNOWN){
                         startChargingSession()
-                        CurrentTripDataManager.plotMarkers.addMarker(PlotMarkerType.CHARGE, System.nanoTime(), CurrentTripDataManager.traveledDistance)
+                        CurrentTripDataManager.plotMarkers.addMarker(PlotMarkerType.CHARGE, System.currentTimeMillis(), CurrentTripDataManager.traveledDistance)
                     }
                     else CurrentTripDataManager.ChargeTime.start()
                 }
                 DrivingState.PARKED -> {
                     if (previousDrivingState == DrivingState.DRIVE){
                         pauseTrip()
-                        CurrentTripDataManager.plotMarkers.addMarker(PlotMarkerType.PARK, System.nanoTime(), CurrentTripDataManager.traveledDistance)
+                        CurrentTripDataManager.plotMarkers.addMarker(PlotMarkerType.PARK, System.currentTimeMillis(), CurrentTripDataManager.traveledDistance)
                     }
                     if (previousDrivingState == DrivingState.CHARGE) stopChargingSession()
 
