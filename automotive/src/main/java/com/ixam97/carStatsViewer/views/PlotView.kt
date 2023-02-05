@@ -663,7 +663,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val markers = plotMarkers?.markers?.filter {
             val isNotOnEdge = when (dimension) {
                 PlotDimension.DISTANCE -> (minDimension as Float) < it.StartDistance && it.StartDistance < (maxDimension as Float)
-                PlotDimension.TIME -> (minDimension as Long) < it.StartTime && it.StartTime < (maxDimension as Long)
+                PlotDimension.TIME -> false // (minDimension as Long) < it.StartTime && it.StartTime < (maxDimension as Long)
                 else -> false
             }
             visibleMarkerTypes.contains(it.MarkerType) && isNotOnEdge
