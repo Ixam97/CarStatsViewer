@@ -122,12 +122,11 @@ class SummaryActivity: Activity() {
         summary_consumption_plot.secondaryDimension = PlotSecondaryDimension.SPEED
         summary_consumption_plot.dimension = PlotDimension.DISTANCE
         summary_consumption_plot.dimensionRestriction = ((tripData.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1
+        summary_consumption_plot.dimensionRestrictionMin = MainActivity.DISTANCE_TRIP_DIVIDER
         summary_consumption_plot.dimensionSmoothingPercentage = 0.02f
         summary_consumption_plot.setPlotMarkers(plotMarkers)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
-        summary_consumption_plot.dimensionShiftTouchEnabled = true
-        summary_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
 
         summary_consumption_plot.invalidate()
 
@@ -160,9 +159,7 @@ class SummaryActivity: Activity() {
             summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.chargeCurves.last().chargeTime)
             summary_charge_ambient_temp.text = "%.0f °C".format(tripData.chargeCurves.last().ambientTemperature)
             summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves.last().chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
-            summary_charge_plot_view.dimensionShiftTouchEnabled = true
-            summary_charge_plot_view.dimensionRestrictionTouchInterval = TimeUnit.SECONDS.toNanos(10L)
-
+            summary_charge_plot_view.dimensionRestrictionMin = TimeUnit.MINUTES.toNanos(5L)
         }
         if (tripData.chargeCurves.size < 2){
             summary_charge_plot_button_next.isEnabled = false

@@ -75,7 +75,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             if (diff) invalidate()
         }
 
-    var dimensionRestrictionTouchInterval: Long? = null
+    var dimensionRestrictionMin: Long? = null
     var dimensionRestriction: Long? = null
         set(value) {
             val diff = value != field
@@ -83,7 +83,6 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             if (diff) invalidate()
         }
 
-    var dimensionShiftTouchEnabled: Boolean = false
     var dimensionShift: Long? = null
         set(value) {
             val diff = value != field
@@ -246,11 +245,11 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private fun x(index: Any?, min: Any, max: Any, maxX: Float): Float? {
         if (min is Float) {
-            return x(index as Float?, min as Float, max as Float, maxX)
+            return x(index as Float?, min, max as Float, maxX)
         }
 
         if (min is Long) {
-            return x(index as Long?, min as Long, max as Long, maxX)
+            return x(index as Long?, min, max as Long, maxX)
         }
 
         return null
@@ -297,13 +296,21 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         override fun onScale(scaleGestureDetector: ScaleGestureDetector): Boolean {
             val spanX: Float = scaleGestureDetector.currentSpanX
+            val restrictionMin = dimensionRestrictionMin ?: return true
 
-            val restrictionInterval = dimensionRestrictionTouchInterval
-            if (restrictionInterval != null && lastRestriction != null && !(lastSpanX/spanX).isInfinite()) {
-                dimensionRestriction = (((lastRestriction!!.toFloat() * (lastSpanX / spanX)).toLong()/restrictionInterval) * restrictionInterval)
-                    .coerceAtMost(touchDimensionMax + (restrictionInterval - touchDimensionMax % restrictionInterval))
-                    .coerceAtLeast(restrictionInterval)
-            }
+            if (lastRestriction == null || (lastSpanX/spanX).isInfinite()) return true
+
+            val targetDimensionRestriction = ((lastRestriction!!.toFloat() * (lastSpanX / spanX)).toLong())
+                .coerceAtMost(touchDimensionMax)
+                .coerceAtLeast(restrictionMin)
+
+            dimensionRestriction = targetDimensionRestriction
+
+            val shift = dimensionShift ?: return true
+
+            dimensionShift = shift
+                .coerceAtMost(touchDimensionMax - targetDimensionRestriction)
+                .coerceAtLeast(0L)
 
             return true
         }
@@ -311,12 +318,12 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
-            if (dimensionShiftTouchEnabled) {
-                touchDimensionShiftDistance += - distanceX
-                dimensionShift = (touchDimensionShift + touchDimensionShiftDistance * touchDimensionShiftByPixel).toLong()
-                    .coerceAtMost(touchDimensionMax - (dimensionRestriction ?: 0L))
-                    .coerceAtLeast(0L)
-            }
+            touchDimensionShiftDistance += distanceX * touchDistanceMultiplier
+
+            dimensionShift = (touchDimensionShift + touchDimensionShiftDistance * touchDimensionShiftByPixel).toLong()
+                .coerceAtMost(touchDimensionMax - (dimensionRestriction ?: 0L))
+                .coerceAtLeast(0L)
+
             return true
         }
     }
@@ -324,6 +331,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private val mScrollDetector = GestureDetector(context, mGestureListener)
     private val mScaleDetector = ScaleGestureDetector(context!!, mScaleGestureDetector)
 
+    // invert direction
+    private var touchDistanceMultiplier : Float = -1f
     private var touchDimensionShift : Long = 0L
     private var touchDimensionShiftDistance : Float = 0f
     private var touchDimensionShiftByPixel : Float = 0f
@@ -331,13 +340,20 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
         val restriction = dimensionRestriction ?: return true
+        val min = dimensionRestrictionMin ?: return true
 
         when (ev.action) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                touchDistanceMultiplier = when (dimension.toPlotDirection()) {
+                    PlotDirection.LEFT_TO_RIGHT -> 1f
+                    PlotDirection.RIGHT_TO_LEFT -> -1f
+                }
                 touchDimensionShift = dimensionShift ?: 0L
                 touchDimensionShiftDistance = 0f
                 touchDimensionShiftByPixel = restriction.toFloat() / width.toFloat()
-                touchDimensionMax = (plotLines.mapNotNull { it.distanceDimension(dimension) }.max() ?: 0f).toLong()
+
+                val dimensionMax = plotLines.mapNotNull { it.distanceDimension(dimension) }.max().toLong()
+                touchDimensionMax = dimensionMax + (min - dimensionMax % min)
             }
         }
 
@@ -402,39 +418,41 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val baseShift = dimensionShift ?: 0L
         val sectionShift = baseShift % sectionLength
 
-        val from = if (sectionShift == 0f) 0 else -1
-
-        for (i in from until xLineCount) {
-            val between = i in from + 1 until xLineCount - 1
+        for (i in -1 until xLineCount + 1) {
+            val between = i in 0 until xLineCount
 
             val relativeShift = when {
                 between -> sectionShift % sectionLength
                 else -> 0f
             }
 
-            val leftZero = (sectionLength * i.coerceAtLeast(0)) + baseShift - relativeShift
-            val rightZero = distanceDimension - leftZero + (2 * (baseShift - relativeShift))
+            val leftToRight = (sectionLength * i.coerceAtLeast(0)) + baseShift - relativeShift
+            val rightToLeft = distanceDimension - leftToRight + (2 * (baseShift - relativeShift))
 
-            val cordX = x((sectionLength * i.coerceAtLeast(0)) + relativeShift, 0f, distanceDimension, maxX)!!
-            val cordY = maxY - yMargin
-
-            if (between) {
-                drawXLine(canvas, cordX, maxY, labelLinePaint)
-            } else {
-                drawXLine(canvas, cordX, maxY, borderLinePaint)
+            val corXFactor = when (dimension.toPlotDirection()) {
+                PlotDirection.LEFT_TO_RIGHT -> -1
+                PlotDirection.RIGHT_TO_LEFT -> 1
             }
 
+            val xPos = (sectionLength * i) + (relativeShift * corXFactor)
+            if (xPos < 0f || xPos > distanceDimension) continue
+
+            val cordX = x(xPos, 0f, distanceDimension, maxX)!!
+            val cordY = maxY - yMargin
+
+            drawXLine(canvas, cordX, maxY, labelLinePaint)
+
             val label = when (dimension) {
-                PlotDimension.INDEX -> label(leftZero, PlotLineLabelFormat.NUMBER)
-                PlotDimension.DISTANCE -> label(rightZero, PlotLineLabelFormat.DISTANCE)
-                PlotDimension.TIME -> label(leftZero, PlotLineLabelFormat.TIME)
-                PlotDimension.STATE_OF_CHARGE -> label(leftZero, PlotLineLabelFormat.NUMBER)
+                PlotDimension.INDEX -> label(leftToRight, PlotLineLabelFormat.NUMBER)
+                PlotDimension.DISTANCE -> label(rightToLeft, PlotLineLabelFormat.DISTANCE)
+                PlotDimension.TIME -> label(leftToRight, PlotLineLabelFormat.TIME)
+                PlotDimension.STATE_OF_CHARGE -> label(leftToRight, PlotLineLabelFormat.NUMBER)
             }
 
             val bounds = Rect()
             labelPaint.getTextBounds(label, 0, label.length, bounds)
 
-            if (between || from == 0) {
+            if (between) {
                 canvas.drawText(
                     label,
                     cordX - bounds.width() / 2,
@@ -443,6 +461,9 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 )
             }
         }
+
+        drawXLine(canvas, x(0f, 0f, 1f, maxX), maxY, borderLinePaint)
+        drawXLine(canvas, x(1f, 0f, 1f, maxX), maxY, borderLinePaint)
     }
 
     private fun drawXLine(canvas: Canvas, cord: Float?, maxY: Float, paint: Paint?) {
@@ -600,11 +621,11 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             drawPlotLine(canvas, backgroundPaint, plotPoints, zeroCord, true)
         }
 
-        val plotPaint = when (lastPlot) {
+        val linePaint = when (lastPlot) {
             true -> plotPaint.Plot
             else -> plotPaint.PlotSecondary
         }
-        drawPlotLine(canvas, plotPaint, plotPoints, zeroCord)
+        drawPlotLine(canvas, linePaint, plotPoints, zeroCord)
     }
 
     private fun drawPlotLine(canvas : Canvas, paint : Paint, plotPoints : ArrayList<PlotPoint>, zeroCord: Float?, background: Boolean = false) {
@@ -678,7 +699,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             if (markerGroup.key == null) continue
 
             val markerType = markerGroup.value.minOfOrNull { it.MarkerType } ?: continue
-            val markers = markerGroup.value.filter { it.MarkerType == markerType }
+            val markersByType = markerGroup.value.filter { it.MarkerType == markerType }
 
             val startX = markerGroup.value.mapNotNull { x(it.startByDimension(dimension), minDimension, maxDimension, maxX) }.minOfOrNull { it } ?: continue
             val endX = markerGroup.value.mapNotNull { x(it.endByDimension(dimension), minDimension, maxDimension, maxX) }.maxOfOrNull { it }
@@ -694,7 +715,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             drawMarkerLine(canvas, markerType, startX, -1)
             drawMarkerLine(canvas, markerType, endX, 1)
 
-            val diff = markers.sumOf { (it.EndTime ?: it.StartTime) - it.StartTime }
+            val diff = markersByType.sumOf { (it.EndTime ?: it.StartTime) - it.StartTime }
 
             markerTimes[markerType] = (markerTimes[markerType] ?: 0L) + diff
         }
@@ -896,7 +917,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         // }
         return String.format("%02d:%02d",
             TimeUnit.NANOSECONDS.toHours(time),
-            TimeUnit.NANOSECONDS.toMinutes(time) % TimeUnit.HOURS.toMinutes(1))
+            (TimeUnit.NANOSECONDS.toSeconds(time) / 60f).roundToInt() % TimeUnit.HOURS.toMinutes(1))
     }
 
     private fun label(value: Float, plotLineLabelFormat: PlotLineLabelFormat, plotHighlightMethod: PlotHighlightMethod? = null): String {
