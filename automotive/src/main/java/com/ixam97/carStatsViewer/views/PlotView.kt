@@ -711,7 +711,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val icon = markerIcon[marker.key] ?: return xLimit
         val paint = markerPaint[marker.key]?.Label ?: return xLimit
 
-        val label = timeLabel(marker.value)
+        val label = timeLabel(TimeUnit.MILLISECONDS.toNanos(marker.value))
 
         val padding = 8f
         val spaceNeeded = icon.width + paint.measureText(label).roundToInt() + 2 * padding

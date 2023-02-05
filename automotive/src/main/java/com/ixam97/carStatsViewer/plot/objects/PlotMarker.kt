@@ -5,6 +5,8 @@ import com.ixam97.carStatsViewer.plot.enums.PlotMarkerType
 import kotlin.math.roundToInt
 
 class PlotMarkers {
+    private val currentVersion : Int = 20230205
+
     val markers : ArrayList<PlotMarker> = ArrayList()
 
     fun reset() {
@@ -32,7 +34,7 @@ class PlotMarkers {
             }
         }
 
-        markers.add(PlotMarker(plotMarkerType, StartTime = time, StartDistance = distance))
+        markers.add(PlotMarker(plotMarkerType, StartTime = time, StartDistance = distance, MarkerVersion = currentVersion))
     }
 
     fun addMarkers(markers: List<PlotMarker>) {
@@ -47,27 +49,47 @@ class PlotMarkers {
             }
         }
 
+        // Version Migrations
+        val provided : ArrayList<PlotMarker> = ArrayList()
+        for (marker in markers) {
+            // old version of markers before switch to System.currentTimeMillis()
+            if (marker.MarkerVersion == null) continue
+
+            provided.add(marker)
+        }
+
         this.markers.clear()
-        this.markers.addAll(current.union(markers).sortedBy { it.StartTime })
+        this.markers.addAll(current.union(provided).sortedBy { it.StartTime })
     }
 
     fun endMarker(time: Long, distance: Float) {
-        if (markers.isNotEmpty() && markers.last().EndTime == null) {
-            markers.last().EndTime = time
+        if (markers.isEmpty()) return
+
+        val last = markers.last()
+
+        if (last.EndTime == null) {
+            last.EndTime = when (last.MarkerType) {
+                PlotMarkerType.PARK, PlotMarkerType.CHARGE -> time
+                else -> last.StartTime
+            }
         }
 
-        if (markers.isNotEmpty() && markers.last().EndDistance == null) {
-            markers.last().EndDistance = distance
+        if (last.EndDistance == null) {
+            last.EndDistance = when (last.MarkerType) {
+                PlotMarkerType.PARK, PlotMarkerType.CHARGE -> last.StartDistance
+                else -> distance
+            }
         }
     }
 }
 
 class PlotMarker (
     val MarkerType: PlotMarkerType,
+    val MarkerVersion: Int? = null,
     val StartTime: Long,
     var EndTime: Long? = null,
     val StartDistance: Float,
-    var EndDistance: Float? = null,
+    var EndDistance: Float? = null
 ) {
     fun group(dimension: PlotDimension, dimensionSmoothing: Float?): Float? {
         val value = when(dimension) {
