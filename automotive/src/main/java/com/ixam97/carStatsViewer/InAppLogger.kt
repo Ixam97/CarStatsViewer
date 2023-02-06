@@ -10,7 +10,10 @@ import android.widget.Toast
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManagers
+import com.ixam97.carStatsViewer.mailSender.MailSender
 import kotlinx.android.synthetic.main.activity_log.*
+import kotlinx.coroutines.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 

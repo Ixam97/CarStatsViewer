@@ -17,7 +17,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.mailSender.MailSender
 import com.ixam97.carStatsViewer.plot.enums.*
 import kotlinx.coroutines.*
 import java.io.File
@@ -31,7 +30,7 @@ class DataCollector : Service() {
     companion object {
         lateinit var mainActivityPendingIntent: PendingIntent
         val CurrentTripDataManager = DataManagers.CURRENT_TRIP.dataManager
-        private const val DO_LOG = true
+        private const val DO_LOG = false
         private const val CHANNEL_ID = "TestChannel"
         private const val STATS_NOTIFICATION_ID = 1
         private const val FOREGROUND_NOTIFICATION_ID = 2
@@ -442,6 +441,13 @@ class DataCollector : Service() {
             plotLineMarkerType = plotLineMarkerType,
             autoMarkerTimeDeltaThreshold = CHARGE_PLOT_MARKER_THRESHOLD_NANOS
         )
+
+        if (dataManager.chargePlotLine.getDataPoints(PlotDimension.TIME).last().Marker == PlotLineMarkerType.BEGIN_SESSION) {
+            val timeSpan = dataManager.chargePlotLine.getDataPoints(PlotDimension.TIME).last().EpochTime - dataManager.chargePlotLine.getDataPoints(PlotDimension.TIME).first().EpochTime
+            dataManager.ChargeTime.reset()
+            dataManager.ChargeTime.restore(timeSpan)
+            dataManager.ChargeTime.start()
+        }
     }
 
     private fun addConsumptionDataPoint(item: Float, plotLineMarkerType: PlotLineMarkerType? = null, dataManager: DataManager) {
@@ -471,7 +477,7 @@ class DataCollector : Service() {
             carPropertyManager.getProperty<Any>(propertyId, 0).value,
             System.nanoTime(),
             propertyId,
-            doLog = true)
+            doLog = false)
     }
 
     private fun createNotificationChannel() {

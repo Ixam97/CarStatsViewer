@@ -150,7 +150,11 @@ class SummaryActivity: Activity() {
             getString(R.string.settings_sub_title_last_charge_plot),
             tripData.chargeCurves.size,
             tripData.chargeCurves.size,
-            StringFormatters.getDateString(tripData.chargeCurves.last().chargeStartDate))
+            StringFormatters.getDateString(
+                if (tripData.chargeCurves.isNotEmpty()) tripData.chargeCurves.last().chargeStartDate
+                else null
+            )
+        )
 
         chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
         chargePlotLine.secondaryPlotPaint = when {

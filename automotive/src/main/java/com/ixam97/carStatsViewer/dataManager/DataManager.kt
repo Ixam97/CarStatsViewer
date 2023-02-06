@@ -10,7 +10,6 @@ import com.ixam97.carStatsViewer.plot.enums.PlotHighlightMethod
 import com.ixam97.carStatsViewer.plot.enums.PlotLabelPosition
 import com.ixam97.carStatsViewer.plot.enums.PlotLineLabelFormat
 import com.ixam97.carStatsViewer.plot.objects.*
-import java.util.Calendar
 import java.util.Date
 import kotlin.math.absoluteValue
 
