@@ -699,7 +699,6 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             if (markerGroup.key == null) continue
 
             val markerType = markerGroup.value.minOfOrNull { it.MarkerType } ?: continue
-            val markersByType = markerGroup.value.filter { it.MarkerType == markerType }
 
             val startX = markerGroup.value.mapNotNull { x(it.startByDimension(dimension), minDimension, maxDimension, maxX) }.minOfOrNull { it } ?: continue
             val endX = markerGroup.value.mapNotNull { x(it.endByDimension(dimension), minDimension, maxDimension, maxX) }.maxOfOrNull { it }
@@ -715,7 +714,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             drawMarkerLine(canvas, markerType, startX, -1)
             drawMarkerLine(canvas, markerType, endX, 1)
 
-            val diff = markersByType.sumOf { (it.EndTime ?: it.StartTime) - it.StartTime }
+            val diff = markerGroup.value.sumOf { (it.EndTime ?: it.StartTime) - it.StartTime }
 
             markerTimes[markerType] = (markerTimes[markerType] ?: 0L) + diff
         }
@@ -732,7 +731,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val icon = markerIcon[marker.key] ?: return xLimit
         val paint = markerPaint[marker.key]?.Label ?: return xLimit
 
-        val label = timeLabel(TimeUnit.MILLISECONDS.toNanos(marker.value))
+        val label = timeLabel(TimeUnit.MILLISECONDS.toNanos(markerTimes.map { it.value }.sum()))
 
         val padding = 8f
         val spaceNeeded = icon.width + paint.measureText(label).roundToInt() + 2 * padding
