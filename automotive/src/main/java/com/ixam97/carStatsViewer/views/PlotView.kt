@@ -731,7 +731,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         val icon = markerIcon[marker.key] ?: return xLimit
         val paint = markerPaint[marker.key]?.Label ?: return xLimit
 
-        val label = timeLabel(TimeUnit.MILLISECONDS.toNanos(markerTimes.map { it.value }.sum()))
+        val label = timeLabel(markerTimes.map { it.value }.sum())
 
         val padding = 8f
         val spaceNeeded = icon.width + paint.measureText(label).roundToInt() + 2 * padding
@@ -915,8 +915,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
         //     else -> String.format("%02d'%02d''", TimeUnit.MINUTES.convert(time, TimeUnit.NANOSECONDS), TimeUnit.SECONDS.convert(time, TimeUnit.NANOSECONDS) % 60)
         // }
         return String.format("%02d:%02d",
-            TimeUnit.NANOSECONDS.toHours(time),
-            (TimeUnit.NANOSECONDS.toSeconds(time) / 60f).roundToInt() % TimeUnit.HOURS.toMinutes(1))
+            TimeUnit.MILLISECONDS.toHours(time),
+            (TimeUnit.MILLISECONDS.toSeconds(time) / 60f).roundToInt() % TimeUnit.HOURS.toMinutes(1))
     }
 
     private fun label(value: Float, plotLineLabelFormat: PlotLineLabelFormat, plotHighlightMethod: PlotHighlightMethod? = null): String {

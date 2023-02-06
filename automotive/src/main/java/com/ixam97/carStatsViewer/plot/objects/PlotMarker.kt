@@ -5,8 +5,6 @@ import com.ixam97.carStatsViewer.plot.enums.PlotMarkerType
 import kotlin.math.roundToInt
 
 class PlotMarkers {
-    private val currentVersion : Int = 20230205
-
     val markers : ArrayList<PlotMarker> = ArrayList()
 
     fun reset() {
@@ -34,7 +32,7 @@ class PlotMarkers {
             }
         }
 
-        markers.add(PlotMarker(plotMarkerType, StartTime = time, StartDistance = distance, MarkerVersion = currentVersion))
+        markers.add(PlotMarker(plotMarkerType, StartTime = time, StartDistance = distance, MarkerVersion = PlotGlobalConfiguration.DataVersion))
     }
 
     fun addMarkers(markers: List<PlotMarker>) {

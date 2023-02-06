@@ -6,17 +6,11 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
-import android.view.KeyEvent
-import android.view.inputmethod.InputMethodManager
-import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManagers
-import com.ixam97.carStatsViewer.mailSender.MailSender
 import kotlinx.android.synthetic.main.activity_log.*
-import kotlinx.coroutines.*
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -109,8 +103,6 @@ class LogActivity : Activity() {
 
         log_switch_deep_log.isChecked = appPreferences.deepLog
 
-
-
         // val logTextView = TextView(this)
         // logTextView.typeface
         log_text_view.text = getLogString()
@@ -169,7 +161,10 @@ class LogActivity : Activity() {
             when (currentText) {
                 "JSON" -> {
                     log_button_show_json.text = "LOG"
-                    val gson = GsonBuilder().setPrettyPrinting().create()
+                    val gson = GsonBuilder()
+                        .setExclusionStrategies(appPreferences.exclusionStrategy)
+                        .setPrettyPrinting()
+                        .create()
                     val textValue = "MARKERS: \n" + gson.toJson(DataManagers.CURRENT_TRIP.dataManager.tripData?.markers?: 0) + "\n\nCHARGE CURVE:\n" + gson.toJson(DataManagers.CURRENT_TRIP.dataManager.tripData?.chargePlotLine?: 0)
                     log_text_view.text = textValue
                 }

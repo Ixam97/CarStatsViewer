@@ -3,7 +3,6 @@ package com.ixam97.carStatsViewer.plot.objects
 import com.ixam97.carStatsViewer.plot.graphics.*
 import com.ixam97.carStatsViewer.plot.enums.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.math.abs
 
 class PlotLine(
     val Configuration: PlotLineConfiguration,
@@ -20,19 +19,19 @@ class PlotLine(
 
     var zeroAt: Float? = null
 
-    fun addDataPoint(item: Float, time: Long, distance: Float, stateOfCharge: Float, timeDelta: Long? = null, distanceDelta: Float? = null, stateOfChargeDelta: Float? = null, plotLineMarkerType: PlotLineMarkerType? = null, autoMarkerTimeDeltaThreshold: Long? = null) {
+    fun addDataPoint(item: Float, epochTime: Long, nanoTime: Long, distance: Float, stateOfCharge: Float, timeDelta: Long? = null, distanceDelta: Float? = null, stateOfChargeDelta: Float? = null, plotLineMarkerType: PlotLineMarkerType? = null, autoMarkerTimeDeltaThreshold: Long? = null) {
         val prev = when (dataPoints[dataPoints.size - 1]?.Marker ?: PlotLineMarkerType.BEGIN_SESSION) {
             PlotLineMarkerType.BEGIN_SESSION -> dataPoints[dataPoints.size - 1]
             else -> null
         }
 
-        addDataPoint(
-            PlotLineItem(
+        addDataPoint(PlotLineItem(
             item,
-            time,
+            epochTime,
+            nanoTime,
             distance,
             stateOfCharge,
-            timeDelta?:(time - (prev?.Time ?: time)),
+            timeDelta?:(nanoTime - (prev?.NanoTime ?: nanoTime)),
             distanceDelta?:(distance - (prev?.Distance ?: distance)),
             stateOfChargeDelta?:(stateOfCharge - (prev?.StateOfCharge ?: stateOfCharge)),
             plotLineMarkerType
@@ -99,10 +98,10 @@ class PlotLine(
                     dataPoints.filter { it.value.Distance in min..max }.map { it.value }
                 }
                 PlotDimension.TIME -> {
-                    val min = dataPoints[0]!!.Time + (dimensionShift ?: 0L)
+                    val min = dataPoints[0]!!.EpochTime + (dimensionShift ?: 0L)
                     val max = min + dimensionRestriction
 
-                    dataPoints.filter { it.value.Time in min..max }.map { it.value }
+                    dataPoints.filter { it.value.EpochTime in min..max }.map { it.value }
                 }
                 PlotDimension.STATE_OF_CHARGE -> {
                     val max = dataPoints[dataPoints.size - 1]!!.StateOfCharge - (dimensionShift ?: 0L)
@@ -124,7 +123,7 @@ class PlotLine(
             }
             PlotDimension.TIME -> when {
                 dataPoints.isEmpty() -> 0L
-                else -> dataPoints.minOf { it.Time }
+                else -> dataPoints.minOf { it.EpochTime }
             }
             PlotDimension.STATE_OF_CHARGE -> 0f
         }
@@ -140,7 +139,7 @@ class PlotLine(
             PlotDimension.TIME -> when {
                 dataPoints.isEmpty() -> 0L
                 else -> (minDimension(dataPoints, dimension, dimensionRestriction) as Long + (dimensionRestriction ?: 0L))
-                    .coerceAtLeast(dataPoints.maxOf { it.Time })
+                    .coerceAtLeast(dataPoints.maxOf { it.EpochTime })
             }
             PlotDimension.STATE_OF_CHARGE -> 100f
         }
@@ -321,7 +320,7 @@ class PlotLine(
                     when (dimension) {
                         PlotDimension.INDEX -> x(index.toFloat(), min, max)
                         PlotDimension.DISTANCE -> x(item.Distance, min, max)
-                        PlotDimension.TIME -> x(item.Time, min, max)
+                        PlotDimension.TIME -> x(item.EpochTime, min, max)
                         PlotDimension.STATE_OF_CHARGE -> x(item.StateOfCharge, min, max)
                     },
                     item,
