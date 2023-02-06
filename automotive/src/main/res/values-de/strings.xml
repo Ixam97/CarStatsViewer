@@ -42,6 +42,7 @@
     <string name="summary_travel_time">Fahrzeit</string>
     <string name="summary_charged_energy">Geladene Energie</string>
     <string name="summary_charge_time">Ladezeit</string>
+    <string name="summary_charge_ambient_temp">Außentemperatur</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>

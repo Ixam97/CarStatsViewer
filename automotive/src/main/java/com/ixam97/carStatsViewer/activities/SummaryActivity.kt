@@ -17,6 +17,7 @@ import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.*
 import com.ixam97.carStatsViewer.plot.objects.*
 import com.ixam97.carStatsViewer.dataManager.DataCollector
+import com.ixam97.carStatsViewer.dataManager.DataManager
 import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
@@ -71,12 +72,16 @@ class SummaryActivity: Activity() {
 
         appPreferences = AppPreferences(applicationContext)
 
-        val tripDataFileName = intent.getStringExtra("FileName").toString()
+        //val tripDataFileName = intent.getStringExtra("FileName").toString()
         // tripData = if (tripDataFileName != "null") DataManager.getTripData(tripDataFileName)
         // else DataManager.getTripData()
 
-        tripData = DataManagers.SINCE_CHARGE.dataManager.tripData!!
-        consumptionPlotLine = DataManagers.SINCE_CHARGE.dataManager.consumptionPlotLine
+        val dataManager :DataManager = if (intent.hasExtra("dataManager")) {
+            DataManagers.values()[intent.getIntExtra("dataManager", 0)].dataManager
+        } else DataManagers.CURRENT_TRIP.dataManager
+
+        tripData = dataManager.tripData!!
+        consumptionPlotLine = dataManager.consumptionPlotLine
 
         val typedValue = TypedValue()
         applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
@@ -93,7 +98,7 @@ class SummaryActivity: Activity() {
             createResetDialog()
         }
 
-        summary_trip_date_text.text = getString(R.string.summary_trip_start_date, StringFormatters.getDateString(tripData.tripStartDate))
+        summary_trip_date_text.text = getString(R.string.summary_trip_start_date).format(StringFormatters.getDateString(tripData.tripStartDate))
 
         summary_button_show_consumption_container.isSelected = true
 
@@ -141,10 +146,11 @@ class SummaryActivity: Activity() {
     }
 
     private fun setupChargeLayout() {
-        summary_charge_plot_sub_title_curve.text = "%s (%d/%d)".format(
+        summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
             getString(R.string.settings_sub_title_last_charge_plot),
             tripData.chargeCurves.size,
-            tripData.chargeCurves.size)
+            tripData.chargeCurves.size,
+            StringFormatters.getDateString(tripData.chargeCurves.last().chargeStartDate))
 
         chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
         chargePlotLine.secondaryPlotPaint = when {
@@ -161,7 +167,7 @@ class SummaryActivity: Activity() {
 
             summary_charged_energy_value_text.text = StringFormatters.getEnergyString(tripData.chargeCurves.last().chargedEnergy)
             summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.chargeCurves.last().chargeTime)
-            summary_charge_ambient_temp.text = "%.0f °C".format(tripData.chargeCurves.last().ambientTemperature)
+            summary_charge_ambient_temp.text = StringFormatters.getTemperatureString(tripData.chargeCurves.last().ambientTemperature)
             summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves.last().chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
             summary_charge_plot_view.dimensionRestrictionMin = TimeUnit.MINUTES.toNanos(5L)
         }
@@ -199,10 +205,11 @@ class SummaryActivity: Activity() {
     }
 
     private fun setVisibleChargeCurve(progress: Int) {
-        summary_charge_plot_sub_title_curve.text = "%s (%d/%d)".format(
+        summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
             getString(R.string.settings_sub_title_last_charge_plot),
             tripData.chargeCurves.size,
-            tripData.chargeCurves.size)
+            tripData.chargeCurves.size,
+            StringFormatters.getDateString(tripData.chargeCurves.last().chargeStartDate))
 
         if (tripData.chargeCurves.size - 1 == 0) {
             summary_charge_plot_sub_title_curve.text = "%s (0/0)".format(
@@ -214,10 +221,11 @@ class SummaryActivity: Activity() {
             summary_charge_plot_button_prev.colorFilter = disabledTint
 
         } else {
-            summary_charge_plot_sub_title_curve.text = "%s (%d/%d)".format(
+            summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
                 getString(R.string.settings_sub_title_last_charge_plot),
                 progress + 1,
-                tripData.chargeCurves.size)
+                tripData.chargeCurves.size,
+                StringFormatters.getDateString(tripData.chargeCurves.last().chargeStartDate))
 
             when (progress) {
                 0 -> {
@@ -243,7 +251,7 @@ class SummaryActivity: Activity() {
 
         summary_charged_energy_value_text.text = StringFormatters.getEnergyString(tripData.chargeCurves[progress].chargedEnergy)
         summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.chargeCurves[progress].chargeTime)
-        summary_charge_ambient_temp.text = "%.0f °C".format(tripData.chargeCurves[progress].ambientTemperature)
+        summary_charge_ambient_temp.text = StringFormatters.getTemperatureString(tripData.chargeCurves[progress].ambientTemperature)
 
         chargePlotLine.reset()
         chargePlotLine.addDataPoints(tripData.chargeCurves[progress].chargePlotLine)
