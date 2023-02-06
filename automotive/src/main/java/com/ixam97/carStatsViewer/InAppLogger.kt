@@ -130,29 +130,35 @@ class LogActivity : Activity() {
                 CoroutineScope(Dispatchers.Default).launch() {
                     try {
                         val sender = MailSender(getString(R.string.email_address), getString(R.string.password))
-                        val dir = File(applicationContext.filesDir, "TripData")
-                        if (!dir.exists()) {
-                            InAppLogger.log("TRIP DATA: Directory TripData does not exist!")
+                        enumValues<DataManagers>().forEach {
+                            try {
+                                val dir = File(applicationContext.filesDir, "TripData")
+                                if (!dir.exists()) {
+                                    InAppLogger.log("TRIP DATA: Directory TripData does not exist!")
 
-                        } else {
-                            val gpxFile = File(dir, "${getString(R.string.file_name_current_trip_data)}.json")
-                            if (!gpxFile.exists() && gpxFile.length() > 0) {
-                                InAppLogger.log("TRIP_DATA File ${getString(R.string.file_name_current_trip_data)}.json does not exist!")
+                                } else {
+                                    val gpxFile = File(dir, "${it.dataManager.printableName}.json")
+                                    if (!gpxFile.exists() && gpxFile.length() > 0) {
+                                        InAppLogger.log("TRIP_DATA File ${it.dataManager.printableName}.json does not exist!")
+                                    }
+                                    else {
+                                        sender.addAttachment(gpxFile)
+                                    }
+                                }
+                            } catch(e: java.lang.Exception) {
+                                InAppLogger.log("Can't attach file ${it.dataManager.printableName}")
                             }
-                            else {
-                                sender.addAttachment(gpxFile)
-                            }
+
                         }
                         sender.sendMail("Debug Log ${Date()} from $senderName", getLogString(), "CarStatsViewer@ixam97.de", mailAdr)
                         runOnUiThread {
                             Toast.makeText(this@LogActivity, "Log and JSON sent to $mailAdr", Toast.LENGTH_LONG).show()
                         }
                     } catch (e: java.lang.Exception) {
-                        InAppLogger.log(e.stackTraceToString())
-                    } finally {
                         runOnUiThread {
                             Toast.makeText(this@LogActivity, "Sending E-Mail failed. See log.", Toast.LENGTH_LONG).show()
                         }
+                        InAppLogger.log(e.stackTraceToString())
                     }
                 }
             }

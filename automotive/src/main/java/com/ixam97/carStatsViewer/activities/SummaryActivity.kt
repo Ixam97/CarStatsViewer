@@ -17,6 +17,7 @@ import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.*
 import com.ixam97.carStatsViewer.plot.objects.*
 import com.ixam97.carStatsViewer.dataManager.DataCollector
+import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_summary.*
@@ -35,6 +36,8 @@ class SummaryActivity: Activity() {
             "kW"
         )
     )
+
+    private lateinit var consumptionPlotLine: PlotLine
 
     private lateinit var tripData: TripData
 
@@ -72,7 +75,8 @@ class SummaryActivity: Activity() {
         // tripData = if (tripDataFileName != "null") DataManager.getTripData(tripDataFileName)
         // else DataManager.getTripData()
 
-        tripData = DataCollector.CurrentTripDataManager.tripData!!
+        tripData = DataManagers.SINCE_CHARGE.dataManager.tripData!!
+        consumptionPlotLine = DataManagers.SINCE_CHARGE.dataManager.consumptionPlotLine
 
         val typedValue = TypedValue()
         applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
@@ -117,7 +121,7 @@ class SummaryActivity: Activity() {
     private fun setupConsumptionLayout() {
         val plotMarkers = PlotMarkers()
         plotMarkers.addMarkers(tripData.markers)
-        summary_consumption_plot.addPlotLine(DataCollector.CurrentTripDataManager.consumptionPlotLine)
+        summary_consumption_plot.addPlotLine(consumptionPlotLine)
         summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
         summary_consumption_plot.secondaryDimension = PlotSecondaryDimension.SPEED
         summary_consumption_plot.dimension = PlotDimension.DISTANCE
@@ -275,7 +279,8 @@ class SummaryActivity: Activity() {
                 this@SummaryActivity.finish()
             }
             .setNegativeButton(R.string.dialog_reset_no_save) { _, _ ->
-                DataCollector.CurrentTripDataManager.reset()
+                // DataCollector.CurrentTripDataManager.reset()
+                enumValues<DataManagers>().forEach { it.dataManager.reset() }
                 sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
                 this@SummaryActivity.finish()
             }

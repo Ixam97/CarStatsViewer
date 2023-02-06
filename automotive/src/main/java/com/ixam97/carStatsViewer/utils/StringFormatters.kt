@@ -1,6 +1,7 @@
 package com.ixam97.carStatsViewer.utils
 
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -17,6 +18,10 @@ object StringFormatters {
 
     fun getDateString(tripStartDate: Date): String {
         return "${dateFormat.format(tripStartDate)}, ${timeFormat.format(tripStartDate)}"
+    }
+
+    fun getDateString(tripStartDate: Calendar): String {
+        return "${dateFormat.format(tripStartDate.time)}, ${timeFormat.format(tripStartDate.time)}"
     }
 
     fun getEnergyString(usedEnergy: Float): String {
