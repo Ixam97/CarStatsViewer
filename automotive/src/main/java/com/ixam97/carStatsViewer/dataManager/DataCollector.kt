@@ -14,6 +14,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.mailSender.MailSender
@@ -49,6 +50,8 @@ class DataCollector : Service() {
     private var notificationCounter = 0
 
     private lateinit var appPreferences: AppPreferences
+
+    private lateinit var gson: Gson
 
     private var notificationsEnabled = true
 
@@ -145,6 +148,11 @@ class DataCollector : Service() {
         // InAppLogger.log(String.format( "DataCollector.onCreate in Thread: %s", Thread.currentThread().name))
 
         appPreferences = AppPreferences(applicationContext)
+
+        gson = GsonBuilder()
+            .setExclusionStrategies(appPreferences.exclusionStrategy)
+            .setPrettyPrinting()
+            .create()
 
         notificationsEnabled = appPreferences.notifications
 
@@ -425,6 +433,7 @@ class DataCollector : Service() {
     private fun addChargeDataPoint(plotLineMarkerType: PlotLineMarkerType? = null, dataManager: DataManager) {
         dataManager.chargePlotLine.addDataPoint(
             -dataManager.currentPower / 1_000_000,
+            System.currentTimeMillis(),
             dataManager.CurrentPower.timestamp,
             dataManager.traveledDistance,
             dataManager.stateOfCharge.toFloat(),
@@ -436,6 +445,7 @@ class DataCollector : Service() {
     private fun addConsumptionDataPoint(item: Float, plotLineMarkerType: PlotLineMarkerType? = null, dataManager: DataManager) {
         dataManager.consumptionPlotLine.addDataPoint(
             item,
+            System.currentTimeMillis(),
             dataManager.CurrentSpeed.timestamp,
             dataManager.traveledDistance,
             dataManager.stateOfCharge.toFloat(),
@@ -521,7 +531,7 @@ class DataCollector : Service() {
         try {
             val gpxFile = File(dir, "$fileName.json")
             val writer = FileWriter(gpxFile)
-            writer.append(Gson().toJson(tripData))
+            writer.append(gson.toJson(tripData))
             writer.flush()
             writer.close()
             // InAppLogger.log("TRIP DATA: Saved $fileName.json in Thread ${Thread.currentThread().name}")

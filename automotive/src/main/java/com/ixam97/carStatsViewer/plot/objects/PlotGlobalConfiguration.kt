@@ -3,6 +3,8 @@ package com.ixam97.carStatsViewer.plot.objects
 import com.ixam97.carStatsViewer.plot.enums.*
 
 object PlotGlobalConfiguration {
+    val DataVersion : Int? = 20230206
+
     val SecondaryDimensionConfiguration: HashMap<PlotSecondaryDimension, PlotLineConfiguration> =
         hashMapOf(
             PlotSecondaryDimension.SPEED to PlotLineConfiguration(

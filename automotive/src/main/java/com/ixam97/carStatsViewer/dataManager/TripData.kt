@@ -6,6 +6,7 @@ import java.util.*
 
 data class TripData(
     var appVersion: String,
+    var dataVersion: Int?,
     var tripStartDate: Date,
     var usedEnergy: Float,
     var traveledDistance: Float,

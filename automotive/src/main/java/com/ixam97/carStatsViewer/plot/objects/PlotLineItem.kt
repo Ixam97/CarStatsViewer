@@ -1,33 +1,40 @@
 package com.ixam97.carStatsViewer.plot.objects
 
 import com.ixam97.carStatsViewer.plot.enums.*
+import com.ixam97.carStatsViewer.utils.Exclude
+import java.time.LocalDate
+import java.util.*
 import kotlin.math.roundToInt
 
 class PlotLineItem (
     val Value: Float,
-
-    val Time: Long,
+    val EpochTime: Long,
+    @Exclude
+    val NanoTime: Long?,
     val Distance: Float,
     var StateOfCharge: Float,
-
     val TimeDelta: Long?,
     val DistanceDelta: Float?,
     var StateOfChargeDelta: Float?,
 
     var Marker: PlotLineMarkerType?
 ){
-    fun group(index: Int, dimension: PlotDimension, dimensionSmoothing: Float?): Float {
+    fun group(index: Int, dimension: PlotDimension, dimensionSmoothing: Float?): Any {
         val value = when(dimension) {
-            PlotDimension.INDEX -> index.toFloat()
+            PlotDimension.INDEX -> index
             PlotDimension.DISTANCE -> Distance
-            PlotDimension.TIME -> Time.toFloat()
+            PlotDimension.TIME -> EpochTime
             PlotDimension.STATE_OF_CHARGE -> StateOfCharge
         }
 
         return when (dimensionSmoothing) {
             null -> value
             0f -> value
-            else -> (value / dimensionSmoothing).roundToInt().toFloat()
+            else -> when(dimension) {
+                PlotDimension.INDEX -> (value as Int / dimensionSmoothing).roundToInt()
+                PlotDimension.DISTANCE, PlotDimension.STATE_OF_CHARGE -> (value as Float / dimensionSmoothing).roundToInt()
+                PlotDimension.TIME ->  (value as Long / dimensionSmoothing).roundToInt()
+            }
         }
     }
 
@@ -40,7 +47,7 @@ class PlotLineItem (
                 }
             }
             PlotSecondaryDimension.DISTANCE -> Distance
-            PlotSecondaryDimension.TIME -> Time.toFloat()
+            PlotSecondaryDimension.TIME -> EpochTime.toFloat()
             PlotSecondaryDimension.STATE_OF_CHARGE -> StateOfCharge?:0f
             else -> Value
         }

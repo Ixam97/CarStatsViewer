@@ -2,8 +2,11 @@ package com.ixam97.carStatsViewer.appPreferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.ExclusionStrategy
+import com.google.gson.FieldAttributes
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.plot.enums.PlotDimension
+import com.ixam97.carStatsViewer.utils.Exclude
 
 class AppPreferences(context: Context) {
 
@@ -173,5 +176,15 @@ class AppPreferences(context: Context) {
             throw java.lang.Exception("AppPreferences.setPreference: Unsupported type!")
         }
         throw java.lang.Exception("AppPreferences.setPreference: Unknown Preference!")
+    }
+
+    val exclusionStrategy: ExclusionStrategy = object : ExclusionStrategy {
+        override fun shouldSkipClass(clazz: Class<*>?): Boolean {
+            return false
+        }
+
+        override fun shouldSkipField(field: FieldAttributes): Boolean {
+            return field.getAnnotation(Exclude::class.java) != null
+        }
     }
 }

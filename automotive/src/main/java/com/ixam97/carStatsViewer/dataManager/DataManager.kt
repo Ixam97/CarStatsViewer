@@ -186,6 +186,7 @@ class DataManager(val printableName: String) {
     var tripData: TripData?
         get() = TripData(
             appVersion = BuildConfig.VERSION_NAME,
+            dataVersion = PlotGlobalConfiguration.DataVersion,
             tripStartDate = tripStartDate,
             usedEnergy = usedEnergy,
             traveledDistance = traveledDistance,
@@ -209,7 +210,7 @@ class DataManager(val printableName: String) {
             consumptionPlotLine.reset()
             chargePlotLine.reset()
 
-            if (value != null) {
+            if (value?.dataVersion != null) {
                 if(value.chargeCurves.isNotEmpty()) {
                     for (curve in value.chargeCurves) {
                         chargeCurves.add(curve)
