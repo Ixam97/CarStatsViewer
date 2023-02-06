@@ -89,6 +89,8 @@ class DataManager(val printableName: String) {
     var usedEnergy: Float = 0F
     /** Traveled distance in m */
     var traveledDistance: Float = 0F
+    /** Date of cable plugging in */
+    var chargeStartDate: Date = Date()
     /** Used energy in Wh **/
     var chargedEnergy: Float = 0F
     /** Contains plot markers indicating when the car is parked or charging */
@@ -191,6 +193,7 @@ class DataManager(val printableName: String) {
             usedEnergy = usedEnergy,
             traveledDistance = traveledDistance,
             travelTime = travelTime,
+            chargeStartDate = chargeStartDate,
             chargedEnergy = chargedEnergy,
             chargeTime = chargeTime,
             markers = plotMarkers.markers.toList(),
@@ -200,6 +203,7 @@ class DataManager(val printableName: String) {
         )
         set(value) {
             tripStartDate = value?.tripStartDate?: Date()
+            chargeStartDate = value?.chargeStartDate?: Date()
             traveledDistance = value?.traveledDistance?: 0F
             usedEnergy = value?.usedEnergy?: 0F
             TravelTime.restore(value?.travelTime?: 0L)

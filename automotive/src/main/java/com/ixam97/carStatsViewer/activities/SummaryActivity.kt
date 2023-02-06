@@ -161,6 +161,9 @@ class SummaryActivity: Activity() {
 
             summary_charged_energy_value_text.text = StringFormatters.getEnergyString(tripData.chargeCurves.last().chargedEnergy)
             summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.chargeCurves.last().chargeTime)
+            summary_charge_ambient_temp.text = StringFormatters.getTemperatureString(tripData.chargeCurves.last().ambientTemperature)
+            summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves.last().chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
+            summary_charge_plot_view.dimensionRestrictionMin = TimeUnit.MINUTES.toNanos(5L)
             summary_charge_ambient_temp.text = "%.0f °C".format(tripData.chargeCurves.last().ambientTemperature)
             summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves.last().chargeTime) / 5) + 1) * 5 + 1
             summary_charge_plot_view.dimensionRestrictionMin = TimeUnit.MINUTES.toMillis(5L)
@@ -247,7 +250,7 @@ class SummaryActivity: Activity() {
 
         chargePlotLine.reset()
         chargePlotLine.addDataPoints(tripData.chargeCurves[progress].chargePlotLine)
-        summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves[progress].chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toMillis(1)
+        summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves[progress].chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
         summary_charge_plot_view.invalidate()
     }
 

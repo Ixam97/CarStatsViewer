@@ -402,13 +402,15 @@ class MainActivity : Activity() {
         }
 
         main_button_summary.setOnClickListener {
-            // sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
-            startActivity(Intent(this, SummaryActivity::class.java))
+            val summaryIntent = Intent(this, SummaryActivity::class.java)
+            summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
+            startActivity(summaryIntent)
         }
 
         main_button_summary_charge.setOnClickListener {
-            // sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
-            startActivity(Intent(this, SummaryActivity::class.java))
+            val summaryIntent = Intent(this, SummaryActivity::class.java)
+            summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
+            startActivity(summaryIntent)
         }
 
         main_button_dismiss_charge_plot.setOnClickListener {

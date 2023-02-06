@@ -8,6 +8,7 @@ data class TripData(
     var appVersion: String,
     var dataVersion: Int?,
     var tripStartDate: Date,
+    var chargeStartDate: Date,
     var usedEnergy: Float,
     var traveledDistance: Float,
     var travelTime: Long,

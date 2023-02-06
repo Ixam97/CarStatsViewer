@@ -1,7 +1,6 @@
 package com.ixam97.carStatsViewer.utils
 
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -16,8 +15,9 @@ object StringFormatters {
         return (number.toInt() / 100).toFloat() / 10
     }
 
-    fun getDateString(tripStartDate: Date): String {
-        return "${dateFormat.format(tripStartDate)}, ${timeFormat.format(tripStartDate)}"
+    fun getDateString(date: Date?): String {
+        if (date == null) return "-/-"
+        return "${dateFormat.format(date)}, ${timeFormat.format(date)}"
     }
 
     fun getDateString(tripStartDate: Calendar): String {
@@ -57,5 +57,11 @@ object StringFormatters {
             TimeUnit.MILLISECONDS.toHours(elapsedTime),
             TimeUnit.MILLISECONDS.toMinutes(elapsedTime) % TimeUnit.HOURS.toMinutes(1),
             TimeUnit.MILLISECONDS.toSeconds(elapsedTime) % TimeUnit.MINUTES.toSeconds(1))
+    }
+
+    fun getTemperatureString(temperature: Float?): String {
+        if (temperature == null) return "-/-"
+        val unitString = "°C"
+        return "%d %s".format(temperature.toInt(), unitString)
     }
 }

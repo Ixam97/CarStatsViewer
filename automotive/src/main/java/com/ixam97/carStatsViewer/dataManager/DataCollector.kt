@@ -390,6 +390,7 @@ class DataCollector : Service() {
 
     private fun startChargingSession(dataManager: DataManager) {
         dataManager.chargePlotLine.reset()
+        dataManager.chargeStartDate = Date()
         dataManager.chargedEnergy = 0F
         dataManager.ChargeTime.reset()
         dataManager.ChargeTime.start()
@@ -410,7 +411,8 @@ class DataCollector : Service() {
             dataManager.chargePlotLine.getDataPoints(PlotDimension.TIME),
             dataManager.chargeTime,
             dataManager.chargedEnergy,
-            dataManager.ambientTemperature
+            dataManager.ambientTemperature,
+            dataManager.chargeStartDate
         )
         dataManager.chargeCurves.add(chargeCurve)
 
