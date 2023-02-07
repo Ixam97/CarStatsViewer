@@ -110,7 +110,7 @@ class PlotLine(
             dataPoints.isEmpty() -> null
             else -> when (dimension) {
                 PlotDimension.INDEX -> when(dimensionRestriction) {
-                    null -> 0
+                    null -> dataPoints.minOf { it.key }
                     else -> maxDimension(dimension, dimensionRestriction, dimensionShift) as Int - dimensionRestriction
                 }
                 PlotDimension.DISTANCE -> when(dimensionRestriction) {
@@ -131,8 +131,8 @@ class PlotLine(
             dataPoints.isEmpty() -> null
             else -> when (dimension) {
                 PlotDimension.INDEX -> when(dimensionRestriction) {
-                    null -> dataPoints.size - 1
-                    else -> dataPoints.size - 1 - (dimensionShift ?: 0L)
+                    null -> dataPoints.maxOf { it.key }
+                    else -> dataPoints.maxOf { it.key } - (dimensionShift ?: 0L)
                 }
                 PlotDimension.DISTANCE ->  when(dimensionRestriction) {
                     null -> dataPoints.maxOf { it.value.Distance }
