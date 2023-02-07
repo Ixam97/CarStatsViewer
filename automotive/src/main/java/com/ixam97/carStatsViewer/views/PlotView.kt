@@ -352,7 +352,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 touchDimensionShiftDistance = 0f
                 touchDimensionShiftByPixel = restriction.toFloat() / width.toFloat()
 
-                val dimensionMax = plotLines.maxOfOrNull { it.distanceDimension(dimension) }?.toLong() ?: return true
+                val dimensionMax = plotLines.mapNotNull { it.distanceDimension(dimension) }.maxOfOrNull { it }?.toLong() ?: return true
                 touchDimensionMax = dimensionMax + (min - dimensionMax % min)
             }
         }
@@ -411,7 +411,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         val distanceDimension = when {
             dimensionRestriction != null -> dimensionRestriction!!.toFloat()
-            else -> plotLines.maxOfOrNull { it.distanceDimension(dimension, dimensionRestriction, dimensionShift) }
+            else -> plotLines.mapNotNull { it.distanceDimension(dimension, dimensionRestriction, dimensionShift) }.maxOfOrNull { it }
         } ?: return
 
         val sectionLength = distanceDimension / (xLineCount - 1)
@@ -519,7 +519,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                 val smoothing = when {
                     dimensionSmoothing != null -> dimensionSmoothing
-                    dimensionSmoothingPercentage != null -> line.distanceDimensionMinMax(dimension, minDimension, maxDimension) * dimensionSmoothingPercentage!!
+                    dimensionSmoothingPercentage != null -> (line.distanceDimensionMinMax(dimension, minDimension, maxDimension) ?: 0f) * dimensionSmoothingPercentage!!
                     else -> null
                 }
 

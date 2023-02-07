@@ -147,7 +147,7 @@ class PlotLine(
         }
     }
 
-    fun distanceDimension(dimension: PlotDimension, dimensionRestriction: Long? = null, dimensionShift: Long? = null): Float {
+    fun distanceDimension(dimension: PlotDimension, dimensionRestriction: Long? = null, dimensionShift: Long? = null): Float? {
         return distanceDimensionMinMax(
             dimension,
             minDimension(dimension, dimensionRestriction, dimensionShift),
@@ -155,7 +155,9 @@ class PlotLine(
         )
     }
 
-    fun distanceDimensionMinMax(dimension: PlotDimension, min: Any?, max: Any?): Float {
+    fun distanceDimensionMinMax(dimension: PlotDimension, min: Any?, max: Any?): Float? {
+        if (min == null || max == null) return null
+        
         return when (dimension) {
             PlotDimension.TIME -> (max as Long - min as Long).toFloat()
             else -> max as Float - min as Float
