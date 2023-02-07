@@ -54,6 +54,7 @@
     <string name="settings_experimental_layout">Zeige experimentelles Layout</string>
     <string name="settings_consumption_plot">  Verbrauchsansicht</string>
     <string name="settings_charge_plot">  Ladeansicht</string>
+    <string name="settings_about">  Über Car Stats Viewer</string>
     <string name="settings_consumption_plot_single_motor">Single Motor Modell</string>
     <string name="settings_plot_secondary_color">Grau als sekundäre Diagrammfarbe</string>
     <string name="settings_plot_state_of_charge_dimension">Experimentelle Ladezustand Achse</string>
@@ -62,7 +63,20 @@
     <string name="settings_sub_title_settings">Einstellungen:</string>
     <string name="settings_sub_title_current_cons_plot">Aktuelle Verbrauchskurve:</string>
     <string name="settings_sub_title_last_charge_plot">Letzte Ladekurven:</string>
-
+    
+    <!-- AboutActivity -->
+    <string name="about_title">Über Car Stats Viewer</string>
+    <string name="about_section_about">Über Car Stats Viewer:</string>
+    <string name="about_support">Entwicklung unterstützen</string>
+    <string name="about_support_description">Besuche das GitHub-Repository um mehr darüber erfahren, wie die Entwicklung der App unterstützt werden kann.</string>
+    <string name="about_contributors">Mitwirkende</string>
+    <string name="about_section_feedback">Kontakt:</string>
+    <string name="about_section_misc">Sonstiges:</string>
+    <string name="about_github_issues_description">Dies ist der beste Ort, um Fehler zu melden oder Wünsche zu äußern. Bitte vor dem Erstellen eines neuen Tickets die bereits vorhandenen beachten.</string>
+    <string name="about_polestar_forum_description">Diskussion über Car Stats Viewer im internationalen Forum.</string>
+    <string name="about_polestar_fans_description">Diskussion über Car Stats Viewer im deutschen Forum.</string>
+    <string name="about_third_party_licenses">Lizenzen</string>
+    
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">App beenden?</string>
     <string name="quit_dialog_message">Log wird in die Zwischenablage kopiert.</string>

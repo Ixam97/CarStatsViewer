@@ -1,0 +1,43 @@
+package com.ixam97.carStatsViewer.activities
+
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import com.ixam97.carStatsViewer.BuildConfig
+import com.ixam97.carStatsViewer.R
+import kotlinx.android.synthetic.main.activity_about.*
+
+class AboutActivity : Activity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_about)
+
+        about_button_back.setOnClickListener {
+            finish()
+        }
+
+        about_support_container.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.readme_link))))
+        }
+
+        about_polestar_forum_container.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.polestar_forum_link))))
+        }
+
+        about_polestar_fans_container.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.polestar_fans_link))))
+        }
+
+        about_github_issues_container.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.githug_issues_link))))
+        }
+
+        about_libs.setOnClickListener {
+            startActivity(Intent(this, LibsActivity::class.java))
+        }
+
+        about_version_text.text = "%s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
+    }
+}

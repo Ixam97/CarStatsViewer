@@ -1,20 +1,20 @@
 package com.ixam97.carStatsViewer.mailSender
 
-import javax.mail.internet.MimeMultipart
 import kotlin.jvm.Synchronized
 import kotlin.Throws
-import javax.mail.internet.MimeMessage
-import javax.activation.DataHandler
-import javax.mail.internet.InternetAddress
-import javax.mail.internet.MimeBodyPart
-import javax.activation.FileDataSource
 import com.ixam97.carStatsViewer.mailSender.JSSEProvider
+import jakarta.activation.DataHandler
+import jakarta.activation.DataSource
+import jakarta.activation.FileDataSource
+import jakarta.mail.*
+import jakarta.mail.internet.InternetAddress
+import jakarta.mail.internet.MimeBodyPart
+import jakarta.mail.internet.MimeMessage
+import jakarta.mail.internet.MimeMultipart
 import java.io.*
 import java.lang.Exception
 import java.security.Security
 import java.util.*
-import javax.activation.DataSource
-import javax.mail.*
 
 class MailSender(private val user: String, private val password: String) : Authenticator() {
     private val mailhost = "smtp.strato.de"

@@ -125,6 +125,10 @@ class SettingsActivity : Activity() {
         settings_version_text.setOnClickListener {
             startActivity(Intent(this, LogActivity::class.java))
         }
+
+        settings_about.setOnClickListener {
+            startActivity(Intent(this, AboutActivity::class.java))
+        }
     }
 
     private fun setupSettingsConsumptionPlot() {

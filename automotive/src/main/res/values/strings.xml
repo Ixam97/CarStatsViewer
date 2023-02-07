@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name" translatable="false">Car Stats Viewer (Dev)</string>
 
+    <!-- About -->
+    <string name="readme_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/blob/master/README.md</string>
+    <string name="polestar_fans_link" translatable="false">https://polestar.fans/t/car-stats-viewer-0-22-x/14653</string>
+    <string name="polestar_forum_link" translatable="false">https://www.polestar-forum.com/threads/car-stats-viewer-a-better-range-assistant.10261/#post-188544</string>
+    <string name="githug_issues_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/issues</string>
+    <string name="contributors" translatable="false">Dario Bosshard \nDoubleYouEl \nRobin Hellström \njschlyter \nOddvarr \nFreshDave29 \nrdu"</string>
+
     <!-- Preferences -->
     <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer_dev.preferences</string>
     <string name="preferences_notifications_key" translatable="false">notifications</string>
@@ -86,6 +93,7 @@
     <string name="settings_experimental_layout">Show experimental Layout</string>
     <string name="settings_consumption_plot">  Consumption view</string>
     <string name="settings_charge_plot">  Charge view</string>
+    <string name="settings_about">  About Car Stats Viewer</string>
     <string name="settings_plot_secondary_color">Gray as secondary plot color</string>
     <string name="settings_plot_state_of_charge_dimension">Experimental State Of Charge Axis</string>
     <string name="settings_consumption_plot_single_motor">Single motor model</string>
@@ -94,6 +102,19 @@
     <string name="settings_sub_title_settings">Settings:</string>
     <string name="settings_sub_title_current_cons_plot">Current consumption plot:</string>
     <string name="settings_sub_title_last_charge_plot">Last charging curves:</string>
+
+    <!-- AboutActivity -->
+    <string name="about_title">About Car Stats Viewer</string>
+    <string name="about_section_about">About Car Stats Viewer:</string>
+    <string name="about_support">Support the development</string>
+    <string name="about_support_description">View the GitHub-repository to learn more about how to support the development of the app.</string>
+    <string name="about_contributors">Contributors</string>
+    <string name="about_section_feedback">Feedback:</string>
+    <string name="about_section_misc">Miscellaneous:</string>
+    <string name="about_github_issues_description">This is the best place for bug reports and feature requests. Please read the existing issues before opening a new one.</string>
+    <string name="about_polestar_forum_description">Discussion about Car Stats Viewer in the international forums.</string>
+    <string name="about_polestar_fans_description">Discussion about Car Stats Viewer in the german forums.</string>
+    <string name="about_third_party_licenses">Licenses</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">Quit App?</string>

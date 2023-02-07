@@ -88,6 +88,14 @@
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
+            <TextView
+                android:id="@+id/settings_about"
+                android:text="@string/settings_about"
+                android:drawableStart="@drawable/ic_info"
+                style="@style/menu_button_row_style" />
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
