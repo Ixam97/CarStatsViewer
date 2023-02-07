@@ -84,75 +84,81 @@ class PlotLine(
     fun getDataPoints(dimension: PlotDimension, dimensionRestriction: Long? = null, dimensionShift: Long? = null): List<PlotLineItem> {
         return when {
             dataPoints.isEmpty() || dimensionRestriction == null -> dataPoints.map { it.value }
+            else ->  {
+                val min = minDimension(dimension, dimensionRestriction, dimensionShift)
+                val max = maxDimension(dimension, dimensionRestriction, dimensionShift)
+
+                getDataPoints (dimension, min, max)
+            }
+        }
+    }
+
+    private fun getDataPoints(dimension: PlotDimension, min: Any?, max: Any?): List<PlotLineItem> {
+        return when {
+            dataPoints.isEmpty() || min == null || max == null -> dataPoints.map { it.value }
+            else ->  when (dimension) {
+                PlotDimension.INDEX -> dataPoints.filter { it.key in min as Int..max as Int }.map { it.value }
+                PlotDimension.DISTANCE -> dataPoints.filter { it.value.Distance in min as Float..max as Float }.map { it.value }
+                PlotDimension.TIME -> dataPoints.filter { it.value.EpochTime in min as Long..max as Long }.map { it.value }
+                PlotDimension.STATE_OF_CHARGE -> dataPoints.filter { it.value.StateOfCharge in min as Float..max as Float }.map { it.value }
+            }
+        }
+    }
+
+    internal fun minDimension(dimension: PlotDimension, dimensionRestriction: Long? = null, dimensionShift: Long? = null): Any? {
+        return when {
+            dataPoints.isEmpty() -> null
             else -> when (dimension) {
-                PlotDimension.INDEX -> {
-                    val max = dataPoints.size - 1 - (dimensionShift ?: 0L)
-                    val min = max - dimensionRestriction
-
-                    dataPoints.filter { it.key in min..max }.map { it.value }
+                PlotDimension.INDEX -> when(dimensionRestriction) {
+                    null -> 0
+                    else -> maxDimension(dimension, dimensionRestriction, dimensionShift) as Int - dimensionRestriction
                 }
-                PlotDimension.DISTANCE -> {
-                    val max = dataPoints[dataPoints.size - 1]!!.Distance - (dimensionShift ?: 0L)
-                    val min = max - dimensionRestriction
-
-                    dataPoints.filter { it.value.Distance in min..max }.map { it.value }
+                PlotDimension.DISTANCE -> when(dimensionRestriction) {
+                    null -> dataPoints.minOf { it.value.Distance }
+                    else -> maxDimension(dimension, dimensionRestriction, dimensionShift) as Float - dimensionRestriction
                 }
-                PlotDimension.TIME -> {
-                    val min = dataPoints[0]!!.EpochTime + (dimensionShift ?: 0L)
-                    val max = min + dimensionRestriction
-
-                    dataPoints.filter { it.value.EpochTime in min..max }.map { it.value }
+                PlotDimension.TIME -> when(dimensionRestriction) {
+                    null -> dataPoints.minOf { it.value.EpochTime }
+                    else -> dataPoints.minOf { it.value.EpochTime } + (dimensionShift ?: 0L)
                 }
-                PlotDimension.STATE_OF_CHARGE -> {
-                    val max = dataPoints[dataPoints.size - 1]!!.StateOfCharge - (dimensionShift ?: 0L)
-                    val min = max - dimensionRestriction
-
-                    dataPoints.filter { it.value.StateOfCharge in min..max }.map { it.value }
-                }
+                PlotDimension.STATE_OF_CHARGE -> 0f
             }
         }
     }
 
-    internal fun minDimension(dataPoints: List<PlotLineItem>, dimension: PlotDimension, dimensionRestriction: Long?): Any {
-        return when (dimension) {
-            PlotDimension.INDEX -> 0f
-            PlotDimension.DISTANCE -> when {
-                dataPoints.isEmpty() -> 0f
-                else -> (maxDimension(dataPoints, dimension, dimensionRestriction) as Float - (dimensionRestriction ?: 0L))
-                    .coerceAtMost(dataPoints.minOf { it.Distance })
+    internal fun maxDimension(dimension: PlotDimension, dimensionRestriction: Long? = null, dimensionShift: Long? = null): Any? {
+        return when {
+            dataPoints.isEmpty() -> null
+            else -> when (dimension) {
+                PlotDimension.INDEX -> when(dimensionRestriction) {
+                    null -> dataPoints.size - 1
+                    else -> dataPoints.size - 1 - (dimensionShift ?: 0L)
+                }
+                PlotDimension.DISTANCE ->  when(dimensionRestriction) {
+                    null -> dataPoints.maxOf { it.value.Distance }
+                    else -> dataPoints.maxOf { it.value.Distance } - (dimensionShift ?: 0L)
+                }
+                PlotDimension.TIME ->  when(dimensionRestriction) {
+                    null -> dataPoints.maxOf { it.value.EpochTime }
+                    else -> minDimension(dimension, dimensionRestriction, dimensionShift) as Long + dimensionRestriction
+                }
+                PlotDimension.STATE_OF_CHARGE -> 100f
             }
-            PlotDimension.TIME -> when {
-                dataPoints.isEmpty() -> 0L
-                else -> dataPoints.minOf { it.EpochTime }
-            }
-            PlotDimension.STATE_OF_CHARGE -> 0f
         }
     }
 
-    internal fun maxDimension(dataPoints: List<PlotLineItem>, dimension: PlotDimension, dimensionRestriction: Long?): Any {
-        return when (dimension) {
-            PlotDimension.INDEX -> (dataPoints.size - 1).toFloat()
-            PlotDimension.DISTANCE -> when {
-                dataPoints.isEmpty() -> 0f
-                else -> dataPoints.maxOf { it.Distance }
-            }
-            PlotDimension.TIME -> when {
-                dataPoints.isEmpty() -> 0L
-                else -> (minDimension(dataPoints, dimension, dimensionRestriction) as Long + (dimensionRestriction ?: 0L))
-                    .coerceAtLeast(dataPoints.maxOf { it.EpochTime })
-            }
-            PlotDimension.STATE_OF_CHARGE -> 100f
-        }
+    fun distanceDimension(dimension: PlotDimension, dimensionRestriction: Long? = null, dimensionShift: Long? = null): Float {
+        return distanceDimensionMinMax(
+            dimension,
+            minDimension(dimension, dimensionRestriction, dimensionShift),
+            maxDimension(dimension, dimensionRestriction, dimensionShift)
+        )
     }
 
-    fun distanceDimension(dimension: PlotDimension, dimensionRestriction: Long? = null): Float {
-        return distanceDimension(getDataPoints(dimension), dimension, dimensionRestriction)
-    }
-
-    fun distanceDimension(dataPoints: List<PlotLineItem>, dimension: PlotDimension, dimensionRestriction: Long?): Float {
+    fun distanceDimensionMinMax(dimension: PlotDimension, min: Any?, max: Any?): Float {
         return when (dimension) {
-            PlotDimension.TIME -> (maxDimension(dataPoints, dimension, dimensionRestriction) as Long - minDimension(dataPoints, dimension, dimensionRestriction) as Long).toFloat()
-            else -> maxDimension(dataPoints, dimension, dimensionRestriction) as Float - minDimension(dataPoints, dimension, dimensionRestriction) as Float
+            PlotDimension.TIME -> (max as Long - min as Long).toFloat()
+            else -> max as Float - min as Float
         }
     }
 

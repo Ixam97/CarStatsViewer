@@ -352,7 +352,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 touchDimensionShiftDistance = 0f
                 touchDimensionShiftByPixel = restriction.toFloat() / width.toFloat()
 
-                val dimensionMax = plotLines.mapNotNull { it.distanceDimension(dimension) }.max().toLong()
+                val dimensionMax = plotLines.maxOfOrNull { it.distanceDimension(dimension) }?.toLong() ?: return true
                 touchDimensionMax = dimensionMax + (min - dimensionMax % min)
             }
         }
@@ -411,8 +411,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
         val distanceDimension = when {
             dimensionRestriction != null -> dimensionRestriction!!.toFloat()
-            else -> plotLines.mapNotNull { it.distanceDimension(dimension, dimensionRestriction) }.max()?:0f
-        }
+            else -> plotLines.maxOfOrNull { it.distanceDimension(dimension, dimensionRestriction, dimensionShift) }
+        } ?: return
 
         val sectionLength = distanceDimension / (xLineCount - 1)
         val baseShift = dimensionShift ?: 0L
@@ -501,6 +501,9 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift)
                 if (dataPoints.isEmpty()) continue
 
+                val minDimension = line.minDimension(dimension, dimensionRestriction, dimensionShift) ?: continue
+                val maxDimension = line.maxDimension(dimension, dimensionRestriction, dimensionShift) ?: continue
+
                 val configuration = when {
                     secondaryDimension != null -> PlotGlobalConfiguration.SecondaryDimensionConfiguration[secondaryDimension]
                     else -> line.Configuration
@@ -514,12 +517,9 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                 val minValue = line.minValue(dataPoints, secondaryDimension)!!
                 val maxValue = line.maxValue(dataPoints, secondaryDimension)!!
 
-                val minDimension = line.minDimension(dataPoints, dimension, dimensionRestriction)
-                val maxDimension = line.maxDimension(dataPoints, dimension, dimensionRestriction)
-
                 val smoothing = when {
                     dimensionSmoothing != null -> dimensionSmoothing
-                    dimensionSmoothingPercentage != null -> line.distanceDimension(dataPoints, dimension, dimensionRestriction) * dimensionSmoothingPercentage!!
+                    dimensionSmoothingPercentage != null -> line.distanceDimensionMinMax(dimension, minDimension, maxDimension) * dimensionSmoothingPercentage!!
                     else -> null
                 }
 
