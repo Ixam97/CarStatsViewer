@@ -259,7 +259,7 @@ class SummaryActivity: Activity() {
 
         chargePlotLine.reset()
         chargePlotLine.addDataPoints(tripData.chargeCurves[progress].chargePlotLine)
-        summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves[progress].chargeTime) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
+        summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves[progress].chargeTime) / 5) + 1) * 5 + 1
         summary_charge_plot_view.invalidate()
     }
 
