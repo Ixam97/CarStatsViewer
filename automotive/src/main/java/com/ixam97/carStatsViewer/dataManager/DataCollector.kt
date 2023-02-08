@@ -258,6 +258,7 @@ class DataCollector : Service() {
     private fun handleCarPropertyListenerEvent(propertyId: Int, dataManager: DataManager) {
         when (propertyId) {
             dataManager.CurrentPower.propertyId         -> powerUpdater(dataManager)
+            dataManager.BatteryLevel.propertyId         -> powerUpdater(dataManager)
             dataManager.CurrentSpeed.propertyId         -> speedUpdater(dataManager)
             dataManager.CurrentIgnitionState.propertyId -> driveStateUpdater(dataManager)
             dataManager.ChargePortConnected.propertyId  -> driveStateUpdater(dataManager)
@@ -274,13 +275,13 @@ class DataCollector : Service() {
                 }
             }
             DrivingState.CHARGE -> {
-                if (!dataManager.CurrentPower.isInitialValue && dataManager.CurrentPower.timeDelta < CHARGE_PLOT_MARKER_THRESHOLD_NANOS) {
+                // refreshProperty(dataManager.BatteryLevel.propertyId, dataManager)
+                if (!dataManager.CurrentPower.isInitialValue && dataManager.CurrentPower.timeDelta < CHARGE_PLOT_MARKER_THRESHOLD_NANOS && dataManager.BatteryLevel.propertyId < CHARGE_PLOT_MARKER_THRESHOLD_NANOS) {
                     val chargedEnergyDelta = (dataManager.currentPower / 1_000) * ((dataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
                     dataManager.chargedEnergy -= chargedEnergyDelta
                     dataManager.chargePlotTimeDelta += dataManager.CurrentPower.timeDelta
 
                     if (dataManager.chargePlotTimeDelta >= CHARGE_PLOT_UPDATE_INTERVAL_MILLIS * 1_000_000) {
-                        refreshProperty(dataManager.BatteryLevel.propertyId, dataManager)
                         addChargeDataPoint(dataManager = dataManager)
                         dataManager.chargePlotTimeDelta = 0L
                         sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
@@ -384,7 +385,17 @@ class DataCollector : Service() {
             startChargingSession(dataManager)
             dataManager.plotMarkers.addMarker(PlotMarkerType.CHARGE, System.currentTimeMillis(), dataManager.traveledDistance)
         }
-        else dataManager.ChargeTime.start()
+        else {
+            dataManager.plotMarkers.apply {
+                if (markers.isNotEmpty()) {
+                    if (markers.last().MarkerType != PlotMarkerType.CHARGE) {
+                        startChargingSession(dataManager)
+                        dataManager.plotMarkers.addMarker(PlotMarkerType.CHARGE, System.currentTimeMillis(), dataManager.traveledDistance)
+                    }
+                    else dataManager.ChargeTime.start()
+                }
+            }
+        }
     }
 
     private fun startChargingSession(dataManager: DataManager) {
