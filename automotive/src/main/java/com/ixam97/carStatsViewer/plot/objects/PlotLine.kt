@@ -54,6 +54,12 @@ class PlotLine(
             dataPoint.Marker = PlotLineMarkerType.BEGIN_SESSION
         }
 
+        if (dataPoint.Marker == PlotLineMarkerType.BEGIN_SESSION) {
+            dataPoint.TimeDelta = 0L
+            dataPoint.DistanceDelta = 0f
+            dataPoint.StateOfChargeDelta = 0f
+        }
+
         when {
             dataPoint.Value.isFinite() -> {
                 dataPoints[dataPoints.size] = dataPoint
