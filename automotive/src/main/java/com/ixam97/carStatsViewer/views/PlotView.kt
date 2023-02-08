@@ -843,12 +843,14 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                             }
                         }
 
-                        when (configuration.HighlightMethod) {
-                            PlotHighlightMethod.AVG_BY_INDEX -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
-                            PlotHighlightMethod.AVG_BY_DISTANCE -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
-                            PlotHighlightMethod.AVG_BY_TIME -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
-                            else -> {
-                                // Don't draw
+                        if (highlightCordY != null && highlightCordY in yMargin.toFloat() .. maxY - yMargin) {
+                            when (configuration.HighlightMethod) {
+                                PlotHighlightMethod.AVG_BY_INDEX -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
+                                PlotHighlightMethod.AVG_BY_DISTANCE -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
+                                PlotHighlightMethod.AVG_BY_TIME -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
+                                else -> {
+                                    // Don't draw
+                                }
                             }
                         }
 
@@ -857,6 +859,10 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                         }
                     } else {
                         if (labelCordX != null && highlightCordY != null) {
+                            val highlightCordYLimited = highlightCordY
+                                .coerceAtLeast(yMargin.toFloat())
+                                .coerceAtMost(maxY - yMargin)
+
                             val label = label((highlight!! - valueCorrectionY) / configuration.Divider, configuration.LabelFormat, configuration.HighlightMethod)
                             paint.HighlightLabel.textSize = 35f
                             val labelWidth = paint.HighlightLabel.measureText(label)
@@ -865,21 +871,21 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
                             canvas.drawRect(
                                 labelCordX + labelUnitXOffset - textBoxMargin,
-                                highlightCordY - labelHeight + labelShiftY,
+                                highlightCordYLimited - labelHeight + labelShiftY,
                                 labelCordX + labelUnitXOffset + labelWidth + textBoxMargin,
-                                highlightCordY + labelShiftY + textBoxMargin,
+                                highlightCordYLimited + labelShiftY + textBoxMargin,
                                 backgroundPaint
                             )
 
                             canvas.drawRect(
                                 labelCordX + labelUnitXOffset - textBoxMargin,
-                                highlightCordY - labelHeight + labelShiftY,
+                                highlightCordYLimited - labelHeight + labelShiftY,
                                 labelCordX + labelUnitXOffset + labelWidth + textBoxMargin,
-                                highlightCordY + labelShiftY + textBoxMargin,
+                                highlightCordYLimited + labelShiftY + textBoxMargin,
                                 paint.Plot
                             )
 
-                            canvas.drawText(label, labelCordX + labelUnitXOffset, highlightCordY + labelShiftY, paint.HighlightLabel)
+                            canvas.drawText(label, labelCordX + labelUnitXOffset, highlightCordYLimited + labelShiftY, paint.HighlightLabel)
                         }
                     }
                 }
