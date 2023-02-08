@@ -276,7 +276,7 @@ class DataCollector : Service() {
             }
             DrivingState.CHARGE -> {
                 // refreshProperty(dataManager.BatteryLevel.propertyId, dataManager)
-                if (!dataManager.CurrentPower.isInitialValue && dataManager.CurrentPower.timeDelta < CHARGE_PLOT_MARKER_THRESHOLD_NANOS && dataManager.BatteryLevel.propertyId < CHARGE_PLOT_MARKER_THRESHOLD_NANOS) {
+                if (!dataManager.CurrentPower.isInitialValue && dataManager.CurrentPower.timeDelta < CHARGE_PLOT_MARKER_THRESHOLD_NANOS && dataManager.BatteryLevel.timeDelta < CHARGE_PLOT_MARKER_THRESHOLD_NANOS) {
                     val chargedEnergyDelta = (dataManager.currentPower / 1_000) * ((dataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
                     dataManager.chargedEnergy -= chargedEnergyDelta
                     dataManager.chargePlotTimeDelta += dataManager.CurrentPower.timeDelta
@@ -489,6 +489,10 @@ class DataCollector : Service() {
             System.nanoTime(),
             propertyId,
             doLog = false)
+    }
+
+    private fun getPropertyStatus(propertyId: Int): Int {
+        return carPropertyManager.getProperty<Any>(propertyId, 0).status
     }
 
     private fun createNotificationChannel() {
