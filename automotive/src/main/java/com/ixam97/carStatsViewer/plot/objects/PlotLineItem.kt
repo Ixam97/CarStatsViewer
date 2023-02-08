@@ -13,8 +13,8 @@ class PlotLineItem (
     val NanoTime: Long?,
     val Distance: Float,
     var StateOfCharge: Float,
-    val TimeDelta: Long?,
-    val DistanceDelta: Float?,
+    var TimeDelta: Long?,
+    var DistanceDelta: Float?,
     var StateOfChargeDelta: Float?,
 
     var Marker: PlotLineMarkerType?
