@@ -277,9 +277,9 @@ class DataCollector : Service() {
                 if (!dataManager.CurrentPower.isInitialValue && dataManager.CurrentPower.timeDelta < CHARGE_PLOT_MARKER_THRESHOLD_NANOS) {
                     val chargedEnergyDelta = (dataManager.currentPower / 1_000) * ((dataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
                     dataManager.chargedEnergy -= chargedEnergyDelta
-                    if (dataManager.chargePlotTimeDelta < CHARGE_PLOT_UPDATE_INTERVAL_MILLIS * 1_000_000) {
-                        dataManager.chargePlotTimeDelta += dataManager.CurrentPower.timeDelta
-                    } else {
+                    dataManager.chargePlotTimeDelta += dataManager.CurrentPower.timeDelta
+
+                    if (dataManager.chargePlotTimeDelta >= CHARGE_PLOT_UPDATE_INTERVAL_MILLIS * 1_000_000) {
                         refreshProperty(dataManager.BatteryLevel.propertyId, dataManager)
                         addChargeDataPoint(dataManager = dataManager)
                         dataManager.chargePlotTimeDelta = 0L
@@ -316,9 +316,9 @@ class DataCollector : Service() {
                 Log.i("Drive", "ended")
             }
 
-            if (dataManager.consumptionPlotDistanceDelta < CONSUMPTION_PLOT_UPDATE_DISTANCE) {
-                dataManager.consumptionPlotDistanceDelta += traveledDistanceDelta
-            } else {
+            dataManager.consumptionPlotDistanceDelta += traveledDistanceDelta
+
+            if (dataManager.consumptionPlotDistanceDelta >= CONSUMPTION_PLOT_UPDATE_DISTANCE) {
                 if (dataManager.driveState == DrivingState.DRIVE) {
                     addConsumptionDataPoint(
                         if(dataManager.consumptionPlotDistanceDelta > 0) dataManager.consumptionPlotEnergyDelta / (dataManager.consumptionPlotDistanceDelta / 1000) else 0F,
