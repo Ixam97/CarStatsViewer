@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.plot.objects
 
+import com.ixam97.carStatsViewer.enums.DistanceUnit
 import com.ixam97.carStatsViewer.plot.enums.*
 
 object PlotGlobalConfiguration {
@@ -36,4 +37,12 @@ object PlotGlobalConfiguration {
                 "% SoC"
             )
         )
+
+    fun updateDistanceUnit(distanceUnit: DistanceUnit) {
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.SPEED]?.Divider = 1f / distanceUnit.toFactor()
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.SPEED]?.Unit = "%s/h".format(distanceUnit.unit())
+
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.DISTANCE]?.Divider = 1f / distanceUnit.toFactor()
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.DISTANCE]?.Unit = "%s".format(distanceUnit.unit())
+    }
 }

@@ -34,19 +34,23 @@ object StringFormatters {
     }
 
     fun getTraveledDistanceString(traveledDistance: Float): String {
-        return "%.1f km".format(Locale.ENGLISH, kiloRounder(traveledDistance))
+        return "%.1f %s".format(Locale.ENGLISH, kiloRounder(appPreferences.distanceUnit.toUnit(traveledDistance)), appPreferences.distanceUnit.unit())
     }
 
     fun getAvgConsumptionString(usedEnergy: Float, traveledDistance: Float): String {
-        val avgConsumption = usedEnergy / (traveledDistance / 1000)
-        val unitString = if (appPreferences.consumptionUnit) "Wh/km" else "kWh/100km"
+        val avgConsumption = appPreferences.distanceUnit.asUnit(usedEnergy / (traveledDistance / 1000))
+        val unitString = when {
+            appPreferences.consumptionUnit -> "Wh/%s".format(appPreferences.distanceUnit.unit())
+            else -> "kWh/100%s".format(appPreferences.distanceUnit.unit())
+        }
+
         if (traveledDistance <= 0) {
             return "-/- $unitString"
         }
         if (!appPreferences.consumptionUnit) {
             return "%.1f %s".format(
                 Locale.ENGLISH,
-                (avgConsumption)/10,
+                (avgConsumption) / 10,
                 unitString)
         }
         return "${(avgConsumption).toInt()} $unitString"

@@ -72,6 +72,13 @@
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
+            <Switch
+                android:id="@+id/settings_switch_distance_unit"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_distance_unit"/>
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
             <TextView
                 android:id="@+id/settings_consumption_plot"
                 android:text="@string/settings_consumption_plot"

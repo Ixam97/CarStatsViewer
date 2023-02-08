@@ -167,13 +167,16 @@ class PlotLine(
     fun maxValue(dataPoints: List<PlotLineItem>, secondaryDimension: PlotSecondaryDimension? = null, applyRange: Boolean = true): Float? {
         val baseConfiguration = PlotGlobalConfiguration.SecondaryDimensionConfiguration[secondaryDimension] ?: Configuration
         val max : Float? = when {
-            dataPoints.isEmpty() -> baseConfiguration.Range.minPositive
+            dataPoints.isEmpty() -> when {
+                baseConfiguration.Range.minPositive == null || !applyRange -> null
+                else  -> baseConfiguration.Range.minPositive * baseConfiguration.UnitFactor
+            }
             else -> {
                 var maxByData = dataPoints.mapNotNull { it.bySecondaryDimension(secondaryDimension) }.maxOfOrNull { it }
 
                 if (applyRange) {
-                    if (baseConfiguration.Range.minPositive != null) maxByData = (maxByData?:0f).coerceAtLeast(baseConfiguration.Range.minPositive)
-                    if (baseConfiguration.Range.maxPositive != null) maxByData = (maxByData?:0f).coerceAtMost(baseConfiguration.Range.maxPositive)
+                    if (baseConfiguration.Range.minPositive != null) maxByData = (maxByData?:0f).coerceAtLeast(baseConfiguration.Range.minPositive * baseConfiguration.UnitFactor)
+                    if (baseConfiguration.Range.maxPositive != null) maxByData = (maxByData?:0f).coerceAtMost(baseConfiguration.Range.maxPositive * baseConfiguration.UnitFactor)
                 }
 
                 maxByData
@@ -184,9 +187,9 @@ class PlotLine(
 
         return when {
             max == null -> null
-            baseConfiguration.Range.smoothAxis != null -> when (max % baseConfiguration.Range.smoothAxis) {
+            baseConfiguration.Range.smoothAxis != null -> when (max % (baseConfiguration.Range.smoothAxis * baseConfiguration.UnitFactor)) {
                 0f -> max
-                else -> max + (baseConfiguration.Range.smoothAxis - max % baseConfiguration.Range.smoothAxis)
+                else -> max + ((baseConfiguration.Range.smoothAxis * baseConfiguration.UnitFactor) - max % (baseConfiguration.Range.smoothAxis * baseConfiguration.UnitFactor))
             }
             else -> max
         }
@@ -195,13 +198,16 @@ class PlotLine(
     fun minValue(dataPoints: List<PlotLineItem>, secondaryDimension: PlotSecondaryDimension? = null, applyRange: Boolean = true): Float? {
         val baseConfiguration = PlotGlobalConfiguration.SecondaryDimensionConfiguration[secondaryDimension] ?: Configuration
         val min : Float? = when {
-            dataPoints.isEmpty() -> baseConfiguration.Range.minNegative
+            dataPoints.isEmpty() -> when {
+                baseConfiguration.Range.minNegative == null || !applyRange -> null
+                else  -> baseConfiguration.Range.minNegative * baseConfiguration.UnitFactor
+            }
             else -> {
                 var minByData = dataPoints.mapNotNull { it.bySecondaryDimension(secondaryDimension) }.minOfOrNull { it }
 
                 if (applyRange) {
-                    if (baseConfiguration.Range.minNegative != null) minByData = (minByData?:0f).coerceAtMost(baseConfiguration.Range.minNegative)
-                    if (baseConfiguration.Range.maxNegative != null) minByData = (minByData?:0f).coerceAtLeast(baseConfiguration.Range.maxNegative)
+                    if (baseConfiguration.Range.minNegative != null) minByData = (minByData?:0f).coerceAtMost(baseConfiguration.Range.minNegative * baseConfiguration.UnitFactor)
+                    if (baseConfiguration.Range.maxNegative != null) minByData = (minByData?:0f).coerceAtLeast(baseConfiguration.Range.maxNegative * baseConfiguration.UnitFactor)
                 }
 
                 minByData
@@ -212,9 +218,9 @@ class PlotLine(
 
         val minSmooth = when {
             min == null -> null
-            baseConfiguration.Range.smoothAxis != null -> when (min % baseConfiguration.Range.smoothAxis) {
+            baseConfiguration.Range.smoothAxis != null -> when (min % (baseConfiguration.Range.smoothAxis * baseConfiguration.UnitFactor)) {
                 0f -> min
-                else -> min - (min % baseConfiguration.Range.smoothAxis) - baseConfiguration.Range.smoothAxis
+                else -> min - (min % (baseConfiguration.Range.smoothAxis * baseConfiguration.UnitFactor)) - (baseConfiguration.Range.smoothAxis * baseConfiguration.UnitFactor)
             }
             else -> min
         }

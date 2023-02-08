@@ -23,6 +23,8 @@ import com.ixam97.carStatsViewer.dataManager.ChargeCurve
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.dataManager.DataCollector
+import com.ixam97.carStatsViewer.enums.DistanceUnit
+import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlin.system.exitProcess
 
@@ -79,6 +81,7 @@ class SettingsActivity : Activity() {
     private fun setupSettingsMaster() {
         settings_switch_notifications.isChecked = appPreferences.notifications
         settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
+        settings_switch_distance_unit.isChecked = appPreferences.distanceUnit == DistanceUnit.MILES
 
         settings_version_text.text = "Car Stats Viewer Version %s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 
@@ -112,6 +115,14 @@ class SettingsActivity : Activity() {
 
         settings_switch_consumption_unit.setOnClickListener {
             appPreferences.consumptionUnit = settings_switch_consumption_unit.isChecked
+        }
+
+        settings_switch_distance_unit.setOnClickListener {
+            appPreferences.distanceUnit = when (settings_switch_distance_unit.isChecked) {
+                true -> DistanceUnit.MILES
+                else -> DistanceUnit.KM
+            }
+            PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
         }
         
         settings_consumption_plot.setOnClickListener {

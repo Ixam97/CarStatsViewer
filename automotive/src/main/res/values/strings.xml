@@ -26,6 +26,7 @@
     <string name="preference_charge_plot_secondary_color_key" translatable="false">preference_charge_plot_secondary_color</string>
     <string name="preference_charge_plot_visible_gages_key" translatable="false">preference_charge_plot_visible_gages</string>
     <string name="preference_charge_plot_dimension_key" translatable="false">preference_charge_plot_dimension</string>
+    <string name="preference_distance_unit_key" translatable="false">preference_distance_unit_key</string>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
 
@@ -89,6 +90,7 @@
     <string name="settings_button_quit">Quit app</string>
     <string name="settings_notifications">Notifications</string>
     <string name="settings_consumption_unit">Wh/km as consumption unit</string>
+    <string name="settings_distance_unit">Miles as distance unit</string>
     <string name="settings_debug">Debug information</string>
     <string name="settings_experimental_layout">Show experimental Layout</string>
     <string name="settings_consumption_plot">  Consumption view</string>

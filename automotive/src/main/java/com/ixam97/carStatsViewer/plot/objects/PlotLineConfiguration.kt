@@ -8,5 +8,6 @@ class PlotLineConfiguration(
     var LabelPosition: PlotLabelPosition,
     var HighlightMethod: PlotHighlightMethod,
     var Unit: String,
-    var Divider: Float = 1f
+    var Divider: Float = 1f,
+    var UnitFactor: Float = 1f
 )
