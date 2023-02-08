@@ -24,6 +24,7 @@ import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.views.PlotView
 import com.ixam97.carStatsViewer.dataManager.DataManagers
+import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.services.LocCollector
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import kotlinx.android.synthetic.main.activity_main.*
@@ -38,6 +39,7 @@ class MainActivity : Activity() {
     companion object {
         private const val UI_UPDATE_INTERVAL = 1000L
         const val DISTANCE_TRIP_DIVIDER = 5_000L
+        const val CONSUMPTION_DISTANCE_RESTRICTION = 10_000L
         // lateinit var context: Context
         lateinit var appPreferences: AppPreferences
     }
@@ -77,14 +79,20 @@ class MainActivity : Activity() {
 
         // InAppLogger.log("MainActivity.onResume")
 
+        PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
+
+        main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(CONSUMPTION_DISTANCE_RESTRICTION)
+
+        selectedDataManager.consumptionPlotLine.Configuration.UnitFactor = appPreferences.distanceUnit.toFactor()
+
         if (appPreferences.consumptionUnit) {
-            selectedDataManager.consumptionPlotLine.Configuration.Unit = "Wh/km"
+            selectedDataManager.consumptionPlotLine.Configuration.Unit = "Wh/%s".format(appPreferences.distanceUnit.unit())
             selectedDataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
-            selectedDataManager.consumptionPlotLine.Configuration.Divider = 1f
+            selectedDataManager.consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 1f
         } else {
-            selectedDataManager.consumptionPlotLine.Configuration.Unit = "kWh/100km"
+            selectedDataManager.consumptionPlotLine.Configuration.Unit = "kWh/100%s".format(appPreferences.distanceUnit.unit())
             selectedDataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
-            selectedDataManager.consumptionPlotLine.Configuration.Divider = 10f
+            selectedDataManager.consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 10f
         }
 
         main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
@@ -133,6 +141,8 @@ class MainActivity : Activity() {
         StringFormatters.appPreferences = appPreferences
         StringFormatters.dateFormat = DateFormat.getDateFormat(context)
         StringFormatters.timeFormat = DateFormat.getTimeFormat(context)
+
+        PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
         startForegroundService(Intent(this, DataCollector::class.java))
         startService(Intent(this, LocCollector::class.java))
@@ -190,6 +200,7 @@ class MainActivity : Activity() {
         main_gage_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(selectedDataManager.travelTime))
         main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getEnergyString(selectedDataManager.chargedEnergy))
         main_gage_charge_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(selectedDataManager.chargeTime))
+        main_gage_remaining_range_text_view.text = "-/-  %s".format(appPreferences.distanceUnit.unit())
         main_gage_ambient_temperature_text_view.text = "  %s".format( StringFormatters.getTemperatureString(selectedDataManager.ambientTemperature))
     }
 
@@ -217,21 +228,23 @@ class MainActivity : Activity() {
         var consumptionValue: Float? = null
 
         if (appPreferences.consumptionUnit) {
-            main_consumption_gage.gageUnit = "Wh/km"
-            main_consumption_gage.minValue = -300f
-            main_consumption_gage.maxValue = 600f
+            main_consumption_gage.gageUnit = "Wh/%s".format(appPreferences.distanceUnit.unit())
+            main_consumption_gage.minValue = appPreferences.distanceUnit.asUnit(-300f)
+            main_consumption_gage.maxValue = appPreferences.distanceUnit.asUnit(600f)
+
             if (selectedDataManager.currentSpeed * 3.6 > 3) {
-                main_consumption_gage.setValue(((selectedDataManager.currentPower / 1000) / (selectedDataManager.currentSpeed * 3.6)).toInt())
+                main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit((selectedDataManager.currentPower / 1000) / (selectedDataManager.currentSpeed * 3.6)).roundToInt())
             } else {
                 main_consumption_gage.setValue(consumptionValue)
             }
 
         } else {
-            main_consumption_gage.gageUnit = "kWh/100km"
-            main_consumption_gage.minValue = -30f
-            main_consumption_gage.maxValue = 60f
+            main_consumption_gage.gageUnit = "kWh/100%s".format(appPreferences.distanceUnit.unit())
+            main_consumption_gage.minValue = appPreferences.distanceUnit.asUnit(-30f)
+            main_consumption_gage.maxValue = appPreferences.distanceUnit.asUnit(60f)
+
             if (selectedDataManager.currentSpeed * 3.6 > 3) {
-                main_consumption_gage.setValue(((selectedDataManager.currentPower / 1000) / (selectedDataManager.currentSpeed * 3.6f))/10)
+                main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit((selectedDataManager.currentPower / 1000) / (selectedDataManager.currentSpeed * 3.6f)) / 10)
             } else {
                 main_consumption_gage.setValue(consumptionValue)
             }
@@ -266,6 +279,8 @@ class MainActivity : Activity() {
 
     private fun setupDefaultUi() {
 
+        PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
+
         var plotDistanceId = when (appPreferences.plotDistance) {
             1 -> main_radio_10.id
             2 -> main_radio_25.id
@@ -289,7 +304,7 @@ class MainActivity : Activity() {
         }
 
         main_consumption_plot.dimension = PlotDimension.DISTANCE
-        main_consumption_plot.dimensionRestriction = 10_001L
+        main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(CONSUMPTION_DISTANCE_RESTRICTION)
         main_consumption_plot.dimensionSmoothingPercentage = 0.02f
         main_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
         main_consumption_plot.secondaryDimension = when (appPreferences.plotSpeed) {

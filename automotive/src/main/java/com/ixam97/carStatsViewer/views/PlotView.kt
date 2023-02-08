@@ -14,6 +14,8 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.activities.MainActivity
+import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.*
 import com.ixam97.carStatsViewer.plot.objects.*
@@ -127,8 +129,11 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private var markerPaint = HashMap<PlotMarkerType, PlotMarkerPaint>()
     private var markerIcon = HashMap<PlotMarkerType, Bitmap?>()
 
+    private val appPreferences : AppPreferences
+
     init {
         setupPaint()
+        appPreferences = MainActivity.appPreferences
     }
 
     // Setup paint with color and stroke styles
@@ -938,8 +943,8 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
             }
             PlotLineLabelFormat.TIME -> timeLabel(value.toLong())
             PlotLineLabelFormat.DISTANCE -> when {
-                value % 1000 > 100 -> String.format("%.1f km", value / 1000)
-                else -> String.format("%d km", (value / 1000).toInt())
+                appPreferences.distanceUnit.toUnit(value) % 1000 > 100 -> String.format("%.1f %s", appPreferences.distanceUnit.toUnit(value) / 1000, appPreferences.distanceUnit.unit())
+                else -> String.format("%d %s", (appPreferences.distanceUnit.toUnit(value) / 1000).roundToInt(), appPreferences.distanceUnit.unit())
             }
         }
     }

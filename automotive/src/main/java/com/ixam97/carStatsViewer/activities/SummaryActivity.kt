@@ -130,8 +130,8 @@ class SummaryActivity: Activity() {
         summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
         summary_consumption_plot.secondaryDimension = PlotSecondaryDimension.SPEED
         summary_consumption_plot.dimension = PlotDimension.DISTANCE
-        summary_consumption_plot.dimensionRestriction = ((tripData.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1
-        summary_consumption_plot.dimensionRestrictionMin = MainActivity.DISTANCE_TRIP_DIVIDER
+        summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((tripData.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1)
+        summary_consumption_plot.dimensionRestrictionMin = appPreferences.distanceUnit.asUnit(MainActivity.DISTANCE_TRIP_DIVIDER)
         summary_consumption_plot.dimensionSmoothingPercentage = 0.02f
         summary_consumption_plot.setPlotMarkers(plotMarkers)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)

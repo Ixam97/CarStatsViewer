@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.enums.DistanceUnit
 import com.ixam97.carStatsViewer.plot.enums.PlotDimension
 import com.ixam97.carStatsViewer.utils.Exclude
 
@@ -110,7 +111,13 @@ class AppPreferences(context: Context) {
         set(value) {
             setPreference(AppPreference.CHARGE_PLOT_DIMENSION, value)
         }
-
+    var distanceUnit: DistanceUnit
+        get() {
+            return getPreference(AppPreference.DISTANCE_UNIT) as DistanceUnit
+        }
+        set(value) {
+            setPreference(AppPreference.DISTANCE_UNIT, value)
+        }
 
     private val keyMap = hashMapOf<AppPreference, String>(
         AppPreference.DEBUG to context.getString(R.string.preferences_debug_key),
@@ -125,7 +132,8 @@ class AppPreferences(context: Context) {
         AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to context.getString(R.string.preference_consumption_plot_visible_gages_key),
         AppPreference.CHARGE_PLOT_SECONDARY_COLOR to context.getString(R.string.preference_charge_plot_secondary_color_key),
         AppPreference.CHARGE_PLOT_VISIBLE_GAGES to context.getString(R.string.preference_charge_plot_visible_gages_key),
-        AppPreference.CHARGE_PLOT_DIMENSION to context.getString(R.string.preference_charge_plot_dimension_key)
+        AppPreference.CHARGE_PLOT_DIMENSION to context.getString(R.string.preference_charge_plot_dimension_key),
+        AppPreference.DISTANCE_UNIT to context.getString(R.string.preference_distance_unit_key)
     )
 
     private var typeMap = mapOf<AppPreference, Any>( // Also contains default values
@@ -141,7 +149,8 @@ class AppPreferences(context: Context) {
         AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to true,
         AppPreference.CHARGE_PLOT_SECONDARY_COLOR to false,
         AppPreference.CHARGE_PLOT_VISIBLE_GAGES to true,
-        AppPreference.CHARGE_PLOT_DIMENSION to PlotDimension.TIME
+        AppPreference.CHARGE_PLOT_DIMENSION to PlotDimension.TIME,
+        AppPreference.DISTANCE_UNIT to DistanceUnit.KM
     )
 
     private fun getPreference(appPreference: AppPreference): Any {
@@ -154,6 +163,9 @@ class AppPreferences(context: Context) {
             }
             if (typeMap[appPreference] is PlotDimension) {
                 return PlotDimension.valueOf(sharedPref.getString(keyMap[appPreference], (typeMap[appPreference] as PlotDimension).name) ?: PlotDimension.TIME.name)
+            }
+            if (typeMap[appPreference] is DistanceUnit) {
+                return DistanceUnit.valueOf(sharedPref.getString(keyMap[appPreference], (typeMap[appPreference] as DistanceUnit).name) ?: DistanceUnit.KM.name)
             }
         }
         throw java.lang.Exception("AppPreferences.setPreference: Unknown Preference!")
@@ -170,6 +182,10 @@ class AppPreferences(context: Context) {
                 return
             }
             if (typeMap[appPreference] is PlotDimension && value is PlotDimension) {
+                sharedPref.edit().putString(keyMap[appPreference], value.name).apply()
+                return
+            }
+            if (typeMap[appPreference] is DistanceUnit && value is DistanceUnit) {
                 sharedPref.edit().putString(keyMap[appPreference], value.name).apply()
                 return
             }
