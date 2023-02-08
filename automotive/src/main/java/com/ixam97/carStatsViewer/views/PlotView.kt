@@ -838,12 +838,14 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                             }
                         }
 
-                        when (configuration.HighlightMethod) {
-                            PlotHighlightMethod.AVG_BY_INDEX -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
-                            PlotHighlightMethod.AVG_BY_DISTANCE -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
-                            PlotHighlightMethod.AVG_BY_TIME -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
-                            else -> {
-                                // Don't draw
+                        if (highlightCordY != null && highlightCordY in yMargin.toFloat() .. maxY - yMargin) {
+                            when (configuration.HighlightMethod) {
+                                PlotHighlightMethod.AVG_BY_INDEX -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
+                                PlotHighlightMethod.AVG_BY_DISTANCE -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
+                                PlotHighlightMethod.AVG_BY_TIME -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
+                                else -> {
+                                    // Don't draw
+                                }
                             }
                         }
 
