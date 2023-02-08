@@ -213,6 +213,7 @@ class DataCollector : Service() {
     /** Update DataManagers on new VHAL event */
     private val carPropertyListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(carPropertyValue: CarPropertyValue<*>) {
+            if (carPropertyValue.status != CarPropertyValue.STATUS_AVAILABLE) InAppLogger.log("PropertyStatus: ${carPropertyValue.status}")
             DataManagers.values().forEach {
                 if (it.dataManager.update(
                         carPropertyValue,
@@ -484,6 +485,7 @@ class DataCollector : Service() {
     }
 
     private fun refreshProperty(propertyId: Int, dataManager: DataManager) {
+        getPropertyStatus(propertyId)
         dataManager.update(
             carPropertyManager.getProperty<Any>(propertyId, 0).value,
             System.nanoTime(),
@@ -492,7 +494,9 @@ class DataCollector : Service() {
     }
 
     private fun getPropertyStatus(propertyId: Int): Int {
-        return carPropertyManager.getProperty<Any>(propertyId, 0).status
+        val status = carPropertyManager.getProperty<Any>(propertyId, 0).status
+        if (status != CarPropertyValue.STATUS_AVAILABLE) InAppLogger.log("PropertyStatus: $status")
+        return status
     }
 
     private fun createNotificationChannel() {
