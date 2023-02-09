@@ -1,9 +1,7 @@
 package com.ixam97.carStatsViewer.dataManager
 
-import com.ixam97.carStatsViewer.*
 import android.app.*
 import android.car.Car
-import android.car.VehicleGear
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
@@ -15,6 +13,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.plot.enums.*
@@ -259,7 +258,6 @@ class DataCollector : Service() {
     private fun handleCarPropertyListenerEvent(propertyId: Int, dataManager: DataManager) {
         when (propertyId) {
             dataManager.CurrentPower.propertyId         -> powerUpdater(dataManager)
-            dataManager.BatteryLevel.propertyId         -> powerUpdater(dataManager)
             dataManager.CurrentSpeed.propertyId         -> speedUpdater(dataManager)
             dataManager.CurrentIgnitionState.propertyId -> driveStateUpdater(dataManager)
             dataManager.ChargePortConnected.propertyId  -> driveStateUpdater(dataManager)
