@@ -165,10 +165,11 @@ class DataManager(val printableName: String) {
             if (doLog) Log.w(TAG, "${timestamp}: Failed to update ${property.printableName}: Invalid data type")
             return INVALID_TYPE
         }
-        if (allowInvalidTimestamps && timestamp < property.timestamp){
-            timestamp = property.startupTimestamp
-        }
-        if (timestamp < property.timestamp) {
+        // if (allowInvalidTimestamps && timestamp < property.timestamp){
+        //     //timestamp = property.startupTimestamp
+        //     timestamp = System.nanoTime()
+        // }
+        if (!allowInvalidTimestamps && timestamp < property.timestamp) {
             if (doLog) Log.w(TAG, "${timestamp}: Failed to update ${property.printableName}: Invalid timestamp")
             return INVALID_TIMESTAMP
         }
@@ -284,6 +285,16 @@ class DataManager(val printableName: String) {
             VehiclePropertyIds.EV_BATTERY_LEVEL to CarPropertyManager.SENSOR_RATE_FAST,
             VehiclePropertyIds.IGNITION_STATE to CarPropertyManager.SENSOR_RATE_FAST,
             VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE to CarPropertyManager.SENSOR_RATE_ONCHANGE
+        )
+
+        val allowInvalidTimestampsMap: Map<Int, Boolean> = mapOf(
+            VehiclePropertyIds.PERF_VEHICLE_SPEED to false,
+            VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE to false,
+            VehiclePropertyIds.GEAR_SELECTION to true,
+            VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED to true,
+            VehiclePropertyIds.EV_BATTERY_LEVEL to true,
+            VehiclePropertyIds.IGNITION_STATE to true,
+            VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE to true
         )
     }
 }

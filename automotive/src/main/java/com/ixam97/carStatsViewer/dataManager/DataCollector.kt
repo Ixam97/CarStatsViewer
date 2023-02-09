@@ -219,7 +219,7 @@ class DataCollector : Service() {
                         carPropertyValue,
                         DO_LOG,
                         valueMustChange = false,
-                        allowInvalidTimestamps = false
+                        allowInvalidTimestamps = DataManager.allowInvalidTimestampsMap[carPropertyValue.propertyId] == true
                     ) == it.dataManager.VALID) {
                     handleCarPropertyListenerEvent(carPropertyValue.propertyId, it.dataManager)
                 }
@@ -276,8 +276,8 @@ class DataCollector : Service() {
                 }
             }
             DrivingState.CHARGE -> {
-                // refreshProperty(dataManager.BatteryLevel.propertyId, dataManager)
-                if (!dataManager.CurrentPower.isInitialValue && dataManager.CurrentPower.timeDelta < CHARGE_PLOT_MARKER_THRESHOLD_NANOS && dataManager.BatteryLevel.timeDelta < CHARGE_PLOT_MARKER_THRESHOLD_NANOS) {
+                refreshProperty(dataManager.BatteryLevel.propertyId, dataManager)
+                if (!dataManager.CurrentPower.isInitialValue && !dataManager.BatteryLevel.isInitialValue && dataManager.CurrentPower.timeDelta < CHARGE_PLOT_MARKER_THRESHOLD_NANOS && dataManager.BatteryLevel.timeDelta < CHARGE_PLOT_MARKER_THRESHOLD_NANOS) {
                     val chargedEnergyDelta = (dataManager.currentPower / 1_000) * ((dataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
                     dataManager.chargedEnergy -= chargedEnergyDelta
                     dataManager.chargePlotTimeDelta += dataManager.CurrentPower.timeDelta
@@ -289,7 +289,16 @@ class DataCollector : Service() {
                     }
 
                 } else {
-                    InAppLogger.log("DATA COLLECTOR: Discarded charge plot data Point due to large time delta!")
+                    if (dataManager == DataManagers.values().first().dataManager) {
+                        var printableName1 =
+                            (if (dataManager.CurrentPower.timeDelta > CHARGE_PLOT_MARKER_THRESHOLD_NANOS) dataManager.CurrentPower.printableName else "")
+                        val printableName2 = (if (dataManager.BatteryLevel.timeDelta > CHARGE_PLOT_MARKER_THRESHOLD_NANOS) dataManager.BatteryLevel.printableName else "")
+                        if (printableName2.isNotEmpty()) printableName1 += " and "
+                        printableName1 += printableName2
+
+                        if (printableName1.isNotEmpty()) InAppLogger.log("DATA COLLECTOR: Discarded charge plot data Point due to large time delta of $printableName1!")
+                        else InAppLogger.log("DATA COLLECTOR: Discarded charge plot data Point due to initial values!")
+                    }
                 }
             }
             else -> {
@@ -485,12 +494,14 @@ class DataCollector : Service() {
     }
 
     private fun refreshProperty(propertyId: Int, dataManager: DataManager) {
+        val property = carPropertyManager.getProperty<Any>(propertyId, 0)
         getPropertyStatus(propertyId)
         dataManager.update(
-            carPropertyManager.getProperty<Any>(propertyId, 0).value,
-            System.nanoTime(),
+            property.value,
+            property.timestamp,
             propertyId,
-            doLog = false)
+            doLog = false,
+            allowInvalidTimestamps = DataManager.allowInvalidTimestampsMap[propertyId] == true)
     }
 
     private fun getPropertyStatus(propertyId: Int): Int {
