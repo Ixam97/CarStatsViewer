@@ -1,18 +1,32 @@
 package com.ixam97.carStatsViewer.appPreferences
 
-enum class AppPreference {
-    DEBUG,
-    NOTIFICATIONS,
-    CONSUMPTION_UNIT,
-    EXPERIMENTAL_LAYOUT,
-    DEEP_LOG,
-    PLOT_SHOW_SPEED,
-    PLOT_DISTANCE,
-    CONSUMPTION_PLOT_SINGLE_MOTOR,
-    CONSUMPTION_PLOT_SECONDARY_COLOR,
-    CONSUMPTION_PLOT_VISIBLE_GAGES,
-    CHARGE_PLOT_SECONDARY_COLOR,
-    CHARGE_PLOT_VISIBLE_GAGES,
-    CHARGE_PLOT_DIMENSION,
-    DISTANCE_UNIT
+import android.content.SharedPreferences
+import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
+import com.ixam97.carStatsViewer.plot.enums.PlotDimension
+
+class AppPreference<T>(
+    private val key: String,
+    private val default: T,
+    private val sharedPref: SharedPreferences) {
+
+    var value: T
+        get() {
+            return when (default) {
+                is Boolean -> sharedPref.getBoolean(key, default) as T
+                is Int -> sharedPref.getInt(key, default) as T
+                is PlotDimension -> PlotDimension.valueOf(sharedPref.getString(key, default.name)!!) as T
+                is DistanceUnitEnum -> DistanceUnitEnum.valueOf(sharedPref.getString(key, default.name)!!) as T
+                else -> default
+            }
+        }
+        set(value) {
+            when (default) {
+                is Boolean -> sharedPref.edit().putBoolean(key, value as Boolean).apply()
+                is Int -> sharedPref.edit().putInt(key, value as Int).apply()
+                is PlotDimension -> sharedPref.edit().putString(key, (value as PlotDimension).name).apply()
+                is DistanceUnitEnum ->sharedPref.edit().putString(key, (value as DistanceUnitEnum).name).apply()
+                //else ->
+            }
+        }
 }
+

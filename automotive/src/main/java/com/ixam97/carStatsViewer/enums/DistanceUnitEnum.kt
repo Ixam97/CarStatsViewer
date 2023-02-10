@@ -2,7 +2,7 @@ package com.ixam97.carStatsViewer.enums
 
 import kotlin.math.roundToLong
 
-enum class DistanceUnit {
+enum class DistanceUnitEnum {
     KM, MILES;
 
     fun toFactor(): Float {

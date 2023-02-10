@@ -281,14 +281,14 @@ class MainActivity : Activity() {
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
-        var plotDistanceId = when (appPreferences.plotDistance) {
-            1 -> main_radio_10.id
-            2 -> main_radio_25.id
-            3 -> main_radio_50.id
-            else -> main_radio_10.id
-        }
+        // var plotDistanceId = when (appPreferences.plotDistance) {
+        //     1 -> main_radio_10.id
+        //     2 -> main_radio_25.id
+        //     3 -> main_radio_50.id
+        //     else -> main_radio_10.id
+        // }
 
-        main_radio_group_distance.check(plotDistanceId)
+        // main_radio_group_distance.check(plotDistanceId)
 
         main_consumption_plot.reset()
         main_consumption_plot.addPlotLine(selectedDataManager.consumptionPlotLine)

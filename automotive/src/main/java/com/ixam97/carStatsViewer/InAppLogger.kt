@@ -104,7 +104,7 @@ class LogActivity : Activity() {
 
         setContentView(R.layout.activity_log)
 
-        log_switch_deep_log.isChecked = appPreferences.deepLog
+        // log_switch_deep_log.isChecked = appPreferences.deepLog
 
         // val logTextView = TextView(this)
         // logTextView.typeface
@@ -193,9 +193,9 @@ class LogActivity : Activity() {
             startActivity(intent)
         }
 
-        log_switch_deep_log.setOnClickListener {
-            appPreferences.deepLog = log_switch_deep_log.isChecked
-        }
+        // log_switch_deep_log.setOnClickListener {
+        //     appPreferences.deepLog = log_switch_deep_log.isChecked
+        // }
 
     }
 

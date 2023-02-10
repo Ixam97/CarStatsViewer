@@ -5,194 +5,43 @@ import android.content.SharedPreferences
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.enums.DistanceUnit
+import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.plot.enums.PlotDimension
 import com.ixam97.carStatsViewer.utils.Exclude
 
-class AppPreferences(context: Context) {
-
-    private var sharedPref: SharedPreferences
-
-    init {
-        sharedPref = context.getSharedPreferences(
-            context.getString(R.string.preferences_file_key), Context.MODE_PRIVATE
-        )
-    }
-
-    var debug: Boolean
-        get() {
-            return getPreference(AppPreference.DEBUG) as Boolean
-        }
-        set(value) {
-            setPreference(AppPreference.DEBUG, value)
-        }
-    var notifications: Boolean
-        get() {
-            return getPreference(AppPreference.NOTIFICATIONS) as Boolean
-        }
-        set(value) {
-            setPreference(AppPreference.NOTIFICATIONS, value)
-        }
-    var consumptionUnit: Boolean
-        get() {
-            return getPreference(AppPreference.CONSUMPTION_UNIT) as Boolean
-        }
-        set(value) {
-            setPreference(AppPreference.CONSUMPTION_UNIT, value)
-        }
-    var experimentalLayout: Boolean
-        get() {
-            return getPreference(AppPreference.EXPERIMENTAL_LAYOUT) as Boolean
-        }
-        set(value) {
-            setPreference(AppPreference.EXPERIMENTAL_LAYOUT, value)
-        }
-    var deepLog: Boolean
-        get() {
-            return getPreference(AppPreference.DEEP_LOG) as Boolean
-        }
-        set(value) {
-            setPreference(AppPreference.DEEP_LOG, value)
-        }
-    var plotSpeed: Boolean
-        get() {
-            return getPreference(AppPreference.PLOT_SHOW_SPEED) as Boolean
-        }
-        set(value) {
-            setPreference(AppPreference.PLOT_SHOW_SPEED, value)
-        }
-    var plotDistance: Int
-        get() {
-            return getPreference(AppPreference.PLOT_DISTANCE) as Int
-        }
-        set(value) {
-            setPreference(AppPreference.PLOT_DISTANCE, value)
-        }
-    var consumptionPlotSingleMotor: Boolean
-        get() {
-            return getPreference(AppPreference.CONSUMPTION_PLOT_SINGLE_MOTOR) as Boolean
-        }
-        set(value) {
-            setPreference(AppPreference.CONSUMPTION_PLOT_SINGLE_MOTOR, value)
-        }
-    var consumptionPlotSecondaryColor: Boolean
-        get() {
-            return getPreference(AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR) as Boolean
-        }
-        set(value) {
-            setPreference(AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR, value)
-        }
-    var consumptionPlotVisibleGages: Boolean
-        get() {
-            return getPreference(AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES) as Boolean
-        }
-        set(value) {
-            setPreference(AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES, value)
-        }
-    var chargePlotSecondaryColor: Boolean
-        get() {
-            return getPreference(AppPreference.CHARGE_PLOT_SECONDARY_COLOR) as Boolean
-        }
-        set(value) {
-            setPreference(AppPreference.CHARGE_PLOT_SECONDARY_COLOR, value)
-        }
-    var chargePlotVisibleGages: Boolean
-        get() {
-            return getPreference(AppPreference.CHARGE_PLOT_VISIBLE_GAGES) as Boolean
-        }
-        set(value) {
-            setPreference(AppPreference.CHARGE_PLOT_VISIBLE_GAGES, value)
-        }
-
-    var chargePlotDimension: PlotDimension
-        get() {
-            return getPreference(AppPreference.CHARGE_PLOT_DIMENSION) as PlotDimension
-        }
-        set(value) {
-            setPreference(AppPreference.CHARGE_PLOT_DIMENSION, value)
-        }
-    var distanceUnit: DistanceUnit
-        get() {
-            return getPreference(AppPreference.DISTANCE_UNIT) as DistanceUnit
-        }
-        set(value) {
-            setPreference(AppPreference.DISTANCE_UNIT, value)
-        }
-
-    private val keyMap = hashMapOf<AppPreference, String>(
-        AppPreference.DEBUG to context.getString(R.string.preferences_debug_key),
-        AppPreference.NOTIFICATIONS to context.getString(R.string.preferences_notifications_key),
-        AppPreference.CONSUMPTION_UNIT to context.getString(R.string.preferences_consumption_unit_key),
-        AppPreference.EXPERIMENTAL_LAYOUT to context.getString(R.string.preferences_experimental_layout_key),
-        AppPreference.DEEP_LOG to context.getString(R.string.preferences_deep_log_key),
-        AppPreference.PLOT_SHOW_SPEED to context.getString(R.string.preferences_plot_speed_key),
-        AppPreference.PLOT_DISTANCE to context.getString(R.string.preferences_plot_distance_key),
-        AppPreference.CONSUMPTION_PLOT_SINGLE_MOTOR to context.getString(R.string.preferences_consumption_plot_single_motor_key),
-        AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR to context.getString(R.string.preference_consumption_plot_secondary_color_key),
-        AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to context.getString(R.string.preference_consumption_plot_visible_gages_key),
-        AppPreference.CHARGE_PLOT_SECONDARY_COLOR to context.getString(R.string.preference_charge_plot_secondary_color_key),
-        AppPreference.CHARGE_PLOT_VISIBLE_GAGES to context.getString(R.string.preference_charge_plot_visible_gages_key),
-        AppPreference.CHARGE_PLOT_DIMENSION to context.getString(R.string.preference_charge_plot_dimension_key),
-        AppPreference.DISTANCE_UNIT to context.getString(R.string.preference_distance_unit_key)
+class AppPreferences(
+    val context: Context
+) {
+    private var sharedPref: SharedPreferences = context.getSharedPreferences(
+        context.getString(R.string.preferences_file_key), Context.MODE_PRIVATE
     )
 
-    private var typeMap = mapOf<AppPreference, Any>( // Also contains default values
-        AppPreference.DEBUG to false,
-        AppPreference.NOTIFICATIONS to false,
-        AppPreference.CONSUMPTION_UNIT to false,
-        AppPreference.EXPERIMENTAL_LAYOUT to false,
-        AppPreference.DEEP_LOG to false,
-        AppPreference.PLOT_SHOW_SPEED to false,
-        AppPreference.PLOT_DISTANCE to 1,
-        AppPreference.CONSUMPTION_PLOT_SINGLE_MOTOR to false,
-        AppPreference.CONSUMPTION_PLOT_SECONDARY_COLOR to false,
-        AppPreference.CONSUMPTION_PLOT_VISIBLE_GAGES to true,
-        AppPreference.CHARGE_PLOT_SECONDARY_COLOR to false,
-        AppPreference.CHARGE_PLOT_VISIBLE_GAGES to true,
-        AppPreference.CHARGE_PLOT_DIMENSION to PlotDimension.TIME,
-        AppPreference.DISTANCE_UNIT to DistanceUnit.KM
-    )
+    private val Debug = AppPreference<Boolean>(context.getString(R.string.preferences_debug_key), false, sharedPref)
+    private val Notification = AppPreference<Boolean>(context.getString(R.string.preferences_notifications_key), false, sharedPref)
+    private val ConsumptionUnit = AppPreference<Boolean>(context.getString(R.string.preferences_consumption_unit_key), false, sharedPref)
+    // private //val ExperimentalLayout = AppPreference<Boolean>(context.getString(R.string.preferences_notifications_key), false, sharedPref)
+    // private //val DeepLog = AppPreference<Boolean>(context.getString(R.string.preferences_notifications_key), false, sharedPref)
+    private val PlotSpeed = AppPreference<Boolean>(context.getString(R.string.preferences_plot_speed_key), false, sharedPref)
+    // private //val PlotDistance = AppPreference<Int>(context.getString(R.string.preferences_notifications_key), false, sharedPref)
+    private val ConsumptionPlotSingleMotor = AppPreference<Boolean>(context.getString(R.string.preferences_consumption_plot_single_motor_key), false, sharedPref)
+    private val ConsumptionPlotSecondaryColor = AppPreference<Boolean>(context.getString(R.string.preference_consumption_plot_secondary_color_key), false, sharedPref)
+    private val ConsumptionPlotVisibleGages = AppPreference<Boolean>(context.getString(R.string.preference_consumption_plot_visible_gages_key), true, sharedPref)
+    private val ChagrPlotSecondaryColor = AppPreference<Boolean>(context.getString(R.string.preference_charge_plot_secondary_color_key), false, sharedPref)
+    private val ChargePlotVisibleGages = AppPreference<Boolean>(context.getString(R.string.preference_charge_plot_visible_gages_key), true, sharedPref)
+    private val ChargePlotDimension = AppPreference<PlotDimension>(context.getString(R.string.preference_charge_plot_dimension_key), PlotDimension.TIME, sharedPref)
+    private val DistanceUnit = AppPreference<DistanceUnitEnum>(context.getString(R.string.preference_distance_unit_key), DistanceUnitEnum.KM, sharedPref)
 
-    private fun getPreference(appPreference: AppPreference): Any {
-        if (typeMap.containsKey(appPreference)) {
-            if (typeMap[appPreference] is Boolean) {
-                return sharedPref.getBoolean(keyMap[appPreference], typeMap[appPreference] as Boolean)
-            }
-            if (typeMap[appPreference] is Int) {
-                return sharedPref.getInt(keyMap[appPreference], typeMap[appPreference] as Int)
-            }
-            if (typeMap[appPreference] is PlotDimension) {
-                return PlotDimension.valueOf(sharedPref.getString(keyMap[appPreference], (typeMap[appPreference] as PlotDimension).name) ?: PlotDimension.TIME.name)
-            }
-            if (typeMap[appPreference] is DistanceUnit) {
-                return DistanceUnit.valueOf(sharedPref.getString(keyMap[appPreference], (typeMap[appPreference] as DistanceUnit).name) ?: DistanceUnit.KM.name)
-            }
-        }
-        throw java.lang.Exception("AppPreferences.setPreference: Unknown Preference!")
-    }
-
-    private fun setPreference(appPreference: AppPreference, value: Any) {
-        if (typeMap.containsKey(appPreference)) {
-            if (typeMap[appPreference] is Boolean && value is Boolean) {
-                sharedPref.edit().putBoolean(keyMap[appPreference], value).apply()
-                return
-            }
-            if (typeMap[appPreference] is Int && value is Int) {
-                sharedPref.edit().putInt(keyMap[appPreference], value).apply()
-                return
-            }
-            if (typeMap[appPreference] is PlotDimension && value is PlotDimension) {
-                sharedPref.edit().putString(keyMap[appPreference], value.name).apply()
-                return
-            }
-            if (typeMap[appPreference] is DistanceUnit && value is DistanceUnit) {
-                sharedPref.edit().putString(keyMap[appPreference], value.name).apply()
-                return
-            }
-            throw java.lang.Exception("AppPreferences.setPreference: Unsupported type!")
-        }
-        throw java.lang.Exception("AppPreferences.setPreference: Unknown Preference!")
-    }
+    var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
+    var notifications: Boolean get() = Notification.value; set(value) {Notification.value = value}
+    var consumptionUnit: Boolean get() = ConsumptionUnit.value; set(value) {ConsumptionUnit.value = value}
+    var plotSpeed: Boolean get() = PlotSpeed.value; set(value) {PlotSpeed.value = value}
+    var consumptionPlotSingleMotor: Boolean get() = ConsumptionPlotSingleMotor.value; set(value) {ConsumptionPlotSingleMotor.value = value}
+    var consumptionPlotSecondaryColor: Boolean get() = ConsumptionPlotSecondaryColor.value; set(value) {ConsumptionPlotSecondaryColor.value = value}
+    var consumptionPlotVisibleGages: Boolean get() = ConsumptionPlotVisibleGages.value; set(value) {ConsumptionPlotVisibleGages.value = value}
+    var chargePlotSecondaryColor: Boolean get() = ChagrPlotSecondaryColor.value; set(value) {ChagrPlotSecondaryColor.value = value}
+    var chargePlotVisibleGages: Boolean get() = ChargePlotVisibleGages.value; set(value) {ChargePlotVisibleGages.value = value}
+    var chargePlotDimension: PlotDimension get() = ChargePlotDimension.value; set(value) {ChargePlotDimension.value = value}
+    var distanceUnit: DistanceUnitEnum get() = DistanceUnit.value; set(value) {DistanceUnit.value = value}
 
     val exclusionStrategy: ExclusionStrategy = object : ExclusionStrategy {
         override fun shouldSkipClass(clazz: Class<*>?): Boolean {

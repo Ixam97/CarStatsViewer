@@ -23,7 +23,7 @@ import com.ixam97.carStatsViewer.dataManager.ChargeCurve
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.dataManager.DataCollector
-import com.ixam97.carStatsViewer.enums.DistanceUnit
+import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlin.system.exitProcess
@@ -81,7 +81,7 @@ class SettingsActivity : Activity() {
     private fun setupSettingsMaster() {
         settings_switch_notifications.isChecked = appPreferences.notifications
         settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
-        settings_switch_distance_unit.isChecked = appPreferences.distanceUnit == DistanceUnit.MILES
+        settings_switch_distance_unit.isChecked = appPreferences.distanceUnit == DistanceUnitEnum.MILES
 
         settings_version_text.text = "Car Stats Viewer Version %s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 
@@ -119,8 +119,8 @@ class SettingsActivity : Activity() {
 
         settings_switch_distance_unit.setOnClickListener {
             appPreferences.distanceUnit = when (settings_switch_distance_unit.isChecked) {
-                true -> DistanceUnit.MILES
-                else -> DistanceUnit.KM
+                true -> DistanceUnitEnum.MILES
+                else -> DistanceUnitEnum.KM
             }
             PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
         }
@@ -178,6 +178,7 @@ class SettingsActivity : Activity() {
 
         settings_charge_plot_switch_secondary_color.isChecked = appPreferences.chargePlotSecondaryColor
         settings_charge_plot_switch_state_of_charge_dimension.isChecked = appPreferences.chargePlotDimension == PlotDimension.STATE_OF_CHARGE
+        settings_charge_plot_switch_visible_gages.isChecked = appPreferences.chargePlotVisibleGages
 
         settings_charge_plot_button_back.setOnClickListener {
             gotoMaster(settings_charge_plot_layout)
@@ -190,6 +191,10 @@ class SettingsActivity : Activity() {
                 else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
             }
             DataCollector.CurrentTripDataManager.chargePlotLine.secondaryPlotPaint = plotPaint
+        }
+
+        settings_charge_plot_switch_visible_gages.setOnClickListener {
+            appPreferences.chargePlotVisibleGages = settings_charge_plot_switch_visible_gages.isChecked
         }
 
         settings_save_charge_curve.setOnClickListener {
