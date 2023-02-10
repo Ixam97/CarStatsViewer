@@ -148,6 +148,7 @@
                     <EditText
                         android:id="@+id/log_text_target_mail"
                         android:text="ixam97@ixam97.de"
+                        android:inputType="textEmailAddress"
                         android:textSize="25sp"
                         android:singleLine="true"
                         android:textFontWeight="400"

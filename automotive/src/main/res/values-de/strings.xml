@@ -17,7 +17,7 @@
     <string name="main_average_consumption">Durchschnittsverbrauch:</string>
     <string name="main_button_reset_stats">Statistiken zurücksetzen</string>
     <string name="main_consumption">Verbrauch über die letzten 3 km:</string>
-    <string name="main_checkbox_speed">Geschwindigkeit</string>
+    <string name="main_speed">Geschwindigkeit</string>
     <string name="main_gage_speed">Geschwindigkeit</string>
     <string name="main_gage_power">Leistung</string>
     <string name="main_gage_charging_power">Ladeleistung</string>
@@ -28,6 +28,7 @@
     <string name="main_button_trip_summary">Tripzusammenfassung</string>
     <string name="main_button_hide_speed">Geschwindigkeit verbergen</string>
     <string name="main_button_show_speed">Geschwindigkeit anzeigen</string>
+    <string name="main_secondary_axis">Sekundärachse: %s</string>
 
     <!-- SummaryActivity -->
     <string name="summary_title">Tripzusammenfassung</string>

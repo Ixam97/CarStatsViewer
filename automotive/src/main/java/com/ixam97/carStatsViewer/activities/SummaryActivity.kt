@@ -21,6 +21,7 @@ import com.ixam97.carStatsViewer.dataManager.DataManager
 import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_summary.*
 import java.util.concurrent.TimeUnit
 
@@ -128,7 +129,22 @@ class SummaryActivity: Activity() {
         plotMarkers.addMarkers(tripData.markers)
         summary_consumption_plot.addPlotLine(consumptionPlotLine)
         summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
-        summary_consumption_plot.secondaryDimension = PlotSecondaryDimension.SPEED
+        summary_consumption_plot.secondaryDimension = when (MainActivity.appPreferences.secondaryConsumptionDimension) {
+            1 -> {
+                summary_button_secondary_dimension.text =
+                    getString(R.string.main_secondary_axis, getString(R.string.main_speed))
+                PlotSecondaryDimension.SPEED
+            }
+            2 -> {
+                summary_button_secondary_dimension.text =
+                    getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
+                PlotSecondaryDimension.STATE_OF_CHARGE
+            }
+            else -> {
+                summary_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
+                null
+            }
+        }
         summary_consumption_plot.dimension = PlotDimension.DISTANCE
         summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((tripData.traveledDistance / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER + 1)
         summary_consumption_plot.dimensionRestrictionMin = appPreferences.distanceUnit.asUnit(MainActivity.DISTANCE_TRIP_DIVIDER)
@@ -143,6 +159,29 @@ class SummaryActivity: Activity() {
         summary_used_energy_value_text.text = StringFormatters.getEnergyString(tripData.usedEnergy)
         summary_avg_consumption_value_text.text = StringFormatters.getAvgConsumptionString(tripData.usedEnergy, tripData.traveledDistance)
         summary_travel_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.travelTime)
+
+        summary_button_secondary_dimension.setOnClickListener {
+            var currentIndex = appPreferences.secondaryConsumptionDimension
+            currentIndex++
+            if (currentIndex > 2) currentIndex = 0
+            appPreferences.secondaryConsumptionDimension = currentIndex
+            summary_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
+                1 -> {
+                    summary_button_secondary_dimension.text =
+                        getString(R.string.main_secondary_axis, getString(R.string.main_speed))
+                    PlotSecondaryDimension.SPEED
+                }
+                2 -> {
+                    summary_button_secondary_dimension.text =
+                        getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
+                    PlotSecondaryDimension.STATE_OF_CHARGE
+                }
+                else -> {
+                    summary_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
+                    null
+                }
+            }
+        }
     }
 
     private fun setupChargeLayout() {

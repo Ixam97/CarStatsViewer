@@ -17,7 +17,7 @@
     <string name="main_average_consumption">Gemiddeld verbruik:</string>
     <string name="main_button_reset_stats">Statistieken resetten</string>
     <string name="main_consumption">Verbruik over de laatste 3 km:</string>
-    <string name="main_checkbox_speed">Snelheid</string>
+    <string name="main_speed">Snelheid</string>
     <string name="main_gage_speed">Snelheid</string>
     <string name="main_gage_power">Power</string>
     <string name="main_gage_charging_power">Laadvermogen</string>

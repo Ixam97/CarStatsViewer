@@ -15,7 +15,7 @@
     <string name="main_average_consumption">Gjennomsnitt forbruk:</string>
     <string name="main_button_reset_stats">Resett statistikker</string>
     <string name="main_consumption">Forbruk over de 3 sist km:</string>
-    <string name="main_checkbox_speed">Hastighet</string>
+    <string name="main_speed">Hastighet</string>
     <string name="main_dialog_reset_title">Resett snitt?</string>
     <string name="main_dialog_reset_message">Alle lagrede turer vil bli resatt til null.</string>
     <string name="main_gage_speed">Hastighet</string>

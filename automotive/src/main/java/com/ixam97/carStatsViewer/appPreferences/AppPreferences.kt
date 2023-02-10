@@ -30,6 +30,7 @@ class AppPreferences(
     private val ChargePlotVisibleGages = AppPreference<Boolean>(context.getString(R.string.preference_charge_plot_visible_gages_key), true, sharedPref)
     private val ChargePlotDimension = AppPreference<PlotDimension>(context.getString(R.string.preference_charge_plot_dimension_key), PlotDimension.TIME, sharedPref)
     private val DistanceUnit = AppPreference<DistanceUnitEnum>(context.getString(R.string.preference_distance_unit_key), DistanceUnitEnum.KM, sharedPref)
+    private val SecondaryConsumptionDimension = AppPreference<Int>(context.getString(R.string.preference_secondary_dimension_key), 0, sharedPref)
 
     var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
     var notifications: Boolean get() = Notification.value; set(value) {Notification.value = value}
@@ -42,6 +43,7 @@ class AppPreferences(
     var chargePlotVisibleGages: Boolean get() = ChargePlotVisibleGages.value; set(value) {ChargePlotVisibleGages.value = value}
     var chargePlotDimension: PlotDimension get() = ChargePlotDimension.value; set(value) {ChargePlotDimension.value = value}
     var distanceUnit: DistanceUnitEnum get() = DistanceUnit.value; set(value) {DistanceUnit.value = value}
+    var secondaryConsumptionDimension: Int get() = SecondaryConsumptionDimension.value; set(value) {SecondaryConsumptionDimension.value = value}
 
     val exclusionStrategy: ExclusionStrategy = object : ExclusionStrategy {
         override fun shouldSkipClass(clazz: Class<*>?): Boolean {

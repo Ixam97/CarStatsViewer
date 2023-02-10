@@ -27,6 +27,7 @@
     <string name="preference_charge_plot_visible_gages_key" translatable="false">preference_charge_plot_visible_gages</string>
     <string name="preference_charge_plot_dimension_key" translatable="false">preference_charge_plot_dimension</string>
     <string name="preference_distance_unit_key" translatable="false">preference_distance_unit_key</string>
+    <string name="preference_secondary_dimension_key" translatable="false">secondary_dimension_key</string>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
 
@@ -48,14 +49,14 @@
     <string name="main_port_connected">Charge port connected:</string>
     <string name="main_current_power">Current power draw:</string>
     <string name="main_used_energy">Used energy:</string>
-    <string name="main_SoC" translatable="false">SoC:</string>
+    <string name="main_SoC" translatable="false">SoC</string>
     <string name="main_current_speed">Current speed:</string>
     <string name="main_traveled_distance">Traveled distance:</string>
     <string name="main_inst_consumption">Instantaneous consumption:</string>
     <string name="main_average_consumption">Average consumption:</string>
     <string name="main_button_reset_stats">Reset statistics</string>
     <string name="main_consumption">Consumption over the last 3 km:</string>
-    <string name="main_checkbox_speed">Speed</string>
+    <string name="main_speed">Speed</string>
     <string name="main_dialog_reset_title">Reset stats?</string>
     <string name="main_dialog_reset_message">All saved trip data will be reset to zero.</string>
     <string name="main_gage_speed">Speed</string>
@@ -68,6 +69,7 @@
     <string name="main_button_trip_summary">Trip summary</string>
     <string name="main_button_hide_speed">Hide speed</string>
     <string name="main_button_show_speed">Show speed</string>
+    <string name="main_secondary_axis">Secondary axis: %s</string>
 
     <!-- SummaryActivity -->
     <string name="summary_title">Trip summary</string>

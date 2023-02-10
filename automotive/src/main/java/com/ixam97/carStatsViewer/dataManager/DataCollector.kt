@@ -2,6 +2,7 @@ package com.ixam97.carStatsViewer.dataManager
 
 import android.app.*
 import android.car.Car
+import android.car.VehicleIgnitionState
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
@@ -257,9 +258,13 @@ class DataCollector : Service() {
     /** Handle incoming property changes by property ID */
     private fun handleCarPropertyListenerEvent(propertyId: Int, dataManager: DataManager) {
         when (propertyId) {
+            dataManager.BatteryLevel.propertyId         -> {
+                if (dataManager.currentIgnitionState < 3) InAppLogger.log("BatteryLevel while ignition off: ${((dataManager.batteryLevel/dataManager.maxBatteryLevel)/100).toInt()}%")
+                else InAppLogger.log("BatteryLevel while ignition on: ${((dataManager.batteryLevel/dataManager.maxBatteryLevel)/100).toInt()}%")
+            }
             dataManager.CurrentPower.propertyId         -> powerUpdater(dataManager)
             dataManager.CurrentSpeed.propertyId         -> speedUpdater(dataManager)
-            dataManager.CurrentIgnitionState.propertyId -> driveStateUpdater(dataManager)
+            dataManager.CurrentIgnitionState.propertyId -> ignitionUpdater(dataManager)
             dataManager.ChargePortConnected.propertyId  -> driveStateUpdater(dataManager)
         }
     }
@@ -358,6 +363,13 @@ class DataCollector : Service() {
             writeTripDataToFile(dataManager.tripData!!, dataManager.printableName)
             sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
         }
+    }
+
+    private fun ignitionUpdater(dataManager: DataManager) {
+        if (dataManager == DataManagers.values().first().dataManager) {
+            InAppLogger.log("Ignition switched to: ${ignitionList[dataManager.currentIgnitionState]}")
+        }
+        driveStateUpdater(dataManager)
     }
 
     private fun driveState(previousDrivingState: Int, dataManager: DataManager) {
@@ -570,7 +582,7 @@ class DataCollector : Service() {
             writer.append(gson.toJson(tripData))
             writer.flush()
             writer.close()
-            // InAppLogger.log("TRIP DATA: Saved $fileName.json in Thread ${Thread.currentThread().name}")
+            // InAppLogger.log("TRIP DATA: Saved $fileName.json")
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
@@ -578,7 +590,7 @@ class DataCollector : Service() {
 
     private fun readTripDataFromFile(fileName: String): TripData? {
 
-        InAppLogger.log("TRIP DATA: Reading $fileName.json in Thread ${Thread.currentThread().name}")
+        InAppLogger.log("TRIP DATA: Reading $fileName.json")
         val startTime = System.currentTimeMillis()
         val dir = File(applicationContext.filesDir, "TripData")
         if (!dir.exists()) {
@@ -645,4 +657,8 @@ class DataCollector : Service() {
             InAppLogger.log("Resetting ${DataManagers.SINCE_CHARGE.dataManager.printableName}")
         }
     }
+
+    private val ignitionList = listOf<String>(
+        "UNKNOWN", "Lock", "Off", "Accessories", "On", "Start"
+    )
 }
