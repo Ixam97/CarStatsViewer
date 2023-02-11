@@ -1,7 +1,5 @@
 
-!(Banner)[docs/banner.png]
-===========================================
-Reads data from the VHAL of AAOS to provide more detailed car stats than the regular trip computer.
+![Banner](/docs/banner.png)
 
 ## Features:
  - View instantaneous power and consumption
@@ -13,24 +11,26 @@ Reads data from the VHAL of AAOS to provide more detailed car stats than the reg
  - Estimate range based on the current trip's consumption
  - Save and export trip data for further analysis 
  - More performance oriented real time drive stats
+ 
+## Installing the app on a car
+Currently the app is not available in the public Play Store. This is due to strict requirements by Google what kind of apps are allowed to be installed on cars. As of now the App is only available via internal test tracks which are limited to 100 users each. Currently there are no free internal test slots in any of the existing forks.
+
+Once the app has reached a more finished state I will try to reach out to Polestar directly to potentially make it available through them. Just like ABRP or the Vivaldi browser which also do not comply with Google's restrictions.
 
 ## Support the development of the app:
-Any form of support and feedback is very welcome! If you like the app and want to buy me a beer,
-feel free (but never obliged! This is a hobby for me) to use this link: https://paypal.me/Ixam
+Any form of support and feedback is very welcome! If you like the app and want to buy me a beer, feel free (but never obliged! This is a hobby for me) to use this link: https://paypal.me/Ixam
 
-Other than that, contributions to the app are always welcome. Be it in form of code contributions, 
-constructive feedback, bug reports or translations.
+Other than that, contributions to the app are always welcome. Be it in form of code contributions, constructive feedback, bug reports or translations.
 
 ### Bug reports and feature requests:
-If you have any bugs to report or want du suggest a new feature, please have a look at the GitHub 
-issues. Don't forget to have a look at the existing issues to not create duplicates. Let me know if
-you support any of the existing feature request so I can adjust my priorities accordingly.
+If you have any bugs to report or want du suggest a new feature, please have a look at the GitHub issues. Don't forget to have a look at the existing issues to not create duplicates. Let me know if you support any of the existing feature request so I can adjust my priorities accordingly.
 
 ### Translations:
-If you are using the app and miss the translation into your language, feel free to create a 
-translation yourself and contribute on the development of the app. The default strings used in the 
-app can be found here: https://github.com/Ixam97/CarStatsViewer/blob/active_development/automotive/src/main/res/values/strings.xml
-Values with "translatable="false"" shall not be translated.
+If you are using the app and miss the translation into your language, feel free to create a translation yourself and contribute on the development of the app. The default strings used in the app can be found here: 
+
+[English strings](https://github.com/Ixam97/CarStatsViewer/blob/active_development/automotive/src/main/res/values/strings.xml)
+
+Values containing `translatable="false"` shall not be translated.
 
 ## Contributors:
 - Dario Bosshard (Consumption and charge curve diagrams)
@@ -40,7 +40,15 @@ Values with "translatable="false"" shall not be translated.
 - FreshDave29
 - rdu
 
-Original impulse cam from here: https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerKotlin
+## Links
+
+Original impulse cam from here: [CarGearViewerKotlin](https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerKotlin)
+
+Discussion in the german Polestar forums: [Polestar Club](https://polestar.fans/t/car-stats-viewer-0-22-x/14653)
+
+Discussion in the international Polestar forums: [Polestar Forum](https://www.polestar-forum.com/threads/car-stats-viewer-a-better-range-assistant.10261/)
+
+---
 
 ## Changelog [DE]:
 
