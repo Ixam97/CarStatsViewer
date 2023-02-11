@@ -175,14 +175,14 @@ class PlotLine(
         val max : Float? = when {
             dataPoints.isEmpty() -> when {
                 baseConfiguration.Range.minPositive == null || !applyRange -> null
-                else  -> baseConfiguration.Range.minPositive * baseConfiguration.UnitFactor
+                else -> baseConfiguration.Range.minPositive
             }
             else -> {
                 var maxByData = dataPoints.mapNotNull { it.bySecondaryDimension(secondaryDimension) }.maxOfOrNull { it }
 
                 if (applyRange) {
-                    if (baseConfiguration.Range.minPositive != null) maxByData = (maxByData?:0f).coerceAtLeast(baseConfiguration.Range.minPositive * baseConfiguration.UnitFactor)
-                    if (baseConfiguration.Range.maxPositive != null) maxByData = (maxByData?:0f).coerceAtMost(baseConfiguration.Range.maxPositive * baseConfiguration.UnitFactor)
+                    if (baseConfiguration.Range.minPositive != null) maxByData = (maxByData?:0f).coerceAtLeast(baseConfiguration.Range.minPositive)
+                    if (baseConfiguration.Range.maxPositive != null) maxByData = (maxByData?:0f).coerceAtMost(baseConfiguration.Range.maxPositive)
                 }
 
                 maxByData
@@ -206,14 +206,14 @@ class PlotLine(
         val min : Float? = when {
             dataPoints.isEmpty() -> when {
                 baseConfiguration.Range.minNegative == null || !applyRange -> null
-                else  -> baseConfiguration.Range.minNegative * baseConfiguration.UnitFactor
+                else  -> baseConfiguration.Range.minNegative
             }
             else -> {
                 var minByData = dataPoints.mapNotNull { it.bySecondaryDimension(secondaryDimension) }.minOfOrNull { it }
 
                 if (applyRange) {
-                    if (baseConfiguration.Range.minNegative != null) minByData = (minByData?:0f).coerceAtMost(baseConfiguration.Range.minNegative * baseConfiguration.UnitFactor)
-                    if (baseConfiguration.Range.maxNegative != null) minByData = (minByData?:0f).coerceAtLeast(baseConfiguration.Range.maxNegative * baseConfiguration.UnitFactor)
+                    if (baseConfiguration.Range.minNegative != null) minByData = (minByData?:0f).coerceAtMost(baseConfiguration.Range.minNegative)
+                    if (baseConfiguration.Range.maxNegative != null) minByData = (minByData?:0f).coerceAtLeast(baseConfiguration.Range.maxNegative)
                 }
 
                 minByData
