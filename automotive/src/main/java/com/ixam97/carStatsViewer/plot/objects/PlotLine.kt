@@ -140,11 +140,11 @@ class PlotLine(
                     null -> dataPoints.maxOf { it.key }
                     else -> dataPoints.maxOf { it.key } - (dimensionShift ?: 0L)
                 }
-                PlotDimension.DISTANCE ->  when(dimensionRestriction) {
+                PlotDimension.DISTANCE -> when(dimensionRestriction) {
                     null -> dataPoints.maxOf { it.value.Distance }
                     else -> dataPoints.maxOf { it.value.Distance } - (dimensionShift ?: 0L)
                 }
-                PlotDimension.TIME ->  when(dimensionRestriction) {
+                PlotDimension.TIME -> when(dimensionRestriction) {
                     null -> dataPoints.maxOf { it.value.EpochTime }
                     else -> minDimension(dimension, dimensionRestriction, dimensionShift) as Long + dimensionRestriction
                 }
@@ -175,14 +175,14 @@ class PlotLine(
         val max : Float? = when {
             dataPoints.isEmpty() -> when {
                 baseConfiguration.Range.minPositive == null || !applyRange -> null
-                else  -> baseConfiguration.Range.minPositive * baseConfiguration.UnitFactor
+                else -> baseConfiguration.Range.minPositive
             }
             else -> {
                 var maxByData = dataPoints.mapNotNull { it.bySecondaryDimension(secondaryDimension) }.maxOfOrNull { it }
 
                 if (applyRange) {
-                    if (baseConfiguration.Range.minPositive != null) maxByData = (maxByData?:0f).coerceAtLeast(baseConfiguration.Range.minPositive * baseConfiguration.UnitFactor)
-                    if (baseConfiguration.Range.maxPositive != null) maxByData = (maxByData?:0f).coerceAtMost(baseConfiguration.Range.maxPositive * baseConfiguration.UnitFactor)
+                    if (baseConfiguration.Range.minPositive != null) maxByData = (maxByData?:0f).coerceAtLeast(baseConfiguration.Range.minPositive)
+                    if (baseConfiguration.Range.maxPositive != null) maxByData = (maxByData?:0f).coerceAtMost(baseConfiguration.Range.maxPositive)
                 }
 
                 maxByData
@@ -206,14 +206,14 @@ class PlotLine(
         val min : Float? = when {
             dataPoints.isEmpty() -> when {
                 baseConfiguration.Range.minNegative == null || !applyRange -> null
-                else  -> baseConfiguration.Range.minNegative * baseConfiguration.UnitFactor
+                else  -> baseConfiguration.Range.minNegative
             }
             else -> {
                 var minByData = dataPoints.mapNotNull { it.bySecondaryDimension(secondaryDimension) }.minOfOrNull { it }
 
                 if (applyRange) {
-                    if (baseConfiguration.Range.minNegative != null) minByData = (minByData?:0f).coerceAtMost(baseConfiguration.Range.minNegative * baseConfiguration.UnitFactor)
-                    if (baseConfiguration.Range.maxNegative != null) minByData = (minByData?:0f).coerceAtLeast(baseConfiguration.Range.maxNegative * baseConfiguration.UnitFactor)
+                    if (baseConfiguration.Range.minNegative != null) minByData = (minByData?:0f).coerceAtMost(baseConfiguration.Range.minNegative)
+                    if (baseConfiguration.Range.maxNegative != null) minByData = (minByData?:0f).coerceAtLeast(baseConfiguration.Range.maxNegative)
                 }
 
                 minByData
@@ -254,13 +254,13 @@ class PlotLine(
         if (dataPoints.isEmpty()) return null
         if (dataPoints.size == 1) return dataPoints.first().bySecondaryDimension(secondaryDimension)
 
-        return when (averageMethod) {
+        val averageValue = when (averageMethod) {
             PlotHighlightMethod.AVG_BY_INDEX -> dataPoints.mapNotNull { it.bySecondaryDimension(secondaryDimension) }.average().toFloat()
             PlotHighlightMethod.AVG_BY_DISTANCE -> {
                 val value = dataPoints.map { (it.DistanceDelta?:0f) * (it.bySecondaryDimension(secondaryDimension)?:0f) }.sum()
                 val distance = dataPoints.map { (it.DistanceDelta?:0f) }.sum()
 
-                return when {
+                when {
                     distance != 0f -> value / distance
                     else -> null
                 }
@@ -269,7 +269,7 @@ class PlotLine(
                 val value = dataPoints.map { (it.TimeDelta?:0L) * (it.bySecondaryDimension(secondaryDimension)?:0f) }.sum()
                 val distance = dataPoints.sumOf { (it.TimeDelta?:0L) }
 
-                return when {
+                when {
                     distance != 0L -> value / distance
                     else -> null
                 }
@@ -278,12 +278,21 @@ class PlotLine(
                 val value = dataPoints.map { (it.StateOfChargeDelta?:0f) * (it.bySecondaryDimension(secondaryDimension)?:0f) }.sum()
                 val distance = dataPoints.map { (it.StateOfChargeDelta?:0f) }.sum()
 
-                return when {
+                when {
                     distance != 0f -> value / distance
                     else -> null
                 }
             }
             else -> null
+        }
+
+        if (averageValue != null) return averageValue
+
+        val nonNull = dataPoints.mapNotNull { it.bySecondaryDimension(secondaryDimension) }
+
+        return when {
+            nonNull.isEmpty() -> null
+            else -> nonNull.sum() / nonNull.size
         }
     }
 

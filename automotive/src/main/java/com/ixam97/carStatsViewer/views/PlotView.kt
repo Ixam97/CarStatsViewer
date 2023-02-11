@@ -516,7 +516,6 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
                     val minDimension = line.minDimension(dimension, dimensionRestriction, dimensionShift) ?: continue
                     val maxDimension = line.maxDimension(dimension, dimensionRestriction, dimensionShift) ?: continue
 
-
                     val paint = when {
                         secondaryDimension != null -> line.secondaryPlotPaint ?: line.plotPaint
                         else -> line.plotPaint
