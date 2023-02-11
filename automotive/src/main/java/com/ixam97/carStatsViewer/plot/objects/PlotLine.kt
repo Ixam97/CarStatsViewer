@@ -52,6 +52,9 @@ class PlotLine(
         if ((autoMarkerTimeDeltaThreshold ?: dataPoint.TimeDelta ?: 0L) < (dataPoint.TimeDelta ?: 0L)) {
             prev?.Marker = PlotLineMarkerType.END_SESSION
             dataPoint.Marker = PlotLineMarkerType.BEGIN_SESSION
+        } else if (prev?.Marker == PlotLineMarkerType.BEGIN_SESSION && prev.StateOfCharge < dataPoint.StateOfCharge - 1) {
+            // Car gives an old value for SoC at the end of hibernation. just override that. Bit hacky though...
+            prev.StateOfCharge = dataPoint.StateOfCharge
         }
 
         if (dataPoint.Marker == PlotLineMarkerType.BEGIN_SESSION) {
