@@ -1,12 +1,51 @@
-AAOS Car Stats Viewer
+
+!(Banner)[docs/banner.png]
 ===========================================
 Reads data from the VHAL of AAOS to provide more detailed car stats than the regular trip computer.
 
-currently being tested on Polestar 2
+## Features:
+ - View instantaneous power and consumption
+ - View details of the current trip
+ - Visualizes consumption, speed and state of charge along the trip
+ - Visualizes and saves charge curves during a trip
 
-Based on https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerKotlin
+## Planned:
+ - Estimate range based on the current trip's consumption
+ - Save and export trip data for further analysis 
+ - More performance oriented real time drive stats
+
+## Support the development of the app:
+Any form of support and feedback is very welcome! If you like the app and want to buy me a beer,
+feel free (but never obliged! This is a hobby for me) to use this link: https://paypal.me/Ixam
+
+Other than that, contributions to the app are always welcome. Be it in form of code contributions, 
+constructive feedback, bug reports or translations.
+
+### Bug reports and feature requests:
+If you have any bugs to report or want du suggest a new feature, please have a look at the GitHub 
+issues. Don't forget to have a look at the existing issues to not create duplicates. Let me know if
+you support any of the existing feature request so I can adjust my priorities accordingly.
+
+### Translations:
+If you are using the app and miss the translation into your language, feel free to create a 
+translation yourself and contribute on the development of the app. The default strings used in the 
+app can be found here: https://github.com/Ixam97/CarStatsViewer/blob/active_development/automotive/src/main/res/values/strings.xml
+Values with "translatable="false"" shall not be translated.
+
+## Contributors:
+- Dario Bosshard (Consumption and charge curve diagrams)
+- Dutch translation: DoubleYouEl
+- Swedish translation: Robin Hellström, jschlyter
+- Norwegian translation: Oddvarr
+- FreshDave29
+- rdu
+
+Original impulse cam from here: https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerKotlin
 
 ## Changelog [DE]:
+
+### 0.22.1 (02.02.2023)
+- Falsche Lokalisierung für Norwegisch behoben.
 
 ### 0.22.0 ()
  - Tripzusammenfassung für den aktuellen Trip hinzugefügt. (Um einen Trip-Reset durchzuführen kann es erforderlich sein, die App neu zu installieren, da Änderungen im Manifest vorgnommen wurden)

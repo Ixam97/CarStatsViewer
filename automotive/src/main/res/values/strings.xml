@@ -6,7 +6,7 @@
     <string name="polestar_fans_link" translatable="false">https://polestar.fans/t/car-stats-viewer-0-22-x/14653</string>
     <string name="polestar_forum_link" translatable="false">https://www.polestar-forum.com/threads/car-stats-viewer-a-better-range-assistant.10261/#post-188544</string>
     <string name="githug_issues_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/issues</string>
-    <string name="contributors" translatable="false">Dario Bosshard \nDoubleYouEl \nRobin Hellström \njschlyter \nOddvarr \nFreshDave29 \nrdu"</string>
+    <string name="contributors" translatable="false">Dario Bosshard \nDoubleYouEl \nRobin Hellström \njschlyter \nOddvarr \nFreshDave29 \nrdu</string>
 
     <!-- Preferences -->
     <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer_dev.preferences</string>
