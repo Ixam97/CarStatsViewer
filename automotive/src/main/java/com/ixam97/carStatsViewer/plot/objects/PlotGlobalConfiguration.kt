@@ -39,10 +39,14 @@ object PlotGlobalConfiguration {
         )
 
     fun updateDistanceUnit(distanceUnit: DistanceUnitEnum) {
-        SecondaryDimensionConfiguration[PlotSecondaryDimension.SPEED]?.Divider = 1f / distanceUnit.toFactor()
+
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.SPEED]?.UnitFactor = distanceUnit.asFactor()
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.SPEED]?.Divider = distanceUnit.asFactor()
         SecondaryDimensionConfiguration[PlotSecondaryDimension.SPEED]?.Unit = "%s/h".format(distanceUnit.unit())
 
-        SecondaryDimensionConfiguration[PlotSecondaryDimension.DISTANCE]?.Divider = 1f / distanceUnit.toFactor()
+
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.DISTANCE]?.UnitFactor = distanceUnit.toFactor()
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.DISTANCE]?.Divider = distanceUnit.asFactor()
         SecondaryDimensionConfiguration[PlotSecondaryDimension.DISTANCE]?.Unit = "%s".format(distanceUnit.unit())
     }
 }
