@@ -33,7 +33,7 @@ object PlotGlobalConfiguration {
                 PlotRange(0f, 100f, backgroundZero = 0f),
                 PlotLineLabelFormat.PERCENTAGE,
                 PlotLabelPosition.RIGHT,
-                PlotHighlightMethod.MAX,
+                PlotHighlightMethod.LAST,
                 "% SoC"
             )
         )

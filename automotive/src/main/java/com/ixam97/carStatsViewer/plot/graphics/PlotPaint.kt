@@ -13,6 +13,9 @@ class PlotPaint(
     val PlotGapSecondary: Paint,
     val PlotBackgroundSecondary: Paint,
 
+    val Color: Int,
+    val TransparentColor: Int,
+
     val HighlightLabel: Paint,
     val HighlightLabelLine: Paint
 ) {
@@ -35,7 +38,7 @@ class PlotPaint(
             plotGapPaint.pathEffect = DashPathEffect(floatArrayOf(2f, 10f), 0f)
 
             val plotBackgroundPaint = Paint(plotPaint)
-            plotBackgroundPaint.color = Color.argb(32, Color.red(color), Color.green(color), Color.blue(color))
+            plotBackgroundPaint.color = Color.argb(160, Color.red(color), Color.green(color), Color.blue(color))
             plotBackgroundPaint.style = Paint.Style.FILL
 
 //            val plotSecondaryPaint = Paint(plotPaint)
@@ -57,7 +60,18 @@ class PlotPaint(
             highlightLabelLinePaint.strokeWidth = 3f
             highlightLabelLinePaint.pathEffect = DashPathEffect(floatArrayOf(5f, 10f), 0f)
 
-            val paint = PlotPaint(plotPaint, plotGapPaint, plotBackgroundPaint, plotPaint, plotGapPaint, plotBackgroundPaint, highlightLabelPaint, highlightLabelLinePaint)
+            val paint = PlotPaint(
+                plotPaint,
+                plotGapPaint,
+                plotBackgroundPaint,
+                plotPaint, // use same as primary for now
+                plotGapPaint,
+                plotBackgroundPaint,
+                color, // use same as primary for now
+                Color.argb(0, Color.red(color), Color.green(color), Color.blue(color)),
+                highlightLabelPaint,
+                highlightLabelLinePaint
+            )
 
             if (paintCache[color] == null) paintCache[color] = HashMap()
 
