@@ -12,7 +12,7 @@ object PlotGlobalConfiguration {
                 PlotRange(0f, 40f, 0f, 240f, 40f),
                 PlotLineLabelFormat.NUMBER,
                 PlotLabelPosition.RIGHT,
-                PlotHighlightMethod.AVG_BY_DIMENSION,
+                PlotHighlightMethod.AVG_BY_TIME,
                 "km/h"
             ),
             PlotSecondaryDimension.DISTANCE to PlotLineConfiguration(
