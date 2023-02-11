@@ -4,6 +4,7 @@ import android.app.*
 import android.car.Car
 import android.car.VehicleIgnitionState
 import android.car.VehiclePropertyIds
+import android.car.VehicleUnit
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
 import android.content.*
@@ -17,6 +18,7 @@ import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.plot.enums.*
 import kotlinx.coroutines.*
 import java.io.File
@@ -165,6 +167,14 @@ class DataCollector : Service() {
             emulatorMode = true
             // CurrentTripDataManager.update(VehicleGear.GEAR_PARK, System.nanoTime(), CurrentTripDataManager.CurrentGear.propertyId)
         }
+
+        val displayUnit = carPropertyManager.getProperty<Int>(VehiclePropertyIds.DISTANCE_DISPLAY_UNITS, 0).value
+        InAppLogger.log("Display distance unit: $displayUnit")
+        appPreferences.distanceUnit = when (displayUnit) {
+            VehicleUnit.MILE -> DistanceUnitEnum.MILES
+            else -> DistanceUnitEnum.KM
+        }
+        // if (emulatorMode) appPreferences.distanceUnit = DistanceUnitEnum.KM
 
         notificationTitleString = resources.getString(R.string.notification_title)
         statsNotification.setContentTitle(notificationTitleString).setContentIntent(mainActivityPendingIntent)
