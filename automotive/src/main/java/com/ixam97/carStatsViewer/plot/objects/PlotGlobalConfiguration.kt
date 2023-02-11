@@ -12,7 +12,7 @@ object PlotGlobalConfiguration {
                 PlotRange(0f, 40f, 0f, 240f, 40f),
                 PlotLineLabelFormat.NUMBER,
                 PlotLabelPosition.RIGHT,
-                PlotHighlightMethod.AVG_BY_TIME,
+                PlotHighlightMethod.AVG_BY_DIMENSION,
                 "km/h"
             ),
             PlotSecondaryDimension.DISTANCE to PlotLineConfiguration(
@@ -33,7 +33,7 @@ object PlotGlobalConfiguration {
                 PlotRange(0f, 100f, backgroundZero = 0f),
                 PlotLineLabelFormat.PERCENTAGE,
                 PlotLabelPosition.RIGHT,
-                PlotHighlightMethod.MAX,
+                PlotHighlightMethod.LAST,
                 "% SoC"
             )
         )
