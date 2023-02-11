@@ -258,10 +258,7 @@ class DataCollector : Service() {
     /** Handle incoming property changes by property ID */
     private fun handleCarPropertyListenerEvent(propertyId: Int, dataManager: DataManager) {
         when (propertyId) {
-            dataManager.BatteryLevel.propertyId         -> {
-                if (dataManager.currentIgnitionState < 3) InAppLogger.log("BatteryLevel while ignition off: ${((dataManager.batteryLevel/dataManager.maxBatteryLevel)/100).toInt()}%")
-                else InAppLogger.log("BatteryLevel while ignition on: ${((dataManager.batteryLevel/dataManager.maxBatteryLevel)/100).toInt()}%")
-            }
+            dataManager.BatteryLevel.propertyId         -> if (dataManager.currentIgnitionState < 3) InAppLogger.log("BatteryLevel while ignition off: ${((dataManager.batteryLevel/dataManager.maxBatteryLevel)/100).toInt()}%")
             dataManager.CurrentPower.propertyId         -> powerUpdater(dataManager)
             dataManager.CurrentSpeed.propertyId         -> speedUpdater(dataManager)
             dataManager.CurrentIgnitionState.propertyId -> ignitionUpdater(dataManager)
