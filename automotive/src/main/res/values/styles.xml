@@ -21,7 +21,7 @@
         <item name="android:layout_height">50dp</item>
         <item name="android:textSize">32sp</item>
         <item name="android:textFontWeight">600</item>
-        <item name="android:textColor">@color/secondary_text_color</item>
+        <item name="android:textColor">?android:attr/colorControlActivated</item>
     </style>
     <style name="menu_standard_switch_style">
         <item name="android:layout_width">match_parent</item>
@@ -31,23 +31,23 @@
     </style>
     <style name="menu_standard_row_label">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">101dp</item>
         <item name="android:textSize">35sp</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
     <style name="menu_row_top_text">
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">35sp</item>
         <item name="android:layout_marginTop">3.5dp</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
     <style name="menu_row_content_text">
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:textSize">35sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">30sp</item>
         <item name="android:layout_marginBottom">3.5dp</item>
         <item name="android:textColor">@color/secondary_text_color</item>
     </style>
@@ -81,5 +81,10 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">1</item>
+    </style>
+    <style name="libs_default_container">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:orientation">vertical</item>
     </style>
 </resources>

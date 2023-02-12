@@ -1,29 +1,34 @@
 package com.ixam97.carStatsViewer.activities
 
 import com.ixam97.carStatsViewer.*
-import com.ixam97.carStatsViewer.objects.*
-import com.ixam97.carStatsViewer.services.*
+import com.ixam97.carStatsViewer.dataManager.*
 import android.app.Activity
 import android.app.PendingIntent
 import android.car.VehicleGear
+import android.car.VehiclePropertyIds
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.text.format.DateFormat
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.views.PlotView
+import com.ixam97.carStatsViewer.dataManager.DataManagers
+import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
+import com.ixam97.carStatsViewer.services.LocCollector
+import com.ixam97.carStatsViewer.utils.StringFormatters
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -33,16 +38,19 @@ var emulatorPowerSign = -1
 
 class MainActivity : Activity() {
     companion object {
-        private const val UI_UPDATE_INTERVAL = 500L
+        private const val UI_UPDATE_INTERVAL = 1000L
         const val DISTANCE_TRIP_DIVIDER = 5_000L
+        const val CONSUMPTION_DISTANCE_RESTRICTION = 10_000L
     }
 
     /** values and variables */
-
+    private lateinit var appPreferences: AppPreferences
     private lateinit var timerHandler: Handler
     private lateinit var starterIntent: Intent
     private lateinit var context: Context
-    private lateinit var appPreferences: AppPreferences
+    // private lateinit var appPreferences: AppPreferences
+
+    private var selectedDataManager = DataManagers.CURRENT_TRIP.dataManager
 
     private var updateUi = false
     private var lastPlotUpdate: Long = 0L
@@ -68,16 +76,22 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
 
-        InAppLogger.log("MainActivity.onResume")
+        // InAppLogger.log("MainActivity.onResume")
+
+        PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
+
+        main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(CONSUMPTION_DISTANCE_RESTRICTION)
+
+        selectedDataManager.consumptionPlotLine.Configuration.UnitFactor = appPreferences.distanceUnit.toFactor()
 
         if (appPreferences.consumptionUnit) {
-            DataHolder.consumptionPlotLine.Configuration.Unit = "Wh/km"
-            DataHolder.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
-            DataHolder.consumptionPlotLine.Configuration.Divider = 1f
+            selectedDataManager.consumptionPlotLine.Configuration.Unit = "Wh/%s".format(appPreferences.distanceUnit.unit())
+            selectedDataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
+            selectedDataManager.consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 1f
         } else {
-            DataHolder.consumptionPlotLine.Configuration.Unit = "kWh/100km"
-            DataHolder.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
-            DataHolder.consumptionPlotLine.Configuration.Divider = 10f
+            selectedDataManager.consumptionPlotLine.Configuration.Unit = "kWh/100%s".format(appPreferences.distanceUnit.unit())
+            selectedDataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
+            selectedDataManager.consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 10f
         }
 
         main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
@@ -89,24 +103,39 @@ class MainActivity : Activity() {
         main_charge_gage.barVisibility = appPreferences.chargePlotVisibleGages
 
         main_checkbox_speed.isChecked = appPreferences.plotSpeed
-        main_consumption_plot.secondaryDimension = when (appPreferences.plotSpeed) {
+        main_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
+            1 -> {
+                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.main_speed))
+                PlotSecondaryDimension.SPEED
+            }
+            2 -> {
+                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
+                PlotSecondaryDimension.STATE_OF_CHARGE
+            }
+            else -> {
+                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
+                null
+            }
+        }
+
+        /* when (appPreferences.plotSpeed) {
             true -> PlotSecondaryDimension.SPEED
             else -> null
         }
 
-        main_button_speed.text = when {
+        main_button_secondary_dimension.text = when {
             main_consumption_plot.secondaryDimension != null -> getString(R.string.main_button_hide_speed)
             else -> getString(R.string.main_button_show_speed)
-        }
+        }*/
 
-        DataHolder.consumptionPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.primary_plot_color), PlotView.textSize)
-        DataHolder.consumptionPlotLine.secondaryPlotPaint = when {
+        selectedDataManager.consumptionPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.primary_plot_color), PlotView.textSize)
+        selectedDataManager.consumptionPlotLine.secondaryPlotPaint = when {
             appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
             else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
 
-        DataHolder.chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
-        DataHolder.chargePlotLine.secondaryPlotPaint = when {
+        selectedDataManager.chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
+        selectedDataManager.chargePlotLine.secondaryPlotPaint = when {
             appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
             else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
@@ -119,15 +148,24 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        InAppLogger.log("MainActivity.onCreate")
+        // InAppLogger.log("MainActivity.onCreate")
 
         context = applicationContext
 
         appPreferences = AppPreferences(context)
+        StringFormatters.initFormatter(
+            DateFormat.getDateFormat(context),
+            DateFormat.getTimeFormat(context),
+            appPreferences.consumptionUnit,
+            appPreferences.distanceUnit
+        )
+
+        PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
         startForegroundService(Intent(this, DataCollector::class.java))
+        startService(Intent(this, LocCollector::class.java))
 
-        mainActivityPendingIntent = PendingIntent.getActivity(
+        DataCollector.mainActivityPendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
@@ -156,148 +194,96 @@ class MainActivity : Activity() {
         super.onDestroy()
         disableUiUpdates()
         unregisterReceiver(broadcastReceiver)
-        InAppLogger.log("MainActivity.onDestroy")
+        // InAppLogger.log("MainActivity.onDestroy")
     }
 
     override fun onPause() {
         super.onPause()
         disableUiUpdates()
-        InAppLogger.log("MainActivity.onPause")
+        // InAppLogger.log("MainActivity.onPause")
     }
 
     /** Private functions */
 
     private fun updateActivity() {
-        InAppLogger.logUIUpdate()
-        /** Use data from DataHolder to Update MainActivity text */
+        // InAppLogger.logUIUpdate()
+        /** Use data from DataManager to Update MainActivity text */
+
+        DataCollector.gagePowerValue = selectedDataManager.currentPower
+        DataCollector.gageConsValue = ((selectedDataManager.currentPower / 1000)/(selectedDataManager.currentSpeed * 3.6f)).let {
+            if (it.isFinite()) it
+            else 0F
+        }
 
         setUiVisibilities()
         updateGages()
 
-        main_gage_avg_consumption_text_view.text = "  Ø %s".format(getAvgConsumptionString())
-        main_gage_distance_text_view.text = "  %s".format(getTraveledDistanceString())
-        main_gage_used_power_text_view.text = "  %s".format(getUsedEnergyString())
-        main_gage_time_text_view.text = "  %s".format(getElapsedTimeString(DataHolder.travelTimeMillis))
-
-        main_gage_charged_energy_text_view.text = "  %s".format(getChargedEnergyString())
-        main_gage_charge_time_text_view.text = "  %s".format(getElapsedTimeString(DataHolder.chargeTimeMillis))
-    }
-
-    private fun getCurrentSpeedString(): String {
-        return "${(DataHolder.currentSpeedSmooth * 3.6).toInt()} km/h"
-    }
-
-    private fun getAvgSpeedString(): String {
-        return " %d km/h".format(
-            ((DataHolder.traveledDistance / 1000) / (DataHolder.travelTimeMillis.toFloat() / 3_600_000)).toInt())
-    }
-
-    private fun getCurrentPowerString(detailed : Boolean = true): String {
-        val rawPower = DataHolder.currentPowerSmooth / 1_000_000
-
-        return when {
-            !detailed && rawPower.absoluteValue >= 10 -> "%d kW".format(Locale.ENGLISH, rawPower.roundToInt())
-            else -> "%.1f kW".format(Locale.ENGLISH, rawPower)
-        }
-    }
-
-    private fun getUsedEnergyString(): String {
-        if (!appPreferences.consumptionUnit) {
-            return "%.1f kWh".format(
-                Locale.ENGLISH,
-                DataHolder.usedEnergy / 1000)
-        }
-        return "${DataHolder.usedEnergy.toInt()} Wh"
-    }
-
-    private fun getChargedEnergyString(): String {
-        if (!appPreferences.consumptionUnit) {
-            return "%.1f kWh".format(
-                Locale.ENGLISH,
-                DataHolder.chargedEnergy / 1000)
-        }
-        return "${DataHolder.chargedEnergy.toInt()} Wh"
-    }
-
-    private fun getInstConsumptionString(): String {
-        if (DataHolder.currentSpeed <= 0) {
-            return "-/-"
-        }
-        if (!appPreferences.consumptionUnit) {
-            return "%.1f kWh/100km".format(
-                Locale.ENGLISH,
-                ((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6))/10)
-        }
-        return "${((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6)).toInt()} Wh/km"
-    }
-
-    private fun getAvgConsumptionString(): String {
-        val unitString = if (appPreferences.consumptionUnit) "Wh/km" else "kWh/100km"
-        if (DataHolder.traveledDistance <= 0) {
-            return "-/- $unitString"
-        }
-        if (!appPreferences.consumptionUnit) {
-            return "%.1f %s".format(
-                Locale.ENGLISH,
-                (DataHolder.usedEnergy /(DataHolder.traveledDistance /1000))/10,
-                unitString)
-        }
-        return "${(DataHolder.usedEnergy /(DataHolder.traveledDistance /1000)).toInt()} $unitString"
-    }
-
-    private fun getTraveledDistanceString(): String {
-        return "%.1f km".format(Locale.ENGLISH, DataHolder.traveledDistance / 1000)
+        main_gage_avg_consumption_text_view.text = "  Ø %s".format(StringFormatters.getAvgConsumptionString(selectedDataManager.usedEnergy, selectedDataManager.traveledDistance))
+        main_gage_distance_text_view.text = "  %s".format(StringFormatters.getTraveledDistanceString(selectedDataManager.traveledDistance))
+        main_gage_used_power_text_view.text = "  %s".format(StringFormatters.getEnergyString(selectedDataManager.usedEnergy))
+        main_gage_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(selectedDataManager.travelTime))
+        main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getEnergyString(selectedDataManager.chargedEnergy))
+        main_gage_charge_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(selectedDataManager.chargeTime))
+        main_gage_remaining_range_text_view.text = "-/-  %s".format(appPreferences.distanceUnit.unit())
+        main_gage_ambient_temperature_text_view.text = "  %s".format( StringFormatters.getTemperatureString(selectedDataManager.ambientTemperature))
     }
 
     private fun setUiVisibilities() {
 
-        if (main_button_dismiss_charge_plot.isEnabled == DataHolder.chargePortConnected)
-            main_button_dismiss_charge_plot.isEnabled = !DataHolder.chargePortConnected
+        if (main_button_dismiss_charge_plot.isEnabled == selectedDataManager.chargePortConnected)
+            main_button_dismiss_charge_plot.isEnabled = !selectedDataManager.chargePortConnected
 
-        if (main_charge_layout.visibility == View.GONE && DataHolder.chargePortConnected) {
+        if (main_charge_layout.visibility == View.GONE && selectedDataManager.chargePortConnected) {
             main_consumption_layout.visibility = View.GONE
             main_charge_layout.visibility = View.VISIBLE
         }
     }
 
     private fun updateGages() {
-        if ((DataHolder.currentPowerSmooth / 1_000_000).absoluteValue > 10 && true) { // Add Setting!
-            val newValue = (DataHolder.currentPowerSmooth / 1_000_000).toInt()
-            main_power_gage.setValue(newValue)
+        if ((selectedDataManager.currentPower / 1_000_000).absoluteValue >= 100 && true) { // Add Setting!
+            main_power_gage.setValue((DataCollector.gagePowerValue / 1_000_000).toInt())
+            main_charge_gage.setValue((-DataCollector.gagePowerValue / 1_000_000).toInt())
         } else {
-            main_power_gage.setValue(DataHolder.currentPowerSmooth / 1_000_000)
+            main_power_gage.setValue(DataCollector.gagePowerValue / 1_000_000)
+            main_charge_gage.setValue(-DataCollector.gagePowerValue / 1_000_000)
         }
-        main_charge_gage.setValue(-DataHolder.currentPowerSmooth / 1_000_000)
-        main_SoC_gage.setValue((100f / DataHolder.maxBatteryCapacity * DataHolder.currentBatteryCapacity).roundToInt())
+        main_SoC_gage.setValue(selectedDataManager.stateOfCharge)
 
-        var consumptionValue: Float? = null
+        val nullValue: Float? = null
 
         if (appPreferences.consumptionUnit) {
-            main_consumption_gage.gageUnit = "Wh/km"
-            main_consumption_gage.minValue = -300f
-            main_consumption_gage.maxValue = 600f
-            if (DataHolder.currentSpeed * 3.6 > 3) {
-                main_consumption_gage.setValue(((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6)).toInt())
+            main_consumption_gage.gageUnit = "Wh/%s".format(appPreferences.distanceUnit.unit())
+            main_consumption_gage.minValue = appPreferences.distanceUnit.asUnit(-300f)
+            main_consumption_gage.maxValue = appPreferences.distanceUnit.asUnit(600f)
+
+            if (selectedDataManager.currentSpeed * 3.6 > 3) {
+                main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(DataCollector.gageConsValue).roundToInt())
             } else {
-                main_consumption_gage.setValue(consumptionValue)
+                main_consumption_gage.setValue(nullValue)
             }
 
         } else {
-            main_consumption_gage.gageUnit = "kWh/100km"
-            main_consumption_gage.minValue = -30f
-            main_consumption_gage.maxValue = 60f
-            if (DataHolder.currentSpeed * 3.6 > 3) {
-                main_consumption_gage.setValue(((DataHolder.currentPowerSmooth / 1000) / (DataHolder.currentSpeedSmooth * 3.6f))/10)
+            main_consumption_gage.gageUnit = "kWh/100%s".format(appPreferences.distanceUnit.unit())
+            main_consumption_gage.minValue = appPreferences.distanceUnit.asUnit(-30f)
+            main_consumption_gage.maxValue = appPreferences.distanceUnit.asUnit(60f)
+
+            if (selectedDataManager.currentSpeed * 3.6 > 3) {
+                main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(DataCollector.gageConsValue) / 10)
             } else {
-                main_consumption_gage.setValue(consumptionValue)
+                main_consumption_gage.setValue(nullValue)
             }
         }
+        main_consumption_gage.invalidate()
+        main_power_gage.invalidate()
+        main_charge_gage.invalidate()
+        main_SoC_gage.invalidate()
+        Log.i("Gages", "updated")
     }
 
     private fun updatePlots(){
         // if (appPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
 
-        main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toNanos((TimeUnit.MILLISECONDS.toMinutes(DataHolder.chargeTimeMillis) / 5) + 1) * 5 + TimeUnit.MILLISECONDS.toNanos(1)
+        main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(selectedDataManager.chargeTime) / 5) + 1) * 5 + 1
 
         if (SystemClock.elapsedRealtime() - lastPlotUpdate > 1_000L) {
             if (main_consumption_layout.visibility == View.VISIBLE) {
@@ -312,80 +298,75 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun getElapsedTimeString(elapsedTime: Long): String {
-        return String.format("%02d:%02d:%02d",
-            TimeUnit.MILLISECONDS.toHours(elapsedTime),
-            TimeUnit.MILLISECONDS.toMinutes(elapsedTime) % TimeUnit.HOURS.toMinutes(1),
-            TimeUnit.MILLISECONDS.toSeconds(elapsedTime) % TimeUnit.MINUTES.toSeconds(1))
-    }
-
-    // private fun dimensionRestrictionById(id : Int) : Long {
-    //     return when (id) {
-    //         1 -> DISTANCE_1
-    //         2 -> DISTANCE_2
-    //         3 -> ((DataHolder.traveledDistance / DISTANCE_TRIP_DIVIDER).toInt() + 1) * DISTANCE_TRIP_DIVIDER + 1
-    //         else -> DISTANCE_2
-    //     }
-    // }
-
     private fun resetStats() {
         finish()
         startActivity(intent)
-        InAppLogger.log("MainActivity.resetStats")
-        DataHolder.resetDataHolder()
+        // InAppLogger.log("MainActivity.resetStats")
+        selectedDataManager.reset()
         sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
     }
 
     private fun setupDefaultUi() {
 
-        var plotDistanceId = when (appPreferences.plotDistance) {
-            1 -> main_radio_10.id
-            2 -> main_radio_25.id
-            3 -> main_radio_50.id
-            else -> main_radio_10.id
-        }
+        PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
-        main_radio_group_distance.check(plotDistanceId)
+        // var plotDistanceId = when (appPreferences.plotDistance) {
+        //     1 -> main_radio_10.id
+        //     2 -> main_radio_25.id
+        //     3 -> main_radio_50.id
+        //     else -> main_radio_10.id
+        // }
+
+        // main_radio_group_distance.check(plotDistanceId)
 
         main_consumption_plot.reset()
-        main_consumption_plot.addPlotLine(DataHolder.consumptionPlotLine)
-        // main_consumption_plot.setPlotMarkers(DataHolder.plotMarkers)
-        // main_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
-        // main_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
+        main_consumption_plot.addPlotLine(selectedDataManager.consumptionPlotLine)
 
-        main_button_speed.text = when {
-            main_consumption_plot.secondaryDimension != null -> getString(R.string.main_button_hide_speed)
-            else -> getString(R.string.main_button_show_speed)
-        }
+        main_button_secondary_dimension.text = "Toggle secondary dimension"
 
-        DataHolder.consumptionPlotLine.secondaryPlotPaint = when {
+        // when {
+        //     main_consumption_plot.secondaryDimension != null -> getString(R.string.main_button_hide_speed)
+        //     else -> getString(R.string.main_button_show_speed)
+        // }
+
+        selectedDataManager.consumptionPlotLine.secondaryPlotPaint = when {
             appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
             else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
 
         main_consumption_plot.dimension = PlotDimension.DISTANCE
-        main_consumption_plot.dimensionRestriction = 10_001L
+        main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(CONSUMPTION_DISTANCE_RESTRICTION)
         main_consumption_plot.dimensionSmoothingPercentage = 0.02f
-        //main_consumption_plot.dimensionShiftTouchInterval = 1_000L
-        //main_consumption_plot.dimensionRestrictionTouchInterval = 5_000L
-        main_consumption_plot.secondaryDimension = when (appPreferences.plotSpeed) {
-            true -> PlotSecondaryDimension.SPEED
-            else -> null
+        main_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
+        main_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
+            1 -> {
+                main_button_secondary_dimension.text =
+                    getString(R.string.main_secondary_axis, getString(R.string.main_speed))
+                PlotSecondaryDimension.SPEED
+            }
+            2 -> {
+                main_button_secondary_dimension.text =
+                    getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
+                PlotSecondaryDimension.STATE_OF_CHARGE
+            }
+            else -> {
+                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
+                null
+            }
         }
 
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
-        main_charge_plot.addPlotLine(DataHolder.chargePlotLine)
+        main_charge_plot.addPlotLine(selectedDataManager.chargePlotLine)
 
-        DataHolder.chargePlotLine.secondaryPlotPaint = when {
+        selectedDataManager.chargePlotLine.secondaryPlotPaint = when {
             appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
             else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
 
         main_charge_plot.dimension = PlotDimension.TIME
         main_charge_plot.dimensionRestriction = null
-        main_charge_plot.dimensionSmoothingPercentage = 0.01f
         main_charge_plot.sessionGapRendering = PlotSessionGapRendering.GAP
         main_charge_plot.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
         main_charge_plot.invalidate()
@@ -423,22 +404,26 @@ class MainActivity : Activity() {
 
         main_title.setOnClickListener {
             if (emulatorMode) {
-                DataHolder.currentGear = when (DataHolder.currentGear) {
-                    VehicleGear.GEAR_PARK -> {
-                        Toast.makeText(this, "Drive", Toast.LENGTH_SHORT).show()
-                        // DataHolder.resetTimestamp += (System.nanoTime() - DataHolder.parkTimestamp)
-                        DataHolder.plotMarkers.endMarker(SystemClock.elapsedRealtimeNanos())
-                        VehicleGear.GEAR_DRIVE
+                val gearSimulationIntent = Intent(getString(R.string.VHAL_emulator_broadcast)).apply {
+                    putExtra(
+                        EmulatorIntentExtras.PROPERTY_ID,
+                        VehiclePropertyIds.GEAR_SELECTION
+                    )
+                    putExtra(EmulatorIntentExtras.TYPE, EmulatorIntentExtras.TYPE_INT)
+                    if (selectedDataManager.currentGear == VehicleGear.GEAR_PARK) {
+                        putExtra(
+                            EmulatorIntentExtras.VALUE,
+                            VehicleGear.GEAR_DRIVE
+                        )
+                        Toast.makeText(applicationContext, "Drive", Toast.LENGTH_SHORT).show()
                     }
-                    else -> {
-                        Toast.makeText(this, "Park", Toast.LENGTH_SHORT).show()
-                        // DataHolder.parkTimestamp = System.nanoTime()
-                        DataHolder.plotMarkers.addMarker(PlotMarkerType.PARK, SystemClock.elapsedRealtimeNanos())
-                        VehicleGear.GEAR_PARK
+                    else {
+                        putExtra(EmulatorIntentExtras.VALUE, VehicleGear.GEAR_PARK)
+                        Toast.makeText(applicationContext, "Park", Toast.LENGTH_SHORT).show()
                     }
                 }
-                sendBroadcast(Intent(getString(R.string.gear_update_broadcast)))
-                if (DataHolder.currentGear == VehicleGear.GEAR_PARK) sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+                sendBroadcast(gearSimulationIntent)
+                sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
             }
         }
         main_title_icon.setOnClickListener {
@@ -448,102 +433,68 @@ class MainActivity : Activity() {
                 Toast.makeText(this, "Power sign: ${if(emulatorPowerSign<0) "-" else "+"}", Toast.LENGTH_SHORT).show()
             }
         }
-/*
-        main_button_reset.setOnClickListener {
-
-            val builder = AlertDialog.Builder(this@MainActivity)
-            builder.setTitle(getString(R.string.dialog_reset_title))
-                .setMessage(getString(R.string.dialog_reset_message))
-                .setCancelable(true)
-                .setPositiveButton(getString(R.string.dialog_confirm)) { dialog, id ->
-                    resetStats()
-                }
-                .setNegativeButton(getString(R.string.dialog_dismiss)) { dialog, id ->
-                    // Dismiss the dialog
-                    InAppLogger.log("Dismiss reset but refresh MainActivity")
-                    finish()
-                    startActivity(intent)
-                }
-            val alert = builder.create()
-            alert.show()
-        }
-
- */
 
         main_button_settings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
-        /** cycle through consumption plot distances when tapping the plot */
-        // main_consumption_plot.setOnClickListener {
-        //     main_consumption_plot.dimensionRestriction = 5_000L
-        // }
-
-        /* main_radio_group_distance.setOnCheckedChangeListener { group, checkedId ->
-            var id = when (checkedId) {
-                main_radio_10.id -> 1
-                main_radio_25.id -> 2
-                main_radio_50.id -> 3
-                else -> 1
+        main_button_secondary_dimension.setOnClickListener {
+            var currentIndex = appPreferences.secondaryConsumptionDimension
+            currentIndex++
+            if (currentIndex > 2) currentIndex = 0
+            appPreferences.secondaryConsumptionDimension = currentIndex
+            main_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
+                1 -> {
+                    main_button_secondary_dimension.text =
+                        getString(R.string.main_secondary_axis, getString(R.string.main_speed))
+                    PlotSecondaryDimension.SPEED
+                }
+                2 -> {
+                    main_button_secondary_dimension.text =
+                        getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
+                    PlotSecondaryDimension.STATE_OF_CHARGE
+                }
+                else -> {
+                    main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
+                    null
+                }
             }
-
-            main_consumption_plot.dimensionRestriction = dimensionRestrictionById(id)
-
-            appPreferences.plotDistance = id
-        }
-
-        main_checkbox_speed.setOnClickListener {
-            if (main_checkbox_speed.isChecked && !DataHolder.speedPlotLine.Visible) {
-                DataHolder.speedPlotLine.Visible = true
-            } else if (!main_checkbox_speed.isChecked && DataHolder.speedPlotLine.Visible) {
-                DataHolder.speedPlotLine.Visible = false
-            }
-
-            appPreferences.plotSpeed = main_checkbox_speed.isChecked
-            main_consumption_plot.invalidate()
-        } */
-
-        main_button_speed.setOnClickListener {
-            main_consumption_plot.secondaryDimension = when (main_consumption_plot.secondaryDimension) {
-                null -> PlotSecondaryDimension.SPEED
-                else -> null
-            }
-
-            appPreferences.plotSpeed = main_consumption_plot.secondaryDimension != null
-            main_consumption_plot.invalidate()
-            main_button_speed.text = when {
-                main_consumption_plot.secondaryDimension != null -> getString(R.string.main_button_hide_speed)
-                else -> getString(R.string.main_button_show_speed)
-            }
+            //main_consumption_plot.secondaryDimension = when (main_consumption_plot.secondaryDimension) {
+            //    null -> PlotSecondaryDimension.SPEED
+            //    else -> null
+            //}
+            //
+            //appPreferences.plotSpeed = main_consumption_plot.secondaryDimension != null
+            //main_consumption_plot.invalidate()
+            //main_button_speed.text = when {
+            //    main_consumption_plot.secondaryDimension != null -> getString(R.string.main_button_hide_speed)
+            //    else -> getString(R.string.main_button_show_speed)
+            //}
         }
 
         main_button_summary.setOnClickListener {
-            // sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
-            startActivity(Intent(this, SummaryActivity::class.java))
+            val summaryIntent = Intent(this, SummaryActivity::class.java)
+            summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
+            startActivity(summaryIntent)
         }
 
         main_button_summary_charge.setOnClickListener {
-            // sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
-            startActivity(Intent(this, SummaryActivity::class.java))
+            val summaryIntent = Intent(this, SummaryActivity::class.java)
+            summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
+            startActivity(summaryIntent)
         }
 
         main_button_dismiss_charge_plot.setOnClickListener {
             main_charge_layout.visibility = View.GONE
             main_consumption_layout.visibility = View.VISIBLE
             main_consumption_plot.invalidate()
-            DataHolder.chargedEnergy = 0f
-            DataHolder.chargeTimeMillis = 0L
+            // DataManager.chargedEnergy = 0f
+            // DataManager.chargeTime = 0L
         }
-/*
-        main_button_reset_charge_plot.setOnClickListener {
-            //main_charge_plot.reset()
-            DataHolder.chargePlotLine.reset()
-        }
-*/
     }
 
     private fun enableUiUpdates() {
-        InAppLogger.log("Enabling UI updates")
+        // InAppLogger.log("Enabling UI updates")
         updateUi = true
         if (this::timerHandler.isInitialized) {
             timerHandler.removeCallbacks(updateActivityTask)
@@ -553,7 +504,7 @@ class MainActivity : Activity() {
     }
 
     private fun disableUiUpdates() {
-        InAppLogger.log("Disabling UI Updates")
+        // InAppLogger.log("Disabling UI Updates")
         updateUi = false
         if (this::timerHandler.isInitialized) {
             timerHandler.removeCallbacks(updateActivityTask)

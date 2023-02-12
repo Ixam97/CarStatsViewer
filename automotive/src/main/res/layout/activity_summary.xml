@@ -39,12 +39,6 @@
         android:background="?android:attr/colorControlActivated"/>
 
     <TextView
-        android:id="@+id/summary_trip_date_text"
-        android:layout_marginTop="10dp"
-        android:layout_marginHorizontal="20dp"
-        style="@style/menu_section_title_style"/>
-
-    <TextView
         android:id="@+id/summary_parked_warning"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -90,10 +84,21 @@
             android:layout_marginHorizontal="20dp"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/summary_trip_date_text"
+                android:layout_marginTop="10dp"
+                style="@style/menu_section_title_style"/>
+
             <com.ixam97.carStatsViewer.views.PlotView
                 android:id="@+id/summary_consumption_plot"
                 android:layout_width="match_parent"
                 android:layout_height="550dp"/>
+
+            <Button
+                android:id="@+id/summary_button_secondary_dimension"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"/>
+
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
@@ -195,6 +200,12 @@
                 style="@style/menu_row_top_text"
                 android:text="-/-"/>
             <TextView
+                android:visibility="gone"
+                style="@style/menu_row_content_text"
+                android:id="@+id/summary_charged_energy_warning_text"
+                android:text="Charging session has been interrupted. This value is probably incorrect."
+                android:textColor="@color/bad_red"/>
+            <TextView
                 style="@style/menu_row_content_text"
                 android:text="@string/summary_charged_energy"/>
             <View style="@style/menu_divider_style"
@@ -209,6 +220,12 @@
                 android:text="@string/summary_charge_time"/>
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
+            <TextView
+                android:id="@+id/summary_charge_ambient_temp"
+                style="@style/menu_row_top_text"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_charge_ambient_temp"/>
 
         </LinearLayout>
     </ScrollView>

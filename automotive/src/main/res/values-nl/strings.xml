@@ -6,7 +6,7 @@
     <string name="permissions_dialog_text">Deze app heeft bepaalde toelatingen nodig om te kunnen werken. Zonder de aangegeven toelatingen, kunnen de gegevens van het voertuig niet worden verzameld.</string>
     <string name="permissions_dialog_quit">Car Stats Viewer afsluiten</string>
     <string name="permissions_dialog_grant">Toelatingen goedkeuren</string>
-    
+
     <!-- MainActivity -->
     <string name="main_port_connected">Laadkabel aangesloten:</string>
     <string name="main_current_power">Huidig stroomverbruik:</string>
@@ -17,7 +17,7 @@
     <string name="main_average_consumption">Gemiddeld verbruik:</string>
     <string name="main_button_reset_stats">Statistieken resetten</string>
     <string name="main_consumption">Verbruik over de laatste 3 km:</string>
-    <string name="main_checkbox_speed">Snelheid</string>
+    <string name="main_speed">Snelheid</string>
     <string name="main_gage_speed">Snelheid</string>
     <string name="main_gage_power">Power</string>
     <string name="main_gage_charging_power">Laadvermogen</string>
@@ -61,7 +61,7 @@
     <string name="settings_sub_title_settings">Instellingen:</string>
     <string name="settings_sub_title_current_cons_plot">Actuele verbruikscurve:</string>
     <string name="settings_sub_title_last_charge_plot">Laatste laadcurven:</string>
-    
+
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">App afsluiten?</string>
     <string name="quit_dialog_message">Log wordt gekopieerd naar het klembord.</string>

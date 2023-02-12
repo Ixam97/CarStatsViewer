@@ -21,6 +21,15 @@
 
         <View style="@style/filler"/>
 
+        <Button
+            android:id="@+id/log_button_show_json"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:textSize="47sp"
+            android:textFontWeight="600"
+            android:text="JSON"
+            android:backgroundTint="@android:color/transparent"/>
+
         <ImageButton
             android:id="@+id/log_button_copy"
             android:src="@drawable/ic_copy"
@@ -54,34 +63,110 @@
         android:orientation="vertical">
 
         <Switch
+            android:visibility="gone"
             android:id="@+id/log_switch_deep_log"
             style="@style/menu_standard_switch_style"
             android:text="Deep Log"/>
 
         <View
+            android:visibility="gone"
             style="@style/menu_divider_style"
             android:background="?android:attr/listDivider" />
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/log_reset_log"
             style="@style/menu_button_row_style"
             android:text="Empty Log"
             android:drawableEnd="@drawable/ic_delete"/>
 
         <View
+            android:visibility="gone"
             style="@style/menu_divider_style"
             android:background="?android:attr/listDivider" />
-
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_above="@+id/log_send_container">
             <LinearLayout
                 android:id="@+id/log_log"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/log_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:typeface="monospace"/>
             </LinearLayout>
         </ScrollView>
+            <LinearLayout
+                android:id="@+id/log_send_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical">
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
+                        android:text="From:"
+                        android:textSize="25sp"
+                        android:textFontWeight="400"/>
+                    <EditText
+                        android:id="@+id/log_text_sender"
+                        android:text="Username"
+                        android:hint="Username"
+                        android:textSize="25sp"
+                        android:singleLine="true"
+                        android:textFontWeight="400"
+                        android:imeOptions="actionDone"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="25dp"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
+                        android:text="To:"
+                        android:textSize="25sp"
+                        android:textFontWeight="400"/>
+                    <EditText
+                        android:id="@+id/log_text_target_mail"
+                        android:text="ixam97@ixam97.de"
+                        android:inputType="textEmailAddress"
+                        android:textSize="25sp"
+                        android:singleLine="true"
+                        android:textFontWeight="400"
+                        android:imeOptions="actionDone"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:layout_marginHorizontal="25dp"/>
+                    <ImageButton
+                        android:id="@+id/log_button_send"
+                        android:src="@drawable/ic_send"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent"
+                        android:layout_marginEnd="10dp"/>
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
 </LinearLayout>

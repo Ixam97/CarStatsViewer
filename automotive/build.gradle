@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
 android {
     compileSdkVersion 33
@@ -8,10 +9,10 @@ android {
 
     defaultConfig {
         applicationId "com.ixam97.carStatsViewer_dev"
-        minSdkVersion 28
+        minSdkVersion 29
         targetSdkVersion 33
-        versionCode 39
-        versionName "0.22.0_dev02"
+        versionCode 61
+        versionName "DataManager_Prototype_18"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -21,6 +22,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    packagingOptions {
+        pickFirst 'META-INF/LICENSE.md' // picks the Angus Mail license file
+        pickFirst 'META-INF/NOTICE.md' // picks the Angus Mail notice file
     }
 
     // android.car exists since Android 10 (API level 29) Revision 5.
@@ -36,6 +42,11 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.5.5'
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    implementation 'org.eclipse.angus:jakarta.mail:2.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.mikepenz:aboutlibraries-core:8.9.4'
+    implementation 'com.airbnb.android:paris:2.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     // to fix unresolved references to android.car
     def sdkDir = project.android.sdkDirectory.canonicalPath
