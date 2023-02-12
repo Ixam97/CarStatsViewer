@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Behörigheter krävs för användning</string>
