@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Car Stats Viewer</string>
+    <string name="app_name" translatable="false">Car Stats Viewer (Dev)</string>
 
     <!-- About -->
     <string name="readme_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/blob/master/README.md</string>
@@ -9,7 +9,7 @@
     <string name="contributors" translatable="false">Dario Bosshard \nDoubleYouEl \nRobin Hellström \njschlyter \nOddvarr \nFreshDave29 \nrdu</string>
 
     <!-- Preferences -->
-    <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer.preferences</string>
+    <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer_dev.preferences</string>
     <string name="preferences_notifications_key" translatable="false">notifications</string>
     <string name="preferences_consumption_unit_key" translatable="false">consumption_unit</string>
     <string name="preferences_debug_key" translatable="false">debug</string>
