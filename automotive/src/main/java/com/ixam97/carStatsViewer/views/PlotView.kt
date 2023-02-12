@@ -22,7 +22,7 @@ import com.ixam97.carStatsViewer.plot.objects.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
-class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
+class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     companion object {
         const val textSize = 26f
     }
@@ -133,7 +133,7 @@ class PlotView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     init {
         setupPaint()
-        appPreferences = MainActivity.appPreferences
+        appPreferences = AppPreferences(context)
     }
 
     // Setup paint with color and stroke styles

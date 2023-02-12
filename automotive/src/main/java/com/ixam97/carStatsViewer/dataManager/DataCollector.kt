@@ -42,6 +42,12 @@ class DataCollector : Service() {
         private const val CHARGE_PLOT_MARKER_THRESHOLD_NANOS = 10_000_000_000L // 2 times CHARGE_PLOT_UPDATE_INTERVAL_MILLIS in nanos
         private const val AUTO_SAVE_INTERVAL_MILLIS = 30_000L
         private const val AUTO_RESET_TIME_HOURS = 5L
+        private const val POWER_GAGE_HYSTERESIS = 1_000_000F
+        private const val CONS_GAGE_HYSTERESIS = 10F
+
+        var gagePowerValue: Float = 0F
+        var gageConsValue: Float = 0F
+        var gageSoCValue: Int = 0
     }
 
     private var lastSoC: Int = 0
@@ -172,11 +178,12 @@ class DataCollector : Service() {
 
         val displayUnit = carPropertyManager.getProperty<Int>(VehiclePropertyIds.DISTANCE_DISPLAY_UNITS, 0).value
         InAppLogger.log("Display distance unit: $displayUnit")
-        appPreferences.distanceUnit = when (displayUnit) {
-            VehicleUnit.MILE -> DistanceUnitEnum.MILES
-            else -> DistanceUnitEnum.KM
-        }
-        // if (emulatorMode) appPreferences.distanceUnit = DistanceUnitEnum.KM
+        appPreferences.distanceUnit = if (!emulatorMode) {
+            when (displayUnit) {
+                VehicleUnit.MILE -> DistanceUnitEnum.MILES
+                else -> DistanceUnitEnum.KM
+            }
+        } else DistanceUnitEnum.KM
 
         notificationTitleString = resources.getString(R.string.notification_title)
         statsNotification.setContentTitle(notificationTitleString).setContentIntent(mainActivityPendingIntent)
@@ -285,6 +292,21 @@ class DataCollector : Service() {
     }
 
     private fun powerUpdater(dataManager: DataManager) {
+        if (dataManager == DataManagers.CURRENT_TRIP.dataManager && !dataManager.CurrentPower.isInitialValue) {
+            var gageValueChanged = false
+            if ((dataManager.currentPower - gagePowerValue).absoluteValue > POWER_GAGE_HYSTERESIS) {
+                gagePowerValue = dataManager.currentPower
+                gageValueChanged = true
+            }
+            if (((dataManager.currentPower / 1000)/(dataManager.currentSpeed * 3.6) - gageConsValue).absoluteValue > CONS_GAGE_HYSTERESIS) {
+                gageConsValue = ((dataManager.currentPower / 1000)/(dataManager.currentSpeed * 3.6f)).let {
+                    if (it.isFinite()) it
+                    else 0F
+                }
+                gageValueChanged = true
+            }
+            if (gageValueChanged) sendBroadcast(Intent(getString(R.string.ui_update_gages_broadcast)))
+        }
         when (dataManager.driveState) {
             DrivingState.DRIVE -> {
                 if (!dataManager.CurrentPower.isInitialValue) {
@@ -326,6 +348,21 @@ class DataCollector : Service() {
     }
 
     private fun speedUpdater(dataManager: DataManager) {
+        if (dataManager == DataManagers.CURRENT_TRIP.dataManager && !dataManager.CurrentPower.isInitialValue) {
+            var gageValueChanged = false
+            if ((dataManager.currentPower - gagePowerValue).absoluteValue > POWER_GAGE_HYSTERESIS) {
+                gagePowerValue = dataManager.currentPower
+                gageValueChanged = true
+            }
+            if (((dataManager.currentPower / 1000)/(dataManager.currentSpeed * 3.6) - gageConsValue).absoluteValue > CONS_GAGE_HYSTERESIS) {
+                gageConsValue = ((dataManager.currentPower / 1000)/(dataManager.currentSpeed * 3.6f)).let {
+                    if (it.isFinite()) it
+                    else 0F
+                }
+                gageValueChanged = true
+            }
+            if (gageValueChanged) sendBroadcast(Intent(getString(R.string.ui_update_gages_broadcast)))
+        }
         if (emulatorMode) {
             val emulatePowerIntent = Intent(getString(R.string.VHAL_emulator_broadcast)).apply {
                 putExtra(EmulatorIntentExtras.PROPERTY_ID, dataManager.CurrentPower.propertyId)

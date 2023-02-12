@@ -17,6 +17,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
@@ -208,6 +209,12 @@ class MainActivity : Activity() {
         // InAppLogger.logUIUpdate()
         /** Use data from DataManager to Update MainActivity text */
 
+        DataCollector.gagePowerValue = selectedDataManager.currentPower
+        DataCollector.gageConsValue = ((selectedDataManager.currentPower / 1000)/(selectedDataManager.currentSpeed * 3.6f)).let {
+            if (it.isFinite()) it
+            else 0F
+        }
+
         setUiVisibilities()
         updateGages()
 
@@ -233,16 +240,16 @@ class MainActivity : Activity() {
     }
 
     private fun updateGages() {
-        if ((selectedDataManager.currentPower / 1_000_000).absoluteValue > 10 && true) { // Add Setting!
-            val newValue = (selectedDataManager.currentPower / 1_000_000).toInt()
-            main_power_gage.setValue(newValue)
+        if ((selectedDataManager.currentPower / 1_000_000).absoluteValue >= 100 && true) { // Add Setting!
+            main_power_gage.setValue((DataCollector.gagePowerValue / 1_000_000).toInt())
+            main_charge_gage.setValue((-DataCollector.gagePowerValue / 1_000_000).toInt())
         } else {
-            main_power_gage.setValue(selectedDataManager.currentPower / 1_000_000)
+            main_power_gage.setValue(DataCollector.gagePowerValue / 1_000_000)
+            main_charge_gage.setValue(-DataCollector.gagePowerValue / 1_000_000)
         }
-        main_charge_gage.setValue(-selectedDataManager.currentPower / 1_000_000)
-        main_SoC_gage.setValue((100f / selectedDataManager.maxBatteryLevel * selectedDataManager.batteryLevel).roundToInt())
+        main_SoC_gage.setValue(selectedDataManager.stateOfCharge)
 
-        var consumptionValue: Float? = null
+        val nullValue: Float? = null
 
         if (appPreferences.consumptionUnit) {
             main_consumption_gage.gageUnit = "Wh/%s".format(appPreferences.distanceUnit.unit())
@@ -250,9 +257,9 @@ class MainActivity : Activity() {
             main_consumption_gage.maxValue = appPreferences.distanceUnit.asUnit(600f)
 
             if (selectedDataManager.currentSpeed * 3.6 > 3) {
-                main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit((selectedDataManager.currentPower / 1000) / (selectedDataManager.currentSpeed * 3.6)).roundToInt())
+                main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(DataCollector.gageConsValue).roundToInt())
             } else {
-                main_consumption_gage.setValue(consumptionValue)
+                main_consumption_gage.setValue(nullValue)
             }
 
         } else {
@@ -261,11 +268,16 @@ class MainActivity : Activity() {
             main_consumption_gage.maxValue = appPreferences.distanceUnit.asUnit(60f)
 
             if (selectedDataManager.currentSpeed * 3.6 > 3) {
-                main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit((selectedDataManager.currentPower / 1000) / (selectedDataManager.currentSpeed * 3.6f)) / 10)
+                main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(DataCollector.gageConsValue) / 10)
             } else {
-                main_consumption_gage.setValue(consumptionValue)
+                main_consumption_gage.setValue(nullValue)
             }
         }
+        main_consumption_gage.invalidate()
+        main_power_gage.invalidate()
+        main_charge_gage.invalidate()
+        main_SoC_gage.invalidate()
+        Log.i("Gages", "updated")
     }
 
     private fun updatePlots(){

@@ -129,7 +129,7 @@ class SummaryActivity: Activity() {
         plotMarkers.addMarkers(tripData.markers)
         summary_consumption_plot.addPlotLine(consumptionPlotLine)
         summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
-        summary_consumption_plot.secondaryDimension = when (MainActivity.appPreferences.secondaryConsumptionDimension) {
+        summary_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
             1 -> {
                 summary_button_secondary_dimension.text =
                     getString(R.string.main_secondary_axis, getString(R.string.main_speed))

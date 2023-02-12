@@ -117,6 +117,7 @@ class SettingsActivity : Activity() {
             appPreferences.consumptionUnit = settings_switch_consumption_unit.isChecked
         }
 
+        if (emulatorMode) settings_switch_distance_unit.visibility = View.VISIBLE
         settings_switch_distance_unit.setOnClickListener {
             appPreferences.distanceUnit = when (settings_switch_distance_unit.isChecked) {
                 true -> DistanceUnitEnum.MILES
