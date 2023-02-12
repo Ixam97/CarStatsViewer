@@ -40,11 +40,10 @@ class MainActivity : Activity() {
         private const val UI_UPDATE_INTERVAL = 1000L
         const val DISTANCE_TRIP_DIVIDER = 5_000L
         const val CONSUMPTION_DISTANCE_RESTRICTION = 10_000L
-        lateinit var appPreferences: AppPreferences
     }
 
     /** values and variables */
-
+    private lateinit var appPreferences: AppPreferences
     private lateinit var timerHandler: Handler
     private lateinit var starterIntent: Intent
     private lateinit var context: Context
