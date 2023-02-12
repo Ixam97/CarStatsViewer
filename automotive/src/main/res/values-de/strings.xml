@@ -17,7 +17,7 @@
     <string name="main_average_consumption">Durchschnittsverbrauch:</string>
     <string name="main_button_reset_stats">Statistiken zurücksetzen</string>
     <string name="main_consumption">Verbrauch über die letzten 3 km:</string>
-    <string name="main_checkbox_speed">Geschwindigkeit</string>
+    <string name="main_speed">Geschwindigkeit</string>
     <string name="main_gage_speed">Geschwindigkeit</string>
     <string name="main_gage_power">Leistung</string>
     <string name="main_gage_charging_power">Ladeleistung</string>
@@ -28,6 +28,7 @@
     <string name="main_button_trip_summary">Tripzusammenfassung</string>
     <string name="main_button_hide_speed">Geschwindigkeit verbergen</string>
     <string name="main_button_show_speed">Geschwindigkeit anzeigen</string>
+    <string name="main_secondary_axis">Sekundärachse: %s</string>
 
     <!-- SummaryActivity -->
     <string name="summary_title">Tripzusammenfassung</string>
@@ -35,13 +36,14 @@
     <string name="summary_parked_warning">Ansicht nur im geparkten Zustand verfügbar.</string>
     <string name="summary_trip_history">Fahrtverlauf</string>
     <string name="summary_charging_sessions">Ladevorgänge</string>
-    <string name="summary_trip_start_date">Trip begonnen am:</string>
+    <string name="summary_trip_start_date">Trip begonnen am: %s</string>
     <string name="summary_used_energy">Verbrauchte Energie</string>
     <string name="summary_traveled_distance">Zurückgelegte Distanz</string>
     <string name="summary_average_consumption">Durchschnittsverbrauch</string>
     <string name="summary_travel_time">Fahrzeit</string>
     <string name="summary_charged_energy">Geladene Energie</string>
     <string name="summary_charge_time">Ladezeit</string>
+    <string name="summary_charge_ambient_temp">Außentemperatur</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
@@ -53,6 +55,7 @@
     <string name="settings_experimental_layout">Zeige experimentelles Layout</string>
     <string name="settings_consumption_plot">  Verbrauchsansicht</string>
     <string name="settings_charge_plot">  Ladeansicht</string>
+    <string name="settings_about">  Über Car Stats Viewer</string>
     <string name="settings_consumption_plot_single_motor">Single Motor Modell</string>
     <string name="settings_plot_secondary_color">Grau als sekundäre Diagrammfarbe</string>
     <string name="settings_plot_state_of_charge_dimension">Experimentelle Ladezustand Achse</string>
@@ -61,7 +64,20 @@
     <string name="settings_sub_title_settings">Einstellungen:</string>
     <string name="settings_sub_title_current_cons_plot">Aktuelle Verbrauchskurve:</string>
     <string name="settings_sub_title_last_charge_plot">Letzte Ladekurven:</string>
-
+    
+    <!-- AboutActivity -->
+    <string name="about_title">Über Car Stats Viewer</string>
+    <string name="about_section_about">Über Car Stats Viewer:</string>
+    <string name="about_support">Entwicklung unterstützen</string>
+    <string name="about_support_description">Besuche das GitHub-Repository um mehr darüber erfahren, wie die Entwicklung der App unterstützt werden kann.</string>
+    <string name="about_contributors">Mitwirkende</string>
+    <string name="about_section_feedback">Kontakt:</string>
+    <string name="about_section_misc">Sonstiges:</string>
+    <string name="about_github_issues_description">Dies ist der beste Ort, um Fehler zu melden oder Wünsche zu äußern. Bitte vor dem Erstellen eines neuen Tickets die bereits vorhandenen beachten.</string>
+    <string name="about_polestar_forum_description">Diskussion über Car Stats Viewer im internationalen Forum.</string>
+    <string name="about_polestar_fans_description">Diskussion über Car Stats Viewer im deutschen Forum.</string>
+    <string name="about_third_party_licenses">Lizenzen</string>
+    
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">App beenden?</string>
     <string name="quit_dialog_message">Log wird in die Zwischenablage kopiert.</string>
@@ -78,5 +94,5 @@
     <!-- Notifications -->
     <string name="notification_title">Aktuelle Fahrdaten:</string>
     <string name="foreground_service_info">Fahrdatenerfassung aktiv</string>
-    <string name="toast_file_read_error">Fehler beim Binlesen der Trip-Datei</string>
+    <string name="toast_file_read_error">Fehler beim Einlesen der Trip-Datei</string>
 </resources>

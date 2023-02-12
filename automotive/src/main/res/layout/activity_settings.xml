@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:ignore="UseSwitchCompatOrMaterialXml, UseAppTint, UseCompatTextViewDrawableXml"
     tools:context=".activities.SettingsActivity">
 
     <View
@@ -61,7 +62,7 @@
             <Switch
                 android:id="@+id/settings_switch_notifications"
                 style="@style/menu_standard_switch_style"
-                android:text="@string/settings_notifications"/>
+                android:text="@string/settings_notifications" />
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
@@ -76,7 +77,7 @@
                 android:id="@+id/settings_consumption_plot"
                 android:text="@string/settings_consumption_plot"
                 android:drawableStart="@drawable/ic_diagram"
-                style="@style/menu_button_row_style" />
+                style="@style/menu_button_row_style"/>
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
@@ -88,6 +89,19 @@
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
+            <TextView
+                android:id="@+id/settings_about"
+                android:text="@string/settings_about"
+                android:drawableStart="@drawable/ic_info"
+                style="@style/menu_button_row_style" />
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+            <Switch
+                android:visibility="gone"
+                android:id="@+id/settings_switch_distance_unit"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_distance_unit"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -243,6 +257,16 @@
                     android:id="@+id/settings_charge_plot_switch_visible_gages"
                     style="@style/menu_standard_switch_style"
                     android:text="@string/settings_visible_gages"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+
+                <TextView
+                    android:layout_height="101dp"
+                    android:id="@+id/settings_save_charge_curve"
+                    android:drawableStart="@drawable/ic_save"
+                    style="@style/menu_standard_row_label"
+                    android:text="Manually save last charge curve"/>
 
                 <Switch
                     android:visibility="gone"

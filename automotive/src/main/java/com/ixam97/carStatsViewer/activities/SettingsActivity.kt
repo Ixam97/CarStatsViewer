@@ -3,7 +3,6 @@ package com.ixam97.carStatsViewer.activities
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import com.ixam97.carStatsViewer.*
-import com.ixam97.carStatsViewer.objects.*
 import android.app.Activity
 import android.app.AlertDialog
 import android.car.VehicleGear
@@ -17,14 +16,15 @@ import android.content.IntentFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.view.View
-import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
+import android.widget.Toast
+import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.dataManager.ChargeCurve
 import com.ixam97.carStatsViewer.plot.enums.*
-import com.ixam97.carStatsViewer.plot.objects.PlotLine
-import com.ixam97.carStatsViewer.plot.objects.PlotLineConfiguration
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
-import com.ixam97.carStatsViewer.plot.objects.PlotRange
+import com.ixam97.carStatsViewer.dataManager.DataCollector
+import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
+import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlin.system.exitProcess
 
@@ -36,7 +36,7 @@ class SettingsActivity : Activity() {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                getString(R.string.gear_update_broadcast) -> setEnableByGear(DataHolder.currentGear)
+                getString(R.string.gear_update_broadcast) -> setEnableByGear(DataCollector.CurrentTripDataManager.currentGear)
             }
         }
     }
@@ -44,7 +44,7 @@ class SettingsActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        InAppLogger.log("SettingsActivity.onCreate")
+        // InAppLogger.log("SettingsActivity.onCreate")
 
         context = applicationContext
         appPreferences = AppPreferences(context)
@@ -57,13 +57,13 @@ class SettingsActivity : Activity() {
 
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.gear_update_broadcast)))
 
-        setEnableByGear(DataHolder.currentGear)
+        setEnableByGear(DataCollector.CurrentTripDataManager.currentGear)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(broadcastReceiver)
-        InAppLogger.log("SettingsActivity.onDestroy")
+        // InAppLogger.log("SettingsActivity.onDestroy")
     }
 
     private fun setEnableByGear(gear: Int) {
@@ -81,6 +81,7 @@ class SettingsActivity : Activity() {
     private fun setupSettingsMaster() {
         settings_switch_notifications.isChecked = appPreferences.notifications
         settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
+        settings_switch_distance_unit.isChecked = appPreferences.distanceUnit == DistanceUnitEnum.MILES
 
         settings_version_text.text = "Car Stats Viewer Version %s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 
@@ -115,6 +116,15 @@ class SettingsActivity : Activity() {
         settings_switch_consumption_unit.setOnClickListener {
             appPreferences.consumptionUnit = settings_switch_consumption_unit.isChecked
         }
+
+        if (emulatorMode) settings_switch_distance_unit.visibility = View.VISIBLE
+        settings_switch_distance_unit.setOnClickListener {
+            appPreferences.distanceUnit = when (settings_switch_distance_unit.isChecked) {
+                true -> DistanceUnitEnum.MILES
+                else -> DistanceUnitEnum.KM
+            }
+            PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
+        }
         
         settings_consumption_plot.setOnClickListener {
             gotoConsumptionPlot()
@@ -126,6 +136,10 @@ class SettingsActivity : Activity() {
 
         settings_version_text.setOnClickListener {
             startActivity(Intent(this, LogActivity::class.java))
+        }
+
+        settings_about.setOnClickListener {
+            startActivity(Intent(this, AboutActivity::class.java))
         }
     }
 
@@ -142,7 +156,7 @@ class SettingsActivity : Activity() {
 
         settings_consumption_plot_switch_secondary_color.setOnClickListener {
             appPreferences.consumptionPlotSecondaryColor = settings_consumption_plot_switch_secondary_color.isChecked
-            DataHolder.consumptionPlotLine.secondaryPlotPaint = when {
+            DataCollector.CurrentTripDataManager.consumptionPlotLine.secondaryPlotPaint = when {
                 appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
                 else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
             }
@@ -165,6 +179,7 @@ class SettingsActivity : Activity() {
 
         settings_charge_plot_switch_secondary_color.isChecked = appPreferences.chargePlotSecondaryColor
         settings_charge_plot_switch_state_of_charge_dimension.isChecked = appPreferences.chargePlotDimension == PlotDimension.STATE_OF_CHARGE
+        settings_charge_plot_switch_visible_gages.isChecked = appPreferences.chargePlotVisibleGages
 
         settings_charge_plot_button_back.setOnClickListener {
             gotoMaster(settings_charge_plot_layout)
@@ -176,7 +191,28 @@ class SettingsActivity : Activity() {
                 appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
                 else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
             }
-            DataHolder.chargePlotLine.secondaryPlotPaint = plotPaint
+            DataCollector.CurrentTripDataManager.chargePlotLine.secondaryPlotPaint = plotPaint
+        }
+
+        settings_charge_plot_switch_visible_gages.setOnClickListener {
+            appPreferences.chargePlotVisibleGages = settings_charge_plot_switch_visible_gages.isChecked
+        }
+
+        settings_save_charge_curve.setOnClickListener {
+            if (DataCollector.CurrentTripDataManager.chargePlotLine.getDataPoints(PlotDimension.TIME).isNotEmpty()) {
+                DataCollector.CurrentTripDataManager.chargeCurves.add(
+                    ChargeCurve(
+                        DataCollector.CurrentTripDataManager.chargePlotLine.getDataPoints(PlotDimension.TIME),
+                        DataCollector.CurrentTripDataManager.chargeTime,
+                        DataCollector.CurrentTripDataManager.chargedEnergy,
+                        DataCollector.CurrentTripDataManager.ambientTemperature
+                    )
+                )
+                sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+                Toast.makeText(this, "Saved charge curve", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "No charge curve to save", Toast.LENGTH_SHORT).show()
+            }
         }
 /*
         settings_charge_plot_switch_state_of_charge_dimension.setOnClickListener {
@@ -226,8 +262,6 @@ class SettingsActivity : Activity() {
                     }
                 })
         }
-
-        InAppLogger.log(resources.getInteger(android.R.integer.config_shortAnimTime).toString())
     }
 
     private fun setMenuRowIsEnabled(enabled: Boolean, view: View) {

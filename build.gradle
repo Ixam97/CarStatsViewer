@@ -21,11 +21,12 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-
+        gradlePluginPortal()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:8.9.4'
     }
 }
 
@@ -33,7 +34,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-
     }
 }
 

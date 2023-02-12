@@ -2,20 +2,24 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ixam97.carStatsViewer">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.car.permission.CAR_SPEED" />
     <uses-permission android:name="android.car.permission.CAR_ENERGY" />
     <uses-permission android:name="android.car.permission.CAR_POWERTRAIN" />
     <uses-permission android:name="android.car.permission.CAR_INFO" />
     <uses-permission android:name="android.car.permission.CAR_EXTERIOR_ENVIRONMENT" />
     <uses-permission android:name="android.car.permission.CAR_ENERGY_PORTS" />
+    <uses-permission android:name="android.car.permission.READ_CAR_DISPLAY_UNITS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROLS" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-    <!--<uses-feature
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!--<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>-->
+    <uses-feature
         android:name="android.hardware.type.automotive"
-        android:required="true"/>-->
+        android:required="true"/>
 
     <application
         android:allowBackup="true"
@@ -47,7 +51,14 @@
             android:exported="false">
             <meta-data android:name="distractionOptimized" android:value="true"/>
         </activity>
-        <service android:name=".services.DataCollector"/>
+        <activity
+            android:name=".activities.LibsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AboutActivity"
+            android:exported="false" />
+        <service android:name=".services.LocCollector"/>
+        <service android:name=".dataManager.DataCollector"/>
     </application>
 
 </manifest>

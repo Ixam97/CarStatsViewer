@@ -2,16 +2,16 @@
 ![Banner](/docs/banner.png)
 
 ## Features:
-- View instantaneous power and consumption
-- View details of the current trip
-- Visualizes consumption, speed and state of charge along the trip
-- Visualizes and saves charge curves during a trip
+ - View instantaneous power and consumption
+ - View details of the current trip
+ - Visualizes consumption, speed and state of charge along the trip
+ - Visualizes and saves charge curves during a trip
 
 ## Planned:
-- Estimate range based on the current trip's consumption
-- Save and export trip data for further analysis
-- More performance oriented real time drive stats
-
+ - Estimate range based on the current trip's consumption
+ - Save and export trip data for further analysis 
+ - More performance oriented real time drive stats
+ 
 ## Installing the app on a car
 Currently the app is not available in the public Play Store. This is due to strict requirements by Google what kind of apps are allowed to be installed on cars. As of now the App is only available via internal test tracks which are limited to 100 users each. Currently there are no free internal test slots in any of the existing forks.
 
@@ -26,7 +26,7 @@ Other than that, contributions to the app are always welcome. Be it in form of c
 If you have any bugs to report or want du suggest a new feature, please have a look at the GitHub issues. Don't forget to have a look at the existing issues to not create duplicates. Let me know if you support any of the existing feature request so I can adjust my priorities accordingly.
 
 ### Translations:
-If you are using the app and miss the translation into your language, feel free to create a translation yourself and contribute on the development of the app. The default strings used in the app can be found here:
+If you are using the app and miss the translation into your language, feel free to create a translation yourself and contribute on the development of the app. The default strings used in the app can be found here: 
 
 [English strings](https://github.com/Ixam97/CarStatsViewer/blob/active_development/automotive/src/main/res/values/strings.xml)
 
@@ -56,10 +56,10 @@ Discussion in the international Polestar forums: [Polestar Forum](https://www.po
 - Falsche Lokalisierung für Norwegisch behoben.
 
 ### 0.22.0 ()
-- Tripzusammenfassung für den aktuellen Trip hinzugefügt. (Um einen Trip-Reset durchzuführen kann es erforderlich sein, die App neu zu installieren, da Änderungen im Manifest vorgnommen wurden)
-- Stabilitätsverbresserungen bei der Abfrage und Verarbeitung von Fahrzeugdaten
-- Schwedische Übersetzung hinzugefügt
-- Norwegische Übersetzung hinzugefügt
+ - Tripzusammenfassung für den aktuellen Trip hinzugefügt. (Um einen Trip-Reset durchzuführen kann es erforderlich sein, die App neu zu installieren, da Änderungen im Manifest vorgnommen wurden)
+ - Stabilitätsverbresserungen bei der Abfrage und Verarbeitung von Fahrzeugdaten
+ - Schwedische Übersetzung hinzugefügt
+ - Norwegische Übersetzung hinzugefügt
 
 ### 0.21.2
 - Zurücksetzen der Ladekurve beim erneuten Betreten des Fahrzeugs wurde behoben
