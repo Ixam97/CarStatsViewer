@@ -721,8 +721,12 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             drawMarkerLine(canvas, markerType, startX, -1)
             drawMarkerLine(canvas, markerType, endX, 1)
 
-            for (marker in markerGroup.value) {
-                markerTimes[marker.MarkerType] = (markerTimes[marker.MarkerType] ?: 0L) + ((marker.EndTime ?: marker.StartTime) - marker.StartTime)
+            for (markerDimensionGroup in markerGroup.value.groupBy { it.group(dimension) }) {
+                val markerDimensionType = markerDimensionGroup.value.minOfOrNull { it.MarkerType } ?: continue
+
+                for (marker in markerDimensionGroup.value) {
+                    markerTimes[markerDimensionType] = (markerTimes[markerDimensionType] ?: 0L) + ((marker.EndTime ?: marker.StartTime) - marker.StartTime)
+                }
             }
         }
 
