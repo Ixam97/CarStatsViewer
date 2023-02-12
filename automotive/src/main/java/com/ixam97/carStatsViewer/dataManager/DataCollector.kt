@@ -44,6 +44,8 @@ class DataCollector : Service() {
         private const val AUTO_RESET_TIME_HOURS = 5L
     }
 
+    private var lastSoC: Int = 0
+
     private var startupTimestamp: Long = 0L
 
     private var lastNotificationTimeMillis = 0L
@@ -268,7 +270,13 @@ class DataCollector : Service() {
     /** Handle incoming property changes by property ID */
     private fun handleCarPropertyListenerEvent(propertyId: Int, dataManager: DataManager) {
         when (propertyId) {
-            dataManager.BatteryLevel.propertyId         -> if (dataManager.currentIgnitionState < 3) InAppLogger.log("BatteryLevel while ignition off: ${dataManager.stateOfCharge}%")
+            dataManager.BatteryLevel.propertyId         -> {
+                if (dataManager.currentIgnitionState < 3 && dataManager == DataManagers.CURRENT_TRIP.dataManager) InAppLogger.log("BatteryLevel while ignition off: ${dataManager.stateOfCharge}%")
+                if (lastSoC != dataManager.stateOfCharge) {
+                    InAppLogger.log("Old SoC: $lastSoC, new SoC: ${dataManager.stateOfCharge} | ${dataManager.batteryLevel} / ${dataManager.maxBatteryLevel} = ${dataManager.batteryLevel/dataManager.maxBatteryLevel}")
+                    lastSoC = dataManager.stateOfCharge
+                }
+            }
             dataManager.CurrentPower.propertyId         -> powerUpdater(dataManager)
             dataManager.CurrentSpeed.propertyId         -> speedUpdater(dataManager)
             dataManager.CurrentIgnitionState.propertyId -> ignitionUpdater(dataManager)
@@ -331,10 +339,10 @@ class DataCollector : Service() {
             dataManager.traveledDistance += traveledDistanceDelta
             if (dataManager.currentSpeed.absoluteValue >= 1 && (dataManager.CurrentSpeed.lastValue as Float).absoluteValue < 1) {
                 // Drive started -> Distraction optimization
-                Log.i("Drive", "started")
+                InAppLogger.log("Drive started")
             } else if (dataManager.currentSpeed.absoluteValue < 1 && (dataManager.CurrentSpeed.lastValue as Float).absoluteValue > 1) {
                 // Drive ended
-                Log.i("Drive", "ended")
+                InAppLogger.log("Drive ended")
             }
 
             dataManager.consumptionPlotDistanceDelta += traveledDistanceDelta

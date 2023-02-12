@@ -40,7 +40,6 @@ class MainActivity : Activity() {
         private const val UI_UPDATE_INTERVAL = 1000L
         const val DISTANCE_TRIP_DIVIDER = 5_000L
         const val CONSUMPTION_DISTANCE_RESTRICTION = 10_000L
-        // lateinit var context: Context
         lateinit var appPreferences: AppPreferences
     }
 
@@ -154,9 +153,12 @@ class MainActivity : Activity() {
         context = applicationContext
 
         appPreferences = AppPreferences(context)
-        StringFormatters.appPreferences = appPreferences
-        StringFormatters.dateFormat = DateFormat.getDateFormat(context)
-        StringFormatters.timeFormat = DateFormat.getTimeFormat(context)
+        StringFormatters.initFormatter(
+            DateFormat.getDateFormat(context),
+            DateFormat.getTimeFormat(context),
+            appPreferences.consumptionUnit,
+            appPreferences.distanceUnit
+        )
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 

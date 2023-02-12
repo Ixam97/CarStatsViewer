@@ -1,14 +1,28 @@
 package com.ixam97.carStatsViewer.utils
 
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 object StringFormatters {
 
-    lateinit var appPreferences: AppPreferences
-    lateinit var dateFormat: java.text.DateFormat
-    lateinit var timeFormat: java.text.DateFormat
+    private lateinit var dateFormat: java.text.DateFormat
+    private lateinit var timeFormat: java.text.DateFormat
+    private var consumptionUnit: Boolean = false
+    private lateinit var distanceUnit : DistanceUnitEnum
+
+    fun initFormatter(
+        dateFormat: java.text.DateFormat,
+        timeFormat: java.text.DateFormat,
+        consumptionUnit: Boolean,
+        distanceUnit : DistanceUnitEnum
+    ) {
+        this.dateFormat = dateFormat
+        this.timeFormat = timeFormat
+        this.consumptionUnit = consumptionUnit
+        this.distanceUnit = distanceUnit
+    }
 
     /** Divides a Float by 1000 and rounds it up to one decimal point to be on par with board computer */
     private fun kiloRounder(number: Float): Float {
@@ -25,7 +39,7 @@ object StringFormatters {
     }
 
     fun getEnergyString(usedEnergy: Float): String {
-        if (!appPreferences.consumptionUnit) {
+        if (!consumptionUnit) {
             return "%.1f kWh".format(
                 Locale.ENGLISH,
                 kiloRounder(usedEnergy))
@@ -34,20 +48,20 @@ object StringFormatters {
     }
 
     fun getTraveledDistanceString(traveledDistance: Float): String {
-        return "%.1f %s".format(Locale.ENGLISH, kiloRounder(appPreferences.distanceUnit.toUnit(traveledDistance)), appPreferences.distanceUnit.unit())
+        return "%.1f %s".format(Locale.ENGLISH, kiloRounder(distanceUnit.toUnit(traveledDistance)), distanceUnit.unit())
     }
 
     fun getAvgConsumptionString(usedEnergy: Float, traveledDistance: Float): String {
-        val avgConsumption = appPreferences.distanceUnit.asUnit(usedEnergy / (traveledDistance / 1000))
+        val avgConsumption = distanceUnit.asUnit(usedEnergy / (traveledDistance / 1000))
         val unitString = when {
-            appPreferences.consumptionUnit -> "Wh/%s".format(appPreferences.distanceUnit.unit())
-            else -> "kWh/100%s".format(appPreferences.distanceUnit.unit())
+            consumptionUnit -> "Wh/%s".format(distanceUnit.unit())
+            else -> "kWh/100%s".format(distanceUnit.unit())
         }
 
         if (traveledDistance <= 0) {
             return "-/- $unitString"
         }
-        if (!appPreferences.consumptionUnit) {
+        if (!consumptionUnit) {
             return "%.1f %s".format(
                 Locale.ENGLISH,
                 (avgConsumption) / 10,
