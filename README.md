@@ -62,67 +62,67 @@ Discussion in the international Polestar forums: [Polestar Forum](https://www.po
  - Norwegische Übersetzung hinzugefügt
 
 ### 0.21.2
- - Zurücksetzen der Ladekurve beim erneuten Betreten des Fahrzeugs wurde behoben
+- Zurücksetzen der Ladekurve beim erneuten Betreten des Fahrzeugs wurde behoben
 
 ### 0.21.1
- - Hardcoded Text durch variablen String ersetzt
+- Hardcoded Text durch variablen String ersetzt
 
 ### 0.21.0 (25.01.2023)
- - Optische Differenzierung der Ladekurvenansicht
- - Mehrere Ladekurven in einem Trip gespeichert und können in den Einstellungen betrachtet werden
- - Die Verbrauchsanzeige in der Hauptansicht ist fest auf 10 km eingestellt
- - Die Verbrauchsanzeige in den Einstellungen kann mit einer Zoom-Geste vergrößert und seitlich verschoben werden.
- - Die Verbrauchsanzeige in den Einstellungen beinhaltet nun Markierungen fürs Parken und Laden
- - Grundstein für Tripzusammenfassung gelegt (Work in Progrss, momentan nur zum Zurücksetzen des Trips)
- - Niederländische Übersetzung hinzugefügt
+- Optische Differenzierung der Ladekurvenansicht
+- Mehrere Ladekurven in einem Trip gespeichert und können in den Einstellungen betrachtet werden
+- Die Verbrauchsanzeige in der Hauptansicht ist fest auf 10 km eingestellt
+- Die Verbrauchsanzeige in den Einstellungen kann mit einer Zoom-Geste vergrößert und seitlich verschoben werden.
+- Die Verbrauchsanzeige in den Einstellungen beinhaltet nun Markierungen fürs Parken und Laden
+- Grundstein für Tripzusammenfassung gelegt (Work in Progrss, momentan nur zum Zurücksetzen des Trips)
+- Niederländische Übersetzung hinzugefügt
 
 ### 0.20.0 (18.01.2023)
- - Wake Lock wieder entfernt.
- - Debug Logging für Zündungsstatus wieder entfernt
- - Der Energiezähler erfasst nur noch Werte, wenn das Fahrzug nicht in Fahrstufe P ist
- - Trips werden auch nach vollständigem Beenden der App fortgesetzt
- - Es kann nun durch den Verbrauchsplot gescrollt werden
+- Wake Lock wieder entfernt.
+- Debug Logging für Zündungsstatus wieder entfernt
+- Der Energiezähler erfasst nur noch Werte, wenn das Fahrzug nicht in Fahrstufe P ist
+- Trips werden auch nach vollständigem Beenden der App fortgesetzt
+- Es kann nun durch den Verbrauchsplot gescrollt werden
 
 ### 0.19.2 (16.01.2023)
- - Wake Lock hinzugefügt
+- Wake Lock hinzugefügt
 
 ### 0.19.1 (16.01.2023)
- - Zusätzliches Debug-Logging für den Zündungsstatus
- - Zeiterfassung korrigiert
- - Untermenüs werden während der Fahrt deaktiviert
+- Zusätzliches Debug-Logging für den Zündungsstatus
+- Zeiterfassung korrigiert
+- Untermenüs werden während der Fahrt deaktiviert
 
 ### 0.19.0 (15.01.2023)
- - Die Ladekurve wird solange angezeigt, bis sie manuell geschlossen wird, nachdem das Ladekabel abgezogen wurde
- - Die Lade- und Verbrauchskurven sind in ihrem jemweiligen Einstellungsmenü sichtbar
- - Die Ladekurve ist nun (versuchsweise) blau eingefärbt 
+- Die Ladekurve wird solange angezeigt, bis sie manuell geschlossen wird, nachdem das Ladekabel abgezogen wurde
+- Die Lade- und Verbrauchskurven sind in ihrem jemweiligen Einstellungsmenü sichtbar
+- Die Ladekurve ist nun (versuchsweise) blau eingefärbt
 
 ### 0.18.2 (14.01.2023)
- - UI-Updates optimiert
+- UI-Updates optimiert
 
 ### 0.18.1 (13.01.2023)
- - Aktualisierungsrate der Hauptansicht reduziert
+- Aktualisierungsrate der Hauptansicht reduziert
 
 ### 0.18.0
- - Neues Icon
- - Optische verbesserungen am Diagramm
- - Neue Diagrammoptionen (vorerst beschränkt auf das Verbrauchsdiagramm)
- - Allgemeine Stabilitätsverbresserung, insbesondere bei der Rundung und Zeiterfassung
+- Neues Icon
+- Optische verbesserungen am Diagramm
+- Neue Diagrammoptionen (vorerst beschränkt auf das Verbrauchsdiagramm)
+- Allgemeine Stabilitätsverbresserung, insbesondere bei der Rundung und Zeiterfassung
 
 ### 0.17 (11.01.2023)
- - Diagrammachsen aufgehellt
- - Versuchsweise hellgrauer statt grüner Graph für die Geschwindigkeit
- - Min- und Max-Grenzen für die Diagrammskalierung (WIP)
- - Farbe und Grenzwerte für Balkenanzeigen angepasst
- - Fahrzeit sollte nun korrekt funktionieren
+- Diagrammachsen aufgehellt
+- Versuchsweise hellgrauer statt grüner Graph für die Geschwindigkeit
+- Min- und Max-Grenzen für die Diagrammskalierung (WIP)
+- Farbe und Grenzwerte für Balkenanzeigen angepasst
+- Fahrzeit sollte nun korrekt funktionieren
 
 ### 0.16 (10.01.2023)
- - Labels der Diagramme hervorgehoben
- - 50km bei Diagrammen durch "Trip" ersetzt (Zeigt die gesamte Strecke seit dem letzten Reset in 10km-Schritten an)
- - Zwischen den Distanzen kann durch ein Tippen auf das Diagramm durchgeschaltet werden
- - Kleinere UI-Anpassungen
- - Fahrzeit hinzugefügt
- - Mittelwertberechnung in den Diagrammen korrigiert
- - Allgemeine Stabilitätsverbessrungen
+- Labels der Diagramme hervorgehoben
+- 50km bei Diagrammen durch "Trip" ersetzt (Zeigt die gesamte Strecke seit dem letzten Reset in 10km-Schritten an)
+- Zwischen den Distanzen kann durch ein Tippen auf das Diagramm durchgeschaltet werden
+- Kleinere UI-Anpassungen
+- Fahrzeit hinzugefügt
+- Mittelwertberechnung in den Diagrammen korrigiert
+- Allgemeine Stabilitätsverbessrungen
 
 ### 0.15 (08.01.2023)
 - Ladekurve hinzugefügt.
