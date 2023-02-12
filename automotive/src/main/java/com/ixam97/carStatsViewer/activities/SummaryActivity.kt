@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.car.VehicleGear
 import android.content.*
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
@@ -12,13 +13,10 @@ import android.view.View
 import android.widget.SeekBar
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.dataManager.TripData
+import com.ixam97.carStatsViewer.dataManager.*
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.*
 import com.ixam97.carStatsViewer.plot.objects.*
-import com.ixam97.carStatsViewer.dataManager.DataCollector
-import com.ixam97.carStatsViewer.dataManager.DataManager
-import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -208,7 +206,12 @@ class SummaryActivity: Activity() {
             summary_charge_plot_button_prev.isEnabled = true
             summary_charge_plot_button_prev.colorFilter = enabledTint
 
-            summary_charged_energy_value_text.text = StringFormatters.getEnergyString(tripData.chargeCurves.last().chargedEnergy)
+            if (tripData.chargeCurves.last().chargePlotLine.filter { it.Marker == PlotLineMarkerType.END_SESSION }.size > 1)
+            // Charge has been interrupted
+                summary_charged_energy_warning_text.visibility = View.VISIBLE
+            else summary_charged_energy_warning_text.visibility = View.GONE
+
+            summary_charged_energy_value_text.text = chargedEnergy(tripData.chargeCurves.last())
             summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.chargeCurves.last().chargeTime)
             summary_charge_ambient_temp.text = StringFormatters.getTemperatureString(tripData.chargeCurves.last().ambientTemperature)
             summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves.last().chargeTime) / 5) + 1) * 5 + 1
@@ -291,8 +294,12 @@ class SummaryActivity: Activity() {
                 }
             }
         }
+        if (tripData.chargeCurves[progress].chargePlotLine.filter { it.Marker == PlotLineMarkerType.END_SESSION }.size > 1)
+            // Charge has been interrupted
+            summary_charged_energy_warning_text.visibility = View.VISIBLE
+        else summary_charged_energy_warning_text.visibility = View.GONE
 
-        summary_charged_energy_value_text.text = StringFormatters.getEnergyString(tripData.chargeCurves[progress].chargedEnergy)
+        summary_charged_energy_value_text.text = chargedEnergy(tripData.chargeCurves[progress])
         summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.chargeCurves[progress].chargeTime)
         summary_charge_ambient_temp.text = StringFormatters.getTemperatureString(tripData.chargeCurves[progress].ambientTemperature)
 
@@ -354,5 +361,12 @@ class SummaryActivity: Activity() {
         summary_parked_warning.visibility =
             if (DataCollector.CurrentTripDataManager.currentGear != VehicleGear.GEAR_PARK) View.VISIBLE
             else View.GONE
+    }
+
+    private fun chargedEnergy(chargeCurve: ChargeCurve): String {
+        return "%s (%d%%)".format(
+            StringFormatters.getEnergyString(chargeCurve.chargedEnergy),
+            (chargeCurve.chargePlotLine.last().StateOfCharge - chargeCurve.chargePlotLine.first().StateOfCharge).toInt()
+        )
     }
 }

@@ -7,7 +7,7 @@ import java.util.*
 import kotlin.math.roundToInt
 
 class PlotLineItem (
-    val Value: Float,
+    var Value: Float,
     val EpochTime: Long,
     @Exclude
     val NanoTime: Long?,
