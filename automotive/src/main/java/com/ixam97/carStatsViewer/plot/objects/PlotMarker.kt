@@ -89,17 +89,21 @@ class PlotMarker (
     val StartDistance: Float,
     var EndDistance: Float? = null
 ) {
-    fun group(dimension: PlotDimension, dimensionSmoothing: Float?): Float? {
+    fun group(dimension: PlotDimension, dimensionSmoothing: Float? = null): Any? {
         val value = when(dimension) {
             PlotDimension.DISTANCE -> StartDistance
-            PlotDimension.TIME -> StartTime.toFloat()
+            PlotDimension.TIME -> StartTime
             else -> null
         } ?: return null
 
         return when (dimensionSmoothing) {
             null -> value
             0f -> value
-            else -> (value / dimensionSmoothing).roundToInt().toFloat()
+            else -> when(dimension) {
+                PlotDimension.DISTANCE -> (value as Float / dimensionSmoothing).roundToInt()
+                PlotDimension.TIME ->  (value as Long / dimensionSmoothing).roundToInt()
+                else -> value
+            }
         }
     }
 
