@@ -1,6 +1,7 @@
 package com.ixam97.carStatsViewer.activities
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -39,5 +40,33 @@ class AboutActivity : Activity() {
         }
 
         about_version_text.text = "%s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
+
+        var contributors = ""
+        val contributorsArray = resources.getStringArray(R.array.contributors)
+        for ((index, contributor) in contributorsArray.withIndex()) {
+            contributors += contributor
+            if (index < contributorsArray.size -1) contributors += "\n"
+        }
+        about_contributors_text.text = contributors
+
+        about_supporters.setOnClickListener {
+            val supportersDialog = AlertDialog.Builder(this).apply {
+                setPositiveButton(getString(R.string.dialog_close)) { dialog, _ ->
+                    dialog.cancel()
+                }
+                setTitle(getString(R.string.about_thank_you))
+                val supportersArray = resources.getStringArray(R.array.supporters)
+                var supporters = getString(R.string.about_supporters_message)
+                for ((index, supporter) in supportersArray.withIndex()) {
+                    supporters += supporter
+                    if (index < supportersArray.size - 1) supporters += ", "
+                }
+                setMessage(supporters)
+                setCancelable(true)
+                create()
+            }
+            supportersDialog.show()
+        }
+
     }
 }

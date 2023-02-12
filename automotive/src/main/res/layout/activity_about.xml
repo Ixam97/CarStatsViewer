@@ -112,10 +112,16 @@
                 style="@style/menu_row_top_text"
                 android:text="@string/about_contributors"/>
             <TextView
+                android:id="@+id/about_contributors_text"
                 android:layout_marginStart="30dp"
                 android:textSize="30sp"
-                android:text="@string/contributors"
                 style="@style/menu_row_content_text"/>
+            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/about_supporters"
+                style="@style/menu_button_row_style"
+                android:text="@string/about_supporters"/>
             <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
 
             <TextView

@@ -44,6 +44,7 @@
     <string name="summary_charged_energy">Geladene Energie</string>
     <string name="summary_charge_time">Ladezeit</string>
     <string name="summary_charge_ambient_temp">Außentemperatur</string>
+    <string name="summary_interruption_warning">Aufzeichnung der Ladekurve unterbrochen. Dieser Wert ist vermutlich nicht korrekt.</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
@@ -77,10 +78,14 @@
     <string name="about_polestar_forum_description">Diskussion über Car Stats Viewer im internationalen Forum.</string>
     <string name="about_polestar_fans_description">Diskussion über Car Stats Viewer im deutschen Forum.</string>
     <string name="about_third_party_licenses">Lizenzen</string>
-    
+    <string name="about_supporters">Unterstützer</string>
+    <string name="about_thank_you">Vielen Dank!</string>
+    <string name="about_supporters_message">Vielen Dank an alle Unterstützer von Car Stats Viewer!\n\n</string>
+
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">App beenden?</string>
     <string name="quit_dialog_message">Log wird in die Zwischenablage kopiert.</string>
+    <string name="dialog_close">Schließen</string>
     <string name="dialog_reset_title">Tripdaten zurücksetzen?</string>
     <string name="dialog_reset_message">Die aktuellen Tripdaten werden zurückgesetzt. Soll der Trip gespeichert werden?</string>
     <string name="dialog_reset_do_save">Speichern</string>
