@@ -1,18 +1,17 @@
-
 ![Banner](/docs/banner.png)
 
 ## Features:
- - View instantaneous power and consumption
- - View details of the current trip
- - Visualizes consumption, speed and state of charge along the trip
- - Visualizes and saves charge curves during a trip
+- View instantaneous power and consumption
+- View details of the current trip
+- Visualizes consumption, speed and state of charge along the trip
+- Visualizes and saves charge curves during a trip
 
 ## Planned:
- - Estimate range based on the current trip's consumption
- - Save and export trip data for further analysis 
- - More performance oriented real time drive stats
- 
-## Installing the app on a car
+- Estimate range based on the current trip's consumption
+- Save and export trip data for further analysis
+- More performance oriented real time drive stats
+
+## Installing the app on a car:
 Currently the app is not available in the public Play Store. This is due to strict requirements by Google what kind of apps are allowed to be installed on cars. As of now the App is only available via internal test tracks which are limited to 100 users each. Currently there are no free internal test slots in any of the existing forks.
 
 Once the app has reached a more finished state I will try to reach out to Polestar directly to potentially make it available through them. Just like ABRP or the Vivaldi browser which also do not comply with Google's restrictions.
@@ -20,17 +19,48 @@ Once the app has reached a more finished state I will try to reach out to Polest
 ## Support the development of the app:
 Any form of support and feedback is very welcome! If you like the app and want to buy me a beer, feel free (but never obliged! This is a hobby for me) to use this link: https://paypal.me/Ixam
 
+<b>Many thanks to everyone who has supported the development of Car Stats Viewer!</b>
+<details>
+<summary><h3>Supporters</h3></summary>
+
+ * Ahti Hinnov </br>
+ * Robin Hellström
+
+</details>
+
 Other than that, contributions to the app are always welcome. Be it in form of code contributions, constructive feedback, bug reports or translations.
 
 ### Bug reports and feature requests:
 If you have any bugs to report or want du suggest a new feature, please have a look at the GitHub issues. Don't forget to have a look at the existing issues to not create duplicates. Let me know if you support any of the existing feature request so I can adjust my priorities accordingly.
 
 ### Translations:
-If you are using the app and miss the translation into your language, feel free to create a translation yourself and contribute on the development of the app. The default strings used in the app can be found here: 
+If you are using the app and miss the translation into your language, feel free to create a translation yourself and contribute on the development of the app. The default strings used in the app can be found here:
 
 [English strings](https://github.com/Ixam97/CarStatsViewer/blob/active_development/automotive/src/main/res/values/strings.xml)
 
-Values containing `translatable="false"` shall not be translated.
+Values containing `translatable="false"` should not be translated.
+
+Currently the following languages are already available:
+ - :gb: English
+ - :de: German
+ - :netherlands: Dutch
+ - :sweden: Swedish
+ - :norway: Norwegian
+
+### Rules for contributing code:
+<details>
+
+<summary>Please read before contributing and creating Pull Requests!</summary>
+
+
+- If you want to contribute code you are very welcome to. When creating a Pull Request, make sure to use [active_development](https://github.com/Ixam97/CarStatsViewer/tree/active_development). With the exception of hotfixes I will not merge any PRs into master since that branch is used by other forks to build the app bundle for the Play Store.
+
+- Also describe what you want to archive with your code contribution. Uncommented PRs with no context on what they do are hard to understand and review. To make it easyer for me to review and test your contribution make sure to [allow edits from maintainers](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork). </br>
+Please also be aware that I will not just include everything. It has to fit into my goals I want to archive with this app. I may just say "I don't feel it" (yes, I konw, this joke is getting old 😅). It would be best to open an issue beforehand, describing what you want to see in the app and offer your help before starting to code. This way it is possible to exchange ideas before spending hours in coding.
+
+- If you just want to contribute a translation and dont want to setup a complete development environment or tinker with GitHub you can just download the strings file linked above. Open it in notepad (change the extension to .txt if neccessary) and start translating. When you are done you can just send me the edited file via [E-Mail](mailto:ixam97@ixam97.de) and I will include it with the next update.
+
+</details>
 
 ## Contributors:
 - Dario Bosshard (Consumption and charge curve diagrams)
@@ -40,7 +70,7 @@ Values containing `translatable="false"` shall not be translated.
 - FreshDave29
 - rdu
 
-## Links
+## Links:
 
 Original impulse cam from here: [CarGearViewerKotlin](https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerKotlin)
 
@@ -56,10 +86,10 @@ Discussion in the international Polestar forums: [Polestar Forum](https://www.po
 - Falsche Lokalisierung für Norwegisch behoben.
 
 ### 0.22.0 ()
- - Tripzusammenfassung für den aktuellen Trip hinzugefügt. (Um einen Trip-Reset durchzuführen kann es erforderlich sein, die App neu zu installieren, da Änderungen im Manifest vorgnommen wurden)
- - Stabilitätsverbresserungen bei der Abfrage und Verarbeitung von Fahrzeugdaten
- - Schwedische Übersetzung hinzugefügt
- - Norwegische Übersetzung hinzugefügt
+- Tripzusammenfassung für den aktuellen Trip hinzugefügt. (Um einen Trip-Reset durchzuführen kann es erforderlich sein, die App neu zu installieren, da Änderungen im Manifest vorgnommen wurden)
+- Stabilitätsverbresserungen bei der Abfrage und Verarbeitung von Fahrzeugdaten
+- Schwedische Übersetzung hinzugefügt
+- Norwegische Übersetzung hinzugefügt
 
 ### 0.21.2
 - Zurücksetzen der Ladekurve beim erneuten Betreten des Fahrzeugs wurde behoben
