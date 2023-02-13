@@ -18,8 +18,10 @@
     <string name="main_button_reset_stats">Statistieken resetten</string>
     <string name="main_consumption">Verbruik over de laatste 3 km:</string>
     <string name="main_speed">Snelheid</string>
+    <string name="main_dialog_reset_title">Reset statistieken?</string>
+    <string name="main_dialog_reset_message">Alle bewaarde tripgegevens zullen naar nul worden gereset.</string>
     <string name="main_gage_speed">Snelheid</string>
-    <string name="main_gage_power">Power</string>
+    <string name="main_gage_power">Vermogen</string>
     <string name="main_gage_charging_power">Laadvermogen</string>
     <string name="main_gage_SoC">SoC (batterijpercentage)</string>
     <string name="main_gage_consumption">Momenteel verbruik</string>
@@ -28,6 +30,7 @@
     <string name="main_button_trip_summary">Samenvatting trip</string>
     <string name="main_button_hide_speed">Snelheid verbergen</string>
     <string name="main_button_show_speed">Snelheid tonen</string>
+    <string name="main_secondary_axis">Tweede as: %s</string>
 
     <!-- SummaryActivity -->
     <string name="summary_title">Samenvatting trip</string>
@@ -42,6 +45,8 @@
     <string name="summary_travel_time">Tijdsduur</string>
     <string name="summary_charged_energy">Geladen energie</string>
     <string name="summary_charge_time">Laadtijd</string>
+    <string name="summary_charge_ambient_temp">Omgevingstemperatuur</string>
+    <string name="summary_interruption_warning">De registratie van de laadsessie werd onderbroken. Deze waarde is waarschijnlijk incorrect.</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Instellingen</string>
@@ -49,22 +54,41 @@
     <string name="settings_button_quit">App afsluiten</string>
     <string name="settings_notifications">Meldingen</string>
     <string name="settings_consumption_unit">Wh/km als eenheid van verbruik</string>
+    <string name="settings_distance_unit">Mijl als afstandsmaat</string>
     <string name="settings_debug">Debug-informatie</string>
     <string name="settings_experimental_layout">Toon experimentele layout</string>
     <string name="settings_consumption_plot">  Verbruikscurve</string>
     <string name="settings_charge_plot">  Laadcurve</string>
-    <string name="settings_consumption_plot_single_motor">Single Motor model</string>
-    <string name="settings_plot_secondary_color">Grijs als tweede tekenkleur</string>
+    <string name="settings_about">  Over Car Stats Viewer</string>
+    <string name="settings_plot_secondary_color">Grijs als tweede grafiekkleur</string>
     <string name="settings_plot_state_of_charge_dimension">Experimental State Of Charge Axis</string>
-    <string name="settings_visible_gages">Toon stroommeters</string>
+    <string name="settings_consumption_plot_single_motor">Single Motor model</string>
+    <string name="settings_visible_gages">Toon verbruiksmeters</string>
     <string name="settings_consumption_plot_speed">Toon snelheidscurve</string>
     <string name="settings_sub_title_settings">Instellingen:</string>
-    <string name="settings_sub_title_current_cons_plot">Actuele verbruikscurve:</string>
-    <string name="settings_sub_title_last_charge_plot">Laatste laadcurven:</string>
+    <string name="settings_sub_title_current_cons_plot">Actuele verbruiksgrafiek:</string>
+    <string name="settings_sub_title_last_charge_plot">Laatste laadgrafieken:</string>
+
+    <!-- AboutActivity -->
+    <string name="about_title">Over Car Stats Viewer</string>
+    <string name="about_section_about">Over Car Stats Viewer:</string>
+    <string name="about_support">Steun de ontwikkeling</string>
+    <string name="about_support_description">Bekijk de GitHub-repository om te weten te komen hoe je kan bijdragen aan de ontwikkeling van de app.</string>
+    <string name="about_contributors">Bijdragers</string>
+    <string name="about_section_feedback">Feedback:</string>
+    <string name="about_section_misc">Allerlei:</string>
+    <string name="about_github_issues_description">Dit is de beste plaats voor bugrapporten en vragen voor nieuwe functionaliteit. Lees aub eerst de bestaande vragen voordat je nieuwe vragen toevoegt.</string>
+    <string name="about_polestar_forum_description">Discussie over Car Stats Viewer in de internationale forums.</string>
+    <string name="about_polestar_fans_description">Discussie over Car Stats Viewer in de Duitstalige forums.</string>
+    <string name="about_third_party_licenses">Licenties</string>
+    <string name="about_supporters">Supporters</string>
+    <string name="about_thank_you">Dank u!</string>
+    <string name="about_supporters_message">Veel dank aan iedereen die bijgedragen heeft aan de ontwikkeling van Car Stats Viewer!\n\n</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">App afsluiten?</string>
     <string name="quit_dialog_message">Log wordt gekopieerd naar het klembord.</string>
+    <string name="dialog_close">Sluiten</string>
     <string name="dialog_reset_title">Tripgegevens resetten?</string>
     <string name="dialog_reset_message">De huidige tripgegevens worden gereset. Moet de trip opgeslagen worden?</string>
     <string name="dialog_reset_do_save">Opslaan</string>
