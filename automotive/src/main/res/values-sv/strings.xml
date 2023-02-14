@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
+
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Behörigheter krävs för användning</string>
     <string name="permissions_dialog_text">Denna app kräver behörigheter för att kunna användas. Utan de nödvändiga behörigheterna kan appen inte läsa någon data från bilen.</string>
@@ -29,6 +30,7 @@
     <string name="main_button_trip_summary">Reseöversikt</string>
     <string name="main_button_hide_speed">Dölj hastighet</string>
     <string name="main_button_show_speed">Visa hastighet</string>
+    <string name="main_secondary_axis">Sekundär axel: %s</string>
 
     <!-- SummaryActivity -->
     <string name="summary_title">Reseöversikt</string>
@@ -43,6 +45,8 @@
     <string name="summary_travel_time">Restid</string>
     <string name="summary_charged_energy">Laddad energi</string>
     <string name="summary_charge_time">Laddtid</string>
+    <string name="summary_charge_ambient_temp">Utomhustemperatur</string>
+    <string name="summary_interruption_warning">Inspelning av laddningssession har avbrutits. Detta värde är förmodligen felaktigt.</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Inställningar</string>
@@ -50,10 +54,12 @@
     <string name="settings_button_quit">Avsluta appen</string>
     <string name="settings_notifications">Aviseringar</string>
     <string name="settings_consumption_unit">Wh/km som förbrukningsenhet</string>
+    <string name="settings_distance_unit">Miles som distansenhet</string>
     <string name="settings_debug">Felsökningsinformation</string>
     <string name="settings_experimental_layout">Visa experimentell layout</string>
     <string name="settings_consumption_plot"> Förbrukningsvy</string>
     <string name="settings_charge_plot"> Laddningsvy</string>
+    <string name="settings_about">  Om Car Stats Viewer</string>
     <string name="settings_plot_secondary_color">Grå som sekundär plotfärg</string>
     <string name="settings_plot_state_of_charge_dimension">Experimentell Laddnivåstrend</string>
     <string name="settings_consumption_plot_single_motor">Single motor modell</string>
@@ -63,9 +69,26 @@
     <string name="settings_sub_title_current_cons_plot">Plott för nuvarande förbrukning:</string>
     <string name="settings_sub_title_last_charge_plot">Senaste laddningskurvor:</string>
 
-    <!-- Avsluta dialogrutan -->
+    <!-- AboutActivity -->
+    <string name="about_title">Om Car Stats Viewer</string>
+    <string name="about_section_about">Om Car Stats Viewer:</string>
+    <string name="about_support">Stöd utvecklingen</string>
+    <string name="about_support_description">Besök GitHub för att lära dig mer om hur du stödjer utvecklingen av appen.</string>
+    <string name="about_contributors">Medverkande</string>
+    <string name="about_section_feedback">Återkoppling:</string>
+    <string name="about_section_misc">Diverse:</string>
+    <string name="about_github_issues_description">Detta är det bästa stället för felrapporter och funktionsförfrågningar. Läs de befintliga rapporterna innan du öppnar ett nytt.</string>
+    <string name="about_polestar_forum_description">Diskussion om Car Stats Viewer in internationalla forum.</string>
+    <string name="about_polestar_fans_description">Diskussion om Car Stats Viewer in tyska forumen.</string>
+    <string name="about_third_party_licenses">Licenser</string>
+    <string name="about_supporters">Supporters</string>
+    <string name="about_thank_you">Tack!</string>
+    <string name="about_supporters_message">Tack till alla alla som stödjer utvecklingen av Car Stats Viewer!\n\n</string>
+
+    <!-- Quit Dialog -->
     <string name="quit_dialog_title">Avsluta appen?</string>
     <string name="quit_dialog_message">Logg kommer att kopieras till urklipp.</string>
+    <string name="dialog_close">Stäng</string>
     <string name="dialog_reset_title">Återställ resedata?</string>
     <string name="dialog_reset_message">Nuvarande resedata kommer återställas till noll. Vill du spara resan?</string>
     <string name="dialog_reset_do_save">Spara</string>
