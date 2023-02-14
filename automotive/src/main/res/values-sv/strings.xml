@@ -78,8 +78,8 @@
     <string name="about_section_feedback">Återkoppling:</string>
     <string name="about_section_misc">Diverse:</string>
     <string name="about_github_issues_description">Detta är det bästa stället för felrapporter och funktionsförfrågningar. Läs de befintliga rapporterna innan du öppnar ett nytt.</string>
-    <string name="about_polestar_forum_description">Diskussion om Car Stats Viewer in internationalla forum.</string>
-    <string name="about_polestar_fans_description">Diskussion om Car Stats Viewer in tyska forumen.</string>
+    <string name="about_polestar_forum_description">Diskussion om Car Stats Viewer i internationalla forum.</string>
+    <string name="about_polestar_fans_description">Diskussion om Car Stats Viewer i tyska forum.</string>
     <string name="about_third_party_licenses">Licenser</string>
     <string name="about_supporters">Supporters</string>
     <string name="about_thank_you">Tack!</string>
