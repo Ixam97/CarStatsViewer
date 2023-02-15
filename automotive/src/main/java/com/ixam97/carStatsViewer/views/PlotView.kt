@@ -19,6 +19,7 @@ import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.*
 import com.ixam97.carStatsViewer.plot.objects.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
@@ -106,7 +107,27 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         }
 
     private var dimensionHighlightAt : Float? = null
-    private var dimensionHighlightValue : HashMap<PlotLine, Float?> = HashMap()
+        set(value) {
+            val coerce = value
+                ?.coerceAtLeast(xMargin.toFloat())
+                ?.coerceAtMost((width - xMargin).toFloat())
+
+            val diff = coerce != field
+            field = coerce
+            if (diff) {
+                dimensionHighlightAtPercentage = when (coerce) {
+                    null -> null
+                    else -> (1f / (width.toFloat() - 2 * xMargin) * (coerce - xMargin))
+                        .coerceAtLeast(0f)
+                        .coerceAtMost(1f)
+                }
+                invalidate()
+            }
+        }
+
+    private var dimensionHighlightAtPercentage : Float? = null
+
+    private var dimensionHighlightValue : HashMap<PlotLine, HashMap<PlotSecondaryDimension?, Float?>> = HashMap()
 
     var visibleMarkerTypes: HashSet<PlotMarkerType> = HashSet()
 
@@ -127,6 +148,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     private lateinit var borderLinePaint: Paint
     private lateinit var baseLinePaint: Paint
     private lateinit var backgroundPaint: Paint
+    private lateinit var dimensionHighlightLinePaint: Paint
 
     private var markerPaint = HashMap<PlotMarkerType, PlotMarkerPaint>()
     private var markerIcon = HashMap<PlotMarkerType, Bitmap?>()
@@ -160,6 +182,10 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         backgroundPaint = Paint(basePaint)
         backgroundPaint.color = Color.BLACK
         backgroundPaint.style = Paint.Style.FILL
+
+        dimensionHighlightLinePaint = Paint(borderLinePaint)
+        dimensionHighlightLinePaint.strokeWidth = 3f
+        dimensionHighlightLinePaint.pathEffect = DashPathEffect(floatArrayOf(5f, 10f), 0f)
 
         val plotColors = listOf(null, Color.CYAN, Color.BLUE, Color.RED)
 
@@ -325,6 +351,11 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+            if (dimensionHighlightAt != null) {
+                dimensionHighlightAt = e2.x
+                return true
+            }
+
             touchDimensionShiftDistance += distanceX * touchDistanceMultiplier
 
             dimensionShift = (touchDimensionShift + touchDimensionShiftDistance * touchDimensionShiftByPixel).toLong()
@@ -334,13 +365,18 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             return true
         }
 
-        override fun onLongPress(e: MotionEvent) {
-            dimensionHighlightAt = e.x
-            super.onLongPress(e)
+        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+            if (dimensionHighlightAt != null) {
+                dimensionHighlightAt = e.x
+            }
+            return super.onSingleTapConfirmed(e)
         }
 
         override fun onDoubleTap(e: MotionEvent): Boolean {
-            dimensionHighlightAt = null
+            dimensionHighlightAt = when (dimensionHighlightAt) {
+                null -> e.x
+                else -> null
+            }
             return super.onDoubleTap(e)
         }
     }
@@ -481,6 +517,11 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
         drawXLine(canvas, x(0f, 0f, 1f, maxX), maxY, borderLinePaint)
         drawXLine(canvas, x(1f, 0f, 1f, maxX), maxY, borderLinePaint)
+
+        val dimensionHighlight = dimensionHighlightAt
+        if (dimensionHighlight != null) {
+            drawXLine(canvas, dimensionHighlight, maxY, dimensionHighlightLinePaint)
+        }
     }
 
     private fun drawXLine(canvas: Canvas, cord: Float?, maxY: Float, paint: Paint?) {
@@ -511,8 +552,13 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         val maxY = height.toFloat()
 
         for (line in plotLines.filter { it.Visible }) {
+
+            if (!dimensionHighlightValue.containsKey(line)) dimensionHighlightValue[line] = HashMap()
+
             for (drawBackground in listOf(true, false)) {
                 for (secondaryDimension in arrayListOf(null, secondaryDimension).distinct().reversed()) {
+                    dimensionHighlightValue[line]?.set(secondaryDimension, null)
+
                     if (line.isEmpty()) continue
 
                     val configuration = when {
@@ -560,16 +606,14 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         val dataPointsUnrestricted = line.getDataPoints(dimension)
         val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPointsUnrestricted, dimension, smoothing, minDimension, maxDimension)
 
-        val highlightAt = dimensionHighlightAt
-
-        dimensionHighlightValue[line] = null
-
         val plotPointCollection = ArrayList<ArrayList<PlotPoint>>()
         for (collection in plotLineItemPointCollection) {
             if (collection.isEmpty()) continue
 
-            if (highlightAt != null && highlightAt in collection.minOf { it.x } .. collection.maxOf { it.x }) {
-                dimensionHighlightValue[line] = collection.minByOrNull { (it.x - highlightAt) }!!.y.bySecondaryDimension(secondaryDimension)
+            val dimensionHighlight = dimensionHighlightAtPercentage
+            if (dimensionHighlight != null && dimensionHighlight in collection.minOf { it.x } .. collection.maxOf { it.x }) {
+                val point = collection.minByOrNull { (it.x - dimensionHighlight).absoluteValue }
+                dimensionHighlightValue[line]?.set(secondaryDimension, point?.y?.bySecondaryDimension(secondaryDimension))
             }
 
             val plotPoints = ArrayList<PlotPoint>()
@@ -578,10 +622,12 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                 val plotPoint = when {
                     group.value.size <= 1 -> {
                         val point = group.value.first()
-                        val x = x(point.x, 0f, 1f, maxX) ?: continue
-                        val y = y(point.y.bySecondaryDimension(secondaryDimension), minValue, maxValue, maxY) ?: continue
 
-                        PlotPoint(x, y)
+                        val value = point.y.bySecondaryDimension(secondaryDimension)
+                        val x = x(point.x, 0f, 1f, maxX) ?: continue
+                        val y = y(value, minValue, maxValue, maxY) ?: continue
+
+                        PlotPoint(x, y, value)
                     }
                     else -> {
                         val xGroup = when (plotPoints.size) {
@@ -589,10 +635,11 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                             else -> group.value.maxOfOrNull { it.x }
                         } ?: continue
 
+                        val value = line.averageValue(group.value.map { it.y }, dimension, secondaryDimension)
                         val x = x(xGroup, 0f, 1f, maxX) ?: continue
-                        val y = y(line.averageValue(group.value.map { it.y }, dimension, secondaryDimension), minValue, maxValue, maxY) ?: continue
+                        val y = y(value, minValue, maxValue, maxY) ?: continue
 
-                        PlotPoint(x, y)
+                        PlotPoint(x, y, value)
                     }
                 }
 
@@ -842,8 +889,13 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
                     val minValue = line.minValue(dataPoints, secondaryDimension)!!
                     val maxValue = line.maxValue(dataPoints, secondaryDimension)!!
-                    val highlight = dimensionHighlightValue[line] ?: line.byHighlightMethod(dataPoints, dimension, secondaryDimension)
-                    val highlightMethod = when (dimensionHighlightValue[line]) {
+
+                    val highlight = when (dimensionHighlightAt) {
+                        null -> line.byHighlightMethod(dataPoints, dimension, secondaryDimension)
+                        else -> dimensionHighlightValue[line]?.get(secondaryDimension)
+                    }
+
+                    val highlightMethod = when (dimensionHighlightAt) {
                         null -> configuration.HighlightMethod
                         else -> PlotHighlightMethod.RAW
                     }
