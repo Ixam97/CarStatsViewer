@@ -14,7 +14,6 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.*
@@ -105,6 +104,9 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             field = value
             if (diff) invalidate()
         }
+
+    private var dimensionHighlightAt : Float? = null
+    private var dimensionHighlightValue : HashMap<PlotLine, Float?> = HashMap()
 
     var visibleMarkerTypes: HashSet<PlotMarkerType> = HashSet()
 
@@ -331,6 +333,16 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
             return true
         }
+
+        override fun onLongPress(e: MotionEvent) {
+            dimensionHighlightAt = e.x
+            super.onLongPress(e)
+        }
+
+        override fun onDoubleTap(e: MotionEvent): Boolean {
+            dimensionHighlightAt = null
+            return super.onDoubleTap(e)
+        }
     }
 
     private val mScrollDetector = GestureDetector(context, mGestureListener)
@@ -548,9 +560,17 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         val dataPointsUnrestricted = line.getDataPoints(dimension)
         val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPointsUnrestricted, dimension, smoothing, minDimension, maxDimension)
 
+        val highlightAt = dimensionHighlightAt
+
+        dimensionHighlightValue[line] = null
+
         val plotPointCollection = ArrayList<ArrayList<PlotPoint>>()
         for (collection in plotLineItemPointCollection) {
             if (collection.isEmpty()) continue
+
+            if (highlightAt != null && highlightAt in collection.minOf { it.x } .. collection.maxOf { it.x }) {
+                dimensionHighlightValue[line] = collection.minByOrNull { (it.x - highlightAt) }!!.y.bySecondaryDimension(secondaryDimension)
+            }
 
             val plotPoints = ArrayList<PlotPoint>()
 
@@ -822,7 +842,11 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
                     val minValue = line.minValue(dataPoints, secondaryDimension)!!
                     val maxValue = line.maxValue(dataPoints, secondaryDimension)!!
-                    val highlight = line.byHighlightMethod(dataPoints, dimension, secondaryDimension)
+                    val highlight = dimensionHighlightValue[line] ?: line.byHighlightMethod(dataPoints, dimension, secondaryDimension)
+                    val highlightMethod = when (dimensionHighlightValue[line]) {
+                        null -> configuration.HighlightMethod
+                        else -> PlotHighlightMethod.RAW
+                    }
 
                     val labelShiftY = (bounds.height() / 2).toFloat()
                     val valueShiftY = (maxValue - minValue) / (yLineCount - 1)
@@ -861,12 +885,13 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                         }
 
                         if (highlightCordY != null && highlightCordY in yMargin.toFloat() .. maxY - yMargin) {
-                            when (configuration.HighlightMethod) {
+                            when (highlightMethod) {
                                 PlotHighlightMethod.AVG_BY_DIMENSION,
                                 PlotHighlightMethod.AVG_BY_INDEX,
                                 PlotHighlightMethod.AVG_BY_DISTANCE,
                                 PlotHighlightMethod.AVG_BY_STATE_OF_CHARGE,
-                                PlotHighlightMethod.AVG_BY_TIME -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
+                                PlotHighlightMethod.AVG_BY_TIME,
+                                PlotHighlightMethod.RAW -> drawYLine(canvas, highlightCordY, maxX, paint.HighlightLabelLine)
                                 else -> {
                                     // Don't draw
                                 }
@@ -882,7 +907,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                                 .coerceAtLeast(yMargin.toFloat())
                                 .coerceAtMost(maxY - yMargin)
 
-                            val label = label((highlight!! - valueCorrectionY) / configuration.Divider, configuration.LabelFormat, configuration.HighlightMethod)
+                            val label = label((highlight!! - valueCorrectionY) / configuration.Divider, configuration.LabelFormat, highlightMethod)
                             paint.HighlightLabel.textSize = 35f
                             val labelWidth = paint.HighlightLabel.measureText(label)
                             val labelHeight = paint.HighlightLabel.textSize
