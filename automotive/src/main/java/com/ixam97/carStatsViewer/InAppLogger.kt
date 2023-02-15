@@ -21,6 +21,7 @@ import java.util.*
 object InAppLogger {
 
     var logArray = ArrayList<String>()
+    private val logArrayMaxSize = 10_000
 
     private var lastVHALCallback = ""
     private var numVHALCallbacks = 0
@@ -33,10 +34,10 @@ object InAppLogger {
     private var numNotificationUpdates = 0
 
     fun log(message: String) {
-        var messageTime = SimpleDateFormat("dd.MM.yyyy hh:mm:ss.SSS").format(Date())
+        val messageTime = SimpleDateFormat("dd.MM.yyyy hh:mm:ss.SSS").format(Date())
         val logMessage = String.format("%s: %s", messageTime, message)
         android.util.Log.d("InAppLogger:", logMessage)
-        if (logArray.size > 1_000) logArray.removeAt(0)
+        if (logArray.size > logArrayMaxSize) logArray.removeAt(0)
         logArray.add(logMessage)
     }
 

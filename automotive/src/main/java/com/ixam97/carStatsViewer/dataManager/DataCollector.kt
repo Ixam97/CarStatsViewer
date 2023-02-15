@@ -36,7 +36,7 @@ class DataCollector : Service() {
         private const val CHANNEL_ID = "TestChannel"
         private const val STATS_NOTIFICATION_ID = 1
         private const val FOREGROUND_NOTIFICATION_ID = 2
-        private const val NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS = 1_000L
+        private const val NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS = 5_000L
         private const val CONSUMPTION_PLOT_UPDATE_DISTANCE = 100
         private const val CHARGE_PLOT_UPDATE_INTERVAL_MILLIS = 2_000L
         private const val CHARGE_PLOT_MARKER_THRESHOLD_NANOS = 10_000_000_000L // 2 times CHARGE_PLOT_UPDATE_INTERVAL_MILLIS in nanos
@@ -104,6 +104,18 @@ class DataCollector : Service() {
             // InAppLogger.logNotificationUpdate()
             val currentNotificationTimeMillis = System.currentTimeMillis()
             lastNotificationTimeMillis = currentNotificationTimeMillis
+
+            // Log additional data:
+            InAppLogger.log("Additional data:\n" +
+                "    Current speed in m/s: ${DataManagers.CURRENT_TRIP.dataManager.CurrentSpeed.value}\n"+
+                "    Current power in mW: ${DataManagers.CURRENT_TRIP.dataManager.CurrentPower.value}\n"+
+                "    Current gear selection: ${DataManagers.CURRENT_TRIP.dataManager.CurrentGear.value}\n"+
+                "    Connection status: ${DataManagers.CURRENT_TRIP.dataManager.ChargePortConnected.value}\n"+
+                "    Battery level in Wh: ${DataManagers.CURRENT_TRIP.dataManager.BatteryLevel.value}\n"+
+                "    Ignition state: ${DataManagers.CURRENT_TRIP.dataManager.CurrentIgnitionState.value}\n"+
+                "    Current ambient temperature: ${DataManagers.CURRENT_TRIP.dataManager.CurrentAmbientTemperature.value}"
+            )
+
             notificationTimerHandler.postDelayed(this, NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS)
         }
     }
@@ -170,6 +182,8 @@ class DataCollector : Service() {
 
         /** Get vehicle name to enable dev mode in emulator */
         val carName = carPropertyManager.getProperty<String>(VehiclePropertyIds.INFO_MODEL, 0).value.toString()
+        val carManufacturer = carPropertyManager.getProperty<String>(VehiclePropertyIds.INFO_MAKE, 0).value.toString()
+        val carModelYear = carPropertyManager.getIntProperty(VehiclePropertyIds.INFO_MODEL_YEAR, 0).toString()
         if (carName == "Speedy Model") {
             Toast.makeText(this, "Emulator Mode", Toast.LENGTH_LONG).show()
             emulatorMode = true
@@ -177,13 +191,20 @@ class DataCollector : Service() {
         }
 
         val displayUnit = carPropertyManager.getProperty<Int>(VehiclePropertyIds.DISTANCE_DISPLAY_UNITS, 0).value
-        InAppLogger.log("Display distance unit: $displayUnit")
+
+
         appPreferences.distanceUnit = if (!emulatorMode) {
             when (displayUnit) {
                 VehicleUnit.MILE -> DistanceUnitEnum.MILES
                 else -> DistanceUnitEnum.KM
             }
         } else DistanceUnitEnum.KM
+
+        InAppLogger.log("Display distance unit: $displayUnit")
+        InAppLogger.log("Car name: $carName, $carManufacturer, $carModelYear")
+        InAppLogger.log("Max battery Capacity: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)}")
+        InAppLogger.log("Fuel level: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.FUEL_LEVEL, 0)}")
+        InAppLogger.log("Fuel Capacity: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_FUEL_CAPACITY, 0)}")
 
         notificationTitleString = resources.getString(R.string.notification_title)
         statsNotification.setContentTitle(notificationTitleString).setContentIntent(mainActivityPendingIntent)
@@ -209,6 +230,7 @@ class DataCollector : Service() {
                 refreshProperty(propertyId, it.dataManager)
             }
             it.dataManager.consumptionPlotLine.baseLineAt.add(0f)
+            it.dataManager.maxBatteryLevel = carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
             driveStateUpdater(it.dataManager)
             speedUpdater(it.dataManager)
             powerUpdater(it.dataManager)
@@ -232,7 +254,7 @@ class DataCollector : Service() {
     /** Update DataManagers on new VHAL event */
     private val carPropertyListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(carPropertyValue: CarPropertyValue<*>) {
-            if (carPropertyValue.status != CarPropertyValue.STATUS_AVAILABLE) InAppLogger.log("PropertyStatus: ${carPropertyValue.status}")
+            if (carPropertyValue.status != CarPropertyValue.STATUS_AVAILABLE) InAppLogger.log("PropertyStatus: ${DataManagers.CURRENT_TRIP.dataManager.getVehiclePropertyById(carPropertyValue.propertyId)?.printableName} ${carPropertyValue.status}")
             DataManagers.values().forEach {
                 if (it.dataManager.update(
                         carPropertyValue,
@@ -634,7 +656,7 @@ class DataCollector : Service() {
             writer.append(gson.toJson(tripData))
             writer.flush()
             writer.close()
-            // InAppLogger.log("TRIP DATA: Saved $fileName.json")
+            InAppLogger.log("TRIP DATA: Saved $fileName.json")
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }

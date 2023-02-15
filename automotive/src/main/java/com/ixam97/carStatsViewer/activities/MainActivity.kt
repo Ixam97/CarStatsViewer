@@ -277,7 +277,7 @@ class MainActivity : Activity() {
         main_power_gage.invalidate()
         main_charge_gage.invalidate()
         main_SoC_gage.invalidate()
-        Log.i("Gages", "updated")
+        // Log.i("Gages", "updated")
     }
 
     private fun updatePlots(){
