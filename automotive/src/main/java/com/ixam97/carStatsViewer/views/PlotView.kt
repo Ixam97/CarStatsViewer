@@ -627,7 +627,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                         val x = x(point.x, 0f, 1f, maxX) ?: continue
                         val y = y(value, minValue, maxValue, maxY) ?: continue
 
-                        PlotPoint(x, y, value)
+                        PlotPoint(x, y)
                     }
                     else -> {
                         val xGroup = when (plotPoints.size) {
@@ -639,7 +639,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                         val x = x(xGroup, 0f, 1f, maxX) ?: continue
                         val y = y(value, minValue, maxValue, maxY) ?: continue
 
-                        PlotPoint(x, y, value)
+                        PlotPoint(x, y)
                     }
                 }
 
