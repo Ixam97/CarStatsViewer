@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.plot.objects
 import com.ixam97.carStatsViewer.plot.graphics.*
 import com.ixam97.carStatsViewer.plot.enums.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.absoluteValue
 
 class PlotLine(
     val Configuration: PlotLineConfiguration,
@@ -53,9 +54,10 @@ class PlotLine(
             prev?.Marker = PlotLineMarkerType.END_SESSION
             dataPoint.Marker = PlotLineMarkerType.BEGIN_SESSION
         } else if (prev?.Marker == PlotLineMarkerType.BEGIN_SESSION) {
-            if (prev.StateOfCharge < dataPoint.StateOfCharge - 1) {
+            if ((prev.StateOfCharge - dataPoint.StateOfCharge).absoluteValue > 1) {
                 // Car gives an old value for SoC at the end of hibernation. just override that. Bit hacky though...
                 prev.StateOfCharge = dataPoint.StateOfCharge
+                dataPoint.StateOfChargeDelta = 0f
             }
             if (prev.Value < dataPoint.Value - 1_000) {
                 prev.Value = dataPoint.Value
