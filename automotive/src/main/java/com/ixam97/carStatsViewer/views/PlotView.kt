@@ -608,8 +608,13 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             val dimensionHighlight = dimensionHighlightAtPercentage
             if (dimensionHighlight != null && dimensionHighlight in collection.minOf { it.x } .. collection.maxOf { it.x }) {
                 val point = collection.minByOrNull { (it.x - dimensionHighlight).absoluteValue }
-                dimensionHighlightValue[line]?.set(secondaryDimension, point?.y?.bySecondaryDimension(secondaryDimension))
-            }
+                if (point != null) {
+                    val points = collection.filter { (it.x - point.x).absoluteValue <= (dimensionSmoothingPercentage ?: 0f) }
+                    val value = line.averageValue(points.map { it.y }, dimension, secondaryDimension)
+
+                    dimensionHighlightValue[line]?.set(secondaryDimension, value)
+                }
+             }
 
             val plotPoints = ArrayList<PointF>()
 
