@@ -351,11 +351,6 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
-            if (dimensionHighlightAt != null) {
-                dimensionHighlightAt = e2.x
-                return true
-            }
-
             touchDimensionShiftDistance += distanceX * touchDistanceMultiplier
 
             dimensionShift = (touchDimensionShift + touchDimensionShiftDistance * touchDimensionShiftByPixel).toLong()
