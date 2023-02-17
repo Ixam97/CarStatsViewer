@@ -357,15 +357,15 @@ class PlotLine(
         )
     }
 
-    fun toPlotLineItemPointCollection(dataPoints: List<PlotLineItem>, dimension: PlotDimension, dimensionSmoothing: Float?, min: Any, max: Any): ArrayList<ArrayList<PlotLineItemPoint>> {
-        val result = ArrayList<ArrayList<PlotLineItemPoint>>()
-        var group = ArrayList<PlotLineItemPoint>()
+    fun toPlotLineItemPointCollection(dataPoints: List<PlotLineItem>, dimension: PlotDimension, dimensionSmoothing: Float?, min: Any, max: Any): ArrayList<ArrayList<PlotPoint>> {
+        val result = ArrayList<ArrayList<PlotPoint>>()
+        var group = ArrayList<PlotPoint>()
 
         for (index in dataPoints.indices) {
             val item = dataPoints[index]
 
             group.add(
-                PlotLineItemPoint(
+                PlotPoint(
                     when (dimension) {
                         PlotDimension.INDEX -> x(index.toFloat(), min, max)
                         PlotDimension.DISTANCE -> x(item.Distance, min, max)
