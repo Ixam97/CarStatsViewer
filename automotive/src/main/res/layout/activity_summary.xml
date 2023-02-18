@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:textFontWeight="600"
                 android:layout_marginTop="10dp"
-                android:textSize="47sp"
+                android:textSize="@dimen/title_font_size"
                 android:textColor="?android:attr/textColorPrimary"
                 android:gravity="center"
                 android:text="@string/summary_title"/>

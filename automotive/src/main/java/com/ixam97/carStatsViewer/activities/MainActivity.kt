@@ -233,7 +233,7 @@ class MainActivity : Activity() {
         main_gage_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(selectedDataManager.travelTime))
         main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getEnergyString(DataManagers.CURRENT_TRIP.dataManager.chargedEnergy))
         main_gage_charge_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(DataManagers.CURRENT_TRIP.dataManager.chargeTime))
-        main_gage_remaining_range_text_view.text = "-/-  %s".format(appPreferences.distanceUnit.unit())
+        main_gage_remaining_range_text_view.text = "  -/-  %s".format(appPreferences.distanceUnit.unit())
         main_gage_ambient_temperature_text_view.text = "  %s".format( StringFormatters.getTemperatureString(selectedDataManager.ambientTemperature))
     }
 

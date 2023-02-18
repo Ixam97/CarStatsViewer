@@ -114,7 +114,7 @@
             <TextView
                 android:id="@+id/about_contributors_text"
                 android:layout_marginStart="30dp"
-                android:textSize="30sp"
+                android:textSize="@dimen/reduced_font_size"
                 style="@style/menu_row_content_text"/>
             <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
 
