@@ -14,14 +14,66 @@
 
         <ImageButton
             android:id="@+id/summary_button_back"
-            style="@style/title_back_button_style"/>
+            style="@style/title_back_button_style"
+            android:src="@drawable/ic_close"/>
 
-        <TextView
-            android:id="@+id/summary_title"
-            style="@style/title_text_style"
-            android:text="@string/summary_title"/>
-
-        <View style="@style/filler"/>
+        <ImageButton
+            android:id="@+id/summary_button_trip_prev"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_chevron_left"
+            android:background="@android:color/transparent"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/summary_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textFontWeight="600"
+                android:layout_marginTop="10dp"
+                android:textSize="47sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:gravity="center"
+                android:text="@string/summary_title"/>
+            <LinearLayout
+                android:id="@+id/summary_selected_trip_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:weightSum="4"
+                android:orientation="horizontal">
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="5dp"
+                    android:background="@color/disable_background"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="5dp"
+                    android:background="@color/disable_background"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="5dp"
+                    android:background="@color/disable_background"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="5dp"
+                    android:background="@color/disable_background"/>
+            </LinearLayout>
+        </LinearLayout>
+        <ImageButton
+            android:id="@+id/summary_button_trip_next"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_chevron_right"
+            android:background="@android:color/transparent"/>
 
         <Button
             android:layout_margin="15dp"

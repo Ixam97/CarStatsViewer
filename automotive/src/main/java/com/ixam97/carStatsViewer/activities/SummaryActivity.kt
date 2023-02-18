@@ -11,6 +11,10 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
 import android.widget.SeekBar
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.toColor
+import androidx.core.view.children
+import androidx.core.view.get
 import com.ixam97.carStatsViewer.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
@@ -21,6 +25,7 @@ import com.ixam97.carStatsViewer.plot.objects.*
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.activity_summary.*
 import java.util.concurrent.TimeUnit
 
@@ -45,7 +50,7 @@ class SummaryActivity: Activity() {
     private lateinit var appPreferences: AppPreferences
 
     private lateinit var disabledTint: PorterDuffColorFilter
-    private lateinit var enabledTint: PorterDuffColorFilter
+    private lateinit var enabledTint: android.graphics.ColorFilter
 
     private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -79,7 +84,11 @@ class SummaryActivity: Activity() {
 
         val dataManager :DataManager = if (intent.hasExtra("dataManager")) {
             DataManagers.values()[intent.getIntExtra("dataManager", 0)].dataManager
-        } else DataManagers.CURRENT_TRIP.dataManager
+        } else DataManagers.values()[appPreferences.mainViewTrip].dataManager
+
+        if (appPreferences.mainViewTrip != 0) {
+            summary_button_reset.isEnabled = false
+        }
 
         tripData = dataManager.tripData!!
         consumptionPlotLine = dataManager.consumptionPlotLine
@@ -88,8 +97,29 @@ class SummaryActivity: Activity() {
         applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
         primaryColor = typedValue.data
 
+        summary_selected_trip_bar[appPreferences.mainViewTrip].background = primaryColor!!.toColor().toDrawable()
+
+        summary_button_trip_prev.setOnClickListener {
+            var tripIndex = appPreferences.mainViewTrip
+            tripIndex--
+            if (tripIndex < 0) tripIndex = 3
+            appPreferences.mainViewTrip = tripIndex
+            startActivity(Intent(this, SummaryActivity::class.java))
+            finish()
+        }
+
+        summary_button_trip_next.setOnClickListener {
+            var tripIndex = appPreferences.mainViewTrip
+            tripIndex++
+            if (tripIndex > 3) tripIndex = 0
+            appPreferences.mainViewTrip = tripIndex
+            startActivity(Intent(this, SummaryActivity::class.java))
+            finish()
+        }
+
+        // enabledTint = summary_charge_plot_button_next.foreground!!
         disabledTint = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
-        enabledTint = PorterDuffColorFilter(getColor(android.R.color.white), PorterDuff.Mode.SRC_IN)
+        enabledTint = PorterDuffColorFilter(primaryColor!!, PorterDuff.Mode.SRC_IN)
 
         summary_title.text = getString(resources.getIdentifier(
             dataManager.printableName, "string", packageName

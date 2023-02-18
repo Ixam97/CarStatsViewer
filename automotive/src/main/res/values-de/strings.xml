@@ -93,7 +93,7 @@
     <string name="quit_dialog_message">Log wird in die Zwischenablage kopiert.</string>
     <string name="dialog_close">Schließen</string>
     <string name="dialog_reset_title">Tripdaten zurücksetzen?</string>
-    <string name="dialog_reset_message">Die aktuellen Tripdaten werden zurückgesetzt. Soll der Trip gespeichert werden?</string>
+    <string name="dialog_reset_message">Der manuelle Trip wird zurückgesetzt. Soll der Trip gespeichert werden?</string>
     <string name="dialog_reset_do_save">Speichern</string>
     <string name="dialog_reset_no_save">Nicht speichern</string>
     <string name="dialog_reset_cancel">Abbrechen</string>

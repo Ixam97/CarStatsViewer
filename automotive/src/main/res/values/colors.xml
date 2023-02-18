@@ -6,6 +6,7 @@
     <color name="button_background_active">#D96C00</color>
     <color name="secondary_text_color">#B3B3B3</color>
     <color name="disabled_tint">#FF757575</color>
+    <color name="disable_background">#1F1F1F</color>
     <color name="primary_plot_color">#FFD96C00</color>
     <color name="secondary_plot_color">#FF00C400</color>
     <color name="secondary_plot_color_alt">#FFCCCCCC</color>

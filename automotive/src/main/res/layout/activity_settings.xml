@@ -86,22 +86,55 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_chevron_left"
-                    android:tint="?android:attr/colorControlActivated"
                     android:background="@android:color/transparent"/>
-                <TextView
-                    android:id="@+id/settings_main_trip_name_text"
-                    style="@style/menu_standard_row_label"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Trip"
-                    android:gravity="center"/>
+                    android:layout_gravity="center"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/settings_main_trip_name_text"
+                        style="@style/menu_standard_row_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="25dp"
+                        android:text="Trip"
+                        android:gravity="center"/>
+                    <LinearLayout
+                        android:id="@+id/settings_selected_trip_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:weightSum="4"
+                        android:orientation="horizontal">
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="5dp"
+                            android:background="@color/disable_background"/>
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="5dp"
+                            android:background="@color/disable_background"/>
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="5dp"
+                            android:background="@color/disable_background"/>
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="5dp"
+                            android:background="@color/disable_background"/>
+                    </LinearLayout>
+                </LinearLayout>
                 <ImageButton
                     android:id="@+id/settings_button_main_trip_next"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_chevron_right"
-                    android:tint="?android:attr/colorControlActivated"
                     android:background="@android:color/transparent"/>
             </LinearLayout>
             <View

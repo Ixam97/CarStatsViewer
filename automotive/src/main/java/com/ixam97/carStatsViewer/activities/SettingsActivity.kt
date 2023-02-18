@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter
 import com.ixam97.carStatsViewer.*
 import android.app.Activity
 import android.app.AlertDialog
-import android.car.VehicleGear
 import android.content.BroadcastReceiver
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_settings.*
@@ -13,11 +12,17 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.toColor
+import androidx.core.view.children
+import androidx.core.view.get
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.ChargeCurve
 import com.ixam97.carStatsViewer.plot.enums.*
@@ -33,6 +38,7 @@ class SettingsActivity : Activity() {
 
     private lateinit var context : Context
     private lateinit var appPreferences: AppPreferences
+    private lateinit var primaryColor: Color
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -51,6 +57,10 @@ class SettingsActivity : Activity() {
         appPreferences = AppPreferences(context)
 
         setContentView(R.layout.activity_settings)
+
+        val typedValue = TypedValue()
+        applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
+        primaryColor = typedValue.data.toColor()
 
         setupSettingsMaster()
         setupSettingsConsumptionPlot()
@@ -86,6 +96,8 @@ class SettingsActivity : Activity() {
         settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
         settings_switch_distance_unit.isChecked = appPreferences.distanceUnit == DistanceUnitEnum.MILES
 
+        settings_selected_trip_bar[appPreferences.mainViewTrip].background = primaryColor.toDrawable()
+
         settings_main_trip_name_text.text = getString(resources.getIdentifier(
             DataManagers.values()[appPreferences.mainViewTrip].dataManager.printableName, "string", packageName
         ))
@@ -98,6 +110,8 @@ class SettingsActivity : Activity() {
             settings_main_trip_name_text.text = getString(resources.getIdentifier(
                 DataManagers.values()[appPreferences.mainViewTrip].dataManager.printableName, "string", packageName
             ))
+            for (view in settings_selected_trip_bar.children) view.background = getColor(R.color.disable_background).toDrawable()
+            settings_selected_trip_bar[tripIndex].background = primaryColor.toDrawable()
         }
 
         settings_button_main_trip_next.setOnClickListener {
@@ -108,6 +122,8 @@ class SettingsActivity : Activity() {
             settings_main_trip_name_text.text = getString(resources.getIdentifier(
                 DataManagers.values()[appPreferences.mainViewTrip].dataManager.printableName, "string", packageName
             ))
+            for (view in settings_selected_trip_bar.children) view.background = getColor(R.color.disable_background).toDrawable()
+            settings_selected_trip_bar[tripIndex].background = primaryColor.toDrawable()
         }
 
         settings_version_text.text = "Car Stats Viewer Version %s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
