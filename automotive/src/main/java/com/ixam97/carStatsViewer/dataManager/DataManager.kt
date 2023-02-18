@@ -5,6 +5,7 @@ import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
 import android.util.Log
 import com.ixam97.carStatsViewer.BuildConfig
+import com.ixam97.carStatsViewer.InAppLogger
 import com.ixam97.carStatsViewer.plot.enums.PlotDimension
 import com.ixam97.carStatsViewer.plot.enums.PlotHighlightMethod
 import com.ixam97.carStatsViewer.plot.enums.PlotLabelPosition
@@ -142,6 +143,7 @@ class DataManager(val printableName: String) {
      * @return Int representing the success of the update. 0 means a valid update.
      */
     fun update(value: CarPropertyValue<*>, doLog: Boolean = false, valueMustChange: Boolean = false, allowInvalidTimestamps: Boolean = false): Int {
+        if (value.status != CarPropertyValue.STATUS_AVAILABLE) InAppLogger.log("PropertyStatus ${getVehiclePropertyById(value.propertyId)?.printableName}: ${value.status}")
         return update(value.value, value.timestamp, value.propertyId, doLog, valueMustChange, allowInvalidTimestamps)
     }
 

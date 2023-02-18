@@ -106,15 +106,17 @@ class DataCollector : Service() {
             lastNotificationTimeMillis = currentNotificationTimeMillis
 
             // Log additional data:
+            /*
             InAppLogger.log("Additional data:\n" +
-                "    Current speed in m/s: ${DataManagers.CURRENT_TRIP.dataManager.CurrentSpeed.value}\n"+
-                "    Current power in mW: ${DataManagers.CURRENT_TRIP.dataManager.CurrentPower.value}\n"+
-                "    Current gear selection: ${DataManagers.CURRENT_TRIP.dataManager.CurrentGear.value}\n"+
-                "    Connection status: ${DataManagers.CURRENT_TRIP.dataManager.ChargePortConnected.value}\n"+
+                "    Speed in m/s:        ${DataManagers.CURRENT_TRIP.dataManager.CurrentSpeed.value}\n"+
+                "    Power in mW:         ${DataManagers.CURRENT_TRIP.dataManager.CurrentPower.value}\n"+
+                "    Gear selection:      ${DataManagers.CURRENT_TRIP.dataManager.CurrentGear.value}\n"+
+                "    Connection status:   ${DataManagers.CURRENT_TRIP.dataManager.ChargePortConnected.value}\n"+
                 "    Battery level in Wh: ${DataManagers.CURRENT_TRIP.dataManager.BatteryLevel.value}\n"+
-                "    Ignition state: ${DataManagers.CURRENT_TRIP.dataManager.CurrentIgnitionState.value}\n"+
-                "    Current ambient temperature: ${DataManagers.CURRENT_TRIP.dataManager.CurrentAmbientTemperature.value}"
+                "    Ignition state:      ${DataManagers.CURRENT_TRIP.dataManager.CurrentIgnitionState.value}\n"+
+                "    Ambient temperature: ${DataManagers.CURRENT_TRIP.dataManager.CurrentAmbientTemperature.value}"
             )
+            */
 
             notificationTimerHandler.postDelayed(this, NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS)
         }
@@ -231,6 +233,8 @@ class DataCollector : Service() {
             }
             it.dataManager.consumptionPlotLine.baseLineAt.add(0f)
             it.dataManager.maxBatteryLevel = carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
+            InAppLogger.log("Max battery Capacity: ${it.dataManager.maxBatteryLevel}")
+
             driveStateUpdater(it.dataManager)
             speedUpdater(it.dataManager)
             powerUpdater(it.dataManager)
@@ -254,7 +258,6 @@ class DataCollector : Service() {
     /** Update DataManagers on new VHAL event */
     private val carPropertyListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(carPropertyValue: CarPropertyValue<*>) {
-            if (carPropertyValue.status != CarPropertyValue.STATUS_AVAILABLE) InAppLogger.log("PropertyStatus: ${DataManagers.CURRENT_TRIP.dataManager.getVehiclePropertyById(carPropertyValue.propertyId)?.printableName} ${carPropertyValue.status}")
             DataManagers.values().forEach {
                 if (it.dataManager.update(
                         carPropertyValue,
