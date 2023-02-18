@@ -76,6 +76,12 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
 
+        val preferenceDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
+        if (selectedDataManager != preferenceDataManager) {
+            finish()
+            startActivity(intent)
+        }
+
         // InAppLogger.log("MainActivity.onResume")
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
@@ -160,6 +166,9 @@ class MainActivity : Activity() {
             appPreferences.distanceUnit
         )
 
+        selectedDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
+        InAppLogger.log("selected Trip: ${selectedDataManager.printableName}")
+
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
         startForegroundService(Intent(this, DataCollector::class.java))
@@ -222,8 +231,8 @@ class MainActivity : Activity() {
         main_gage_distance_text_view.text = "  %s".format(StringFormatters.getTraveledDistanceString(selectedDataManager.traveledDistance))
         main_gage_used_power_text_view.text = "  %s".format(StringFormatters.getEnergyString(selectedDataManager.usedEnergy))
         main_gage_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(selectedDataManager.travelTime))
-        main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getEnergyString(selectedDataManager.chargedEnergy))
-        main_gage_charge_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(selectedDataManager.chargeTime))
+        main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getEnergyString(DataManagers.CURRENT_TRIP.dataManager.chargedEnergy))
+        main_gage_charge_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(DataManagers.CURRENT_TRIP.dataManager.chargeTime))
         main_gage_remaining_range_text_view.text = "-/-  %s".format(appPreferences.distanceUnit.unit())
         main_gage_ambient_temperature_text_view.text = "  %s".format( StringFormatters.getTemperatureString(selectedDataManager.ambientTemperature))
     }
@@ -358,9 +367,9 @@ class MainActivity : Activity() {
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
-        main_charge_plot.addPlotLine(selectedDataManager.chargePlotLine)
+        main_charge_plot.addPlotLine(DataManagers.CURRENT_TRIP.dataManager.chargePlotLine)
 
-        selectedDataManager.chargePlotLine.secondaryPlotPaint = when {
+        DataManagers.CURRENT_TRIP.dataManager.chargePlotLine.secondaryPlotPaint = when {
             appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
             else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
         }
@@ -474,13 +483,15 @@ class MainActivity : Activity() {
 
         main_button_summary.setOnClickListener {
             val summaryIntent = Intent(this, SummaryActivity::class.java)
-            summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
+            // summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
+            summaryIntent.putExtra("dataManager", appPreferences.mainViewTrip)
             startActivity(summaryIntent)
         }
 
         main_button_summary_charge.setOnClickListener {
             val summaryIntent = Intent(this, SummaryActivity::class.java)
-            summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
+            // summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
+            summaryIntent.putExtra("dataManager", appPreferences.mainViewTrip)
             startActivity(summaryIntent)
         }
 

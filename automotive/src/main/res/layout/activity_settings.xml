@@ -73,6 +73,40 @@
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/menu_standard_row_label"
+                    android:text="@string/settings_select_trip"/>
+                <ImageButton
+                    android:id="@+id/settings_button_main_trip_prev"
+                    android:layout_marginStart="25dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_chevron_left"
+                    android:tint="?android:attr/colorControlActivated"
+                    android:background="@android:color/transparent"/>
+                <TextView
+                    android:id="@+id/settings_main_trip_name_text"
+                    style="@style/menu_standard_row_label"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Trip"
+                    android:gravity="center"/>
+                <ImageButton
+                    android:id="@+id/settings_button_main_trip_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_chevron_right"
+                    android:tint="?android:attr/colorControlActivated"
+                    android:background="@android:color/transparent"/>
+            </LinearLayout>
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
             <TextView
                 android:id="@+id/settings_consumption_plot"
                 android:text="@string/settings_consumption_plot"
@@ -172,11 +206,13 @@
                     android:background="?android:attr/listDivider"/>
 
                 <Switch
+                    android:visibility="gone"
                     android:id="@+id/settings_consumption_plot_speed_switch"
                     style="@style/menu_standard_switch_style"
                     android:text="@string/settings_consumption_plot_speed"/>
 
                 <View
+                    android:visibility="gone"
                     style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>
 
@@ -262,6 +298,7 @@
                     android:background="?android:attr/listDivider"/>
 
                 <TextView
+                    android:visibility="gone"
                     android:layout_height="101dp"
                     android:id="@+id/settings_save_charge_curve"
                     android:drawableStart="@drawable/ic_save"
@@ -274,6 +311,7 @@
                     style="@style/menu_standard_switch_style"
                     android:text="@string/settings_plot_state_of_charge_dimension"/>
                 <View
+                    android:visibility="gone"
                     style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>
 

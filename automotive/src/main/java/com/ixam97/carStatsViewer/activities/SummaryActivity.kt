@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
 import android.widget.SeekBar
+import com.ixam97.carStatsViewer.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.*
@@ -56,9 +57,10 @@ class SummaryActivity: Activity() {
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            InAppLogger.log(intent.action?: "")
             when (intent.action) {
-                getString(R.string.gear_update_broadcast) -> {
-                    updateDistractionOptimization(true)
+                getString(R.string.distraction_optimization_broadcast) -> {
+                    updateDistractionOptimization()
                 }
                 else -> {}
             }
@@ -89,6 +91,10 @@ class SummaryActivity: Activity() {
         disabledTint = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
         enabledTint = PorterDuffColorFilter(getColor(android.R.color.white), PorterDuff.Mode.SRC_IN)
 
+        summary_title.text = getString(resources.getIdentifier(
+            dataManager.printableName, "string", packageName
+        ))
+
         summary_button_back.setOnClickListener {
             finish()
         }
@@ -114,7 +120,7 @@ class SummaryActivity: Activity() {
         setupConsumptionLayout()
         setupChargeLayout()
 
-        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.gear_update_broadcast)))
+        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.distraction_optimization_broadcast)))
     }
 
     override fun onDestroy() {
@@ -338,7 +344,8 @@ class SummaryActivity: Activity() {
             }
             .setNegativeButton(R.string.dialog_reset_no_save) { _, _ ->
                 // DataCollector.CurrentTripDataManager.reset()
-                enumValues<DataManagers>().forEach { it.dataManager.reset() }
+                // enumValues<DataManagers>().forEach { it.dataManager.reset() }
+                DataManagers.CURRENT_TRIP.dataManager.reset()
                 sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
                 this@SummaryActivity.finish()
             }
@@ -352,15 +359,14 @@ class SummaryActivity: Activity() {
 
     }
 
-    private fun updateDistractionOptimization(update: Boolean = false) {
-        if (update) {
-            finish()
-            startActivity(intent)
-            return
-        }
+    private fun updateDistractionOptimization() {
+        InAppLogger.log("Distraction optimization: ${appPreferences.doDistractionOptimization}")
         summary_parked_warning.visibility =
-            if (DataCollector.CurrentTripDataManager.currentGear != VehicleGear.GEAR_PARK) View.VISIBLE
+            if (appPreferences.doDistractionOptimization) View.VISIBLE
             else View.GONE
+        summary_content_container.visibility =
+            if (appPreferences.doDistractionOptimization) View.GONE
+            else View.VISIBLE
     }
 
     private fun chargedEnergy(chargeCurve: ChargeCurve): String {

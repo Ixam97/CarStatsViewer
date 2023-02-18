@@ -399,12 +399,18 @@ class DataCollector : Service() {
         if (!dataManager.CurrentSpeed.isInitialValue && dataManager.driveState == DrivingState.DRIVE) {
             val traveledDistanceDelta = (dataManager.currentSpeed.absoluteValue * dataManager.CurrentSpeed.timeDelta.toFloat()) / 1_000_000_000F
             dataManager.traveledDistance += traveledDistanceDelta
-            if (dataManager.currentSpeed.absoluteValue >= 1 && (dataManager.CurrentSpeed.lastValue as Float).absoluteValue < 1) {
-                // Drive started -> Distraction optimization
-                InAppLogger.log("Drive started")
-            } else if (dataManager.currentSpeed.absoluteValue < 1 && (dataManager.CurrentSpeed.lastValue as Float).absoluteValue > 1) {
-                // Drive ended
-                InAppLogger.log("Drive ended")
+            if (dataManager == DataManagers.CURRENT_TRIP.dataManager) {
+                if (dataManager.currentSpeed.absoluteValue >= 1 && !appPreferences.doDistractionOptimization) {
+                    // Drive started -> Distraction optimization
+                    appPreferences.doDistractionOptimization = true
+                    sendBroadcast(Intent(getString(R.string.distraction_optimization_broadcast)))
+                    InAppLogger.log("Drive started")
+                } else if (dataManager.currentSpeed.absoluteValue < 1 && appPreferences.doDistractionOptimization) {
+                    // Drive ended
+                    appPreferences.doDistractionOptimization = false
+                    sendBroadcast(Intent(getString(R.string.distraction_optimization_broadcast)))
+                    InAppLogger.log("Drive ended")
+                }
             }
 
             dataManager.consumptionPlotDistanceDelta += traveledDistanceDelta
@@ -474,6 +480,10 @@ class DataCollector : Service() {
             dataManager.plotMarkers.addMarker(PlotMarkerType.PARK, System.currentTimeMillis(), dataManager.traveledDistance)
         }
         if (previousDrivingState == DrivingState.CHARGE) stopChargingSession(dataManager)
+        // Drive ended
+        appPreferences.doDistractionOptimization = false
+        sendBroadcast(Intent(getString(R.string.distraction_optimization_broadcast)))
+        InAppLogger.log("Drive ended")
     }
 
     private fun chargeState(previousDrivingState: Int, dataManager: DataManager) {

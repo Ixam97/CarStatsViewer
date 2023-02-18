@@ -23,6 +23,7 @@ import com.ixam97.carStatsViewer.dataManager.ChargeCurve
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.dataManager.DataCollector
+import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.views.PlotView
@@ -36,7 +37,7 @@ class SettingsActivity : Activity() {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                getString(R.string.gear_update_broadcast) -> setEnableByGear(DataCollector.CurrentTripDataManager.currentGear)
+                getString(R.string.distraction_optimization_broadcast) -> setDistractionOptimization(appPreferences.doDistractionOptimization)
             }
         }
     }
@@ -55,9 +56,9 @@ class SettingsActivity : Activity() {
         setupSettingsConsumptionPlot()
         setupSettingsChargePlot()
 
-        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.gear_update_broadcast)))
+        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.distraction_optimization_broadcast)))
 
-        setEnableByGear(DataCollector.CurrentTripDataManager.currentGear)
+        setDistractionOptimization(appPreferences.doDistractionOptimization)
     }
 
     override fun onDestroy() {
@@ -66,15 +67,17 @@ class SettingsActivity : Activity() {
         // InAppLogger.log("SettingsActivity.onDestroy")
     }
 
-    private fun setEnableByGear(gear: Int) {
-        if (gear != VehicleGear.GEAR_PARK) {
+    private fun setDistractionOptimization(doOptimize: Boolean) {
+        if (doOptimize) {
             if (settings_charge_plot_layout.visibility == View.VISIBLE) animateTransition(settings_charge_plot_layout, settings_master_layout)
             if (settings_consumption_plot_layout.visibility == View.VISIBLE) animateTransition(settings_consumption_plot_layout, settings_master_layout)
             setMenuRowIsEnabled(false, settings_charge_plot)
             setMenuRowIsEnabled(false, settings_consumption_plot)
+            setMenuRowIsEnabled(false, settings_about)
         } else {
             setMenuRowIsEnabled(true, settings_charge_plot)
             setMenuRowIsEnabled(true, settings_consumption_plot)
+            setMenuRowIsEnabled(true, settings_about)
         }
     }
 
@@ -82,6 +85,30 @@ class SettingsActivity : Activity() {
         settings_switch_notifications.isChecked = appPreferences.notifications
         settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
         settings_switch_distance_unit.isChecked = appPreferences.distanceUnit == DistanceUnitEnum.MILES
+
+        settings_main_trip_name_text.text = getString(resources.getIdentifier(
+            DataManagers.values()[appPreferences.mainViewTrip].dataManager.printableName, "string", packageName
+        ))
+
+        settings_button_main_trip_prev.setOnClickListener {
+            var tripIndex = appPreferences.mainViewTrip
+            tripIndex--
+            if (tripIndex < 0) tripIndex = 3
+            appPreferences.mainViewTrip = tripIndex
+            settings_main_trip_name_text.text = getString(resources.getIdentifier(
+                DataManagers.values()[appPreferences.mainViewTrip].dataManager.printableName, "string", packageName
+            ))
+        }
+
+        settings_button_main_trip_next.setOnClickListener {
+            var tripIndex = appPreferences.mainViewTrip
+            tripIndex++
+            if (tripIndex > 3) tripIndex = 0
+            appPreferences.mainViewTrip = tripIndex
+            settings_main_trip_name_text.text = getString(resources.getIdentifier(
+                DataManagers.values()[appPreferences.mainViewTrip].dataManager.printableName, "string", packageName
+            ))
+        }
 
         settings_version_text.text = "Car Stats Viewer Version %s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 

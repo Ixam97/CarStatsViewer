@@ -33,7 +33,7 @@
     <!-- SummaryActivity -->
     <string name="summary_title">Tripzusammenfassung</string>
     <string name="summary_button_reset_trip">Trip zurücksetzen</string>
-    <string name="summary_parked_warning">Ansicht nur im geparkten Zustand verfügbar.</string>
+    <string name="summary_parked_warning">Ansicht nur im Stillstand verfügbar.</string>
     <string name="summary_trip_history">Fahrtverlauf</string>
     <string name="summary_charging_sessions">Ladevorgänge</string>
     <string name="summary_trip_start_date">Trip begonnen am: %s</string>
@@ -65,6 +65,12 @@
     <string name="settings_sub_title_settings">Einstellungen:</string>
     <string name="settings_sub_title_current_cons_plot">Aktuelle Verbrauchskurve:</string>
     <string name="settings_sub_title_last_charge_plot">Letzte Ladekurven:</string>
+    <string name="settings_select_trip">Trip in Hauptansicht:</string>
+
+    <string name="CurrentTripData">Manueller Trip</string>
+    <string name="SinceChargeData">Seit letzter Ladung</string>
+    <string name="AutoTripData">Automatischer Trip</string>
+    <string name="CurrentMonthData">Aktueller Monat</string>
     
     <!-- AboutActivity -->
     <string name="about_title">Über Car Stats Viewer</string>

@@ -32,14 +32,15 @@
     <string name="preferences_plot_distance_key" translatable="false">preferences_plot_distance</string>
     <string name="preferences_plot_speed_key" translatable="false">preferences_plot_speed</string>
     <string name="preferences_experimental_layout_key" translatable="false">preferences_experimental_layout</string>
-    <string name="preferences_consumption_plot_single_motor_key" translatable="false">preferences_consumption_plot_single_motor_key</string>
+    <string name="preferences_consumption_plot_single_motor_key" translatable="false">preferences_consumption_plot_single_motor</string>
     <string name="preference_consumption_plot_visible_gages_key" translatable="false">preference_consumption_plot_visible_gages</string>
     <string name="preference_consumption_plot_secondary_color_key" translatable="false">preference_consumption_plot_secondary_color</string>
     <string name="preference_charge_plot_secondary_color_key" translatable="false">preference_charge_plot_secondary_color</string>
     <string name="preference_charge_plot_visible_gages_key" translatable="false">preference_charge_plot_visible_gages</string>
     <string name="preference_charge_plot_dimension_key" translatable="false">preference_charge_plot_dimension</string>
-    <string name="preference_distance_unit_key" translatable="false">preference_distance_unit_key</string>
-    <string name="preference_secondary_dimension_key" translatable="false">secondary_dimension_key</string>
+    <string name="preference_distance_unit_key" translatable="false">preference_distance_unit</string>
+    <string name="preference_secondary_dimension_key" translatable="false">preference_secondary_dimension</string>
+    <string name="preference_main_view_trip_key" translatable="false">preference_main_view_trip</string>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
 
@@ -50,6 +51,7 @@
     <string name="wake_lock_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.wake_lock_broadcast</string>
     <string name="save_trip_data_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.save_trip_data_broadcast</string>
     <string name="VHAL_emulator_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.VHAL_emulator_broadcast</string>
+    <string name="distraction_optimization_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.distraction_optimization_broadcast</string>
 
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Permissions required for use</string>
@@ -86,7 +88,7 @@
     <!-- SummaryActivity -->
     <string name="summary_title">Trip summary</string>
     <string name="summary_button_reset_trip">Reset trip</string>
-    <string name="summary_parked_warning">View only available when parked.</string>
+    <string name="summary_parked_warning">View only available at standstill.</string>
     <string name="summary_trip_history">Trip history</string>
     <string name="summary_charging_sessions">Charging sessions</string>
     <string name="summary_trip_start_date">Trip started on: %s</string>
@@ -119,6 +121,12 @@
     <string name="settings_sub_title_settings">Settings:</string>
     <string name="settings_sub_title_current_cons_plot">Current consumption plot:</string>
     <string name="settings_sub_title_last_charge_plot">Last charging curves:</string>
+    <string name="settings_select_trip">Trip in main view:</string>
+
+    <string name="CurrentTripData">Manual trip</string>
+    <string name="SinceChargeData">Since last charge</string>
+    <string name="AutoTripData">Automatic trip</string>
+    <string name="CurrentMonthData">Current month</string>
 
     <!-- AboutActivity -->
     <string name="about_title">About Car Stats Viewer</string>
