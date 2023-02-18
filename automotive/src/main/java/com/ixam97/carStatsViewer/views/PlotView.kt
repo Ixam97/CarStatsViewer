@@ -351,11 +351,6 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
-            if (dimensionHighlightAt != null) {
-                dimensionHighlightAt = e2.x
-                return true
-            }
-
             touchDimensionShiftDistance += distanceX * touchDistanceMultiplier
 
             dimensionShift = (touchDimensionShift + touchDimensionShiftDistance * touchDimensionShiftByPixel).toLong()
@@ -602,21 +597,26 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         }
     }
 
-    private fun toPlotPointCollection(line: PlotLine, secondaryDimension: PlotSecondaryDimension?, minValue: Float, maxValue: Float, minDimension: Any, maxDimension: Any, maxX: Float, maxY: Float, smoothing: Float?): ArrayList<ArrayList<PlotPoint>> {
+    private fun toPlotPointCollection(line: PlotLine, secondaryDimension: PlotSecondaryDimension?, minValue: Float, maxValue: Float, minDimension: Any, maxDimension: Any, maxX: Float, maxY: Float, smoothing: Float?): ArrayList<ArrayList<PointF>> {
         val dataPointsUnrestricted = line.getDataPoints(dimension)
         val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPointsUnrestricted, dimension, smoothing, minDimension, maxDimension)
 
-        val plotPointCollection = ArrayList<ArrayList<PlotPoint>>()
+        val plotPointCollection = ArrayList<ArrayList<PointF>>()
         for (collection in plotLineItemPointCollection) {
             if (collection.isEmpty()) continue
 
             val dimensionHighlight = dimensionHighlightAtPercentage
             if (dimensionHighlight != null && dimensionHighlight in collection.minOf { it.x } .. collection.maxOf { it.x }) {
                 val point = collection.minByOrNull { (it.x - dimensionHighlight).absoluteValue }
-                dimensionHighlightValue[line]?.set(secondaryDimension, point?.y?.bySecondaryDimension(secondaryDimension))
-            }
+                if (point != null) {
+                    val points = collection.filter { (it.x - point.x).absoluteValue <= (dimensionSmoothingPercentage ?: 0f) }
+                    val value = line.averageValue(points.map { it.y }, dimension, secondaryDimension)
 
-            val plotPoints = ArrayList<PlotPoint>()
+                    dimensionHighlightValue[line]?.set(secondaryDimension, value)
+                }
+             }
+
+            val plotPoints = ArrayList<PointF>()
 
             for (group in collection.groupBy { it.group }) {
                 val plotPoint = when {
@@ -627,7 +627,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                         val x = x(point.x, 0f, 1f, maxX) ?: continue
                         val y = y(value, minValue, maxValue, maxY) ?: continue
 
-                        PlotPoint(x, y)
+                        PointF(x, y)
                     }
                     else -> {
                         val xGroup = when (plotPoints.size) {
@@ -639,7 +639,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                         val x = x(xGroup, 0f, 1f, maxX) ?: continue
                         val y = y(value, minValue, maxValue, maxY) ?: continue
 
-                        PlotPoint(x, y)
+                        PointF(x, y)
                     }
                 }
 
@@ -652,11 +652,11 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         return plotPointCollection
     }
 
-    private fun drawPlotPointCollection(canvas: Canvas, plotPointCollection: ArrayList<ArrayList<PlotPoint>>, maxX: Float, maxY: Float, paint: PlotPaint, drawBackground: Boolean, zeroCord: Float?) {
+    private fun drawPlotPointCollection(canvas: Canvas, plotPointCollection: ArrayList<ArrayList<PointF>>, maxX: Float, maxY: Float, paint: PlotPaint, drawBackground: Boolean, zeroCord: Float?) {
 
         restrictCanvas(canvas, maxX, maxY)
 
-        val joinedPlotPoints = ArrayList<PlotPoint>()
+        val joinedPlotPoints = ArrayList<PointF>()
 
         for (plotPointIndex in plotPointCollection.indices) {
             val plotPoints = plotPointCollection[plotPointIndex]
@@ -672,7 +672,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         }
 
         if (sessionGapRendering == PlotSessionGapRendering.GAP) {
-            var last: PlotPoint? = null
+            var last: PointF? = null
             for (collection in plotPointCollection) {
                 if (last != null) {
                     val first = collection.first()
@@ -685,7 +685,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         canvas.restore()
     }
 
-    private fun drawPlotPoints(canvas: Canvas, plotPoints : ArrayList<PlotPoint>, plotPaint: PlotPaint, drawBackground: Boolean, zeroCord: Float?, lastPlot: Boolean = true) {
+    private fun drawPlotPoints(canvas: Canvas, plotPoints : ArrayList<PointF>, plotPaint: PlotPaint, drawBackground: Boolean, zeroCord: Float?, lastPlot: Boolean = true) {
         val linePaint = when (lastPlot) {
             true -> when (drawBackground) {
                 true -> plotPaint.PlotBackground
@@ -699,14 +699,14 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         drawPlotLine(canvas, linePaint, plotPaint.TransparentColor, plotPoints, drawBackground, zeroCord)
     }
 
-    private fun drawPlotLine(canvas : Canvas, paint : Paint, transparentColor: Int, plotPoints : ArrayList<PlotPoint>, drawBackground: Boolean, zeroCord: Float?) {
+    private fun drawPlotLine(canvas : Canvas, paint : Paint, transparentColor: Int, plotPoints : ArrayList<PointF>, drawBackground: Boolean, zeroCord: Float?) {
         if (plotPoints.isEmpty()) return
         if (drawBackground && zeroCord == null) return
 
         val path = Path()
 
-        var firstPoint: PlotPoint? = null
-        var prevPoint: PlotPoint? = null
+        var firstPoint: PointF? = null
+        var prevPoint: PointF? = null
 
         for (i in plotPoints.indices) {
             val point = plotPoints[i]
@@ -748,7 +748,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         canvas.drawPath(path, paint)
     }
 
-    private fun drawPlotLineMarker(canvas: Canvas, point: PlotPoint?, paint: Paint) {
+    private fun drawPlotLineMarker(canvas: Canvas, point: PointF?, paint: Paint) {
         if (point == null) return
         canvas.drawCircle(point.x, point.y, 3f, paint)
     }

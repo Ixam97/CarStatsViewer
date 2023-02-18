@@ -30,7 +30,7 @@ class SummaryActivity: Activity() {
     private var chargePlotLine = PlotLine(
         PlotLineConfiguration(
             PlotRange(0f, 20f, 0f, 160f, 20f),
-            PlotLineLabelFormat.NUMBER,
+            PlotLineLabelFormat.FLOAT,
             PlotLabelPosition.LEFT,
             PlotHighlightMethod.AVG_BY_TIME,
             "kW"
