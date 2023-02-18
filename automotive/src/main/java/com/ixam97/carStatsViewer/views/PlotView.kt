@@ -349,7 +349,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         }
     }
 
-    private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
+    private val mScrollGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             touchDimensionShiftDistance += distanceX * touchDistanceMultiplier
 
@@ -359,7 +359,9 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
             return true
         }
+    }
 
+    private val mTapGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
             if (dimensionHighlightAt != null) {
                 dimensionHighlightAt = e.x
@@ -376,8 +378,9 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         }
     }
 
-    private val mScrollDetector = GestureDetector(context, mGestureListener)
-    private val mScaleDetector = ScaleGestureDetector(context!!, mScaleGestureDetector)
+    private val mScrollDetector = GestureDetector(context, mScrollGestureListener)
+    private val mTapDetector = GestureDetector(context, mTapGestureListener)
+    private val mScaleDetector = ScaleGestureDetector(context, mScaleGestureDetector)
 
     // invert direction
     private var touchDistanceMultiplier : Float = -1f
@@ -385,13 +388,14 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     private var touchDimensionShiftDistance : Float = 0f
     private var touchDimensionShiftByPixel : Float = 0f
     private var touchDimensionMax : Long = 0L
+    private var touchGesture : Boolean = false
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
         val restriction = dimensionRestriction ?: return true
         val min = dimensionRestrictionMin ?: return true
 
         when (ev.action) {
-            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+            MotionEvent.ACTION_DOWN -> {
                 touchDistanceMultiplier = when (dimension.toPlotDirection()) {
                     PlotDirection.LEFT_TO_RIGHT -> 1f
                     PlotDirection.RIGHT_TO_LEFT -> -1f
@@ -402,11 +406,21 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
                 val dimensionMax = plotLines.mapNotNull { it.distanceDimension(dimension) }.maxOfOrNull { it }?.toLong() ?: return true
                 touchDimensionMax = dimensionMax + (min - dimensionMax % min)
+
+                touchGesture = true
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                touchGesture = false
             }
         }
 
-        mScrollDetector.onTouchEvent(ev)
-        mScaleDetector.onTouchEvent(ev)
+        mTapDetector.onTouchEvent(ev)
+
+        if (touchGesture) {
+            mScrollDetector.onTouchEvent(ev)
+            mScaleDetector.onTouchEvent(ev)
+        }
+
         return true
     }
 
