@@ -369,6 +369,7 @@ class MainActivity : Activity() {
         main_charge_plot.reset()
         main_charge_plot.addPlotLine(DataManagers.CURRENT_TRIP.dataManager.chargePlotLine)
 
+        DataManagers.CURRENT_TRIP.dataManager.chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
         DataManagers.CURRENT_TRIP.dataManager.chargePlotLine.secondaryPlotPaint = when {
             appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
             else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
