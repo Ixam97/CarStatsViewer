@@ -17,8 +17,10 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.text.format.DateFormat
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.plot.enums.*
@@ -153,10 +155,11 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         // InAppLogger.log("MainActivity.onCreate")
 
         context = applicationContext
+        val displayMetrics = context.resources.displayMetrics
+        InAppLogger.log("Display size: ${displayMetrics.widthPixels/displayMetrics.density}x${displayMetrics.heightPixels/displayMetrics.density}")
 
         appPreferences = AppPreferences(context)
         StringFormatters.initFormatter(
