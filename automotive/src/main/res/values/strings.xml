@@ -41,6 +41,11 @@
     <string name="preference_distance_unit_key" translatable="false">preference_distance_unit</string>
     <string name="preference_secondary_dimension_key" translatable="false">preference_secondary_dimension</string>
     <string name="preference_main_view_trip_key" translatable="false">preference_main_view_trip</string>
+    <string name="preference_smtp_address_key" translatable="false">preference_smtp_address</string>
+    <string name="preference_smtp_password_key" translatable="false">preference_smtp_password</string>
+    <string name="preference_smtp_server_key" translatable="false">preference_smtp_server</string>
+    <string name="preference_log_target_address_key" translatable="false">preference_log_target_address</string>
+    <string name="preference_log_user_name_key" translatable="false">preference_log_user_name</string>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
 

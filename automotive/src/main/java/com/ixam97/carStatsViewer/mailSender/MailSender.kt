@@ -16,15 +16,14 @@ import java.lang.Exception
 import java.security.Security
 import java.util.*
 
-class MailSender(private val user: String, private val password: String) : Authenticator() {
-    private val mailhost = "smtp.strato.de"
+class MailSender(private val user: String, private val password: String, private val server: String) : Authenticator() {
     private val session: Session
     private val _multipart: Multipart = MimeMultipart()
 
     init {
         val props = Properties()
         props.setProperty("mail.transport.protocol", "smtp")
-        props.setProperty("mail.host", mailhost)
+        props.setProperty("mail.host", server)
         props["mail.smtp.auth"] = "true"
         props["mail.smtp.port"] = "465"
         props["mail.smtp.socketFactory.port"] = "465"

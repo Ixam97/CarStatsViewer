@@ -31,7 +31,12 @@ class AppPreferences(
     private val ChargePlotDimension = AppPreference<PlotDimension>(context.getString(R.string.preference_charge_plot_dimension_key), PlotDimension.TIME, sharedPref)
     private val DistanceUnit = AppPreference<DistanceUnitEnum>(context.getString(R.string.preference_distance_unit_key), DistanceUnitEnum.KM, sharedPref)
     private val SecondaryConsumptionDimension = AppPreference<Int>(context.getString(R.string.preference_secondary_dimension_key), 0, sharedPref)
-    private val MainViewTrip= AppPreference<Int>(context.getString(R.string.preference_main_view_trip_key), 1, sharedPref)
+    private val MainViewTrip = AppPreference<Int>(context.getString(R.string.preference_main_view_trip_key), 1, sharedPref)
+    private val SmtpAddress = AppPreference<String>(context.getString(R.string.preference_smtp_address_key), "", sharedPref)
+    private val SmtpPassword = AppPreference<String>(context.getString(R.string.preference_smtp_password_key), "", sharedPref)
+    private val SmtpServer = AppPreference<String>(context.getString(R.string.preference_smtp_server_key), "", sharedPref)
+    private val LogTargetAddress = AppPreference<String>(context.getString(R.string.preference_log_target_address_key), "ixam97@ixam97.de", sharedPref)
+    private val LogUserName = AppPreference<String>(context.getString(R.string.preference_log_user_name_key), "", sharedPref)
 
     var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
     var notifications: Boolean get() = Notification.value; set(value) {Notification.value = value}
@@ -46,6 +51,11 @@ class AppPreferences(
     var distanceUnit: DistanceUnitEnum get() = DistanceUnit.value; set(value) {DistanceUnit.value = value}
     var secondaryConsumptionDimension: Int get() = SecondaryConsumptionDimension.value; set(value) {SecondaryConsumptionDimension.value = value}
     var mainViewTrip: Int get() = MainViewTrip.value; set(value) {MainViewTrip.value = value}
+    var smtpAddress: String get() = SmtpAddress.value; set(value) {SmtpAddress.value = value}
+    var smtpPassword: String get() = SmtpPassword.value; set(value) {SmtpPassword.value = value}
+    var smtpServer: String get() = SmtpServer.value; set(value) {SmtpServer.value = value}
+    var logUserName: String get() = LogUserName.value; set(value) {LogUserName.value = value}
+    var logTargetAddress: String get() = LogTargetAddress.value; set(value) {LogTargetAddress.value = value}
 
     // Preferences not saved permanently:
     val exclusionStrategy = AppPreferences.exclusionStrategy

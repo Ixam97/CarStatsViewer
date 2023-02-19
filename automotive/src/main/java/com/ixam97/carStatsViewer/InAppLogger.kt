@@ -1,11 +1,14 @@
 package com.ixam97.carStatsViewer
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
+import android.view.LayoutInflater
+import android.widget.EditText
 import android.widget.Toast
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
@@ -105,6 +108,9 @@ class LogActivity : Activity() {
 
         setContentView(R.layout.activity_log)
 
+        log_text_target_mail.setText(appPreferences.logTargetAddress)
+        log_text_sender.setText(appPreferences.logUserName)
+
         // log_switch_deep_log.isChecked = appPreferences.deepLog
 
         // val logTextView = TextView(this)
@@ -120,12 +126,20 @@ class LogActivity : Activity() {
             val mailAdr = log_text_target_mail.text.toString()
             val senderName = log_text_sender.text.toString()
 
+            appPreferences.logTargetAddress = mailAdr
+            appPreferences.logUserName = senderName
+
             if (!mailAdr.isValidEmail())
                 Toast.makeText(this, "Invalid mail address!", Toast.LENGTH_SHORT).show()
             else {
                 CoroutineScope(Dispatchers.Default).launch() {
                     try {
-                        val sender = MailSender(getString(R.string.email_address), getString(R.string.password))
+                        val sender = if (appPreferences.smtpAddress.isNotEmpty() && appPreferences.smtpPassword.isNotEmpty() && appPreferences.smtpServer.isNotEmpty()) {
+                            MailSender(appPreferences.smtpAddress, appPreferences.smtpPassword, appPreferences.smtpServer)
+                        } else {
+                            MailSender(getString(R.string.strato_email_address), getString(R.string.strato_password), getString(R.string.strato_server))
+                        }
+
                         enumValues<DataManagers>().forEach {
                             try {
                                 val dir = File(applicationContext.filesDir, "TripData")
@@ -146,7 +160,7 @@ class LogActivity : Activity() {
                             }
 
                         }
-                        sender.sendMail("Debug Log ${Date()} from $senderName", getLogString(), "CarStatsViewer@ixam97.de", mailAdr)
+                        sender.sendMail("Debug Log ${Date()} from $senderName", getLogString(), appPreferences.smtpAddress, mailAdr)
                         runOnUiThread {
                             Toast.makeText(this@LogActivity, "Log and JSON sent to $mailAdr", Toast.LENGTH_LONG).show()
                         }
@@ -179,8 +193,29 @@ class LogActivity : Activity() {
             }
         }
 
-        log_button_copy.setOnClickListener {
-            copyToClipboard(log_text_view.text.toString())
+        log_button_login.setOnClickListener {
+            // copyToClipboard(log_text_view.text.toString())
+            val credentialsDialog = AlertDialog.Builder(this@LogActivity).apply {
+                val layout = LayoutInflater.from(this@LogActivity).inflate(R.layout.dialog_smpt_credentials, null)
+                val smtp_dialog_address = layout.findViewById<EditText>(R.id.smtp_dialog_address)
+                smtp_dialog_address.setText(appPreferences.smtpAddress)
+                val smtp_dialog_password = layout.findViewById<EditText>(R.id.smtp_dialog_password)
+                smtp_dialog_password.setText(appPreferences.smtpPassword)
+                val smtp_dialog_server = layout.findViewById<EditText>(R.id.smtp_dialog_server)
+                smtp_dialog_server.setText(appPreferences.smtpServer)
+
+                setView(layout)
+
+                setPositiveButton("OK") { dialog, _ ->
+                    appPreferences.smtpAddress = smtp_dialog_address.text.toString()
+                    appPreferences.smtpPassword = smtp_dialog_password.text.toString()
+                    appPreferences.smtpServer = smtp_dialog_server.text.toString()
+                }
+                setTitle("SMTP Login")
+                setCancelable(true)
+                create()
+            }
+            credentialsDialog.show()
         }
 
         log_button_reload.setOnClickListener {
