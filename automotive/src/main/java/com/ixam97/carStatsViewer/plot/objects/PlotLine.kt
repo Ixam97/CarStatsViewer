@@ -13,9 +13,6 @@ class PlotLine(
 
     var baseLineAt: ArrayList<Float> = ArrayList()
 
-    var plotPaint: PlotPaint? = null
-    var secondaryPlotPaint: PlotPaint? = null
-
     var alignZero: Boolean = false
 
     var zeroAt: Float? = null

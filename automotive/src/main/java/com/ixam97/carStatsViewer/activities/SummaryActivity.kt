@@ -48,6 +48,8 @@ class SummaryActivity: Activity() {
     private lateinit var tripData: TripData
 
     private lateinit var appPreferences: AppPreferences
+    private lateinit var consumptionPlotLinePaint : PlotLinePaint
+    private lateinit var chargePlotLinePaint : PlotLinePaint
 
     private lateinit var disabledTint: PorterDuffColorFilter
     private lateinit var enabledTint: android.graphics.ColorFilter
@@ -77,6 +79,19 @@ class SummaryActivity: Activity() {
         setContentView(R.layout.activity_summary)
 
         appPreferences = AppPreferences(applicationContext)
+
+        consumptionPlotLinePaint = PlotLinePaint(
+            PlotPaint.byColor(getColor(R.color.primary_plot_color), PlotView.textSize),
+            PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize),
+            PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+        ) { appPreferences.consumptionPlotSecondaryColor }
+
+        chargePlotLinePaint = PlotLinePaint(
+            PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize),
+            PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize),
+            PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+        ) { appPreferences.chargePlotSecondaryColor }
+
 
         //val tripDataFileName = intent.getStringExtra("FileName").toString()
         // tripData = if (tripDataFileName != "null") DataManager.getTripData(tripDataFileName)
@@ -161,7 +176,7 @@ class SummaryActivity: Activity() {
     private fun setupConsumptionLayout() {
         val plotMarkers = PlotMarkers()
         plotMarkers.addMarkers(tripData.markers)
-        summary_consumption_plot.addPlotLine(consumptionPlotLine)
+        summary_consumption_plot.addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
         summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
         summary_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
             1 -> {
@@ -229,11 +244,6 @@ class SummaryActivity: Activity() {
             )
         )
 
-        chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
-        chargePlotLine.secondaryPlotPaint = when {
-            appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
-        }
         chargePlotLine.reset()
         if (tripData.chargeCurves.isNotEmpty()) {
             chargePlotLine.addDataPoints(tripData.chargeCurves.last().chargePlotLine)
@@ -259,7 +269,7 @@ class SummaryActivity: Activity() {
             summary_charge_plot_button_prev.isEnabled = false
             summary_charge_plot_button_prev.colorFilter = disabledTint
         }
-        summary_charge_plot_view.addPlotLine(chargePlotLine)
+        summary_charge_plot_view.addPlotLine(chargePlotLine, chargePlotLinePaint)
 
         summary_charge_plot_view.dimension = PlotDimension.TIME
         // summary_charge_plot_view.dimensionSmoothingPercentage = 0.01f

@@ -199,10 +199,6 @@ class SettingsActivity : Activity() {
 
         settings_consumption_plot_switch_secondary_color.setOnClickListener {
             appPreferences.consumptionPlotSecondaryColor = settings_consumption_plot_switch_secondary_color.isChecked
-            DataCollector.CurrentTripDataManager.consumptionPlotLine.secondaryPlotPaint = when {
-                appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-                else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
-            }
         }
 
         settings_consumption_plot_speed_switch.setOnClickListener {
@@ -230,11 +226,6 @@ class SettingsActivity : Activity() {
 
         settings_charge_plot_switch_secondary_color.setOnClickListener {
             appPreferences.chargePlotSecondaryColor = settings_charge_plot_switch_secondary_color.isChecked
-            val plotPaint = when {
-                appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-                else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
-            }
-            DataCollector.CurrentTripDataManager.chargePlotLine.secondaryPlotPaint = plotPaint
         }
 
         settings_charge_plot_switch_visible_gages.setOnClickListener {

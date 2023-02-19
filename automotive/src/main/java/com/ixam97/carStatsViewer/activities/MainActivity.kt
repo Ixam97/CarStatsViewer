@@ -17,16 +17,14 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.text.format.DateFormat
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import android.widget.Toast
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.views.PlotView
 import com.ixam97.carStatsViewer.dataManager.DataManagers
+import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.services.LocCollector
 import com.ixam97.carStatsViewer.utils.StringFormatters
@@ -47,6 +45,9 @@ class MainActivity : Activity() {
 
     /** values and variables */
     private lateinit var appPreferences: AppPreferences
+    private lateinit var consumptionPlotLinePaint : PlotLinePaint
+    private lateinit var chargePlotLinePaint : PlotLinePaint
+
     private lateinit var timerHandler: Handler
     private lateinit var starterIntent: Intent
     private lateinit var context: Context
@@ -136,18 +137,6 @@ class MainActivity : Activity() {
             else -> getString(R.string.main_button_show_speed)
         }*/
 
-        selectedDataManager.consumptionPlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.primary_plot_color), PlotView.textSize)
-        selectedDataManager.consumptionPlotLine.secondaryPlotPaint = when {
-            appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
-        }
-
-        selectedDataManager.chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
-        selectedDataManager.chargePlotLine.secondaryPlotPaint = when {
-            appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
-        }
-
         main_consumption_plot.invalidate()
 
         enableUiUpdates()
@@ -168,6 +157,18 @@ class MainActivity : Activity() {
             appPreferences.consumptionUnit,
             appPreferences.distanceUnit
         )
+
+        consumptionPlotLinePaint = PlotLinePaint(
+            PlotPaint.byColor(getColor(R.color.primary_plot_color), PlotView.textSize),
+            PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize),
+            PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+        ) { appPreferences.consumptionPlotSecondaryColor }
+
+        chargePlotLinePaint = PlotLinePaint(
+            PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize),
+            PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize),
+            PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+        ) { appPreferences.chargePlotSecondaryColor }
 
         selectedDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
         InAppLogger.log("selected Trip: ${selectedDataManager.printableName}")
@@ -322,29 +323,10 @@ class MainActivity : Activity() {
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
-        // var plotDistanceId = when (appPreferences.plotDistance) {
-        //     1 -> main_radio_10.id
-        //     2 -> main_radio_25.id
-        //     3 -> main_radio_50.id
-        //     else -> main_radio_10.id
-        // }
-
-        // main_radio_group_distance.check(plotDistanceId)
-
         main_consumption_plot.reset()
-        main_consumption_plot.addPlotLine(selectedDataManager.consumptionPlotLine)
+        main_consumption_plot.addPlotLine(selectedDataManager.consumptionPlotLine, consumptionPlotLinePaint)
 
         main_button_secondary_dimension.text = "Toggle secondary dimension"
-
-        // when {
-        //     main_consumption_plot.secondaryDimension != null -> getString(R.string.main_button_hide_speed)
-        //     else -> getString(R.string.main_button_show_speed)
-        // }
-
-        selectedDataManager.consumptionPlotLine.secondaryPlotPaint = when {
-            appPreferences.consumptionPlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
-        }
 
         main_consumption_plot.dimension = PlotDimension.DISTANCE
         main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(CONSUMPTION_DISTANCE_RESTRICTION)
@@ -370,13 +352,7 @@ class MainActivity : Activity() {
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
-        main_charge_plot.addPlotLine(DataManagers.CURRENT_TRIP.dataManager.chargePlotLine)
-
-        DataManagers.CURRENT_TRIP.dataManager.chargePlotLine.plotPaint = PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize)
-        DataManagers.CURRENT_TRIP.dataManager.chargePlotLine.secondaryPlotPaint = when {
-            appPreferences.chargePlotSecondaryColor -> PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-            else -> PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize)
-        }
+        main_charge_plot.addPlotLine(DataManagers.CURRENT_TRIP.dataManager.chargePlotLine, chargePlotLinePaint)
 
         main_charge_plot.dimension = PlotDimension.TIME
         main_charge_plot.dimensionRestriction = null
