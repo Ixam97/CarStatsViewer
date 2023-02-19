@@ -35,11 +35,9 @@ Other than that, contributions to the app are always welcome. Be it in form of c
 If you have any bugs to report or want du suggest a new feature, please have a look at the GitHub issues. Don't forget to have a look at the existing issues to not create duplicates. Let me know if you support any of the existing feature request so I can adjust my priorities accordingly.
 
 ### Translations:
-If you are using the app and miss the translation into your language, feel free to create a translation yourself and contribute on the development of the app. The default strings used in the app can be found here:
+If you are using the app and miss the translation into your language, feel free to create a translation yourself and contribute on the development of the app:
 
-[English strings](https://github.com/Ixam97/CarStatsViewer/blob/active_development/automotive/src/main/res/values/strings.xml)
-
-Values containing `translatable="false"` should not be translated.
+[Lokalise project for Car Stats Viewer](https://app.lokalise.com/public/7279689963f1e922c08f26.64130521/)
 
 Currently the following languages are already available:
  - :gb: English
@@ -58,8 +56,6 @@ Currently the following languages are already available:
 
 - Also describe what you want to archive with your code contribution. Uncommented PRs with no context on what they do are hard to understand and review. To make it easyer for me to review and test your contribution make sure to [allow edits from maintainers](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork). </br>
 Please also be aware that I will not just include everything. It has to fit into my goals I want to archive with this app. I may just say "I don't feel it" (yes, I konw, this joke is getting old 😅). It would be best to open an issue beforehand, describing what you want to see in the app and offer your help before starting to code. This way it is possible to exchange ideas before spending hours in coding.
-
-- If you just want to contribute a translation and dont want to setup a complete development environment or tinker with GitHub you can just download the strings file linked above. Open it in notepad (change the extension to .txt if neccessary) and start translating. When you are done you can just send me the edited file via [E-Mail](mailto:ixam97@ixam97.de) and I will include it with the next update.
 
 </details>
 
