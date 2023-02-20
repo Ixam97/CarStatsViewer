@@ -92,16 +92,18 @@ class MainActivity : Activity() {
 
         main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(CONSUMPTION_DISTANCE_RESTRICTION)
 
-        selectedDataManager.consumptionPlotLine.Configuration.UnitFactor = appPreferences.distanceUnit.toFactor()
+        for (manager in DataManagers.values()) {
+            manager.dataManager.consumptionPlotLine.Configuration.UnitFactor = appPreferences.distanceUnit.toFactor()
 
-        if (appPreferences.consumptionUnit) {
-            selectedDataManager.consumptionPlotLine.Configuration.Unit = "Wh/%s".format(appPreferences.distanceUnit.unit())
-            selectedDataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
-            selectedDataManager.consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 1f
-        } else {
-            selectedDataManager.consumptionPlotLine.Configuration.Unit = "kWh/100%s".format(appPreferences.distanceUnit.unit())
-            selectedDataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
-            selectedDataManager.consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 10f
+            if (appPreferences.consumptionUnit) {
+                manager.dataManager.consumptionPlotLine.Configuration.Unit = "Wh/%s".format(appPreferences.distanceUnit.unit())
+                manager.dataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
+                manager.dataManager.consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 1f
+            } else {
+                manager.dataManager.consumptionPlotLine.Configuration.Unit = "kWh/100%s".format(appPreferences.distanceUnit.unit())
+                manager.dataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
+                manager.dataManager.consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 10f
+            }
         }
 
         main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
