@@ -18,6 +18,7 @@
     <string-array name="supporters" translatable="false">
         <item>Ahti Hinnov</item>
         <item>Robin Hellström</item>
+        <item>Benjamin Stegmann</item>
     </string-array>
 
     <!-- Preferences -->
