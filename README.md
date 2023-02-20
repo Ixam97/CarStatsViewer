@@ -26,6 +26,7 @@ Any form of support and feedback is very welcome! If you like the app and want t
 
  * Ahti Hinnov </br>
  * Robin Hellström
+ * Benjamin Stegmann 
 
 </details>
 
