@@ -28,6 +28,7 @@ import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.services.LocCollector
 import com.ixam97.carStatsViewer.utils.StringFormatters
+import com.ixam97.carStatsViewer.views.GageView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
@@ -149,6 +150,12 @@ class MainActivity : Activity() {
         context = applicationContext
         val displayMetrics = context.resources.displayMetrics
         InAppLogger.log("Display size: ${displayMetrics.widthPixels/displayMetrics.density}x${displayMetrics.heightPixels/displayMetrics.density}")
+
+        PlotView.textSize = resources.getDimension(R.dimen.reduced_font_size)
+        PlotView.xMargin = resources.getInteger(R.integer.plot_x_margin)
+        PlotView.yMargin = resources.getInteger(R.integer.plot_y_margin)
+        GageView.valueTextSize = resources.getDimension(R.dimen.gage_value_text_size)
+        GageView.descriptionTextSize = resources.getDimension(R.dimen.gage_desc_text_size)
 
         appPreferences = AppPreferences(context)
         StringFormatters.initFormatter(

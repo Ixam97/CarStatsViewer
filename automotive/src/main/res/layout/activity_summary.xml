@@ -33,7 +33,7 @@
                 android:id="@+id/summary_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textFontWeight="600"
+                android:textFontWeight="@integer/title_font_weight"
                 android:layout_marginTop="10dp"
                 android:textSize="@dimen/title_font_size"
                 android:textColor="?android:attr/textColorPrimary"
@@ -75,13 +75,20 @@
             android:src="@drawable/ic_chevron_right"
             android:background="@android:color/transparent"/>
 
-        <Button
+        <ImageButton
+            android:layout_margin="15dp"
+            android:id="@+id/summary_button_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_reset"
+            android:background="@android:color/transparent"/>
+        <!--<Button
             android:layout_margin="15dp"
             android:id="@+id/summary_button_reset"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/summary_button_reset_trip"
-            />
+            />-->
 
     </LinearLayout>
 
@@ -113,14 +120,12 @@
             android:layout_width="0dp"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:textSize="35sp"
             android:text="@string/summary_trip_history"/>
         <Button
             android:id="@+id/summary_button_show_charge_container"
             android:layout_width="0dp"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:textSize="35sp"
             android:text="@string/summary_charging_sessions"/>
     </LinearLayout>
     <View style="@style/menu_divider_style_no_margin"

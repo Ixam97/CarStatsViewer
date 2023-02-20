@@ -24,17 +24,19 @@ import kotlin.math.roundToInt
 
 class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     companion object {
-        const val textSize = 26f
+        var textSize = 26f
+        var xMargin = 100
+        var yMargin = 60
     }
 
-    var xMargin: Int = 100
+    /*var xMargin: Int = 100
         set(value) {
             val diff = value != field
             if (value > 0) {
                 field = value
                 if (diff) invalidate()
             }
-        }
+        }*/
 
     var xLineCount: Int = 6
         set(value) {
@@ -45,14 +47,14 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             }
         }
 
-    var yMargin: Int = 60
+    /*var yMargin: Int = 60
         set(value) {
             val diff = value != field
             if (value > 0) {
                 field = value
                 if (diff) invalidate()
             }
-        }
+        }*/
 
     var yLineCount: Int = 5
         set(value) {

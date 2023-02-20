@@ -103,6 +103,7 @@ class SummaryActivity: Activity() {
 
         if (appPreferences.mainViewTrip != 0) {
             summary_button_reset.isEnabled = false
+            summary_button_reset.setColorFilter(getColor(R.color.disabled_tint))
         }
 
         tripData = dataManager.tripData!!

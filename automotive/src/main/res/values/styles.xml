@@ -7,7 +7,7 @@
         <item name="android:layout_margin">20dp</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">@dimen/title_font_size</item>
-        <item name="android:textFontWeight">600</item>
+        <item name="android:textFontWeight">@integer/title_font_weight</item>
     </style>
     <style name="title_back_button_style">
         <item name="android:layout_width">wrap_content</item>
@@ -20,7 +20,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">50dp</item>
         <item name="android:textSize">@dimen/section_title_font_size</item>
-        <item name="android:textFontWeight">600</item>
+        <item name="android:textFontWeight">@integer/title_font_weight</item>
         <item name="android:textColor">?android:attr/colorControlActivated</item>
     </style>
     <style name="menu_standard_switch_style">
@@ -75,7 +75,7 @@
     </style>
     <style name="menu_divider_style_no_margin">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">2dp</item>
+        <item name="android:layout_height">@dimen/divider_height</item>
     </style>
     <style name="filler">
         <item name="android:layout_width">0dp</item>
