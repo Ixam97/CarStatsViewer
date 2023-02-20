@@ -80,6 +80,17 @@ Discussion in the international Polestar forums: [Polestar Forum](https://www.po
 
 ## Changelog [DE]:
 
+### 0.23.0 ()
+- Datenstruktur grundlegend überarbeitet, um die Stabilität und Sklaierbarkeit zu verbessern
+- "Über Car Stats Viewer" hinzugefügt, (inkl. grundlegende Überarbeitung der ReadMe)
+- Es können neben dem manuellen Trip mehrere, automatisch zurückgesetzte Trips ausgewählt werden
+- Verschiedene optische Anpassungen an den Diagrammen
+- Einzelne Werte eines Diagramms können per doppeltipp hervorgehoben werden
+- Möglichkeit zum verschicken von Debug-Logs
+- Stabilisierung des Verhaltens der Ladekurve, wenn die Ausführung der App zwischenzeitlich unterbrochen wird
+- Optimierung der Fahrerablenkung
+- Zahlreiche weitere Bugfixes und Stabilitätsverbesserungen.
+
 ### 0.22.1 (02.02.2023)
 - Falsche Lokalisierung für Norwegisch behoben.
 
