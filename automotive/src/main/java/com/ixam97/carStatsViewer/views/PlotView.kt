@@ -138,10 +138,8 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
             if (diff) invalidate()
         }
 
-    private val plotLines = ArrayList<PlotLine>()
+    private val plotLines = ArrayList<Pair<PlotLine, PlotLinePaint>>()
     private var plotMarkers : PlotMarkers? = null
-
-    private val plotPaint = ArrayList<PlotPaint>()
 
     private lateinit var labelPaint: Paint
     private lateinit var labelLinePaint: Paint
@@ -186,12 +184,6 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         dimensionHighlightLinePaint = Paint(borderLinePaint)
         dimensionHighlightLinePaint.strokeWidth = 3f
         dimensionHighlightLinePaint.pathEffect = DashPathEffect(floatArrayOf(5f, 10f), 0f)
-
-        val plotColors = listOf(null, Color.CYAN, Color.BLUE, Color.RED)
-
-        for (color in plotColors) {
-            plotPaint.add(PlotPaint.byColor(color ?: typedValue.data, textSize))
-        }
 
         for (type in PlotMarkerType.values()) {
             when (type) {
@@ -240,7 +232,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
     fun reset() {
         for (item in plotLines) {
-            item.reset()
+            item.first.reset()
         }
 
         plotMarkers?.markers?.clear()
@@ -248,21 +240,13 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         invalidate()
     }
 
-    fun addPlotLine(plotLine: PlotLine) {
-        if (plotLine.plotPaint == null) {
-            plotLine.plotPaint = plotPaint[plotLines.size]
-        }
-
-        if (plotLine.secondaryPlotPaint == null) {
-            plotLine.secondaryPlotPaint = PlotPaint.byColor(Color.GREEN, textSize)
-        }
-
-        plotLines.add(plotLine)
+    fun addPlotLine(plotLine: PlotLine, plotLinePaint: PlotLinePaint) {
+        plotLines.add(Pair(plotLine, plotLinePaint))
         invalidate()
     }
 
     fun removePlotLine(plotLine: PlotLine?) {
-        plotLines.remove(plotLine)
+        plotLines.removeAll { it.first == plotLine }
         invalidate()
     }
 
@@ -404,7 +388,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                 touchDimensionShiftDistance = 0f
                 touchDimensionShiftByPixel = restriction.toFloat() / width.toFloat()
 
-                val dimensionMax = plotLines.mapNotNull { it.distanceDimension(dimension) }.maxOfOrNull { it }?.toLong() ?: return true
+                val dimensionMax = plotLines.mapNotNull { it.first.distanceDimension(dimension) }.maxOfOrNull { it }?.toLong() ?: return true
                 touchDimensionMax = dimensionMax + (min - dimensionMax % min)
 
                 touchGesture = true
@@ -435,11 +419,12 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     }
 
     private fun alignZero() {
-        if (plotLines.none { it.alignZero }) return
+        if (plotLines.none { it.first.alignZero }) return
 
         var zeroAt : Float? = null
         for (index in plotLines.indices) {
-            val line = plotLines[index]
+            val pair = plotLines[index]
+            val line = pair?.first ?: continue
 
             if (index == 0) {
                 if (line.isEmpty() || !line.Visible) return
@@ -473,7 +458,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
         val distanceDimension = when {
             dimensionRestriction != null -> dimensionRestriction!!.toFloat()
-            else -> plotLines.mapNotNull { it.distanceDimension(dimension, dimensionRestriction, dimensionShift) }.maxOfOrNull { it }
+            else -> plotLines.mapNotNull { it.first.distanceDimension(dimension, dimensionRestriction, dimensionShift) }.maxOfOrNull { it }
         } ?: return
 
         val sectionLength = distanceDimension / (xLineCount - 1)
@@ -560,7 +545,9 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         val maxX = width.toFloat()
         val maxY = height.toFloat()
 
-        for (line in plotLines.filter { it.Visible }) {
+        for (pair in plotLines.filter { it.first.Visible }) {
+            val line = pair.first
+            val plotPaint = pair.second ?: continue
 
             if (!dimensionHighlightValue.containsKey(line)) dimensionHighlightValue[line] = HashMap()
 
@@ -583,10 +570,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                     val minDimension = line.minDimension(dimension, dimensionRestriction, dimensionShift) ?: continue
                     val maxDimension = line.maxDimension(dimension, dimensionRestriction, dimensionShift) ?: continue
 
-                    val paint = when {
-                        secondaryDimension != null -> line.secondaryPlotPaint ?: line.plotPaint
-                        else -> line.plotPaint
-                    } ?: continue
+                    val paint = plotPaint.bySecondaryDimension(secondaryDimension) ?: continue
 
                     val minValue = line.minValue(dataPoints, secondaryDimension)!!
                     val maxValue = line.maxValue(dataPoints, secondaryDimension)!!
@@ -885,7 +869,10 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
         for (drawHighlightLabelOnly in listOf(false, true)) {
             var index = 0
-            for (line in plotLines.filter { it.Visible }) {
+            for (pair in plotLines.filter { it.first.Visible }) {
+                val line = pair.first
+                val plotPaint = pair.second
+
                 for (secondaryDimension in arrayListOf(null, secondaryDimension).distinct()) {
                     // only draw one secondary
                     if (secondaryDimension != null && index++ > 0) continue
@@ -896,10 +883,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                         else -> line.Configuration
                     } ?: continue
 
-                    val paint = when {
-                        secondaryDimension != null -> line.secondaryPlotPaint ?: line.plotPaint
-                        else -> line.plotPaint
-                    } ?: continue
+                    val paint = plotPaint.bySecondaryDimension(secondaryDimension) ?: continue
 
                     val minValue = line.minValue(dataPoints, secondaryDimension)!!
                     val maxValue = line.maxValue(dataPoints, secondaryDimension)!!
