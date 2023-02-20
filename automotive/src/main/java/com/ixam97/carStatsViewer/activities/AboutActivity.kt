@@ -56,7 +56,7 @@ class AboutActivity : Activity() {
                 }
                 setTitle(getString(R.string.about_thank_you))
                 val supportersArray = resources.getStringArray(R.array.supporters)
-                var supporters = getString(R.string.about_supporters_message)
+                var supporters = getString(R.string.about_supporters_message) + "\n\n"
                 for ((index, supporter) in supportersArray.withIndex()) {
                     supporters += supporter
                     if (index < supportersArray.size - 1) supporters += ", "
