@@ -170,4 +170,9 @@
     <string name="notification_title">Current stats:</string>
     <string name="foreground_service_info">Data collection service running</string>
     <string name="toast_file_read_error">Error reading trip file</string>
+
+    <!-- InAppLogger -->
+    <string name="strato_email_address" translatable="false" />
+    <string name="strato_password" translatable="false" />
+    <string name="strato_server" translatable="false" />
 </resources>
