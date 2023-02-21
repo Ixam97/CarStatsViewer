@@ -25,8 +25,8 @@ import kotlin.math.roundToInt
 class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     companion object {
         var textSize = 26f
-        var xMargin = 100
-        var yMargin = 60
+        var xMargin = 0
+        var yMargin = 0
     }
 
     /*var xMargin: Int = 100
@@ -914,7 +914,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                     }
 
                     val labelCordX = when (configuration.LabelPosition) {
-                        PlotLabelPosition.LEFT -> textSize
+                        PlotLabelPosition.LEFT -> 0f // textSize
                         PlotLabelPosition.RIGHT -> maxX - xMargin + textSize / 2
                         else -> null
                     }
@@ -966,22 +966,22 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                             val textBoxMargin = paint.HighlightLabel.textSize / 3.5f
 
                             canvas.drawRect(
-                                labelCordX + labelUnitXOffset - textBoxMargin,
+                                labelCordX + paint.Plot.strokeWidth * 4 + labelUnitXOffset - textBoxMargin,
                                 highlightCordYLimited - labelHeight + labelShiftY,
-                                labelCordX + labelUnitXOffset + labelWidth + textBoxMargin,
+                                labelCordX + paint.Plot.strokeWidth * 4 + labelUnitXOffset + labelWidth + textBoxMargin,
                                 highlightCordYLimited + labelShiftY + textBoxMargin,
                                 backgroundPaint
                             )
 
                             canvas.drawRect(
-                                labelCordX + labelUnitXOffset - textBoxMargin,
+                                labelCordX + paint.Plot.strokeWidth * 4 + labelUnitXOffset - textBoxMargin,
                                 highlightCordYLimited - labelHeight + labelShiftY,
-                                labelCordX + labelUnitXOffset + labelWidth + textBoxMargin,
+                                labelCordX + paint.Plot.strokeWidth * 4 + labelUnitXOffset + labelWidth + textBoxMargin,
                                 highlightCordYLimited + labelShiftY + textBoxMargin,
                                 paint.Plot
                             )
 
-                            canvas.drawText(label, labelCordX + labelUnitXOffset, highlightCordYLimited + labelShiftY, paint.HighlightLabel)
+                            canvas.drawText(label, labelCordX + paint.Plot.strokeWidth * 4 + labelUnitXOffset, highlightCordYLimited + labelShiftY, paint.HighlightLabel)
                         }
                     }
                 }
@@ -1029,10 +1029,12 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     private fun label(value: Float, plotLineLabelFormat: PlotLineLabelFormat, plotHighlightMethod: PlotHighlightMethod? = null): String {
         if (plotHighlightMethod == PlotHighlightMethod.NONE) return ""
 
-        val suffix = when (plotLineLabelFormat) {
-            PlotLineLabelFormat.PERCENTAGE -> " %"
-            else -> ""
-        }
+        // val suffix = when (plotLineLabelFormat) {
+        //     PlotLineLabelFormat.PERCENTAGE -> " %"
+        //     else -> ""
+        // }
+
+        val suffix = ""
 
         return when (plotLineLabelFormat) {
             PlotLineLabelFormat.NUMBER, PlotLineLabelFormat.PERCENTAGE -> when (plotHighlightMethod) {

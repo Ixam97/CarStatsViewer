@@ -133,6 +133,23 @@ class SummaryActivity: Activity() {
             finish()
         }
 
+        summary_title.setOnClickListener {
+            var isMainDataManager = false
+            for (mainDataManager in DataManagers.values()) {
+                isMainDataManager = dataManager == mainDataManager.dataManager
+                if (isMainDataManager) break
+            }
+            if (isMainDataManager) {
+                var tripIndex = appPreferences.mainViewTrip
+                tripIndex++
+                if (tripIndex > 3) tripIndex = 0
+                appPreferences.mainViewTrip = tripIndex
+                startActivity(Intent(this, SummaryActivity::class.java))
+                finish()
+            } else
+                TODO("Don't use onClick when showing a specific trip, not one of the 4 main trips")
+        }
+
         // enabledTint = summary_charge_plot_button_next.foreground!!
         disabledTint = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
         enabledTint = PorterDuffColorFilter(primaryColor!!, PorterDuff.Mode.SRC_IN)

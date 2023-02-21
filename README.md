@@ -65,6 +65,7 @@ Please also be aware that I will not just include everything. It has to fit into
 - Dutch translation: DoubleYouEl
 - Swedish translation: Robin Hellström, jschlyter
 - Norwegian translation: Oddvarr
+- Danish translation: Emil Blixt Hansen
 - FreshDave29
 - rdu
 
@@ -82,6 +83,7 @@ Discussion in the international Polestar forums: [Polestar Forum](https://www.po
 
 ### 0.23.0 ()
 - Datenstruktur grundlegend überarbeitet, um die Stabilität und Sklaierbarkeit zu verbessern
+- Dänische Übersetzung hinzugefügt
 - "Über Car Stats Viewer" hinzugefügt, (inkl. grundlegende Überarbeitung der ReadMe)
 - Es können neben dem manuellen Trip mehrere, automatisch zurückgesetzte Trips ausgewählt werden
 - Verschiedene optische Anpassungen an den Diagrammen

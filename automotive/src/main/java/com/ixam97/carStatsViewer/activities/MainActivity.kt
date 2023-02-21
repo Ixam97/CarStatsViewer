@@ -154,8 +154,8 @@ class MainActivity : Activity() {
         InAppLogger.log("Display size: ${displayMetrics.widthPixels/displayMetrics.density}x${displayMetrics.heightPixels/displayMetrics.density}")
 
         PlotView.textSize = resources.getDimension(R.dimen.reduced_font_size)
-        PlotView.xMargin = resources.getInteger(R.integer.plot_x_margin)
-        PlotView.yMargin = resources.getInteger(R.integer.plot_y_margin)
+        PlotView.xMargin = resources.getDimension(R.dimen.plot_x_margin).toInt()
+        PlotView.yMargin = resources.getDimension(R.dimen.plot_y_margin).toInt()
         GageView.valueTextSize = resources.getDimension(R.dimen.gage_value_text_size)
         GageView.descriptionTextSize = resources.getDimension(R.dimen.gage_desc_text_size)
 
