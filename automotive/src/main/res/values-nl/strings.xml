@@ -23,16 +23,16 @@
     <string name="main_gage_consumption">Momenteel verbruik</string>
     <string name="main_dismiss_charge_plot">Laadcurve sluiten</string>
     <string name="main_button_reset_charge_plot">Laadcurve resetten</string>
-    <string name="main_button_trip_summary">Samenvatting trip</string>
+    <string name="main_button_trip_summary">Samenvatting rit</string>
     <string name="main_button_hide_speed">Snelheid verbergen</string>
     <string name="main_button_show_speed">Snelheid tonen</string>
     <string name="main_secondary_axis">Secundaire as: %s</string>
-    <string name="summary_title">Samenvatting trip</string>
-    <string name="summary_button_reset_trip">Trip resetten</string>
+    <string name="summary_title">Samenvatting rit</string>
+    <string name="summary_button_reset_trip">Rit resetten</string>
     <string name="summary_parked_warning">Enkel zichtbaar in parkeerstand.</string>
-    <string name="summary_trip_history">Tripverloop</string>
+    <string name="summary_trip_history">Ritverloop</string>
     <string name="summary_charging_sessions">Laadsessies</string>
-    <string name="summary_trip_start_date">Trip begonnen op: %s</string>
+    <string name="summary_trip_start_date">Rit begonnen op: %s</string>
     <string name="summary_used_energy">Verbruikte energie</string>
     <string name="summary_traveled_distance">Afgelegde afstand</string>
     <string name="summary_average_consumption">Gemiddeld verbruik</string>
@@ -77,8 +77,8 @@
     <string name="quit_dialog_title">App afsluiten?</string>
     <string name="quit_dialog_message">Log wordt gekopieerd naar het klembord.</string>
     <string name="dialog_close">Sluit</string>
-    <string name="dialog_reset_title">Tripgegevens resetten?</string>
-    <string name="dialog_reset_message">De huidige tripgegevens worden gereset. Moet de trip opgeslagen worden?</string>
+    <string name="dialog_reset_title">Ritgegevens resetten?</string>
+    <string name="dialog_reset_message">De huidige ritgegevens worden op nul gezet. Wilt u de rit opslaan?</string>
     <string name="dialog_reset_do_save">Opslaan</string>
     <string name="dialog_reset_no_save">Niet opslaan</string>
     <string name="dialog_reset_cancel">Cancel</string>
@@ -88,9 +88,9 @@
     <string name="notification_title">Huidige statistieken:</string>
     <string name="foreground_service_info">Gegevensverzameling is bezig</string>
     <string name="toast_file_read_error">Fout bij het inlezen van de ritgegevens</string>
-    <string name="settings_select_trip"></string>
-    <string name="CurrentTripData"></string>
-    <string name="SinceChargeData"></string>
-    <string name="AutoTripData"></string>
-    <string name="CurrentMonthData"></string>
+    <string name="settings_select_trip">Rit in hoofdweergave:</string>
+    <string name="CurrentTripData">Handmatige rit</string>
+    <string name="SinceChargeData">Sinds de laatste laadbeurt</string>
+    <string name="AutoTripData">Automatische rit</string>
+    <string name="CurrentMonthData">Huidige maand</string>
 </resources>

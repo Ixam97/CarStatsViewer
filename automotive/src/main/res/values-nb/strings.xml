@@ -88,9 +88,9 @@
     <string name="notification_title">Nåværende statistikker:</string>
     <string name="foreground_service_info">Service for datainnsamling kjører</string>
     <string name="toast_file_read_error">Feil ved lesing av turfil</string>
-    <string name="settings_select_trip"></string>
-    <string name="CurrentTripData"></string>
-    <string name="SinceChargeData"></string>
-    <string name="AutoTripData"></string>
-    <string name="CurrentMonthData"></string>
+    <string name="settings_select_trip">Tur i hovedvisning:</string>
+    <string name="CurrentTripData">Manuell tur</string>
+    <string name="SinceChargeData">Siden siste endring</string>
+    <string name="AutoTripData">Automatisk tur</string>
+    <string name="CurrentMonthData">Denne måned</string>
 </resources>
