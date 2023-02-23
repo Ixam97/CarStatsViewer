@@ -137,8 +137,14 @@ class LogActivity : Activity() {
                         val sender = if (appPreferences.smtpAddress.isNotEmpty() && appPreferences.smtpPassword.isNotEmpty() && appPreferences.smtpServer.isNotEmpty()) {
                             MailSender(appPreferences.smtpAddress, appPreferences.smtpPassword, appPreferences.smtpServer)
                         } else {
-                            MailSender(getString(R.string.strato_email_address), getString(R.string.strato_password), getString(R.string.strato_server))
+                            if (getString(R.string.strato_email_address).isNotEmpty() && getString(R.string.strato_password).isNotEmpty() && getString(R.string.strato_server).isNotEmpty()) {
+                                MailSender(getString(R.string.strato_email_address), getString(R.string.strato_password), getString(R.string.strato_server))
+                            } else {
+                                null
+                            }
                         }
+
+                        if (sender == null) return@launch
 
                         enumValues<DataManagers>().forEach {
                             try {

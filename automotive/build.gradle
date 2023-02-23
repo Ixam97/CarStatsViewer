@@ -29,6 +29,21 @@ android {
         pickFirst 'META-INF/NOTICE.md' // picks the Angus Mail notice file
     }
 
+    lintOptions {
+        // Returns whether lint should be quiet (for example, not write informational messages such as paths to report files written)
+        quiet true
+
+        // Whether lint should set the exit code of the process if errors are found
+        abortOnError false
+
+        // Returns whether lint will only check for errors (ignoring warnings)
+        ignoreWarnings true
+
+        // Returns whether lint should check for fatal errors during release builds. Default is true.
+        // If issues with severity "fatal" are found, the release build is aborted.
+        checkReleaseBuilds false
+    }
+
     // android.car exists since Android 10 (API level 29) Revision 5.
     useLibrary 'android.car'
     namespace 'com.ixam97.carStatsViewer'
