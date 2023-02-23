@@ -140,12 +140,12 @@ class LogActivity : Activity() {
                             senderMail = appPreferences.smtpAddress
                             MailSender(appPreferences.smtpAddress, appPreferences.smtpPassword, appPreferences.smtpServer)
                         } else {
-                            if (resources.getIdentifier("strato_email_address", "string", applicationContext.packageName) != 0) {
-                                senderMail = getString(resources.getIdentifier("strato_email_address", "string", applicationContext.packageName))
+                            if (resources.getIdentifier("logmail_email_address", "string", applicationContext.packageName) != 0) {
+                                senderMail = getString(resources.getIdentifier("logmail_email_address", "string", applicationContext.packageName))
                                 MailSender(
                                     senderMail,
-                                    getString(resources.getIdentifier("strato_password", "string", applicationContext.packageName)),
-                                    getString(resources.getIdentifier("strato_server", "string", applicationContext.packageName)))
+                                    getString(resources.getIdentifier("logmail_password", "string", applicationContext.packageName)),
+                                    getString(resources.getIdentifier("logmailserver", "string", applicationContext.packageName)))
                             } else {
                                 runOnUiThread {
                                     Toast.makeText(this@LogActivity, "No SMTP login", Toast.LENGTH_LONG).show()
