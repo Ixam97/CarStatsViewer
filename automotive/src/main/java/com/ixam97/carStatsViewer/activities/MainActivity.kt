@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.activities
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.dataManager.*
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.PendingIntent
 import android.car.VehicleGear
 import android.car.VehiclePropertyIds
@@ -210,6 +211,26 @@ class MainActivity : Activity() {
         main_button_performance.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
 
         enableUiUpdates()
+
+        if (appPreferences.versionString != BuildConfig.VERSION_NAME) {
+            val changelogDialog = AlertDialog.Builder(this).apply {
+                setPositiveButton(getString(R.string.dialog_close)) { dialog, _ ->
+                    dialog.cancel()
+                }
+                setTitle(getString(R.string.main_changelog_dialog_title, BuildConfig.VERSION_NAME))
+                val changesArray = resources.getStringArray(R.array.changes_0_23)
+                var changelog = ""
+                for ((index, change) in changesArray.withIndex()) {
+                    changelog += "• $change"
+                    if (index < changesArray.size - 1) changelog += "\n\n"
+                }
+                setMessage(changelog)
+                setCancelable(true)
+                create()
+            }
+            changelogDialog.show()
+            appPreferences.versionString = BuildConfig.VERSION_NAME
+        }
     }
 
     override fun onDestroy() {

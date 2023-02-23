@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string-array name="changes_0_23">
+        <item>Datenstruktur grundlegend überarbeitet, um die Stabilität und Sklaierbarkeit zu verbessern</item>
+        <item>Dänische Übersetzung hinzugefügt</item>
+        <item>"Über Car Stats Viewer" hinzugefügt, (inkl. grundlegende Überarbeitung der ReadMe mit Hinweisen zur Unterstützung und Mitwirkung)</item>
+        <item>Es können neben dem manuellen Trip mehrere, automatisch zurückgesetzte Trips ausgewählt werden</item>
+        <item>Verschiedene optische Anpassungen an den Diagrammen</item>
+        <item>Einzelne Werte eines Diagramms können per doppeltipp hervorgehoben werden</item>
+        <item>Möglichkeit zum verschicken von Debug-Logs per SMTP (experimentell!)</item>
+        <item>Stabilisierung des Verhaltens der Ladekurve, wenn die Ausführung der App zwischenzeitlich unterbrochen wird</item>
+        <item>Optimierung der Fahrerablenkung</item>
+        <item>Zahlreiche weitere Bugfixes und Stabilitätsverbesserungen.</item>
+    </string-array>
+
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Berechtigungen notwendig</string>
     <string name="permissions_dialog_text">Diese App benötigt Berechtigungen, um genuzt zu werden. Ohne die angeforderten Berechtigungen können keine Daten des Fahrzugs erfasst werden.</string>
@@ -29,6 +42,7 @@
     <string name="main_button_hide_speed">Geschwindigkeit verbergen</string>
     <string name="main_button_show_speed">Geschwindigkeit anzeigen</string>
     <string name="main_secondary_axis">Sekundärachse: %s</string>
+    <string name="main_changelog_dialog_title">Änderungen in Version %s:</string>
 
     <!-- SummaryActivity -->
     <string name="summary_title">Tripzusammenfassung</string>

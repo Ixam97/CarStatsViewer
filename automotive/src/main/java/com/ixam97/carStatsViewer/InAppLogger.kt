@@ -126,6 +126,8 @@ class LogActivity : Activity() {
             val mailAdr = log_text_target_mail.text.toString()
             val senderName = log_text_sender.text.toString()
 
+            var senderMail = ""
+
             appPreferences.logTargetAddress = mailAdr
             appPreferences.logUserName = senderName
 
@@ -134,12 +136,20 @@ class LogActivity : Activity() {
             else {
                 CoroutineScope(Dispatchers.Default).launch() {
                     try {
-                        val sender = if (appPreferences.smtpAddress.isNotEmpty() && appPreferences.smtpPassword.isNotEmpty() && appPreferences.smtpServer.isNotEmpty()) {
+                        val sender = if (appPreferences.smtpAddress != "" && appPreferences.smtpPassword != "" && appPreferences.smtpServer != "") {
+                            senderMail = appPreferences.smtpAddress
                             MailSender(appPreferences.smtpAddress, appPreferences.smtpPassword, appPreferences.smtpServer)
                         } else {
-                            if (getString(R.string.strato_email_address).isNotEmpty() && getString(R.string.strato_password).isNotEmpty() && getString(R.string.strato_server).isNotEmpty()) {
-                                MailSender(getString(R.string.strato_email_address), getString(R.string.strato_password), getString(R.string.strato_server))
+                            if (resources.getIdentifier("strato_email_address", "string", applicationContext.packageName) != 0) {
+                                senderMail = getString(resources.getIdentifier("strato_email_address", "string", applicationContext.packageName))
+                                MailSender(
+                                    senderMail,
+                                    getString(resources.getIdentifier("strato_password", "string", applicationContext.packageName)),
+                                    getString(resources.getIdentifier("strato_server", "string", applicationContext.packageName)))
                             } else {
+                                runOnUiThread {
+                                    Toast.makeText(this@LogActivity, "No SMTP login", Toast.LENGTH_LONG).show()
+                                }
                                 null
                             }
                         }
@@ -166,7 +176,7 @@ class LogActivity : Activity() {
                             }
 
                         }
-                        sender.sendMail("Debug Log ${Date()} from $senderName", getLogString(), appPreferences.smtpAddress, mailAdr)
+                        sender.sendMail("Debug Log ${Date()} from $senderName", getLogString(), senderMail, mailAdr)
                         runOnUiThread {
                             Toast.makeText(this@LogActivity, "Log and JSON sent to $mailAdr", Toast.LENGTH_LONG).show()
                         }

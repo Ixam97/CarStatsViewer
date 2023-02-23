@@ -16,14 +16,16 @@ class AppPreferences(
         context.getString(R.string.preferences_file_key), Context.MODE_PRIVATE
     )
 
-    private val Debug = AppPreference<Boolean>(context.getString(R.string.preferences_debug_key), false, sharedPref)
-    private val Notification = AppPreference<Boolean>(context.getString(R.string.preferences_notifications_key), false, sharedPref)
-    private val ConsumptionUnit = AppPreference<Boolean>(context.getString(R.string.preferences_consumption_unit_key), false, sharedPref)
+    private val VersionString = AppPreference<String>(context.getString(R.string.preference_version_key),"", sharedPref)
+
+    private val Debug = AppPreference<Boolean>(context.getString(R.string.preference_debug_key), false, sharedPref)
+    private val Notification = AppPreference<Boolean>(context.getString(R.string.preference_notifications_key), false, sharedPref)
+    private val ConsumptionUnit = AppPreference<Boolean>(context.getString(R.string.preference_consumption_unit_key), false, sharedPref)
     // private //val ExperimentalLayout = AppPreference<Boolean>(context.getString(R.string.preferences_notifications_key), false, sharedPref)
     // private //val DeepLog = AppPreference<Boolean>(context.getString(R.string.preferences_notifications_key), false, sharedPref)
-    private val PlotSpeed = AppPreference<Boolean>(context.getString(R.string.preferences_plot_speed_key), false, sharedPref)
+    private val PlotSpeed = AppPreference<Boolean>(context.getString(R.string.preference_plot_speed_key), false, sharedPref)
     // private //val PlotDistance = AppPreference<Int>(context.getString(R.string.preferences_notifications_key), false, sharedPref)
-    private val ConsumptionPlotSingleMotor = AppPreference<Boolean>(context.getString(R.string.preferences_consumption_plot_single_motor_key), false, sharedPref)
+    private val ConsumptionPlotSingleMotor = AppPreference<Boolean>(context.getString(R.string.preference_consumption_plot_single_motor_key), false, sharedPref)
     private val ConsumptionPlotSecondaryColor = AppPreference<Boolean>(context.getString(R.string.preference_consumption_plot_secondary_color_key), false, sharedPref)
     private val ConsumptionPlotVisibleGages = AppPreference<Boolean>(context.getString(R.string.preference_consumption_plot_visible_gages_key), true, sharedPref)
     private val ChagrPlotSecondaryColor = AppPreference<Boolean>(context.getString(R.string.preference_charge_plot_secondary_color_key), false, sharedPref)
@@ -37,6 +39,9 @@ class AppPreferences(
     private val SmtpServer = AppPreference<String>(context.getString(R.string.preference_smtp_server_key), "", sharedPref)
     private val LogTargetAddress = AppPreference<String>(context.getString(R.string.preference_log_target_address_key), "ixam97@ixam97.de", sharedPref)
     private val LogUserName = AppPreference<String>(context.getString(R.string.preference_log_user_name_key), "", sharedPref)
+
+
+    var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
     var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
     var notifications: Boolean get() = Notification.value; set(value) {Notification.value = value}

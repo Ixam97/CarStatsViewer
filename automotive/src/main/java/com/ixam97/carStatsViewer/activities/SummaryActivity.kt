@@ -120,8 +120,7 @@ class SummaryActivity: Activity() {
             tripIndex--
             if (tripIndex < 0) tripIndex = 3
             appPreferences.mainViewTrip = tripIndex
-            startActivity(Intent(this, SummaryActivity::class.java))
-            finish()
+            refreshActivity(tripIndex)
         }
 
         summary_button_trip_next.setOnClickListener {
@@ -129,8 +128,7 @@ class SummaryActivity: Activity() {
             tripIndex++
             if (tripIndex > 3) tripIndex = 0
             appPreferences.mainViewTrip = tripIndex
-            startActivity(Intent(this, SummaryActivity::class.java))
-            finish()
+            refreshActivity(tripIndex)
         }
 
         summary_title.setOnClickListener {
@@ -144,8 +142,7 @@ class SummaryActivity: Activity() {
                 tripIndex++
                 if (tripIndex > 3) tripIndex = 0
                 appPreferences.mainViewTrip = tripIndex
-                startActivity(Intent(this, SummaryActivity::class.java))
-                finish()
+                refreshActivity(tripIndex)
             } else
                 TODO("Don't use onClick when showing a specific trip, not one of the 4 main trips")
         }
@@ -249,6 +246,18 @@ class SummaryActivity: Activity() {
                 }
             }
         }
+    }
+
+    private fun refreshActivity(index: Int?) {
+        val refreshIntent = Intent(this, SummaryActivity::class.java).apply {
+            if (index != null) {
+            putExtra("dataManager", index)
+            }
+        }
+        finish()
+        overridePendingTransition(0, 0)
+        startActivity(refreshIntent)
+        overridePendingTransition(0, 0)
     }
 
     private fun setupChargeLayout() {

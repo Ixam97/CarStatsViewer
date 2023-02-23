@@ -22,43 +22,20 @@
         <item>Benjamin Stegmann</item>
     </string-array>
 
-    <!-- Preferences -->
-    <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer_dev.preferences</string>
-    <string name="preferences_notifications_key" translatable="false">notifications</string>
-    <string name="preferences_consumption_unit_key" translatable="false">consumption_unit</string>
-    <string name="preferences_debug_key" translatable="false">debug</string>
-    <string name="preferences_consumption_plot_key" translatable="false">consumption_plot</string>
-    <string name="preferences_deep_log_key" translatable="false">deep_log</string>
-    <string name="userdata_consumption_plot_key" translatable="false">userdata_consumption_plot</string>
-    <string name="userdata_speed_plot_key" translatable="false">userdata_speed_plot</string>
-    <string name="preferences_plot_distance_key" translatable="false">preferences_plot_distance</string>
-    <string name="preferences_plot_speed_key" translatable="false">preferences_plot_speed</string>
-    <string name="preferences_experimental_layout_key" translatable="false">preferences_experimental_layout</string>
-    <string name="preferences_consumption_plot_single_motor_key" translatable="false">preferences_consumption_plot_single_motor</string>
-    <string name="preference_consumption_plot_visible_gages_key" translatable="false">preference_consumption_plot_visible_gages</string>
-    <string name="preference_consumption_plot_secondary_color_key" translatable="false">preference_consumption_plot_secondary_color</string>
-    <string name="preference_charge_plot_secondary_color_key" translatable="false">preference_charge_plot_secondary_color</string>
-    <string name="preference_charge_plot_visible_gages_key" translatable="false">preference_charge_plot_visible_gages</string>
-    <string name="preference_charge_plot_dimension_key" translatable="false">preference_charge_plot_dimension</string>
-    <string name="preference_distance_unit_key" translatable="false">preference_distance_unit</string>
-    <string name="preference_secondary_dimension_key" translatable="false">preference_secondary_dimension</string>
-    <string name="preference_main_view_trip_key" translatable="false">preference_main_view_trip</string>
-    <string name="preference_smtp_address_key" translatable="false">preference_smtp_address</string>
-    <string name="preference_smtp_password_key" translatable="false">preference_smtp_password</string>
-    <string name="preference_smtp_server_key" translatable="false">preference_smtp_server</string>
-    <string name="preference_log_target_address_key" translatable="false">preference_log_target_address</string>
-    <string name="preference_log_user_name_key" translatable="false">preference_log_user_name</string>
+    <string-array name="changes_0_23">
+        <item>Data structure revamped to increase stability and scalability</item>
+        <item>Added danish translation</item>
+        <item>Added "About Car Stats Viewer" (incl. overhaul ReadMe with info about supporting and contributing)</item>
+        <item>Added multiple trip trackers running at the same time (manual trip, since last charge, auto trip, current month)</item>
+        <item>Various visual improvements for the plot views</item>
+        <item>Specific values in plot views can be highlighted by double taping</item>
+        <item>Debug-Logs can be sent via SMTP (experimental!)</item>
+        <item>Stabilized behaviour of charging curve when the app is paused while charging</item>
+        <item>Optimized driver distraction optimization</item>
+        <item>Various bug fixes and stability improvements</item>
+    </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
-
-    <!-- Broadcast -->
-    <string name="ui_update_plot_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.ui_update_plot_broadcast</string>
-    <string name="ui_update_gages_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.ui_update_gages_broadcast</string>
-    <string name="gear_update_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.gear_update_broadcast</string>
-    <string name="wake_lock_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.wake_lock_broadcast</string>
-    <string name="save_trip_data_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.save_trip_data_broadcast</string>
-    <string name="VHAL_emulator_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.VHAL_emulator_broadcast</string>
-    <string name="distraction_optimization_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.distraction_optimization_broadcast</string>
 
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Permissions required for use</string>
@@ -91,6 +68,7 @@
     <string name="main_button_hide_speed">Hide speed</string>
     <string name="main_button_show_speed">Show speed</string>
     <string name="main_secondary_axis">Secondary axis: %s</string>
+    <string name="main_changelog_dialog_title">Changes in version %s:</string>
 
     <!-- SummaryActivity -->
     <string name="summary_title">Trip summary</string>
@@ -170,9 +148,4 @@
     <string name="notification_title">Current stats:</string>
     <string name="foreground_service_info">Data collection service running</string>
     <string name="toast_file_read_error">Error reading trip file</string>
-
-    <!-- InAppLogger -->
-    <string name="strato_email_address" translatable="false" />
-    <string name="strato_password" translatable="false" />
-    <string name="strato_server" translatable="false" />
 </resources>

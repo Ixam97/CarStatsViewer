@@ -717,7 +717,7 @@ class DataCollector : Service() {
             if (Date().month != DataManagers.CURRENT_MONTH.dataManager.tripStartDate.month) {
                 writeTripDataToFile(
                     DataManagers.CURRENT_MONTH.dataManager.tripData!!,
-                    "MonthData_${DataManagers.CURRENT_MONTH.dataManager.tripStartDate}_%.1f".format(DataManagers.CURRENT_MONTH.dataManager.tripStartDate.month + 1)
+                    "MonthData_${DataManagers.CURRENT_MONTH.dataManager.tripStartDate}_${DataManagers.CURRENT_MONTH.dataManager.tripStartDate.month + 1}"
                 )
                 DataManagers.CURRENT_MONTH.dataManager.reset()
                 InAppLogger.log("Resetting ${DataManagers.CURRENT_MONTH.dataManager.printableName}")
