@@ -313,6 +313,8 @@ class SummaryActivity: Activity() {
             if (newProgress <= (tripData.chargeCurves.size - 1)) {
                 summary_charge_plot_seek_bar.progress = newProgress
             }
+            summary_charge_plot_view.dimensionShift = 0L
+            //summary_charge_plot_view.dimensionRestriction = 0L
         }
 
         summary_charge_plot_button_prev.setOnClickListener {
@@ -320,6 +322,7 @@ class SummaryActivity: Activity() {
             if (newProgress >= 0) {
                 summary_charge_plot_seek_bar.progress = newProgress
             }
+            summary_charge_plot_view.dimensionShift = 0L
         }
     }
 
