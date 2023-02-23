@@ -145,7 +145,7 @@ class LogActivity : Activity() {
                                 MailSender(
                                     senderMail,
                                     getString(resources.getIdentifier("logmail_password", "string", applicationContext.packageName)),
-                                    getString(resources.getIdentifier("logmailserver", "string", applicationContext.packageName)))
+                                    getString(resources.getIdentifier("logmail_server", "string", applicationContext.packageName)))
                             } else {
                                 runOnUiThread {
                                     Toast.makeText(this@LogActivity, "No SMTP login", Toast.LENGTH_LONG).show()
