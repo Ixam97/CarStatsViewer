@@ -2,9 +2,9 @@
 <resources>
 
     <string-array name="changes_0_23">
-        <item>Datenstruktur grundlegend überarbeitet, um die Stabilität und Sklaierbarkeit zu verbessern</item>
+        <item>Datenstruktur grundlegend überarbeitet, um die Stabilität und Skalierbarkeit zu verbessern</item>
         <item>Dänische Übersetzung hinzugefügt</item>
-        <item>"Über Car Stats Viewer" hinzugefügt, (inkl. grundlegende Überarbeitung der ReadMe mit Hinweisen zur Unterstützung und Mitwirkung)</item>
+        <item>\"Über Car Stats Viewer\" hinzugefügt, (inkl. grundlegende Überarbeitung der ReadMe mit Hinweisen zur Unterstützung und Mitwirkung)</item>
         <item>Es können neben dem manuellen Trip mehrere, automatisch zurückgesetzte Trips ausgewählt werden</item>
         <item>Verschiedene optische Anpassungen an den Diagrammen</item>
         <item>Einzelne Werte eines Diagramms können per doppeltipp hervorgehoben werden</item>
