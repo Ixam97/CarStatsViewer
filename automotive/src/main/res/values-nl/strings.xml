@@ -93,4 +93,17 @@
     <string name="SinceChargeData">Sinds de laatste laadbeurt</string>
     <string name="AutoTripData">Automatische rit</string>
     <string name="CurrentMonthData">Huidige maand</string>
+    <string-array name="changes_0_23">
+        <item>Datastructuur vernieuwd om de stabiliteit en schaalbaarheid te vergroten</item>
+        <item>Deense vertaling toegevoegd</item>
+        <item>\"Over Car Stats Viewer\" toegevoegd (incl. gereviseerde ReadMe met informatie over ondersteuning en bijdragen)</item>
+        <item>Meerdere rittrackers toegevoegd die tegelijkertijd worden uitgevoerd (handmatige rit, sinds laatste lading, automatische rit, huidige maand)</item>
+        <item>Diverse visuele verbeteringen voor de plotweergaven</item>
+        <item>Specifieke waarden in plotweergaven kunnen worden gemarkeerd door dubbel te tikken</item>
+        <item>Debug-Logs kunnen worden verzonden via SMTP (experimenteel!)</item>
+        <item>Gestabiliseerd gedrag van de laadcurve wanneer de app wordt gepauzeerd tijdens het laden</item>
+        <item>Geoptimaliseerde afleiding van de bestuurder</item>
+        <item>Diverse bugfixes en stabiliteitsverbeteringen</item>
+    </string-array>
+    <string name="main_changelog_dialog_title">Wijzigingen in versie %s:</string>
 </resources>
