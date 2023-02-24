@@ -314,7 +314,6 @@ class SummaryActivity: Activity() {
                 summary_charge_plot_seek_bar.progress = newProgress
             }
             summary_charge_plot_view.dimensionShift = 0L
-            //summary_charge_plot_view.dimensionRestriction = 0L
         }
 
         summary_charge_plot_button_prev.setOnClickListener {

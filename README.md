@@ -27,6 +27,7 @@ Any form of support and feedback is very welcome! If you like the app and want t
  * Ahti Hinnov </br>
  * Robin Hellström 
  * Benjamin Stegmann
+ * Horst Zimmermann
 
 </details>
 
@@ -46,6 +47,7 @@ Currently the following languages are already available:
  - :netherlands: Dutch
  - :sweden: Swedish
  - :norway: Norwegian
+ - :denmark: Danish
 
 ### Rules for contributing code:
 <details>
