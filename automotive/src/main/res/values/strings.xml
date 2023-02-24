@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Car Stats Viewer (Dev)</string>
+    <string name="app_name" translatable="false">Car Stats Viewer</string>
 
     <!-- About -->
     <string name="readme_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/blob/master/README.md</string>

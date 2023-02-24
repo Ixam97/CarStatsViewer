@@ -33,7 +33,7 @@ class AppPreferences(
     private val ChargePlotDimension = AppPreference<PlotDimension>(context.getString(R.string.preference_charge_plot_dimension_key), PlotDimension.TIME, sharedPref)
     private val DistanceUnit = AppPreference<DistanceUnitEnum>(context.getString(R.string.preference_distance_unit_key), DistanceUnitEnum.KM, sharedPref)
     private val SecondaryConsumptionDimension = AppPreference<Int>(context.getString(R.string.preference_secondary_dimension_key), 0, sharedPref)
-    private val MainViewTrip = AppPreference<Int>(context.getString(R.string.preference_main_view_trip_key), 1, sharedPref)
+    private val MainViewTrip = AppPreference<Int>(context.getString(R.string.preference_main_view_trip_key), 0, sharedPref)
     private val SmtpAddress = AppPreference<String>(context.getString(R.string.preference_smtp_address_key), "", sharedPref)
     private val SmtpPassword = AppPreference<String>(context.getString(R.string.preference_smtp_password_key), "", sharedPref)
     private val SmtpServer = AppPreference<String>(context.getString(R.string.preference_smtp_server_key), "", sharedPref)
