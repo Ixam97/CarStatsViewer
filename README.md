@@ -19,6 +19,7 @@ Once the app has reached a more finished state I will try to reach out to Polest
 
 ## Support the development of the app:
 Any form of support and feedback is very welcome! If you like the app and want to buy me a beer, feel free (but never obliged! This is a hobby for me) to use this link: https://paypal.me/Ixam
+Pleas let me now if you do not want to be listed in the supporters list.
 
 <b>Many thanks to everyone who has supported the development of Car Stats Viewer!</b>
 <details>
@@ -83,13 +84,13 @@ Discussion in the international Polestar forums: [Polestar Forum](https://www.po
 
 ## Changelog [DE]:
 
-### 0.23.0 ()
+### 0.23.0 (24.02.2023)
 - Datenstruktur grundlegend überarbeitet, um die Stabilität und Sklaierbarkeit zu verbessern
 - Dänische Übersetzung hinzugefügt
 - "Über Car Stats Viewer" hinzugefügt, (inkl. grundlegende Überarbeitung der ReadMe mit Hinweisen zur Unterstützung und Mitwirkung)
 - Es können neben dem manuellen Trip mehrere, automatisch zurückgesetzte Trips ausgewählt werden
 - Verschiedene optische Anpassungen an den Diagrammen
-- Einzelne Werte eines Diagramms können per doppeltipp hervorgehoben werden
+- Einzelne Werte eines Diagramms können per Doppeltipp hervorgehoben werden
 - Möglichkeit zum verschicken von Debug-Logs per SMTP (experimentell!)
 - Stabilisierung des Verhaltens der Ladekurve, wenn die Ausführung der App zwischenzeitlich unterbrochen wird
 - Optimierung der Fahrerablenkung
