@@ -18,8 +18,8 @@ Currently the app is not available in the public Play Store. This is due to stri
 Once the app has reached a more finished state I will try to reach out to Polestar directly to potentially make it available through them. Just like ABRP or the Vivaldi browser which also do not comply with Google's restrictions.
 
 ## Support the development of the app:
-Any form of support and feedback is very welcome! If you like the app and want to buy me a beer, feel free (but never obliged! This is a hobby for me) to use this link: https://paypal.me/Ixam
-Pleas let me now if you do not want to be listed in the supporters list.
+Any form of support and feedback is very welcome! If you like the app and want to buy me a beer, feel free (but never obliged! This is a hobby for me) to use this link: https://paypal.me/Ixam </br>
+Please let me now if you do not want to be listed in the supporters list.
 
 <b>Many thanks to everyone who has supported the development of Car Stats Viewer!</b>
 <details>
