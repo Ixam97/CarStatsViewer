@@ -25,7 +25,7 @@ Pleas let me now if you do not want to be listed in the supporters list.
 <details>
 <summary><h3>Supporters</h3></summary>
 
- * Ahti Hinnov </br>
+ * Ahti Hinnov
  * Robin Hellström 
  * Benjamin Stegmann
  * Horst Zimmermann
