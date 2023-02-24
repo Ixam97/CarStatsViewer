@@ -93,4 +93,17 @@
     <string name="SinceChargeData">Siden siste endring</string>
     <string name="AutoTripData">Automatisk tur</string>
     <string name="CurrentMonthData">Denne måned</string>
+    <string-array name="changes_0_23">
+        <item>Datastruktur fornyet for å forbere stabilitet og skalerbarhet</item>
+        <item>Lagt til dansk oversettelse</item>
+        <item>Lagt til \"Om Car Stats Viewer\" (inkudert overhalt LesMeg med info om støtte og bidrag)</item>
+        <item>Lagt til flere tursporinger for samtidig kjøring (manuell tur, siden siste lading, auto tur, nåværende måned)</item>
+        <item>Forskjellige visuelle forbedringer for plot-visningen</item>
+        <item>Spesifikke verdier i plot.visning kan bli merket ved dobbel-tap</item>
+        <item>Feillogger kan bli sendt via SMTP (eksperimentell!)</item>
+        <item>Stabilisert oppførsel av ladekurve når appen er pauset under lading</item>
+        <item>Optimert førerdistraksjons optimalisering</item>
+        <item>Forskjellige feilrettinger og stabilitetsforbedringer</item>
+    </string-array>
+    <string name="main_changelog_dialog_title">Changes in version %s:</string>
 </resources>
