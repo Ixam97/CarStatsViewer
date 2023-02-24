@@ -1,13 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Behörigheter krävs för användning</string>
     <string name="permissions_dialog_text">Denna app kräver behörigheter för att kunna användas. Utan de nödvändiga behörigheterna kan appen inte läsa någon data från bilen.</string>
     <string name="permissions_dialog_quit">Avsluta Car Stats Viewer</string>
     <string name="permissions_dialog_grant">Bevilja behörigheter</string>
-
-    <!-- MainActivity -->
-    <string name="main_port_connected">Laddare ansluten:</string>
+    <string name="main_port_connected">Laddkabel ansluten:</string>
     <string name="main_current_power">Aktuell strömförbrukning:</string>
     <string name="main_used_energy">Använd energi:</string>
     <string name="main_current_speed">Aktuell hastighet:</string>
@@ -16,69 +13,97 @@
     <string name="main_average_consumption">Genomsnittlig förbrukning:</string>
     <string name="main_button_reset_stats">Återställ statistik</string>
     <string name="main_consumption">Förbrukning under de senaste 3 km:</string>
-    <string name="main_checkbox_speed">Hastighet</string>
+    <string name="main_speed">Hastighet</string>
     <string name="main_dialog_reset_title">Återställa statistik?</string>
     <string name="main_dialog_reset_message">Alla sparade tripdata kommer att nollställas.</string>
     <string name="main_gage_speed">Hastighet</string>
     <string name="main_gage_power">Effekt</string>
     <string name="main_gage_charging_power">Laddningseffekt</string>
     <string name="main_gage_SoC">Laddningsnivå</string>
-    <string name="main_gage_consumption">Akt. förbrukning</string>
-    <string name="main_dismiss_charge_plot">Stäng laddningsdiagram</string>
-    <string name="main_button_reset_charge_plot">Återställ laddningsdiagram</string>
+    <string name="main_gage_consumption">Momentanförbrukning</string>
+    <string name="main_dismiss_charge_plot">Stäng laddningskurva</string>
+    <string name="main_button_reset_charge_plot">Återställ laddningskurva</string>
     <string name="main_button_trip_summary">Reseöversikt</string>
     <string name="main_button_hide_speed">Dölj hastighet</string>
     <string name="main_button_show_speed">Visa hastighet</string>
-
-    <!-- SummaryActivity -->
+    <string name="main_secondary_axis">Sekundär axel: %s</string>
     <string name="summary_title">Reseöversikt</string>
     <string name="summary_button_reset_trip">Återställ trippmätare</string>
     <string name="summary_parked_warning">Vyn enbart tillgänglig vid parkering.</string>
-    <string name="summary_trip_history">Tripp historisk</string>
+    <string name="summary_trip_history">Resehistoria</string>
     <string name="summary_charging_sessions">Laddningstillfällen</string>
-    <string name="summary_trip_start_date">Tripp påbörjad:</string>
+    <string name="summary_trip_start_date">Resan påbörjad: %s</string>
     <string name="summary_used_energy">Använd energi</string>
-    <string name="summary_traveled_distance">Tripp distans</string>
+    <string name="summary_traveled_distance">Tillryggalagd sträcka</string>
     <string name="summary_average_consumption">Genomsnittlig förbrukning</string>
-    <string name="summary_travel_time">Tripp tid</string>
+    <string name="summary_travel_time">Restid</string>
     <string name="summary_charged_energy">Laddad energi</string>
     <string name="summary_charge_time">Laddtid</string>
-
-    <!-- SettingsActivity -->
+    <string name="summary_charge_ambient_temp">Utomhustemperatur</string>
+    <string name="summary_interruption_warning">Inspelning av laddningssession har avbrutits. Detta värde är förmodligen felaktigt.</string>
     <string name="settings_title">Inställningar</string>
     <string name="settings_button_back">Tillbaka</string>
     <string name="settings_button_quit">Avsluta appen</string>
     <string name="settings_notifications">Aviseringar</string>
     <string name="settings_consumption_unit">Wh/km som förbrukningsenhet</string>
+    <string name="settings_distance_unit">Miles som distansenhet</string>
     <string name="settings_debug">Felsökningsinformation</string>
     <string name="settings_experimental_layout">Visa experimentell layout</string>
-    <string name="settings_consumption_plot"> Förbrukningsvy</string>
-    <string name="settings_charge_plot"> Laddningsvy</string>
+    <string name="settings_consumption_plot">Förbrukningsvy</string>
+    <string name="settings_charge_plot">Laddningsvy</string>
+    <string name="settings_about">Om Car Stats Viewer</string>
     <string name="settings_plot_secondary_color">Grå som sekundär plotfärg</string>
     <string name="settings_plot_state_of_charge_dimension">Experimentell Laddnivåstrend</string>
     <string name="settings_consumption_plot_single_motor">Single motor modell</string>
     <string name="settings_visible_gages">Visa effektmätare</string>
-    <string name="settings_consumption_plot_speed">Visa hastighetsdiagram</string>
+    <string name="settings_consumption_plot_speed">Visa hastighetskurva</string>
     <string name="settings_sub_title_settings">Inställningar:</string>
     <string name="settings_sub_title_current_cons_plot">Plott för nuvarande förbrukning:</string>
     <string name="settings_sub_title_last_charge_plot">Senaste laddningskurvor:</string>
-
-    <!-- Avsluta dialogrutan -->
+    <string name="about_title">Om Car Stats Viewer</string>
+    <string name="about_section_about">Om Car Stats Viewer:</string>
+    <string name="about_support">Stöd utvecklingen</string>
+    <string name="about_support_description">Besök GitHub för att lära dig mer om hur du stödjer utvecklingen av appen.</string>
+    <string name="about_contributors">Medverkande</string>
+    <string name="about_section_feedback">Återkoppling:</string>
+    <string name="about_section_misc">Diverse:</string>
+    <string name="about_github_issues_description">Detta är det bästa stället för felrapporter och förslag till förbättringar. Läs de befintliga rapporterna innan du skapar en ny.</string>
+    <string name="about_polestar_forum_description">Diskussion om Car Stats Viewer i internationalla forum.</string>
+    <string name="about_polestar_fans_description">Diskussion om Car Stats Viewer i tyska forum.</string>
+    <string name="about_third_party_licenses">Licenser</string>
+    <string name="about_supporters">Supporters</string>
+    <string name="about_thank_you">Tack!</string>
+    <string name="about_supporters_message">Tack till alla alla som stödjer utvecklingen av Car Stats Viewer!</string>
     <string name="quit_dialog_title">Avsluta appen?</string>
     <string name="quit_dialog_message">Logg kommer att kopieras till urklipp.</string>
-    <string name="dialog_reset_title">Återställ trippdata?</string>
-    <string name="dialog_reset_message">Nuvarande trippdata kommer återställas till noll. Vill du spara trippen?</string>
+    <string name="dialog_close">Stäng</string>
+    <string name="dialog_reset_title">Återställ resedata?</string>
+    <string name="dialog_reset_message">Nuvarande resedata kommer återställas till noll. Vill du spara resan?</string>
     <string name="dialog_reset_do_save">Spara</string>
     <string name="dialog_reset_no_save">"Spara inte"</string>
     <string name="dialog_reset_cancel">Avbryt</string>
     <string name="dialog_confirm">Ja</string>
     <string name="dialog_dismiss">Nej</string>
-
-    <!-- LogActivity -->
     <string name="log_title">Felsök</string>
-
-    <!-- Aviseringar -->
     <string name="notification_title">Aktuell statistik:</string>
-    <string name="foreground_service_info">Datainsamlingstjänst körs</string>
+    <string name="foreground_service_info">Datainsamlingstjänst aktiv</string>
     <string name="toast_file_read_error">Fel vid läsning av tripp-fil</string>
+    <string name="settings_select_trip">Resa i huvudvy:</string>
+    <string name="CurrentTripData">Manuell resa</string>
+    <string name="SinceChargeData">Sedan senaste laddningen</string>
+    <string name="AutoTripData">Automatisk resa</string>
+    <string name="CurrentMonthData">Aktuell månad</string>
+    <string-array name="changes_0_23">
+        <item>Datastrukturen har förnyats för att öka stabiliteten och skalbarheten</item>
+        <item>Lagt till svensk översättning</item>
+        <item>Lagt till \"About Car Stats Viewer\" (inklusive översyn av ReadMe med information om stöd och bidrag)</item>
+        <item>Flera reseindikatorer som körs samtidigt har lagts till (manuell resa, sedan senaste laddning, automatisk resa, aktuell månad)</item>
+        <item>Diverse visuella förbättringar av grafik</item>
+        <item>Specifika värden i plotvyer kan markeras genom att dubbeltrycka</item>
+        <item>Debug-log kan skickas via SMTP (experimentellt!)</item>
+        <item>Stabiliserat beteende för laddningskurvan när appen är pausad under laddning</item>
+        <item>Optimerad optimering av förarens distraktion</item>
+        <item>Diverse felrättningar och stabilitetsförbättringar</item>
+    </string-array>
+    <string name="main_changelog_dialog_title">Ändringar i version %s:</string>
 </resources>

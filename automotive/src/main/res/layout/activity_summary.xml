@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/activity_summary"
     tools:context=".activities.SummaryActivity">
 
     <LinearLayout
@@ -14,22 +15,81 @@
 
         <ImageButton
             android:id="@+id/summary_button_back"
-            style="@style/title_back_button_style"/>
+            style="@style/title_back_button_style"
+            android:src="@drawable/ic_close"/>
 
-        <TextView
-            android:id="@+id/summary_title"
-            style="@style/title_text_style"
-            android:text="@string/summary_title"/>
+        <ImageButton
+            android:id="@+id/summary_button_trip_prev"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_chevron_left"
+            android:background="@android:color/transparent"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/summary_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textFontWeight="@integer/title_font_weight"
+                android:layout_marginTop="10dp"
+                android:textSize="@dimen/title_font_size"
+                android:textColor="?android:attr/textColorPrimary"
+                android:gravity="center"
+                android:text="@string/summary_title"/>
+            <LinearLayout
+                android:id="@+id/summary_selected_trip_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:weightSum="4"
+                android:orientation="horizontal">
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="5dp"
+                    android:background="@color/disable_background"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="5dp"
+                    android:background="@color/disable_background"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="5dp"
+                    android:background="@color/disable_background"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="5dp"
+                    android:background="@color/disable_background"/>
+            </LinearLayout>
+        </LinearLayout>
+        <ImageButton
+            android:id="@+id/summary_button_trip_next"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_chevron_right"
+            android:background="@android:color/transparent"/>
 
-        <View style="@style/filler"/>
-
-        <Button
+        <ImageButton
+            android:layout_margin="15dp"
+            android:id="@+id/summary_button_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_reset"
+            android:background="@android:color/transparent"/>
+        <!--<Button
             android:layout_margin="15dp"
             android:id="@+id/summary_button_reset"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/summary_button_reset_trip"
-            />
+            />-->
 
     </LinearLayout>
 
@@ -37,12 +97,6 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="?android:attr/colorControlActivated"/>
-
-    <TextView
-        android:id="@+id/summary_trip_date_text"
-        android:layout_marginTop="10dp"
-        android:layout_marginHorizontal="20dp"
-        style="@style/menu_section_title_style"/>
 
     <TextView
         android:id="@+id/summary_parked_warning"
@@ -56,6 +110,7 @@
         android:text="@string/summary_parked_warning"/>
 
     <LinearLayout
+        android:id="@+id/summary_content_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="2"
@@ -66,14 +121,12 @@
             android:layout_width="0dp"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:textSize="35sp"
             android:text="@string/summary_trip_history"/>
         <Button
             android:id="@+id/summary_button_show_charge_container"
             android:layout_width="0dp"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:textSize="35sp"
             android:text="@string/summary_charging_sessions"/>
     </LinearLayout>
     <View style="@style/menu_divider_style_no_margin"
@@ -90,10 +143,21 @@
             android:layout_marginHorizontal="20dp"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/summary_trip_date_text"
+                android:layout_marginTop="10dp"
+                style="@style/menu_section_title_style"/>
+
             <com.ixam97.carStatsViewer.views.PlotView
                 android:id="@+id/summary_consumption_plot"
                 android:layout_width="match_parent"
                 android:layout_height="550dp"/>
+
+            <Button
+                android:id="@+id/summary_button_secondary_dimension"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"/>
+
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
@@ -195,6 +259,12 @@
                 style="@style/menu_row_top_text"
                 android:text="-/-"/>
             <TextView
+                android:visibility="gone"
+                style="@style/menu_row_content_text"
+                android:id="@+id/summary_charged_energy_warning_text"
+                android:text="@string/summary_interruption_warning"
+                android:textColor="@color/bad_red"/>
+            <TextView
                 style="@style/menu_row_content_text"
                 android:text="@string/summary_charged_energy"/>
             <View style="@style/menu_divider_style"
@@ -209,6 +279,12 @@
                 android:text="@string/summary_charge_time"/>
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
+            <TextView
+                android:id="@+id/summary_charge_ambient_temp"
+                style="@style/menu_row_top_text"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_charge_ambient_temp"/>
 
         </LinearLayout>
     </ScrollView>

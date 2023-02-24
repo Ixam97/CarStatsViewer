@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer.preferences</string>
+    <string name="preference_notifications_key" translatable="false">notifications</string>
+    <string name="preference_consumption_unit_key" translatable="false">consumption_unit</string>
+    <string name="preference_debug_key" translatable="false">debug</string>
+    <string name="preference_consumption_plot_key" translatable="false">consumption_plot</string>
+    <string name="preference_deep_log_key" translatable="false">deep_log</string>
+    <string name="preference_userdata_consumption_plot_key" translatable="false">preference_userdata_consumption_plot</string>
+    <string name="preference_userdata_speed_plot_key" translatable="false">preference_userdata_speed_plot</string>
+    <string name="preference_plot_distance_key" translatable="false">preference_plot_distance</string>
+    <string name="preference_plot_speed_key" translatable="false">preference_plot_speed</string>
+    <string name="preference_experimental_layout_key" translatable="false">preference_experimental_layout</string>
+    <string name="preference_consumption_plot_single_motor_key" translatable="false">preference_consumption_plot_single_motor</string>
+    <string name="preference_consumption_plot_visible_gages_key" translatable="false">preference_consumption_plot_visible_gages</string>
+    <string name="preference_consumption_plot_secondary_color_key" translatable="false">preference_consumption_plot_secondary_color</string>
+    <string name="preference_charge_plot_secondary_color_key" translatable="false">preference_charge_plot_secondary_color</string>
+    <string name="preference_charge_plot_visible_gages_key" translatable="false">preference_charge_plot_visible_gages</string>
+    <string name="preference_charge_plot_dimension_key" translatable="false">preference_charge_plot_dimension</string>
+    <string name="preference_distance_unit_key" translatable="false">preference_distance_unit</string>
+    <string name="preference_secondary_dimension_key" translatable="false">preference_secondary_dimension</string>
+    <string name="preference_main_view_trip_key" translatable="false">preference_main_view_trip</string>
+    <string name="preference_smtp_address_key" translatable="false">preference_smtp_address</string>
+    <string name="preference_smtp_password_key" translatable="false">preference_smtp_password</string>
+    <string name="preference_smtp_server_key" translatable="false">preference_smtp_server</string>
+    <string name="preference_log_target_address_key" translatable="false">preference_log_target_address</string>
+    <string name="preference_log_user_name_key" translatable="false">preference_log_user_name</string>
+    <string name="preference_version_key" translatable="false">preference_version</string>
+</resources>

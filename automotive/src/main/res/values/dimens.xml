@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="std_row_height">70dp</dimen>
+    <dimen name="std_icon_size">60dp</dimen>
+    <dimen name="row_icon_width">75dp</dimen>
+    <dimen name="text_icon_size">42dp</dimen>
+    <dimen name="chevron_icon_size">60dp</dimen>
+    <dimen name="std_font_size">28sp</dimen>
+    <dimen name="reduced_font_size">22sp</dimen>
+    <dimen name="title_font_size">37sp</dimen>
+    <integer name="title_font_weight">550</integer>
+    <dimen name="section_title_font_size">27sp</dimen>
+    <dimen name="divider_height">1dp</dimen>
+    <dimen name="plot_x_margin">60dp</dimen>
+    <dimen name="plot_y_margin">48dp</dimen>
+    <dimen name="gage_value_text_size">80sp</dimen>
+    <dimen name="gage_desc_text_size">25sp</dimen>
+</resources>

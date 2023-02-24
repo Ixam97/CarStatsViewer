@@ -10,6 +10,10 @@ import kotlin.math.roundToInt
 
 
 class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+    companion object {
+        var descriptionTextSize = 30f
+        var valueTextSize = 100f
+    }
 
     var gageName : String = "gageName"
         set(value) {
@@ -67,13 +71,13 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val namePaint = Paint().apply {
         color = Color.GRAY
-        textSize = dpToPx(30f)
+        textSize = descriptionTextSize
         isAntiAlias = true
     }
 
     private val unitPaint = Paint().apply {
         color = getPrimaryColor()
-        textSize = dpToPx(30f)
+        textSize = descriptionTextSize
         isAntiAlias = true
     }
 
@@ -100,13 +104,13 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val valuePaint = Paint().apply {
         color = Color.WHITE
-        textSize = dpToPx(100f)
+        textSize = valueTextSize
         isAntiAlias = true
     }
 
     private val xTextMargin = dpToPx(15f)
     private val yTextMargin = dpToPx(10f)
-    private val gageWidth = dpToPx(60f)
+    private val gageWidth = 2 * descriptionTextSize
 
     private val nameYPos = namePaint.textSize * 0.76f
     private val valueYPos = nameYPos + valuePaint.textSize * 0.9f

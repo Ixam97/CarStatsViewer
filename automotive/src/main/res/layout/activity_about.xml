@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.AboutActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/about_button_back"
+            style="@style/title_back_button_style"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_info" />
+
+        <TextView
+            android:id="@+id/about_title"
+            style="@style/title_text_style"
+            android:text="@string/about_title"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="?android:attr/colorControlActivated" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/about_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp">
+
+
+            <TextView
+                style="@style/menu_section_title_style"
+                android:text="@string/about_section_about"/>
+            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+
+            <TextView
+                style="@style/menu_row_top_text"
+                android:text="Version"/>
+            <TextView
+                android:id="@+id/about_version_text"
+                style="@style/menu_row_content_text"/>
+            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+
+            <TextView
+                style="@style/menu_row_top_text"
+                android:text="Copyright"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="©2022-2023 Maximilian Goldschmidt"/>
+            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/about_support_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/about_support_container_linearLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/about_support_container_imageView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.397">
+
+                    <TextView
+                        style="@style/menu_row_top_text"
+                        android:text="@string/about_support" />
+
+                    <TextView
+                        style="@style/menu_row_content_text"
+                        android:text="@string/about_support_description" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/about_support_container_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_link"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+
+            <TextView
+                style="@style/menu_row_top_text"
+                android:text="@string/about_contributors"/>
+            <TextView
+                android:id="@+id/about_contributors_text"
+                android:layout_marginStart="30dp"
+                android:textSize="@dimen/reduced_font_size"
+                style="@style/menu_row_content_text"/>
+            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/about_supporters"
+                style="@style/menu_button_row_style"
+                android:text="@string/about_supporters"/>
+            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+
+            <TextView
+                style="@style/menu_section_title_style"
+                android:text="@string/about_section_feedback"/>
+            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/about_polestar_fans_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/about_polestar_fans_container_linearLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/about_polestar_fans_container_imageView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.397">
+
+                    <TextView
+                        style="@style/menu_row_top_text"
+                        android:text="Polestar Club" />
+
+                    <TextView
+                        style="@style/menu_row_content_text"
+                        android:text="@string/about_polestar_fans_description" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/about_polestar_fans_container_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_link"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/about_polestar_forum_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/about_polestar_forum_container_linearLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/about_polestar_forum_container_imageView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.397">
+
+                    <TextView
+                        style="@style/menu_row_top_text"
+                        android:text="Polestar Forum" />
+
+                    <TextView
+                        style="@style/menu_row_content_text"
+                        android:text="@string/about_polestar_forum_description" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/about_polestar_forum_container_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_link"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/about_github_issues_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.397">
+
+                    <TextView
+                        style="@style/menu_row_top_text"
+                        android:text="GitHub Issues" />
+
+                    <TextView
+                        style="@style/menu_row_content_text"
+                        android:text="@string/about_github_issues_description" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_link"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+
+            <TextView
+                style="@style/menu_section_title_style"
+                android:text="@string/about_section_misc"/>
+            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/about_libs"
+                style="@style/menu_button_row_style"
+                android:text="@string/about_third_party_licenses"/>
+            <View style="@style/menu_divider_style" android:background="@android:color/transparent"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

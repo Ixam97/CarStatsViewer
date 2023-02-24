@@ -1,13 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
-
-    <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Noodzakelijke permissies</string>
     <string name="permissions_dialog_text">Deze app heeft bepaalde toelatingen nodig om te kunnen werken. Zonder de aangegeven toelatingen, kunnen de gegevens van het voertuig niet worden verzameld.</string>
     <string name="permissions_dialog_quit">Car Stats Viewer afsluiten</string>
     <string name="permissions_dialog_grant">Toelatingen goedkeuren</string>
-    
-    <!-- MainActivity -->
     <string name="main_port_connected">Laadkabel aangesloten:</string>
     <string name="main_current_power">Huidig stroomverbruik:</string>
     <string name="main_used_energy">Verbruikte energie:</string>
@@ -17,7 +13,9 @@
     <string name="main_average_consumption">Gemiddeld verbruik:</string>
     <string name="main_button_reset_stats">Statistieken resetten</string>
     <string name="main_consumption">Verbruik over de laatste 3 km:</string>
-    <string name="main_checkbox_speed">Snelheid</string>
+    <string name="main_speed">Snelheid</string>
+    <string name="main_dialog_reset_title">Statistieken resetten?</string>
+    <string name="main_dialog_reset_message">Alle opgeslagen ritgegevens worden op nul gezet.</string>
     <string name="main_gage_speed">Snelheid</string>
     <string name="main_gage_power">Power</string>
     <string name="main_gage_charging_power">Laadvermogen</string>
@@ -25,59 +23,87 @@
     <string name="main_gage_consumption">Momenteel verbruik</string>
     <string name="main_dismiss_charge_plot">Laadcurve sluiten</string>
     <string name="main_button_reset_charge_plot">Laadcurve resetten</string>
-    <string name="main_button_trip_summary">Samenvatting trip</string>
+    <string name="main_button_trip_summary">Samenvatting rit</string>
     <string name="main_button_hide_speed">Snelheid verbergen</string>
     <string name="main_button_show_speed">Snelheid tonen</string>
-
-    <!-- SummaryActivity -->
-    <string name="summary_title">Samenvatting trip</string>
-    <string name="summary_button_reset_trip">Trip resetten</string>
+    <string name="main_secondary_axis">Secundaire as: %s</string>
+    <string name="summary_title">Samenvatting rit</string>
+    <string name="summary_button_reset_trip">Rit resetten</string>
     <string name="summary_parked_warning">Enkel zichtbaar in parkeerstand.</string>
-    <string name="summary_trip_history">Tripverloop</string>
+    <string name="summary_trip_history">Ritverloop</string>
     <string name="summary_charging_sessions">Laadsessies</string>
-    <string name="summary_trip_start_date">Trip begonnen op:</string>
+    <string name="summary_trip_start_date">Rit begonnen op: %s</string>
     <string name="summary_used_energy">Verbruikte energie</string>
     <string name="summary_traveled_distance">Afgelegde afstand</string>
     <string name="summary_average_consumption">Gemiddeld verbruik</string>
     <string name="summary_travel_time">Tijdsduur</string>
     <string name="summary_charged_energy">Geladen energie</string>
     <string name="summary_charge_time">Laadtijd</string>
-
-    <!-- SettingsActivity -->
+    <string name="summary_charge_ambient_temp">Omgevingstemperatuur</string>
+    <string name="summary_interruption_warning">Registratie van laadsessie is onderbroken. Deze waarde is waarschijnlijk onjuist.</string>
     <string name="settings_title">Instellingen</string>
     <string name="settings_button_back">Terug</string>
     <string name="settings_button_quit">App afsluiten</string>
     <string name="settings_notifications">Meldingen</string>
     <string name="settings_consumption_unit">Wh/km als eenheid van verbruik</string>
+    <string name="settings_distance_unit">Mijlen als afstandseenheid</string>
     <string name="settings_debug">Debug-informatie</string>
     <string name="settings_experimental_layout">Toon experimentele layout</string>
-    <string name="settings_consumption_plot">  Verbruikscurve</string>
-    <string name="settings_charge_plot">  Laadcurve</string>
-    <string name="settings_consumption_plot_single_motor">Single Motor model</string>
+    <string name="settings_consumption_plot">Verbruikscurve</string>
+    <string name="settings_charge_plot">Laadcurve</string>
+    <string name="settings_about">Over Car Stats Viewer:</string>
     <string name="settings_plot_secondary_color">Grijs als tweede tekenkleur</string>
     <string name="settings_plot_state_of_charge_dimension">Experimental State Of Charge Axis</string>
+    <string name="settings_consumption_plot_single_motor">Single Motor model</string>
     <string name="settings_visible_gages">Toon stroommeters</string>
     <string name="settings_consumption_plot_speed">Toon snelheidscurve</string>
     <string name="settings_sub_title_settings">Instellingen:</string>
     <string name="settings_sub_title_current_cons_plot">Actuele verbruikscurve:</string>
     <string name="settings_sub_title_last_charge_plot">Laatste laadcurven:</string>
-    
-    <!-- Quit Dialog -->
+    <string name="about_title">Over Car Stats Viewer</string>
+    <string name="about_section_about">Over Car Stats Viewer:</string>
+    <string name="about_support">Ondersteun de ontwikkeling</string>
+    <string name="about_support_description">Bekijk de GitHub-repository voor meer informatie over hoe u de ontwikkeling van de app kunt ondersteunen.</string>
+    <string name="about_contributors">Bijdragers</string>
+    <string name="about_section_feedback">Feedback:</string>
+    <string name="about_section_misc">Allerlei:</string>
+    <string name="about_github_issues_description">Dit is de beste plaats voor bugrapporten en verzoeken om verbeteringen. Lees eerst de bestaande problemen voordat u een nieuwe opent.</string>
+    <string name="about_polestar_forum_description">Discussie over Car Stats Viewer in de internationale forums.</string>
+    <string name="about_polestar_fans_description">Discussie over Car Stats Viewer in de Duitse forums.</string>
+    <string name="about_third_party_licenses">Licenties</string>
+    <string name="about_supporters">Supporters</string>
+    <string name="about_thank_you">Bedankt!</string>
+    <string name="about_supporters_message">Veel dank aan iedereen die de ontwikkeling van Car Stats Viewer heeft gesteund!</string>
     <string name="quit_dialog_title">App afsluiten?</string>
     <string name="quit_dialog_message">Log wordt gekopieerd naar het klembord.</string>
-    <string name="dialog_reset_title">Tripgegevens resetten?</string>
-    <string name="dialog_reset_message">De huidige tripgegevens worden gereset. Moet de trip opgeslagen worden?</string>
+    <string name="dialog_close">Sluit</string>
+    <string name="dialog_reset_title">Ritgegevens resetten?</string>
+    <string name="dialog_reset_message">De huidige ritgegevens worden op nul gezet. Wilt u de rit opslaan?</string>
     <string name="dialog_reset_do_save">Opslaan</string>
     <string name="dialog_reset_no_save">Niet opslaan</string>
     <string name="dialog_reset_cancel">Cancel</string>
     <string name="dialog_confirm">Ja</string>
     <string name="dialog_dismiss">Neen</string>
-
-    <!-- LogActivity -->
     <string name="log_title">Debug</string>
-
-    <!-- Notifications -->
     <string name="notification_title">Huidige statistieken:</string>
     <string name="foreground_service_info">Gegevensverzameling is bezig</string>
     <string name="toast_file_read_error">Fout bij het inlezen van de ritgegevens</string>
+    <string name="settings_select_trip">Rit in hoofdweergave:</string>
+    <string name="CurrentTripData">Handmatige rit</string>
+    <string name="SinceChargeData">Sinds de laatste laadbeurt</string>
+    <string name="AutoTripData">Automatische rit</string>
+    <string name="CurrentMonthData">Huidige maand</string>
+    <string-array name="changes_0_23">
+        <item>Datastructuur vernieuwd om de stabiliteit en schaalbaarheid te vergroten</item>
+        <item>Deense vertaling toegevoegd</item>
+        <item>\"Over Car Stats Viewer\" toegevoegd (incl. gereviseerde ReadMe met informatie over ondersteuning en bijdragen)</item>
+        <item>Meerdere rittrackers toegevoegd die tegelijkertijd worden uitgevoerd (handmatige rit, sinds laatste lading, automatische rit, huidige maand)</item>
+        <item>Diverse visuele verbeteringen voor de plotweergaven</item>
+        <item>Specifieke waarden in plotweergaven kunnen worden gemarkeerd door dubbel te tikken</item>
+        <item>Debug-Logs kunnen worden verzonden via SMTP (experimenteel!)</item>
+        <item>Gestabiliseerd gedrag van de laadcurve wanneer de app wordt gepauzeerd tijdens het laden</item>
+        <item>Geoptimaliseerde afleiding van de bestuurder</item>
+        <item>Diverse bugfixes en stabiliteitsverbeteringen</item>
+    </string-array>
+    <string name="main_changelog_dialog_title">Wijzigingen in versie %s:</string>
 </resources>

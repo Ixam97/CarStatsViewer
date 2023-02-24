@@ -1,12 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Tillatelser er nødvendig for bruk</string>
     <string name="permissions_dialog_text">Denne appen trenger Tillatelser for å kunne brukes. Uten nødvendige tillatelser kan ikke appen lese data fra bilen.</string>
     <string name="permissions_dialog_quit">Avslutt Car Stats Viewer</string>
     <string name="permissions_dialog_grant">Gi tillatelser</string>
-
-    <!-- MainActivity -->
     <string name="main_port_connected">Ladeport tilkoblet:</string>
     <string name="main_current_power">Nåværende effekt trekk:</string>
     <string name="main_used_energy">Brukt energi:</string>
@@ -16,7 +13,7 @@
     <string name="main_average_consumption">Gjennomsnitt forbruk:</string>
     <string name="main_button_reset_stats">Resett statistikker</string>
     <string name="main_consumption">Forbruk over de 3 sist km:</string>
-    <string name="main_checkbox_speed">Hastighet</string>
+    <string name="main_speed">Hastighet</string>
     <string name="main_dialog_reset_title">Resett snitt?</string>
     <string name="main_dialog_reset_message">Alle lagrede turer vil bli resatt til null.</string>
     <string name="main_gage_speed">Hastighet</string>
@@ -29,31 +26,32 @@
     <string name="main_button_trip_summary">Tur oppsummering</string>
     <string name="main_button_hide_speed">Skjul hastighet</string>
     <string name="main_button_show_speed">Vis hastighet</string>
-
-    <!-- SummaryActivity -->
+    <string name="main_secondary_axis">Sekundær akse:%s</string>
     <string name="summary_title">Tur oppsummering</string>
     <string name="summary_button_reset_trip">Resett tur</string>
     <string name="summary_parked_warning">Visning er kun tilgjengelig når parkert.</string>
     <string name="summary_trip_history">Tur historie</string>
     <string name="summary_charging_sessions">Ladesesjoner</string>
-    <string name="summary_trip_start_date">Turen startet på:</string>
+    <string name="summary_trip_start_date">Turen startet på: %s</string>
     <string name="summary_used_energy">Energi brukt</string>
     <string name="summary_traveled_distance">Reist distanse</string>
     <string name="summary_average_consumption">Gjennomsnittlig forbruk</string>
     <string name="summary_travel_time">Reisetid</string>
     <string name="summary_charged_energy">Energi ladet</string>
     <string name="summary_charge_time">Ladetid</string>
-
-    <!-- SettingsActivity -->
+    <string name="summary_charge_ambient_temp">Omgivelsestemperatur</string>
+    <string name="summary_interruption_warning">Opptak av ladesesjonen er avbrutt. Denne verdien er sannsynligvis feil.</string>
     <string name="settings_title">Innstillinger</string>
     <string name="settings_button_back">Tilbake</string>
     <string name="settings_button_quit">Avslutt app</string>
     <string name="settings_notifications">Varslinger</string>
     <string name="settings_consumption_unit">Wh/km som forbruksenhet</string>
+    <string name="settings_distance_unit">Miles som distanseenhet</string>
     <string name="settings_debug">Feilsøk informasjon</string>
     <string name="settings_experimental_layout">Vis eksperimentell visning</string>
-    <string name="settings_consumption_plot">  Forbruksvisning</string>
-    <string name="settings_charge_plot">  Ladevisning</string>
+    <string name="settings_consumption_plot">Forbruksvisning</string>
+    <string name="settings_charge_plot">Ladevisning</string>
+    <string name="settings_about">Om Car Stats Viewer</string>
     <string name="settings_plot_secondary_color">Grå som sekundær farge</string>
     <string name="settings_plot_state_of_charge_dimension">Eksperimentellakse for ladetilstand</string>
     <string name="settings_consumption_plot_single_motor">Enkel motor modell</string>
@@ -62,10 +60,23 @@
     <string name="settings_sub_title_settings">Innstillinger:</string>
     <string name="settings_sub_title_current_cons_plot">Nåværende forbruksgraf:</string>
     <string name="settings_sub_title_last_charge_plot">Siste ladekurver:</string>
-
-    <!-- Quit Dialog -->
+    <string name="about_title">Om Car Stats Viewer</string>
+    <string name="about_section_about">Om Car Stats Viewer:</string>
+    <string name="about_support">Støtt utviklingen</string>
+    <string name="about_support_description">Se GitHub-repository for å lære om hvordan du kan støtte utviklingen av appen.</string>
+    <string name="about_contributors">Bidragsytere</string>
+    <string name="about_section_feedback">Tilbakemelding:</string>
+    <string name="about_section_misc">Forskjellige:</string>
+    <string name="about_github_issues_description">Dette er den bete plassen for feilrapprotering og endringsforespørlser. Vennligst les om eksisterende problemer før du rapporterer et nytt problem.</string>
+    <string name="about_polestar_forum_description">Diskusjoner om Car Stats Viewer i det internasjonale forumet.</string>
+    <string name="about_polestar_fans_description">Diskusjoner om Car Stats Viewer i det tyske forumet.</string>
+    <string name="about_third_party_licenses">Lisenser</string>
+    <string name="about_supporters">Supportere</string>
+    <string name="about_thank_you">Takk!</string>
+    <string name="about_supporters_message">Mange takk til alle som har støttet utviklingen av Car Stats Viewer!</string>
     <string name="quit_dialog_title">Avslutt app?</string>
     <string name="quit_dialog_message">Loggen vil bli kopiert til utklippstavlen.</string>
+    <string name="dialog_close">Lukk</string>
     <string name="dialog_reset_title">Resett turdata?</string>
     <string name="dialog_reset_message">Nåværende turdata vil bli resatt til null. Vil du lagre turen?</string>
     <string name="dialog_reset_do_save">Lagre</string>
@@ -73,12 +84,26 @@
     <string name="dialog_reset_cancel">Avbryt</string>
     <string name="dialog_confirm">Ja</string>
     <string name="dialog_dismiss">Nei</string>
-
-    <!-- LogActivity -->
     <string name="log_title">Feilsøk</string>
-
-    <!-- Notifications -->
     <string name="notification_title">Nåværende statistikker:</string>
     <string name="foreground_service_info">Service for datainnsamling kjører</string>
     <string name="toast_file_read_error">Feil ved lesing av turfil</string>
+    <string name="settings_select_trip">Tur i hovedvisning:</string>
+    <string name="CurrentTripData">Manuell tur</string>
+    <string name="SinceChargeData">Siden siste endring</string>
+    <string name="AutoTripData">Automatisk tur</string>
+    <string name="CurrentMonthData">Denne måned</string>
+    <string-array name="changes_0_23">
+        <item>Datastruktur fornyet for å forbere stabilitet og skalerbarhet</item>
+        <item>Lagt til dansk oversettelse</item>
+        <item>Lagt til \"Om Car Stats Viewer\" (inkudert overhalt LesMeg med info om støtte og bidrag)</item>
+        <item>Lagt til flere tursporinger for samtidig kjøring (manuell tur, siden siste lading, auto tur, nåværende måned)</item>
+        <item>Forskjellige visuelle forbedringer for plot-visningen</item>
+        <item>Spesifikke verdier i plot.visning kan bli merket ved dobbel-tap</item>
+        <item>Feillogger kan bli sendt via SMTP (eksperimentell!)</item>
+        <item>Stabilisert oppførsel av ladekurve når appen er pauset under lading</item>
+        <item>Optimert førerdistraksjons optimalisering</item>
+        <item>Forskjellige feilrettinger og stabilitetsforbedringer</item>
+    </string-array>
+    <string name="main_changelog_dialog_title">Changes in version %s:</string>
 </resources>

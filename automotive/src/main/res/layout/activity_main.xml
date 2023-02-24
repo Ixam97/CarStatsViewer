@@ -14,8 +14,8 @@
 
         <ImageView
             android:id="@+id/main_title_icon"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="@dimen/std_icon_size"
+            android:layout_height="@dimen/std_icon_size"
             android:layout_margin="15dp"
             android:src="@mipmap/ic_launcher"/>
 
@@ -101,7 +101,7 @@
                 android:layout_weight="6">
 
                 <View
-                    android:layout_width="2dp"
+                    android:layout_width="@dimen/divider_height"
                     android:layout_height="match_parent"
                     android:background="?android:attr/listDivider"
                     android:layout_margin="15dp"/>
@@ -117,7 +117,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="35sp"
+                        android:textSize="@dimen/std_font_size"
                         android:drawableStart="@drawable/ic_distance"
                         />
 
@@ -128,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="35sp"
+                        android:textSize="@dimen/std_font_size"
                         android:drawableStart="@drawable/ic_power"
                         />
 
@@ -138,7 +138,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="35sp"
+                        android:textSize="@dimen/std_font_size"
                         android:drawableStart="@drawable/ic_avg_consumption"
                         />
 
@@ -148,7 +148,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="35sp"
+                        android:textSize="@dimen/std_font_size"
                         android:text="  00:00:00"
                         android:drawableStart="@drawable/ic_time"
                         />
@@ -160,7 +160,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="10dp"
                         android:textColor="?android:attr/textColorPrimary"
-                        android:textSize="35sp"
+                        android:textSize="@dimen/std_font_size"
                         android:text="  -/- km"
                         android:drawableStart="@drawable/ic_remaining_range"
                         />
@@ -172,7 +172,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="2dp"
+            android:layout_height="@dimen/divider_height"
             android:layout_weight="0"
             android:background="?android:attr/listDivider"/>
 
@@ -180,7 +180,7 @@
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:layout_margin="0dp"
+            android:layout_marginHorizontal="20dp"
             android:id="@+id/main_consumption_plot"/>
 
         <LinearLayout
@@ -203,20 +203,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
-                    android:textSize="35sp"
+                    android:textSize="@dimen/std_font_size"
                     android:text="5 km"/>
                 <RadioButton
                     android:id="@+id/main_radio_25"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
-                    android:textSize="35sp"
+                    android:textSize="@dimen/std_font_size"
                     android:text="15 km"/>
                 <RadioButton
                     android:id="@+id/main_radio_50"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="35sp"
+                    android:textSize="@dimen/std_font_size"
                     android:text="Trip"/>
             </RadioGroup>
 
@@ -229,7 +229,7 @@
                 android:id="@+id/main_checkbox_speed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/main_checkbox_speed"
+                android:text="@string/main_speed"
                 android:textSize="35sp"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="5dp"
@@ -251,7 +251,7 @@
                 android:layout_marginEnd="7.5dp"
                 android:text="@string/main_button_trip_summary"/>
             <Button
-                android:id="@+id/main_button_speed"
+                android:id="@+id/main_button_secondary_dimension"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="80dp"
@@ -307,7 +307,7 @@
                 android:layout_weight="6">
 
                 <View
-                    android:layout_width="2dp"
+                    android:layout_width="@dimen/divider_height"
                     android:layout_height="match_parent"
                     android:background="?android:attr/listDivider"
                     android:layout_margin="15dp"/>
@@ -343,11 +343,22 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:layout_marginBottom="10dp"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="35sp"
                         android:text="  -/- km"
                         android:drawableStart="@drawable/ic_remaining_range"
+                    />
+
+                    <TextView
+                        android:id="@+id/main_gage_ambient_temperature_text_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="35sp"
+                        android:drawableStart="@drawable/ic_temperature"
+                        android:visibility="gone"
                     />
 
                 </LinearLayout>
@@ -357,7 +368,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="2dp"
+            android:layout_height="@dimen/divider_height"
             android:layout_weight="0"
             android:background="?android:attr/listDivider"/>
 
@@ -365,7 +376,7 @@
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:layout_margin="0dp"
+            android:layout_margin="20dp"
             android:id="@+id/main_charge_plot"/>
 
         <LinearLayout

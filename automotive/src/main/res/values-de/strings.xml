@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string-array name="changes_0_23">
+        <item>Datenstruktur grundlegend überarbeitet, um die Stabilität und Skalierbarkeit zu verbessern</item>
+        <item>Dänische Übersetzung hinzugefügt</item>
+        <item>\"Über Car Stats Viewer\" hinzugefügt, (inkl. grundlegende Überarbeitung der ReadMe mit Hinweisen zur Unterstützung und Mitwirkung)</item>
+        <item>Es können neben dem manuellen Trip mehrere, automatisch zurückgesetzte Trips ausgewählt werden</item>
+        <item>Verschiedene optische Anpassungen an den Diagrammen</item>
+        <item>Einzelne Werte eines Diagramms können per doppeltipp hervorgehoben werden</item>
+        <item>Möglichkeit zum verschicken von Debug-Logs per SMTP (experimentell!)</item>
+        <item>Stabilisierung des Verhaltens der Ladekurve, wenn die Ausführung der App zwischenzeitlich unterbrochen wird</item>
+        <item>Optimierung der Fahrerablenkung</item>
+        <item>Zahlreiche weitere Bugfixes und Stabilitätsverbesserungen.</item>
+    </string-array>
+
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Berechtigungen notwendig</string>
     <string name="permissions_dialog_text">Diese App benötigt Berechtigungen, um genuzt zu werden. Ohne die angeforderten Berechtigungen können keine Daten des Fahrzugs erfasst werden.</string>
@@ -17,7 +30,7 @@
     <string name="main_average_consumption">Durchschnittsverbrauch:</string>
     <string name="main_button_reset_stats">Statistiken zurücksetzen</string>
     <string name="main_consumption">Verbrauch über die letzten 3 km:</string>
-    <string name="main_checkbox_speed">Geschwindigkeit</string>
+    <string name="main_speed">Geschwindigkeit</string>
     <string name="main_gage_speed">Geschwindigkeit</string>
     <string name="main_gage_power">Leistung</string>
     <string name="main_gage_charging_power">Ladeleistung</string>
@@ -28,20 +41,24 @@
     <string name="main_button_trip_summary">Tripzusammenfassung</string>
     <string name="main_button_hide_speed">Geschwindigkeit verbergen</string>
     <string name="main_button_show_speed">Geschwindigkeit anzeigen</string>
+    <string name="main_secondary_axis">Sekundärachse: %s</string>
+    <string name="main_changelog_dialog_title">Änderungen in Version %s:</string>
 
     <!-- SummaryActivity -->
     <string name="summary_title">Tripzusammenfassung</string>
     <string name="summary_button_reset_trip">Trip zurücksetzen</string>
-    <string name="summary_parked_warning">Ansicht nur im geparkten Zustand verfügbar.</string>
+    <string name="summary_parked_warning">Ansicht nur im Stillstand verfügbar.</string>
     <string name="summary_trip_history">Fahrtverlauf</string>
     <string name="summary_charging_sessions">Ladevorgänge</string>
-    <string name="summary_trip_start_date">Trip begonnen am:</string>
+    <string name="summary_trip_start_date">Trip begonnen am: %s</string>
     <string name="summary_used_energy">Verbrauchte Energie</string>
     <string name="summary_traveled_distance">Zurückgelegte Distanz</string>
     <string name="summary_average_consumption">Durchschnittsverbrauch</string>
     <string name="summary_travel_time">Fahrzeit</string>
     <string name="summary_charged_energy">Geladene Energie</string>
     <string name="summary_charge_time">Ladezeit</string>
+    <string name="summary_charge_ambient_temp">Außentemperatur</string>
+    <string name="summary_interruption_warning">Aufzeichnung der Ladekurve unterbrochen. Dieser Wert ist vermutlich nicht korrekt.</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
@@ -51,8 +68,9 @@
     <string name="settings_consumption_unit">Wh/km als Verbrauchseinheit</string>
     <string name="settings_debug">Debug-Informationen</string>
     <string name="settings_experimental_layout">Zeige experimentelles Layout</string>
-    <string name="settings_consumption_plot">  Verbrauchsansicht</string>
-    <string name="settings_charge_plot">  Ladeansicht</string>
+    <string name="settings_consumption_plot">Verbrauchsansicht</string>
+    <string name="settings_charge_plot">Ladeansicht</string>
+    <string name="settings_about">Über Car Stats Viewer</string>
     <string name="settings_consumption_plot_single_motor">Single Motor Modell</string>
     <string name="settings_plot_secondary_color">Grau als sekundäre Diagrammfarbe</string>
     <string name="settings_plot_state_of_charge_dimension">Experimentelle Ladezustand Achse</string>
@@ -61,12 +79,35 @@
     <string name="settings_sub_title_settings">Einstellungen:</string>
     <string name="settings_sub_title_current_cons_plot">Aktuelle Verbrauchskurve:</string>
     <string name="settings_sub_title_last_charge_plot">Letzte Ladekurven:</string>
+    <string name="settings_select_trip">Trip in Hauptansicht:</string>
+
+    <string name="CurrentTripData">Manueller Trip</string>
+    <string name="SinceChargeData">Seit letzter Ladung</string>
+    <string name="AutoTripData">Automatischer Trip</string>
+    <string name="CurrentMonthData">Aktueller Monat</string>
+    
+    <!-- AboutActivity -->
+    <string name="about_title">Über Car Stats Viewer</string>
+    <string name="about_section_about">Über Car Stats Viewer:</string>
+    <string name="about_support">Entwicklung unterstützen</string>
+    <string name="about_support_description">Besuche das GitHub-Repository um mehr darüber erfahren, wie die Entwicklung der App unterstützt werden kann.</string>
+    <string name="about_contributors">Mitwirkende</string>
+    <string name="about_section_feedback">Kontakt:</string>
+    <string name="about_section_misc">Sonstiges:</string>
+    <string name="about_github_issues_description">Dies ist der beste Ort, um Fehler zu melden oder Wünsche zu äußern. Bitte vor dem Erstellen eines neuen Tickets die bereits vorhandenen beachten.</string>
+    <string name="about_polestar_forum_description">Diskussion über Car Stats Viewer im internationalen Forum.</string>
+    <string name="about_polestar_fans_description">Diskussion über Car Stats Viewer im deutschen Forum.</string>
+    <string name="about_third_party_licenses">Lizenzen</string>
+    <string name="about_supporters">Unterstützer</string>
+    <string name="about_thank_you">Vielen Dank!</string>
+    <string name="about_supporters_message">Vielen Dank an alle Unterstützer von Car Stats Viewer!</string>
 
     <!-- Quit Dialog -->
     <string name="quit_dialog_title">App beenden?</string>
     <string name="quit_dialog_message">Log wird in die Zwischenablage kopiert.</string>
+    <string name="dialog_close">Schließen</string>
     <string name="dialog_reset_title">Tripdaten zurücksetzen?</string>
-    <string name="dialog_reset_message">Die aktuellen Tripdaten werden zurückgesetzt. Soll der Trip gespeichert werden?</string>
+    <string name="dialog_reset_message">Der manuelle Trip wird zurückgesetzt. Soll der Trip gespeichert werden?</string>
     <string name="dialog_reset_do_save">Speichern</string>
     <string name="dialog_reset_no_save">Nicht speichern</string>
     <string name="dialog_reset_cancel">Abbrechen</string>
@@ -78,5 +119,5 @@
     <!-- Notifications -->
     <string name="notification_title">Aktuelle Fahrdaten:</string>
     <string name="foreground_service_info">Fahrdatenerfassung aktiv</string>
-    <string name="toast_file_read_error">Fehler beim Binlesen der Trip-Datei</string>
+    <string name="toast_file_read_error">Fehler beim Einlesen der Trip-Datei</string>
 </resources>

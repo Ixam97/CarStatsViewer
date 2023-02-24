@@ -1,8 +1,11 @@
 package com.ixam97.carStatsViewer.plot.objects
 
+import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.plot.enums.*
 
 object PlotGlobalConfiguration {
+    val DataVersion : Int? = 20230206
+
     val SecondaryDimensionConfiguration: HashMap<PlotSecondaryDimension, PlotLineConfiguration> =
         hashMapOf(
             PlotSecondaryDimension.SPEED to PlotLineConfiguration(
@@ -30,8 +33,20 @@ object PlotGlobalConfiguration {
                 PlotRange(0f, 100f, backgroundZero = 0f),
                 PlotLineLabelFormat.PERCENTAGE,
                 PlotLabelPosition.RIGHT,
-                PlotHighlightMethod.MAX,
+                PlotHighlightMethod.LAST,
                 "% SoC"
             )
         )
+
+    fun updateDistanceUnit(distanceUnit: DistanceUnitEnum) {
+
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.SPEED]?.UnitFactor = distanceUnit.asFactor()
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.SPEED]?.Divider = distanceUnit.asFactor()
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.SPEED]?.Unit = "%s/h".format(distanceUnit.unit())
+
+
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.DISTANCE]?.UnitFactor = distanceUnit.toFactor()
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.DISTANCE]?.Divider = distanceUnit.asFactor()
+        SecondaryDimensionConfiguration[PlotSecondaryDimension.DISTANCE]?.Unit = "%s".format(distanceUnit.unit())
+    }
 }

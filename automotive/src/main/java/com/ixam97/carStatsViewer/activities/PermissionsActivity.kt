@@ -12,7 +12,13 @@ import kotlin.system.exitProcess
 
 class PermissionsActivity: Activity() {
     companion object {
-        private val PERMISSIONS = arrayOf(Car.PERMISSION_ENERGY, Car.PERMISSION_SPEED)
+        private val PERMISSIONS = arrayOf(
+            Car.PERMISSION_ENERGY,
+            Car.PERMISSION_SPEED,
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+            //android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,8 +36,8 @@ class PermissionsActivity: Activity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         InAppLogger.log("onRequestPermissionResult")
-        if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)
-        {
+
+        if (unGrantedPermissions().isEmpty()) {
             finish()
             startActivity(Intent(applicationContext, MainActivity::class.java))
         } else {
@@ -53,13 +59,41 @@ class PermissionsActivity: Activity() {
 
     private fun checkPermissions(): Boolean {
         InAppLogger.log("Checking permissions...")
-        if (checkSelfPermission(Car.PERMISSION_ENERGY) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(
-                Car.PERMISSION_SPEED) != PackageManager.PERMISSION_GRANTED) {
+        val unGrantedPermissions = unGrantedPermissions()
+        if (unGrantedPermissions.isNotEmpty()) {
             InAppLogger.log("Requesting missing Permissions...")
-            requestPermissions(PERMISSIONS, 0)
+            requestPermissions(unGrantedPermissions.toTypedArray(), 0)
             return false
         }
         InAppLogger.log("Permissions already granted.")
         return true
     }
+
+    private fun unGrantedPermissions(): List<String> {
+        return PERMISSIONS.filter { checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
