@@ -4,7 +4,7 @@
     <string name="permissions_dialog_text">Denna app kräver behörigheter för att kunna användas. Utan de nödvändiga behörigheterna kan appen inte läsa någon data från bilen.</string>
     <string name="permissions_dialog_quit">Avsluta Car Stats Viewer</string>
     <string name="permissions_dialog_grant">Bevilja behörigheter</string>
-    <string name="main_port_connected">Laddare ansluten:</string>
+    <string name="main_port_connected">Laddkabel ansluten:</string>
     <string name="main_current_power">Aktuell strömförbrukning:</string>
     <string name="main_used_energy">Använd energi:</string>
     <string name="main_current_speed">Aktuell hastighet:</string>
@@ -93,4 +93,17 @@
     <string name="SinceChargeData">Sedan senaste laddningen</string>
     <string name="AutoTripData">Automatisk resa</string>
     <string name="CurrentMonthData">Aktuell månad</string>
+    <string-array name="changes_0_23">
+        <item>Datastrukturen har förnyats för att öka stabiliteten och skalbarheten</item>
+        <item>Lagt till svensk översättning</item>
+        <item>Lagt till \"About Car Stats Viewer\" (inklusive översyn av ReadMe med information om stöd och bidrag)</item>
+        <item>Flera reseindikatorer som körs samtidigt har lagts till (manuell resa, sedan senaste laddning, automatisk resa, aktuell månad)</item>
+        <item>Diverse visuella förbättringar av grafik</item>
+        <item>Specifika värden i plotvyer kan markeras genom att dubbeltrycka</item>
+        <item>Debug-log kan skickas via SMTP (experimentellt!)</item>
+        <item>Stabiliserat beteende för laddningskurvan när appen är pausad under laddning</item>
+        <item>Optimerad optimering av förarens distraktion</item>
+        <item>Diverse felrättningar och stabilitetsförbättringar</item>
+    </string-array>
+    <string name="main_changelog_dialog_title">Ändringar i version %s:</string>
 </resources>
