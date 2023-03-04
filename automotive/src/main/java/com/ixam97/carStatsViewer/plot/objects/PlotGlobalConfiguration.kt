@@ -34,7 +34,11 @@ object PlotGlobalConfiguration {
                 PlotLineLabelFormat.PERCENTAGE,
                 PlotLabelPosition.RIGHT,
                 PlotHighlightMethod.LAST,
-                "% SoC"
+                "% SoC",
+                DimensionSmoothing = 1f,
+                DimensionSmoothingType = PlotDimensionSmoothingType.PIXEL,
+                DimensionSmoothingHighlightMethod = PlotHighlightMethod.MAX,
+                SessionGapRendering = PlotSessionGapRendering.GAP
             )
         )
 

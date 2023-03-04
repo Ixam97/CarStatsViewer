@@ -212,7 +212,8 @@ class SummaryActivity: Activity() {
         summary_consumption_plot.dimension = PlotDimension.DISTANCE
         summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((appPreferences.distanceUnit.toUnit(tripData.traveledDistance) / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) + 1
         summary_consumption_plot.dimensionRestrictionMin = appPreferences.distanceUnit.asUnit(MainActivity.DISTANCE_TRIP_DIVIDER)
-        summary_consumption_plot.dimensionSmoothingPercentage = 0.02f
+        summary_consumption_plot.dimensionSmoothing = 0.02f
+        summary_consumption_plot.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
         summary_consumption_plot.setPlotMarkers(plotMarkers)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
