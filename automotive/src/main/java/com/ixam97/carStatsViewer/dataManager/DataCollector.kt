@@ -129,9 +129,12 @@ class DataCollector : Service() {
         override fun run() {
             CoroutineScope(Dispatchers.Default).launch {
                 Log.i("LiveData", Thread.currentThread().name)
+                val abrpApiKey = if (resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName) != 0) {
+                    getString(resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName))
+                } else null
                 val abrpLiveData = AbrpLiveData(
                     token = appPreferences.abrpGenericToken,
-                    apiKey = getString(R.string.abrp_api_key)
+                    apiKey = abrpApiKey
                 )
                 val dataManager = DataManagers.CURRENT_TRIP.dataManager
 

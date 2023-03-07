@@ -24,7 +24,7 @@ import java.util.*
 object InAppLogger {
 
     var logArray = ArrayList<String>()
-    private val logArrayMaxSize = 10_000
+    private val logArrayMaxSize = 1_000
 
     private var lastVHALCallback = ""
     private var numVHALCallbacks = 0

@@ -49,11 +49,11 @@ class AbrpLiveData (val apiKey : String? = null, val token : String? = null) {
             close()
         }
 
-        Log.i("SENT", jsonObject.toString())
-        Log.i("STATUS", con.responseCode.toString());
-        Log.i("MSG" , con.responseMessage)
+        InAppLogger.log("SENT: $jsonObject")
+        InAppLogger.log("STATUS: ${con.responseCode.toString()}");
+        InAppLogger.log("MSG: ${con.responseMessage}")
         try {
-            Log.i("JSON", con.inputStream.bufferedReader().use {it.readText()})
+            InAppLogger.log("JSON: ${con.inputStream.bufferedReader().use {it.readText()}}")
         }
         catch (e: java.lang.Exception) {
             InAppLogger.log("ABRP API Auth Error")
