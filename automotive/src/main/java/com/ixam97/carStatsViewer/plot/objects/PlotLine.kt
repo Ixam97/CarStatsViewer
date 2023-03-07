@@ -315,17 +315,21 @@ class PlotLine(
             else -> Configuration
         } ?: return null
 
-        val highlightMethod = when (configuration.HighlightMethod) {
+        return byHighlightMethod(configuration.HighlightMethod, dataPoints, dimension, secondaryDimension)
+    }
+
+    fun byHighlightMethod(highlightMethod: PlotHighlightMethod, dataPoints: List<PlotLineItem>, dimension: PlotDimension, secondaryDimension: PlotSecondaryDimension? = null): Float? {
+        if (dataPoints.isEmpty()) return null
+
+        return when (val inlineHighlightMethod = when (highlightMethod) {
             PlotHighlightMethod.AVG_BY_DIMENSION -> when (dimension) {
                 PlotDimension.INDEX -> PlotHighlightMethod.AVG_BY_INDEX
                 PlotDimension.DISTANCE -> PlotHighlightMethod.AVG_BY_DISTANCE
                 PlotDimension.TIME -> PlotHighlightMethod.AVG_BY_TIME
                 PlotDimension.STATE_OF_CHARGE -> PlotHighlightMethod.AVG_BY_STATE_OF_CHARGE
             }
-            else -> configuration.HighlightMethod
-        }
-
-        return when (highlightMethod) {
+            else -> highlightMethod
+        }) {
             PlotHighlightMethod.MIN -> minValue(dataPoints, secondaryDimension, false)
             PlotHighlightMethod.MAX -> maxValue(dataPoints, secondaryDimension, false)
             PlotHighlightMethod.FIRST -> dataPoints.first().bySecondaryDimension(secondaryDimension)
@@ -333,7 +337,7 @@ class PlotLine(
             PlotHighlightMethod.AVG_BY_INDEX,
             PlotHighlightMethod.AVG_BY_DISTANCE,
             PlotHighlightMethod.AVG_BY_TIME,
-            PlotHighlightMethod.AVG_BY_STATE_OF_CHARGE -> averageValue(dataPoints, highlightMethod, secondaryDimension)
+            PlotHighlightMethod.AVG_BY_STATE_OF_CHARGE -> averageValue(dataPoints, inlineHighlightMethod, secondaryDimension)
             else -> null
         }
     }

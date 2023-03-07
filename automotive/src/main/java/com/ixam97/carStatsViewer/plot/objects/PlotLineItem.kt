@@ -2,8 +2,6 @@ package com.ixam97.carStatsViewer.plot.objects
 
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.utils.Exclude
-import java.time.LocalDate
-import java.util.*
 import kotlin.math.roundToInt
 
 class PlotLineItem (
@@ -33,7 +31,7 @@ class PlotLineItem (
             else -> when(dimension) {
                 PlotDimension.INDEX -> (value as Int / dimensionSmoothing).roundToInt()
                 PlotDimension.DISTANCE, PlotDimension.STATE_OF_CHARGE -> (value as Float / dimensionSmoothing).roundToInt()
-                PlotDimension.TIME ->  (value as Long / dimensionSmoothing).roundToInt()
+                PlotDimension.TIME -> value as Long / dimensionSmoothing.toLong()
             }
         }
     }

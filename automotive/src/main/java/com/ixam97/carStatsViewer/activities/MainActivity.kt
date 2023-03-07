@@ -381,7 +381,8 @@ class MainActivity : Activity() {
 
         main_consumption_plot.dimension = PlotDimension.DISTANCE
         main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(CONSUMPTION_DISTANCE_RESTRICTION)
-        main_consumption_plot.dimensionSmoothingPercentage = 0.02f
+        main_consumption_plot.dimensionSmoothing = 0.02f
+        main_consumption_plot.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
         main_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
         main_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
             1 -> {
