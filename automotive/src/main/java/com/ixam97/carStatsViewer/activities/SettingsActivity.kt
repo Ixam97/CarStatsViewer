@@ -16,7 +16,9 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.graphics.drawable.toDrawable
@@ -183,6 +185,26 @@ class SettingsActivity : Activity() {
 
         settings_about.setOnClickListener {
             startActivity(Intent(this, AboutActivity::class.java))
+        }
+
+        settings_abrp_token.setOnClickListener {
+            val tokenDialog = AlertDialog.Builder(this@SettingsActivity).apply {
+                val layout = LayoutInflater.from(this@SettingsActivity).inflate(R.layout.dialog_abrp_token, null)
+                val abrp_token = layout.findViewById<EditText>(R.id.abrp_token)
+
+                abrp_token.setText(appPreferences.abrpGenericToken)
+
+                setView(layout)
+
+                setPositiveButton("OK") { dialog, _ ->
+                    appPreferences.abrpGenericToken = abrp_token.text.toString()
+                }
+                setTitle("ABRP Generic Token")
+                setMessage("Enter ABRP Generic Token to transmit live data to the ABRP servers.")
+                setCancelable(true)
+                create()
+            }
+            tokenDialog.show()
         }
     }
 

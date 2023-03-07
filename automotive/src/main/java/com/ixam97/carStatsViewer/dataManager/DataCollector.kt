@@ -2,7 +2,6 @@ package com.ixam97.carStatsViewer.dataManager
 
 import android.app.*
 import android.car.Car
-import android.car.VehicleIgnitionState
 import android.car.VehiclePropertyIds
 import android.car.VehicleUnit
 import android.car.hardware.CarPropertyValue
@@ -19,11 +18,12 @@ import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
+import com.ixam97.carStatsViewer.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.plot.enums.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Runnable
 import java.io.File
 import java.io.FileWriter
-import java.lang.Runnable
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
@@ -37,6 +37,7 @@ class DataCollector : Service() {
         private const val STATS_NOTIFICATION_ID = 1
         private const val FOREGROUND_NOTIFICATION_ID = 2
         private const val NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS = 5_000L
+        private const val LIVE_DATA_TASK_INTERVAL = 5_000L
         private const val CONSUMPTION_PLOT_UPDATE_DISTANCE = 100
         private const val CHARGE_PLOT_UPDATE_INTERVAL_MILLIS = 2_000L
         private const val CHARGE_PLOT_MARKER_THRESHOLD_NANOS = 10_000_000_000L // 2 times CHARGE_PLOT_UPDATE_INTERVAL_MILLIS in nanos
@@ -71,6 +72,7 @@ class DataCollector : Service() {
 
     private lateinit var notificationTimerHandler: Handler
     private lateinit var saveTripDataTimerHandler: Handler
+    private lateinit var liveDataTimerHandler: Handler
 
     init {
         startupTimestamp = System.nanoTime()
@@ -101,6 +103,7 @@ class DataCollector : Service() {
     private val updateStatsNotificationTask = object : Runnable {
         override fun run() {
             updateStatsNotification()
+            Log.i("Notification", Thread.currentThread().name)
             // InAppLogger.logNotificationUpdate()
             val currentNotificationTimeMillis = System.currentTimeMillis()
             lastNotificationTimeMillis = currentNotificationTimeMillis
@@ -119,6 +122,34 @@ class DataCollector : Service() {
             */
 
             notificationTimerHandler.postDelayed(this, NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS)
+        }
+    }
+
+    private val abrpLiveDataTask = object : Runnable {
+        override fun run() {
+            CoroutineScope(Dispatchers.Default).launch {
+                Log.i("LiveData", Thread.currentThread().name)
+                val abrpLiveData = AbrpLiveData(
+                    token = appPreferences.abrpGenericToken,
+                    apiKey = getString(R.string.abrp_api_key)
+                )
+                val dataManager = DataManagers.CURRENT_TRIP.dataManager
+
+                val broadcastIntent = Intent(getString(R.string.abrp_connection_broadcast))
+                broadcastIntent.putExtra(
+                    "status",
+                    abrpLiveData.send(
+                        stateOfCharge = dataManager.stateOfCharge,
+                        power = dataManager.currentPower,
+                        speed = dataManager.currentSpeed,
+                        isCharging = dataManager.chargePortConnected,
+                        isParked = dataManager.driveState == DrivingState.PARKED
+                    )
+                )
+
+                sendBroadcast(broadcastIntent)
+            }
+            liveDataTimerHandler.postDelayed(this, LIVE_DATA_TASK_INTERVAL)
         }
     }
 
@@ -223,6 +254,8 @@ class DataCollector : Service() {
         notificationTimerHandler.post(updateStatsNotificationTask)
         saveTripDataTimerHandler = Handler(Looper.getMainLooper())
         saveTripDataTimerHandler.postDelayed(saveTripDataTask, AUTO_SAVE_INTERVAL_MILLIS)
+        liveDataTimerHandler = Handler(Looper.getMainLooper())
+        liveDataTimerHandler.post(abrpLiveDataTask)
 
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.save_trip_data_broadcast)))
         registerReceiver(carPropertyEmulatorReceiver, IntentFilter(getString(R.string.VHAL_emulator_broadcast)))

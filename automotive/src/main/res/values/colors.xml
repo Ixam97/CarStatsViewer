@@ -12,6 +12,7 @@
     <color name="secondary_plot_color_alt">#FFCCCCCC</color>
     <color name="charge_plot_color">#2693ff</color>
     <color name="charge_marker">#2693ff</color>
+    <color name="connected_blue"></color>
     <color name="park_marker">@color/disabled_tint</color>
     <color name="bad_red">#771515</color>
     <color name="grid_line_color">#272727</color>

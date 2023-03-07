@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
@@ -31,6 +32,7 @@ import com.ixam97.carStatsViewer.services.LocCollector
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.GageView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_settings.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -72,6 +74,7 @@ class MainActivity : Activity() {
             when (intent.action) {
                 getString(R.string.ui_update_plot_broadcast) -> updatePlots()
                 getString(R.string.ui_update_gages_broadcast) -> updateGages()
+                getString(R.string.abrp_connection_broadcast) -> updateAbrpStatus(intent.getIntExtra("status", 0))
             }
         }
     }
@@ -206,6 +209,10 @@ class MainActivity : Activity() {
             broadcastReceiver,
             IntentFilter(getString(R.string.ui_update_gages_broadcast))
         )
+        registerReceiver(
+            broadcastReceiver,
+            IntentFilter(getString(R.string.abrp_connection_broadcast))
+        )
 
         main_button_performance.isEnabled = false
         main_button_performance.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
@@ -338,6 +345,20 @@ class MainActivity : Activity() {
             }
 
             lastPlotUpdate = SystemClock.elapsedRealtime()
+        }
+    }
+
+    private fun updateAbrpStatus(status: Int) {
+        when (status) {
+            1 -> {
+                main_icon_abrp_status.setColorFilter(Color.parseColor("#2595FF"))
+                main_icon_abrp_status.visibility = View.VISIBLE
+            }
+            2 -> {
+                main_icon_abrp_status.setColorFilter(getColor(R.color.bad_red))
+                main_icon_abrp_status.visibility = View.VISIBLE
+            }
+            else -> main_icon_abrp_status.visibility = View.GONE
         }
     }
 
