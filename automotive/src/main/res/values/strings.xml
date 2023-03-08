@@ -38,6 +38,9 @@
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
 
+    <string name="toast_started_in_background">Car Stats Viewer started in background</string>
+    <string name="toast_crashed">Car Stats Viewer has crashed and will attempt a restart</string>
+
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Permissions required for use</string>
     <string name="permissions_dialog_text">This app requires Permissions to be used. Without the required permissions the app cannot read any data from the car.</string>

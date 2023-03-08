@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.abrpLiveData
 
-import android.util.Log
 import com.ixam97.carStatsViewer.InAppLogger
 import org.json.JSONObject
 import java.io.DataOutputStream
@@ -24,8 +23,10 @@ class AbrpLiveData (val apiKey : String? = null, val token : String? = null) {
         con.requestMethod = "POST"
         con.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
         con.setRequestProperty("Accept","application/json");
-        con.doOutput = true;
-        con.doInput = true;
+        con.doOutput = true
+        con.doInput = true
+
+        var responseCode = 0
 
         val jsonObject = JSONObject().apply {
             put("token", token)
@@ -38,17 +39,24 @@ class AbrpLiveData (val apiKey : String? = null, val token : String? = null) {
                 put("is_charging", isCharging)
                 put("is_parked", isParked)
                 put("speed", speed * 3.6f)
+                put("car_model", "polestar:2:23:78:single:lr")
             }
             put("tlm", tlm)
 
         }
-
-        DataOutputStream(con.outputStream).apply {
-            writeBytes(jsonObject.toString())
-            flush()
-            close()
+        try {
+            DataOutputStream(con.outputStream).apply {
+                writeBytes(jsonObject.toString())
+                flush()
+                close()
+            }
+            responseCode = con.responseCode
+            con.disconnect()
+        } catch (e: java.lang.Exception) {
+            InAppLogger.log("ABRP network connection error")
+            return 2
         }
-
+/*
         InAppLogger.log("SENT: $jsonObject")
         InAppLogger.log("STATUS: ${con.responseCode.toString()}");
         InAppLogger.log("MSG: ${con.responseMessage}")
@@ -61,7 +69,10 @@ class AbrpLiveData (val apiKey : String? = null, val token : String? = null) {
         finally {
             con.disconnect()
         }
-        if (con.responseCode == 200) return 1
+*/
+
+        if (responseCode == 200) return 1
+        InAppLogger.log("ABRP connection failed. Response code: $responseCode")
         return 2
     }
 }

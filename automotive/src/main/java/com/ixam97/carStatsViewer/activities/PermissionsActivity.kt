@@ -1,11 +1,15 @@
 package com.ixam97.carStatsViewer.activities
 
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.PendingIntent
 import android.car.Car
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.InAppLogger
 import com.ixam97.carStatsViewer.R
 import kotlin.system.exitProcess
@@ -23,6 +27,14 @@ class PermissionsActivity: Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /*CarStatsViewer.pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE
+        )*/
+
         if (checkPermissions()){
             finish()
             startActivity(Intent(applicationContext, MainActivity::class.java))

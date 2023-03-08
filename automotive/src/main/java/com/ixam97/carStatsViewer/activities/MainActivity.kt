@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.activities
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.dataManager.*
 import android.app.Activity
+import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.PendingIntent
 import android.car.VehicleGear
@@ -32,7 +33,7 @@ import com.ixam97.carStatsViewer.services.LocCollector
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.GageView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_settings.*
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -188,7 +189,7 @@ class MainActivity : Activity() {
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
-        startForegroundService(Intent(this, DataCollector::class.java))
+        // startForegroundService(Intent(this, DataCollector::class.java))
         startService(Intent(this, LocCollector::class.java))
 
         DataCollector.mainActivityPendingIntent = PendingIntent.getActivity(
@@ -214,7 +215,7 @@ class MainActivity : Activity() {
             IntentFilter(getString(R.string.abrp_connection_broadcast))
         )
 
-        main_button_performance.isEnabled = false
+        main_button_performance.isEnabled = true
         main_button_performance.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
 
         enableUiUpdates()
@@ -533,6 +534,10 @@ class MainActivity : Activity() {
             main_consumption_plot.invalidate()
             // DataManager.chargedEnergy = 0f
             // DataManager.chargeTime = 0L
+        }
+
+        main_button_performance.setOnClickListener {
+            throw IOException()
         }
     }
 

@@ -169,11 +169,25 @@
                     <View
                         style="@style/menu_divider_style"
                         android:background="?android:attr/listDivider"/>
-
-                    <TextView
+                    <LinearLayout
                         android:id="@+id/settings_abrp_token"
-                        style="@style/menu_button_row_style"
-                        android:text="ABRP Generic Token"/>
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/std_row_height"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/row_icon_width"
+                            android:layout_height="@dimen/std_icon_size"
+                            android:layout_gravity="center"
+                            android:scaleType="fitStart"
+                            android:adjustViewBounds="true"
+                            android:src="@mipmap/abrp_icon_png"/>
+
+                        <TextView
+                            style="@style/menu_button_row_style"
+                            android:text="ABRP Generic Token"/>
+
+                    </LinearLayout>
                     <View
                         style="@style/menu_divider_style"
                         android:background="?android:attr/listDivider"/>

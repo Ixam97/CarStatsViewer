@@ -19,6 +19,7 @@ import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.abrpLiveData.AbrpLiveData
+import com.ixam97.carStatsViewer.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.plot.enums.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Runnable
@@ -33,7 +34,6 @@ class DataCollector : Service() {
         lateinit var mainActivityPendingIntent: PendingIntent
         val CurrentTripDataManager = DataManagers.CURRENT_TRIP.dataManager
         private const val DO_LOG = false
-        private const val CHANNEL_ID = "TestChannel"
         private const val STATS_NOTIFICATION_ID = 1
         private const val FOREGROUND_NOTIFICATION_ID = 2
         private const val NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS = 5_000L
@@ -103,7 +103,6 @@ class DataCollector : Service() {
     private val updateStatsNotificationTask = object : Runnable {
         override fun run() {
             updateStatsNotification()
-            Log.i("Notification", Thread.currentThread().name)
             // InAppLogger.logNotificationUpdate()
             val currentNotificationTimeMillis = System.currentTimeMillis()
             lastNotificationTimeMillis = currentNotificationTimeMillis
@@ -128,7 +127,6 @@ class DataCollector : Service() {
     private val abrpLiveDataTask = object : Runnable {
         override fun run() {
             CoroutineScope(Dispatchers.Default).launch {
-                Log.i("LiveData", Thread.currentThread().name)
                 val abrpApiKey = if (resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName) != 0) {
                     getString(resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName))
                 } else null
@@ -146,7 +144,7 @@ class DataCollector : Service() {
                         power = dataManager.currentPower,
                         speed = dataManager.currentSpeed,
                         isCharging = dataManager.chargePortConnected,
-                        isParked = dataManager.driveState == DrivingState.PARKED
+                        isParked = (dataManager.driveState == DrivingState.PARKED || dataManager.driveState == DrivingState.CHARGE)
                     )
                 )
 
@@ -185,15 +183,24 @@ class DataCollector : Service() {
             // Wait for completed restore before doing anything
         }
 
-        createNotificationChannel()
-
-        foregroundServiceNotification = Notification.Builder(applicationContext, CHANNEL_ID)
+        foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(getString(R.string.foreground_service_info))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setOngoing(true)
 
-        statsNotification = Notification.Builder(this, CHANNEL_ID)
+        foregroundServiceNotification.setContentIntent(
+                PendingIntent.getActivity(
+                    applicationContext,
+                    0,
+                    Intent(applicationContext, PermissionsActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP + Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    },
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            )
+
+        statsNotification = Notification.Builder(this, CarStatsViewer.CHANNEL_ID)
             .setContentTitle("Title")
             .setContentText("Test Notification from Car Stats Viewer")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -243,7 +250,7 @@ class DataCollector : Service() {
         InAppLogger.log("Fuel Capacity: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_FUEL_CAPACITY, 0)}")
 
         notificationTitleString = resources.getString(R.string.notification_title)
-        statsNotification.setContentTitle(notificationTitleString).setContentIntent(mainActivityPendingIntent)
+        statsNotification.setContentTitle(notificationTitleString)
 
         if (notificationsEnabled) {
             with(NotificationManagerCompat.from(this)) {
@@ -641,17 +648,6 @@ class DataCollector : Service() {
         val status = carPropertyManager.getProperty<Any>(propertyId, 0).status
         if (status != CarPropertyValue.STATUS_AVAILABLE) InAppLogger.log("PropertyStatus: $status")
         return status
-    }
-
-    private fun createNotificationChannel() {
-        val name = "TestChannel"
-        val descriptionText = "TestChannel"
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-            description = descriptionText
-        }
-        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
     }
 
     private fun updateStatsNotification() {
