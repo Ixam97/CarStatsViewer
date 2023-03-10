@@ -8,6 +8,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import com.google.gson.GsonBuilder
@@ -16,7 +17,9 @@ import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.mailSender.MailSender
 import kotlinx.android.synthetic.main.activity_log.*
 import kotlinx.coroutines.*
+import java.io.BufferedWriter
 import java.io.File
+import java.io.FileWriter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -37,11 +40,33 @@ object InAppLogger {
     private var numNotificationUpdates = 0
 
     fun log(message: String) {
-        val messageTime = SimpleDateFormat("dd.MM.yyyy hh:mm:ss.SSS").format(Date())
+        val messageTime = SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(Date())
         val logMessage = String.format("%s: %s", messageTime, message)
         android.util.Log.d("InAppLogger:", logMessage)
         if (logArray.size > logArrayMaxSize) logArray.removeAt(0)
         logArray.add(logMessage)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            withContext(Dispatchers.IO) {
+                val logFile = File(CarStatsViewer.appContext.filesDir,"InAppLogger.txt")
+                if (!logFile.exists()) {
+                    try {
+                        logFile.createNewFile()
+                    } catch (e: java.lang.Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                try {
+                    BufferedWriter(FileWriter(logFile, true)).apply {
+                        append(logMessage)
+                        newLine()
+                        close()
+                    }
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
     }
 
     fun logVHALCallback() {
@@ -115,7 +140,16 @@ class LogActivity : Activity() {
 
         // val logTextView = TextView(this)
         // logTextView.typeface
-        log_text_view.text = getLogString()
+
+        log_progress_bar.visibility = View.VISIBLE
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val logString = getLogString()
+            runOnUiThread {
+                log_text_view.text = logString
+                log_progress_bar.visibility = View.GONE
+            }
+        }
 
         log_button_back.setOnClickListener {
             finish()
@@ -134,6 +168,7 @@ class LogActivity : Activity() {
             if (!mailAdr.isValidEmail())
                 Toast.makeText(this, "Invalid mail address!", Toast.LENGTH_SHORT).show()
             else {
+                log_progress_bar.visibility = View.VISIBLE
                 CoroutineScope(Dispatchers.Default).launch() {
                     try {
                         val sender = if (appPreferences.smtpAddress != "" && appPreferences.smtpPassword != "" && appPreferences.smtpServer != "") {
@@ -178,10 +213,12 @@ class LogActivity : Activity() {
                         }
                         sender.sendMail("Debug Log ${Date()} from $senderName", getLogString(), senderMail, mailAdr)
                         runOnUiThread {
+                            log_progress_bar.visibility = View.GONE
                             Toast.makeText(this@LogActivity, "Log and JSON sent to $mailAdr", Toast.LENGTH_LONG).show()
                         }
                     } catch (e: java.lang.Exception) {
                         runOnUiThread {
+                            log_progress_bar.visibility = View.GONE
                             Toast.makeText(this@LogActivity, "Sending E-Mail failed. See log.", Toast.LENGTH_LONG).show()
                         }
                         InAppLogger.log(e.stackTraceToString())
@@ -240,9 +277,32 @@ class LogActivity : Activity() {
 
         log_reset_log.setOnClickListener {
             InAppLogger.logArray.clear()
-            InAppLogger.log("Cleared log")
-            finish()
-            startActivity(intent)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val logFile = File(applicationContext.filesDir,"InAppLogger.txt")
+                if (!logFile.exists()) {
+                    try {
+                        logFile.createNewFile()
+                    } catch (e: java.lang.Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                try {
+                    BufferedWriter(FileWriter(logFile)).apply {
+                        write("")
+                        close()
+                    }
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                }
+                runOnUiThread {
+                    InAppLogger.log("Cleared log")
+                    log_text_view.text = ""
+                }
+            }
+
+            // finish()
+            // startActivity(intent)
         }
 
         // log_switch_deep_log.setOnClickListener {
@@ -259,9 +319,12 @@ class LogActivity : Activity() {
     private fun getLogString(): String {
         var logString = ""
 
-        for (i in 0 until InAppLogger.logArray.size) {
-            logString += "${InAppLogger.logArray[i]}\n"
-        }
+        // for (i in 0 until InAppLogger.logArray.size) {
+        //     logString += "${InAppLogger.logArray[i]}\n"
+        // }
+
+        val logFile = File(applicationContext.filesDir,"InAppLogger.txt")
+        logString = logFile.readText()
 
         // logString += "${InAppLogger.getVHALLog()}\n${InAppLogger.getUILog()}\n${InAppLogger.getNotificationLog()}\n"
         logString += "v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"

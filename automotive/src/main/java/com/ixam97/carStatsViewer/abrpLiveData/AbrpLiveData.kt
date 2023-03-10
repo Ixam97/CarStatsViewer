@@ -15,7 +15,11 @@ class AbrpLiveData (val apiKey : String? = null, val token : String? = null) {
         power: Float,
         isCharging: Boolean,
         speed: Float,
-        isParked: Boolean
+        isParked: Boolean,
+        lat: Double?,
+        lon: Double?,
+        alt: Double?,
+        temp: Float
     ) : Int {
         if (apiKey == null || token == null || apiKey.isEmpty() || token.isEmpty()){
             connection_status = 0
@@ -44,7 +48,11 @@ class AbrpLiveData (val apiKey : String? = null, val token : String? = null) {
                 put("is_charging", isCharging)
                 put("is_parked", isParked)
                 put("speed", speed * 3.6f)
-                put("car_model", "polestar:2:23:78:single:lr")
+                put("ext_temp ", temp)
+                lat?.let { put("lat", it) }
+                lon?.let { put("lon", it) }
+                alt?.let { put("elevation", it) }
+                put("is_dcfc", power < -11_000_000)
             }
             put("tlm", tlm)
 

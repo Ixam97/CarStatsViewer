@@ -7,11 +7,12 @@ import android.car.VehicleUnit
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
 import android.content.*
-import android.graphics.BitmapFactory
+import android.location.Location
 import android.os.*
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
+import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.*
@@ -20,9 +21,14 @@ import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.activities.PermissionsActivity
+import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
+import com.ixam97.carStatsViewer.locationTracking.LocationClient
 import com.ixam97.carStatsViewer.plot.enums.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.io.File
 import java.io.FileWriter
 import java.util.*
@@ -34,7 +40,6 @@ class DataCollector : Service() {
         lateinit var mainActivityPendingIntent: PendingIntent
         val CurrentTripDataManager = DataManagers.CURRENT_TRIP.dataManager
         private const val DO_LOG = false
-        private const val STATS_NOTIFICATION_ID = 1
         private const val FOREGROUND_NOTIFICATION_ID = 2
         private const val NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS = 5_000L
         private const val LIVE_DATA_TASK_INTERVAL = 5_000L
@@ -51,7 +56,8 @@ class DataCollector : Service() {
         var gageSoCValue: Int = 0
     }
 
-    private var lastSoC: Int = 0
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private lateinit var locationClient: LocationClient
 
     private var startupTimestamp: Long = 0L
 
@@ -71,6 +77,8 @@ class DataCollector : Service() {
     private lateinit var liveDataTimerHandler: Handler
 
     private lateinit var foregroundServiceNotification: Notification.Builder
+
+    private var location: Location? = null
 
     init {
         startupTimestamp = System.nanoTime()
@@ -120,6 +128,20 @@ class DataCollector : Service() {
                 )
                 val dataManager = DataManagers.CURRENT_TRIP.dataManager
 
+                var lat: Double? = null
+                var lon: Double? = null
+                var alt: Double? = null
+
+                location?.let {
+                    if (it.time + 20_000 > System.currentTimeMillis()) {
+                        lat = it.latitude
+                        lon = it.longitude
+                        alt = it.altitude
+                    }
+                }
+
+                if (lat == null) InAppLogger.log("No valid location")
+
                 val broadcastIntent = Intent(getString(R.string.abrp_connection_broadcast))
                 broadcastIntent.putExtra(
                     "status",
@@ -128,7 +150,11 @@ class DataCollector : Service() {
                         power = dataManager.currentPower,
                         speed = dataManager.currentSpeed,
                         isCharging = dataManager.chargePortConnected,
-                        isParked = (dataManager.driveState == DrivingState.PARKED || dataManager.driveState == DrivingState.CHARGE)
+                        isParked = (dataManager.driveState == DrivingState.PARKED || dataManager.driveState == DrivingState.CHARGE),
+                        lat = lat,
+                        lon = lon,
+                        alt = alt,
+                        temp = dataManager.ambientTemperature
                     )
                 )
 
@@ -144,6 +170,11 @@ class DataCollector : Service() {
 
     override fun onCreate() {
         super.onCreate()
+
+        locationClient = DefaultLocationClient(
+            this,
+            LocationServices.getFusedLocationProviderClient(this)
+        )
 
         var tripRestoreComplete = false
         CoroutineScope(Dispatchers.IO).launch {
@@ -236,7 +267,6 @@ class DataCollector : Service() {
             }
             it.dataManager.consumptionPlotLine.baseLineAt.add(0f)
             it.dataManager.maxBatteryLevel = carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
-            InAppLogger.log("Max battery Capacity: ${it.dataManager.maxBatteryLevel}")
 
             driveStateUpdater(it.dataManager)
             speedUpdater(it.dataManager)
@@ -247,6 +277,7 @@ class DataCollector : Service() {
     override fun onDestroy() {
         super.onDestroy()
         // .log("DataCollector.onDestroy")
+        serviceScope.cancel()
         sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
         unregisterReceiver(broadcastReceiver)
         car.disconnect()
@@ -258,6 +289,16 @@ class DataCollector : Service() {
             if (intent.getStringExtra("reason") == "crash")
                 Toast.makeText(this, "Car Stats Viewer restarted after a crash", Toast.LENGTH_LONG).show()
         }
+        locationClient
+            .getLocationUpdates(5_000L)
+            .catch { e ->
+                InAppLogger.log(e.message?:"Location updates could not be set up: Unknown error")
+            }
+            .onEach { location ->
+                this@DataCollector.location = location
+                InAppLogger.log("Location: lat: ${location.latitude}, lon: ${location.longitude}, alt: ${location.altitude}m")
+            }
+            .launchIn(serviceScope)
         startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
         return START_STICKY
     }
@@ -309,13 +350,6 @@ class DataCollector : Service() {
     /** Handle incoming property changes by property ID */
     private fun handleCarPropertyListenerEvent(propertyId: Int, dataManager: DataManager) {
         when (propertyId) {
-            dataManager.BatteryLevel.propertyId         -> {
-                if (dataManager.currentIgnitionState < 3 && dataManager == DataManagers.CURRENT_TRIP.dataManager) InAppLogger.log("BatteryLevel while ignition off: ${dataManager.stateOfCharge}%")
-                if (lastSoC != dataManager.stateOfCharge) {
-                    InAppLogger.log("Old SoC: $lastSoC, new SoC: ${dataManager.stateOfCharge} | ${dataManager.batteryLevel} / ${dataManager.maxBatteryLevel} = ${dataManager.batteryLevel/dataManager.maxBatteryLevel}")
-                    lastSoC = dataManager.stateOfCharge
-                }
-            }
             dataManager.CurrentPower.propertyId         -> powerUpdater(dataManager)
             dataManager.CurrentSpeed.propertyId         -> speedUpdater(dataManager)
             dataManager.CurrentIgnitionState.propertyId -> ignitionUpdater(dataManager)
@@ -487,10 +521,6 @@ class DataCollector : Service() {
             dataManager.plotMarkers.addMarker(PlotMarkerType.PARK, System.currentTimeMillis(), dataManager.traveledDistance)
         }
         if (previousDrivingState == DrivingState.CHARGE) stopChargingSession(dataManager)
-        // Drive ended
-        appPreferences.doDistractionOptimization = false
-        sendBroadcast(Intent(getString(R.string.distraction_optimization_broadcast)))
-        InAppLogger.log("Drive ended")
     }
 
     private fun chargeState(previousDrivingState: Int, dataManager: DataManager) {

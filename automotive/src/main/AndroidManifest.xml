@@ -18,7 +18,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <!--<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>-->
+
     <uses-feature
         android:name="android.hardware.type.automotive"
         android:required="true"/>
@@ -74,8 +74,8 @@
         <activity
             android:name=".activities.AboutActivity"
             android:exported="false" />
-        <service android:name=".services.LocCollector"/>
         <service android:name=".dataManager.DataCollector"
+            android:foregroundServiceType="location"
             android:enabled="true"
             android:exported="true"/>
     </application>

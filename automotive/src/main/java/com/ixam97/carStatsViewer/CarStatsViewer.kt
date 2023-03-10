@@ -10,10 +10,13 @@ class CarStatsViewer : Application() {
 
     companion object {
         const val CHANNEL_ID = "TestChannel"
+        lateinit var appContext: Context
     }
 
     override fun onCreate() {
         super.onCreate()
+
+        CarStatsViewer.appContext = applicationContext
 
         createNotificationChannel()
 

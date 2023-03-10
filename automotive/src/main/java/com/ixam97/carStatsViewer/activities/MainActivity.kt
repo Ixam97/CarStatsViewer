@@ -30,7 +30,6 @@ import com.ixam97.carStatsViewer.views.PlotView
 import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
-import com.ixam97.carStatsViewer.services.LocCollector
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.GageView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -195,7 +194,6 @@ class MainActivity : Activity() {
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
         startForegroundService(Intent(this, DataCollector::class.java))
-        startService(Intent(this, LocCollector::class.java))
 
         DataCollector.mainActivityPendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_IMMUTABLE
