@@ -7,6 +7,9 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class AbrpLiveData (val apiKey : String? = null, val token : String? = null) {
+    companion object {
+        var connection_status = 0
+    }
     fun send(
         stateOfCharge: Int,
         power: Float,
@@ -14,8 +17,10 @@ class AbrpLiveData (val apiKey : String? = null, val token : String? = null) {
         speed: Float,
         isParked: Boolean
     ) : Int {
-        if (apiKey == null || token == null) return 0
-        if (apiKey.isEmpty() || token.isEmpty()) return 0
+        if (apiKey == null || token == null || apiKey.isEmpty() || token.isEmpty()){
+            connection_status = 0
+            return connection_status
+        }
 
         val url = URL("https://api.iternio.com/1/tlm/send")
         val con: HttpURLConnection = url.openConnection() as HttpURLConnection
@@ -54,7 +59,8 @@ class AbrpLiveData (val apiKey : String? = null, val token : String? = null) {
             con.disconnect()
         } catch (e: java.lang.Exception) {
             InAppLogger.log("ABRP network connection error")
-            return 2
+            connection_status = 2
+            return connection_status
         }
 /*
         InAppLogger.log("SENT: $jsonObject")
@@ -71,8 +77,12 @@ class AbrpLiveData (val apiKey : String? = null, val token : String? = null) {
         }
 */
 
-        if (responseCode == 200) return 1
+        if (responseCode == 200) {
+            connection_status = 1
+            return connection_status
+        }
         InAppLogger.log("ABRP connection failed. Response code: $responseCode")
-        return 2
+        connection_status = 2
+        return connection_status
     }
 }

@@ -22,6 +22,7 @@ import android.os.SystemClock
 import android.text.format.DateFormat
 import android.view.View
 import android.widget.Toast
+import com.ixam97.carStatsViewer.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
@@ -85,10 +86,14 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
 
+        updateAbrpStatus(AbrpLiveData.connection_status)
+
         val preferenceDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
         if (selectedDataManager != preferenceDataManager) {
             finish()
+            overridePendingTransition(0, 0)
             startActivity(intent)
+            overridePendingTransition(0, 0)
         }
 
         // InAppLogger.log("MainActivity.onResume")
@@ -189,7 +194,7 @@ class MainActivity : Activity() {
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
-        // startForegroundService(Intent(this, DataCollector::class.java))
+        startForegroundService(Intent(this, DataCollector::class.java))
         startService(Intent(this, LocCollector::class.java))
 
         DataCollector.mainActivityPendingIntent = PendingIntent.getActivity(

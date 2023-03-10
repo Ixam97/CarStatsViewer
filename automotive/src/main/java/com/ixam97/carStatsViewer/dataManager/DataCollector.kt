@@ -196,7 +196,7 @@ class DataCollector : Service() {
                     Intent(applicationContext, PermissionsActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_CLEAR_TOP + Intent.FLAG_ACTIVITY_SINGLE_TOP
                     },
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                    PendingIntent.FLAG_IMMUTABLE
                 )
             )
 
@@ -294,6 +294,10 @@ class DataCollector : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         // InAppLogger.log("DataCollector.onStartCommand")
+        if (intent.hasExtra("reason")) {
+            if (intent.getStringExtra("reason") == "crash")
+                Toast.makeText(this, "Car Stats Viewer restarted after a crash", Toast.LENGTH_LONG).show()
+        }
         startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
         return START_STICKY
     }

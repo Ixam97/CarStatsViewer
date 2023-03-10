@@ -16,7 +16,7 @@ import kotlin.system.exitProcess
 
 class PermissionsActivity: Activity() {
     companion object {
-        private val PERMISSIONS = arrayOf(
+        val PERMISSIONS = arrayOf(
             Car.PERMISSION_ENERGY,
             Car.PERMISSION_SPEED,
             android.Manifest.permission.ACCESS_FINE_LOCATION,
