@@ -57,8 +57,6 @@ class DataCollector : Service() {
 
     private var lastNotificationTimeMillis = 0L
 
-    private var notificationCounter = 0
-
     private lateinit var appPreferences: AppPreferences
 
     private lateinit var gson: Gson
@@ -68,11 +66,11 @@ class DataCollector : Service() {
     private lateinit var car: Car
     private lateinit var carPropertyManager: CarPropertyManager
 
-    private lateinit var notificationTitleString: String
-
     private lateinit var notificationTimerHandler: Handler
     private lateinit var saveTripDataTimerHandler: Handler
     private lateinit var liveDataTimerHandler: Handler
+
+    private lateinit var foregroundServiceNotification: Notification.Builder
 
     init {
         startupTimestamp = System.nanoTime()
@@ -106,20 +104,6 @@ class DataCollector : Service() {
             // InAppLogger.logNotificationUpdate()
             val currentNotificationTimeMillis = System.currentTimeMillis()
             lastNotificationTimeMillis = currentNotificationTimeMillis
-
-            // Log additional data:
-            /*
-            InAppLogger.log("Additional data:\n" +
-                "    Speed in m/s:        ${DataManagers.CURRENT_TRIP.dataManager.CurrentSpeed.value}\n"+
-                "    Power in mW:         ${DataManagers.CURRENT_TRIP.dataManager.CurrentPower.value}\n"+
-                "    Gear selection:      ${DataManagers.CURRENT_TRIP.dataManager.CurrentGear.value}\n"+
-                "    Connection status:   ${DataManagers.CURRENT_TRIP.dataManager.ChargePortConnected.value}\n"+
-                "    Battery level in Wh: ${DataManagers.CURRENT_TRIP.dataManager.BatteryLevel.value}\n"+
-                "    Ignition state:      ${DataManagers.CURRENT_TRIP.dataManager.CurrentIgnitionState.value}\n"+
-                "    Ambient temperature: ${DataManagers.CURRENT_TRIP.dataManager.CurrentAmbientTemperature.value}"
-            )
-            */
-
             notificationTimerHandler.postDelayed(this, NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS)
         }
     }
@@ -153,9 +137,6 @@ class DataCollector : Service() {
             liveDataTimerHandler.postDelayed(this, LIVE_DATA_TASK_INTERVAL)
         }
     }
-
-    private lateinit var statsNotification: Notification.Builder
-    private lateinit var foregroundServiceNotification: Notification.Builder
 
     override fun onBind(intent: Intent): IBinder? {
         return null
@@ -200,17 +181,6 @@ class DataCollector : Service() {
                 )
             )
 
-        statsNotification = Notification.Builder(this, CarStatsViewer.CHANNEL_ID)
-            .setContentTitle("Title")
-            .setContentText("Test Notification from Car Stats Viewer")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher_foreground))
-            .setStyle(Notification.MediaStyle())
-            .setCategory(Notification.CATEGORY_TRANSPORT)
-            .setOngoing(true)
-
-        // InAppLogger.log(String.format( "DataCollector.onCreate in Thread: %s", Thread.currentThread().name))
-
         appPreferences = AppPreferences(applicationContext)
 
         gson = GsonBuilder()
@@ -235,7 +205,6 @@ class DataCollector : Service() {
 
         val displayUnit = carPropertyManager.getProperty<Int>(VehiclePropertyIds.DISTANCE_DISPLAY_UNITS, 0).value
 
-
         appPreferences.distanceUnit = if (!emulatorMode) {
             when (displayUnit) {
                 VehicleUnit.MILE -> DistanceUnitEnum.MILES
@@ -248,15 +217,6 @@ class DataCollector : Service() {
         InAppLogger.log("Max battery Capacity: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)}")
         InAppLogger.log("Fuel level: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.FUEL_LEVEL, 0)}")
         InAppLogger.log("Fuel Capacity: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_FUEL_CAPACITY, 0)}")
-
-        notificationTitleString = resources.getString(R.string.notification_title)
-        statsNotification.setContentTitle(notificationTitleString)
-
-        if (notificationsEnabled) {
-            with(NotificationManagerCompat.from(this)) {
-                notify(STATS_NOTIFICATION_ID, statsNotification.build())
-            }
-        }
 
         registerCarPropertyCallbacks()
 
@@ -667,8 +627,6 @@ class DataCollector : Service() {
                 }
                 if ((CurrentTripDataManager.traveledDistance <= 0)) averageConsumptionString = "N/A"
 
-                notificationCounter++
-
                 val message = String.format(
                     "P:%.1f kW, D: %.3f km, Ø: %s",
                     CurrentTripDataManager.currentPower / 1_000_000,
@@ -676,16 +634,11 @@ class DataCollector : Service() {
                     averageConsumptionString
                 )
 
-                statsNotification.setContentText(message)
                 foregroundServiceNotification.setContentText(message)
-                notify(STATS_NOTIFICATION_ID, statsNotification.build())
                 notify(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
             }
         } else if (notificationsEnabled && !appPreferences.notifications) {
             notificationsEnabled = false
-            with(NotificationManagerCompat.from(this)) {
-                cancel(STATS_NOTIFICATION_ID)
-            }
             foregroundServiceNotification.setContentText(getString(R.string.foreground_service_info))
             NotificationManagerCompat.from(this).notify(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
         } else if (!notificationsEnabled && appPreferences.notifications) {
