@@ -283,24 +283,27 @@ class DataCollector : Service() {
         car.disconnect()
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // InAppLogger.log("DataCollector.onStartCommand")
-        if (intent.hasExtra("reason")) {
-            if (intent.getStringExtra("reason") == "crash")
-                Toast.makeText(this, "Car Stats Viewer restarted after a crash", Toast.LENGTH_LONG).show()
+        intent?.let {
+            if (intent.hasExtra("reason")) {
+                if (intent.getStringExtra("reason") == "crash")
+                    Toast.makeText(this, "Car Stats Viewer restarted after a crash", Toast.LENGTH_LONG).show()
+            }
         }
+
         locationClient
             .getLocationUpdates(5_000L)
             .catch { e ->
-                InAppLogger.log(e.message?:"Location updates could not be set up: Unknown error")
+                InAppLogger.log("LocationClient: ${e.message}")
             }
             .onEach { location ->
                 this@DataCollector.location = location
-                InAppLogger.log("Location: lat: ${location.latitude}, lon: ${location.longitude}, alt: ${location.altitude}m")
+                InAppLogger.log("Location: lat: ${location.latitude.toString().take(5)}, lon: ${location.longitude.toString().take(5)}, alt: ${location.altitude.toInt()}m")
             }
             .launchIn(serviceScope)
         startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     /** Update DataManagers on new VHAL event */
