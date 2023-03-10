@@ -27,4 +27,5 @@
     <string name="preference_log_user_name_key" translatable="false">preference_log_user_name</string>
     <string name="preference_version_key" translatable="false">preference_version</string>
     <string name="preference_abrp_generic_token_key" translatable="false">preference_abrp_generic_token</string>
+    <string name="preference_http_live_data_url" translatable="false">preference_http_live_data_url</string>
 </resources>

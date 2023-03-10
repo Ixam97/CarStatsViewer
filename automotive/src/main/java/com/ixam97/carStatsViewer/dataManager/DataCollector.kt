@@ -23,6 +23,7 @@ import com.ixam97.carStatsViewer.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
+import com.ixam97.carStatsViewer.httpLiveData.HTTPLiveData
 import com.ixam97.carStatsViewer.plot.enums.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Runnable
@@ -126,6 +127,9 @@ class DataCollector : Service() {
                     token = appPreferences.abrpGenericToken,
                     apiKey = abrpApiKey
                 )
+
+                val httpLiveDataURL = appPreferences.httpLiveDataURL
+                val httpLiveData = HTTPLiveData(httpLiveDataURL)
                 val dataManager = DataManagers.CURRENT_TRIP.dataManager
 
                 var lat: Double? = null
@@ -155,6 +159,15 @@ class DataCollector : Service() {
                         lon = lon,
                         alt = alt,
                         temp = dataManager.ambientTemperature
+                    )
+                ).putExtra(
+                    "status",
+                    httpLiveData.send(
+                        stateOfCharge = dataManager.stateOfCharge,
+                        power = dataManager.currentPower,
+                        speed = dataManager.currentSpeed,
+                        isCharging = dataManager.chargePortConnected,
+                        isParked = (dataManager.driveState == DrivingState.PARKED || dataManager.driveState == DrivingState.CHARGE)
                     )
                 )
 

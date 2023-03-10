@@ -8,6 +8,7 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.plot.enums.PlotDimension
 import com.ixam97.carStatsViewer.utils.Exclude
+import java.net.URL
 
 class AppPreferences(
     val context: Context
@@ -40,7 +41,7 @@ class AppPreferences(
     private val LogTargetAddress = AppPreference<String>(context.getString(R.string.preference_log_target_address_key), "ixam97@ixam97.de", sharedPref)
     private val LogUserName = AppPreference<String>(context.getString(R.string.preference_log_user_name_key), "", sharedPref)
     private val AbrpGenericToken = AppPreference<String>(context.getString(R.string.preference_abrp_generic_token_key), "", sharedPref)
-
+    private val HTTPLiveDataURL = AppPreference<String>(context.getString(R.string.preference_http_live_data_url), "", sharedPref)
 
     var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
@@ -63,6 +64,7 @@ class AppPreferences(
     var logUserName: String get() = LogUserName.value; set(value) {LogUserName.value = value}
     var logTargetAddress: String get() = LogTargetAddress.value; set(value) {LogTargetAddress.value = value}
     var abrpGenericToken: String get() = AbrpGenericToken.value; set(value) {AbrpGenericToken.value = value}
+    var httpLiveDataURL : String get() = HTTPLiveDataURL.value; set(value) {HTTPLiveDataURL.value = value}
 
     // Preferences not saved permanently:
     val exclusionStrategy = AppPreferences.exclusionStrategy

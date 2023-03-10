@@ -76,6 +76,7 @@ class MainActivity : Activity() {
                 getString(R.string.ui_update_plot_broadcast) -> updatePlots()
                 getString(R.string.ui_update_gages_broadcast) -> updateGages()
                 getString(R.string.abrp_connection_broadcast) -> updateAbrpStatus(intent.getIntExtra("status", 0))
+                getString(R.string.http_connection_broadcast) -> updateHTTStatus(intent.getIntExtra("status", 0))
             }
         }
     }
@@ -353,6 +354,20 @@ class MainActivity : Activity() {
     }
 
     private fun updateAbrpStatus(status: Int) {
+        when (status) {
+            1 -> {
+                main_icon_abrp_status.setColorFilter(Color.parseColor("#2595FF"))
+                main_icon_abrp_status.visibility = View.VISIBLE
+            }
+            2 -> {
+                main_icon_abrp_status.setColorFilter(getColor(R.color.bad_red))
+                main_icon_abrp_status.visibility = View.VISIBLE
+            }
+            else -> main_icon_abrp_status.visibility = View.GONE
+        }
+    }
+
+    private fun updateHTTStatus(status: Int) {
         when (status) {
             1 -> {
                 main_icon_abrp_status.setColorFilter(Color.parseColor("#2595FF"))

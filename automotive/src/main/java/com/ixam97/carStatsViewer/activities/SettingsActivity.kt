@@ -34,6 +34,7 @@ import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.views.PlotView
+import java.net.URL
 import kotlin.system.exitProcess
 
 class SettingsActivity : Activity() {
@@ -201,6 +202,26 @@ class SettingsActivity : Activity() {
                 }
                 setTitle("ABRP Generic Token")
                 setMessage("Enter ABRP Generic Token to transmit live data to the ABRP servers.")
+                setCancelable(true)
+                create()
+            }
+            tokenDialog.show()
+        }
+
+        settings_http_data.setOnClickListener {
+            val tokenDialog = AlertDialog.Builder(this@SettingsActivity).apply {
+                val layout = LayoutInflater.from(this@SettingsActivity).inflate(R.layout.dialog_http_data, null)
+                val liveDataURL = layout.findViewById<EditText>(R.id.http_live_data_url)
+
+                liveDataURL.setText(appPreferences.httpLiveDataURL)
+
+                setView(layout)
+
+                setPositiveButton("OK") { dialog, _ ->
+                    appPreferences.httpLiveDataURL = liveDataURL.text.toString()
+                }
+                setTitle("Live Data URL")
+                setMessage("Enter URL to transmit live data to the specified location.")
                 setCancelable(true)
                 create()
             }
