@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.location.LocationManager
-import android.location.OnNmeaMessageListener
-import android.os.Handler
 import android.os.Looper
 import com.google.android.gms.location.*
 import com.ixam97.carStatsViewer.InAppLogger
@@ -21,6 +19,7 @@ class DefaultLocationClient(
 
     init {
         Geoid.init()
+
     }
 
     @SuppressLint("MissingPermission")
@@ -47,7 +46,9 @@ class DefaultLocationClient(
                 override fun onLocationResult(locationResult: LocationResult) {
                     super.onLocationResult(locationResult)
                     locationResult.locations.lastOrNull()?.let { location ->
-                        InAppLogger.log("EGM96 alt: ${location.altitude +  Geoid.getOffset(org.matthiaszimmermann.location.Location(location.latitude, location.longitude))}")
+                        location.altitude -= Geoid.getOffset(
+                            org.matthiaszimmermann.location.Location(location.latitude, location.longitude)
+                        )
                         launch { send(location) }
                     }
                 }
