@@ -70,9 +70,9 @@ class AbrpLiveData (val apiKey : String? = null, val token : String? = null) {
             connection_status = 2
             return connection_status
         }
-/*
-        InAppLogger.log("SENT: $jsonObject")
-        InAppLogger.log("STATUS: ${con.responseCode.toString()}");
+
+        // InAppLogger.log("SENT: $jsonObject")
+        /* InAppLogger.log("STATUS: ${con.responseCode.toString()}");
         InAppLogger.log("MSG: ${con.responseMessage}")
         try {
             InAppLogger.log("JSON: ${con.inputStream.bufferedReader().use {it.readText()}}")

@@ -13,13 +13,11 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
+import org.matthiaszimmermann.location.egm96.Geoid
 
 class DefaultLocationClient(
     private val context: Context,
     private val client: FusedLocationProviderClient): LocationClient {
-
-    private var lastMslAltitude: Double = 0.0
-    private var nmeaListenerSuccess = false
 
     @SuppressLint("MissingPermission")
     override fun getLocationUpdates(interval: Long): Flow<Location> {
@@ -36,13 +34,6 @@ class DefaultLocationClient(
                 throw LocationClient.LocationException("GPS is not enabled!")
             }
 
-            try {
-                locationManager.addNmeaListener(nmeaMessageListener, Handler(Looper.getMainLooper()))
-                nmeaListenerSuccess = true
-            } catch (e: java.lang.Exception) {
-                InAppLogger.log("NMEA Listener: " + (e.message?:e.stackTraceToString()))
-            }
-
             val request = LocationRequest.create()
                 .setInterval(interval)
                 .setFastestInterval(interval)
@@ -52,7 +43,7 @@ class DefaultLocationClient(
                 override fun onLocationResult(locationResult: LocationResult) {
                     super.onLocationResult(locationResult)
                     locationResult.locations.lastOrNull()?.let { location ->
-                        InAppLogger.log("Last msl altitude: $lastMslAltitude")
+                        InAppLogger.log("EGM96 alt: ${location.altitude +  Geoid.getOffset(org.matthiaszimmermann.location.Location(location.latitude, location.longitude))}")
                         launch { send(location) }
                     }
                 }
@@ -71,21 +62,4 @@ class DefaultLocationClient(
             }
         }
     }
-
-    val nmeaMessageListener = OnNmeaMessageListener { message, timestamp -> parseNmeaString(message) }
-
-    private fun parseNmeaString(line: String) {
-        if (line.startsWith("$")) {
-            val tokens = line.split(",").toTypedArray()
-            val type = tokens[0]
-
-            // Parse altitude above sea level, Detailed description of NMEA string here http://aprs.gids.nl/nmea/#gga
-            if (type.startsWith("\$GPGGA")) {
-                if (!tokens[9].isEmpty()) {
-                    lastMslAltitude = tokens[9].toDouble()
-                }
-            }
-        }
-    }
-
 }

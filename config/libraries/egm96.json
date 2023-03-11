@@ -1,0 +1,15 @@
+{
+  "uniqueId": "com.github.matthiaszimmermann:EGM96",
+  "developers": [
+    {
+      "name" : "Matthias Zimmermann"
+    }
+  ],
+  "artifactVersion": "master-SNAPSHOT",
+  "description": "",
+  "name": "EGM96",
+  "licenses": [
+    "MIT"
+  ],
+  "website": "https://github.com/matthiaszimmermann/EGM96"
+}
