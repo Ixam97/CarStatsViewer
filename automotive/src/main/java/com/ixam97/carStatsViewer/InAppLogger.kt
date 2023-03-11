@@ -2,9 +2,6 @@ package com.ixam97.carStatsViewer
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -26,25 +23,10 @@ import java.util.*
 
 object InAppLogger {
 
-    var logArray = ArrayList<String>()
-    private val logArrayMaxSize = 1_000
-
-    private var lastVHALCallback = ""
-    private var numVHALCallbacks = 0
-
-    private var lastUIUpdate = ""
-    private var numUIUpdates = 0
-
-
-    private var lastNotificationUpdate = ""
-    private var numNotificationUpdates = 0
-
     fun log(message: String) {
         val messageTime = SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(Date())
         val logMessage = String.format("%s: %s", messageTime, message)
         android.util.Log.d("InAppLogger:", logMessage)
-        if (logArray.size > logArrayMaxSize) logArray.removeAt(0)
-        logArray.add(logMessage)
 
         CoroutineScope(Dispatchers.IO).launch {
             withContext(Dispatchers.IO) {
@@ -69,53 +51,9 @@ object InAppLogger {
         }
     }
 
-    fun logVHALCallback() {
-        numVHALCallbacks++
-        lastVHALCallback = SimpleDateFormat("dd.MM.yyyy hh:mm:ss").format(Date())
-    }
-
-    fun getVHALLog(): String {
-        return String.format("Total of %d VHAL callbacks, last at %s", numVHALCallbacks, lastVHALCallback)
-    }
-
-    fun logUIUpdate(){
-        numUIUpdates++
-        lastUIUpdate = SimpleDateFormat("dd.MM.yyyy hh:mm:ss").format(Date())
-    }
-
-    fun getUILog(): String {
-        return String.format("Total of %d UI updates, last at %s", numUIUpdates, lastUIUpdate)
-    }
-
-    fun logNotificationUpdate() {
-        numNotificationUpdates++
-        lastNotificationUpdate = SimpleDateFormat("dd.MM.yyyy hh:mm:ss").format(Date())
-    }
-
-    fun getNotificationLog(): String {
-        return String.format("Total of %d notification updates, last at %s", numNotificationUpdates, lastNotificationUpdate)
-    }
-
-    fun logAllToConsole() {
-        for (i in 0 until logArray.size) {
-            android.util.Log.d("InAppLogger:", logArray[i])
-        }
-    }
-
-    fun copyToClipboard(context: Context) {
-        var clipboardString = ""
-
-        for (i in 0 until logArray.size) {
-            clipboardString += (logArray[i] + "\n")
-        }
-
-        // clipboardString += getVHALLog() + "\n" + getUILog() + "\n" + getNotificationLog()
-
-        val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clipData = ClipData.newPlainText("CarStatsViewerLog", clipboardString)
-        clipboardManager.setPrimaryClip(clipData)
-
-        Toast.makeText(context,"Copied log to clipboard", Toast.LENGTH_LONG).show()
+    fun getLogString(): String {
+        val logFile = File(CarStatsViewer.appContext.filesDir, "InAppLogger.txt")
+        return "${logFile.readText()} v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
     }
 }
 
@@ -123,11 +61,10 @@ class LogActivity : Activity() {
 
     private lateinit var appPreferences: AppPreferences
 
-    fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
+    private fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        InAppLogger.log("LogActivity.onCreate")
 
         appPreferences = AppPreferences(applicationContext)
 
@@ -136,15 +73,10 @@ class LogActivity : Activity() {
         log_text_target_mail.setText(appPreferences.logTargetAddress)
         log_text_sender.setText(appPreferences.logUserName)
 
-        // log_switch_deep_log.isChecked = appPreferences.deepLog
-
-        // val logTextView = TextView(this)
-        // logTextView.typeface
-
         log_progress_bar.visibility = View.VISIBLE
 
         CoroutineScope(Dispatchers.IO).launch {
-            val logString = getLogString()
+            val logString = InAppLogger.getLogString()
             runOnUiThread {
                 log_text_view.text = logString
                 log_progress_bar.visibility = View.GONE
@@ -211,7 +143,7 @@ class LogActivity : Activity() {
                             }
 
                         }
-                        sender.sendMail("Debug Log ${Date()} from $senderName", getLogString(), senderMail, mailAdr)
+                        sender.sendMail("Debug Log ${Date()} from $senderName", InAppLogger.getLogString(), senderMail, mailAdr)
                         runOnUiThread {
                             log_progress_bar.visibility = View.GONE
                             Toast.makeText(this@LogActivity, "Log and JSON sent to $mailAdr", Toast.LENGTH_LONG).show()
@@ -241,7 +173,7 @@ class LogActivity : Activity() {
                 }
                 "LOG" -> {
                     log_button_show_json.text = "JSON"
-                    log_text_view.text = getLogString()
+                    log_text_view.text = InAppLogger.getLogString()
                 }
             }
         }
@@ -272,71 +204,34 @@ class LogActivity : Activity() {
         }
 
         log_button_reload.setOnClickListener {
-            log_text_view.text = getLogString()
+            log_text_view.text = InAppLogger.getLogString()
         }
 
         log_reset_log.setOnClickListener {
-            InAppLogger.logArray.clear()
-
             CoroutineScope(Dispatchers.IO).launch {
-                val logFile = File(applicationContext.filesDir,"InAppLogger.txt")
-                if (!logFile.exists()) {
+                withContext(Dispatchers.IO) {
+                    val logFile = File(applicationContext.filesDir,"InAppLogger.txt")
+                    if (!logFile.exists()) {
+                        try {
+                            logFile.createNewFile()
+                        } catch (e: java.lang.Exception) {
+                            e.printStackTrace()
+                        }
+                    }
                     try {
-                        logFile.createNewFile()
+                        BufferedWriter(FileWriter(logFile)).apply {
+                            write("")
+                            close()
+                        }
                     } catch (e: java.lang.Exception) {
                         e.printStackTrace()
                     }
-                }
-                try {
-                    BufferedWriter(FileWriter(logFile)).apply {
-                        write("")
-                        close()
+                    runOnUiThread {
+                        InAppLogger.log("Cleared log")
+                        log_text_view.text = ""
                     }
-                } catch (e: java.lang.Exception) {
-                    e.printStackTrace()
-                }
-                runOnUiThread {
-                    InAppLogger.log("Cleared log")
-                    log_text_view.text = ""
                 }
             }
-
-            // finish()
-            // startActivity(intent)
         }
-
-        // log_switch_deep_log.setOnClickListener {
-        //     appPreferences.deepLog = log_switch_deep_log.isChecked
-        // }
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        InAppLogger.log("LogActivity.onDestroy")
-    }
-
-    private fun getLogString(): String {
-        var logString = ""
-
-        // for (i in 0 until InAppLogger.logArray.size) {
-        //     logString += "${InAppLogger.logArray[i]}\n"
-        // }
-
-        val logFile = File(applicationContext.filesDir,"InAppLogger.txt")
-        logString = logFile.readText()
-
-        // logString += "${InAppLogger.getVHALLog()}\n${InAppLogger.getUILog()}\n${InAppLogger.getNotificationLog()}\n"
-        logString += "v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
-
-        return logString
-    }
-
-    private fun copyToClipboard(clipboardString: String) {
-        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clipData = ClipData.newPlainText("CarStatsViewerLog", clipboardString)
-        clipboardManager.setPrimaryClip(clipData)
-
-        Toast.makeText(this,"Copied to clipboard", Toast.LENGTH_LONG).show()
     }
 }
