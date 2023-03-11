@@ -19,6 +19,10 @@ class DefaultLocationClient(
     private val context: Context,
     private val client: FusedLocationProviderClient): LocationClient {
 
+    init {
+        Geoid.init()
+    }
+
     @SuppressLint("MissingPermission")
     override fun getLocationUpdates(interval: Long): Flow<Location> {
         return callbackFlow {
