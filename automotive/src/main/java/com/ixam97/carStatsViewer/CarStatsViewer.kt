@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import com.ixam97.carStatsViewer.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.dataManager.DataCollector
 import kotlin.system.exitProcess
 
@@ -11,12 +12,19 @@ class CarStatsViewer : Application() {
     companion object {
         const val CHANNEL_ID = "TestChannel"
         lateinit var appContext: Context
+        lateinit var abrpLiveData: AbrpLiveData
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        CarStatsViewer.appContext = applicationContext
+        appContext = applicationContext
+
+        val abrpApiKey = if (resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName) != 0) {
+            getString(resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName))
+        } else ""
+
+        abrpLiveData = AbrpLiveData(abrpApiKey)
 
         createNotificationChannel()
 

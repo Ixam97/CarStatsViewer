@@ -16,6 +16,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.*
+import com.ixam97.carStatsViewer.abrpLiveData.AbrpDataSet
 import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
@@ -74,7 +75,9 @@ class DataCollector : Service() {
 
     private lateinit var notificationTimerHandler: Handler
     private lateinit var saveTripDataTimerHandler: Handler
+
     private lateinit var liveDataTimerHandler: Handler
+    private lateinit var abrpLiveDataTask: Runnable
 
     private lateinit var foregroundServiceNotification: Notification.Builder
 
@@ -113,54 +116,6 @@ class DataCollector : Service() {
             val currentNotificationTimeMillis = System.currentTimeMillis()
             lastNotificationTimeMillis = currentNotificationTimeMillis
             notificationTimerHandler.postDelayed(this, NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS)
-        }
-    }
-
-    private val abrpLiveDataTask = object : Runnable {
-        override fun run() {
-            CoroutineScope(Dispatchers.Default).launch {
-                val abrpApiKey = if (resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName) != 0) {
-                    getString(resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName))
-                } else null
-                val abrpLiveData = AbrpLiveData(
-                    token = appPreferences.abrpGenericToken,
-                    apiKey = abrpApiKey
-                )
-                val dataManager = DataManagers.CURRENT_TRIP.dataManager
-
-                var lat: Double? = null
-                var lon: Double? = null
-                var alt: Double? = null
-
-                location?.let {
-                    if (it.time + 20_000 > System.currentTimeMillis()) {
-                        lat = it.latitude
-                        lon = it.longitude
-                        alt = it.altitude
-                    }
-                }
-
-                if (lat == null) InAppLogger.log("No valid location")
-
-                val broadcastIntent = Intent(getString(R.string.abrp_connection_broadcast))
-                broadcastIntent.putExtra(
-                    "status",
-                    abrpLiveData.send(
-                        stateOfCharge = dataManager.stateOfCharge,
-                        power = dataManager.currentPower,
-                        speed = dataManager.currentSpeed,
-                        isCharging = dataManager.chargePortConnected,
-                        isParked = (dataManager.driveState == DrivingState.PARKED || dataManager.driveState == DrivingState.CHARGE),
-                        lat = lat,
-                        lon = lon,
-                        alt = alt,
-                        temp = dataManager.ambientTemperature
-                    )
-                )
-
-                sendBroadcast(broadcastIntent)
-            }
-            liveDataTimerHandler.postDelayed(this, LIVE_DATA_TASK_INTERVAL)
         }
     }
 
@@ -255,7 +210,14 @@ class DataCollector : Service() {
         notificationTimerHandler.post(updateStatsNotificationTask)
         saveTripDataTimerHandler = Handler(Looper.getMainLooper())
         saveTripDataTimerHandler.postDelayed(saveTripDataTask, AUTO_SAVE_INTERVAL_MILLIS)
+
         liveDataTimerHandler = Handler(Looper.getMainLooper())
+        abrpLiveDataTask = CarStatsViewer.abrpLiveData.createAbrpLiveDataTask(
+            location,
+            DataManagers.CURRENT_TRIP.dataManager,
+            liveDataTimerHandler,
+            LIVE_DATA_TASK_INTERVAL
+        )
         liveDataTimerHandler.post(abrpLiveDataTask)
 
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.save_trip_data_broadcast)))
@@ -287,8 +249,11 @@ class DataCollector : Service() {
         // InAppLogger.log("DataCollector.onStartCommand")
         intent?.let {
             if (intent.hasExtra("reason")) {
-                if (intent.getStringExtra("reason") == "crash")
-                    Toast.makeText(this, "Car Stats Viewer restarted after a crash", Toast.LENGTH_LONG).show()
+                when (intent.getStringExtra("reason")) {
+                    "crash" -> Toast.makeText(this, "Car Stats Viewer restarted after a crash", Toast.LENGTH_LONG).show()
+                    "update" -> Toast.makeText(this, "Car Stats Viewer restarted after an update", Toast.LENGTH_LONG).show()
+                    "reboot" -> Toast.makeText(this, "Car Stats Viewer restarted after a reboot", Toast.LENGTH_LONG).show()
+                }
             }
         }
 

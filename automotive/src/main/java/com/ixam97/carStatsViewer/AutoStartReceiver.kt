@@ -12,14 +12,20 @@ import com.ixam97.carStatsViewer.dataManager.DataCollector
 class AutoStartReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val appPreferences = AppPreferences(context.applicationContext)
-        //if (appPreferences.notifications) {
-            Toast.makeText(context, context.resources.getString(R.string.toast_started_in_background), Toast.LENGTH_LONG).show()
-            if (PermissionsActivity.PERMISSIONS.none {
-                    context.applicationContext.checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED
-                }) {
-                context.applicationContext.startForegroundService(Intent(context.applicationContext, DataCollector::class.java))
-                InAppLogger.log("Started in background")
+        val serviceIntent = Intent(context.applicationContext, DataCollector::class.java)
+        serviceIntent.putExtra(
+            "reason",
+            when (intent.action) {
+                Intent.ACTION_BOOT_COMPLETED -> "reboot"
+                Intent.ACTION_MY_PACKAGE_REPLACED -> "update"
+                else -> ""
             }
-        //}
+        )
+        if (PermissionsActivity.PERMISSIONS.none {
+                context.applicationContext.checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED
+            }) {
+            context.applicationContext.startForegroundService(serviceIntent)
+            InAppLogger.log("Started in background")
+        }
     }
 }

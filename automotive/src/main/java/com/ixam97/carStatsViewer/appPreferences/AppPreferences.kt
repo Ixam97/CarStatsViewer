@@ -12,7 +12,7 @@ import com.ixam97.carStatsViewer.utils.Exclude
 class AppPreferences(
     val context: Context
 ) {
-    private var sharedPref: SharedPreferences = context.getSharedPreferences(
+    var sharedPref: SharedPreferences = context.getSharedPreferences(
         context.getString(R.string.preferences_file_key), Context.MODE_PRIVATE
     )
 
@@ -39,8 +39,6 @@ class AppPreferences(
     private val SmtpServer = AppPreference<String>(context.getString(R.string.preference_smtp_server_key), "", sharedPref)
     private val LogTargetAddress = AppPreference<String>(context.getString(R.string.preference_log_target_address_key), "ixam97@ixam97.de", sharedPref)
     private val LogUserName = AppPreference<String>(context.getString(R.string.preference_log_user_name_key), "", sharedPref)
-    private val AbrpGenericToken = AppPreference<String>(context.getString(R.string.preference_abrp_generic_token_key), "", sharedPref)
-
 
     var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
@@ -62,7 +60,6 @@ class AppPreferences(
     var smtpServer: String get() = SmtpServer.value; set(value) {SmtpServer.value = value}
     var logUserName: String get() = LogUserName.value; set(value) {LogUserName.value = value}
     var logTargetAddress: String get() = LogTargetAddress.value; set(value) {LogTargetAddress.value = value}
-    var abrpGenericToken: String get() = AbrpGenericToken.value; set(value) {AbrpGenericToken.value = value}
 
     // Preferences not saved permanently:
     val exclusionStrategy = AppPreferences.exclusionStrategy

@@ -85,7 +85,7 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
 
-        updateAbrpStatus(AbrpLiveData.connection_status)
+        updateAbrpStatus(CarStatsViewer.abrpLiveData.connection_status)
 
         val preferenceDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
         if (selectedDataManager != preferenceDataManager) {

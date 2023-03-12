@@ -186,24 +186,8 @@ class SettingsActivity : Activity() {
             startActivity(Intent(this, AboutActivity::class.java))
         }
 
-        settings_abrp_token.setOnClickListener {
-            val tokenDialog = AlertDialog.Builder(this@SettingsActivity).apply {
-                val layout = LayoutInflater.from(this@SettingsActivity).inflate(R.layout.dialog_abrp_token, null)
-                val abrp_token = layout.findViewById<EditText>(R.id.abrp_token)
-
-                abrp_token.setText(appPreferences.abrpGenericToken)
-
-                setView(layout)
-
-                setPositiveButton("OK") { dialog, _ ->
-                    appPreferences.abrpGenericToken = abrp_token.text.toString()
-                }
-                setTitle("ABRP Generic Token")
-                setMessage("Enter ABRP Generic Token to transmit live data to the ABRP servers.")
-                setCancelable(true)
-                create()
-            }
-            tokenDialog.show()
+        settings_button_apis.setOnClickListener {
+            startActivity(Intent(this, SettingsApisActivity::class.java))
         }
     }
 

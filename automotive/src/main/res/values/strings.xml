@@ -115,6 +115,7 @@
     <string name="settings_sub_title_current_cons_plot">Current consumption plot:</string>
     <string name="settings_sub_title_last_charge_plot">Last charging curves:</string>
     <string name="settings_select_trip">Trip in main view:</string>
+    <string name="settings_apis_title">API settings</string>
 
     <string name="CurrentTripData">Manual trip</string>
     <string name="SinceChargeData">Since last charge</string>
