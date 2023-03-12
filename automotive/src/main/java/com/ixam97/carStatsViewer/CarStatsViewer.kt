@@ -12,7 +12,10 @@ class CarStatsViewer : Application() {
     companion object {
         const val CHANNEL_ID = "TestChannel"
         lateinit var appContext: Context
-        lateinit var abrpLiveData: AbrpLiveData
+        // lateinit var abrpLiveData: LiveDataApiInterface
+
+        lateinit var liveDataApis: ArrayList<LiveDataApi>
+
     }
 
     override fun onCreate() {
@@ -24,7 +27,13 @@ class CarStatsViewer : Application() {
             getString(resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName))
         } else ""
 
-        abrpLiveData = AbrpLiveData(abrpApiKey)
+        /*
+        Add live data APIs here
+         */
+        liveDataApis = arrayListOf(
+            AbrpLiveData(abrpApiKey)
+        )
+        // abrpLiveData = AbrpLiveData(abrpApiKey)
 
         createNotificationChannel()
 

@@ -2,23 +2,15 @@ package com.ixam97.carStatsViewer.abrpLiveData
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
-import android.location.Location
-import android.os.Handler
-import android.provider.ContactsContract.Data
 import android.view.LayoutInflater
 import android.widget.EditText
+import com.ixam97.carStatsViewer.LiveDataApi
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.dataManager.DataCollector
 import com.ixam97.carStatsViewer.dataManager.DataManager
-import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.dataManager.DrivingState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.DataOutputStream
 import java.net.HttpURLConnection
@@ -27,10 +19,9 @@ import java.net.URL
 class AbrpLiveData (
     val apiKey : String,
     var token : String = ""
-) {
-    var connection_status = 0
+): LiveDataApi("com.ixam97.carStatsViewer_dev.abrp_connection_broadcast") {
 
-    fun send(
+    private fun send(
         abrpDataSet: AbrpDataSet,
         context: Context = CarStatsViewer.appContext
     ) : Int {
@@ -38,8 +29,7 @@ class AbrpLiveData (
         token = AppPreferences(context).abrpGenericToken
 
         if (apiKey.isEmpty() || token.isEmpty()){
-            connection_status = 0
-            return connection_status
+            return 0
         }
 
         val url = URL("https://api.iternio.com/1/tlm/send")
@@ -51,7 +41,7 @@ class AbrpLiveData (
         con.doOutput = true
         con.doInput = true
 
-        var responseCode = 0
+        val responseCode: Int
 
         val jsonObject = JSONObject().apply {
             put("token", token)
@@ -83,8 +73,7 @@ class AbrpLiveData (
             con.disconnect()
         } catch (e: java.lang.Exception) {
             InAppLogger.log("ABRP network connection error")
-            connection_status = 2
-            return connection_status
+            return 0
         }
 
         // InAppLogger.log("SENT: $jsonObject")
@@ -101,15 +90,13 @@ class AbrpLiveData (
         }
 */
         if (responseCode == 200) {
-            connection_status = 1
-            return connection_status
+            return 1
         }
         InAppLogger.log("ABRP connection failed. Response code: $responseCode")
-        connection_status = 2
-        return connection_status
+        return 2
     }
 
-    fun showAbrpTokenDialog(context: Context) {
+    override fun showSettingsDialog(context: Context) {
         val tokenDialog = AlertDialog.Builder(context).apply {
             val layout = LayoutInflater.from(context).inflate(R.layout.dialog_abrp_token, null)
             val abrp_token = layout.findViewById<EditText>(R.id.abrp_token)
@@ -128,51 +115,46 @@ class AbrpLiveData (
         }
         tokenDialog.show()
     }
-
-    fun createAbrpLiveDataTask(
-        location: Location?,
+/*
+    override fun createLiveDataTask(
         dataManager: DataManager,
         handler: Handler,
-        interval: Long = 5_000L
+        interval: Long
     ): Runnable {
         return object : Runnable {
             override fun run() {
-                CoroutineScope(Dispatchers.Default).launch {
-                    // CarStatsViewer.abrpLiveData.token = appPreferences.abrpGenericToken
-                    // val dataManager = DataManagers.CURRENT_TRIP.dataManager
-
-                    var lat: Double? = null
-                    var lon: Double? = null
-                    var alt: Double? = null
-
-                    location?.let {
-                        if (it.time + 20_000 > System.currentTimeMillis()) {
-                            lat = it.latitude
-                            lon = it.longitude
-                            alt = it.altitude
-                        }
-                    }
-
-                    if (lat == null) InAppLogger.log("No valid location")
-
-                    val broadcastIntent = Intent(CarStatsViewer.appContext.getString(R.string.abrp_connection_broadcast))
-                    val abrpSendResult = CarStatsViewer.abrpLiveData.send(AbrpDataSet(
-                        stateOfCharge = dataManager.stateOfCharge,
-                        power = dataManager.currentPower,
-                        speed = dataManager.currentSpeed,
-                        isCharging = dataManager.chargePortConnected,
-                        isParked = (dataManager.driveState == DrivingState.PARKED || dataManager.driveState == DrivingState.CHARGE),
-                        lat = lat,
-                        lon = lon,
-                        alt = alt,
-                        temp = dataManager.ambientTemperature
-                    ))
-                    broadcastIntent.putExtra("status", abrpSendResult)
-
-                    CarStatsViewer.appContext.sendBroadcast(broadcastIntent)
-                }
+                sendNow(dataManager)
                 handler.postDelayed(this, interval)
             }
         }
+    }
+*/
+
+    override fun sendNow(dataManager: DataManager) {
+        var lat: Double? = null
+        var lon: Double? = null
+        var alt: Double? = null
+
+        dataManager.location?.let {
+            if (it.time + 20_000 > System.currentTimeMillis()) {
+                lat = it.latitude
+                lon = it.longitude
+                alt = it.altitude
+            }
+        }
+
+        if (lat == null) InAppLogger.log("No valid location")
+
+        connectionStatus = send(AbrpDataSet(
+            stateOfCharge = dataManager.stateOfCharge,
+            power = dataManager.currentPower,
+            speed = dataManager.currentSpeed,
+            isCharging = dataManager.chargePortConnected,
+            isParked = (dataManager.driveState == DrivingState.PARKED || dataManager.driveState == DrivingState.CHARGE),
+            lat = lat,
+            lon = lon,
+            alt = alt,
+            temp = dataManager.ambientTemperature
+        ))
     }
 }

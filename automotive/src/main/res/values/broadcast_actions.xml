@@ -7,5 +7,4 @@
     <string name="save_trip_data_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.save_trip_data_broadcast</string>
     <string name="VHAL_emulator_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.VHAL_emulator_broadcast</string>
     <string name="distraction_optimization_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.distraction_optimization_broadcast</string>
-    <string name="abrp_connection_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.abrp_connection_broadcast</string>
 </resources>

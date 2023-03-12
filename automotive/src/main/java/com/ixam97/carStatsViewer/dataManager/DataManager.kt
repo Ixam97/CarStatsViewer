@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.dataManager
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
+import android.location.Location
 import android.util.Log
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.InAppLogger
@@ -97,6 +98,8 @@ class DataManager(val printableName: String) {
     var plotMarkers = PlotMarkers()
     /** ArrayList of the past charging sessions during the current trip */
     var chargeCurves: ArrayList<ChargeCurve> = ArrayList()
+    /** current location of the Vehicle */
+    var location: Location? = null
 
     // Plot values
     var consumptionPlotEnergyDelta = 0F

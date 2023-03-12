@@ -16,11 +16,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.*
-import com.ixam97.carStatsViewer.abrpLiveData.AbrpDataSet
 import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
-import com.ixam97.carStatsViewer.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
@@ -81,7 +79,7 @@ class DataCollector : Service() {
 
     private lateinit var foregroundServiceNotification: Notification.Builder
 
-    private var location: Location? = null
+    // private var location: Location? = null
 
     init {
         startupTimestamp = System.nanoTime()
@@ -212,12 +210,11 @@ class DataCollector : Service() {
         saveTripDataTimerHandler.postDelayed(saveTripDataTask, AUTO_SAVE_INTERVAL_MILLIS)
 
         liveDataTimerHandler = Handler(Looper.getMainLooper())
-        abrpLiveDataTask = CarStatsViewer.abrpLiveData.createAbrpLiveDataTask(
-            location,
+        abrpLiveDataTask = CarStatsViewer.liveDataApis[0].createLiveDataTask(
             DataManagers.CURRENT_TRIP.dataManager,
             liveDataTimerHandler,
             LIVE_DATA_TASK_INTERVAL
-        )
+        )!!
         liveDataTimerHandler.post(abrpLiveDataTask)
 
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.save_trip_data_broadcast)))
@@ -263,7 +260,9 @@ class DataCollector : Service() {
                 InAppLogger.log("LocationClient: ${e.message}")
             }
             .onEach { location ->
-                this@DataCollector.location = location
+                enumValues<DataManagers>().forEach {
+                    it.dataManager.location = location
+                }
                 InAppLogger.log("Location: lat: ${location.latitude.toString().take(5)}, lon: ${location.longitude.toString().take(5)}, alt: ${location.altitude.toInt()}m")
             }
             .launchIn(serviceScope)

@@ -3,7 +3,6 @@ package com.ixam97.carStatsViewer.activities
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.dataManager.*
 import android.app.Activity
-import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.PendingIntent
 import android.car.VehicleGear
@@ -22,7 +21,6 @@ import android.os.SystemClock
 import android.text.format.DateFormat
 import android.view.View
 import android.widget.Toast
-import com.ixam97.carStatsViewer.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
@@ -75,7 +73,7 @@ class MainActivity : Activity() {
             when (intent.action) {
                 getString(R.string.ui_update_plot_broadcast) -> updatePlots()
                 getString(R.string.ui_update_gages_broadcast) -> updateGages()
-                getString(R.string.abrp_connection_broadcast) -> updateAbrpStatus(intent.getIntExtra("status", 0))
+                CarStatsViewer.liveDataApis[0].broadcastAction -> updateAbrpStatus(intent.getIntExtra("status", 0))
             }
         }
     }
@@ -85,7 +83,7 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
 
-        updateAbrpStatus(CarStatsViewer.abrpLiveData.connection_status)
+        updateAbrpStatus(CarStatsViewer.liveDataApis[0].connectionStatus)
 
         val preferenceDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
         if (selectedDataManager != preferenceDataManager) {
@@ -215,7 +213,7 @@ class MainActivity : Activity() {
         )
         registerReceiver(
             broadcastReceiver,
-            IntentFilter(getString(R.string.abrp_connection_broadcast))
+            IntentFilter(CarStatsViewer.liveDataApis[0].broadcastAction)
         )
 
         main_button_performance.isEnabled = true

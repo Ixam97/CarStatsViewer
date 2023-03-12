@@ -2,7 +2,7 @@ package com.ixam97.carStatsViewer.activities
 
 import android.app.Activity
 import android.os.Bundle
-import com.ixam97.carStatsViewer.CarStatsViewer.Companion.abrpLiveData
+import com.ixam97.carStatsViewer.CarStatsViewer.Companion.liveDataApis
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import kotlinx.android.synthetic.main.activity_settings_apis.*
@@ -23,7 +23,7 @@ class SettingsApisActivity: Activity() {
         }
 
         settings_apis_abrp_token.setOnClickListener {
-            abrpLiveData.showAbrpTokenDialog(this@SettingsApisActivity)
+            liveDataApis[0].showSettingsDialog(this@SettingsApisActivity)
         }
     }
 

@@ -1,6 +1,10 @@
 package com.ixam97.carStatsViewer.abrpLiveData
 
-import com.ixam97.carStatsViewer.R
+/**
+ * This file extends the AppPreferences to contain keys used by the API implementation. The rest of
+ * the app does not need to see them.
+ */
+
 import com.ixam97.carStatsViewer.appPreferences.AppPreference
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 
