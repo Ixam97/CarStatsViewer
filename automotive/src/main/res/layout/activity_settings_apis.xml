@@ -17,6 +17,11 @@
             android:id="@+id/settings_apis_button_back"
             style="@style/title_back_button_style"/>
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_api" />
+
         <TextView
             style="@style/title_text_style"
             android:text="@string/settings_apis_title" />
@@ -59,6 +64,15 @@
                     android:text="ABRP Generic Token"/>
 
             </LinearLayout>
+
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/settings_apis_smtp_login"
+                style="@style/menu_button_row_style"
+                android:text="SMTP login credentials"
+                android:drawableStart="@drawable/ic_mail"/>
 
         </LinearLayout>
     </ScrollView>
