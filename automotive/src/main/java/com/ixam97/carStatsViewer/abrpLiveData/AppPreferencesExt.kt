@@ -11,4 +11,8 @@ import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 val AppPreferences.AbrpGenericToken: AppPreference<String>
     get() = AppPreference<String>("preference_abrp_generic_token", "", sharedPref)
 
+val AppPreferences.AbrpUseApi: AppPreference<Boolean>
+    get() = AppPreference<Boolean>("preference_abrp_use", false, sharedPref)
+
 var AppPreferences.abrpGenericToken: String get() = AbrpGenericToken.value; set(value) {AbrpGenericToken.value = value}
+var AppPreferences.abrpUseApi: Boolean get() = AbrpUseApi.value; set(value) {AbrpUseApi.value = value}

@@ -11,8 +11,8 @@ android {
         applicationId "com.ixam97.carStatsViewer_dev"
         minSdkVersion 29
         targetSdkVersion 33
-        versionCode 85
-        versionName "0.24.0_dev11"
+        versionCode 86
+        versionName "0.24.0_dev12"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -68,6 +68,8 @@ dependencies {
     implementation 'com.airbnb.android:paris:2.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.github.matthiaszimmermann:EGM96:master-SNAPSHOT'
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
 
     // to fix unresolved references to android.car
     def sdkDir = project.android.sdkDirectory.canonicalPath

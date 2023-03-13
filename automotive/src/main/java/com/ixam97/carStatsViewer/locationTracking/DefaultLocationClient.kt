@@ -15,7 +15,10 @@ import org.matthiaszimmermann.location.egm96.Geoid
 
 class DefaultLocationClient(
     private val context: Context,
-    private val client: FusedLocationProviderClient): LocationClient {
+    private val client: FusedLocationProviderClient
+): LocationClient {
+
+    var locationNotAvailable = true
 
     init {
         Geoid.init()
@@ -33,7 +36,10 @@ class DefaultLocationClient(
             val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
             val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-            if (!isGpsEnabled && !isNetworkEnabled) {
+
+            locationNotAvailable = !isGpsEnabled && !isNetworkEnabled
+
+            if (locationNotAvailable) {
                 throw LocationClient.LocationException("GPS is not enabled!")
             }
 

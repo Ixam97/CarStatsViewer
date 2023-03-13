@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.EditText
+import android.widget.Switch
 import com.ixam97.carStatsViewer.LiveDataApi
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -18,13 +19,16 @@ import java.net.URL
 
 class AbrpLiveData (
     val apiKey : String,
-    var token : String = ""
+    var token : String = "",
+    var detailedLog : Boolean = false
 ): LiveDataApi("com.ixam97.carStatsViewer_dev.abrp_connection_broadcast") {
 
     private fun send(
         abrpDataSet: AbrpDataSet,
         context: Context = CarStatsViewer.appContext
     ) : Int {
+
+        if (!AppPreferences(context).abrpUseApi) return 0
 
         token = AppPreferences(context).abrpGenericToken
 
@@ -36,8 +40,8 @@ class AbrpLiveData (
         val con: HttpURLConnection = url.openConnection() as HttpURLConnection
 
         con.requestMethod = "POST"
-        con.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-        con.setRequestProperty("Accept","application/json");
+        con.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
+        con.setRequestProperty("Accept","application/json")
         con.doOutput = true
         con.doInput = true
 
@@ -54,7 +58,7 @@ class AbrpLiveData (
                 put("is_charging", abrpDataSet.isCharging)
                 put("is_parked", abrpDataSet.isParked)
                 put("speed", abrpDataSet.speed * 3.6f)
-                put("ext_temp ", abrpDataSet.temp)
+                put("ext_temp", abrpDataSet.temp)
                 abrpDataSet.lat?.let { put("lat", it) }
                 abrpDataSet.lon?.let { put("lon", it) }
                 abrpDataSet.alt?.let { put("elevation", it) }
@@ -70,29 +74,31 @@ class AbrpLiveData (
                 close()
             }
             responseCode = con.responseCode
-            con.disconnect()
+            // con.disconnect()
         } catch (e: java.lang.Exception) {
-            InAppLogger.log("ABRP network connection error")
+            InAppLogger.log("ABRP API: Network connection error")
             return 0
         }
 
-        // InAppLogger.log("SENT: $jsonObject")
-        /* InAppLogger.log("STATUS: ${con.responseCode.toString()}");
-        InAppLogger.log("MSG: ${con.responseMessage}")
-        try {
-            InAppLogger.log("JSON: ${con.inputStream.bufferedReader().use {it.readText()}}")
+        if (detailedLog) {
+            InAppLogger.log("SENT: $jsonObject")
+            InAppLogger.log("STATUS: ${con.responseCode.toString()}");
+            InAppLogger.log("MSG: ${con.responseMessage}")
+            try {
+                InAppLogger.log("JSON: ${con.inputStream.bufferedReader().use {it.readText()}}")
+                con.inputStream.close()
+            }
+            catch (e: java.lang.Exception) {
+                InAppLogger.log("ABRP API: No response content")
+            }
         }
-        catch (e: java.lang.Exception) {
-            InAppLogger.log("ABRP API Auth Error")
-        }
-        finally {
-            con.disconnect()
-        }
-*/
+
+        con.disconnect()
         if (responseCode == 200) {
             return 1
         }
-        InAppLogger.log("ABRP connection failed. Response code: $responseCode")
+        InAppLogger.log("ABRP API: Connection failed. Response code: $responseCode")
+        if (responseCode == 401) InAppLogger.log("          Auth error")
         return 2
     }
 
@@ -100,6 +106,13 @@ class AbrpLiveData (
         val tokenDialog = AlertDialog.Builder(context).apply {
             val layout = LayoutInflater.from(context).inflate(R.layout.dialog_abrp_token, null)
             val abrp_token = layout.findViewById<EditText>(R.id.abrp_token)
+            val abrp_use_api = layout.findViewById<Switch>(R.id.abrp_use_api)
+
+            abrp_use_api.isChecked = AppPreferences(context).abrpUseApi
+
+            abrp_use_api.setOnClickListener {
+                AppPreferences(context).abrpUseApi = abrp_use_api.isChecked
+            }
 
             abrp_token.setText(AppPreferences(context).abrpGenericToken)
 
@@ -115,22 +128,13 @@ class AbrpLiveData (
         }
         tokenDialog.show()
     }
-/*
-    override fun createLiveDataTask(
-        dataManager: DataManager,
-        handler: Handler,
-        interval: Long
-    ): Runnable {
-        return object : Runnable {
-            override fun run() {
-                sendNow(dataManager)
-                handler.postDelayed(this, interval)
-            }
-        }
-    }
-*/
 
     override fun sendNow(dataManager: DataManager) {
+        if (!AppPreferences(CarStatsViewer.appContext).abrpUseApi) {
+            connectionStatus = 0
+            return
+        }
+
         var lat: Double? = null
         var lon: Double? = null
         var alt: Double? = null
@@ -143,7 +147,7 @@ class AbrpLiveData (
             }
         }
 
-        if (lat == null) InAppLogger.log("No valid location")
+        if (lat == null && detailedLog) InAppLogger.log("No valid location")
 
         connectionStatus = send(AbrpDataSet(
             stateOfCharge = dataManager.stateOfCharge,

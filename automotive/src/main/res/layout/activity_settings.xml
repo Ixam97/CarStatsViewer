@@ -162,18 +162,18 @@
                         style="@style/menu_divider_style"
                         android:background="?android:attr/listDivider"/>
                     <TextView
-                        android:id="@+id/settings_about"
-                        android:text="@string/settings_about"
-                        android:drawableStart="@drawable/ic_info"
-                        style="@style/menu_button_row_style" />
-                    <View
-                        style="@style/menu_divider_style"
-                        android:background="?android:attr/listDivider"/>
-                    <TextView
                         android:id="@+id/settings_button_apis"
                         style="@style/menu_button_row_style"
                         android:drawableStart="@drawable/ic_api"
                         android:text="@string/settings_apis_title"/>
+                    <View
+                        style="@style/menu_divider_style"
+                        android:background="?android:attr/listDivider"/>
+                    <TextView
+                        android:id="@+id/settings_about"
+                        android:text="@string/settings_about"
+                        android:drawableStart="@drawable/ic_info"
+                        style="@style/menu_button_row_style" />
                     <View
                         style="@style/menu_divider_style"
                         android:background="?android:attr/listDivider"/>

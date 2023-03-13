@@ -3,10 +3,13 @@ package com.ixam97.carStatsViewer
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.os.StrictMode
+import android.os.StrictMode.VmPolicy
 import com.ixam97.carStatsViewer.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.dataManager.DataCollector
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlin.system.exitProcess
+
 
 class CarStatsViewer : Application() {
 
@@ -16,11 +19,16 @@ class CarStatsViewer : Application() {
         // lateinit var abrpLiveData: LiveDataApiInterface
 
         lateinit var liveDataApis: ArrayList<LiveDataApi>
-
     }
 
     override fun onCreate() {
         super.onCreate()
+
+        // StrictMode.setVmPolicy(
+        //     VmPolicy.Builder(StrictMode.getVmPolicy())
+        //         .detectLeakedClosableObjects()
+        //         .build()
+        // )
 
         appContext = applicationContext
 
