@@ -28,12 +28,12 @@ class AbrpLiveData (
         context: Context = CarStatsViewer.appContext
     ) : ConnectionStatus {
 
-        if (!AppPreferences(context).abrpUseApi) return ConnectionStatus.Unused
+        if (!AppPreferences(context).abrpUseApi) return ConnectionStatus.UNUSED
 
         token = AppPreferences(context).abrpGenericToken
 
         if (apiKey.isEmpty() || token.isEmpty()){
-            return ConnectionStatus.Unused
+            return ConnectionStatus.UNUSED
         }
 
         val url = URL("https://api.iternio.com/1/tlm/send")
@@ -74,32 +74,32 @@ class AbrpLiveData (
                 close()
             }
             responseCode = con.responseCode
-            // con.disconnect()
         } catch (e: java.lang.Exception) {
             InAppLogger.log("ABRP API: Network connection error")
-            return ConnectionStatus.Unused
+            return ConnectionStatus.UNUSED
         }
 
         if (detailedLog) {
             InAppLogger.log("SENT: $jsonObject")
-            InAppLogger.log("STATUS: ${con.responseCode.toString()}");
+            InAppLogger.log("STATUS: ${con.responseCode}")
             InAppLogger.log("MSG: ${con.responseMessage}")
             try {
                 InAppLogger.log("JSON: ${con.inputStream.bufferedReader().use {it.readText()}}")
-                con.inputStream.close()
+
             }
             catch (e: java.lang.Exception) {
                 InAppLogger.log("ABRP API: No response content")
             }
         }
+        con.inputStream.close()
 
         con.disconnect()
         if (responseCode == 200) {
-            return ConnectionStatus.Connected
+            return ConnectionStatus.CONNECTED
         }
         InAppLogger.log("ABRP API: Connection failed. Response code: $responseCode")
         if (responseCode == 401) InAppLogger.log("          Auth error")
-        return ConnectionStatus.Error
+        return ConnectionStatus.ERROR
     }
 
     override fun showSettingsDialog(context: Context) {
@@ -131,7 +131,7 @@ class AbrpLiveData (
 
     override fun sendNow(dataManager: DataManager) {
         if (!AppPreferences(CarStatsViewer.appContext).abrpUseApi) {
-            connectionStatus = ConnectionStatus.Unused
+            connectionStatus = ConnectionStatus.UNUSED
             return
         }
 

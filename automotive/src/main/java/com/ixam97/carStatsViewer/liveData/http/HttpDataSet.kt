@@ -1,6 +1,6 @@
 package com.ixam97.carStatsViewer.liveData.http
 
-data class HTTPDataSet(
+data class HttpDataSet(
     val stateOfCharge: Int,
     val power: Float,
     val isCharging: Boolean,

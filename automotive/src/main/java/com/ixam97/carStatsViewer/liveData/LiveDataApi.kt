@@ -19,15 +19,15 @@ abstract class LiveDataApi(
      *      1: Connected
      *      2: Error
      */
-    var connectionStatus: ConnectionStatus = ConnectionStatus.Unused
+    var connectionStatus: ConnectionStatus = ConnectionStatus.UNUSED
 
     enum class ConnectionStatus(val status: Int) {
-        Unused(0),
-        Connected(1),
-        Error(2);
+        UNUSED(0),
+        CONNECTED(1),
+        ERROR(2);
 
         companion object {
-            fun fromInt(status: Int) = ConnectionStatus.values().first { it.status == status }
+            fun fromInt(status: Int) = values().first { it.status == status }
         }
     }
 
@@ -71,7 +71,7 @@ abstract class LiveDataApi(
 
     private fun sendStatusBroadcast(context: Context) {
         val broadcastIntent = Intent(broadcastAction)
-        broadcastIntent.putExtra("status", connectionStatus)
+        broadcastIntent.putExtra("status", connectionStatus.status)
         context.sendBroadcast(broadcastIntent)
     }
 }

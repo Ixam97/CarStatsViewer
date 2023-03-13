@@ -19,7 +19,7 @@ import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-class HTTPLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data_connection_broadcast") {
+class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data_connection_broadcast") {
 
 
     private fun addBasicAuth(connection: HttpURLConnection, username: String, password: String) {
@@ -83,7 +83,7 @@ class HTTPLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
 
     override fun sendNow(dataManager: DataManager) {
         if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataEnabled) {
-            connectionStatus = ConnectionStatus.Unused
+            connectionStatus = ConnectionStatus.UNUSED
             return
         }
 
@@ -102,7 +102,7 @@ class HTTPLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
         if (lat == null) InAppLogger.log("No valid location")
 
         connectionStatus = send(
-            HTTPDataSet(
+            HttpDataSet(
                 stateOfCharge = dataManager.stateOfCharge,
                 power = dataManager.currentPower,
                 speed = dataManager.currentSpeed,
@@ -116,7 +116,7 @@ class HTTPLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
         )
     }
 
-    private fun send(dataSet: HTTPDataSet, context: Context = CarStatsViewer.appContext): ConnectionStatus {
+    private fun send(dataSet: HttpDataSet, context: Context = CarStatsViewer.appContext): ConnectionStatus {
         val url = URL(AppPreferences(context).httpLiveDataURL)
         val username = AppPreferences(context).httpLiveDataUsername
         val password = AppPreferences(context).httpLiveDataPassword
@@ -145,17 +145,18 @@ class HTTPLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
                 close()
             }
             responseCode = connection.responseCode
-            // con.disconnect()
         } catch (e: java.lang.Exception) {
             InAppLogger.log("HTTP API: Network connection error")
-            return ConnectionStatus.Error
+            return ConnectionStatus.ERROR
         }
+
+        connection.inputStream.close()
 
         if (responseCode != 200) {
             InAppLogger.log("HTTP Live Data: Transmission failed. Status code $responseCode")
-            return ConnectionStatus.Error
+            return ConnectionStatus.ERROR
         }
 
-        return ConnectionStatus.Connected
+        return ConnectionStatus.CONNECTED
     }
 }

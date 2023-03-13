@@ -348,11 +348,11 @@ class MainActivity : Activity() {
 
     private fun updateAbrpStatus(status: LiveDataApi.ConnectionStatus) {
         when (status) {
-            LiveDataApi.ConnectionStatus.Connected -> {
+            LiveDataApi.ConnectionStatus.CONNECTED -> {
                 main_icon_abrp_status.setColorFilter(Color.parseColor("#2595FF"))
                 main_icon_abrp_status.visibility = View.VISIBLE
             }
-            LiveDataApi.ConnectionStatus.Error -> {
+            LiveDataApi.ConnectionStatus.ERROR -> {
                 main_icon_abrp_status.setColorFilter(getColor(R.color.bad_red))
                 main_icon_abrp_status.visibility = View.VISIBLE
             }

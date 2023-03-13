@@ -3,10 +3,11 @@ package com.ixam97.carStatsViewer
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.os.StrictMode
 import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.dataManager.DataCollector
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
-import com.ixam97.carStatsViewer.liveData.http.HTTPLiveData
+import com.ixam97.carStatsViewer.liveData.http.HttpLiveData
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlin.system.exitProcess
 
@@ -41,7 +42,7 @@ class CarStatsViewer : Application() {
          */
         liveDataApis = arrayListOf(
             AbrpLiveData(abrpApiKey),
-            HTTPLiveData()
+            HttpLiveData()
         )
         // abrpLiveData = AbrpLiveData(abrpApiKey)
 
