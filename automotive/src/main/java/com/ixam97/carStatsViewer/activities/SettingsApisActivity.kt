@@ -29,6 +29,10 @@ class SettingsApisActivity: Activity() {
             liveDataApis[0].showSettingsDialog(this@SettingsApisActivity)
         }
 
+        settings_apis_http_live_data.setOnClickListener {
+            liveDataApis[1].showSettingsDialog(this@SettingsApisActivity)
+        }
+
         settings_apis_smtp_login.setOnClickListener {
             showSmtpLoginDialog()
         }

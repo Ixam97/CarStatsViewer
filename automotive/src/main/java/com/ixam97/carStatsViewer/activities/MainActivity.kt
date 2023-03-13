@@ -25,6 +25,7 @@ import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.views.PlotView
 import com.ixam97.carStatsViewer.dataManager.DataManagers
+import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -73,7 +74,8 @@ class MainActivity : Activity() {
             when (intent.action) {
                 getString(R.string.ui_update_plot_broadcast) -> updatePlots()
                 getString(R.string.ui_update_gages_broadcast) -> updateGages()
-                CarStatsViewer.liveDataApis[0].broadcastAction -> updateAbrpStatus(intent.getIntExtra("status", 0))
+                CarStatsViewer.liveDataApis[0].broadcastAction -> updateAbrpStatus(LiveDataApi.ConnectionStatus.fromInt(intent.getIntExtra("status", 0)))
+                CarStatsViewer.liveDataApis[1].broadcastAction -> updateAbrpStatus(LiveDataApi.ConnectionStatus.fromInt(intent.getIntExtra("status", 0)))
             }
         }
     }
@@ -344,13 +346,13 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun updateAbrpStatus(status: Int) {
+    private fun updateAbrpStatus(status: LiveDataApi.ConnectionStatus) {
         when (status) {
-            1 -> {
+            LiveDataApi.ConnectionStatus.Connected -> {
                 main_icon_abrp_status.setColorFilter(Color.parseColor("#2595FF"))
                 main_icon_abrp_status.visibility = View.VISIBLE
             }
-            2 -> {
+            LiveDataApi.ConnectionStatus.Error -> {
                 main_icon_abrp_status.setColorFilter(getColor(R.color.bad_red))
                 main_icon_abrp_status.visibility = View.VISIBLE
             }

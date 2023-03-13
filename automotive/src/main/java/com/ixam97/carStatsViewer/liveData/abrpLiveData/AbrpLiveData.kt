@@ -1,11 +1,11 @@
-package com.ixam97.carStatsViewer.abrpLiveData
+package com.ixam97.carStatsViewer.liveData.abrpLiveData
 
 import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.Switch
-import com.ixam97.carStatsViewer.LiveDataApi
+import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
@@ -26,14 +26,14 @@ class AbrpLiveData (
     private fun send(
         abrpDataSet: AbrpDataSet,
         context: Context = CarStatsViewer.appContext
-    ) : Int {
+    ) : ConnectionStatus {
 
-        if (!AppPreferences(context).abrpUseApi) return 0
+        if (!AppPreferences(context).abrpUseApi) return ConnectionStatus.Unused
 
         token = AppPreferences(context).abrpGenericToken
 
         if (apiKey.isEmpty() || token.isEmpty()){
-            return 0
+            return ConnectionStatus.Unused
         }
 
         val url = URL("https://api.iternio.com/1/tlm/send")
@@ -77,7 +77,7 @@ class AbrpLiveData (
             // con.disconnect()
         } catch (e: java.lang.Exception) {
             InAppLogger.log("ABRP API: Network connection error")
-            return 0
+            return ConnectionStatus.Unused
         }
 
         if (detailedLog) {
@@ -95,11 +95,11 @@ class AbrpLiveData (
 
         con.disconnect()
         if (responseCode == 200) {
-            return 1
+            return ConnectionStatus.Connected
         }
         InAppLogger.log("ABRP API: Connection failed. Response code: $responseCode")
         if (responseCode == 401) InAppLogger.log("          Auth error")
-        return 2
+        return ConnectionStatus.Error
     }
 
     override fun showSettingsDialog(context: Context) {
@@ -131,7 +131,7 @@ class AbrpLiveData (
 
     override fun sendNow(dataManager: DataManager) {
         if (!AppPreferences(CarStatsViewer.appContext).abrpUseApi) {
-            connectionStatus = 0
+            connectionStatus = ConnectionStatus.Unused
             return
         }
 
