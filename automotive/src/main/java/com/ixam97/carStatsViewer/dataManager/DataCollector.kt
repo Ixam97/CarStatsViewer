@@ -7,7 +7,6 @@ import android.car.VehicleUnit
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
 import android.content.*
-import android.location.Location
 import android.os.*
 import android.util.Log
 import android.widget.Toast
@@ -23,6 +22,7 @@ import com.ixam97.carStatsViewer.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
 import com.ixam97.carStatsViewer.plot.enums.*
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.flow.catch
@@ -129,8 +129,21 @@ class DataCollector : Service() {
             LocationServices.getFusedLocationProviderClient(this)
         )
 
+        locationClient
+            .getLocationUpdates(5_000L)
+            .catch { e ->
+                InAppLogger.log("LocationClient: ${e.message}")
+            }
+            .onEach { location ->
+                enumValues<DataManagers>().forEach {
+                    it.dataManager.location = location
+                }
+                InAppLogger.log("Location: lat: %.5f, lon: %.5f, alt: %.2fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
+            }
+            .launchIn(serviceScope)
+
         var tripRestoreComplete = false
-        CoroutineScope(Dispatchers.IO).launch {
+        runBlocking {
             enumValues<DataManagers>().forEach {
                 val mPrevTripData = readTripDataFromFile(it.dataManager.printableName)
                 if (mPrevTripData != null) {
@@ -144,9 +157,9 @@ class DataCollector : Service() {
             tripRestoreComplete = true
         }
 
-        while (!tripRestoreComplete) {
-            // Wait for completed restore before doing anything
-        }
+        // while (!tripRestoreComplete) {
+        //     // Wait for completed restore before doing anything
+        // }
 
         foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
@@ -254,18 +267,6 @@ class DataCollector : Service() {
             }
         }
 
-        locationClient
-            .getLocationUpdates(5_000L)
-            .catch { e ->
-                InAppLogger.log("LocationClient: ${e.message}")
-            }
-            .onEach { location ->
-                enumValues<DataManagers>().forEach {
-                    it.dataManager.location = location
-                }
-                InAppLogger.log("Location: lat: ${location.latitude.toString().take(5)}, lon: ${location.longitude.toString().take(5)}, alt: ${location.altitude.toInt()}m")
-            }
-            .launchIn(serviceScope)
         startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
         return START_NOT_STICKY
     }

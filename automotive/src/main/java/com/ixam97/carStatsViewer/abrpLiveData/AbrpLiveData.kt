@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.widget.EditText
 import com.ixam97.carStatsViewer.LiveDataApi
 import com.ixam97.carStatsViewer.CarStatsViewer
-import com.ixam97.carStatsViewer.InAppLogger
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManager

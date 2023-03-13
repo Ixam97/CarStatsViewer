@@ -81,6 +81,9 @@
     <string name="settings_sub_title_last_charge_plot">Letzte Ladekurven:</string>
     <string name="settings_select_trip">Trip in Hauptansicht:</string>
 
+    <string name="settings_apis_title">API-Einstellungen</string>
+    <string name="settings_apis_smtp_login">SMTP-Logindaten</string>
+
     <string name="CurrentTripData">Manueller Trip</string>
     <string name="SinceChargeData">Seit letzter Ladung</string>
     <string name="AutoTripData">Automatischer Trip</string>

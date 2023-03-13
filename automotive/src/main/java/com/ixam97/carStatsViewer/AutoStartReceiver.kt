@@ -4,10 +4,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.widget.Toast
 import com.ixam97.carStatsViewer.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataCollector
+import com.ixam97.carStatsViewer.utils.InAppLogger
 
 class AutoStartReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

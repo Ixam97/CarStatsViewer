@@ -6,7 +6,7 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
 import com.google.android.gms.location.*
-import com.ixam97.carStatsViewer.InAppLogger
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -46,10 +46,15 @@ class DefaultLocationClient(
                 override fun onLocationResult(locationResult: LocationResult) {
                     super.onLocationResult(locationResult)
                     locationResult.locations.lastOrNull()?.let { location ->
-                        location.altitude -= Geoid.getOffset(
-                            org.matthiaszimmermann.location.Location(location.latitude, location.longitude)
-                        )
-                        launch { send(location) }
+                        if (location.altitude > 0 || location.altitude < 0) {
+                            location.altitude -= Geoid.getOffset(
+                                org.matthiaszimmermann.location.Location(location.latitude, location.longitude)
+                            )
+                            launch { send(location) }
+                        } else {
+                            InAppLogger.log("LocationClient has returned altitude of 0m")
+                        }
+
                     }
                 }
             }

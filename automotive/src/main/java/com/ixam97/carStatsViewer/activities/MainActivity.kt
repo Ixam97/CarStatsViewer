@@ -18,7 +18,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.text.format.DateFormat
 import android.view.View
 import android.widget.Toast
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
@@ -28,6 +27,7 @@ import com.ixam97.carStatsViewer.views.PlotView
 import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.GageView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -167,12 +167,6 @@ class MainActivity : Activity() {
         GageView.descriptionTextSize = resources.getDimension(R.dimen.gage_desc_text_size)
 
         appPreferences = AppPreferences(context)
-        StringFormatters.initFormatter(
-            DateFormat.getDateFormat(context),
-            DateFormat.getTimeFormat(context),
-            appPreferences.consumptionUnit,
-            appPreferences.distanceUnit
-        )
 
         consumptionPlotLinePaint = PlotLinePaint(
             PlotPaint.byColor(getColor(R.color.primary_plot_color), PlotView.textSize),
@@ -191,7 +185,7 @@ class MainActivity : Activity() {
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
-        startForegroundService(Intent(this, DataCollector::class.java))
+        // startForegroundService(Intent(this, DataCollector::class.java))
 
         DataCollector.mainActivityPendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_IMMUTABLE

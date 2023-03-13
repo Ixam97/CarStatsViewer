@@ -9,7 +9,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import com.google.gson.GsonBuilder
-import com.ixam97.carStatsViewer.InAppLogger
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManagers

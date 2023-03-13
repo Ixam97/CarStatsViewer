@@ -2,9 +2,7 @@ package com.ixam97.carStatsViewer.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.car.VehicleGear
 import android.content.*
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
@@ -13,9 +11,8 @@ import android.view.View
 import android.widget.SeekBar
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColor
-import androidx.core.view.children
 import androidx.core.view.get
-import com.ixam97.carStatsViewer.InAppLogger
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.*
@@ -24,8 +21,6 @@ import com.ixam97.carStatsViewer.plot.graphics.*
 import com.ixam97.carStatsViewer.plot.objects.*
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.activity_summary.*
 import java.util.concurrent.TimeUnit
 

@@ -6,7 +6,7 @@ import android.car.hardware.property.CarPropertyManager
 import android.location.Location
 import android.util.Log
 import com.ixam97.carStatsViewer.BuildConfig
-import com.ixam97.carStatsViewer.InAppLogger
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.plot.enums.PlotDimension
 import com.ixam97.carStatsViewer.plot.enums.PlotHighlightMethod
 import com.ixam97.carStatsViewer.plot.enums.PlotLabelPosition

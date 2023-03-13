@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.ixam97.carStatsViewer.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.dataManager.DataCollector
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlin.system.exitProcess
 
 class CarStatsViewer : Application() {
@@ -36,6 +37,8 @@ class CarStatsViewer : Application() {
         // abrpLiveData = AbrpLiveData(abrpApiKey)
 
         createNotificationChannel()
+
+        startForegroundService(Intent(applicationContext, DataCollector::class.java))
 
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
             InAppLogger.log("Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")

@@ -1,5 +1,7 @@
-package com.ixam97.carStatsViewer
+package com.ixam97.carStatsViewer.utils
 
+import com.ixam97.carStatsViewer.BuildConfig
+import com.ixam97.carStatsViewer.CarStatsViewer
 import kotlinx.coroutines.*
 import java.io.BufferedWriter
 import java.io.File

@@ -16,9 +16,7 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.graphics.drawable.toDrawable
@@ -28,12 +26,11 @@ import androidx.core.view.get
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.ChargeCurve
 import com.ixam97.carStatsViewer.plot.enums.*
-import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.dataManager.DataCollector
 import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
-import com.ixam97.carStatsViewer.views.PlotView
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlin.system.exitProcess
 
 class SettingsActivity : Activity() {

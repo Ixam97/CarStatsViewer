@@ -71,8 +71,11 @@
             <TextView
                 android:id="@+id/settings_apis_smtp_login"
                 style="@style/menu_button_row_style"
-                android:text="SMTP login credentials"
+                android:text="@string/settings_apis_smtp_login"
                 android:drawableStart="@drawable/ic_mail"/>
+
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
 
         </LinearLayout>
     </ScrollView>
