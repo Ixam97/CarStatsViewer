@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.abrpLiveData
+package com.ixam97.carStatsViewer.liveData.abrpLiveData
 
 /**
  * This file extends the AppPreferences to contain keys used by the API implementation. The rest of

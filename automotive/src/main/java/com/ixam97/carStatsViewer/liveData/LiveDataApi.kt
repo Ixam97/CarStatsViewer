@@ -1,8 +1,9 @@
-package com.ixam97.carStatsViewer
+package com.ixam97.carStatsViewer.liveData
 
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.dataManager.DataManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +19,17 @@ abstract class LiveDataApi(
      *      1: Connected
      *      2: Error
      */
-    var connectionStatus: Int = 0
+    var connectionStatus: ConnectionStatus = ConnectionStatus.UNUSED
+
+    enum class ConnectionStatus(val status: Int) {
+        UNUSED(0),
+        CONNECTED(1),
+        ERROR(2);
+
+        companion object {
+            fun fromInt(status: Int) = values().first { it.status == status }
+        }
+    }
 
     /**
      * Dialog to setup API.
@@ -60,7 +71,7 @@ abstract class LiveDataApi(
 
     private fun sendStatusBroadcast(context: Context) {
         val broadcastIntent = Intent(broadcastAction)
-        broadcastIntent.putExtra("status", connectionStatus)
+        broadcastIntent.putExtra("status", connectionStatus.status)
         context.sendBroadcast(broadcastIntent)
     }
 }

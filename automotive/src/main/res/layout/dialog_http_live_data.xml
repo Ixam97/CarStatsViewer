@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="25dp"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/http_live_data_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/std_font_size"
+        android:hint="URL"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/http_live_data_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/std_font_size"
+        android:hint="BasicAuth Username"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/http_live_data_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="BasicAuth Password"
+        android:inputType="textPassword"
+        android:textSize="@dimen/std_font_size" />
+
+    <Switch
+        android:id="@+id/http_live_data_enabled"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/std_font_size"
+        android:text="Use API" />
+</LinearLayout>
