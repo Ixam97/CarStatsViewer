@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.StrictMode
 import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
+import android.os.StrictMode.VmPolicy
+import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataCollector
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.liveData.http.HttpLiveData
@@ -20,6 +22,7 @@ class CarStatsViewer : Application() {
         // lateinit var abrpLiveData: LiveDataApiInterface
 
         lateinit var liveDataApis: ArrayList<LiveDataApi>
+        lateinit var appPreferences: AppPreferences
     }
 
     override fun onCreate() {
@@ -32,6 +35,7 @@ class CarStatsViewer : Application() {
         // )
 
         appContext = applicationContext
+        appPreferences = AppPreferences(applicationContext)
 
         val abrpApiKey = if (resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName) != 0) {
             getString(resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName))
