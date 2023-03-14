@@ -2,14 +2,10 @@ package com.ixam97.carStatsViewer.liveData.http
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.Switch
 import android.widget.TextView
-import android.widget.Toast
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
