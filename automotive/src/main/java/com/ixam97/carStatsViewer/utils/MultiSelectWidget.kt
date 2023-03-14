@@ -1,0 +1,134 @@
+package com.ixam97.carStatsViewer.utils
+
+import android.content.Context
+import android.graphics.Canvas
+import android.util.AttributeSet
+import android.util.TypedValue
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.view.children
+import com.ixam97.carStatsViewer.R
+import kotlin.math.roundToInt
+
+
+class MultiSelectWidget @JvmOverloads constructor(context: Context, private val attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+    LinearLayout(context, attrs, defStyleAttr) {
+
+    var entries: ArrayList<String> = arrayListOf()
+        set(value) {
+            field = value
+            init()
+        }
+
+    var mListener: OnIndexChangedListener? = null
+
+    private val primaryColor: Int
+    private val secondaryColor: Int = context.getColor(R.color.disable_background)
+
+    private val title: String
+    private val titleWidth: Float
+
+    var selectedIndex = 0
+        set(value) {
+            if (entries.isNotEmpty()) {
+                field = if (value >= entries.size) entries.size - 1 else if (value < 0) 0 else value
+                try {
+                    selectedView.text = entries[selectedIndex]
+                    barLayout.children.forEach { it.setBackgroundColor(secondaryColor) }
+                    barLayout.getChildAt(selectedIndex).setBackgroundColor(primaryColor)
+                } finally {
+                    invalidate()
+                }
+            } else {
+                field = -1
+            }
+        }
+
+    private lateinit var titleView: TextView
+    private lateinit var selectedView: TextView
+    private lateinit var barLayout: LinearLayout
+
+    fun interface OnIndexChangedListener {
+        fun onIndexChanged()
+    }
+
+    fun setOnIndexChangedListener(listener: OnIndexChangedListener) {
+        mListener = listener
+    }
+
+    init {
+        val typedValue = TypedValue()
+        context.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
+        primaryColor = typedValue.data
+
+        val attributes = context.obtainStyledAttributes(attrs, R.styleable.MultiSelectWidget)
+        try {
+            title = attributes.getString(R.styleable.MultiSelectWidget_title)?:""
+            titleWidth = attributes.getDimension(R.styleable.MultiSelectWidget_title_width, -2f)
+        } finally {
+            attributes.recycle()
+        }
+
+        init()
+    }
+
+    private fun calcDimen(dimen: Float): Int {
+        return when (dimen) {
+            -1f -> -1
+            -2f -> -2
+            else -> TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dimen, resources.displayMetrics).roundToInt()
+        }
+    }
+
+    private fun init() {
+        this.removeAllViews()
+        View.inflate(context, R.layout.widget_multi_select, this)
+
+        titleView = findViewById(R.id.widget_title)
+        selectedView = findViewById(R.id.widget_selected_text)
+        barLayout = findViewById(R.id.widget_selected_bar)
+        val leftButton: ImageButton = findViewById(R.id.widget_button_left)
+        val rightButton: ImageButton = findViewById(R.id.widget_button_right)
+
+        titleView.text = title
+        titleView.layoutParams.width = calcDimen(titleWidth)
+
+        if (entries.isNotEmpty()) {
+            leftButton.setOnClickListener {
+                if (selectedIndex == 0) selectedIndex = entries.size - 1
+                else selectedIndex--
+                selectedView.text = entries[selectedIndex]
+                barLayout.children.forEach { it.setBackgroundColor(secondaryColor) }
+                barLayout.getChildAt(selectedIndex).setBackgroundColor(primaryColor)
+                mListener?.onIndexChanged()
+                invalidate()
+            }
+
+            rightButton.setOnClickListener {
+                if (selectedIndex == entries.size - 1) selectedIndex = 0
+                else selectedIndex++
+                selectedView.text = entries[selectedIndex]
+                barLayout.children.forEach { it.setBackgroundColor(secondaryColor) }
+                barLayout.getChildAt(selectedIndex).setBackgroundColor(primaryColor)
+                mListener?.onIndexChanged()
+                invalidate()
+            }
+
+            barLayout.weightSum = entries.size.toFloat()
+            entries.forEach {
+                val barView = View(context)
+                barView.apply {
+                    layoutParams = LayoutParams(0, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5f, resources.displayMetrics).roundToInt(), 1f)
+                    setBackgroundColor(context.getColor(R.color.disable_background))
+                }
+                barLayout.addView(barView)
+                InAppLogger.log(it as String)
+            }
+            selectedView.text = entries[selectedIndex]
+            barLayout.getChildAt(selectedIndex).setBackgroundColor(primaryColor)
+        }
+    }
+}
