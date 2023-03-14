@@ -258,7 +258,7 @@ class PlotLine(
     }
 
     private fun averageValue(dataPoints: List<PlotLineItem>, averageMethod: PlotHighlightMethod, secondaryDimension: PlotSecondaryDimension? = null): Float? {
-        if (dataPoints.isEmpty()) return null
+        if (dataPoints.isEmpty() || dataPoints.all { it.bySecondaryDimension(secondaryDimension)?:0f == 0f }) return null
         if (dataPoints.size == 1) return dataPoints.first().bySecondaryDimension(secondaryDimension)
 
         val averageValue = when (averageMethod) {
