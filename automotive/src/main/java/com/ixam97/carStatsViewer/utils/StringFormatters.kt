@@ -2,7 +2,6 @@ package com.ixam97.carStatsViewer.utils
 
 import android.text.format.DateFormat
 import com.ixam97.carStatsViewer.CarStatsViewer
-import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -10,7 +9,7 @@ object StringFormatters {
 
     private val dateFormat = DateFormat.getDateFormat(CarStatsViewer.appContext)
     private val timeFormat = DateFormat.getTimeFormat(CarStatsViewer.appContext)
-    private val appPreferences = AppPreferences(CarStatsViewer.appContext)
+    private val appPreferences = CarStatsViewer.appPreferences
 
     /** Divides a Float by 1000 and rounds it up to one decimal point to be on par with board computer */
     private fun kiloRounder(number: Float): Float {

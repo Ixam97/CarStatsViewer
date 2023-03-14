@@ -8,6 +8,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.children
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlin.math.roundToInt
@@ -24,7 +25,7 @@ class MultiSelectWidget @JvmOverloads constructor(context: Context, private val 
 
     var mListener: OnIndexChangedListener? = null
 
-    private val primaryColor: Int
+    private val primaryColor = CarStatsViewer.primaryColor
     private val secondaryColor: Int = context.getColor(R.color.disable_background)
 
     private val title: String
@@ -59,10 +60,6 @@ class MultiSelectWidget @JvmOverloads constructor(context: Context, private val 
     }
 
     init {
-        val typedValue = TypedValue()
-        context.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
-        primaryColor = typedValue.data
-
         val attributes = context.obtainStyledAttributes(attrs, R.styleable.MultiSelectWidget)
         try {
             title = attributes.getString(R.styleable.MultiSelectWidget_title)?:""

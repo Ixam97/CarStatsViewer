@@ -12,6 +12,7 @@ import android.widget.SeekBar
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColor
 import androidx.core.view.get
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeUnit
 
 class SummaryActivity: Activity() {
 
-    private var primaryColor: Int? = null
+    private var primaryColor = CarStatsViewer.primaryColor
 
     private var chargePlotLine = PlotLine(
         PlotLineConfiguration(
@@ -103,10 +104,6 @@ class SummaryActivity: Activity() {
 
         tripData = dataManager.tripData!!
         consumptionPlotLine = dataManager.consumptionPlotLine
-
-        val typedValue = TypedValue()
-        applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
-        primaryColor = typedValue.data
 
         summary_selected_trip_bar[appPreferences.mainViewTrip].background = primaryColor!!.toColor().toDrawable()
 

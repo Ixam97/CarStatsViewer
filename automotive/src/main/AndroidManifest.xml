@@ -64,18 +64,15 @@
             android:exported="false">
             <meta-data android:name="distractionOptimized" android:value="true"/>
         </activity>
+        <activity android:name=".activities.SettingsMainViewActivity" android:exported="false"/>
+        <activity android:name=".activities.SettingsVehicleActivity" android:exported="false"/>
+        <activity android:name=".activities.LibsActivity" android:exported="false" />
+        <activity android:name=".activities.AboutActivity" android:exported="false" />
+        <activity android:name=".activities.SettingsApisActivity" android:exported="false" />
         <activity android:name=".activities.LogActivity"
             android:exported="false">
             <meta-data android:name="distractionOptimized" android:value="true"/>
         </activity>
-        <activity
-            android:name=".activities.LibsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.AboutActivity"
-            android:exported="false" />
-        <activity android:name=".activities.SettingsApisActivity"
-            android:exported="false" />
         <service android:name=".dataManager.DataCollector"
             android:foregroundServiceType="location"
             android:enabled="true"

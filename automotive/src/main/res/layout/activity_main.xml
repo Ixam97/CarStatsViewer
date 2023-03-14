@@ -56,6 +56,15 @@
             android:src="@drawable/ic_performance"/>
 
         <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="15dp"
+            android:layout_marginEnd="15dp"
+            android:background="@android:color/transparent"
+            android:tint="@color/disabled_tint"
+            android:src="@drawable/ic_history"/>
+
+        <ImageButton
             android:id="@+id/main_button_settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

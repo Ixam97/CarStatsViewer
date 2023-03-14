@@ -6,11 +6,14 @@ import android.content.Intent
 import android.os.StrictMode
 import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
 import android.os.StrictMode.VmPolicy
+import android.util.TypedValue
+import androidx.core.graphics.toColor
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataCollector
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.liveData.http.HttpLiveData
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import kotlin.properties.Delegates
 import kotlin.system.exitProcess
 
 
@@ -23,10 +26,15 @@ class CarStatsViewer : Application() {
 
         lateinit var liveDataApis: ArrayList<LiveDataApi>
         lateinit var appPreferences: AppPreferences
+        var primaryColor by Delegates.notNull<Int>()
     }
 
     override fun onCreate() {
         super.onCreate()
+
+        val typedValue = TypedValue()
+        applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
+        primaryColor = typedValue.data
 
         // StrictMode.setVmPolicy(
         //     VmPolicy.Builder(StrictMode.getVmPolicy())
