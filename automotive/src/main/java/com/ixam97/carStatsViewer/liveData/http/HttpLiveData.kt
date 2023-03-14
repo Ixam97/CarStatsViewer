@@ -150,12 +150,12 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
             return ConnectionStatus.ERROR
         }
 
-        connection.inputStream.close()
-
         if (responseCode != 200) {
             InAppLogger.log("HTTP Live Data: Transmission failed. Status code $responseCode")
             return ConnectionStatus.ERROR
         }
+
+        InAppLogger.log("HTTP Live Data: Transmission succeeded")
 
         return ConnectionStatus.CONNECTED
     }

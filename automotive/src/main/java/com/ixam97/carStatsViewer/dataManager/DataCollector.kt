@@ -76,6 +76,7 @@ class DataCollector : Service() {
 
     private lateinit var liveDataTimerHandler: Handler
     private lateinit var abrpLiveDataTask: Runnable
+    private lateinit var httpLiveDataTask: Runnable
 
     private lateinit var foregroundServiceNotification: Notification.Builder
 
@@ -228,7 +229,12 @@ class DataCollector : Service() {
             liveDataTimerHandler,
             LIVE_DATA_TASK_INTERVAL
         )!!
-        liveDataTimerHandler.post(abrpLiveDataTask)
+        httpLiveDataTask = CarStatsViewer.liveDataApis[1].createLiveDataTask(
+            DataManagers.CURRENT_TRIP.dataManager,
+            liveDataTimerHandler,
+            LIVE_DATA_TASK_INTERVAL
+        )!!
+        liveDataTimerHandler.post(httpLiveDataTask)
 
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.save_trip_data_broadcast)))
         registerReceiver(carPropertyEmulatorReceiver, IntentFilter(getString(R.string.VHAL_emulator_broadcast)))
