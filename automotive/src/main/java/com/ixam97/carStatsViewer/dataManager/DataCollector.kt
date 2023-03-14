@@ -233,7 +233,6 @@ class DataCollector : Service() {
             }
         }
 
-
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.save_trip_data_broadcast)))
         registerReceiver(carPropertyEmulatorReceiver, IntentFilter(getString(R.string.VHAL_emulator_broadcast)))
 
