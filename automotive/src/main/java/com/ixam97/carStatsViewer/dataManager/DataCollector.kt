@@ -223,7 +223,7 @@ class DataCollector : Service() {
 
         liveDataTimerHandler = Handler(Looper.getMainLooper())
         for (liveDataAPI in CarStatsViewer.liveDataApis) {
-            val task = liveDataAPI.createLiveDataTask(
+            var task = liveDataAPI.createLiveDataTask(
                 DataManagers.CURRENT_TRIP.dataManager,
                 liveDataTimerHandler,
                 LIVE_DATA_TASK_INTERVAL

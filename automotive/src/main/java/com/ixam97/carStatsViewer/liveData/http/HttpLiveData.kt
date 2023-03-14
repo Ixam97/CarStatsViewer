@@ -123,7 +123,7 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
             }
         }
 
-        if (lat == null) InAppLogger.log("No valid location")
+        if (lat == null) InAppLogger.log("HTTP Live Data: No valid location")
 
         connectionStatus = send(
             HttpDataSet(
