@@ -79,7 +79,6 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
         }
 
         val dialog = httpLiveDataSettingsDialog.show()
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
 
         httpLiveDataEnabled.isChecked = AppPreferences(context).httpLiveDataEnabled
         httpLiveDataEnabled.setOnClickListener {
@@ -89,6 +88,9 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
         url.setText(AppPreferences(context).httpLiveDataURL)
         username.setText(AppPreferences(context).httpLiveDataUsername)
         password.setText(AppPreferences(context).httpLiveDataPassword)
+
+        // Enable the Ok button initially only in case the user already entered a valid URL
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = isValidURL(url.text.toString())
 
         url.addTextChangedListener(object : TextValidator(url) {
             override fun validate(textView: TextView?, text: String?) {

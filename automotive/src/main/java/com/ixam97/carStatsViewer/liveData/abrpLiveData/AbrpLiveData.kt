@@ -27,7 +27,6 @@ class AbrpLiveData (
         abrpDataSet: AbrpDataSet,
         context: Context = CarStatsViewer.appContext
     ) : ConnectionStatus {
-
         if (!AppPreferences(context).abrpUseApi) return ConnectionStatus.UNUSED
 
         token = AppPreferences(context).abrpGenericToken
