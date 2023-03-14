@@ -1,16 +1,15 @@
-package com.ixam97.carStatsViewer.utils
+package com.ixam97.carStatsViewer.views
 
 import android.content.Context
-import android.graphics.Canvas
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.children
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlin.math.roundToInt
 
 
