@@ -2,9 +2,14 @@ package com.ixam97.carStatsViewer.liveData.http
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.Switch
+import android.widget.TextView
+import android.widget.Toast
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
@@ -18,6 +23,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*
+
 
 class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data_connection_broadcast") {
 
@@ -46,39 +52,61 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
         return con
     }
 
+    private fun isValidURL(possibleURL: CharSequence): Boolean {
+        if (possibleURL == null) {
+            return false
+        }
+
+        return android.util.Patterns.WEB_URL.matcher(possibleURL).matches()
+    }
+
     override fun showSettingsDialog(context: Context) {
-        val tokenDialog = AlertDialog.Builder(context).apply {
-            val layout = LayoutInflater.from(context).inflate(R.layout.dialog_http_live_data, null)
-            val url = layout.findViewById<EditText>(R.id.http_live_data_url)
-            val username = layout.findViewById<EditText>(R.id.http_live_data_username)
-            val password = layout.findViewById<EditText>(R.id.http_live_data_password)
-            val httpLiveDataEnabled = layout.findViewById<Switch>(R.id.http_live_data_enabled)
+        val layout = LayoutInflater.from(context).inflate(R.layout.dialog_http_live_data, null)
+        val url = layout.findViewById<EditText>(R.id.http_live_data_url)
+        val username = layout.findViewById<EditText>(R.id.http_live_data_username)
+        val password = layout.findViewById<EditText>(R.id.http_live_data_password)
+        val httpLiveDataEnabled = layout.findViewById<Switch>(R.id.http_live_data_enabled)
 
-
-            httpLiveDataEnabled.isChecked = AppPreferences(context).httpLiveDataEnabled
-
-            httpLiveDataEnabled.setOnClickListener {
-                AppPreferences(context).httpLiveDataEnabled = httpLiveDataEnabled.isChecked
-            }
-
-            url.setText(AppPreferences(context).httpLiveDataURL)
-            username.setText(AppPreferences(context).httpLiveDataUsername)
-            password.setText(AppPreferences(context).httpLiveDataPassword)
-
-
+        val httpLiveDataSettingsDialog = AlertDialog.Builder(context).apply {
             setView(layout)
 
-            setPositiveButton("OK") { dialog, _ ->
+            setPositiveButton("OK") { _, _ ->
                 AppPreferences(context).httpLiveDataURL = url.text.toString()
                 AppPreferences(context).httpLiveDataUsername = username.text.toString()
                 AppPreferences(context).httpLiveDataPassword = password.text.toString()
             }
+
             setTitle("HTTP Live Data")
             setMessage("Enter HTTP URL and (optional) basic auth credentials to transmit live data to the specified URL.")
             setCancelable(true)
             create()
         }
-        tokenDialog.show()
+
+        val dialog = httpLiveDataSettingsDialog.show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+
+        httpLiveDataEnabled.isChecked = AppPreferences(context).httpLiveDataEnabled
+        httpLiveDataEnabled.setOnClickListener {
+            AppPreferences(context).httpLiveDataEnabled = httpLiveDataEnabled.isChecked
+        }
+
+        url.setText(AppPreferences(context).httpLiveDataURL)
+        username.setText(AppPreferences(context).httpLiveDataUsername)
+        password.setText(AppPreferences(context).httpLiveDataPassword)
+
+        url.addTextChangedListener(object : TextValidator(url) {
+            override fun validate(textView: TextView?, text: String?) {
+                if (text == null || textView == null) {
+                    return
+                }
+                if (!isValidURL(text)) {
+                    textView.error = "Invalid URL!";
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+                    return
+                }
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
+            }
+        })
     }
 
     override fun sendNow(dataManager: DataManager) {
@@ -160,3 +188,4 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
         return ConnectionStatus.CONNECTED
     }
 }
+
