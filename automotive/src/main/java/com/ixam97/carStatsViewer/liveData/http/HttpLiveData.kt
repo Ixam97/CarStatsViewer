@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.Switch
 import android.widget.TextView
+import com.google.gson.Gson
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
@@ -129,15 +130,34 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
 
         connectionStatus = send(
             HttpDataSet(
+                currentSpeed = dataManager.currentSpeed * 3.6f,
+                currentPower = dataManager.currentPower / 1_000_000f,
+                currentGear = dataManager.currentGear,
+                chargePortConnected = dataManager.chargePortConnected,
+                batteryLevel = dataManager.batteryLevel,
                 stateOfCharge = dataManager.stateOfCharge,
-                power = dataManager.currentPower,
-                speed = dataManager.currentSpeed,
-                isCharging = dataManager.chargePortConnected,
-                isParked = (dataManager.driveState == DrivingState.PARKED || dataManager.driveState == DrivingState.CHARGE),
+                currentIgnitionState = dataManager.currentIgnitionState,
+                instConsumption = dataManager.instConsumption,
+                avgConsumption = dataManager.avgConsumption,
+                avgSpeed = dataManager.avgSpeed,
+                travelTime = dataManager.travelTime,
+                chargeTime = dataManager.chargeTime,
+                driveState = dataManager.driveState,
+                ambientTemperature = dataManager.ambientTemperature,
+                maxBatteryLevel = dataManager.maxBatteryLevel,
+                tripStartDate = dataManager.tripStartDate,
+                usedEnergy = dataManager.usedEnergy,
+                traveledDistance = dataManager.traveledDistance,
+                chargeStartDate = dataManager.chargeStartDate,
+                chargedEnergy = dataManager.chargedEnergy,
                 lat = lat,
                 lon = lon,
                 alt = alt,
-                temp = dataManager.ambientTemperature
+
+                // Helpers
+                isCharging = dataManager.chargePortConnected,
+                isParked = (dataManager.driveState == DrivingState.PARKED || dataManager.driveState == DrivingState.CHARGE),
+                isFastCharging = (dataManager.chargePortConnected && dataManager.currentPower < -11_000_000)
             )
         )
     }
@@ -150,19 +170,10 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
         val connection = getConnection(url, username, password)
         val responseCode: Int
 
-        val jsonObject = JSONObject().apply {
-            put("soc", dataSet.stateOfCharge)
-            put("utc", System.currentTimeMillis() / 1000)
-            put("power", dataSet.power / 1_000_000f)
-            put("is_charging", dataSet.isCharging)
-            put("is_parked", dataSet.isParked)
-            put("speed", dataSet.speed * 3.6f)
-            put("ext_temp", dataSet.temp)
-            dataSet.lat?.let { put("lat", it) }
-            dataSet.lon?.let { put("lon", it) }
-            dataSet.alt?.let { put("elevation", it) }
-            put("is_dcfc", dataSet.power < -11_000_000)
-        }
+        val gson = Gson()
+        val jsonObject = gson.toJson(dataSet)
+
+        InAppLogger.log(jsonObject)
 
         try {
             DataOutputStream(connection.outputStream).apply {
