@@ -73,26 +73,27 @@ class AbrpLiveData (
                 close()
             }
             responseCode = con.responseCode
+
+            if (detailedLog) {
+                InAppLogger.log("SENT: $jsonObject")
+                InAppLogger.log("STATUS: ${con.responseCode}")
+                InAppLogger.log("MSG: ${con.responseMessage}")
+                try {
+                    InAppLogger.log("JSON: ${con.inputStream.bufferedReader().use {it.readText()}}")
+
+                }
+                catch (e: java.lang.Exception) {
+                    InAppLogger.log("ABRP API: No response content")
+                }
+            }
+            con.inputStream.close()
+
+            con.disconnect()
+
         } catch (e: java.lang.Exception) {
             InAppLogger.log("ABRP API: Network connection error")
             return ConnectionStatus.UNUSED
         }
-
-        if (detailedLog) {
-            InAppLogger.log("SENT: $jsonObject")
-            InAppLogger.log("STATUS: ${con.responseCode}")
-            InAppLogger.log("MSG: ${con.responseMessage}")
-            try {
-                InAppLogger.log("JSON: ${con.inputStream.bufferedReader().use {it.readText()}}")
-
-            }
-            catch (e: java.lang.Exception) {
-                InAppLogger.log("ABRP API: No response content")
-            }
-        }
-        con.inputStream.close()
-
-        con.disconnect()
         if (responseCode == 200) {
             return ConnectionStatus.CONNECTED
         }

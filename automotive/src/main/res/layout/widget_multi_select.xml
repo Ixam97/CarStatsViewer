@@ -34,6 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:background="@android:color/black"
             android:weightSum="4"
             android:orientation="horizontal">
         </LinearLayout>

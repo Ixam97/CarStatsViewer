@@ -31,6 +31,12 @@ class MultiSelectWidget @JvmOverloads constructor(context: Context, private val 
     private val title: String
     private val titleWidth: Float
 
+    private lateinit var titleView: TextView
+    private lateinit var selectedView: TextView
+    private lateinit var barLayout: LinearLayout
+    private lateinit var leftButton: ImageButton
+    private lateinit var rightButton: ImageButton
+
     var selectedIndex = 0
         set(value) {
             if (entries.isNotEmpty()) {
@@ -47,9 +53,18 @@ class MultiSelectWidget @JvmOverloads constructor(context: Context, private val 
             }
         }
 
-    private lateinit var titleView: TextView
-    private lateinit var selectedView: TextView
-    private lateinit var barLayout: LinearLayout
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+
+        leftButton.isEnabled = enabled
+        rightButton.isEnabled = enabled
+        val enabledAlpha = if (!isEnabled) CarStatsViewer.disabledAlpha else 1f
+        selectedView.alpha = enabledAlpha
+        titleView.alpha = enabledAlpha
+        leftButton.alpha = enabledAlpha
+        rightButton.alpha = enabledAlpha
+        this.invalidate()
+    }
 
     fun interface OnIndexChangedListener {
         fun onIndexChanged()
@@ -68,7 +83,7 @@ class MultiSelectWidget @JvmOverloads constructor(context: Context, private val 
             attributes.recycle()
         }
 
-        init()
+        // init()
     }
 
     private fun calcDimen(dimen: Float): Int {
@@ -86,8 +101,8 @@ class MultiSelectWidget @JvmOverloads constructor(context: Context, private val 
         titleView = findViewById(R.id.widget_title)
         selectedView = findViewById(R.id.widget_selected_text)
         barLayout = findViewById(R.id.widget_selected_bar)
-        val leftButton: ImageButton = findViewById(R.id.widget_button_left)
-        val rightButton: ImageButton = findViewById(R.id.widget_button_right)
+        leftButton = findViewById(R.id.widget_button_left)
+        rightButton = findViewById(R.id.widget_button_right)
 
         titleView.text = title
         titleView.layoutParams.width = calcDimen(titleWidth)

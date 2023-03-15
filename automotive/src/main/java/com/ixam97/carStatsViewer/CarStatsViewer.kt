@@ -3,18 +3,15 @@ package com.ixam97.carStatsViewer
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.os.StrictMode
-import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
-import android.os.StrictMode.VmPolicy
+import android.content.pm.PackageManager
 import android.util.TypedValue
-import androidx.core.graphics.toColor
+import com.ixam97.carStatsViewer.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataCollector
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
+import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveData.http.HttpLiveData
-import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlin.properties.Delegates
-import kotlin.system.exitProcess
 
 
 class CarStatsViewer : Application() {
@@ -27,6 +24,7 @@ class CarStatsViewer : Application() {
         lateinit var liveDataApis: ArrayList<LiveDataApi>
         lateinit var appPreferences: AppPreferences
         var primaryColor by Delegates.notNull<Int>()
+        var disabledAlpha by Delegates.notNull<Float>()
     }
 
     override fun onCreate() {
@@ -35,6 +33,9 @@ class CarStatsViewer : Application() {
         val typedValue = TypedValue()
         applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
         primaryColor = typedValue.data
+
+        applicationContext.theme.resolveAttribute(android.R.attr.disabledAlpha, typedValue, true)
+        disabledAlpha = typedValue.float
 
         // StrictMode.setVmPolicy(
         //     VmPolicy.Builder(StrictMode.getVmPolicy())
@@ -60,22 +61,11 @@ class CarStatsViewer : Application() {
 
         createNotificationChannel()
 
-        startForegroundService(Intent(applicationContext, DataCollector::class.java))
-
-        Thread.setDefaultUncaughtExceptionHandler { t, e ->
-            InAppLogger.log("Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
-            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val serviceIntent = Intent(applicationContext, DataCollector::class.java)
-            serviceIntent.putExtra("reason", "crash")
-            val pendingIntent = PendingIntent.getForegroundService(
-                applicationContext,
-                0,
-                serviceIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-
-            alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent)
-            exitProcess(2)
+        if (PermissionsActivity.PERMISSIONS.none {
+                applicationContext.checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED
+            }
+        ) {
+            startForegroundService(Intent(applicationContext, DataCollector::class.java))
         }
     }
 

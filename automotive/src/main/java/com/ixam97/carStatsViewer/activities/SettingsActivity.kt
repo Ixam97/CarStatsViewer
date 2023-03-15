@@ -3,14 +3,11 @@ package com.ixam97.carStatsViewer.activities
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.*
-import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
-import androidx.core.graphics.toColor
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
@@ -43,24 +40,22 @@ class SettingsActivity : Activity() {
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.distraction_optimization_broadcast)))
 
         setDistractionOptimization(appPreferences.doDistractionOptimization)
-        setMenuRowIsEnabled(false, settings_button_vehicle)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(broadcastReceiver)
-        // InAppLogger.log("SettingsActivity.onDestroy")
     }
 
     private fun setDistractionOptimization(doOptimize: Boolean) {
         if (doOptimize) {
             setMenuRowIsEnabled(false, settings_button_main_view)
-            // setMenuRowIsEnabled(false, settings_button_vehicle)
+            setMenuRowIsEnabled(false, settings_button_vehicle)
             setMenuRowIsEnabled(false, settings_button_apis)
             setMenuRowIsEnabled(false, settings_button_about)
         } else {
             setMenuRowIsEnabled(true, settings_button_main_view)
-            // setMenuRowIsEnabled(true, settings_button_vehicle)
+            setMenuRowIsEnabled(true, settings_button_vehicle)
             setMenuRowIsEnabled(true, settings_button_apis)
             setMenuRowIsEnabled(true, settings_button_about)
         }

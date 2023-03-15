@@ -101,6 +101,8 @@ class DataManager(val printableName: String) {
     /** current location of the Vehicle */
     var location: Location? = null
 
+    var model: String = ""
+
     // Plot values
     var consumptionPlotEnergyDelta = 0F
     var consumptionPlotDistanceDelta = 0F

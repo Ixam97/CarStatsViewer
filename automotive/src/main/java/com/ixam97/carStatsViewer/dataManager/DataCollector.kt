@@ -15,10 +15,10 @@ import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.*
+import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
-import com.ixam97.carStatsViewer.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
 import com.ixam97.carStatsViewer.plot.enums.*
@@ -33,6 +33,7 @@ import java.io.FileWriter
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
+import kotlin.system.exitProcess
 
 class DataCollector : Service() {
     companion object {
@@ -123,8 +124,23 @@ class DataCollector : Service() {
     override fun onCreate() {
         super.onCreate()
 
+        Thread.setDefaultUncaughtExceptionHandler { t, e ->
+            InAppLogger.log("Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val serviceIntent = Intent(applicationContext, DataCollector::class.java)
+            serviceIntent.putExtra("reason", "crash")
+            val pendingIntent = PendingIntent.getForegroundService(
+                applicationContext,
+                0,
+                serviceIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent)
+            exitProcess(0)
+        }
+
         locationClient = DefaultLocationClient(
-            this,
+            CarStatsViewer.appContext,
             LocationServices.getFusedLocationProviderClient(this)
         )
 
@@ -170,9 +186,7 @@ class DataCollector : Service() {
                 PendingIntent.getActivity(
                     applicationContext,
                     0,
-                    Intent(applicationContext, PermissionsActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP + Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    },
+                    Intent(applicationContext, MainActivity::class.java),
                     PendingIntent.FLAG_IMMUTABLE
                 )
             )
@@ -242,6 +256,7 @@ class DataCollector : Service() {
             }
             it.dataManager.consumptionPlotLine.baseLineAt.add(0f)
             it.dataManager.maxBatteryLevel = carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
+            it.dataManager.model = carName
 
             driveStateUpdater(it.dataManager)
             speedUpdater(it.dataManager)
