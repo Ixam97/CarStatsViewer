@@ -587,8 +587,8 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
                     val paint = plotPaint.bySecondaryDimension(dimensionY) ?: continue
 
-                    val minValue = plotLine.minValue(dataPoints, dimensionY)!!
-                    val maxValue = plotLine.maxValue(dataPoints, dimensionY)!!
+                    val minValue = plotLine.minValue(dataPoints, dimensionY) ?: continue
+                    val maxValue = plotLine.maxValue(dataPoints, dimensionY) ?: continue
 
                     val smoothing = when (val dimensionSmoothingByConfig = configuration.DimensionSmoothing ?: dimensionSmoothing){
                         null -> null
@@ -917,8 +917,8 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
                     val paint = plotPaint.bySecondaryDimension(dimensionY) ?: continue
 
-                    val minValue = line.minValue(dataPoints, dimensionY)!!
-                    val maxValue = line.maxValue(dataPoints, dimensionY)!!
+                    val minValue = line.minValue(dataPoints, dimensionY) ?: continue
+                    val maxValue = line.maxValue(dataPoints, dimensionY) ?: continue
 
                     val highlight = when (dimensionHighlightAt) {
                         null -> line.byHighlightMethod(dataPoints, dimension, dimensionY)

@@ -4,6 +4,7 @@
     <string name="permissions_dialog_text">Denna app kräver behörigheter för att kunna användas. Utan de nödvändiga behörigheterna kan appen inte läsa någon data från bilen.</string>
     <string name="permissions_dialog_quit">Avsluta Car Stats Viewer</string>
     <string name="permissions_dialog_grant">Bevilja behörigheter</string>
+    <string name="plot_dimensionY_SPEED">Hastighet</string>
     <string name="main_port_connected">Laddkabel ansluten:</string>
     <string name="main_current_power">Aktuell strömförbrukning:</string>
     <string name="main_used_energy">Använd energi:</string>

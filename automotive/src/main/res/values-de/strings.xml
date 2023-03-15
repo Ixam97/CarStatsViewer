@@ -20,6 +20,8 @@
     <string name="permissions_dialog_quit">Car Stats Viewer beenden</string>
     <string name="permissions_dialog_grant">Berechtigungen erteilen</string>
 
+    <string name="plot_dimensionY_SPEED">Geschwindigkeit</string>
+
     <!-- MainActivity -->
     <string name="main_port_connected">Ladekabel angeschlossen:</string>
     <string name="main_current_power">Momentanleistung:</string>

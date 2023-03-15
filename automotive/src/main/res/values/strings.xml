@@ -51,6 +51,12 @@
     <string name="permissions_dialog_quit">Quit Car Stats Viewer</string>
     <string name="permissions_dialog_grant">Grant permissions</string>
 
+    <!-- Global -->
+    <string name="plot_dimensionY_CONSUMPTION" translatable="false">-</string>
+    <string name="plot_dimensionY_STATE_OF_CHARGE" translatable="false">SoC</string>
+    <string name="plot_dimensionY_SPEED">Speed</string>
+    <string name="plot_dimensionY_ALTITUDE">Altitude</string>
+
     <!-- MainActivity -->
     <string name="main_port_connected">Charge port connected:</string>
     <string name="main_current_power">Current power draw:</string>

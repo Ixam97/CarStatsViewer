@@ -4,6 +4,7 @@
     <string name="permissions_dialog_text">Deze app heeft bepaalde toelatingen nodig om te kunnen werken. Zonder de aangegeven toelatingen, kunnen de gegevens van het voertuig niet worden verzameld.</string>
     <string name="permissions_dialog_quit">Car Stats Viewer afsluiten</string>
     <string name="permissions_dialog_grant">Toelatingen goedkeuren</string>
+    <string name="plot_dimensionY_SPEED">Snelheid</string>
     <string name="main_port_connected">Laadkabel aangesloten:</string>
     <string name="main_current_power">Huidig stroomverbruik:</string>
     <string name="main_used_energy">Verbruikte energie:</string>
