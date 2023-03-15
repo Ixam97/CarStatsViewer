@@ -1,6 +1,6 @@
 package com.ixam97.carStatsViewer.plot.objects
 
-import com.ixam97.carStatsViewer.plot.enums.PlotDimension
+import com.ixam97.carStatsViewer.plot.enums.PlotDimensionX
 import com.ixam97.carStatsViewer.plot.enums.PlotMarkerType
 import kotlin.math.roundToInt
 
@@ -89,10 +89,10 @@ class PlotMarker (
     val StartDistance: Float,
     var EndDistance: Float? = null
 ) {
-    fun group(dimension: PlotDimension, dimensionSmoothing: Float? = null): Any? {
+    fun group(dimension: PlotDimensionX, dimensionSmoothing: Float? = null): Any? {
         val value = when(dimension) {
-            PlotDimension.DISTANCE -> StartDistance
-            PlotDimension.TIME -> StartTime
+            PlotDimensionX.DISTANCE -> StartDistance
+            PlotDimensionX.TIME -> StartTime
             else -> null
         } ?: return null
 
@@ -100,25 +100,25 @@ class PlotMarker (
             null -> value
             0f -> value
             else -> when(dimension) {
-                PlotDimension.DISTANCE -> (value as Float / dimensionSmoothing).roundToInt()
-                PlotDimension.TIME ->  (value as Long / dimensionSmoothing).roundToInt()
+                PlotDimensionX.DISTANCE -> (value as Float / dimensionSmoothing).roundToInt()
+                PlotDimensionX.TIME ->  (value as Long / dimensionSmoothing).roundToInt()
                 else -> value
             }
         }
     }
 
-    fun startByDimension(dimension: PlotDimension) : Any? {
+    fun startByDimension(dimension: PlotDimensionX) : Any? {
         return when (dimension) {
-            PlotDimension.TIME -> StartTime
-            PlotDimension.DISTANCE -> StartDistance
+            PlotDimensionX.TIME -> StartTime
+            PlotDimensionX.DISTANCE -> StartDistance
             else -> null
         }
     }
 
-    fun endByDimension(dimension: PlotDimension) : Any? {
+    fun endByDimension(dimension: PlotDimensionX) : Any? {
         return when (dimension) {
-            PlotDimension.TIME -> EndTime
-            PlotDimension.DISTANCE -> EndDistance
+            PlotDimensionX.TIME -> EndTime
+            PlotDimensionX.DISTANCE -> EndDistance
             else -> null
         }
     }

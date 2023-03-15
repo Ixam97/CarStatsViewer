@@ -6,7 +6,6 @@ import android.content.*
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.View
 import android.widget.SeekBar
 import androidx.core.graphics.drawable.toDrawable
@@ -33,7 +32,6 @@ class SummaryActivity: Activity() {
         PlotLineConfiguration(
             PlotRange(0f, 20f, 0f, 160f, 20f),
             PlotLineLabelFormat.FLOAT,
-            PlotLabelPosition.LEFT,
             PlotHighlightMethod.AVG_BY_TIME,
             "kW"
         )
@@ -185,23 +183,23 @@ class SummaryActivity: Activity() {
         plotMarkers.addMarkers(tripData.markers)
         summary_consumption_plot.addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
         summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
-        summary_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
+        summary_consumption_plot.dimensionYSecondary = when (appPreferences.secondaryConsumptionDimension) {
             1 -> {
                 summary_button_secondary_dimension.text =
                     getString(R.string.main_secondary_axis, getString(R.string.main_speed))
-                PlotSecondaryDimension.SPEED
+                PlotDimensionY.SPEED
             }
             2 -> {
                 summary_button_secondary_dimension.text =
                     getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
-                PlotSecondaryDimension.STATE_OF_CHARGE
+                PlotDimensionY.STATE_OF_CHARGE
             }
             else -> {
                 summary_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
                 null
             }
         }
-        summary_consumption_plot.dimension = PlotDimension.DISTANCE
+        summary_consumption_plot.dimension = PlotDimensionX.DISTANCE
         summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((appPreferences.distanceUnit.toUnit(tripData.traveledDistance) / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) + 1
         summary_consumption_plot.dimensionRestrictionMin = appPreferences.distanceUnit.asUnit(MainActivity.DISTANCE_TRIP_DIVIDER)
         summary_consumption_plot.dimensionSmoothing = 0.02f
@@ -222,16 +220,16 @@ class SummaryActivity: Activity() {
             currentIndex++
             if (currentIndex > 2) currentIndex = 0
             appPreferences.secondaryConsumptionDimension = currentIndex
-            summary_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
+            summary_consumption_plot.dimensionYSecondary = when (appPreferences.secondaryConsumptionDimension) {
                 1 -> {
                     summary_button_secondary_dimension.text =
                         getString(R.string.main_secondary_axis, getString(R.string.main_speed))
-                    PlotSecondaryDimension.SPEED
+                    PlotDimensionY.SPEED
                 }
                 2 -> {
                     summary_button_secondary_dimension.text =
                         getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
-                    PlotSecondaryDimension.STATE_OF_CHARGE
+                    PlotDimensionY.STATE_OF_CHARGE
                 }
                 else -> {
                     summary_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
@@ -291,10 +289,10 @@ class SummaryActivity: Activity() {
         }
         summary_charge_plot_view.addPlotLine(chargePlotLine, chargePlotLinePaint)
 
-        summary_charge_plot_view.dimension = PlotDimension.TIME
+        summary_charge_plot_view.dimension = PlotDimensionX.TIME
         // summary_charge_plot_view.dimensionSmoothingPercentage = 0.01f
         summary_charge_plot_view.sessionGapRendering = PlotSessionGapRendering.GAP
-        summary_charge_plot_view.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
+        summary_charge_plot_view.dimensionYPrimary = PlotDimensionY.STATE_OF_CHARGE
         summary_charge_plot_view.invalidate()
 
         summary_charge_plot_seek_bar.max = (tripData.chargeCurves.size - 1).coerceAtLeast(0)
