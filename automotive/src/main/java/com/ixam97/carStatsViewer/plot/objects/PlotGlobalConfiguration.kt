@@ -38,7 +38,7 @@ object PlotGlobalConfiguration {
             ),
             PlotDimensionY.ALTITUDE to PlotLineConfiguration(
                 PlotRange(smoothAxis = 100f),
-                PlotLineLabelFormat.DISTANCE,
+                PlotLineLabelFormat.ALTITUDE,
                 PlotHighlightMethod.AVG_BY_TIME,
                 "m",
                 SessionGapRendering = PlotSessionGapRendering.GAP
