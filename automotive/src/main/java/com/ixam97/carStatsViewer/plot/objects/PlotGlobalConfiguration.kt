@@ -51,9 +51,12 @@ object PlotGlobalConfiguration {
         DimensionYConfiguration[PlotDimensionY.SPEED]?.Divider = distanceUnit.asFactor()
         DimensionYConfiguration[PlotDimensionY.SPEED]?.Unit = "%s/h".format(distanceUnit.unit())
 
-
         DimensionYConfiguration[PlotDimensionY.DISTANCE]?.UnitFactor = distanceUnit.toFactor()
         DimensionYConfiguration[PlotDimensionY.DISTANCE]?.Divider = distanceUnit.asFactor()
         DimensionYConfiguration[PlotDimensionY.DISTANCE]?.Unit = "%s".format(distanceUnit.unit())
+
+        DimensionYConfiguration[PlotDimensionY.ALTITUDE]?.UnitFactor = distanceUnit.toSubFactor()
+        DimensionYConfiguration[PlotDimensionY.ALTITUDE]?.Divider = distanceUnit.asSubFactor()
+        DimensionYConfiguration[PlotDimensionY.ALTITUDE]?.Unit = "%s".format(distanceUnit.subUnit())
     }
 }
