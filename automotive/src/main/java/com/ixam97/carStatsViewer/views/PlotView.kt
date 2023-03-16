@@ -1080,7 +1080,7 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                 appPreferences.distanceUnit.toUnit(value) % 1000 > 100 -> String.format("%.1f %s", appPreferences.distanceUnit.toUnit(value) / 1000, appPreferences.distanceUnit.unit())
                 else -> String.format("%d %s", (appPreferences.distanceUnit.toUnit(value) / 1000).roundToInt(), appPreferences.distanceUnit.unit())
             }
-            PlotLineLabelFormat.ALTITUDE -> String.format("%d %s", (appPreferences.distanceUnit.toSubUnit(value) / 1000).roundToInt(), appPreferences.distanceUnit.subUnit())
+            PlotLineLabelFormat.ALTITUDE -> String.format("%d", appPreferences.distanceUnit.toSubUnit(value).roundToInt(), appPreferences.distanceUnit.subUnit())
         }
     }
 }
