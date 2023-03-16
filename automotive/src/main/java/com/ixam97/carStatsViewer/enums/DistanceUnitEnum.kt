@@ -29,7 +29,7 @@ enum class DistanceUnitEnum {
     fun asSubFactor(): Float {
         return when (this) {
             KM -> 1.0f
-            else -> 3.28084f
+            else -> 0.3048f
         }
     }
 
