@@ -11,6 +11,7 @@ import com.ixam97.carStatsViewer.dataManager.DataCollector
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveData.http.HttpLiveData
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlin.properties.Delegates
 
 
@@ -61,8 +62,11 @@ class CarStatsViewer : Application() {
 
         createNotificationChannel()
 
-        if (PermissionsActivity.PERMISSIONS.none {
-                applicationContext.checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED
+        if (PermissionsActivity.PERMISSIONS.all {
+                val granted = applicationContext.checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED
+                if (granted) InAppLogger.log("$it granted") else InAppLogger.log("$it denied")
+                granted
+
             }
         ) {
             startForegroundService(Intent(applicationContext, DataCollector::class.java))

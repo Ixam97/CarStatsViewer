@@ -14,7 +14,6 @@ import com.ixam97.carStatsViewer.dataManager.DataManager
 import com.ixam97.carStatsViewer.dataManager.DrivingState
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import org.json.JSONObject
 import java.io.DataOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -49,10 +48,13 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
         return con
     }
 
-    private fun isValidURL(possibleURL: CharSequence): Boolean {
+    private fun isValidURL(possibleURL: CharSequence?): Boolean {
         if (possibleURL == null) {
             return false
         }
+
+        if (!possibleURL.contains("http://") && !possibleURL.contains("https://"))
+            return false
 
         return android.util.Patterns.WEB_URL.matcher(possibleURL).matches()
     }
@@ -163,27 +165,31 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
     }
 
     private fun send(dataSet: HttpDataSet, context: Context = CarStatsViewer.appContext): ConnectionStatus {
-        val url = URL(AppPreferences(context).httpLiveDataURL)
         val username = AppPreferences(context).httpLiveDataUsername
         val password = AppPreferences(context).httpLiveDataPassword
-
-        val connection = getConnection(url, username, password)
         val responseCode: Int
 
         val gson = Gson()
-        val jsonObject = gson.toJson(dataSet)
+        val liveDataJson = gson.toJson(dataSet)
 
-        InAppLogger.log(jsonObject)
+        InAppLogger.log(liveDataJson)
 
         try {
+            val url = URL(AppPreferences(context).httpLiveDataURL) // + "?json=$jsonObject")
+            val connection = getConnection(url, username, password)
             DataOutputStream(connection.outputStream).apply {
-                writeBytes(jsonObject.toString())
+                writeBytes(liveDataJson)
                 flush()
                 close()
             }
             responseCode = connection.responseCode
+
+            InAppLogger.log("JSON: ${connection.inputStream.bufferedReader().use {it.readText()}}")
+            connection.inputStream.close()
+            connection.disconnect()
+
         } catch (e: java.lang.Exception) {
-            InAppLogger.log("HTTP API: Network connection error")
+            InAppLogger.log("HTTP API: Connection error")
             return ConnectionStatus.ERROR
         }
 

@@ -68,26 +68,11 @@
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
-
-            <LinearLayout
+            <TextView
                 android:id="@+id/settings_apis_http_live_data"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="@dimen/row_icon_width"
-                    android:layout_height="@dimen/std_icon_size"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitStart"
-                    android:src="@android:drawable/stat_notify_sync_noanim" />
-
-                <TextView
-                    style="@style/menu_button_row_style"
-                    android:text="HTTP Live Data" />
-
-            </LinearLayout>
+                style="@style/menu_button_row_style"
+                android:drawableStart="@drawable/ic_webhook"
+                android:text="HTTP Live Data" />
 
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
