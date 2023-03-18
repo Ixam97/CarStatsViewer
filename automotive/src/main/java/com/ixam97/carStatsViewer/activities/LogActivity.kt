@@ -178,22 +178,7 @@ class LogActivity : Activity() {
         log_reset_log.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 withContext(Dispatchers.IO) {
-                    val logFile = File(applicationContext.filesDir,"InAppLogger.txt")
-                    if (!logFile.exists()) {
-                        try {
-                            logFile.createNewFile()
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-                    try {
-                        BufferedWriter(FileWriter(logFile)).apply {
-                            write("")
-                            close()
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    InAppLogger.resetLog()
                     runOnUiThread {
                         InAppLogger.log("Cleared log")
                         log_text_view.text = ""

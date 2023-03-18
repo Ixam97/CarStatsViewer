@@ -40,7 +40,32 @@ object InAppLogger {
     }
 
     fun getLogString(): String {
-        val logFile = File(CarStatsViewer.appContext.filesDir, "InAppLogger.txt")
-        return "${logFile.readText()} v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
+        return try {
+            val logFile = File(CarStatsViewer.appContext.filesDir, "InAppLogger.txt")
+            "${logFile.readText()} v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
+        } catch (e: java.lang.Exception) {
+            resetLog()
+            log("Loading Log failed. It has been reset.\n${e.stackTraceToString()}")
+            ""
+        }
+    }
+
+    fun resetLog() {
+        val logFile = File(CarStatsViewer.appContext.filesDir,"InAppLogger.txt")
+        if (!logFile.exists()) {
+            try {
+                logFile.createNewFile()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        try {
+            BufferedWriter(FileWriter(logFile)).apply {
+                write("")
+                close()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
