@@ -26,6 +26,17 @@
         <item>Man8ck</item>
         <item>Björn Befuß</item>
         <item>Peter Füllhase</item>
+        <item>Lukas Bruckenberger</item>
+        <item>Stefan Süssenguth</item>
+    </string-array>
+
+    <string-array name="changes_0_24">
+        <item>Added multiple live data APIs:\n- ABRP OTA live data\n- HTTP Webhook with BasicAuth</item>
+        <item>Added location tracking and elevation history</item>
+        <item>Added restart notification after a reboot, update or app crash</item>
+        <item>Added vehicle setup</item>
+        <item>Restructured settings menu</item>
+        <item>Fixed main view units not updating</item>
     </string-array>
 
     <string-array name="changes_0_23">

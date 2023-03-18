@@ -33,6 +33,8 @@ Pleas let me now if you do not want to be listed in the supporters list.
  * Man8ck
  * Björn Befuß
  * Peter Füllhase
+ * Lukas Bruckenberger
+ * Stefan Süssenguth
 
 </details>
 

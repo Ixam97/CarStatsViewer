@@ -204,7 +204,7 @@ class MainActivity : Activity() {
                     dialog.cancel()
                 }
                 setTitle(getString(R.string.main_changelog_dialog_title, BuildConfig.VERSION_NAME))
-                val changesArray = resources.getStringArray(R.array.changes_0_23)
+                val changesArray = resources.getStringArray(R.array.changes_0_24)
                 var changelog = ""
                 for ((index, change) in changesArray.withIndex()) {
                     changelog += "• $change"
