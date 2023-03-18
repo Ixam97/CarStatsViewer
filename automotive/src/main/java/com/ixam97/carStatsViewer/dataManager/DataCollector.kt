@@ -281,7 +281,7 @@ class DataCollector : Service() {
 
         intent?.let {
             if (it.hasExtra("reason")) {
-                Toast.makeText(applicationContext, "Stats tracking service started in Background", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, getString(R.string.restart_toast_background), Toast.LENGTH_LONG).show()
             }
         }
 
@@ -633,7 +633,7 @@ class DataCollector : Service() {
 
     private fun updateStatsNotification() {
         if (notificationsEnabled && appPreferences.notifications) {
-            with(NotificationManagerCompat.from(this)) {
+            with(CarStatsViewer.notificationManager) {
                 val averageConsumption = CurrentTripDataManager.usedEnergy / (CurrentTripDataManager.traveledDistance/1000)
 
                 var averageConsumptionString = String.format("%d Wh/km", averageConsumption.toInt())
@@ -656,8 +656,8 @@ class DataCollector : Service() {
             }
         } else if (notificationsEnabled && !appPreferences.notifications) {
             notificationsEnabled = false
-            foregroundServiceNotification.setContentText(getString(R.string.foreground_service_info))
-            NotificationManagerCompat.from(this).notify(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
+            foregroundServiceNotification.setContentText("")
+            CarStatsViewer.notificationManager.notify(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
         } else if (!notificationsEnabled && appPreferences.notifications) {
             notificationsEnabled = true
         }

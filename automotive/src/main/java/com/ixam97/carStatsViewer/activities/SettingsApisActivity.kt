@@ -55,7 +55,8 @@ class SettingsApisActivity: Activity() {
                 appPreferences.smtpPassword = smtp_dialog_password.text.toString()
                 appPreferences.smtpServer = smtp_dialog_server.text.toString()
             }
-            setTitle("SMTP Login")
+            setTitle(getString(R.string.settings_apis_smtp))
+            setMessage(getString(R.string.smtp_description))
             setCancelable(true)
             create()
         }

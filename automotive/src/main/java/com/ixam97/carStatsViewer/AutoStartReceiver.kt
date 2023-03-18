@@ -22,6 +22,11 @@ import kotlinx.coroutines.launch
 
 class AutoStartReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
+        val reasonMap = mapOf(
+            "crash" to context.getString(R.string.restart_notification_reason_crash),
+            "reboot" to context.getString(R.string.restart_notification_reason_reboot),
+            "update" to context.getString(R.string.restart_notification_reason_update),
+        )
         var reason: String? = null
 
         intent?.let {
@@ -32,11 +37,11 @@ class AutoStartReceiver: BroadcastReceiver() {
                 return
             }
             reason = if (intent.hasExtra("reason")) {
-                intent.getStringExtra("reason")
+                reasonMap[intent.getStringExtra("reason")]
             } else {
                 when (intent.action) {
-                    Intent.ACTION_BOOT_COMPLETED -> "reboot"
-                    Intent.ACTION_MY_PACKAGE_REPLACED -> "update"
+                    Intent.ACTION_BOOT_COMPLETED -> reasonMap["reboot"]
+                    Intent.ACTION_MY_PACKAGE_REPLACED -> reasonMap["update"]
                     else -> "unknown event"
                 }
             }
@@ -45,8 +50,11 @@ class AutoStartReceiver: BroadcastReceiver() {
         InAppLogger.log("AutStartReceiver fired. Reason: $reason")
 
         val notificationText =
-            if (reason != null) "Car Stats Viewer has restarted after $reason."
-            else "Car Stats Viewer started in Background."
+            if (reason != null) {
+                context.getString(R.string.restart_notification_title,
+                    context.getString(R.string.app_name_short),
+                    reason)
+            } else "Car Stats Viewer started in Background."
 
         val actionServicePendingIntent = PendingIntent.getForegroundService(
             context.applicationContext,
@@ -77,24 +85,24 @@ class AutoStartReceiver: BroadcastReceiver() {
             CarStatsViewer.RESTART_CHANNEL_ID
         )
             .setContentTitle(notificationText)
-            .setContentText("Please restart foreground service for stats tracking.")
+            .setContentText(context.getString(R.string.restart_notification_message))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setOngoing(true)
 
         startupNotificationBuilder.apply {
             addAction(Notification.Action.Builder(
                     null,
-                    "Start service",
+                    context.getString(R.string.restart_notification_service),
                     actionServicePendingIntent
             ).build())
             addAction(Notification.Action.Builder(
                     null,
-                    "Start app",
+                context.getString(R.string.restart_notification_app),
                     actionActivityPendingIntent
             ).build())
             addAction(Notification.Action.Builder(
                     null,
-                    "Dismiss",
+                context.getString(R.string.restart_notification_dismiss),
                     actionDismissPendingIntent
             ).build())
         }

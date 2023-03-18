@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_font_size"
-        android:hint="Generic Token"
+        android:hint="@string/abrp_generic_token"
         android:inputType="text"/>
 
     <Switch
@@ -19,5 +19,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_font_size"
-        android:text="Use API" />
+        android:text="@string/settings_apis_use" />
 </LinearLayout>

@@ -21,7 +21,9 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 
 
-class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data_connection_broadcast") {
+class HttpLiveData (
+    var detailedLog : Boolean = false
+): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data_connection_broadcast") {
 
 
     private fun addBasicAuth(connection: HttpURLConnection, username: String, password: String) {
@@ -75,8 +77,8 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
                 AppPreferences(context).httpLiveDataPassword = password.text.toString()
             }
 
-            setTitle("HTTP Live Data")
-            setMessage("Enter HTTP URL and (optional) basic auth credentials to transmit live data to the specified URL.")
+            setTitle(context.getString(R.string.settings_apis_http))
+            setMessage(context.getString(R.string.http_description))
             setCancelable(true)
             create()
         }
@@ -100,8 +102,8 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
                 if (text == null || textView == null) {
                     return
                 }
-                if (!isValidURL(text)) {
-                    textView.error = "Invalid URL!";
+                if (!isValidURL(text) && text.isNotEmpty()) {
+                    textView.error = context.getString(R.string.http_invalid_url);
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
                     return
                 }
@@ -184,7 +186,8 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
             }
             responseCode = connection.responseCode
 
-            InAppLogger.log("JSON: ${connection.inputStream.bufferedReader().use {it.readText()}}")
+            if (detailedLog)
+                InAppLogger.log("JSON: ${connection.inputStream.bufferedReader().use {it.readText()}}")
             connection.inputStream.close()
             connection.disconnect()
 
@@ -198,7 +201,8 @@ class HttpLiveData (): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data
             return ConnectionStatus.ERROR
         }
 
-        InAppLogger.log("HTTP Live Data: Transmission succeeded")
+        if (detailedLog)
+            InAppLogger.log("HTTP Live Data: Transmission succeeded")
 
         return ConnectionStatus.CONNECTED
     }

@@ -22,7 +22,7 @@
         <TextView
             style="@style/title_text_style"
             android:layout_marginStart="0dp"
-            android:text="Main View"/>
+            android:text="@string/settings_main_view"/>
 
         <View
             android:layout_width="0dp"

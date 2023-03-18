@@ -121,8 +121,8 @@ class AbrpLiveData (
             setPositiveButton("OK") { dialog, _ ->
                 AppPreferences(context).abrpGenericToken = abrp_token.text.toString()
             }
-            setTitle("ABRP Generic Token")
-            setMessage("Enter ABRP Generic Token to transmit live data to the ABRP servers.")
+            setTitle(context.getString(R.string.settings_apis_abrp))
+            setMessage(context.getString(R.string.abrp_description))
             setCancelable(true)
             create()
         }
