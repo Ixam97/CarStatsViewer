@@ -58,7 +58,7 @@
 
                 <TextView
                     style="@style/menu_section_title_style"
-                    android:text="Allgemeine Einstellungen:"/>
+                    android:text="@string/settings_title_generic"/>
                 <View
                     style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>
@@ -79,14 +79,14 @@
                     android:background="?android:attr/listDivider"/>
                 <TextView
                     style="@style/menu_section_title_style"
-                    android:text="Sonstige Einstellungen:"/>
+                    android:text="@string/settings_title_misc"/>
                 <View
                     style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>
                 <TextView
                     android:id="@+id/settings_button_main_view"
                     style="@style/menu_button_row_style"
-                    android:text="Hauptansicht"
+                    android:text="@string/settings_main_view"
                     android:drawableStart="@drawable/ic_diagram" />
                 <View
                     style="@style/menu_divider_style"
@@ -94,7 +94,7 @@
                 <TextView
                     android:id="@+id/settings_button_vehicle"
                     style="@style/menu_button_row_style"
-                    android:text="Fahrzeug"
+                    android:text="@string/vehicle_title"
                     android:drawableStart="@drawable/ic_car"/>
                 <View
                     style="@style/menu_divider_style"

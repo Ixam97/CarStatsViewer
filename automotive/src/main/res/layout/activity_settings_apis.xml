@@ -61,31 +61,7 @@
 
                 <TextView
                     style="@style/menu_button_row_style"
-                    android:text="ABRP Generic Token"/>
-
-            </LinearLayout>
-
-            <View style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
-
-
-            <LinearLayout
-                android:id="@+id/settings_apis_http_live_data"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="@dimen/row_icon_width"
-                    android:layout_height="@dimen/std_icon_size"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitStart"
-                    android:src="@android:drawable/stat_notify_sync_noanim" />
-
-                <TextView
-                    style="@style/menu_button_row_style"
-                    android:text="HTTP Live Data" />
+                    android:text="@string/settings_apis_abrp"/>
 
             </LinearLayout>
 
@@ -93,9 +69,18 @@
                 android:background="?android:attr/listDivider"/>
 
             <TextView
+                android:id="@+id/settings_apis_http_live_data"
+                style="@style/menu_button_row_style"
+                android:drawableStart="@drawable/ic_webhook"
+                android:text="@string/settings_apis_http" />
+
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
                 android:id="@+id/settings_apis_smtp_login"
                 style="@style/menu_button_row_style"
-                android:text="@string/settings_apis_smtp_login"
+                android:text="@string/settings_apis_smtp"
                 android:drawableStart="@drawable/ic_mail"/>
 
             <View style="@style/menu_divider_style"

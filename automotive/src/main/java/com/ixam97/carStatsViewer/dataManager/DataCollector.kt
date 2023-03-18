@@ -15,10 +15,9 @@ import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.*
-import com.ixam97.carStatsViewer.activities.emulatorMode
+import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
-import com.ixam97.carStatsViewer.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
 import com.ixam97.carStatsViewer.plot.enums.*
@@ -33,6 +32,7 @@ import java.io.FileWriter
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
+import kotlin.system.exitProcess
 
 class DataCollector : Service() {
     companion object {
@@ -52,7 +52,6 @@ class DataCollector : Service() {
 
         var gagePowerValue: Float = 0F
         var gageConsValue: Float = 0F
-        var gageSoCValue: Int = 0
     }
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -81,7 +80,10 @@ class DataCollector : Service() {
     // private var location: Location? = null
 
     init {
+        InAppLogger.log("DataCollector is initializing...")
         startupTimestamp = System.nanoTime()
+        CarStatsViewer.foregroundServiceStarted = true
+        CarStatsViewer.notificationManager.cancel(CarStatsViewer.RESTART_NOTIFICATION_ID)
     }
 
     private val broadcastReceiver = object : BroadcastReceiver() {
@@ -123,8 +125,26 @@ class DataCollector : Service() {
     override fun onCreate() {
         super.onCreate()
 
+        InAppLogger.log("CSV Started!")
+
+        Thread.setDefaultUncaughtExceptionHandler { t, e ->
+            InAppLogger.log("Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val serviceIntent = Intent(applicationContext, AutoStartReceiver::class.java)
+            serviceIntent.action = "com.ixam97.carStatsViewer.RestartAction"
+            serviceIntent.putExtra("reason", "crash")
+            val pendingIntent = PendingIntent.getBroadcast(
+                applicationContext,
+                0,
+                serviceIntent,
+                PendingIntent.FLAG_ONE_SHOT
+            )
+            alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent)
+            exitProcess(0)
+        }
+
         locationClient = DefaultLocationClient(
-            this,
+            CarStatsViewer.appContext,
             LocationServices.getFusedLocationProviderClient(this)
         )
 
@@ -160,9 +180,9 @@ class DataCollector : Service() {
         //     // Wait for completed restore before doing anything
         // }
 
-        foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.CHANNEL_ID)
-            .setContentTitle(getString(R.string.app_name))
-            .setContentText(getString(R.string.foreground_service_info))
+        foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.FOREGROUND_CHANNEL_ID)
+            // .setContentTitle(getString(R.string.app_name))
+            .setContentTitle(getString(R.string.foreground_service_info))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setOngoing(true)
 
@@ -170,9 +190,7 @@ class DataCollector : Service() {
                 PendingIntent.getActivity(
                     applicationContext,
                     0,
-                    Intent(applicationContext, PermissionsActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP + Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    },
+                    Intent(applicationContext, MainActivity::class.java),
                     PendingIntent.FLAG_IMMUTABLE
                 )
             )
@@ -242,6 +260,7 @@ class DataCollector : Service() {
             }
             it.dataManager.consumptionPlotLine.baseLineAt.add(0f)
             it.dataManager.maxBatteryLevel = carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)
+            it.dataManager.model = carName
 
             driveStateUpdater(it.dataManager)
             speedUpdater(it.dataManager)
@@ -259,18 +278,15 @@ class DataCollector : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // InAppLogger.log("DataCollector.onStartCommand")
+
         intent?.let {
-            if (intent.hasExtra("reason")) {
-                when (intent.getStringExtra("reason")) {
-                    "crash" -> Toast.makeText(this, "Car Stats Viewer restarted after a crash", Toast.LENGTH_LONG).show()
-                    "update" -> Toast.makeText(this, "Car Stats Viewer restarted after an update", Toast.LENGTH_LONG).show()
-                    "reboot" -> Toast.makeText(this, "Car Stats Viewer restarted after a reboot", Toast.LENGTH_LONG).show()
-                }
+            if (it.hasExtra("reason")) {
+                Toast.makeText(applicationContext, getString(R.string.restart_toast_background), Toast.LENGTH_LONG).show()
             }
         }
 
-        startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
+        startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
+
         return START_NOT_STICKY
     }
 
@@ -619,7 +635,7 @@ class DataCollector : Service() {
 
     private fun updateStatsNotification() {
         if (notificationsEnabled && appPreferences.notifications) {
-            with(NotificationManagerCompat.from(this)) {
+            with(CarStatsViewer.notificationManager) {
                 val averageConsumption = CurrentTripDataManager.usedEnergy / (CurrentTripDataManager.traveledDistance/1000)
 
                 var averageConsumptionString = String.format("%d Wh/km", averageConsumption.toInt())
@@ -642,8 +658,8 @@ class DataCollector : Service() {
             }
         } else if (notificationsEnabled && !appPreferences.notifications) {
             notificationsEnabled = false
-            foregroundServiceNotification.setContentText(getString(R.string.foreground_service_info))
-            NotificationManagerCompat.from(this).notify(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
+            foregroundServiceNotification.setContentText("")
+            CarStatsViewer.notificationManager.notify(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
         } else if (!notificationsEnabled && appPreferences.notifications) {
             notificationsEnabled = true
         }

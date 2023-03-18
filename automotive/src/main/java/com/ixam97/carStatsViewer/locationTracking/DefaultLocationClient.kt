@@ -19,6 +19,7 @@ class DefaultLocationClient(
 ): LocationClient {
 
     var locationNotAvailable = true
+    var lastTimeStamp = 0L
 
     init {
         Geoid.init()
@@ -28,7 +29,7 @@ class DefaultLocationClient(
     @SuppressLint("MissingPermission")
     override fun getLocationUpdates(interval: Long): Flow<Location> {
         return callbackFlow {
-
+            InAppLogger.log("Setting up location client")
             if (!context.hasLocationPermission()) {
                 throw LocationClient.LocationException("Missing location permissions")
             }
@@ -39,14 +40,17 @@ class DefaultLocationClient(
 
             locationNotAvailable = !isGpsEnabled && !isNetworkEnabled
 
+            val request = LocationRequest.create()
+                .setInterval(interval)
+                .setFastestInterval(interval / 2)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setMaxWaitTime(interval)
+
+            InAppLogger.log("MaxWaitTime: ${request.maxWaitTime}")
+
             if (locationNotAvailable) {
                 throw LocationClient.LocationException("GPS is not enabled!")
             }
-
-            val request = LocationRequest.create()
-                .setInterval(interval)
-                .setFastestInterval(interval)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
 
             val locationCallback = object: LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
@@ -56,6 +60,10 @@ class DefaultLocationClient(
                             location.altitude -= Geoid.getOffset(
                                 org.matthiaszimmermann.location.Location(location.latitude, location.longitude)
                             )
+                            if (location.time > lastTimeStamp + 5_000) {
+                                InAppLogger.log("LocationClient: Interval exceeded!")
+                            }
+                            lastTimeStamp = location.time
                             launch { send(location) }
                         } else {
                             InAppLogger.log("LocationClient has returned altitude of 0m")

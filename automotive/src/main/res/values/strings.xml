@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Car Stats Viewer (Dev)</string>
+    <string name="app_name_short" translatable="false">CSV (Dev)</string>
 
     <!-- About -->
     <string name="readme_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/blob/master/README.md</string>
@@ -42,8 +43,16 @@
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
 
-    <string name="toast_started_in_background">Car Stats Viewer started in background</string>
-    <string name="toast_crashed">Car Stats Viewer has crashed and will attempt a restart</string>
+    <!-- Restart Dialog -->
+    <string name="restart_notification_title">%s has restarted after %s.</string>
+    <string name="restart_notification_reason_crash">a crash</string>
+    <string name="restart_notification_reason_reboot">a reboot</string>
+    <string name="restart_notification_reason_update">an update</string>
+    <string name="restart_notification_message">Please restart service for statistics tracking.</string>
+    <string name="restart_notification_dismiss">Dismiss</string>
+    <string name="restart_notification_app">Start app</string>
+    <string name="restart_notification_service">Start service</string>
+    <string name="restart_toast_background">Statistics tracking service started in background</string>
 
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Permissions required for use</string>
@@ -102,15 +111,18 @@
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
+    <string name="settings_title_generic">Generic settings:</string>
+    <string name="settings_title_misc">Miscellaneous settings:</string>
     <string name="settings_button_back">Back</string>
     <string name="settings_button_quit">Quit app</string>
-    <string name="settings_notifications">Notifications</string>
-    <string name="settings_consumption_unit">Wh/km as consumption unit</string>
+    <string name="settings_notifications">Detailed notification</string>
+    <string name="settings_consumption_unit">Wh/distance as consumption unit</string>
     <string name="settings_distance_unit">Miles as distance unit</string>
     <string name="settings_debug">Debug information</string>
+    <string name="settings_main_view">Main view</string>
     <string name="settings_experimental_layout">Show experimental Layout</string>
-    <string name="settings_consumption_plot">Consumption view</string>
-    <string name="settings_charge_plot">Charge view</string>
+    <string name="settings_consumption_plot">Consumption view:</string>
+    <string name="settings_charge_plot">Charge view:</string>
     <string name="settings_about">About Car Stats Viewer</string>
     <string name="settings_plot_secondary_color">Gray as secondary plot color</string>
     <string name="settings_plot_state_of_charge_dimension">Experimental State Of Charge Axis</string>
@@ -122,12 +134,42 @@
     <string name="settings_sub_title_last_charge_plot">Last charging curves:</string>
     <string name="settings_select_trip">Trip in main view:</string>
     <string name="settings_apis_title">API settings</string>
-    <string name="settings_apis_smtp_login">SMTP login credentials</string>
-
+    <string name="settings_apis_abrp">ABRP Live Data</string>
+    <string name="settings_apis_http">HTTP Webhook</string>
+    <string name="settings_apis_smtp">SMTP Login</string>
+    <string name="settings_apis_use">Use API</string>
+    
+    <!-- ABRP -->
+    <string name="abrp_description">Enter an ABRP generic token to transmit over-the-air live data to the ABRP servers. This includes location data if not disabled.</string>
+    <string name="abrp_generic_token">Generic token</string>
+    
+    <!-- HTTP -->
+    <string name="http_description">Enter HTTP URL and (optional) basic auth credentials to transmit live data to the specified URL. Uses POST request with JSON content. This includes location data if not disabled.</string>
+    <string name="http_username">BasicAuth username</string>
+    <string name="http_password">BasicAuth password</string>
+    <string name="http_invalid_url">Invalid URL!</string>
+    
+    <!-- SMTP -->
+    <string name="smtp_description">Enter your SMTP credentials given by your E-Mail provider. This is used to send saved statistics and debug logs to a target address specified by the user.</string>
+    <string name="smtp_address">E-Mail address</string>
+    <string name="smtp_password">E-Mail password</string>
+    <string name="smtp_server">SMTP server URL</string>
+    <string name="smtp_port">SMTP server port</string>
+    <string name="smtp_use_STARTTLS">Use STARTTLS</string>
+    
     <string name="CurrentTripData">Manual trip</string>
     <string name="SinceChargeData">Since last charge</string>
     <string name="AutoTripData">Automatic trip</string>
     <string name="CurrentMonthData">Current month</string>
+
+    <!-- Vehicle Setup -->
+    <string name="vehicle_title">Vehicle setup</string>
+    <string name="vehicle_my">Modell year</string>
+    <string name="vehicle_drivetrain">Drive train</string>
+    <string name="vehicle_plus">Plus package</string>
+    <string name="vehicle_performance">Performance upgrade</string>
+    <string name="vehicle_bst">BST Edition</string>
+    <string name="vehicle_launch">Launch Edition</string>
 
     <!-- AboutActivity -->
     <string name="about_title">About Car Stats Viewer</string>
@@ -162,6 +204,6 @@
 
     <!-- Notifications -->
     <string name="notification_title">Current stats:</string>
-    <string name="foreground_service_info">Data collection service running</string>
+    <string name="foreground_service_info">Statistics tracking service running</string>
     <string name="toast_file_read_error">Error reading trip file</string>
 </resources>

@@ -18,14 +18,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_font_size"
-        android:hint="BasicAuth Username"
+        android:hint="@string/http_username"
         android:inputType="text"/>
 
     <EditText
         android:id="@+id/http_live_data_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="BasicAuth Password"
+        android:hint="@string/http_password"
         android:inputType="textPassword"
         android:textSize="@dimen/std_font_size" />
 
@@ -35,5 +35,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_font_size"
-        android:text="Use API" />
+        android:text="@string/settings_apis_use" />
 </LinearLayout>
