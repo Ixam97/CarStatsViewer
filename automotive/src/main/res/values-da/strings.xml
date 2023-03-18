@@ -4,6 +4,7 @@
     <string name="permissions_dialog_text">Denne app kræver tilladelser for at blive brugt. Uden de påkrævede tilladelser kan appen ikke læse data fra bilen.</string>
     <string name="permissions_dialog_quit">Afslut Car Stats Viewer</string>
     <string name="permissions_dialog_grant">Giv tilladelse</string>
+    <string name="plot_dimensionY_SPEED">Hastighed</string>
     <string name="main_port_connected">Ladeport forbundet:</string>
     <string name="main_current_power">Nuværende strømforbrug:</string>
     <string name="main_used_energy">Brugt energi:</string>

@@ -548,7 +548,7 @@ class DataCollector : Service() {
         addChargeDataPoint(PlotLineMarkerType.END_SESSION, dataManager = dataManager)
 
         val chargeCurve = ChargeCurve(
-            dataManager.chargePlotLine.getDataPoints(PlotDimension.TIME),
+            dataManager.chargePlotLine.getDataPoints(PlotDimensionX.TIME),
             dataManager.chargeTime,
             dataManager.chargedEnergy,
             dataManager.ambientTemperature,
@@ -579,12 +579,13 @@ class DataCollector : Service() {
             dataManager.CurrentPower.timestamp,
             dataManager.traveledDistance,
             dataManager.stateOfCharge.toFloat(),
+            dataManager.location?.altitude?.toFloat(),
             plotLineMarkerType = plotLineMarkerType,
             autoMarkerTimeDeltaThreshold = CHARGE_PLOT_MARKER_THRESHOLD_NANOS
         )
 
-        if (dataManager.chargePlotLine.getDataPoints(PlotDimension.TIME).last().Marker == PlotLineMarkerType.BEGIN_SESSION) {
-            val timeSpan = dataManager.chargePlotLine.getDataPoints(PlotDimension.TIME).last().EpochTime - dataManager.chargePlotLine.getDataPoints(PlotDimension.TIME).first().EpochTime
+        if (dataManager.chargePlotLine.getDataPoints(PlotDimensionX.TIME).last().Marker == PlotLineMarkerType.BEGIN_SESSION) {
+            val timeSpan = dataManager.chargePlotLine.getDataPoints(PlotDimensionX.TIME).last().EpochTime - dataManager.chargePlotLine.getDataPoints(PlotDimensionX.TIME).first().EpochTime
             dataManager.ChargeTime.reset()
             dataManager.ChargeTime.restore(timeSpan)
             dataManager.ChargeTime.start()
@@ -598,6 +599,7 @@ class DataCollector : Service() {
             dataManager.CurrentSpeed.timestamp,
             dataManager.traveledDistance,
             dataManager.stateOfCharge.toFloat(),
+            dataManager.location?.altitude?.toFloat(),
             plotLineMarkerType = plotLineMarkerType
         )
     }

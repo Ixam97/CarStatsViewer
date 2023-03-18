@@ -7,9 +7,8 @@ import android.location.Location
 import android.util.Log
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import com.ixam97.carStatsViewer.plot.enums.PlotDimension
+import com.ixam97.carStatsViewer.plot.enums.PlotDimensionX
 import com.ixam97.carStatsViewer.plot.enums.PlotHighlightMethod
-import com.ixam97.carStatsViewer.plot.enums.PlotLabelPosition
 import com.ixam97.carStatsViewer.plot.enums.PlotLineLabelFormat
 import com.ixam97.carStatsViewer.plot.objects.*
 import java.util.Date
@@ -112,7 +111,6 @@ class DataManager(val printableName: String) {
         PlotLineConfiguration(
             PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
             PlotLineLabelFormat.NUMBER,
-            PlotLabelPosition.LEFT,
             PlotHighlightMethod.AVG_BY_DISTANCE,
             "Wh/km"
         ),
@@ -122,7 +120,6 @@ class DataManager(val printableName: String) {
         PlotLineConfiguration(
             PlotRange(0f, 20f, 0f, 160f, 20f),
             PlotLineLabelFormat.FLOAT,
-            PlotLabelPosition.LEFT,
             PlotHighlightMethod.AVG_BY_TIME,
             "kW"
         ),
@@ -205,8 +202,8 @@ class DataManager(val printableName: String) {
             chargeTime = chargeTime,
             markers = plotMarkers.markers.toList(),
             chargeCurves = chargeCurves.toList(),
-            consumptionPlotLine = consumptionPlotLine.getDataPoints(PlotDimension.DISTANCE).toList(),
-            chargePlotLine = chargePlotLine.getDataPoints(PlotDimension.TIME).toList()
+            consumptionPlotLine = consumptionPlotLine.getDataPoints(PlotDimensionX.DISTANCE).toList(),
+            chargePlotLine = chargePlotLine.getDataPoints(PlotDimensionX.TIME).toList()
         )
         set(value) {
             tripStartDate = value?.tripStartDate?: Date()

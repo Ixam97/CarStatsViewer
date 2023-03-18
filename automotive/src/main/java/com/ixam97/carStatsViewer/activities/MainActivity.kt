@@ -117,20 +117,7 @@ class MainActivity : Activity() {
         main_charge_gage.barVisibility = appPreferences.chargePlotVisibleGages
 
         main_checkbox_speed.isChecked = appPreferences.plotSpeed
-        main_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
-            1 -> {
-                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.main_speed))
-                PlotSecondaryDimension.SPEED
-            }
-            2 -> {
-                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
-                PlotSecondaryDimension.STATE_OF_CHARGE
-            }
-            else -> {
-                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
-                null
-            }
-        }
+        main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[appPreferences.secondaryConsumptionDimension]
 
         main_consumption_plot.invalidate()
 
@@ -342,39 +329,22 @@ class MainActivity : Activity() {
         main_consumption_plot.reset()
         main_consumption_plot.addPlotLine(selectedDataManager.consumptionPlotLine, consumptionPlotLinePaint)
 
-        main_button_secondary_dimension.text = "Toggle secondary dimension"
-
-        main_consumption_plot.dimension = PlotDimension.DISTANCE
+        main_consumption_plot.dimension = PlotDimensionX.DISTANCE
         main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(CONSUMPTION_DISTANCE_RESTRICTION)
         main_consumption_plot.dimensionSmoothing = 0.02f
         main_consumption_plot.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
         main_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
-        main_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
-            1 -> {
-                main_button_secondary_dimension.text =
-                    getString(R.string.main_secondary_axis, getString(R.string.main_speed))
-                PlotSecondaryDimension.SPEED
-            }
-            2 -> {
-                main_button_secondary_dimension.text =
-                    getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
-                PlotSecondaryDimension.STATE_OF_CHARGE
-            }
-            else -> {
-                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
-                null
-            }
-        }
+        main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[appPreferences.secondaryConsumptionDimension]
 
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
         main_charge_plot.addPlotLine(DataManagers.CURRENT_TRIP.dataManager.chargePlotLine, chargePlotLinePaint)
 
-        main_charge_plot.dimension = PlotDimension.TIME
+        main_charge_plot.dimension = PlotDimensionX.TIME
         main_charge_plot.dimensionRestriction = null
         main_charge_plot.sessionGapRendering = PlotSessionGapRendering.GAP
-        main_charge_plot.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
+        main_charge_plot.dimensionYSecondary = PlotDimensionY.STATE_OF_CHARGE
         main_charge_plot.invalidate()
 
         main_power_gage.gageName = getString(R.string.main_gage_power)
@@ -444,27 +414,21 @@ class MainActivity : Activity() {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
-        main_button_secondary_dimension.setOnClickListener {
-            var currentIndex = appPreferences.secondaryConsumptionDimension
-            currentIndex++
-            if (currentIndex > 2) currentIndex = 0
-            appPreferences.secondaryConsumptionDimension = currentIndex
-            main_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
-                1 -> {
-                    main_button_secondary_dimension.text =
-                        getString(R.string.main_secondary_axis, getString(R.string.main_speed))
-                    PlotSecondaryDimension.SPEED
-                }
-                2 -> {
-                    main_button_secondary_dimension.text =
-                        getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
-                    PlotSecondaryDimension.STATE_OF_CHARGE
-                }
-                else -> {
-                    main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
-                    null
-                }
+        main_dimension_y_secondary.entries = arrayListOf<String>().apply {
+            PlotDimensionY.IndexMap.forEach {
+                val id = resources.getIdentifier("plot_dimensionY_" + (it.value?.name?:"CONSUMPTION"), "string", packageName)
+                add(
+                    when (id != 0) {
+                        true -> getString(id)
+                        else -> (it.value?.name?:"-")
+                    }
+                )
             }
+        }
+        main_dimension_y_secondary.selectedIndex = appPreferences.secondaryConsumptionDimension
+        main_dimension_y_secondary.setOnIndexChangedListener {
+            appPreferences.secondaryConsumptionDimension = main_dimension_y_secondary.selectedIndex
+            main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[main_dimension_y_secondary.selectedIndex]
         }
 
         main_button_summary.setOnClickListener {
