@@ -16,7 +16,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.activities.MainActivity
-import com.ixam97.carStatsViewer.activities.emulatorMode
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
@@ -53,7 +52,6 @@ class DataCollector : Service() {
 
         var gagePowerValue: Float = 0F
         var gageConsValue: Float = 0F
-        var gageSoCValue: Int = 0
     }
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -82,7 +80,10 @@ class DataCollector : Service() {
     // private var location: Location? = null
 
     init {
+        InAppLogger.log("DataCollector is initializing...")
         startupTimestamp = System.nanoTime()
+        CarStatsViewer.foregroundServiceStarted = true
+        CarStatsViewer.notificationManager.cancel(CarStatsViewer.RESTART_NOTIFICATION_ID)
     }
 
     private val broadcastReceiver = object : BroadcastReceiver() {
@@ -124,16 +125,19 @@ class DataCollector : Service() {
     override fun onCreate() {
         super.onCreate()
 
+        InAppLogger.log("CSV Started!")
+
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
             InAppLogger.log("Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
             val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            val serviceIntent = Intent(applicationContext, DataCollector::class.java)
+            val serviceIntent = Intent(applicationContext, AutoStartReceiver::class.java)
+            serviceIntent.action = "com.ixam97.carStatsViewer.RestartAction"
             serviceIntent.putExtra("reason", "crash")
-            val pendingIntent = PendingIntent.getForegroundService(
+            val pendingIntent = PendingIntent.getBroadcast(
                 applicationContext,
                 0,
                 serviceIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_ONE_SHOT
             )
             alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent)
             exitProcess(0)
@@ -176,9 +180,9 @@ class DataCollector : Service() {
         //     // Wait for completed restore before doing anything
         // }
 
-        foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.CHANNEL_ID)
-            .setContentTitle(getString(R.string.app_name))
-            .setContentText(getString(R.string.foreground_service_info))
+        foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.FOREGROUND_CHANNEL_ID)
+            // .setContentTitle(getString(R.string.app_name))
+            .setContentTitle(getString(R.string.foreground_service_info))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setOngoing(true)
 
@@ -274,18 +278,15 @@ class DataCollector : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // InAppLogger.log("DataCollector.onStartCommand")
+
         intent?.let {
-            if (intent.hasExtra("reason")) {
-                when (intent.getStringExtra("reason")) {
-                    "crash" -> Toast.makeText(this, "Car Stats Viewer restarted after a crash", Toast.LENGTH_LONG).show()
-                    "update" -> Toast.makeText(this, "Car Stats Viewer restarted after an update", Toast.LENGTH_LONG).show()
-                    "reboot" -> Toast.makeText(this, "Car Stats Viewer restarted after a reboot", Toast.LENGTH_LONG).show()
-                }
+            if (it.hasExtra("reason")) {
+                Toast.makeText(applicationContext, "Stats tracking service started in Background", Toast.LENGTH_LONG).show()
             }
         }
 
-        startForeground(FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
+        startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
+
         return START_NOT_STICKY
     }
 

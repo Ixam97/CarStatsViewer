@@ -2,30 +2,33 @@ package com.ixam97.carStatsViewer
 
 import android.app.*
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.util.TypedValue
-import com.ixam97.carStatsViewer.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.dataManager.DataCollector
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveData.http.HttpLiveData
-import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlin.properties.Delegates
 
+var emulatorMode = false
+var emulatorPowerSign = -1
 
 class CarStatsViewer : Application() {
 
     companion object {
-        const val CHANNEL_ID = "TestChannel"
-        lateinit var appContext: Context
-        // lateinit var abrpLiveData: LiveDataApiInterface
+        const val RESTART_CHANNEL_ID = "RestartChannel"
+        const val RESTART_NOTIFICATION_ID = 1
+        const val FOREGROUND_CHANNEL_ID = "ForegroundChannel"
+        const val FOREGROUND_NOTIFICATION_ID = 2
 
+        lateinit var appContext: Context
         lateinit var liveDataApis: ArrayList<LiveDataApi>
         lateinit var appPreferences: AppPreferences
+        lateinit var notificationManager: NotificationManager
         var primaryColor by Delegates.notNull<Int>()
         var disabledAlpha by Delegates.notNull<Float>()
+
+        var foregroundServiceStarted = false
+        var restartNotificationDismissed = false
     }
 
     override fun onCreate() {
@@ -51,36 +54,37 @@ class CarStatsViewer : Application() {
             getString(resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName))
         } else ""
 
-        /*
-        Add live data APIs here
-         */
         liveDataApis = arrayListOf(
             AbrpLiveData(abrpApiKey),
             HttpLiveData()
         )
-        // abrpLiveData = AbrpLiveData(abrpApiKey)
 
-        createNotificationChannel()
+        notificationManager = createNotificationManager()
 
-        if (PermissionsActivity.PERMISSIONS.all {
-                val granted = applicationContext.checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED
-                if (granted) InAppLogger.log("$it granted") else InAppLogger.log("$it denied")
-                granted
-
-            }
-        ) {
-            startForegroundService(Intent(applicationContext, DataCollector::class.java))
-        }
     }
 
-    fun createNotificationChannel() {
-        val name = "TestChannel"
-        val descriptionText = "TestChannel"
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-            description = descriptionText
-        }
+    private fun createNotificationManager(): NotificationManager {
         val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
+        val restartChannel = NotificationChannel(
+            RESTART_CHANNEL_ID,
+            RESTART_CHANNEL_ID,
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = RESTART_CHANNEL_ID
+        }
+
+        val foregroundChannel = NotificationChannel(
+            FOREGROUND_CHANNEL_ID,
+            FOREGROUND_CHANNEL_ID,
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = FOREGROUND_CHANNEL_ID
+        }
+
+        notificationManager.createNotificationChannels(listOf(
+            restartChannel,
+            foregroundChannel
+        ))
+        return notificationManager
     }
 }

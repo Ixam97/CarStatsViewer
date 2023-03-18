@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.dataManager.DataCollector
 import kotlin.system.exitProcess
 
 class PermissionsActivity: Activity() {
@@ -23,7 +22,6 @@ class PermissionsActivity: Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         if (checkPermissions()){
             finish()
             startActivity(Intent(applicationContext, MainActivity::class.java))
@@ -40,7 +38,6 @@ class PermissionsActivity: Activity() {
 
         if (unGrantedPermissions().isEmpty()) {
             finish()
-            startForegroundService(Intent(applicationContext, DataCollector::class.java))
             startActivity(Intent(applicationContext, MainActivity::class.java))
         } else {
             val builder = AlertDialog.Builder(this)

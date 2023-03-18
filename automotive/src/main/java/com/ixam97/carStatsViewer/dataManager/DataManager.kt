@@ -55,7 +55,7 @@ class DataManager(val printableName: String) {
     /** Current speed in m/s */
     val currentSpeed get() = ((CurrentSpeed.value?: 0F) as Float).absoluteValue
     /** Current power in mW */
-    val currentPower get() = com.ixam97.carStatsViewer.activities.emulatorPowerSign * (CurrentPower.value ?: 0F) as Float
+    val currentPower get() = com.ixam97.carStatsViewer.emulatorPowerSign * (CurrentPower.value ?: 0F) as Float
     /** Current gear selection */
     val currentGear get() = (CurrentGear.value?: 0) as Int
     /** Connection status of the charge port */

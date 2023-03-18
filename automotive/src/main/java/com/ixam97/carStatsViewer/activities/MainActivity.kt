@@ -37,9 +37,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
-var emulatorMode = false
-var emulatorPowerSign = -1
-
 class MainActivity : Activity() {
     companion object {
         private const val UI_UPDATE_INTERVAL = 1000L
@@ -53,9 +50,7 @@ class MainActivity : Activity() {
     private lateinit var chargePlotLinePaint : PlotLinePaint
 
     private lateinit var timerHandler: Handler
-    private lateinit var starterIntent: Intent
     private lateinit var context: Context
-    // private lateinit var appPreferences: AppPreferences
 
     private var selectedDataManager = DataManagers.CURRENT_TRIP.dataManager
 
@@ -94,8 +89,6 @@ class MainActivity : Activity() {
             startActivity(intent)
             overridePendingTransition(0, 0)
         }
-
-        // InAppLogger.log("MainActivity.onResume")
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
@@ -139,16 +132,6 @@ class MainActivity : Activity() {
             }
         }
 
-        /* when (appPreferences.plotSpeed) {
-            true -> PlotSecondaryDimension.SPEED
-            else -> null
-        }
-
-        main_button_secondary_dimension.text = when {
-            main_consumption_plot.secondaryDimension != null -> getString(R.string.main_button_hide_speed)
-            else -> getString(R.string.main_button_show_speed)
-        }*/
-
         main_consumption_plot.invalidate()
 
         enableUiUpdates()
@@ -156,7 +139,7 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // InAppLogger.log("MainActivity.onCreate")
+        startForegroundService(Intent(applicationContext, DataCollector::class.java))
 
         context = applicationContext
         val displayMetrics = context.resources.displayMetrics
@@ -186,8 +169,6 @@ class MainActivity : Activity() {
         InAppLogger.log("selected Trip: ${selectedDataManager.printableName}")
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
-
-        // startForegroundService(Intent(this, DataCollector::class.java))
 
         DataCollector.mainActivityPendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_IMMUTABLE
@@ -242,19 +223,16 @@ class MainActivity : Activity() {
         super.onDestroy()
         disableUiUpdates()
         unregisterReceiver(broadcastReceiver)
-        // InAppLogger.log("MainActivity.onDestroy")
     }
 
     override fun onPause() {
         super.onPause()
         disableUiUpdates()
-        // InAppLogger.log("MainActivity.onPause")
     }
 
     /** Private functions */
 
     private fun updateActivity() {
-        // InAppLogger.logUIUpdate()
         /** Use data from DataManager to Update MainActivity text */
 
         DataCollector.gagePowerValue = selectedDataManager.currentPower
@@ -325,12 +303,9 @@ class MainActivity : Activity() {
         main_power_gage.invalidate()
         main_charge_gage.invalidate()
         main_SoC_gage.invalidate()
-        // Log.i("Gages", "updated")
     }
 
     private fun updatePlots(){
-        // if (appPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
-
         main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(selectedDataManager.chargeTime) / 5) + 1) * 5 + 1
 
         if (SystemClock.elapsedRealtime() - lastPlotUpdate > 1_000L) {
@@ -358,14 +333,6 @@ class MainActivity : Activity() {
             }
             else -> main_icon_abrp_status.visibility = View.GONE
         }
-    }
-
-    private fun resetStats() {
-        finish()
-        startActivity(intent)
-        // InAppLogger.log("MainActivity.resetStats")
-        selectedDataManager.reset()
-        sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
     }
 
     private fun setupDefaultUi() {
@@ -498,17 +465,6 @@ class MainActivity : Activity() {
                     null
                 }
             }
-            //main_consumption_plot.secondaryDimension = when (main_consumption_plot.secondaryDimension) {
-            //    null -> PlotSecondaryDimension.SPEED
-            //    else -> null
-            //}
-            //
-            //appPreferences.plotSpeed = main_consumption_plot.secondaryDimension != null
-            //main_consumption_plot.invalidate()
-            //main_button_speed.text = when {
-            //    main_consumption_plot.secondaryDimension != null -> getString(R.string.main_button_hide_speed)
-            //    else -> getString(R.string.main_button_show_speed)
-            //}
         }
 
         main_button_summary.setOnClickListener {
