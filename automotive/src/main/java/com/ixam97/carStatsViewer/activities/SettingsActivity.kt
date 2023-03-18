@@ -64,6 +64,8 @@ class SettingsActivity : Activity() {
     private fun setupSettingsMaster() {
         settings_switch_notifications.isChecked = appPreferences.notifications
         settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
+        settings_switch_use_location.isChecked = appPreferences.useLocation
+        settings_switch_autostart.isChecked = appPreferences.autostart
         settings_switch_distance_unit.isChecked = appPreferences.distanceUnit == DistanceUnitEnum.MILES
 
         settings_version_text.text = "Car Stats Viewer Version %s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
@@ -97,6 +99,14 @@ class SettingsActivity : Activity() {
 
         settings_switch_consumption_unit.setOnClickListener {
             appPreferences.consumptionUnit = settings_switch_consumption_unit.isChecked
+        }
+
+        settings_switch_use_location.setOnClickListener {
+            appPreferences.useLocation = settings_switch_use_location.isChecked
+        }
+
+        settings_switch_autostart.setOnClickListener {
+            appPreferences.autostart = settings_switch_autostart.isChecked
         }
 
         if (emulatorMode) settings_switch_distance_unit.visibility = View.VISIBLE

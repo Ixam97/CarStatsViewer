@@ -77,6 +77,20 @@
                 <View
                     style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>
+                <Switch
+                    android:id="@+id/settings_switch_use_location"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_use_location"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+                <Switch
+                    android:id="@+id/settings_switch_autostart"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_autostart"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
                 <TextView
                     style="@style/menu_section_title_style"
                     android:text="@string/settings_title_misc"/>

@@ -6,6 +6,7 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Looper
 import com.google.android.gms.location.*
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -27,7 +28,7 @@ class DefaultLocationClient(
     }
 
     @SuppressLint("MissingPermission")
-    override fun getLocationUpdates(interval: Long): Flow<Location> {
+    override fun getLocationUpdates(interval: Long): Flow<Location?> {
         return callbackFlow {
             InAppLogger.log("Setting up location client")
             if (!context.hasLocationPermission()) {
@@ -56,19 +57,22 @@ class DefaultLocationClient(
                 override fun onLocationResult(locationResult: LocationResult) {
                     super.onLocationResult(locationResult)
                     locationResult.locations.lastOrNull()?.let { location ->
-                        if (location.altitude > 0 || location.altitude < 0) {
-                            location.altitude -= Geoid.getOffset(
-                                org.matthiaszimmermann.location.Location(location.latitude, location.longitude)
-                            )
-                            if (location.time > lastTimeStamp + 5_000) {
-                                InAppLogger.log("LocationClient: Interval exceeded!")
+                        if (CarStatsViewer.appPreferences.useLocation) {
+                            if (location.altitude > 0 || location.altitude < 0) {
+                                location.altitude -= Geoid.getOffset(
+                                    org.matthiaszimmermann.location.Location(location.latitude, location.longitude)
+                                )
+                                if (location.time > lastTimeStamp + 5_000) {
+                                    InAppLogger.log("LocationClient: Interval exceeded!")
+                                }
+                                lastTimeStamp = location.time
+                                launch { send(location) }
+                            } else {
+                                InAppLogger.log("LocationClient has returned altitude of 0m")
                             }
-                            lastTimeStamp = location.time
-                            launch { send(location) }
                         } else {
-                            InAppLogger.log("LocationClient has returned altitude of 0m")
+                            launch { send(null) }
                         }
-
                     }
                 }
             }

@@ -10,7 +10,6 @@ import android.content.*
 import android.os.*
 import android.util.Log
 import android.widget.Toast
-import androidx.core.app.NotificationManagerCompat
 import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -76,8 +75,6 @@ class DataCollector : Service() {
     private lateinit var liveDataTimerHandler: Handler
 
     private lateinit var foregroundServiceNotification: Notification.Builder
-
-    // private var location: Location? = null
 
     init {
         InAppLogger.log("DataCollector is initializing...")
@@ -157,7 +154,9 @@ class DataCollector : Service() {
                 enumValues<DataManagers>().forEach {
                     it.dataManager.location = location
                 }
-                InAppLogger.log("Location: lat: %.5f, lon: %.5f, alt: %.2fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
+                if (location != null) {
+                    InAppLogger.log("Location: lat: %.5f, lon: %.5f, alt: %.2fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
+                }
             }
             .launchIn(serviceScope)
 

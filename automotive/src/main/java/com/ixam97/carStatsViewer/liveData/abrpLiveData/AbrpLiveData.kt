@@ -92,7 +92,7 @@ class AbrpLiveData (
 
         } catch (e: java.lang.Exception) {
             InAppLogger.log("ABRP API: Network connection error")
-            return ConnectionStatus.UNUSED
+            return ConnectionStatus.ERROR
         }
         if (responseCode == 200) {
             return ConnectionStatus.CONNECTED

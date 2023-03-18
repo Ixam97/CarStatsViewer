@@ -43,8 +43,13 @@ class MultiSelectWidget @JvmOverloads constructor(context: Context, private val 
                 field = if (value >= entries.size) entries.size - 1 else if (value < 0) 0 else value
                 try {
                     selectedView.text = entries[selectedIndex]
-                    barLayout.children.forEach { it.setBackgroundColor(secondaryColor) }
-                    barLayout.getChildAt(selectedIndex).setBackgroundColor(primaryColor)
+                    barLayout.children.forEach {
+                        it.alpha = 1f
+                        it.setBackgroundColor(secondaryColor) }
+                    barLayout.getChildAt(selectedIndex).apply {
+                        setBackgroundColor(primaryColor)
+                        if (!isEnabled) alpha = CarStatsViewer.disabledAlpha
+                    }
                 } finally {
                     invalidate()
                 }
@@ -63,6 +68,7 @@ class MultiSelectWidget @JvmOverloads constructor(context: Context, private val 
         titleView.alpha = enabledAlpha
         leftButton.alpha = enabledAlpha
         rightButton.alpha = enabledAlpha
+        barLayout.getChildAt(selectedIndex).alpha = enabledAlpha
         this.invalidate()
     }
 

@@ -26,4 +26,6 @@
     <string name="preference_log_target_address_key" translatable="false">preference_log_target_address</string>
     <string name="preference_log_user_name_key" translatable="false">preference_log_user_name</string>
     <string name="preference_version_key" translatable="false">preference_version</string>
+    <string name="preference_use_location_key" translatable="false">preference_use_location</string>
+    <string name="preference_autostart_key" translatable="false">preference_autostart</string>
 </resources>

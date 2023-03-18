@@ -2,40 +2,70 @@ package com.ixam97.carStatsViewer.activities
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.EditText
-import com.ixam97.carStatsViewer.CarStatsViewer.Companion.liveDataApis
+import android.widget.ImageView
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import kotlinx.android.synthetic.main.activity_settings_apis.*
 
 class SettingsApisActivity: Activity() {
 
-    lateinit var appPreferences: AppPreferences
+    val appPreferences = CarStatsViewer.appPreferences
+
+    lateinit var abrpIcon: ImageView
+
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            when (intent.action) {
+                CarStatsViewer.liveDataApis[0].broadcastAction -> {
+                    updateStatus(abrpIcon, CarStatsViewer.liveDataApis[0].connectionStatus)
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateStatus(abrpIcon, CarStatsViewer.liveDataApis[0].connectionStatus)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(broadcastReceiver)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_settings_apis)
 
-        appPreferences = AppPreferences(this)
+        abrpIcon = findViewById(R.id.abrp_connection)
 
         settings_apis_button_back.setOnClickListener {
             finish()
         }
 
         settings_apis_abrp_token.setOnClickListener {
-            liveDataApis[0].showSettingsDialog(this@SettingsApisActivity)
+            CarStatsViewer.liveDataApis[0].showSettingsDialog(this@SettingsApisActivity)
         }
 
         settings_apis_http_live_data.setOnClickListener {
-            liveDataApis[1].showSettingsDialog(this@SettingsApisActivity)
+            CarStatsViewer.liveDataApis[1].showSettingsDialog(this@SettingsApisActivity)
         }
 
         settings_apis_smtp_login.setOnClickListener {
             showSmtpLoginDialog()
         }
+
+        registerReceiver(broadcastReceiver, IntentFilter(CarStatsViewer.liveDataApis[0].broadcastAction))
     }
 
     private fun showSmtpLoginDialog() {
@@ -61,5 +91,22 @@ class SettingsApisActivity: Activity() {
             create()
         }
         credentialsDialog.show()
+    }
+
+    private fun updateStatus(icon: ImageView, status: LiveDataApi.ConnectionStatus) {
+        when (status) {
+            LiveDataApi.ConnectionStatus.CONNECTED -> {
+                icon.setColorFilter(getColor(R.color.connected_blue))
+                icon.alpha = 1f
+            }
+            LiveDataApi.ConnectionStatus.ERROR -> {
+                icon.setColorFilter(getColor(R.color.bad_red))
+                icon.alpha = 1f
+            }
+            else -> {
+                icon.setColorFilter(Color.WHITE)
+                icon.alpha = CarStatsViewer.disabledAlpha
+            }
+        }
     }
 }

@@ -29,6 +29,8 @@ class AutoStartReceiver: BroadcastReceiver() {
         )
         var reason: String? = null
 
+        if (!CarStatsViewer.appPreferences.autostart) return
+
         intent?.let {
             if (intent.hasExtra("dismiss"))
             {

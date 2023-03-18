@@ -122,6 +122,8 @@
     <string name="settings_button_quit">Quit app</string>
     <string name="settings_notifications">Detailed notification</string>
     <string name="settings_consumption_unit">Wh/distance as consumption unit</string>
+    <string name="settings_use_location">Location tracking</string>
+    <string name="settings_autostart">Automatic app start</string>
     <string name="settings_distance_unit">Miles as distance unit</string>
     <string name="settings_debug">Debug information</string>
     <string name="settings_main_view">Main view</string>
