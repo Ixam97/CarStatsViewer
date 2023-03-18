@@ -635,20 +635,24 @@ class DataCollector : Service() {
     private fun updateStatsNotification() {
         if (notificationsEnabled && appPreferences.notifications) {
             with(CarStatsViewer.notificationManager) {
-                val averageConsumption = CurrentTripDataManager.usedEnergy / (CurrentTripDataManager.traveledDistance/1000)
+                val dataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
+                val averageConsumption = dataManager.usedEnergy / (dataManager.traveledDistance/1000)
 
                 var averageConsumptionString = String.format("%d Wh/km", averageConsumption.toInt())
                 if (!appPreferences.consumptionUnit) {
                     averageConsumptionString = String.format(
+                        Locale.ENGLISH,
                         "%.1f kWh/100km",
                         averageConsumption / 10)
                 }
-                if ((CurrentTripDataManager.traveledDistance <= 0)) averageConsumptionString = "N/A"
+                if ((dataManager.traveledDistance <= 0)) averageConsumptionString = "N/A"
 
+                val trackerName = getString(resources.getIdentifier(dataManager.printableName, "string", packageName))
                 val message = String.format(
-                    "P:%.1f kW, D: %.3f km, Ø: %s",
-                    CurrentTripDataManager.currentPower / 1_000_000,
-                    CurrentTripDataManager.traveledDistance / 1000,
+                    Locale.ENGLISH,
+                    "Power: %.1f kW\n$trackerName:  Dist.: %.1f km,  Ø-Cons.: %s",
+                    dataManager.currentPower / 1_000_000,
+                    dataManager.traveledDistance / 1000,
                     averageConsumptionString
                 )
 
