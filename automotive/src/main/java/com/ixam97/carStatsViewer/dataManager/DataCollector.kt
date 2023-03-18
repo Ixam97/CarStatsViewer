@@ -46,7 +46,7 @@ class DataCollector : Service() {
         private const val CHARGE_PLOT_MARKER_THRESHOLD_NANOS = 10_000_000_000L // 2 times CHARGE_PLOT_UPDATE_INTERVAL_MILLIS in nanos
         private const val AUTO_SAVE_INTERVAL_MILLIS = 30_000L
         private const val AUTO_RESET_TIME_HOURS = 5L
-        private const val POWER_GAGE_HYSTERESIS = 1_000_000F
+        private const val POWER_GAGE_HYSTERESIS = 200_000F
         private const val CONS_GAGE_HYSTERESIS = 10F
 
         var gagePowerValue: Float = 0F
