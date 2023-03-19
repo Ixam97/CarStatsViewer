@@ -160,6 +160,15 @@ class DataCollector : Service() {
             }
             .launchIn(serviceScope)
 
+        // Testing out a Flow to send live data in fixed time intervals
+        CarStatsViewer.liveDataApis[1]
+            .requestFlow(
+                serviceScope,
+                dataManager = DataManagers.CURRENT_TRIP.dataManager,
+                5_000L
+            ).catch { e -> InAppLogger.log("requestFlow: ${e.message}") }
+            .launchIn(serviceScope)
+
         var tripRestoreComplete = false
         runBlocking {
             enumValues<DataManagers>().forEach {
@@ -238,7 +247,17 @@ class DataCollector : Service() {
         saveTripDataTimerHandler = Handler(Looper.getMainLooper())
         saveTripDataTimerHandler.postDelayed(saveTripDataTask, AUTO_SAVE_INTERVAL_MILLIS)
 
+
         liveDataTimerHandler = Handler(Looper.getMainLooper())
+        CarStatsViewer.liveDataApis[0].apply {
+            var task = createLiveDataTask(
+                dataManager = DataManagers.CURRENT_TRIP.dataManager,
+                liveDataTimerHandler,
+                LIVE_DATA_TASK_INTERVAL
+            )
+            task?.let {liveDataTimerHandler.post(it)}
+        }
+        /*
         for (liveDataAPI in CarStatsViewer.liveDataApis) {
             var task = liveDataAPI.createLiveDataTask(
                 DataManagers.CURRENT_TRIP.dataManager,
@@ -249,6 +268,7 @@ class DataCollector : Service() {
                 liveDataTimerHandler.post(task)
             }
         }
+        */
 
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.save_trip_data_broadcast)))
         registerReceiver(carPropertyEmulatorReceiver, IntentFilter(getString(R.string.VHAL_emulator_broadcast)))

@@ -40,6 +40,7 @@ class AbrpLiveData (
         con.requestMethod = "POST"
         con.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
         con.setRequestProperty("Accept","application/json")
+        con.connectTimeout = timeout
         con.doOutput = true
         con.doInput = true
 
@@ -74,12 +75,13 @@ class AbrpLiveData (
             responseCode = con.responseCode
 
             if (detailedLog) {
-                var logString = "ABRP live-data: Status: ${con.responseCode}, Msg: ${con.responseMessage}, Content:"
+                var logString =
+                    "ABRP live-data: Status: ${con.responseCode}, Msg: ${con.responseMessage}, Content:"
                 // InAppLogger.log("SENT: $jsonObject")
                 // InAppLogger.log("STATUS: ${con.responseCode}")
                 // InAppLogger.log("MSG: ${con.responseMessage}")
                 logString += try {
-                    con.inputStream.bufferedReader().use {it.readText()}
+                    con.inputStream.bufferedReader().use { it.readText() }
 
                 } catch (e: java.lang.Exception) {
                     "No response content"
@@ -90,7 +92,9 @@ class AbrpLiveData (
             con.inputStream.close()
 
             con.disconnect()
-
+        } catch (e: java.net.SocketTimeoutException) {
+            InAppLogger.log("ABRP live-data: Network timeout error")
+            return ConnectionStatus.ERROR
         } catch (e: java.lang.Exception) {
             InAppLogger.log("ABRP live-data: Network connection error")
             return ConnectionStatus.ERROR

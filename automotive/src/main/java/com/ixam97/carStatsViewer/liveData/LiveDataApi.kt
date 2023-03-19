@@ -5,8 +5,12 @@ import android.content.Intent
 import android.os.Handler
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.dataManager.DataManager
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 abstract class LiveDataApi(
@@ -21,6 +25,7 @@ abstract class LiveDataApi(
      *      2: Error
      */
     var connectionStatus: ConnectionStatus = ConnectionStatus.UNUSED
+    var timeout: Int = 5_000
 
     enum class ConnectionStatus(val status: Int) {
         UNUSED(0),
@@ -46,6 +51,7 @@ abstract class LiveDataApi(
         handler: Handler,
         interval: Long
     ): Runnable? {
+        timeout = interval.toInt()
         return object : Runnable {
             override fun run() {
                 coroutineSendNow(dataManager)
@@ -61,6 +67,18 @@ abstract class LiveDataApi(
         CoroutineScope(Dispatchers.Default).launch {
             sendNow(dataManager)
             sendStatusBroadcast(CarStatsViewer.appContext)
+        }
+    }
+
+    fun requestFlow(serviceScope: CoroutineScope, dataManager: DataManager, interval: Long): Flow<Unit> {
+        timeout = interval.toInt()
+        return flow {
+            while (true) {
+                InAppLogger.log("requestFlow")
+                coroutineSendNow(dataManager)
+                emit(Unit)
+                delay(interval)
+            }
         }
     }
 

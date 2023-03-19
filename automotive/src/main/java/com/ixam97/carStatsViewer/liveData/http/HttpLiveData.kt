@@ -42,6 +42,7 @@ class HttpLiveData (
         con.requestMethod = "POST"
         con.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
         con.setRequestProperty("Accept","application/json")
+        con.connectTimeout = timeout
         con.doOutput = true
         con.doInput = true
 
@@ -200,7 +201,9 @@ class HttpLiveData (
 
             connection.inputStream.close()
             connection.disconnect()
-
+        } catch (e: java.net.SocketTimeoutException) {
+            InAppLogger.log("HTTP Webhook: Network timeout error")
+            return ConnectionStatus.ERROR
         } catch (e: java.lang.Exception) {
             InAppLogger.log("HTTP Webhook: Connection error")
             return ConnectionStatus.ERROR
