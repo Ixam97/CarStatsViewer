@@ -157,7 +157,7 @@
     <string name="abrp_generic_token">Generic token</string>
     
     <!-- HTTP -->
-    <string name="http_description">Enter HTTP URL and (optional) basic auth credentials to transmit live data to the specified URL. Uses POST request with JSON content. This includes location data if not disabled.</string>
+    <string name="http_description">Enter HTTPS URL and (optional) basic auth credentials to transmit live data to the specified URL. Uses POST request with JSON content. This includes location data if not disabled.</string>
     <string name="http_username">BasicAuth username</string>
     <string name="http_password">BasicAuth password</string>
     <string name="http_invalid_url">Invalid URL!</string>

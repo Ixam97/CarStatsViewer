@@ -55,7 +55,7 @@ class HttpLiveData (
             return false
         }
 
-        if (!possibleURL.contains("http://") && !possibleURL.contains("https://"))
+        if (!possibleURL.contains("https://"))
             return false
 
         return android.util.Patterns.WEB_URL.matcher(possibleURL).matches()
