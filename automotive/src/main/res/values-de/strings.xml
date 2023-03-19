@@ -109,7 +109,7 @@
     <string name="abrp_generic_token">Generic Token</string>
 
     <!-- HTTP -->
-    <string name="http_description">HTTP-URL und BasicAuth-Logindaten eingeben, um Live-Daten an die angegebene URL zu senden. Nutzt POST-Requests mit JSON-Inhalt. Dies beinhaltet Standortdaten, falls nicht deaktiviert.</string>
+    <string name="http_description">HTTPS-URL und BasicAuth-Logindaten eingeben, um Live-Daten an die angegebene URL zu senden. Nutzt POST-Requests mit JSON-Inhalt. Dies beinhaltet Standortdaten, falls nicht deaktiviert.</string>
     <string name="http_username">BasicAuth Nutzername</string>
     <string name="http_password">BasicAuth Passwort</string>
     <string name="http_invalid_url">Ungültige URL!</string>
