@@ -142,7 +142,6 @@ class MultiSelectWidget @JvmOverloads constructor(context: Context, private val 
                     setBackgroundColor(context.getColor(R.color.disable_background))
                 }
                 barLayout.addView(barView)
-                InAppLogger.log(it as String)
             }
             selectedView.text = entries[selectedIndex]
             barLayout.getChildAt(selectedIndex).setBackgroundColor(primaryColor)

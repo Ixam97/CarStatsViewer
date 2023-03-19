@@ -15,10 +15,7 @@ import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.mailSender.MailSender
 import kotlinx.android.synthetic.main.activity_log.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -41,14 +38,6 @@ class LogActivity : Activity() {
         log_text_sender.setText(appPreferences.logUserName)
 
         log_progress_bar.visibility = View.VISIBLE
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val logString = InAppLogger.getLogString()
-            runOnUiThread {
-                log_text_view.text = logString
-                log_progress_bar.visibility = View.GONE
-            }
-        }
 
         log_button_back.setOnClickListener {
             finish()
@@ -184,6 +173,18 @@ class LogActivity : Activity() {
                         log_text_view.text = ""
                     }
                 }
+            }
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val logString = InAppLogger.getLogString()
+            runOnUiThread {
+                log_text_view.text = logString
+                log_progress_bar.visibility = View.GONE
+            }
+            delay(100)
+            runOnUiThread {
+                log_scrollview.fullScroll(View.FOCUS_DOWN)
             }
         }
     }

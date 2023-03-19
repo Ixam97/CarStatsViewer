@@ -130,7 +130,8 @@ class MainActivity : Activity() {
 
         context = applicationContext
         val displayMetrics = context.resources.displayMetrics
-        InAppLogger.log("Display size: ${displayMetrics.widthPixels/displayMetrics.density}x${displayMetrics.heightPixels/displayMetrics.density}")
+        // InAppLogger.log("Display size: ${displayMetrics.widthPixels/displayMetrics.density}x${displayMetrics.heightPixels/displayMetrics.density}")
+        InAppLogger.log("Main view created")
 
         PlotView.textSize = resources.getDimension(R.dimen.reduced_font_size)
         PlotView.xMargin = resources.getDimension(R.dimen.plot_x_margin).toInt()
@@ -210,6 +211,7 @@ class MainActivity : Activity() {
         super.onDestroy()
         disableUiUpdates()
         unregisterReceiver(broadcastReceiver)
+        InAppLogger.log("Main view destroyed")
     }
 
     override fun onPause() {

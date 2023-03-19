@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.liveData.http
 import java.util.*
 
 data class HttpDataSet(
+    val timestamp: Long,
     val currentSpeed: Float,
     val currentPower: Float,
     val currentGear: Int,

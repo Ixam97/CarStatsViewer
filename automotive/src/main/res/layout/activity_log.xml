@@ -77,6 +77,7 @@
             android:layout_height="wrap_content">
 
             <ScrollView
+                android:id="@+id/log_scrollview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/log_send_container">

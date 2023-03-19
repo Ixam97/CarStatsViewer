@@ -7,6 +7,7 @@ import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveData.http.HttpLiveData
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlin.properties.Delegates
 
 var emulatorMode = false
@@ -49,6 +50,8 @@ class CarStatsViewer : Application() {
 
         appContext = applicationContext
         appPreferences = AppPreferences(applicationContext)
+
+        InAppLogger.log("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
 
         val abrpApiKey = if (resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName) != 0) {
             getString(resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName))

@@ -87,6 +87,7 @@ class DataCollector : Service() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 getString(R.string.save_trip_data_broadcast) -> {
+                    InAppLogger.log("TRIP DATA: Broadcast save")
                     enumValues<DataManagers>().filter{ it.doTrack}.forEach {
                         writeTripDataToFile(it.dataManager.tripData!!, it.dataManager.printableName)
                     }
@@ -98,6 +99,7 @@ class DataCollector : Service() {
 
     private val saveTripDataTask = object : Runnable {
         override fun run() {
+            InAppLogger.log("TRIP DATA: Autosave")
             enumValues<DataManagers>().filter{ it.doTrack}.forEach {
                 writeTripDataToFile(it.dataManager.tripData!!, it.dataManager.printableName)
             }
@@ -121,8 +123,6 @@ class DataCollector : Service() {
 
     override fun onCreate() {
         super.onCreate()
-
-        InAppLogger.log("CSV Started!")
 
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
             InAppLogger.log("Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
@@ -225,11 +225,11 @@ class DataCollector : Service() {
             }
         } else DistanceUnitEnum.KM
 
-        InAppLogger.log("Display distance unit: $displayUnit")
+        // InAppLogger.log("Display distance unit: $displayUnit")
         InAppLogger.log("Car name: $carName, $carManufacturer, $carModelYear")
         InAppLogger.log("Max battery Capacity: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)}")
-        InAppLogger.log("Fuel level: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.FUEL_LEVEL, 0)}")
-        InAppLogger.log("Fuel Capacity: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_FUEL_CAPACITY, 0)}")
+        // InAppLogger.log("Fuel level: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.FUEL_LEVEL, 0)}")
+        // InAppLogger.log("Fuel Capacity: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_FUEL_CAPACITY, 0)}")
 
         registerCarPropertyCallbacks()
 
@@ -265,6 +265,7 @@ class DataCollector : Service() {
             speedUpdater(it.dataManager)
             powerUpdater(it.dataManager)
         }
+        InAppLogger.log("DataCollector service started")
     }
 
     override fun onDestroy() {
@@ -470,6 +471,8 @@ class DataCollector : Service() {
                 DrivingState.CHARGE -> chargeState(previousDrivingState, dataManager)
                 DrivingState.PARKED -> parkState(previousDrivingState, dataManager)
             }
+            if (dataManager == DataManagers.CURRENT_TRIP.dataManager)
+                InAppLogger.log("TRIP DATA: Drive state save")
             writeTripDataToFile(dataManager.tripData!!, dataManager.printableName)
             sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
         }
@@ -680,9 +683,10 @@ class DataCollector : Service() {
             writer.append(gson.toJson(tripData))
             writer.flush()
             writer.close()
-            InAppLogger.log("TRIP DATA: Saved $fileName.json")
+            // InAppLogger.log("TRIP DATA: Saved $fileName.json")
         } catch (e: java.lang.Exception) {
-            e.printStackTrace()
+            InAppLogger.log("TRIP DATA: Writing $fileName.json failed!")
+            InAppLogger.log(e.stackTraceToString())
         }
     }
 
@@ -726,6 +730,7 @@ class DataCollector : Service() {
             newDrivingState == DrivingState.DRIVE) {
             // Reset if in different Month than start and save old month
             if (Date().month != DataManagers.CURRENT_MONTH.dataManager.tripStartDate.month) {
+                InAppLogger.log("TRIP DATA: Saving past Month")
                 writeTripDataToFile(
                     DataManagers.CURRENT_MONTH.dataManager.tripData!!,
                     "MonthData_${DataManagers.CURRENT_MONTH.dataManager.tripStartDate}_${DataManagers.CURRENT_MONTH.dataManager.tripStartDate.month + 1}"

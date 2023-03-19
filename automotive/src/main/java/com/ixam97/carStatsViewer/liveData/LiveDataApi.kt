@@ -10,7 +10,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 abstract class LiveDataApi(
-    val broadcastAction: String
+    val broadcastAction: String,
+    var detailedLog: Boolean
     ){
 
     /**

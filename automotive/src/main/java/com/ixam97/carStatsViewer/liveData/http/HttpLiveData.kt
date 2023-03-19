@@ -22,8 +22,8 @@ import java.util.*
 
 
 class HttpLiveData (
-    var detailedLog : Boolean = false
-): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data_connection_broadcast") {
+    detailedLog : Boolean = true
+): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data_connection_broadcast", detailedLog) {
 
 
     private fun addBasicAuth(connection: HttpURLConnection, username: String, password: String) {
@@ -130,10 +130,9 @@ class HttpLiveData (
             }
         }
 
-        if (lat == null) InAppLogger.log("HTTP Live Data: No valid location")
-
         connectionStatus = send(
             HttpDataSet(
+                timestamp = System.currentTimeMillis(),
                 currentSpeed = dataManager.currentSpeed * 3.6f,
                 currentPower = dataManager.currentPower / 1_000_000f,
                 currentGear = dataManager.currentGear,
@@ -174,8 +173,6 @@ class HttpLiveData (
         val gson = Gson()
         val liveDataJson = gson.toJson(dataSet)
 
-        InAppLogger.log(liveDataJson)
-
         try {
             val url = URL(AppPreferences(context).httpLiveDataURL) // + "?json=$jsonObject")
             val connection = getConnection(url, username, password)
@@ -186,23 +183,33 @@ class HttpLiveData (
             }
             responseCode = connection.responseCode
 
-            if (detailedLog)
-                InAppLogger.log("JSON: ${connection.inputStream.bufferedReader().use {it.readText()}}")
+            if (detailedLog) {
+                var logString = "HTTP Webhook: Status: ${connection.responseCode}, Msg: ${connection.responseMessage}, Content:"
+                // InAppLogger.log("SENT: $jsonObject")
+                // InAppLogger.log("STATUS: ${con.responseCode}")
+                // InAppLogger.log("MSG: ${con.responseMessage}")
+                logString += try {
+                    connection.inputStream.bufferedReader().use {it.readText()}
+
+                } catch (e: java.lang.Exception) {
+                    "No response content"
+                }
+                if (dataSet.lat == null) logString += ". No valid location!"
+                InAppLogger.log(logString)
+            }
+
             connection.inputStream.close()
             connection.disconnect()
 
         } catch (e: java.lang.Exception) {
-            InAppLogger.log("HTTP API: Connection error")
+            InAppLogger.log("HTTP Webhook: Connection error")
             return ConnectionStatus.ERROR
         }
 
         if (responseCode != 200) {
-            InAppLogger.log("HTTP Live Data: Transmission failed. Status code $responseCode")
+            InAppLogger.log("HTTP Webhook: Transmission failed. Status code $responseCode")
             return ConnectionStatus.ERROR
         }
-
-        if (detailedLog)
-            InAppLogger.log("HTTP Live Data: Transmission succeeded")
 
         return ConnectionStatus.CONNECTED
     }

@@ -18,10 +18,9 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class AbrpLiveData (
-    val apiKey : String,
-    var token : String = "",
-    var detailedLog : Boolean = false
-): LiveDataApi("com.ixam97.carStatsViewer_dev.abrp_connection_broadcast") {
+    private val apiKey : String,
+    detailedLog : Boolean = true
+): LiveDataApi("com.ixam97.carStatsViewer_dev.abrp_connection_broadcast", detailedLog) {
 
     private fun send(
         abrpDataSet: AbrpDataSet,
@@ -29,7 +28,7 @@ class AbrpLiveData (
     ) : ConnectionStatus {
         if (!AppPreferences(context).abrpUseApi) return ConnectionStatus.UNUSED
 
-        token = AppPreferences(context).abrpGenericToken
+        val token = AppPreferences(context).abrpGenericToken
 
         if (apiKey.isEmpty() || token.isEmpty()){
             return ConnectionStatus.UNUSED
@@ -75,29 +74,31 @@ class AbrpLiveData (
             responseCode = con.responseCode
 
             if (detailedLog) {
-                InAppLogger.log("SENT: $jsonObject")
-                InAppLogger.log("STATUS: ${con.responseCode}")
-                InAppLogger.log("MSG: ${con.responseMessage}")
-                try {
-                    InAppLogger.log("JSON: ${con.inputStream.bufferedReader().use {it.readText()}}")
+                var logString = "ABRP live-data: Status: ${con.responseCode}, Msg: ${con.responseMessage}, Content:"
+                // InAppLogger.log("SENT: $jsonObject")
+                // InAppLogger.log("STATUS: ${con.responseCode}")
+                // InAppLogger.log("MSG: ${con.responseMessage}")
+                logString += try {
+                    con.inputStream.bufferedReader().use {it.readText()}
 
+                } catch (e: java.lang.Exception) {
+                    "No response content"
                 }
-                catch (e: java.lang.Exception) {
-                    InAppLogger.log("ABRP API: No response content")
-                }
+                if (abrpDataSet.lat == null) logString += ". No valid location!"
+                InAppLogger.log(logString)
             }
             con.inputStream.close()
 
             con.disconnect()
 
         } catch (e: java.lang.Exception) {
-            InAppLogger.log("ABRP API: Network connection error")
+            InAppLogger.log("ABRP live-data: Network connection error")
             return ConnectionStatus.ERROR
         }
         if (responseCode == 200) {
             return ConnectionStatus.CONNECTED
         }
-        InAppLogger.log("ABRP API: Connection failed. Response code: $responseCode")
+        InAppLogger.log("ABRP live-data: Connection failed. Response code: $responseCode")
         if (responseCode == 401) InAppLogger.log("          Auth error")
         return ConnectionStatus.ERROR
     }
@@ -146,8 +147,6 @@ class AbrpLiveData (
                 alt = it.altitude
             }
         }
-
-        if (lat == null && detailedLog) InAppLogger.log("No valid location")
 
         connectionStatus = send(AbrpDataSet(
             stateOfCharge = dataManager.stateOfCharge,
