@@ -17,6 +17,7 @@
         android:src="@drawable/ic_chevron_left"
         android:background="@android:color/transparent"/>
     <LinearLayout
+        android:id="@+id/widget_button_center"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content"

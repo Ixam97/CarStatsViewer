@@ -1,8 +1,5 @@
 package com.ixam97.carStatsViewer.activities
 
-import com.ixam97.carStatsViewer.*
-import com.ixam97.carStatsViewer.dataManager.*
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.PendingIntent
 import android.car.VehicleGear
@@ -20,26 +17,29 @@ import android.os.Looper
 import android.os.SystemClock
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.commit
+import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.plot.enums.*
-import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
-import com.ixam97.carStatsViewer.views.PlotView
-import com.ixam97.carStatsViewer.dataManager.DataManagers
+import com.ixam97.carStatsViewer.dataManager.*
+import com.ixam97.carStatsViewer.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
+import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
+import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.GageView
+import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import java.io.IOException
-import java.lang.Runnable
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
-class MainActivity : Activity() {
+class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedListener {
     companion object {
         private const val UI_UPDATE_INTERVAL = 1000L
         const val DISTANCE_TRIP_DIVIDER = 5_000L
@@ -75,6 +75,10 @@ class MainActivity : Activity() {
                 CarStatsViewer.liveDataApis[1].broadcastAction -> updateAbrpStatus(LiveDataApi.ConnectionStatus.fromInt(intent.getIntExtra("status", 0)))
             }
         }
+    }
+
+    override fun onSelectedTripChanged() {
+        onResume()
     }
 
     /** Overrides */
@@ -171,6 +175,7 @@ class MainActivity : Activity() {
         )
 
         setContentView(R.layout.activity_main)
+
         setupDefaultUi()
         setUiEventListeners()
 
@@ -255,7 +260,6 @@ class MainActivity : Activity() {
 
         if (main_button_dismiss_charge_plot.isEnabled == selectedDataManager.chargePortConnected)
             main_button_dismiss_charge_plot.isEnabled = !selectedDataManager.chargePortConnected
-
         if (main_charge_layout.visibility == View.GONE && selectedDataManager.chargePortConnected) {
             main_consumption_layout.visibility = View.GONE
             main_charge_layout.visibility = View.VISIBLE
@@ -443,11 +447,23 @@ class MainActivity : Activity() {
         }
 
         main_button_summary.setOnClickListener {
-            val summaryIntent = Intent(this, SummaryActivity::class.java)
-            // summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
-            summaryIntent.putExtra("dataManager", appPreferences.mainViewTrip)
-            startActivity(summaryIntent)
-            overridePendingTransition(R.anim.slide_in_up, R.anim.stay_still)
+            //val summaryIntent = Intent(this, SummaryActivity::class.java)
+            //// summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
+            //summaryIntent.putExtra("dataManager", appPreferences.mainViewTrip)
+            //startActivity(summaryIntent)
+            //overridePendingTransition(R.anim.slide_in_up, R.anim.stay_still)
+            main_fragment_container.visibility = View.VISIBLE
+            supportFragmentManager.commit {
+                setCustomAnimations(
+                    R.anim.slide_in_up,
+                    R.anim.stay_still,
+                    R.anim.stay_still,
+                    R.anim.slide_out_down
+                )
+                val summaryDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
+                add(R.id.main_fragment_container, SummaryFragment(summaryDataManager.tripData!!, summaryDataManager))
+            }
+
         }
 
         main_button_summary_charge.setOnClickListener {

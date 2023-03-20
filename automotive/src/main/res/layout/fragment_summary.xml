@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:clickable="true"
+    android:id="@+id/activity_summary"
+    tools:context=".activities.SummaryActivity"
+    android:background="@color/slideup_activity_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/summary_button_back"
+            style="@style/title_back_button_style"
+            android:src="@drawable/ic_close"/>
+        <TextView
+            android:id="@+id/summary_title"
+            android:text="@string/summary_title"
+            style="@style/title_text_style"/>
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/summary_trip_selector"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/summary_button_trip_prev"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_chevron_left"
+                android:background="@android:color/transparent"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/summary_selector_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textFontWeight="@integer/title_font_weight"
+                    android:layout_marginTop="10dp"
+                    android:textSize="@dimen/title_font_size"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:gravity="center"
+                    android:text="@string/summary_title"/>
+                <LinearLayout
+                    android:id="@+id/summary_selected_trip_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:weightSum="4"
+                    android:orientation="horizontal">
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="5dp"
+                        android:background="@color/disable_background"/>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="5dp"
+                        android:background="@color/disable_background"/>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="5dp"
+                        android:background="@color/disable_background"/>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="5dp"
+                        android:background="@color/disable_background"/>
+                </LinearLayout>
+            </LinearLayout>
+            <ImageButton
+                android:id="@+id/summary_button_trip_next"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_chevron_right"
+                android:background="@android:color/transparent"/>
+
+            <ImageButton
+                android:layout_margin="15dp"
+                android:id="@+id/summary_button_reset"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_reset"
+                android:background="@android:color/transparent"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="?android:attr/colorControlActivated"/>
+
+    <TextView
+        android:id="@+id/summary_parked_warning"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textSize="40sp"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        android:text="@string/summary_parked_warning"/>
+
+    <LinearLayout
+        android:id="@+id/summary_content_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:layout_margin="20dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/summary_button_show_consumption_container"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:text="@string/summary_trip_history"/>
+        <Button
+            android:id="@+id/summary_button_show_charge_container"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:text="@string/summary_charging_sessions"/>
+    </LinearLayout>
+    <View style="@style/menu_divider_style_no_margin"
+        android:background="?android:attr/listDivider"/>
+
+    <ScrollView
+        android:id="@+id/summary_consumption_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/summary_trip_date_text"
+                android:layout_marginTop="10dp"
+                style="@style/menu_section_title_style"/>
+
+            <com.ixam97.carStatsViewer.views.PlotView
+                android:id="@+id/summary_consumption_plot"
+                android:layout_width="match_parent"
+                android:layout_height="550dp"/>
+
+            <Button
+                android:id="@+id/summary_button_secondary_dimension"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"/>
+
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/summary_distance_value_text"
+                style="@style/menu_row_top_text"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_traveled_distance"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/summary_used_energy_value_text"
+                style="@style/menu_row_top_text"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_used_energy"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/summary_avg_consumption_value_text"
+                style="@style/menu_row_top_text"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_average_consumption"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/summary_travel_time_value_text"
+                style="@style/menu_row_top_text"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_travel_time"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <ScrollView
+        android:id="@+id/summary_charge_container"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:id="@+id/summary_charge_plot_sub_title_curve"
+                style="@style/menu_row_content_text"
+                android:text="@string/settings_sub_title_last_charge_plot"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/summary_charge_plot_button_prev"
+                    android:src="@drawable/ic_chevron_left"
+                    android:background="@android:color/transparent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+                <SeekBar
+                    android:id="@+id/summary_charge_plot_seek_bar"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <ImageButton
+                    android:id="@+id/summary_charge_plot_button_next"
+                    android:src="@drawable/ic_chevron_right"
+                    android:background="@android:color/transparent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <com.ixam97.carStatsViewer.views.PlotView
+                android:id="@+id/summary_charge_plot_view"
+                android:layout_width="match_parent"
+                android:layout_height="550dp"/>
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/summary_charged_energy_value_text"
+                style="@style/menu_row_top_text"
+                android:text="-/-"/>
+            <TextView
+                android:visibility="gone"
+                style="@style/menu_row_content_text"
+                android:id="@+id/summary_charged_energy_warning_text"
+                android:text="@string/summary_interruption_warning"
+                android:textColor="@color/bad_red"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_charged_energy"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/summary_charge_time_value_text"
+                style="@style/menu_row_top_text"
+                android:text="-/-"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_charge_time"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+            <TextView
+                android:id="@+id/summary_charge_ambient_temp"
+                style="@style/menu_row_top_text"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_charge_ambient_temp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

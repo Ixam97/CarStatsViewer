@@ -36,6 +36,7 @@ class MultiSelectWidget @JvmOverloads constructor(context: Context, private val 
     private lateinit var barLayout: LinearLayout
     private lateinit var leftButton: ImageButton
     private lateinit var rightButton: ImageButton
+    private lateinit var centerButton: LinearLayout
 
     var selectedIndex = 0
         set(value) {
@@ -109,11 +110,22 @@ class MultiSelectWidget @JvmOverloads constructor(context: Context, private val 
         barLayout = findViewById(R.id.widget_selected_bar)
         leftButton = findViewById(R.id.widget_button_left)
         rightButton = findViewById(R.id.widget_button_right)
+        centerButton = findViewById(R.id.widget_button_center)
 
         titleView.text = title
         titleView.layoutParams.width = calcDimen(titleWidth)
 
         if (entries.isNotEmpty()) {
+            fun increaseIndex() {
+                if (selectedIndex == entries.size - 1) selectedIndex = 0
+                else selectedIndex++
+                selectedView.text = entries[selectedIndex]
+                barLayout.children.forEach { it.setBackgroundColor(secondaryColor) }
+                barLayout.getChildAt(selectedIndex).setBackgroundColor(primaryColor)
+                mListener?.onIndexChanged()
+                invalidate()
+            }
+
             leftButton.setOnClickListener {
                 if (selectedIndex == 0) selectedIndex = entries.size - 1
                 else selectedIndex--
@@ -125,14 +137,14 @@ class MultiSelectWidget @JvmOverloads constructor(context: Context, private val 
             }
 
             rightButton.setOnClickListener {
-                if (selectedIndex == entries.size - 1) selectedIndex = 0
-                else selectedIndex++
-                selectedView.text = entries[selectedIndex]
-                barLayout.children.forEach { it.setBackgroundColor(secondaryColor) }
-                barLayout.getChildAt(selectedIndex).setBackgroundColor(primaryColor)
-                mListener?.onIndexChanged()
-                invalidate()
+                increaseIndex()
             }
+
+            centerButton.setOnClickListener {
+                increaseIndex()
+            }
+
+
 
             barLayout.weightSum = entries.size.toFloat()
             entries.forEach {

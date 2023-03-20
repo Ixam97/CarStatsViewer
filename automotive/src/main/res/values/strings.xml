@@ -152,17 +152,17 @@
     <string name="settings_apis_http">HTTP Webhook</string>
     <string name="settings_apis_smtp">SMTP Login</string>
     <string name="settings_apis_use">Use API</string>
-    
+
     <!-- ABRP -->
     <string name="abrp_description">Enter an ABRP generic token to transmit over-the-air live data to the ABRP servers. This includes location data if not disabled.</string>
     <string name="abrp_generic_token">Generic token</string>
-    
+
     <!-- HTTP -->
     <string name="http_description">Enter HTTPS URL and (optional) basic auth credentials to transmit live data to the specified URL. Uses POST request with JSON content. This includes location data if not disabled.</string>
     <string name="http_username">BasicAuth username</string>
     <string name="http_password">BasicAuth password</string>
     <string name="http_invalid_url">Invalid URL!</string>
-    
+
     <!-- SMTP -->
     <string name="smtp_description">Enter your SMTP credentials given by your E-Mail provider. This is used to send saved statistics and debug logs to a target address specified by the user.</string>
     <string name="smtp_address">E-Mail address</string>
@@ -170,7 +170,7 @@
     <string name="smtp_server">SMTP server URL</string>
     <string name="smtp_port">SMTP server port</string>
     <string name="smtp_use_STARTTLS">Use STARTTLS</string>
-    
+
     <string name="CurrentTripData">Manual trip</string>
     <string name="SinceChargeData">Since last charge</string>
     <string name="AutoTripData">Automatic trip</string>
@@ -220,4 +220,6 @@
     <string name="notification_title">Current stats:</string>
     <string name="foreground_service_info">Statistics tracking service running</string>
     <string name="toast_file_read_error">Error reading trip file</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

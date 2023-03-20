@@ -1,40 +1,42 @@
-package com.ixam97.carStatsViewer.activities
+package com.ixam97.carStatsViewer.fragments
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.*
-import android.graphics.Color
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.transition.Fade
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColor
 import androidx.core.view.get
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.dataManager.*
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
-import com.ixam97.carStatsViewer.plot.objects.PlotLine
-import com.ixam97.carStatsViewer.plot.objects.PlotLineConfiguration
-import com.ixam97.carStatsViewer.plot.objects.PlotMarkers
-import com.ixam97.carStatsViewer.plot.objects.PlotRange
+import com.ixam97.carStatsViewer.plot.objects.*
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
-import kotlinx.android.synthetic.main.activity_summary.*
+import kotlinx.android.synthetic.main.fragment_summary.*
 import java.util.concurrent.TimeUnit
 
+/**
+ * A simple [Fragment] subclass.
+ * Use the [SummaryFragment.newInstance] factory method to
+ * create an instance of this fragment.
+ */
+class SummaryFragment(private val tripData: TripData, val dataManager: DataManager? = null) : Fragment(R.layout.fragment_summary) {
 
-class SummaryActivity: Activity() {
+    fun interface OnSelectedTripChangedListener {
+        fun onSelectedTripChanged()
+    }
 
+    val appPreferences = CarStatsViewer.appPreferences
+    val applicationContext = CarStatsViewer.appContext
     private var primaryColor = CarStatsViewer.primaryColor
 
     private var chargePlotLine = PlotLine(
@@ -48,14 +50,10 @@ class SummaryActivity: Activity() {
 
     private lateinit var consumptionPlotLine: PlotLine
 
-    private lateinit var tripData: TripData
-
-    private lateinit var appPreferences: AppPreferences
     private lateinit var consumptionPlotLinePaint : PlotLinePaint
     private lateinit var chargePlotLinePaint : PlotLinePaint
 
-    private lateinit var disabledTint: PorterDuffColorFilter
-    private lateinit var enabledTint: android.graphics.ColorFilter
+    private var mListener: OnSelectedTripChangedListener? = null
 
     private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -77,43 +75,45 @@ class SummaryActivity: Activity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnSelectedTripChangedListener) {
+            mListener = context as OnSelectedTripChangedListener
+        }
+    }
 
-        setContentView(R.layout.activity_summary)
-
-        appPreferences = AppPreferences(applicationContext)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         consumptionPlotLinePaint = PlotLinePaint(
-            PlotPaint.byColor(getColor(R.color.primary_plot_color), PlotView.textSize),
-            PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize),
-            PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+            PlotPaint.byColor(applicationContext.getColor(R.color.primary_plot_color), PlotView.textSize),
+            PlotPaint.byColor(applicationContext.getColor(R.color.secondary_plot_color), PlotView.textSize),
+            PlotPaint.byColor(applicationContext.getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
         ) { appPreferences.consumptionPlotSecondaryColor }
 
         chargePlotLinePaint = PlotLinePaint(
-            PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize),
-            PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize),
-            PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+            PlotPaint.byColor(applicationContext.getColor(R.color.charge_plot_color), PlotView.textSize),
+            PlotPaint.byColor(applicationContext.getColor(R.color.secondary_plot_color), PlotView.textSize),
+            PlotPaint.byColor(applicationContext.getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
         ) { appPreferences.chargePlotSecondaryColor }
 
-
-        //val tripDataFileName = intent.getStringExtra("FileName").toString()
-        // tripData = if (tripDataFileName != "null") DataManager.getTripData(tripDataFileName)
-        // else DataManager.getTripData()
-
-        val dataManager :DataManager = if (intent.hasExtra("dataManager")) {
-            DataManagers.values()[intent.getIntExtra("dataManager", 0)].dataManager
-        } else DataManagers.values()[appPreferences.mainViewTrip].dataManager
-
-        if (appPreferences.mainViewTrip != 0) {
+        if (dataManager == null || (dataManager.printableName != DataManagers.CURRENT_TRIP.dataManager.printableName)) {
             summary_button_reset.isEnabled = false
-            summary_button_reset.setColorFilter(getColor(R.color.disabled_tint))
+            summary_button_reset.setColorFilter(applicationContext.getColor(R.color.disabled_tint))
         }
 
-        tripData = dataManager.tripData!!
-        consumptionPlotLine = dataManager.consumptionPlotLine
+        // tripData = dataManager.tripData!!
+        consumptionPlotLine = PlotLine(
+            PlotLineConfiguration(
+                PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
+                PlotLineLabelFormat.NUMBER,
+                PlotHighlightMethod.AVG_BY_DISTANCE,
+                "Wh/km"
+            ),
+        )
+        consumptionPlotLine.addDataPoints(tripData.consumptionPlotLine)
 
-        summary_selected_trip_bar[appPreferences.mainViewTrip].background = primaryColor!!.toColor().toDrawable()
+        summary_selected_trip_bar[appPreferences.mainViewTrip].background = primaryColor.toColor().toDrawable()
 
         summary_button_trip_prev.setOnClickListener {
             var tripIndex = appPreferences.mainViewTrip
@@ -147,24 +147,25 @@ class SummaryActivity: Activity() {
                 TODO("Don't use onClick when showing a specific trip, not one of the 4 main trips")
         }
 
-        // enabledTint = summary_charge_plot_button_next.foreground!!
-        disabledTint = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
-        enabledTint = PorterDuffColorFilter(primaryColor!!, PorterDuff.Mode.SRC_IN)
-
-        summary_title.text = getString(resources.getIdentifier(
-            dataManager.printableName, "string", packageName
-        ))
-
-        summary_button_back.setOnClickListener {
-            finish()
-            overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
+        if (dataManager != null) {
+          summary_title.visibility = View.GONE
+          summary_trip_selector.visibility = View.VISIBLE
+          summary_selector_title.text = getString(resources.getIdentifier(
+              dataManager.printableName,
+              "string", applicationContext.packageName
+          ))
+            if(dataManager.printableName != DataManagers.CURRENT_TRIP.dataManager.printableName) {
+                summary_button_reset.isEnabled = false;
+                summary_button_reset.alpha = CarStatsViewer.disabledAlpha
+            }
         }
 
         summary_button_reset.setOnClickListener {
             createResetDialog()
         }
 
-        summary_trip_date_text.text = getString(R.string.summary_trip_start_date).format(StringFormatters.getDateString(tripData.tripStartDate))
+        summary_trip_date_text.text = getString(R.string.summary_trip_start_date).format(
+            StringFormatters.getDateString(tripData.tripStartDate))
 
         summary_button_show_consumption_container.isSelected = true
 
@@ -181,12 +182,25 @@ class SummaryActivity: Activity() {
         setupConsumptionLayout()
         setupChargeLayout()
 
-        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.distraction_optimization_broadcast)))
+        applicationContext.registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.distraction_optimization_broadcast)))
+
+        summary_button_back.setOnClickListener {
+            requireActivity().supportFragmentManager.commit {
+                setCustomAnimations(
+                    R.anim.slide_in_up,
+                    R.anim.slide_out_down,
+                    R.anim.stay_still,
+                    R.anim.slide_out_down
+                )
+                remove(this@SummaryFragment)
+            }
+            mListener?.onSelectedTripChanged()
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver(broadcastReceiver)
+    override fun onDetach() {
+        super.onDetach()
+        applicationContext.unregisterReceiver(broadcastReceiver)
     }
 
     private fun setupConsumptionLayout() {
@@ -250,18 +264,6 @@ class SummaryActivity: Activity() {
         }
     }
 
-    private fun refreshActivity(index: Int?) {
-        val refreshIntent = Intent(this, SummaryActivity::class.java).apply {
-            if (index != null) {
-            putExtra("dataManager", index)
-            }
-        }
-        finish()
-        overridePendingTransition(0, 0)
-        startActivity(refreshIntent)
-        overridePendingTransition(0, 0)
-    }
-
     private fun setupChargeLayout() {
         summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
             getString(R.string.settings_sub_title_last_charge_plot),
@@ -277,9 +279,9 @@ class SummaryActivity: Activity() {
         if (tripData.chargeCurves.isNotEmpty()) {
             chargePlotLine.addDataPoints(tripData.chargeCurves.last().chargePlotLine)
             summary_charge_plot_button_next.isEnabled = false
-            summary_charge_plot_button_next.colorFilter = disabledTint
+            summary_charge_plot_button_next.alpha = CarStatsViewer.disabledAlpha
             summary_charge_plot_button_prev.isEnabled = true
-            summary_charge_plot_button_prev.colorFilter = enabledTint
+            summary_charge_plot_button_prev.alpha = 1f
 
             if (tripData.chargeCurves.last().chargePlotLine.filter { it.Marker == PlotLineMarkerType.END_SESSION }.size > 1)
             // Charge has been interrupted
@@ -294,9 +296,9 @@ class SummaryActivity: Activity() {
         }
         if (tripData.chargeCurves.size < 2){
             summary_charge_plot_button_next.isEnabled = false
-            summary_charge_plot_button_next.colorFilter = disabledTint
+            summary_charge_plot_button_next.alpha = CarStatsViewer.disabledAlpha
             summary_charge_plot_button_prev.isEnabled = false
-            summary_charge_plot_button_prev.colorFilter = disabledTint
+            summary_charge_plot_button_prev.alpha = CarStatsViewer.disabledAlpha
         }
         summary_charge_plot_view.addPlotLine(chargePlotLine, chargePlotLinePaint)
 
@@ -339,9 +341,9 @@ class SummaryActivity: Activity() {
                 getString(R.string.settings_sub_title_last_charge_plot))
 
             summary_charge_plot_button_next.isEnabled = false
-            summary_charge_plot_button_next.colorFilter = disabledTint
+            summary_charge_plot_button_next.alpha = CarStatsViewer.disabledAlpha
             summary_charge_plot_button_prev.isEnabled = false
-            summary_charge_plot_button_prev.colorFilter = disabledTint
+            summary_charge_plot_button_prev.alpha = CarStatsViewer.disabledAlpha
 
         } else {
             summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
@@ -353,26 +355,26 @@ class SummaryActivity: Activity() {
             when (progress) {
                 0 -> {
                     summary_charge_plot_button_prev.isEnabled = false
-                    summary_charge_plot_button_prev.colorFilter = disabledTint
+                    summary_charge_plot_button_prev.alpha = CarStatsViewer.disabledAlpha
                     summary_charge_plot_button_next.isEnabled = true
-                    summary_charge_plot_button_next.colorFilter = enabledTint
+                    summary_charge_plot_button_next.alpha = 1f
                 }
                 tripData.chargeCurves.size - 1 -> {
                     summary_charge_plot_button_next.isEnabled = false
-                    summary_charge_plot_button_next.colorFilter = disabledTint
+                    summary_charge_plot_button_next.alpha = CarStatsViewer.disabledAlpha
                     summary_charge_plot_button_prev.isEnabled = true
-                    summary_charge_plot_button_prev.colorFilter = enabledTint
+                    summary_charge_plot_button_prev.alpha = 1f
                 }
                 else -> {
                     summary_charge_plot_button_next.isEnabled = true
-                    summary_charge_plot_button_next.colorFilter = enabledTint
+                    summary_charge_plot_button_next.alpha = 1f
                     summary_charge_plot_button_prev.isEnabled = true
-                    summary_charge_plot_button_prev.colorFilter = enabledTint
+                    summary_charge_plot_button_prev.alpha = 1f
                 }
             }
         }
         if (tripData.chargeCurves[progress].chargePlotLine.filter { it.Marker == PlotLineMarkerType.END_SESSION }.size > 1)
-            // Charge has been interrupted
+        // Charge has been interrupted
             summary_charged_energy_warning_text.visibility = View.VISIBLE
         else summary_charged_energy_warning_text.visibility = View.GONE
 
@@ -404,23 +406,20 @@ class SummaryActivity: Activity() {
     }
 
     private fun createResetDialog() {
-        val builder = AlertDialog.Builder(this@SummaryActivity)
+        val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(getString(R.string.dialog_reset_title))
             .setMessage(getString(R.string.dialog_reset_message))
             .setCancelable(true)
             .setPositiveButton(getString(R.string.dialog_reset_do_save)) { _, _ ->
                 DataCollector.CurrentTripDataManager.reset()
-                sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
-                this@SummaryActivity.finish()
-                this@SummaryActivity.overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
+                applicationContext.sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+                //applicationContext.finish()
+                //applicationContext.overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
             }
             .setNegativeButton(R.string.dialog_reset_no_save) { _, _ ->
-                // DataCollector.CurrentTripDataManager.reset()
-                // enumValues<DataManagers>().forEach { it.dataManager.reset() }
                 DataManagers.CURRENT_TRIP.dataManager.reset()
-                sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
-                this@SummaryActivity.finish()
-                this@SummaryActivity.overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
+                applicationContext.sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+                refreshActivity(dataManager!!)
             }
             .setNeutralButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
                 dialog.cancel()
@@ -428,7 +427,7 @@ class SummaryActivity: Activity() {
         val alert = builder.create()
         alert.show()
         alert.getButton(DialogInterface.BUTTON_POSITIVE).isEnabled = false
-        alert.getButton(DialogInterface.BUTTON_NEGATIVE).setBackgroundColor(getColor(R.color.bad_red))
+        alert.getButton(DialogInterface.BUTTON_NEGATIVE).setBackgroundColor(applicationContext.getColor(R.color.bad_red))
 
     }
 
@@ -447,5 +446,21 @@ class SummaryActivity: Activity() {
             StringFormatters.getEnergyString(chargeCurve.chargedEnergy),
             (chargeCurve.chargePlotLine.last().StateOfCharge - chargeCurve.chargePlotLine.first().StateOfCharge).toInt()
         )
+    }
+
+    private fun refreshActivity(tripData: TripData) {
+        requireActivity().supportFragmentManager.commit {
+            setCustomAnimations(0,0,0,0)
+            replace(R.id.main_fragment_container, SummaryFragment(tripData))
+        }
+    }
+    private fun refreshActivity(dataManager: DataManager) {
+        requireActivity().supportFragmentManager.commit {
+            setCustomAnimations(0,0,0,0)
+            replace(R.id.main_fragment_container, SummaryFragment(dataManager.tripData!!, dataManager))
+        }
+    }
+    private fun refreshActivity(index: Int) {
+        refreshActivity(DataManagers.values()[index].dataManager)
     }
 }
