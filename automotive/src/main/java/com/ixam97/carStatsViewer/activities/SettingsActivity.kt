@@ -28,6 +28,11 @@ class SettingsActivity : Activity() {
         }
     }
 
+    override fun startActivity(intent: Intent?) {
+        super.startActivity(intent)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -72,6 +77,7 @@ class SettingsActivity : Activity() {
 
         settings_button_back.setOnClickListener() {
             finish()
+            overridePendingTransition(R.anim.stay_still, R.anim.slide_out_right)
         }
 
         settings_button_kill.setOnClickListener {
@@ -128,6 +134,7 @@ class SettingsActivity : Activity() {
 
         settings_version_text.setOnClickListener {
             startActivity(Intent(this, LogActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_up, R.anim.stay_still)
         }
 
         settings_button_about.setOnClickListener {

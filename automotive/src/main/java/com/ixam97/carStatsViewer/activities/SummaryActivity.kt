@@ -147,6 +147,7 @@ class SummaryActivity: Activity() {
 
         summary_button_back.setOnClickListener {
             finish()
+            overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
         }
 
         summary_button_reset.setOnClickListener {
@@ -401,6 +402,7 @@ class SummaryActivity: Activity() {
                 DataCollector.CurrentTripDataManager.reset()
                 sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
                 this@SummaryActivity.finish()
+                this@SummaryActivity.overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
             }
             .setNegativeButton(R.string.dialog_reset_no_save) { _, _ ->
                 // DataCollector.CurrentTripDataManager.reset()
@@ -408,6 +410,7 @@ class SummaryActivity: Activity() {
                 DataManagers.CURRENT_TRIP.dataManager.reset()
                 sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
                 this@SummaryActivity.finish()
+                this@SummaryActivity.overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
             }
             .setNeutralButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
                 dialog.cancel()

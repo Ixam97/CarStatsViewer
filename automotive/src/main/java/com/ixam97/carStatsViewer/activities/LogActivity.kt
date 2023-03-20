@@ -41,6 +41,7 @@ class LogActivity : Activity() {
 
         log_button_back.setOnClickListener {
             finish()
+            overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
         }
 
         log_button_send.setOnClickListener {

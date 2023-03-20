@@ -32,7 +32,9 @@ import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.GageView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.*
 import java.io.IOException
+import java.lang.Runnable
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -84,10 +86,16 @@ class MainActivity : Activity() {
 
         val preferenceDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
         if (selectedDataManager != preferenceDataManager) {
-            finish()
-            overridePendingTransition(0, 0)
-            startActivity(intent)
-            overridePendingTransition(0, 0)
+            // Delay refresh for 400ms to ensure transition animation has finished
+            CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+                delay(400)
+                runOnUiThread {
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    finish()
+                    overridePendingTransition(0, 0)
+                }
+            }
         }
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
@@ -414,6 +422,7 @@ class MainActivity : Activity() {
 
         main_button_settings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }
 
         main_dimension_y_secondary.entries = arrayListOf<String>().apply {
@@ -438,6 +447,7 @@ class MainActivity : Activity() {
             // summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
             summaryIntent.putExtra("dataManager", appPreferences.mainViewTrip)
             startActivity(summaryIntent)
+            overridePendingTransition(R.anim.slide_in_up, R.anim.stay_still)
         }
 
         main_button_summary_charge.setOnClickListener {
@@ -445,6 +455,7 @@ class MainActivity : Activity() {
             // summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
             summaryIntent.putExtra("dataManager", appPreferences.mainViewTrip)
             startActivity(summaryIntent)
+            overridePendingTransition(R.anim.slide_in_up, R.anim.stay_still)
         }
 
         main_button_dismiss_charge_plot.setOnClickListener {

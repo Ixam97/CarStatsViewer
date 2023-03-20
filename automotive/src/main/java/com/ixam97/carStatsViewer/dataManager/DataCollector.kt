@@ -165,7 +165,7 @@ class DataCollector : Service() {
             .requestFlow(
                 serviceScope,
                 dataManager = DataManagers.CURRENT_TRIP.dataManager,
-                5_000L
+                LIVE_DATA_TASK_INTERVAL
             ).catch { e -> InAppLogger.log("requestFlow: ${e.message}") }
             .launchIn(serviceScope)
 

@@ -76,7 +76,7 @@ abstract class LiveDataApi(
             while (true) {
                 InAppLogger.log("requestFlow")
                 coroutineSendNow(dataManager)
-                emit(Unit)
+                // emit(Unit)
                 delay(interval)
             }
         }

@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/slideup_activity_background"
     tools:context=".activities.SettingsActivity">
 
     <LinearLayout
@@ -13,7 +14,8 @@
 
         <ImageButton
             android:id="@+id/log_button_back"
-            style="@style/title_back_button_style"/>
+            style="@style/title_back_button_style"
+            android:src="@drawable/ic_close"/>
 
         <TextView
             style="@style/title_text_style"
@@ -90,6 +92,7 @@
                         android:id="@+id/log_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textSize="@dimen/log_font_size"
                         android:typeface="monospace"/>
                 </LinearLayout>
             </ScrollView>

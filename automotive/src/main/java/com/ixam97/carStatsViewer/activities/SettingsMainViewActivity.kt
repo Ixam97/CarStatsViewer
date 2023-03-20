@@ -22,6 +22,7 @@ class SettingsMainViewActivity: Activity() {
 
         settings_main_view_back.setOnClickListener {
             finish()
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
         settings_multiselect_trip.entries = arrayListOf<String>().apply {
