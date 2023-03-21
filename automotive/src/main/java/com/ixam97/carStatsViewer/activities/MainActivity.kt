@@ -120,8 +120,25 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
             }
         }
 
-        main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
-        main_power_gage.minValue = if (appPreferences.consumptionPlotSingleMotor) -100f else -150f
+        if (appPreferences.bstEdition) {
+            main_power_gage.maxValue = 350f
+            main_power_gage.minValue = -175f
+        } else if (appPreferences.driveTrain == 2) {
+            main_power_gage.maxValue = 300f
+            main_power_gage.minValue = -150f
+        } else {
+            main_power_gage.maxValue = 170f
+            main_power_gage.minValue = -100f
+        }
+
+        main_button_secondary_dimension.text = when (appPreferences.secondaryConsumptionDimension) {
+            1 -> getString(R.string.main_secondary_axis, getString(R.string.main_speed))
+            2 -> getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
+            3 -> getString(R.string.main_secondary_axis, getString(R.string.plot_dimensionY_ALTITUDE))
+            else -> getString(R.string.main_secondary_axis, "-")
+        }
+        main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[appPreferences.secondaryConsumptionDimension]
+
 
         main_power_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
         main_consumption_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
@@ -129,7 +146,6 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
         main_charge_gage.barVisibility = appPreferences.chargePlotVisibleGages
 
         main_checkbox_speed.isChecked = appPreferences.plotSpeed
-        main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[appPreferences.secondaryConsumptionDimension]
 
         main_consumption_plot.invalidate()
 
@@ -428,7 +444,35 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
             startActivity(Intent(this, SettingsActivity::class.java))
             overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }
-
+        main_button_secondary_dimension.setOnClickListener {
+            var currentIndex = appPreferences.secondaryConsumptionDimension
+            currentIndex++
+            if (currentIndex > 3) currentIndex = 0
+            appPreferences.secondaryConsumptionDimension = currentIndex
+            main_consumption_plot.dimensionYSecondary = when (appPreferences.secondaryConsumptionDimension) {
+                1 -> {
+                    main_button_secondary_dimension.text =
+                        getString(R.string.main_secondary_axis, getString(R.string.main_speed))
+                    PlotDimensionY.SPEED
+                }
+                2 -> {
+                    main_button_secondary_dimension.text =
+                        getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
+                    PlotDimensionY.STATE_OF_CHARGE
+                }
+                3 -> {
+                    main_button_secondary_dimension.text =
+                        getString(R.string.main_secondary_axis, getString(R.string.plot_dimensionY_ALTITUDE))
+                    PlotDimensionY.ALTITUDE
+                }
+                else -> {
+                    main_button_secondary_dimension.text =
+                        getString(R.string.main_secondary_axis, "-")
+                    null
+                }
+            }
+        }
+        /*
         main_dimension_y_secondary.entries = arrayListOf<String>().apply {
             PlotDimensionY.IndexMap.forEach {
                 val id = resources.getIdentifier("plot_dimensionY_" + (it.value?.name?:"CONSUMPTION"), "string", packageName)
@@ -445,6 +489,8 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
             appPreferences.secondaryConsumptionDimension = main_dimension_y_secondary.selectedIndex
             main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[main_dimension_y_secondary.selectedIndex]
         }
+
+         */
 
         main_button_summary.setOnClickListener {
             //val summaryIntent = Intent(this, SummaryActivity::class.java)

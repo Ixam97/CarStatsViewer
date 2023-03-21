@@ -21,6 +21,7 @@ import com.ixam97.carStatsViewer.plot.objects.*
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_summary.*
 import java.util.concurrent.TimeUnit
 
@@ -148,12 +149,12 @@ class SummaryFragment(private val tripData: TripData, val dataManager: DataManag
         }
 
         if (dataManager != null) {
-          summary_title.visibility = View.GONE
-          summary_trip_selector.visibility = View.VISIBLE
-          summary_selector_title.text = getString(resources.getIdentifier(
-              dataManager.printableName,
-              "string", applicationContext.packageName
-          ))
+            summary_title.visibility = View.GONE
+            summary_trip_selector.visibility = View.VISIBLE
+            summary_selector_title.text = getString(resources.getIdentifier(
+                dataManager.printableName,
+                "string", applicationContext.packageName
+            ))
             if(dataManager.printableName != DataManagers.CURRENT_TRIP.dataManager.printableName) {
                 summary_button_reset.isEnabled = false;
                 summary_button_reset.alpha = CarStatsViewer.disabledAlpha
@@ -208,22 +209,15 @@ class SummaryFragment(private val tripData: TripData, val dataManager: DataManag
         plotMarkers.addMarkers(tripData.markers)
         summary_consumption_plot.addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
         summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
-        summary_consumption_plot.dimensionYSecondary = when (appPreferences.secondaryConsumptionDimension) {
-            1 -> {
-                summary_button_secondary_dimension.text =
-                    getString(R.string.main_secondary_axis, getString(R.string.main_speed))
-                PlotDimensionY.SPEED
-            }
-            2 -> {
-                summary_button_secondary_dimension.text =
-                    getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
-                PlotDimensionY.STATE_OF_CHARGE
-            }
-            else -> {
-                summary_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
-                null
-            }
+
+        summary_button_secondary_dimension.text = when (appPreferences.secondaryConsumptionDimension) {
+            1 -> getString(R.string.main_secondary_axis, getString(R.string.main_speed))
+            2 -> getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
+            3 -> getString(R.string.main_secondary_axis, getString(R.string.plot_dimensionY_ALTITUDE))
+            else -> getString(R.string.main_secondary_axis, "-")
         }
+        summary_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[appPreferences.secondaryConsumptionDimension]
+
         summary_consumption_plot.dimension = PlotDimensionX.DISTANCE
         summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((appPreferences.distanceUnit.toUnit(tripData.traveledDistance) / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) + 1
         summary_consumption_plot.dimensionRestrictionMin = appPreferences.distanceUnit.asUnit(MainActivity.DISTANCE_TRIP_DIVIDER)
@@ -243,7 +237,7 @@ class SummaryFragment(private val tripData: TripData, val dataManager: DataManag
         summary_button_secondary_dimension.setOnClickListener {
             var currentIndex = appPreferences.secondaryConsumptionDimension
             currentIndex++
-            if (currentIndex > 2) currentIndex = 0
+            if (currentIndex > 3) currentIndex = 0
             appPreferences.secondaryConsumptionDimension = currentIndex
             summary_consumption_plot.dimensionYSecondary = when (appPreferences.secondaryConsumptionDimension) {
                 1 -> {
@@ -255,6 +249,11 @@ class SummaryFragment(private val tripData: TripData, val dataManager: DataManag
                     summary_button_secondary_dimension.text =
                         getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
                     PlotDimensionY.STATE_OF_CHARGE
+                }
+                3 -> {
+                    summary_button_secondary_dimension.text =
+                        getString(R.string.main_secondary_axis, getString(R.string.plot_dimensionY_ALTITUDE))
+                    PlotDimensionY.ALTITUDE
                 }
                 else -> {
                     summary_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")

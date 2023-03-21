@@ -3,12 +3,16 @@ package com.ixam97.carStatsViewer.activities
 import android.app.Activity
 import android.os.Bundle
 import android.view.View
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.VehicleDefinitions
 import kotlinx.android.synthetic.main.activity_settings_vehicle.*
 import kotlinx.coroutines.*
 
 class SettingsVehicleActivity : Activity() {
+
+    val appPreferences = CarStatsViewer.appPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -27,6 +31,12 @@ class SettingsVehicleActivity : Activity() {
         settings_vehicle_switch_plus.setOnClickListener { updateVehicleString() }
         settings_vehicle_switch_performance.setOnClickListener { updateVehicleString() }
         settings_vehicle_switch_bst.setOnClickListener { updateVehicleString() }
+
+        settings_vehicle_multiselect_model_year.selectedIndex = appPreferences.modelYear
+        settings_vehicle_multiselect_drivetrain.selectedIndex = appPreferences.driveTrain
+        settings_vehicle_switch_plus.isChecked = appPreferences.plusPack
+        settings_vehicle_switch_performance.isChecked = appPreferences.performanceUpgrade
+        settings_vehicle_switch_bst.isChecked = appPreferences.bstEdition
 
         CoroutineScope(Dispatchers.Default).launch {
             delay(200)
@@ -97,5 +107,12 @@ class SettingsVehicleActivity : Activity() {
             settings_vehicle_switch_performance.isChecked,
             settings_vehicle_switch_bst.isChecked
         )
+
+        appPreferences.modelYear = settings_vehicle_multiselect_model_year.selectedIndex
+        appPreferences.driveTrain = settings_vehicle_multiselect_drivetrain.selectedIndex
+        appPreferences.plusPack = settings_vehicle_switch_plus.isChecked
+        appPreferences.performanceUpgrade = settings_vehicle_switch_performance.isChecked
+        appPreferences.bstEdition = settings_vehicle_switch_bst.isChecked
+
     }
 }

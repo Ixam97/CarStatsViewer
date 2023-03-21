@@ -220,6 +220,4 @@
     <string name="notification_title">Current stats:</string>
     <string name="foreground_service_info">Statistics tracking service running</string>
     <string name="toast_file_read_error">Error reading trip file</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

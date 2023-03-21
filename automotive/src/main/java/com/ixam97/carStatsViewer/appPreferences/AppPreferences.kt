@@ -41,6 +41,11 @@ class AppPreferences(
     private val LogUserName = AppPreference<String>(context.getString(R.string.preference_log_user_name_key), "", sharedPref)
     private val UseLocation = AppPreference<Boolean>(context.getString(R.string.preference_use_location_key), false, sharedPref)
     private val Autostart = AppPreference<Boolean>(context.getString(R.string.preference_autostart_key), false, sharedPref)
+    private val ModelYear = AppPreference<Int>(context.getString(R.string.preference_model_year_key), 0, sharedPref)
+    private val DriveTrain = AppPreference<Int>(context.getString(R.string.preference_drive_train_key), 0, sharedPref)
+    private val PlusPack = AppPreference<Boolean>(context.getString(R.string.preference_plus_key), false, sharedPref)
+    private val PerformanceUpgrade = AppPreference<Boolean>(context.getString(R.string.preference_performance_key), false, sharedPref)
+    private val BstEdition = AppPreference<Boolean>(context.getString(R.string.preference_bst_key), false, sharedPref)
 
     var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
@@ -64,6 +69,11 @@ class AppPreferences(
     var logTargetAddress: String get() = LogTargetAddress.value; set(value) {LogTargetAddress.value = value}
     var useLocation: Boolean get() = UseLocation.value; set(value) {UseLocation.value = value}
     var autostart: Boolean get() = Autostart.value; set(value) {Autostart.value = value}
+    var modelYear: Int get() = ModelYear.value; set(value) {ModelYear.value = value}
+    var driveTrain: Int get() = DriveTrain.value; set(value) {DriveTrain.value = value}
+    var plusPack: Boolean get() = PlusPack.value; set(value) {PlusPack.value = value}
+    var performanceUpgrade: Boolean get() = PerformanceUpgrade.value; set(value) {PerformanceUpgrade.value = value}
+    var bstEdition: Boolean get() = BstEdition.value; set(value) {BstEdition.value = value}
 
     // Preferences not saved permanently:
     val exclusionStrategy = AppPreferences.exclusionStrategy
