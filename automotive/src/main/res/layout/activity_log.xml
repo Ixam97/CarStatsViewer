@@ -15,6 +15,7 @@
         <ImageButton
             android:id="@+id/log_button_back"
             style="@style/title_back_button_style"
+            android:tint="@color/bad_red"
             android:src="@drawable/ic_close"/>
 
         <TextView
@@ -23,30 +24,11 @@
 
         <View style="@style/filler"/>
 
-        <Button
-            android:visibility="gone"
-            android:id="@+id/log_button_show_json"
-            android:layout_height="match_parent"
-            android:layout_width="wrap_content"
-            android:textSize="47sp"
-            android:textFontWeight="600"
-            android:text="JSON"
-            android:backgroundTint="@android:color/transparent"/>
-
         <ImageButton
             android:id="@+id/log_reset_log"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_delete"
-            android:background="@android:color/transparent"
-            android:layout_marginVertical="15dp"
-            android:layout_marginEnd="10dp"/>
-
-        <ImageButton
-            android:id="@+id/log_button_login"
-            android:src="@drawable/ic_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:layout_marginVertical="15dp"
             android:layout_marginEnd="10dp"/>
@@ -65,7 +47,7 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="?android:attr/colorControlActivated"/>
+        android:background="@color/bad_red"/>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -1,14 +1,12 @@
 package com.ixam97.carStatsViewer.activities
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
 import android.widget.Toast
-import com.google.gson.GsonBuilder
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
@@ -27,6 +25,16 @@ class LogActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+/*
+        CoroutineScope(Dispatchers.IO).launch {
+            val drivingPointsList = CarStatsViewer.tripDao.getAllDrivingPoints()
+            Log.i("TripDataDatabase","Size: ${drivingPointsList.size}")
+            drivingPointsList.forEach {
+                Log.i("TripDataDatabase", it.toString())
+            }
+        }
+
+ */
 
         appPreferences = AppPreferences(applicationContext)
 
@@ -112,51 +120,6 @@ class LogActivity : Activity() {
                     }
                 }
             }
-        }
-
-        log_button_show_json.setOnClickListener {
-            val currentText = log_button_show_json.text
-            when (currentText) {
-                "JSON" -> {
-                    log_button_show_json.text = "LOG"
-                    val gson = GsonBuilder()
-                        .setExclusionStrategies(appPreferences.exclusionStrategy)
-                        .setPrettyPrinting()
-                        .create()
-                    val textValue = "MARKERS: \n" + gson.toJson(DataManagers.CURRENT_TRIP.dataManager.tripData?.markers?: 0) + "\n\nCHARGE CURVE:\n" + gson.toJson(
-                        DataManagers.CURRENT_TRIP.dataManager.tripData?.chargePlotLine?: 0)
-                    log_text_view.text = textValue
-                }
-                "LOG" -> {
-                    log_button_show_json.text = "JSON"
-                    log_text_view.text = InAppLogger.getLogString()
-                }
-            }
-        }
-
-        log_button_login.setOnClickListener {
-            // copyToClipboard(log_text_view.text.toString())
-            val credentialsDialog = AlertDialog.Builder(this@LogActivity).apply {
-                val layout = LayoutInflater.from(this@LogActivity).inflate(R.layout.dialog_smtp_credentials, null)
-                val smtp_dialog_address = layout.findViewById<EditText>(R.id.smtp_dialog_address)
-                smtp_dialog_address.setText(appPreferences.smtpAddress)
-                val smtp_dialog_password = layout.findViewById<EditText>(R.id.smtp_dialog_password)
-                smtp_dialog_password.setText(appPreferences.smtpPassword)
-                val smtp_dialog_server = layout.findViewById<EditText>(R.id.smtp_dialog_server)
-                smtp_dialog_server.setText(appPreferences.smtpServer)
-
-                setView(layout)
-
-                setPositiveButton("OK") { dialog, _ ->
-                    appPreferences.smtpAddress = smtp_dialog_address.text.toString()
-                    appPreferences.smtpPassword = smtp_dialog_password.text.toString()
-                    appPreferences.smtpServer = smtp_dialog_server.text.toString()
-                }
-                setTitle("SMTP Login")
-                setCancelable(true)
-                create()
-            }
-            credentialsDialog.show()
         }
 
         log_button_reload.setOnClickListener {

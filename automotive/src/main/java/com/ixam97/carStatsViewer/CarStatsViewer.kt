@@ -3,7 +3,12 @@ package com.ixam97.carStatsViewer
 import android.app.*
 import android.content.Context
 import android.util.TypedValue
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.database.log.LogDatabase
+import com.ixam97.carStatsViewer.database.tripData.TripDao
+import com.ixam97.carStatsViewer.database.tripData.TripDataDatabase
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveData.http.HttpLiveData
@@ -30,10 +35,23 @@ class CarStatsViewer : Application() {
 
         var foregroundServiceStarted = false
         var restartNotificationDismissed = false
+
+        // lateinit var tripDatabase: TripDataDatabase
+        // lateinit var tripDao: TripDao
+
     }
 
     override fun onCreate() {
         super.onCreate()
+/*
+        tripDatabase = Room.databaseBuilder(
+            applicationContext,
+            TripDataDatabase::class.java,
+            "TripDatabase"
+        ).build()
+        tripDao = tripDatabase.tripDao()
+
+ */
 
         val typedValue = TypedValue()
         applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)

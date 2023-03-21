@@ -16,6 +16,7 @@ import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
@@ -465,6 +466,23 @@ class DataCollector : Service() {
                         if(dataManager.consumptionPlotDistanceDelta > 0) dataManager.consumptionPlotEnergyDelta / (dataManager.consumptionPlotDistanceDelta / 1000) else 0F,
                         dataManager =  dataManager
                     )
+                    /*
+                    if (dataManager == DataManagers.CURRENT_TRIP.dataManager) {
+                        val drivingPoint = DrivingPoint(
+                            epochTime = System.currentTimeMillis(),
+                            usedEnergyDelta = dataManager.consumptionPlotEnergyDelta,
+                            traveledDistanceDelta = dataManager.consumptionPlotDistanceDelta,
+                            stateOfCharge = dataManager.stateOfCharge.toFloat() / 100,
+                            marker = null,
+                            lat = dataManager.location?.altitude?.toFloat(),
+                            lon = null,
+                            alt = null
+                        )
+                        CoroutineScope(Dispatchers.IO).launch {
+                            CarStatsViewer.tripDao.addDrivingPoint(drivingPoint)
+                        }
+                    }
+                     */
                 }
                 dataManager.consumptionPlotDistanceDelta = 0F
                 dataManager.consumptionPlotEnergyDelta = 0F
