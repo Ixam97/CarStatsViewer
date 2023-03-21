@@ -178,7 +178,7 @@
 
     <!-- Vehicle Setup -->
     <string name="vehicle_title">Vehicle setup</string>
-    <string name="vehicle_my">Modell year</string>
+    <string name="vehicle_my">Model year</string>
     <string name="vehicle_drivetrain">Drive train</string>
     <string name="vehicle_plus">Plus package</string>
     <string name="vehicle_performance">Performance upgrade</string>
