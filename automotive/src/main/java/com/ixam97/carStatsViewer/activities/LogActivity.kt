@@ -16,9 +16,7 @@ import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.mailSender.MailSender
 import kotlinx.android.synthetic.main.activity_log.*
 import kotlinx.coroutines.*
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileWriter
 import java.util.*
 
 class LogActivity : Activity() {
@@ -84,19 +82,19 @@ class LogActivity : Activity() {
                             try {
                                 val dir = File(applicationContext.filesDir, "TripData")
                                 if (!dir.exists()) {
-                                    InAppLogger.log("TRIP DATA: Directory TripData does not exist!")
+                                    InAppLogger.w("TRIP DATA: Directory TripData does not exist!")
 
                                 } else {
                                     val gpxFile = File(dir, "${it.dataManager.printableName}.json")
                                     if (!gpxFile.exists() && gpxFile.length() > 0) {
-                                        InAppLogger.log("TRIP_DATA File ${it.dataManager.printableName}.json does not exist!")
+                                        InAppLogger.w("TRIP_DATA File ${it.dataManager.printableName}.json does not exist!")
                                     }
                                     else {
                                         sender.addAttachment(gpxFile)
                                     }
                                 }
                             } catch(e: java.lang.Exception) {
-                                InAppLogger.log("Can't attach file ${it.dataManager.printableName}")
+                                InAppLogger.e("Can't attach file ${it.dataManager.printableName}")
                             }
 
                         }
@@ -110,7 +108,7 @@ class LogActivity : Activity() {
                             log_progress_bar.visibility = View.GONE
                             Toast.makeText(this@LogActivity, "Sending E-Mail failed. See log.", Toast.LENGTH_LONG).show()
                         }
-                        InAppLogger.log(e.stackTraceToString())
+                        InAppLogger.e(e.stackTraceToString())
                     }
                 }
             }
@@ -162,7 +160,7 @@ class LogActivity : Activity() {
         }
 
         log_button_reload.setOnClickListener {
-            log_text_view.text = InAppLogger.getLogString()
+            loadLog()
         }
 
         log_reset_log.setOnClickListener {
@@ -170,14 +168,21 @@ class LogActivity : Activity() {
                 withContext(Dispatchers.IO) {
                     InAppLogger.resetLog()
                     runOnUiThread {
-                        InAppLogger.log("Cleared log")
+                        InAppLogger.i("Cleared log")
                         log_text_view.text = ""
                     }
                 }
             }
         }
 
+        loadLog()
+    }
+
+    private fun loadLog() {
         CoroutineScope(Dispatchers.IO).launch {
+            runOnUiThread {
+                log_progress_bar.visibility = View.VISIBLE
+            }
             val logString = InAppLogger.getLogString()
             runOnUiThread {
                 log_text_view.text = logString

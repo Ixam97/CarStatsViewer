@@ -77,9 +77,6 @@ class AbrpLiveData (
             if (detailedLog) {
                 var logString =
                     "ABRP live-data: Status: ${con.responseCode}, Msg: ${con.responseMessage}, Content:"
-                // InAppLogger.log("SENT: $jsonObject")
-                // InAppLogger.log("STATUS: ${con.responseCode}")
-                // InAppLogger.log("MSG: ${con.responseMessage}")
                 logString += try {
                     con.inputStream.bufferedReader().use { it.readText() }
 
@@ -87,23 +84,23 @@ class AbrpLiveData (
                     "No response content"
                 }
                 if (abrpDataSet.lat == null) logString += ". No valid location!"
-                InAppLogger.log(logString)
+                InAppLogger.d(logString)
             }
             con.inputStream.close()
 
             con.disconnect()
         } catch (e: java.net.SocketTimeoutException) {
-            InAppLogger.log("ABRP live-data: Network timeout error")
+            InAppLogger.e("ABRP live-data: Network timeout error")
             return ConnectionStatus.ERROR
         } catch (e: java.lang.Exception) {
-            InAppLogger.log("ABRP live-data: Network connection error")
+            InAppLogger.e("ABRP live-data: Network connection error")
             return ConnectionStatus.ERROR
         }
         if (responseCode == 200) {
             return ConnectionStatus.CONNECTED
         }
-        InAppLogger.log("ABRP live-data: Connection failed. Response code: $responseCode")
-        if (responseCode == 401) InAppLogger.log("          Auth error")
+        InAppLogger.e("ABRP live-data: Connection failed. Response code: $responseCode")
+        if (responseCode == 401) InAppLogger.e("          Auth error")
         return ConnectionStatus.ERROR
     }
 

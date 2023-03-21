@@ -142,8 +142,8 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
 
         context = applicationContext
         val displayMetrics = context.resources.displayMetrics
-        // InAppLogger.log("Display size: ${displayMetrics.widthPixels/displayMetrics.density}x${displayMetrics.heightPixels/displayMetrics.density}")
-        InAppLogger.log("Main view created")
+        InAppLogger.d("Display size: ${displayMetrics.widthPixels/displayMetrics.density}x${displayMetrics.heightPixels/displayMetrics.density}")
+        InAppLogger.d("Main view created")
 
         PlotView.textSize = resources.getDimension(R.dimen.reduced_font_size)
         PlotView.xMargin = resources.getDimension(R.dimen.plot_x_margin).toInt()
@@ -166,7 +166,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
         ) { appPreferences.chargePlotSecondaryColor }
 
         selectedDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
-        InAppLogger.log("selected Trip: ${selectedDataManager.printableName}")
+        InAppLogger.i("selected Trip: ${selectedDataManager.printableName}")
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
@@ -224,7 +224,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
         super.onDestroy()
         disableUiUpdates()
         unregisterReceiver(broadcastReceiver)
-        InAppLogger.log("Main view destroyed")
+        InAppLogger.d("Main view destroyed")
     }
 
     override fun onPause() {
@@ -488,7 +488,6 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
     }
 
     private fun enableUiUpdates() {
-        // InAppLogger.log("Enabling UI updates")
         updateUi = true
         if (this::timerHandler.isInitialized) {
             timerHandler.removeCallbacks(updateActivityTask)
@@ -498,7 +497,6 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
     }
 
     private fun disableUiUpdates() {
-        // InAppLogger.log("Disabling UI Updates")
         updateUi = false
         if (this::timerHandler.isInitialized) {
             timerHandler.removeCallbacks(updateActivityTask)

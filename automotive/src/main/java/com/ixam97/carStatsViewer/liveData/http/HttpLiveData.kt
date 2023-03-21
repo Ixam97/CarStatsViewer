@@ -186,9 +186,6 @@ class HttpLiveData (
 
             if (detailedLog) {
                 var logString = "HTTP Webhook: Status: ${connection.responseCode}, Msg: ${connection.responseMessage}, Content:"
-                // InAppLogger.log("SENT: $jsonObject")
-                // InAppLogger.log("STATUS: ${con.responseCode}")
-                // InAppLogger.log("MSG: ${con.responseMessage}")
                 logString += try {
                     connection.inputStream.bufferedReader().use {it.readText()}
 
@@ -196,21 +193,21 @@ class HttpLiveData (
                     "No response content"
                 }
                 if (dataSet.lat == null) logString += ". No valid location!"
-                InAppLogger.log(logString)
+                InAppLogger.d(logString)
             }
 
             connection.inputStream.close()
             connection.disconnect()
         } catch (e: java.net.SocketTimeoutException) {
-            InAppLogger.log("HTTP Webhook: Network timeout error")
+            InAppLogger.e("HTTP Webhook: Network timeout error")
             return ConnectionStatus.ERROR
         } catch (e: java.lang.Exception) {
-            InAppLogger.log("HTTP Webhook: Connection error")
+            InAppLogger.e("HTTP Webhook: Connection error")
             return ConnectionStatus.ERROR
         }
 
         if (responseCode != 200) {
-            InAppLogger.log("HTTP Webhook: Transmission failed. Status code $responseCode")
+            InAppLogger.e("HTTP Webhook: Transmission failed. Status code $responseCode")
             return ConnectionStatus.ERROR
         }
 

@@ -74,9 +74,7 @@ abstract class LiveDataApi(
         timeout = interval.toInt()
         return flow {
             while (true) {
-                InAppLogger.log("requestFlow")
                 coroutineSendNow(dataManager)
-                // emit(Unit)
                 delay(interval)
             }
         }

@@ -34,7 +34,7 @@ class PermissionsActivity: Activity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        InAppLogger.log("onRequestPermissionResult")
+        InAppLogger.d("onRequestPermissionResult")
 
         if (unGrantedPermissions().isEmpty()) {
             finish()
@@ -57,14 +57,14 @@ class PermissionsActivity: Activity() {
     }
 
     private fun checkPermissions(): Boolean {
-        InAppLogger.log("Checking permissions...")
+        InAppLogger.i("Checking permissions...")
         val unGrantedPermissions = unGrantedPermissions()
         if (unGrantedPermissions.isNotEmpty()) {
-            InAppLogger.log("Requesting missing Permissions...")
+            InAppLogger.i("Requesting missing Permissions...")
             requestPermissions(unGrantedPermissions.toTypedArray(), 0)
             return false
         }
-        InAppLogger.log("Permissions already granted.")
+        InAppLogger.i("Permissions already granted.")
         return true
     }
 

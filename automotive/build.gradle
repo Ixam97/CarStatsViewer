@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
 android {
@@ -8,11 +9,11 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "com.ixam97.carStatsViewer_dev"
+        applicationId "com.ixam97.carStatsViewerDev"
         minSdkVersion 29
         targetSdkVersion 33
-        versionCode 100
-        versionName "0.24.0_dev23"
+        versionCode 101
+        versionName "0.24.0_dev24"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -68,6 +69,9 @@ dependencies {
     implementation 'com.airbnb.android:paris:2.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.github.matthiaszimmermann:EGM96:master-SNAPSHOT'
+
+    implementation("androidx.room:room-ktx:2.5.0")
+    kapt("androidx.room:room-compiler:2.5.0")
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
 

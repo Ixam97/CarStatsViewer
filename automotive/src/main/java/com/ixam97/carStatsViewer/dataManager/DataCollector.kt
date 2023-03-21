@@ -77,7 +77,7 @@ class DataCollector : Service() {
     private lateinit var foregroundServiceNotification: Notification.Builder
 
     init {
-        InAppLogger.log("DataCollector is initializing...")
+        InAppLogger.i("DataCollector is initializing...")
         startupTimestamp = System.nanoTime()
         CarStatsViewer.foregroundServiceStarted = true
         CarStatsViewer.notificationManager.cancel(CarStatsViewer.RESTART_NOTIFICATION_ID)
@@ -87,7 +87,7 @@ class DataCollector : Service() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 getString(R.string.save_trip_data_broadcast) -> {
-                    InAppLogger.log("TRIP DATA: Broadcast save")
+                    InAppLogger.i("TRIP DATA: Broadcast save")
                     enumValues<DataManagers>().filter{ it.doTrack}.forEach {
                         writeTripDataToFile(it.dataManager.tripData!!, it.dataManager.printableName)
                     }
@@ -99,7 +99,7 @@ class DataCollector : Service() {
 
     private val saveTripDataTask = object : Runnable {
         override fun run() {
-            InAppLogger.log("TRIP DATA: Autosave")
+            InAppLogger.i("TRIP DATA: Autosave")
             enumValues<DataManagers>().filter{ it.doTrack}.forEach {
                 writeTripDataToFile(it.dataManager.tripData!!, it.dataManager.printableName)
             }
@@ -110,7 +110,6 @@ class DataCollector : Service() {
     private val updateStatsNotificationTask = object : Runnable {
         override fun run() {
             updateStatsNotification()
-            // InAppLogger.logNotificationUpdate()
             val currentNotificationTimeMillis = System.currentTimeMillis()
             lastNotificationTimeMillis = currentNotificationTimeMillis
             notificationTimerHandler.postDelayed(this, NOTIFICATION_TIMER_HANDLER_DELAY_MILLIS)
@@ -125,7 +124,7 @@ class DataCollector : Service() {
         super.onCreate()
 
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
-            InAppLogger.log("Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
+            InAppLogger.e("Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
             val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val serviceIntent = Intent(applicationContext, AutoStartReceiver::class.java)
             serviceIntent.action = "com.ixam97.carStatsViewer.RestartAction"
@@ -148,14 +147,14 @@ class DataCollector : Service() {
         locationClient
             .getLocationUpdates(5_000L)
             .catch { e ->
-                InAppLogger.log("LocationClient: ${e.message}")
+                InAppLogger.e("LocationClient: ${e.message}")
             }
             .onEach { location ->
                 enumValues<DataManagers>().forEach {
                     it.dataManager.location = location
                 }
                 if (location != null) {
-                    InAppLogger.log("Location: lat: %.5f, lon: %.5f, alt: %.2fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
+                    InAppLogger.d("Location: lat: %.5f, lon: %.5f, alt: %.2fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
                 }
             }
             .launchIn(serviceScope)
@@ -166,7 +165,7 @@ class DataCollector : Service() {
                 serviceScope,
                 dataManager = DataManagers.CURRENT_TRIP.dataManager,
                 LIVE_DATA_TASK_INTERVAL
-            ).catch { e -> InAppLogger.log("requestFlow: ${e.message}") }
+            ).catch { e -> InAppLogger.e("requestFlow: ${e.message}") }
             .launchIn(serviceScope)
 
         var tripRestoreComplete = false
@@ -177,7 +176,7 @@ class DataCollector : Service() {
                     it.dataManager.tripData = mPrevTripData
                     sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
                 } else {
-                    InAppLogger.log("No trip file read!")
+                    InAppLogger.w("No trip file read!")
                     // Toast.makeText(applicationContext ,R.string.toast_file_read_error, Toast.LENGTH_LONG).show()
                 }
             }
@@ -234,11 +233,8 @@ class DataCollector : Service() {
             }
         } else DistanceUnitEnum.KM
 
-        // InAppLogger.log("Display distance unit: $displayUnit")
-        InAppLogger.log("Car name: $carName, $carManufacturer, $carModelYear")
-        InAppLogger.log("Max battery Capacity: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)}")
-        // InAppLogger.log("Fuel level: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.FUEL_LEVEL, 0)}")
-        // InAppLogger.log("Fuel Capacity: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_FUEL_CAPACITY, 0)}")
+        InAppLogger.v("Car name: $carName, $carManufacturer, $carModelYear")
+        InAppLogger.v("Max battery Capacity: ${carPropertyManager.getFloatProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, 0)}")
 
         registerCarPropertyCallbacks()
 
@@ -285,7 +281,7 @@ class DataCollector : Service() {
             speedUpdater(it.dataManager)
             powerUpdater(it.dataManager)
         }
-        InAppLogger.log("DataCollector service started")
+        InAppLogger.i("DataCollector service started")
     }
 
     override fun onDestroy() {
@@ -409,8 +405,8 @@ class DataCollector : Service() {
                         if (printableName2.isNotEmpty()) printableName1 += " and "
                         printableName1 += printableName2
 
-                        if (printableName1.isNotEmpty()) InAppLogger.log("DATA COLLECTOR: Discarded charge plot data Point due to large time delta of $printableName1!")
-                        else InAppLogger.log("DATA COLLECTOR: Discarded charge plot data Point due to initial values!")
+                        if (printableName1.isNotEmpty()) InAppLogger.w("DATA COLLECTOR: Discarded charge plot data Point due to large time delta of $printableName1!")
+                        else InAppLogger.d("DATA COLLECTOR: Discarded charge plot data Point due to initial values!")
                     }
                 }
             }
@@ -452,12 +448,12 @@ class DataCollector : Service() {
                     // Drive started -> Distraction optimization
                     appPreferences.doDistractionOptimization = true
                     sendBroadcast(Intent(getString(R.string.distraction_optimization_broadcast)))
-                    InAppLogger.log("Drive started")
+                    InAppLogger.d("Drive started")
                 } else if (dataManager.currentSpeed.absoluteValue < 1 && appPreferences.doDistractionOptimization) {
                     // Drive ended
                     appPreferences.doDistractionOptimization = false
                     sendBroadcast(Intent(getString(R.string.distraction_optimization_broadcast)))
-                    InAppLogger.log("Drive ended")
+                    InAppLogger.d("Drive ended")
                 }
             }
 
@@ -485,14 +481,14 @@ class DataCollector : Service() {
 
         val previousDrivingState = dataManager.DriveState.lastDriveState
         if (dataManager.DriveState.hasChanged()) {
-            if (dataManager == DataManagers.values().first().dataManager) InAppLogger.log("DRIVE STATE: ${DrivingState.nameMap[previousDrivingState]} -> ${DrivingState.nameMap[dataManager.driveState]} (${dataManager.CurrentIgnitionState.value}")
+            if (dataManager == DataManagers.values().first().dataManager) InAppLogger.i("DRIVE STATE: ${DrivingState.nameMap[previousDrivingState]} -> ${DrivingState.nameMap[dataManager.driveState]} (${dataManager.CurrentIgnitionState.value}")
             when (dataManager.driveState) {
                 DrivingState.DRIVE  -> driveState(previousDrivingState, dataManager)
                 DrivingState.CHARGE -> chargeState(previousDrivingState, dataManager)
                 DrivingState.PARKED -> parkState(previousDrivingState, dataManager)
             }
             if (dataManager == DataManagers.CURRENT_TRIP.dataManager)
-                InAppLogger.log("TRIP DATA: Drive state save")
+                InAppLogger.i("TRIP DATA: Drive state save")
             writeTripDataToFile(dataManager.tripData!!, dataManager.printableName)
             sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))
         }
@@ -500,7 +496,7 @@ class DataCollector : Service() {
 
     private fun ignitionUpdater(dataManager: DataManager) {
         if (dataManager == DataManagers.values().first().dataManager) {
-            InAppLogger.log("Ignition switched to: ${ignitionList[dataManager.currentIgnitionState]}")
+            InAppLogger.d("Ignition switched to: ${ignitionList[dataManager.currentIgnitionState]}")
         }
         driveStateUpdater(dataManager)
     }
@@ -580,7 +576,7 @@ class DataCollector : Service() {
         dataManager.chargeCurves.add(chargeCurve)
 
         if (dataManager != enumValues<DataManagers>().last().dataManager) return
-        InAppLogger.log("Added Charge Curve to SINCE_CHARGE")
+        InAppLogger.i("Added Charge Curve to SINCE_CHARGE")
         DataManagers.SINCE_CHARGE.dataManager.chargeCurves.add(chargeCurve)
     }
 
@@ -628,7 +624,6 @@ class DataCollector : Service() {
     }
 
     private fun registerCarPropertyCallbacks() {
-        // InAppLogger.log("DataCollector.registerCarPropertyCallbacks")
         for (propertyId in DataManager.propertyIds) {
             carPropertyManager.registerCallback(
                 carPropertyListener,
@@ -651,7 +646,7 @@ class DataCollector : Service() {
 
     private fun getPropertyStatus(propertyId: Int): Int {
         val status = carPropertyManager.getProperty<Any>(propertyId, 0).status
-        if (status != CarPropertyValue.STATUS_AVAILABLE) InAppLogger.log("PropertyStatus: $status")
+        if (status != CarPropertyValue.STATUS_AVAILABLE) InAppLogger.w("PropertyStatus: $status")
         return status
     }
 
@@ -703,42 +698,41 @@ class DataCollector : Service() {
             writer.append(gson.toJson(tripData))
             writer.flush()
             writer.close()
-            // InAppLogger.log("TRIP DATA: Saved $fileName.json")
         } catch (e: java.lang.Exception) {
-            InAppLogger.log("TRIP DATA: Writing $fileName.json failed!")
-            InAppLogger.log(e.stackTraceToString())
+            InAppLogger.e("TRIP DATA: Writing $fileName.json failed!")
+            InAppLogger.e(e.stackTraceToString())
         }
     }
 
     private fun readTripDataFromFile(fileName: String): TripData? {
 
-        InAppLogger.log("TRIP DATA: Reading $fileName.json")
+        InAppLogger.i("TRIP DATA: Reading $fileName.json")
         val startTime = System.currentTimeMillis()
         val dir = File(applicationContext.filesDir, "TripData")
         if (!dir.exists()) {
-            InAppLogger.log("TRIP DATA: Directory TripData does not exist!")
+            InAppLogger.w("TRIP DATA: Directory TripData does not exist!")
             return null
         }
 
         val gpxFile = File(dir, "$fileName.json")
         if (!gpxFile.exists() && gpxFile.length() > 0) {
-            InAppLogger.log("TRIP_DATA File $fileName.json does not exist!")
+            InAppLogger.w("TRIP_DATA File $fileName.json does not exist!")
             return null
         }
 
         return try {
-            InAppLogger.log("TRIP DATA: File size: %.1f kB".format(gpxFile.length() / 1024f))
+            InAppLogger.d("TRIP DATA: File size: %.1f kB".format(gpxFile.length() / 1024f))
 
             // val fileReader = FileReader(gpxFile)
             val tripData: TripData = Gson().fromJson(gpxFile.readText(), TripData::class.java)
             // fileReader.close()
 
-            InAppLogger.log("TRIP DATA: Time to read: ${System.currentTimeMillis() - startTime} ms")
+            InAppLogger.d("TRIP DATA: Time to read: ${System.currentTimeMillis() - startTime} ms")
 
             tripData
 
         } catch (e: java.lang.Exception) {
-            InAppLogger.log("Error reading File: $e")
+            InAppLogger.e("Error reading File: $e")
             null
         }
     }
@@ -750,13 +744,13 @@ class DataCollector : Service() {
             newDrivingState == DrivingState.DRIVE) {
             // Reset if in different Month than start and save old month
             if (Date().month != DataManagers.CURRENT_MONTH.dataManager.tripStartDate.month) {
-                InAppLogger.log("TRIP DATA: Saving past Month")
+                InAppLogger.i("TRIP DATA: Saving past Month")
                 writeTripDataToFile(
                     DataManagers.CURRENT_MONTH.dataManager.tripData!!,
                     "MonthData_${DataManagers.CURRENT_MONTH.dataManager.tripStartDate}_${DataManagers.CURRENT_MONTH.dataManager.tripStartDate.month + 1}"
                 )
                 DataManagers.CURRENT_MONTH.dataManager.reset()
-                InAppLogger.log("Resetting ${DataManagers.CURRENT_MONTH.dataManager.printableName}")
+                InAppLogger.i("Resetting ${DataManagers.CURRENT_MONTH.dataManager.printableName}")
             }
         }
         if (DataManagers.AUTO_DRIVE.dataManager == dataManager &&
@@ -769,7 +763,7 @@ class DataCollector : Service() {
                     DataManagers.AUTO_DRIVE.dataManager.plotMarkers.markers.last().StartTime < (Date().time - TimeUnit.HOURS.toMillis(AUTO_RESET_TIME_HOURS))
                 ){
                     DataManagers.AUTO_DRIVE.dataManager.reset()
-                    InAppLogger.log("Resetting ${DataManagers.AUTO_DRIVE.dataManager.printableName}")
+                    InAppLogger.i("Resetting ${DataManagers.AUTO_DRIVE.dataManager.printableName}")
                 }
             }
         }
@@ -777,7 +771,7 @@ class DataCollector : Service() {
             DataManagers.SINCE_CHARGE.doTrack &&
             previousDrivingState == DrivingState.CHARGE) {
             DataManagers.SINCE_CHARGE.dataManager.reset()
-            InAppLogger.log("Resetting ${DataManagers.SINCE_CHARGE.dataManager.printableName}")
+            InAppLogger.i("Resetting ${DataManagers.SINCE_CHARGE.dataManager.printableName}")
         }
     }
 

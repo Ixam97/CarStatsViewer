@@ -5,13 +5,6 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.drawable.Icon
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.widget.Toast
-import androidx.core.app.NotificationCompat.Action
 import com.ixam97.carStatsViewer.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.dataManager.DataCollector
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -49,7 +42,7 @@ class AutoStartReceiver: BroadcastReceiver() {
             }
         }
 
-        InAppLogger.log("AutStartReceiver fired. Reason: $reason")
+        InAppLogger.i("AutStartReceiver fired. Reason: $reason")
 
         val notificationText =
             if (reason != null) {

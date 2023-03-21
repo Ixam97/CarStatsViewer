@@ -67,7 +67,7 @@ class SummaryActivity: Activity() {
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            InAppLogger.log(intent.action?: "")
+            InAppLogger.d(intent.action?: "")
             when (intent.action) {
                 getString(R.string.distraction_optimization_broadcast) -> {
                     updateDistractionOptimization()
@@ -433,7 +433,7 @@ class SummaryActivity: Activity() {
     }
 
     private fun updateDistractionOptimization() {
-        InAppLogger.log("Distraction optimization: ${appPreferences.doDistractionOptimization}")
+        InAppLogger.d("Distraction optimization: ${appPreferences.doDistractionOptimization}")
         summary_parked_warning.visibility =
             if (appPreferences.doDistractionOptimization) View.VISIBLE
             else View.GONE
