@@ -16,7 +16,8 @@ import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
+import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesClient
+import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
@@ -76,6 +77,8 @@ class DataCollector : Service() {
     private lateinit var liveDataTimerHandler: Handler
 
     private lateinit var foregroundServiceNotification: Notification.Builder
+
+    private val carPropertiesData = CarPropertiesData()
 
     init {
         InAppLogger.i("DataCollector is initializing...")
@@ -649,6 +652,19 @@ class DataCollector : Service() {
                 DataManager.sensorRateMap[propertyId]?: 0.0F
             )
         }
+
+        /** Testing flow **/
+        val carPropertiesClient = CarPropertiesClient(CarStatsViewer.appContext)
+
+        carPropertiesClient.getCarPropertiesUpdates(
+            DataManager.propertyIds,
+            carPropertiesData
+        )
+            .catch { e -> InAppLogger.e(e.stackTraceToString()) }
+            // .onEach { carPropertyValue -> InAppLogger.log("${carPropertiesData.CurrentSpeed.value}")}
+            .launchIn(serviceScope)
+
+
     }
 
     private fun refreshProperty(propertyId: Int, dataManager: DataManager) {
