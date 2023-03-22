@@ -654,6 +654,7 @@ class DataCollector : Service() {
         }
 
         /** Testing flow **/
+        /*
         val carPropertiesClient = CarPropertiesClient(CarStatsViewer.appContext)
 
         carPropertiesClient.getCarPropertiesUpdates(
@@ -663,7 +664,7 @@ class DataCollector : Service() {
             .catch { e -> InAppLogger.e(e.stackTraceToString()) }
             // .onEach { carPropertyValue -> InAppLogger.log("${carPropertiesData.CurrentSpeed.value}")}
             .launchIn(serviceScope)
-
+        */
 
     }
 

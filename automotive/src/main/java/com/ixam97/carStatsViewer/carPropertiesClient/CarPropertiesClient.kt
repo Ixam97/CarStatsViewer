@@ -24,13 +24,16 @@ class CarPropertiesClient(context: Context) {
     fun getCarPropertiesUpdates(
         carPropertyIdsList: List<Int> = CarProperties.usedProperties,
         carPropertiesData: CarPropertiesData? = null
-    ): Flow<CarPropertyValue<*>> {
+    ): Flow<CarProperty> {
         return callbackFlow {
 
             val carPropertyListener = object : CarPropertyManager.CarPropertyEventCallback {
                 override fun onChangeEvent(carPropertyValue: CarPropertyValue<*>) {
                     carPropertiesData?.update(carPropertyValue)
-                    launch { send(carPropertyValue) }
+                    val returnProperty = CarProperty(carPropertyValue.propertyId)
+                    returnProperty.value = carPropertyValue.value
+                    returnProperty.timestamp = carPropertyValue.timestamp
+                    launch { send(returnProperty) }
                 }
                 override fun onErrorEvent(propertyId: Int, zone: Int) {
                     throw Exception("Received error car property event, propId=$propertyId")
