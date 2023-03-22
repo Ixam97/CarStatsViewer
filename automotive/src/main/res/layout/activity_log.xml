@@ -50,6 +50,7 @@
         android:background="@color/bad_red"/>
 
     <LinearLayout
+        android:theme="@style/redTextEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
@@ -146,6 +147,7 @@
             <ProgressBar
                 android:id="@+id/log_progress_bar"
                 android:visibility="gone"
+                android:indeterminateTint="@color/bad_red"
                 android:layout_centerInParent="true"
                 android:layout_width="200dp"
                 android:layout_height="200dp"/>

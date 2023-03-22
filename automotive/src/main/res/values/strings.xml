@@ -38,6 +38,7 @@
         <item>Added vehicle setup</item>
         <item>Restructured settings menu</item>
         <item>Fixed main view units not updating</item>
+        <item>General bugfixes and stability improvements</item>
     </string-array>
 
     <string-array name="changes_0_23">

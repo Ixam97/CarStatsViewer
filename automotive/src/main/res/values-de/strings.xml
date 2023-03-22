@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string-array name="changes_0_24">
+        <item>Mehrere Live-Daten-APIs hinzugefügt:\n- ABRP OTA Live Data\n- HTTP Webhook mit BasicAuth</item>
+        <item>Standorterfassung mit höhenverlauf hinzugefügt</item>
+        <item>Neustart-Benachrichtigung nach Update, Reboot oder Absturz hinzugefügt</item>
+        <item>Fahrzeugkonfiguration hinzugefügt</item>
+        <item>Einstellungsmenü umstrukturiert</item>
+        <item>Fehler behoben, der das aktualisieren der Einheiten in der Hauptansicht verhindert hat</item>
+        <item>Allgemeine Bugfixes und Stabilitätsverbesserungen.</item>
+    </string-array>
+
     <string-array name="changes_0_23">
         <item>Datenstruktur grundlegend überarbeitet, um die Stabilität und Skalierbarkeit zu verbessern</item>
         <item>Dänische Übersetzung hinzugefügt</item>
