@@ -2,6 +2,7 @@ package com.ixam97.carStatsViewer.activities
 
 import android.app.AlertDialog
 import android.app.PendingIntent
+import android.car.Car
 import android.car.VehicleGear
 import android.car.VehiclePropertyIds
 import android.content.BroadcastReceiver
@@ -19,6 +20,9 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.*
@@ -34,6 +38,7 @@ import com.ixam97.carStatsViewer.views.GageView
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
@@ -154,6 +159,19 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /*
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val carStatsViewer = applicationContext as CarStatsViewer
+                carStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
+                    // Do stuff with live data
+                    InAppLogger.v("State flow value: $it")
+                }
+            }
+        }
+         */
+
         startForegroundService(Intent(applicationContext, DataCollector::class.java))
 
         context = applicationContext
@@ -507,7 +525,9 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
                     R.anim.slide_out_down
                 )
                 val summaryDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
-                add(R.id.main_fragment_container, SummaryFragment(summaryDataManager.tripData!!, summaryDataManager))
+                CarStatsViewer.dataManager = summaryDataManager
+                CarStatsViewer.tripData = summaryDataManager.tripData
+                add(R.id.main_fragment_container, SummaryFragment())
             }
 
         }

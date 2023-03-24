@@ -16,6 +16,7 @@ import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesClient
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
@@ -654,7 +655,7 @@ class DataCollector : Service() {
         }
 
         /** Testing flow **/
-        /*
+/*
         val carPropertiesClient = CarPropertiesClient(CarStatsViewer.appContext)
 
         carPropertiesClient.getCarPropertiesUpdates(
@@ -662,9 +663,13 @@ class DataCollector : Service() {
             carPropertiesData
         )
             .catch { e -> InAppLogger.e(e.stackTraceToString()) }
-            // .onEach { carPropertyValue -> InAppLogger.log("${carPropertiesData.CurrentSpeed.value}")}
+            .onEach { carProperty ->
+                if (carProperty.propertyId == CarProperties.ENV_OUTSIDE_TEMPERATURE) {
+                    (applicationContext as CarStatsViewer).dataProcessor.updateRealTimeData(carProperty.value as Float)
+                }
+            }
             .launchIn(serviceScope)
-        */
+*/
 
     }
 

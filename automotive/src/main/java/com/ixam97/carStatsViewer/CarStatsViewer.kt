@@ -3,12 +3,10 @@ package com.ixam97.carStatsViewer
 import android.app.*
 import android.content.Context
 import android.util.TypedValue
-import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.database.log.LogDatabase
-import com.ixam97.carStatsViewer.database.tripData.TripDao
-import com.ixam97.carStatsViewer.database.tripData.TripDataDatabase
+import com.ixam97.carStatsViewer.dataManager.DataManager
+import com.ixam97.carStatsViewer.dataManager.TripData
+import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveData.http.HttpLiveData
@@ -36,10 +34,17 @@ class CarStatsViewer : Application() {
         var foregroundServiceStarted = false
         var restartNotificationDismissed = false
 
+        var tripData: TripData? = null
+        var dataManager: DataManager? = null
+
+
+
         // lateinit var tripDatabase: TripDataDatabase
         // lateinit var tripDao: TripDao
 
     }
+
+    val dataProcessor = DataProcessor()
 
     override fun onCreate() {
         super.onCreate()

@@ -21,16 +21,16 @@ import com.ixam97.carStatsViewer.plot.objects.*
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_summary.*
 import java.util.concurrent.TimeUnit
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SummaryFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class SummaryFragment(private val tripData: TripData, val dataManager: DataManager? = null) : Fragment(R.layout.fragment_summary) {
+class SummaryFragment() : Fragment(R.layout.fragment_summary) {
+
+    companion object {
+    }
+
+    private var tripData = CarStatsViewer.tripData!!
+    private var dataManager = CarStatsViewer.dataManager
 
     fun interface OnSelectedTripChangedListener {
         fun onSelectedTripChanged()
@@ -98,7 +98,7 @@ class SummaryFragment(private val tripData: TripData, val dataManager: DataManag
             PlotPaint.byColor(applicationContext.getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
         ) { appPreferences.chargePlotSecondaryColor }
 
-        if (dataManager == null || (dataManager.printableName != DataManagers.CURRENT_TRIP.dataManager.printableName)) {
+        if (dataManager == null || (dataManager?.printableName != DataManagers.CURRENT_TRIP.dataManager.printableName)) {
             summary_button_reset.isEnabled = false
             summary_button_reset.setColorFilter(applicationContext.getColor(R.color.disabled_tint))
         }
@@ -148,14 +148,14 @@ class SummaryFragment(private val tripData: TripData, val dataManager: DataManag
                 TODO("Don't use onClick when showing a specific trip, not one of the 4 main trips")
         }
 
-        if (dataManager != null) {
+        dataManager?.let {
             summary_title.visibility = View.GONE
             summary_trip_selector.visibility = View.VISIBLE
             summary_selector_title.text = getString(resources.getIdentifier(
-                dataManager.printableName,
+                it.printableName,
                 "string", applicationContext.packageName
             ))
-            if(dataManager.printableName != DataManagers.CURRENT_TRIP.dataManager.printableName) {
+            if(it.printableName != DataManagers.CURRENT_TRIP.dataManager.printableName) {
                 summary_button_reset.isEnabled = false;
                 summary_button_reset.alpha = CarStatsViewer.disabledAlpha
             }
@@ -450,13 +450,17 @@ class SummaryFragment(private val tripData: TripData, val dataManager: DataManag
     private fun refreshActivity(tripData: TripData) {
         requireActivity().supportFragmentManager.commit {
             setCustomAnimations(0,0,0,0)
-            replace(R.id.main_fragment_container, SummaryFragment(tripData))
+            CarStatsViewer.dataManager = null
+            CarStatsViewer.tripData = tripData
+            replace(R.id.main_fragment_container, SummaryFragment())
         }
     }
     private fun refreshActivity(dataManager: DataManager) {
         requireActivity().supportFragmentManager.commit {
             setCustomAnimations(0,0,0,0)
-            replace(R.id.main_fragment_container, SummaryFragment(dataManager.tripData!!, dataManager))
+            CarStatsViewer.dataManager = dataManager
+            CarStatsViewer.tripData = dataManager.tripData
+            replace(R.id.main_fragment_container, SummaryFragment())
         }
     }
     private fun refreshActivity(index: Int) {
