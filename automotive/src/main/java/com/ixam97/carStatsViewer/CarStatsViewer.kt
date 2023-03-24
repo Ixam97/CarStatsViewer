@@ -6,7 +6,6 @@ import android.util.TypedValue
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManager
 import com.ixam97.carStatsViewer.dataManager.TripData
-import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveData.http.HttpLiveData
@@ -44,7 +43,7 @@ class CarStatsViewer : Application() {
 
     }
 
-    val dataProcessor = DataProcessor()
+    // val dataProcessor = DataProcessor()
 
     override fun onCreate() {
         super.onCreate()
