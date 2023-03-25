@@ -6,10 +6,11 @@ import androidx.room.RoomDatabase
 @Database(entities =
     [
         DrivingSession::class,
-        ChargingSession::class,
         DrivingPoint::class,
+        ChargingSession::class,
         ChargingPoint::class,
-        Marker::class
+        DrivingSessionPointCrossRef::class,
+        DrivingChargingCrossRef::class
     ],
     version = 1
 )
