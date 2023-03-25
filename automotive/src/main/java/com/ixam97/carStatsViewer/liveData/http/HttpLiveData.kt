@@ -43,6 +43,7 @@ class HttpLiveData (
         con.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
         con.setRequestProperty("Accept","application/json")
         con.connectTimeout = timeout
+        con.readTimeout = timeout
         con.doOutput = true
         con.doInput = true
 
