@@ -20,6 +20,7 @@ import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesClient
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
+import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
 import com.ixam97.carStatsViewer.plot.enums.*
@@ -303,8 +304,12 @@ class DataCollector : Service() {
 
         serviceScope.launch {
             while (true) {
-                if (lastConnection + 10_000 < System.currentTimeMillis())
+                if (lastConnection + 10_000 < System.currentTimeMillis() && CarStatsViewer.liveDataApis[0].connectionStatus != LiveDataApi.ConnectionStatus.UNUSED){
                     InAppLogger.e("Live Data Failure!")
+                    val broadcastIntent = Intent(CarStatsViewer.liveDataApis[0].broadcastAction)
+                    broadcastIntent.putExtra("status", LiveDataApi.ConnectionStatus.ERROR.status)
+                    applicationContext.sendBroadcast(broadcastIntent)
+                }
                 delay(10_000)
             }
         }
