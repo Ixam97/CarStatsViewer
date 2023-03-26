@@ -11,20 +11,14 @@ import java.text.SimpleDateFormat
 
 object InAppLogger {
 
-    private const val VERBOSE = 1
-    private const val DEBUG = 2
-    private const val INFO = 3
-    private const val WARN = 4
-    private const val ERROR = 5
-
-    private val typeMap = mapOf(
-        0 to "?",
-        1 to "V",
-        2 to "D",
-        3 to "I",
-        4 to "W",
-        5 to "E"
-    )
+    private fun typeSymbol(type: Int): String = when (type) {
+        Log.VERBOSE -> "V"
+        Log.DEBUG -> "D"
+        Log.INFO -> "I"
+        Log.WARN -> "W"
+        Log.ERROR -> "E"
+        else -> "?"
+    }
 
     private val logDatabase = Room.databaseBuilder(
         CarStatsViewer.appContext,
@@ -33,16 +27,16 @@ object InAppLogger {
     ).build()
     private val logDao = logDatabase.logDao()
 
-    fun v(message: String) = log(message, VERBOSE)
-    fun d(message: String) = log(message, DEBUG)
-    fun i(message: String) = log(message, INFO)
-    fun w(message: String) = log(message, WARN)
-    fun e(message: String) = log(message, ERROR)
+    fun v(message: String) = log(message, Log.VERBOSE)
+    fun d(message: String) = log(message, Log.DEBUG)
+    fun i(message: String) = log(message, Log.INFO)
+    fun w(message: String) = log(message, Log.WARN)
+    fun e(message: String) = log(message, Log.ERROR)
 
-    fun log(message: String, type: Int = INFO) {
+    fun log(message: String, type: Int = Log.INFO) {
         val logTime = System.currentTimeMillis()
         val messageTime = SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(logTime)
-        Log.d("InAppLogger:", "$messageTime: $message")
+        Log.println(type,"InAppLogger:", "$messageTime ${typeSymbol(type)}: $message")
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -63,7 +57,7 @@ object InAppLogger {
             val logEntries: List<LogEntry> = logDao.getAll()
             logEntries.forEach {
                 if (it.message.contains("Car Stats Viewer")) logString += "------------------------------------------------------------\n"
-                logString += "${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(it.epochTime)} ${typeMap[it.type]}: ${it.message}\n"
+                logString += "${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(it.epochTime)} ${typeSymbol(it.type)}: ${it.message}\n"
             }
             logString += "------------------------------------------------------------\n" +
                 "Loaded ${logEntries.size} log entries in ${System.currentTimeMillis() - startTime} ms\n" +
