@@ -7,6 +7,7 @@ import android.location.LocationManager
 import android.os.Looper
 import com.google.android.gms.location.*
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -58,7 +59,7 @@ class DefaultLocationClient(
                     super.onLocationResult(locationResult)
                     locationResult.locations.lastOrNull()?.let { location ->
                         if (CarStatsViewer.appPreferences.useLocation) {
-                            if (location.altitude > 0 || location.altitude < 0) {
+                            if (location.altitude > 0 || location.altitude < 0 || emulatorMode) {
                                 location.altitude -= Geoid.getOffset(
                                     org.matthiaszimmermann.location.Location(location.latitude, location.longitude)
                                 )
