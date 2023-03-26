@@ -286,6 +286,7 @@ class DataCollector : Service() {
         */
 
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.save_trip_data_broadcast)))
+        registerReceiver(broadcastReceiver, IntentFilter(CarStatsViewer.liveDataApis[0].broadcastAction))
         registerReceiver(carPropertyEmulatorReceiver, IntentFilter(getString(R.string.VHAL_emulator_broadcast)))
 
         DataManagers.values().filter { it.doTrack }.forEach {
