@@ -20,6 +20,7 @@ import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesClient
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
+import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
 import com.ixam97.carStatsViewer.plot.enums.*
@@ -75,11 +76,13 @@ class DataCollector : Service() {
     private lateinit var notificationTimerHandler: Handler
     private lateinit var saveTripDataTimerHandler: Handler
 
-    private lateinit var liveDataTimerHandler: Handler
+    // private lateinit var liveDataTimerHandler: Handler
 
     private lateinit var foregroundServiceNotification: Notification.Builder
 
     private val carPropertiesData = CarPropertiesData()
+
+    private var lastConnection: Long = 0
 
     init {
         InAppLogger.i("DataCollector is initializing...")
@@ -96,6 +99,9 @@ class DataCollector : Service() {
                     enumValues<DataManagers>().filter{ it.doTrack}.forEach {
                         writeTripDataToFile(it.dataManager.tripData!!, it.dataManager.printableName)
                     }
+                }
+                CarStatsViewer.liveDataApis[0].broadcastAction -> {
+                    lastConnection = System.currentTimeMillis()
                 }
                 else -> {}
             }
@@ -164,7 +170,14 @@ class DataCollector : Service() {
             }
             .launchIn(serviceScope)
 
-        // Testing out a Flow to send live data in fixed time intervals
+        CarStatsViewer.liveDataApis[0]
+            .requestFlow(
+                serviceScope,
+                dataManager = DataManagers.CURRENT_TRIP.dataManager,
+                LIVE_DATA_TASK_INTERVAL
+            ).catch { e -> InAppLogger.e("requestFlow: ${e.message}") }
+            .launchIn(serviceScope)
+
         CarStatsViewer.liveDataApis[1]
             .requestFlow(
                 serviceScope,
@@ -248,8 +261,9 @@ class DataCollector : Service() {
         saveTripDataTimerHandler = Handler(Looper.getMainLooper())
         saveTripDataTimerHandler.postDelayed(saveTripDataTask, AUTO_SAVE_INTERVAL_MILLIS)
 
-
+        /*
         liveDataTimerHandler = Handler(Looper.getMainLooper())
+
         CarStatsViewer.liveDataApis[0].apply {
             var task = createLiveDataTask(
                 dataManager = DataManagers.CURRENT_TRIP.dataManager,
@@ -258,7 +272,7 @@ class DataCollector : Service() {
             )
             task?.let {liveDataTimerHandler.post(it)}
         }
-        /*
+
         for (liveDataAPI in CarStatsViewer.liveDataApis) {
             var task = liveDataAPI.createLiveDataTask(
                 DataManagers.CURRENT_TRIP.dataManager,
@@ -272,6 +286,7 @@ class DataCollector : Service() {
         */
 
         registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.save_trip_data_broadcast)))
+        registerReceiver(broadcastReceiver, IntentFilter(CarStatsViewer.liveDataApis[0].broadcastAction))
         registerReceiver(carPropertyEmulatorReceiver, IntentFilter(getString(R.string.VHAL_emulator_broadcast)))
 
         DataManagers.values().filter { it.doTrack }.forEach {
@@ -287,6 +302,18 @@ class DataCollector : Service() {
             powerUpdater(it.dataManager)
         }
         InAppLogger.i("DataCollector service started")
+
+        serviceScope.launch {
+            while (true) {
+                if (lastConnection + 10_000 < System.currentTimeMillis() && CarStatsViewer.liveDataApis[0].connectionStatus != LiveDataApi.ConnectionStatus.UNUSED){
+                    InAppLogger.e("Live Data Failure!")
+                    val broadcastIntent = Intent(CarStatsViewer.liveDataApis[0].broadcastAction)
+                    broadcastIntent.putExtra("status", LiveDataApi.ConnectionStatus.ERROR.status)
+                    applicationContext.sendBroadcast(broadcastIntent)
+                }
+                delay(10_000)
+            }
+        }
     }
 
     override fun onDestroy() {
