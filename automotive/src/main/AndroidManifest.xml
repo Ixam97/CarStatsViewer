@@ -81,6 +81,10 @@
             android:foregroundServiceType="location"
             android:enabled="true"
             android:exported="true"/>
+        <service android:name=".dataManager.NeoDataCollector"
+            android:foregroundServiceType="location"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

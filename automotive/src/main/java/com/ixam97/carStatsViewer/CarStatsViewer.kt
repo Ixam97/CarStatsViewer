@@ -9,10 +9,11 @@ import com.google.gson.Gson
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManager
 import com.ixam97.carStatsViewer.dataManager.TripData
+import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
 import com.ixam97.carStatsViewer.database.tripData.*
-import com.ixam97.carStatsViewer.liveData.LiveDataApi
-import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
-import com.ixam97.carStatsViewer.liveData.http.HttpLiveData
+import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
+import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
+import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,11 +48,11 @@ class CarStatsViewer : Application() {
 
 
         lateinit var tripDatabase: TripDataDatabase
-        lateinit var tripDao: TripDao
+        lateinit var tripDataSource: LocalTripDataSource
 
     }
 
-    // val dataProcessor = DataProcessor()
+    val dataProcessor = DataProcessor()
 
     override fun onCreate() {
         super.onCreate()
@@ -61,68 +62,46 @@ class CarStatsViewer : Application() {
             TripDataDatabase::class.java,
             "TripDatabase"
         ).build()
-        tripDao = tripDatabase.tripDao()
+
+        tripDataSource = LocalTripDataSource(tripDatabase.tripDao())
 
         CoroutineScope(Dispatchers.IO).launch {
 
             tripDatabase.clearAllTables()
 
-            val sessionId = tripDao.addDrivingSession(DrivingSession(
-                start_epoch_time = System.currentTimeMillis(),
-                end_epoch_time = null,
-                session_type = 0,
-                drive_time = 0,
-                used_energy = 0.0,
-                driven_distance = 0.0,
-                note = "Test"
-            ))
+            if (tripDataSource.getActiveDrivingSessionsIds().isEmpty()) {
+                // initial population of Database
+                val startTime = System.currentTimeMillis()
+                tripDataSource.startDrivingSession(startTime, TripType.MANUAL)
+                tripDataSource.startDrivingSession(startTime, TripType.AUTO)
+                tripDataSource.startDrivingSession(startTime, TripType.SINCE_CHARGE)
+                tripDataSource.startDrivingSession(startTime, TripType.MONTH)
+            }
 
-            val chargingSessionId = tripDao.addChargingSession(
-                chargingSession = ChargingSession(
-                    start_epoch_time = System.currentTimeMillis(),
-                    end_epoch_time = null,
-                    charged_energy = 0.0,
-                    charged_soc = 0f,
-                    outside_temp = 10.0f,
-                    lat = null,
-                    lon = null
-                ),
-                activeSessions = listOf(sessionId)
+            val drivingSessionIds = tripDataSource.getActiveDrivingSessionsIdsMap()
+            InAppLogger.d("Trip Database: ${drivingSessionIds.toString()}")
+
+            val chargingSessionId = tripDataSource.startChargingSession(
+                timestamp = System.currentTimeMillis(),
+                outsideTemp = 1.0f
             )
 
             for(i in 0 ..3) {
-                tripDao.addChargingPoint(
-                    chargingPoint = ChargingPoint(
-                        charging_point_epoch_time = System.currentTimeMillis(),
-                        charging_session_id = chargingSessionId,
-                        energy_delta = 0f,
-                        power = 0f,
-                        state_of_charge = 0.5f,
-                        point_marker_type = 0
-                    )
-                )
+                tripDataSource.addChargingPoint(ChargingPoint(
+                    charging_point_epoch_time = System.currentTimeMillis(),
+                    charging_session_id = chargingSessionId,
+                    energy_delta = 0f,
+                    power = 0f,
+                    state_of_charge = 0.5f,
+                    point_marker_type = 0
+                ))
                 delay(500)
             }
 
-            for(i in 0 ..5) {
-                tripDao.addDrivingPoint(
-                    drivingPoint = DrivingPoint(
-                        driving_point_epoch_time = System.currentTimeMillis(),
-                        energy_delta = 0f,
-                        distance_delta = 0f,
-                        point_marker_type = 0,
-                        state_of_charge = .5f,
-                        lat = null,
-                        lon = null,
-                        alt = null
-                    ),
-                    activeSessions = listOf(sessionId)
-                )
-                delay(500)
-            }
+            tripDataSource.endChargingSession(System.currentTimeMillis(), chargingSessionId)
 
-            var drivingSession = tripDao.getCompleteDrivingSessionById(sessionId)
-            var tripDataJson = Gson().toJson(drivingSession)
+            val drivingSession = tripDataSource.getFullDrivingSession(drivingSessionIds[TripType.MANUAL]?: 0)
+            val tripDataJson = Gson().toJson(drivingSession)
             Log.d("Trip Database", tripDataJson)
         }
 

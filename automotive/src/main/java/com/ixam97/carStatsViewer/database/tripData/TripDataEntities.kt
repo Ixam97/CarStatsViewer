@@ -11,15 +11,16 @@ import androidx.room.*
 data class DrivingSession(
     @PrimaryKey(autoGenerate = true) var driving_session_id: Long = 0,
     val start_epoch_time: Long,
-    var end_epoch_time: Long?,
-    var session_type: Int,
-    var drive_time: Long,
-    var used_energy: Double,
-    var driven_distance: Double,
-    var note: String
+    val end_epoch_time: Long?,
+    val session_type: Int,
+    val drive_time: Long,
+    val used_energy: Double,
+    val driven_distance: Double,
+    val note: String
 ) {
-    @Ignore var driving_points: List<DrivingPoint>? = null
-    @Ignore var charging_sessions: List<ChargingSession>? = null
+    @Ignore var drivingPoints: List<DrivingPoint>? = null
+    @Ignore var chargingSessions: List<ChargingSession>? = null
+    @Ignore var sessionMarkers: List<SessionMarker>? = null
 }
 
 @Entity
@@ -38,14 +39,14 @@ data class DrivingPoint(
 data class ChargingSession(
     @PrimaryKey(autoGenerate = true) var charging_session_id: Long = 0,
     val start_epoch_time: Long,
-    var end_epoch_time: Long?,
-    var charged_energy: Double,
+    val end_epoch_time: Long?,
+    val charged_energy: Double,
     val charged_soc: Float,
     val outside_temp: Float,
     val lat: Float?,
     val lon: Float?
 ) {
-    @Ignore var charging_points: List<ChargingPoint>? = null
+    @Ignore var chargingPoints: List<ChargingPoint>? = null
 }
 
 @Entity
@@ -56,6 +57,13 @@ data class ChargingPoint(
     val power: Float,
     val state_of_charge: Float,
     val point_marker_type: Int
+)
+
+@Entity
+data class SessionMarker(
+    @PrimaryKey val marker_start_epoch_time: Long,
+    val marker_end_epoch_time: Long?,
+    val session_marker_type: Int
 )
 
 /**

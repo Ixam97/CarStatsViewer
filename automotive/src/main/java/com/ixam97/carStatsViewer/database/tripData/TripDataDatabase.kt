@@ -10,7 +10,8 @@ import androidx.room.RoomDatabase
         ChargingSession::class,
         ChargingPoint::class,
         DrivingSessionPointCrossRef::class,
-        DrivingChargingCrossRef::class
+        DrivingChargingCrossRef::class,
+        SessionMarker::class
     ],
     version = 1
 )

@@ -16,11 +16,9 @@ import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
-import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesClient
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
-import com.ixam97.carStatsViewer.liveData.LiveDataApi
+import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
 import com.ixam97.carStatsViewer.plot.enums.*
@@ -476,6 +474,8 @@ class DataCollector : Service() {
             val traveledDistanceDelta = (dataManager.currentSpeed.absoluteValue * dataManager.CurrentSpeed.timeDelta.toFloat()) / 1_000_000_000F
             dataManager.traveledDistance += traveledDistanceDelta
             if (dataManager == DataManagers.CURRENT_TRIP.dataManager) {
+                // Log.v("Old", "${traveledDistanceDelta}m, ${dataManager.CurrentSpeed.timeDelta / 1_000_000_000f}s")
+                Log.v("Old", "${dataManager.traveledDistance}m")
                 if (dataManager.currentSpeed.absoluteValue >= 1 && !appPreferences.doDistractionOptimization) {
                     // Drive started -> Distraction optimization
                     appPreferences.doDistractionOptimization = true

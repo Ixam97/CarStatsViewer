@@ -2,7 +2,6 @@ package com.ixam97.carStatsViewer.activities
 
 import android.app.AlertDialog
 import android.app.PendingIntent
-import android.car.Car
 import android.car.VehicleGear
 import android.car.VehiclePropertyIds
 import android.content.BroadcastReceiver
@@ -27,7 +26,7 @@ import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.*
 import com.ixam97.carStatsViewer.fragments.SummaryFragment
-import com.ixam97.carStatsViewer.liveData.LiveDataApi
+import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
@@ -160,7 +159,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        /*
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 val carStatsViewer = applicationContext as CarStatsViewer
@@ -170,9 +169,9 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
                 }
             }
         }
-         */
 
         startForegroundService(Intent(applicationContext, DataCollector::class.java))
+        startForegroundService(Intent(applicationContext, NeoDataCollector::class.java))
 
         context = applicationContext
         val displayMetrics = context.resources.displayMetrics

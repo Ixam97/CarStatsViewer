@@ -11,6 +11,7 @@ object CarProperties {
     const val EV_BATTERY_LEVEL = VehiclePropertyIds.EV_BATTERY_LEVEL
     const val IGNITION_STATE = VehiclePropertyIds.IGNITION_STATE
     const val ENV_OUTSIDE_TEMPERATURE = VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE
+    const val INFO_EV_BATTERY_CAPACITY = VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY
 
     val usedProperties = listOf(
         VehiclePropertyIds.PERF_VEHICLE_SPEED,

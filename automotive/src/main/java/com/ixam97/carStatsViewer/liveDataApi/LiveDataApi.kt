@@ -1,11 +1,10 @@
-package com.ixam97.carStatsViewer.liveData
+package com.ixam97.carStatsViewer.liveDataApi
 
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.dataManager.DataManager
-import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
