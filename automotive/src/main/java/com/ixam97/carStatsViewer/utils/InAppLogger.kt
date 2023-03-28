@@ -70,13 +70,19 @@ object InAppLogger {
             }
             logStringBuilder
                 .append("------------------------------------------------------------\n")
-                .append("Loaded ${logEntries.size} log entries in ${loadedTime - startTime}ms, displayed in ${System.currentTimeMillis() - startTime}ms\n")
+                .append("Loaded ${logEntries.size} log entries in ${loadedTime - startTime}ms, string built in ${System.currentTimeMillis() - startTime}ms\n")
                 .append("V${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})")
         } catch (e: java.lang.Exception) {
             resetLog()
             e("Loading Log failed. It has been reset.\n${e.stackTraceToString()}")
         }
         return logStringBuilder.toString()
+    }
+
+    fun getLogArray(logLevel: Int = Log.VERBOSE): List<String> {
+        return logDao.getLevel(logLevel).map {
+            "${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(it.epochTime)} ${typeSymbol(it.type)}: ${it.message}\n"
+        }
     }
 
     fun resetLog() {

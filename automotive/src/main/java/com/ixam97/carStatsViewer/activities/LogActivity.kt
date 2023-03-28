@@ -191,6 +191,7 @@ class LogActivity : FragmentActivity() {
     private fun loadLog() {
         activityScope.launch {
             withContext(Dispatchers.IO) {
+                val startTime = System.currentTimeMillis()
                 runOnUiThread {
                     log_progress_bar.visibility = View.VISIBLE
                     log_text_view.text = ""
@@ -206,6 +207,7 @@ class LogActivity : FragmentActivity() {
 
                 delay(500)
                 runOnUiThread {
+                    log_text_view.append("Log loading time: ${System.currentTimeMillis() - startTime}ms")
                     log_progress_bar.visibility = View.GONE
                     log_scrollview.fullScroll(View.FOCUS_DOWN)
                 }
