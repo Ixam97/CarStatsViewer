@@ -199,14 +199,10 @@ class LogActivity : FragmentActivity() {
                 val logLines = logString.split("[\n]+".toRegex()).toTypedArray()
 
                 runOnUiThread {
-                    log_text_view.setText(logString)
+                    logLines.forEach {
+                        log_text_view.append("$it\n")
+                    }
                 }
-
-                // runOnUiThread {
-                //     logLines.forEach {
-                //         log_text_view.append("$it\n")
-                //     }
-                // }
 
                 delay(500)
                 runOnUiThread {
