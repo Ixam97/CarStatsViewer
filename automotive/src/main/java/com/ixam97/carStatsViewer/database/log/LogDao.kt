@@ -8,6 +8,9 @@ interface LogDao {
     @Query("SELECT * FROM LogEntries")
     fun getAll(): List<LogEntry>
 
+    @Query("SELECT * FROM LogEntries WHERE type >= :logLevel")
+    fun getLevel(logLevel: Int): List<LogEntry>
+
     @Query("SELECT * FROM LogEntries WHERE epochTime BETWEEN :firstTime AND :lastTime")
     fun getTimeSpan(firstTime: Long, lastTime: Long): List<LogEntry>
 
