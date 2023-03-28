@@ -51,22 +51,24 @@ object InAppLogger {
     }
 
     fun getLogString(): String {
-        var logString = ""
+        val logStringBuilder = StringBuilder()
         try {
             val startTime = System.currentTimeMillis()
             val logEntries: List<LogEntry> = logDao.getAll()
+            val loadedTime = System.currentTimeMillis()
             logEntries.forEach {
-                if (it.message.contains("Car Stats Viewer")) logString += "------------------------------------------------------------\n"
-                logString += "${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(it.epochTime)} ${typeSymbol(it.type)}: ${it.message}\n"
+                if (it.message.contains("Car Stats Viewer")) logStringBuilder.append("------------------------------------------------------------\n")
+                logStringBuilder.append("${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(it.epochTime)} ${typeSymbol(it.type)}: ${it.message}\n")
             }
-            logString += "------------------------------------------------------------\n" +
-                "Loaded ${logEntries.size} log entries in ${System.currentTimeMillis() - startTime} ms\n" +
-                "V${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
+            logStringBuilder
+                .append("------------------------------------------------------------\n")
+                .append("Loaded ${logEntries.size} log entries in ${loadedTime - startTime} ms, displayed in ${System.currentTimeMillis() - startTime}\n")
+                .append("V${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})")
         } catch (e: java.lang.Exception) {
             resetLog()
             e("Loading Log failed. It has been reset.\n${e.stackTraceToString()}")
         }
-        return logString
+        return logStringBuilder.toString()
     }
 
     fun resetLog() {
