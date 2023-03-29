@@ -1,25 +1,33 @@
 package com.ixam97.carStatsViewer.activities
 
-import android.app.Activity
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
+import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
-import com.ixam97.carStatsViewer.CarStatsViewer
+import androidx.fragment.app.FragmentActivity
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.mailSender.MailSender
+import com.ixam97.carStatsViewer.utils.logLevel
+import com.ixam97.carStatsViewer.views.MultiSelectWidget
 import kotlinx.android.synthetic.main.activity_log.*
 import kotlinx.coroutines.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import java.io.File
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
-class LogActivity : Activity() {
+class LogActivity : FragmentActivity() {
 
     private lateinit var appPreferences: AppPreferences
+    private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
 
@@ -122,38 +130,87 @@ class LogActivity : Activity() {
             }
         }
 
+        log_text_view.setOnClickListener {
+            log_scrollview.fullScroll(View.FOCUS_DOWN)
+        }
+
         log_button_reload.setOnClickListener {
             loadLog()
         }
 
         log_reset_log.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                withContext(Dispatchers.IO) {
-                    InAppLogger.resetLog()
-                    runOnUiThread {
-                        InAppLogger.i("Cleared log")
-                        log_text_view.text = ""
-                    }
+            activityScope.launch() {
+                InAppLogger.resetLog()
+                runOnUiThread {
+                    InAppLogger.i("Cleared log")
+                    log_text_view.text = ""
                 }
             }
+        }
+
+        log_settings.setOnClickListener {
+            val settingsDialog = AlertDialog.Builder(ContextThemeWrapper(this, R.style.redTextEdit)).apply {
+                val layout = LayoutInflater.from(context).inflate(R.layout.dialog_log_settings, null)
+
+                val log_level_multiselect = layout.findViewById<MultiSelectWidget>(R.id.log_level_multiselect)
+
+                log_level_multiselect.entries = arrayListOf<String>(
+                    "Verbose",
+                    "Debug",
+                    "Info",
+                    "Warning",
+                    "Error"
+                )
+
+                log_level_multiselect.selectedIndex = appPreferences.logLevel
+
+                log_level_multiselect.setOnIndexChangedListener {
+                    appPreferences.logLevel = log_level_multiselect.selectedIndex
+                }
+
+                setView(layout)
+
+                setPositiveButton("OK") { dialog, _ ->
+                    loadLog()
+                }
+                setTitle("Logging settings")
+                setCancelable(true)
+                create()
+            }
+            settingsDialog.show()
         }
 
         loadLog()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        activityScope.cancel()
+    }
+
     private fun loadLog() {
-        CoroutineScope(Dispatchers.IO).launch {
-            runOnUiThread {
-                log_progress_bar.visibility = View.VISIBLE
-            }
-            val logString = InAppLogger.getLogString()
-            runOnUiThread {
-                log_text_view.text = logString
-                log_progress_bar.visibility = View.GONE
-            }
-            delay(100)
-            runOnUiThread {
-                log_scrollview.fullScroll(View.FOCUS_DOWN)
+        activityScope.launch {
+            withContext(Dispatchers.IO) {
+                val startTime = System.currentTimeMillis()
+                runOnUiThread {
+                    log_progress_bar.visibility = View.VISIBLE
+                    log_text_view.text = ""
+                }
+                val logString = InAppLogger.getLogString(appPreferences.logLevel + 2)
+                val logLines = logString.split("[\n]+".toRegex()).toTypedArray()
+
+                runOnUiThread {
+                    logLines.forEach {
+                        log_text_view.append("$it\n")
+                    }
+                }
+
+                delay(500)
+                runOnUiThread {
+                    log_text_view.append("Log loading time: ${System.currentTimeMillis() - startTime}ms")
+                    log_progress_bar.visibility = View.GONE
+                    log_scrollview.fullScroll(View.FOCUS_DOWN)
+                }
             }
         }
     }

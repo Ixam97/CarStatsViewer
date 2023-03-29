@@ -4,10 +4,18 @@ import android.util.Log
 import androidx.room.Room
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.appPreferences.AppPreference
+import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.database.log.LogDatabase
 import com.ixam97.carStatsViewer.database.log.LogEntry
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
+
+val AppPreferences.LogLevel: AppPreference<Int>
+    get() = AppPreference<Int>("preference_log_level", Log.VERBOSE, sharedPref)
+
+var AppPreferences.logLevel: Int get() = LogLevel.value; set(value) {LogLevel.value = value}
 
 object InAppLogger {
 
@@ -50,11 +58,11 @@ object InAppLogger {
         }
     }
 
-    fun getLogString(): String {
+    fun getLogString(logLevel: Int = Log.VERBOSE): String {
         val logStringBuilder = StringBuilder()
         try {
             val startTime = System.currentTimeMillis()
-            val logEntries: List<LogEntry> = logDao.getAll()
+            val logEntries: List<LogEntry> = logDao.getLevel(logLevel)
             val loadedTime = System.currentTimeMillis()
             logEntries.forEach {
                 if (it.message.contains("Car Stats Viewer")) logStringBuilder.append("------------------------------------------------------------\n")
@@ -62,13 +70,19 @@ object InAppLogger {
             }
             logStringBuilder
                 .append("------------------------------------------------------------\n")
-                .append("Loaded ${logEntries.size} log entries in ${loadedTime - startTime} ms, displayed in ${System.currentTimeMillis() - startTime}\n")
+                .append("Loaded ${logEntries.size} log entries in ${loadedTime - startTime}ms, string built in ${System.currentTimeMillis() - startTime}ms\n")
                 .append("V${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})")
         } catch (e: java.lang.Exception) {
             resetLog()
             e("Loading Log failed. It has been reset.\n${e.stackTraceToString()}")
         }
         return logStringBuilder.toString()
+    }
+
+    fun getLogArray(logLevel: Int = Log.VERBOSE): List<String> {
+        return logDao.getLevel(logLevel).map {
+            "${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(it.epochTime)} ${typeSymbol(it.type)}: ${it.message}\n"
+        }
     }
 
     fun resetLog() {
