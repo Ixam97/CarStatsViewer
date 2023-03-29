@@ -10,6 +10,7 @@ import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManager
 import com.ixam97.carStatsViewer.dataManager.TripData
 import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
+import com.ixam97.carStatsViewer.dataProcessor.TripDataManager
 import com.ixam97.carStatsViewer.database.tripData.*
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
@@ -23,6 +24,10 @@ import kotlin.properties.Delegates
 
 var emulatorMode = false
 var emulatorPowerSign = -1
+
+object Defines {
+    const val PLOT_DISTANCE_INTERVAL = 100.0
+}
 
 class CarStatsViewer : Application() {
 
@@ -45,14 +50,12 @@ class CarStatsViewer : Application() {
         var tripData: TripData? = null
         var dataManager: DataManager? = null
 
-
-
         lateinit var tripDatabase: TripDataDatabase
         lateinit var tripDataSource: LocalTripDataSource
-
     }
 
-    val dataProcessor = DataProcessor()
+    val tripDataManager = TripDataManager()
+    val dataProcessor = DataProcessor(tripDataManager)
 
     override fun onCreate() {
         super.onCreate()
@@ -69,43 +72,9 @@ class CarStatsViewer : Application() {
 
             tripDatabase.clearAllTables()
 
-            if (tripDataSource.getActiveDrivingSessionsIds().isEmpty()) {
-                // initial population of Database
-                val startTime = System.currentTimeMillis()
-                tripDataSource.startDrivingSession(startTime, TripType.MANUAL)
-                tripDataSource.startDrivingSession(startTime, TripType.AUTO)
-                tripDataSource.startDrivingSession(startTime, TripType.SINCE_CHARGE)
-                tripDataSource.startDrivingSession(startTime, TripType.MONTH)
-            }
-
             val drivingSessionIds = tripDataSource.getActiveDrivingSessionsIdsMap()
-            InAppLogger.d("Trip Database: ${drivingSessionIds.toString()}")
-
-            val chargingSessionId = tripDataSource.startChargingSession(
-                timestamp = System.currentTimeMillis(),
-                outsideTemp = 1.0f
-            )
-
-            for(i in 0 ..3) {
-                tripDataSource.addChargingPoint(ChargingPoint(
-                    charging_point_epoch_time = System.currentTimeMillis(),
-                    charging_session_id = chargingSessionId,
-                    energy_delta = 0f,
-                    power = 0f,
-                    state_of_charge = 0.5f,
-                    point_marker_type = 0
-                ))
-                delay(500)
-            }
-
-            tripDataSource.endChargingSession(System.currentTimeMillis(), chargingSessionId)
-
-            val drivingSession = tripDataSource.getFullDrivingSession(drivingSessionIds[TripType.MANUAL]?: 0)
-            val tripDataJson = Gson().toJson(drivingSession)
-            Log.d("Trip Database", tripDataJson)
+            InAppLogger.d("Trip Database: $drivingSessionIds")
         }
-
-
 
         val typedValue = TypedValue()
         applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)

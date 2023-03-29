@@ -50,45 +50,4 @@ class CarPropertiesClient(
     fun disconnect() {
         car.disconnect()
     }
-
-/*
-    fun getCarPropertiesUpdates(
-        carPropertyIdsList: List<Int> = CarProperties.usedProperties,
-        carPropertiesData: CarPropertiesData
-    ): Flow<Int> {
-        return callbackFlow {
-
-            val carPropertyListener = object : CarPropertyManager.CarPropertyEventCallback {
-                override fun onChangeEvent(carPropertyValue: CarPropertyValue<*>) {
-                    // carPropertiesData.
-                    carPropertiesData.let {
-                        it.update(carPropertyValue)
-                        if (it.CurrentSpeed.timeDelta > 0)
-                            it.traveledDistance += (it.CurrentSpeed.value as Float).absoluteValue * (it.CurrentSpeed.timeDelta / 1_000_000_000f)
-                    }
-                    // val returnProperty = CarProperty(carPropertyValue.propertyId)
-                    // returnProperty.value = carPropertyValue.value
-                    // returnProperty.timestamp = carPropertyValue.timestamp
-                    launch { send(carPropertyValue.propertyId) }
-                }
-                override fun onErrorEvent(propertyId: Int, zone: Int) {
-                    throw Exception("Received error car property event, propId=$propertyId")
-                }
-            }
-
-            for (propertyId in carPropertyIdsList) {
-                carPropertyManager.registerCallback(
-                    carPropertyListener,
-                    propertyId,
-                    CarPropertyManager.SENSOR_RATE_ONCHANGE
-                )
-            }
-
-            awaitClose {
-                car.disconnect()
-            }
-        }
-    }
-
- */
 }

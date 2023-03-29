@@ -515,6 +515,10 @@ class DataCollector : Service() {
                     }
                      */
                 }
+                // if (dataManager == DataManagers.CURRENT_TRIP.dataManager) {
+                //     InAppLogger.i("comp: Driven distance (old): ${dataManager.consumptionPlotDistanceDelta}")
+                //     InAppLogger.i("comp:                   Sum: ${dataManager.traveledDistance}")
+                // }
                 dataManager.consumptionPlotDistanceDelta = 0F
                 dataManager.consumptionPlotEnergyDelta = 0F
                 sendBroadcast(Intent(getString(R.string.ui_update_plot_broadcast)))

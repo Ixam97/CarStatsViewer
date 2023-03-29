@@ -30,6 +30,6 @@ object CarProperties {
         VehiclePropertyIds.EV_BATTERY_LEVEL -> "Battery level"
         VehiclePropertyIds.IGNITION_STATE -> "Ignition state"
         VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE -> "Outside temperature"
-        else -> "Unused car property"
+        else -> "unused car property $propertyId"
     }
 }

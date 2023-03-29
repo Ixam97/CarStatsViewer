@@ -165,7 +165,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
                 val carStatsViewer = applicationContext as CarStatsViewer
                 carStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
                     // Do stuff with live data
-                    InAppLogger.v("State flow value: $it")
+                    InAppLogger.v("State flow value: Drive state: ${DrivingState.nameMap[it.drivingState]}, Inst. cons.: ${it.instConsumption}")
                 }
             }
         }

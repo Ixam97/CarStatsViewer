@@ -86,13 +86,11 @@ class NeoDataCollector: Service() {
                 InAppLogger.e("LocationClient: ${e.message}")
             }
             .onEach { location ->
-                location?.let {
+                if (location != null) {
                     InAppLogger.d("Location: lat: %.5f, lon: %.5f, alt: %.2fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
-                    dataProcessor.realTimeData = dataProcessor.realTimeData.copy(
-                        lat = it.latitude.toFloat(),
-                        lon = it.longitude.toFloat(),
-                        alt = it.altitude.toFloat()
-                    )
+                    dataProcessor.processLocation(location.latitude, location.longitude, location.altitude)
+                } else {
+                    dataProcessor.processLocation(null, null, null)
                 }
             }
             .launchIn(serviceScope)
@@ -119,13 +117,9 @@ class NeoDataCollector: Service() {
             batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY)
         )
 
-        carPropertiesClient.updateProperty(CarProperties.GEAR_SELECTION)
-        carPropertiesClient.updateProperty(CarProperties.IGNITION_STATE)
-        carPropertiesClient.updateProperty(CarProperties.EV_BATTERY_LEVEL)
-        carPropertiesClient.updateProperty(CarProperties.EV_CHARGE_PORT_CONNECTED)
-        carPropertiesClient.updateProperty(CarProperties.ENV_OUTSIDE_TEMPERATURE)
-
-
+        CarProperties.usedProperties.forEach {
+            carPropertiesClient.updateProperty(it)
+        }
     }
 
     override fun onDestroy() {

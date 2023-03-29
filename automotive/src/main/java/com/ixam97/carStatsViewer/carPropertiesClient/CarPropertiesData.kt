@@ -58,7 +58,7 @@ class CarPropertiesData {
      */
     fun update(value: Any?, pTimestamp: Long, propertyId: Int, doLog: Boolean = false, valueMustChange: Boolean = false, allowInvalidTimestamps: Boolean = false): Int {
         var timestamp = pTimestamp
-        val failedPropertyString = "Failed to update property ID ${propertyId}:"
+        val failedPropertyString = "Failed to update car property ${CarProperties.getNameById(propertyId)}:"
         if (!CarProperties.usedProperties.contains(propertyId)) {
             InAppLogger.w("$failedPropertyString Invalid property ID")
             return INVALID_PROPERTY_ID
