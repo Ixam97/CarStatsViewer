@@ -3,7 +3,7 @@
 
     <string-array name="changes_0_24">
         <item>Mehrere Live-Daten-APIs hinzugefügt:\n- ABRP OTA Live Data\n- HTTP Webhook mit BasicAuth</item>
-        <item>Standorterfassung mit höhenverlauf hinzugefügt</item>
+        <item>Standorterfassung mit Höhenverlauf hinzugefügt</item>
         <item>Neustart-Benachrichtigung nach Update, Reboot oder Absturz hinzugefügt</item>
         <item>Fahrzeugkonfiguration hinzugefügt</item>
         <item>Einstellungsmenü umstrukturiert</item>
