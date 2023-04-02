@@ -13,7 +13,7 @@ import androidx.room.RoomDatabase
         DrivingChargingCrossRef::class,
         SessionMarker::class
     ],
-    version = 1
+    version = 2
 )
 abstract class TripDataDatabase: RoomDatabase() {
     abstract fun tripDao(): TripDao

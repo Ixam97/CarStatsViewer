@@ -475,7 +475,7 @@ class DataCollector : Service() {
             dataManager.traveledDistance += traveledDistanceDelta
             if (dataManager == DataManagers.CURRENT_TRIP.dataManager) {
                 // Log.v("Old", "${traveledDistanceDelta}m, ${dataManager.CurrentSpeed.timeDelta / 1_000_000_000f}s")
-                Log.v("Old", "${dataManager.traveledDistance}m")
+                // Log.v("Old", "${dataManager.traveledDistance}m")
                 if (dataManager.currentSpeed.absoluteValue >= 1 && !appPreferences.doDistractionOptimization) {
                     // Drive started -> Distraction optimization
                     appPreferences.doDistractionOptimization = true

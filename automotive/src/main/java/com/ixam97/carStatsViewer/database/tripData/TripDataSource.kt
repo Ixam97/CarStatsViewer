@@ -7,19 +7,21 @@ interface TripDataSource {
      */
     suspend fun addDrivingPoint(drivingPoint: DrivingPoint)
 
-    suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long
+    suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long?
 
     suspend fun startDrivingSession(timestamp: Long, type: Int): Long
 
-    suspend fun endDrivingSession(timestamp: Long, sessionId: Long): Int
+    suspend fun endDrivingSession(timestamp: Long, sessionId: Long): Int?
 
     suspend fun getActiveDrivingSessionsIds(): List<Long>
 
-    suspend fun getDrivingSession(sessionId: Long): DrivingSession
+    suspend fun getDrivingSession(sessionId: Long): DrivingSession?
+
+    suspend fun updateDrivingSession(drivingSession: DrivingSession)
 
     suspend fun getActiveDrivingSessionsIdsMap(): Map<Int, Long>
 
-    suspend fun getFullDrivingSession(sessionId: Long): DrivingSession
+    suspend fun getFullDrivingSession(sessionId: Long): DrivingSession?
 
     suspend fun startMarker(timestamp: Long, type: Int)
 

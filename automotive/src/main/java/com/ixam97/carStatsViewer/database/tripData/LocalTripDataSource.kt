@@ -12,15 +12,19 @@ class LocalTripDataSource(
         }
     }
 
-    override suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long {
-        val type = endDrivingSession(timestamp, prevSessionId)
-        return startDrivingSession(timestamp, type)
+    override suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long? {
+        endDrivingSession(timestamp, prevSessionId)?.let {
+            return startDrivingSession(timestamp, it)
+        }
+        return null
     }
 
-    override suspend fun endDrivingSession(timestamp: Long, sessionId: Long): Int {
-        val session = tripDao.getDrivingSessionById(sessionId)
-        tripDao.upsertDrivingSession(session.copy(end_epoch_time = timestamp))
-        return session.session_type
+    override suspend fun endDrivingSession(timestamp: Long, sessionId: Long): Int? {
+        tripDao.getDrivingSessionById(sessionId)?.let {
+            tripDao.upsertDrivingSession(it.copy(end_epoch_time = timestamp))
+            return it.session_type
+        }
+        return null
     }
 
     override suspend fun startDrivingSession(timestamp: Long, type: Int): Long {
@@ -40,14 +44,18 @@ class LocalTripDataSource(
         return tripDao.getActiveDrivingSessionIds()
     }
 
-    override suspend fun getDrivingSession(sessionId: Long): DrivingSession {
+    override suspend fun getDrivingSession(sessionId: Long): DrivingSession? {
         return tripDao.getDrivingSessionById(sessionId)
+    }
+
+    override suspend fun updateDrivingSession(drivingSession: DrivingSession) {
+        tripDao.upsertDrivingSession(drivingSession)
     }
 
     override suspend fun getActiveDrivingSessionsIdsMap(): Map<Int, Long> {
         val idsMap: MutableMap<Int, Long> = mutableMapOf()
         getActiveDrivingSessionsIds().forEach {
-            idsMap[tripDao.getDrivingSessionById(it).session_type] = it
+            idsMap[tripDao.getDrivingSessionById(it)!!.session_type] = it
         }
         return idsMap
     }

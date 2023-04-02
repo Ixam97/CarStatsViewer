@@ -28,7 +28,7 @@ data class DrivingPoint(
     @PrimaryKey val driving_point_epoch_time: Long,
     val energy_delta: Float,
     val distance_delta: Float,
-    val point_marker_type: Int,
+    val point_marker_type: Int?,
     val state_of_charge: Float,
     val lat: Float?,
     val lon: Float?,
@@ -56,7 +56,7 @@ data class ChargingPoint(
     val energy_delta: Float,
     val power: Float,
     val state_of_charge: Float,
-    val point_marker_type: Int
+    val point_marker_type: Int?
 )
 
 @Entity

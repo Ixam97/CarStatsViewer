@@ -1,7 +1,11 @@
 package com.ixam97.carStatsViewer.dataProcessor
 
+import com.ixam97.carStatsViewer.CarStatsViewer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class TripDataManager {
 
@@ -35,6 +39,17 @@ class TripDataManager {
             drivenDistance = currentDrivingDistance,
             usedEnergy = currentDrivingEnergy
         )
+
+        CoroutineScope(Dispatchers.IO).launch {
+            CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds().forEach { sessionIds ->
+                CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
+                    CarStatsViewer.tripDataSource.updateDrivingSession(session.copy(
+                        driven_distance = session.driven_distance + distanceDelta,
+                        used_energy = session.used_energy + energyDelta
+                    ))
+                }
+            }
+        }
 
         // Update database
     }

@@ -64,7 +64,9 @@ class CarStatsViewer : Application() {
             applicationContext,
             TripDataDatabase::class.java,
             "TripDatabase"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
 
         tripDataSource = LocalTripDataSource(tripDatabase.tripDao())
 
@@ -74,6 +76,10 @@ class CarStatsViewer : Application() {
 
             val drivingSessionIds = tripDataSource.getActiveDrivingSessionsIdsMap()
             InAppLogger.d("Trip Database: $drivingSessionIds")
+
+            if (drivingSessionIds.isEmpty()) {
+                tripDataSource.startDrivingSession(System.currentTimeMillis(), TripType.MANUAL)
+            }
         }
 
         val typedValue = TypedValue()

@@ -1,15 +1,25 @@
 package com.ixam97.carStatsViewer.dataProcessor
 
+import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.Defines
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
 import com.ixam97.carStatsViewer.dataManager.DrivingState
+import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
+import com.ixam97.carStatsViewer.database.tripData.SessionMarkerType
+import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.emulatorPowerSign
 import com.ixam97.carStatsViewer.plot.enums.PlotLineMarkerType
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 class DataProcessor(
@@ -90,28 +100,53 @@ class DataProcessor(
 
     private fun stateUpdate() {
         val drivingState = realTimeData.drivingState
-        if (drivingState != previousDrivingState) {
+        if (drivingState != previousDrivingState && previousDrivingState != DrivingState.UNKNOWN) {
             InAppLogger.i("Drive state changed from ${DrivingState.nameMap[previousDrivingState]} to ${DrivingState.nameMap[drivingState]}")
             // if (drivingState == DrivingState.DRIVE || drivingState == DrivingState.PARKED) updateTripData()
             when (drivingState) {
-                DrivingState.DRIVE -> updateDrivingDataPoint(PlotLineMarkerType.BEGIN_SESSION)
-                DrivingState.PARKED -> updateDrivingDataPoint(PlotLineMarkerType.END_SESSION)
+                DrivingState.DRIVE -> updateDrivingDataPoint(PlotLineMarkerType.BEGIN_SESSION.int)
+                DrivingState.PARKED -> updateDrivingDataPoint(PlotLineMarkerType.END_SESSION.int)
             }
             tripDataManager.newDrivingState(drivingState)
         }
         previousDrivingState = drivingState
     }
 
-    private fun updateDrivingDataPoint(markerType: PlotLineMarkerType? = null) {
+    private fun updateDrivingDataPoint(markerType: Int? = null) {
         usedEnergySum += pointUsedEnergy
         InAppLogger.v("Driven distance: $pointDrivenDistance, Used energy: $usedEnergySum")
-        // -> distance and power sum for TripDataManager
+
+        val drivingPoint = DrivingPoint(
+            driving_point_epoch_time = System.currentTimeMillis(),
+            energy_delta = pointUsedEnergy.toFloat(),
+            distance_delta = pointDrivenDistance.toFloat(),
+            point_marker_type = markerType,
+            state_of_charge = realTimeData.stateOfCharge,
+            lat = realTimeData.lat,
+            lon = realTimeData.lon,
+            alt = realTimeData.alt
+        )
+
+        CoroutineScope(Dispatchers.IO).launch {
+            CarStatsViewer.tripDataSource.addDrivingPoint(drivingPoint)
+            CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[TripType.MANUAL]?.let {
+                val fullDrivingSession = CarStatsViewer.tripDataSource.getFullDrivingSession(it)
+                Log.v("Database trip dump", GsonBuilder().setPrettyPrinting().create().toJson(fullDrivingSession))
+            }
+        }
+
         pointUsedEnergy = 0.0
         pointDrivenDistance = 0.0
+
+        updateTripDataValues(DrivingState.DRIVE)
     }
 
-    private fun updateTripDataValues() {
-        when (realTimeData.drivingState) {
+    private fun updateChargingDataPoint(markerType: Int? = null) {
+        updateTripDataValues(DrivingState.CHARGE)
+    }
+
+    private fun updateTripDataValues(drivingState: Int = realTimeData.drivingState) {
+        when (drivingState) {
             DrivingState.DRIVE -> tripDataManager.newDrivingDeltas(valueDrivenDistance, valueUsedEnergy)
             DrivingState.CHARGE -> tripDataManager.newChargingDeltas(valueUsedEnergy)
         }

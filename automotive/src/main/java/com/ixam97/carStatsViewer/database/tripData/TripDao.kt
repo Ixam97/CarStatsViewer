@@ -21,7 +21,7 @@ interface TripDao {
     fun upsertSessionMarker(sessionMarker: SessionMarker)
 
     @Query("SELECT * FROM DrivingSession WHERE driving_session_id = :sessionId")
-    fun getDrivingSessionById(sessionId: Long): DrivingSession
+    fun getDrivingSessionById(sessionId: Long): DrivingSession?
 
     @Query("SELECT driving_session_id FROM DrivingSession WHERE end_epoch_time = 0") //
     fun getActiveDrivingSessionIds(): List<Long>
