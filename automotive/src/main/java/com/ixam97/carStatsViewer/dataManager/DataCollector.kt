@@ -16,8 +16,6 @@ import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
-import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesClient
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
@@ -59,6 +57,7 @@ class DataCollector : Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private lateinit var locationClient: LocationClient
+    private var locationClientJob: Job? = null
 
     private var startupTimestamp: Long = 0L
 
@@ -149,26 +148,6 @@ class DataCollector : Service() {
             alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent)
             exitProcess(0)
         }
-
-        locationClient = DefaultLocationClient(
-            CarStatsViewer.appContext,
-            LocationServices.getFusedLocationProviderClient(this)
-        )
-
-        locationClient
-            .getLocationUpdates(5_000L)
-            .catch { e ->
-                InAppLogger.e("LocationClient: ${e.message}")
-            }
-            .onEach { location ->
-                enumValues<DataManagers>().forEach {
-                    it.dataManager.location = location
-                }
-                if (location != null) {
-                    InAppLogger.d("Location: lat: %.5f, lon: %.5f, alt: %.2fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
-                }
-            }
-            .launchIn(serviceScope)
 
         CarStatsViewer.liveDataApis[0]
             .requestFlow(
@@ -334,6 +313,8 @@ class DataCollector : Service() {
         }
 
         startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
+
+        startLocationClient()
 
         return START_NOT_STICKY
     }
@@ -551,6 +532,7 @@ class DataCollector : Service() {
     }
 
     private fun driveState(previousDrivingState: Int, dataManager: DataManager) {
+        if (dataManager == DataManagers.CURRENT_TRIP.dataManager) startLocationClient()
         resetAutoTrips(previousDrivingState, DrivingState.DRIVE, dataManager)
         resumeTrip(dataManager)
         if (previousDrivingState == DrivingState.CHARGE) stopChargingSession(dataManager)
@@ -840,6 +822,30 @@ class DataCollector : Service() {
             DataManagers.SINCE_CHARGE.dataManager.reset()
             InAppLogger.i("Resetting ${DataManagers.SINCE_CHARGE.dataManager.printableName}")
         }
+    }
+
+    private fun startLocationClient() {
+        locationClientJob?.cancel()
+
+        locationClient = DefaultLocationClient(
+            CarStatsViewer.appContext,
+            LocationServices.getFusedLocationProviderClient(this)
+        )
+
+        locationClientJob = locationClient
+            .getLocationUpdates(5_000L)
+            .catch { e ->
+                InAppLogger.e("LocationClient: ${e.message}")
+            }
+            .onEach { location ->
+                enumValues<DataManagers>().forEach {
+                    it.dataManager.location = location
+                }
+                if (location != null) {
+                    InAppLogger.d("Location: lat: %.5f, lon: %.5f, alt: %.2fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
+                }
+            }
+            .launchIn(serviceScope)
     }
 
     private val ignitionList = listOf<String>(
