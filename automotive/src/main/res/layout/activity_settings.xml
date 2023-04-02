@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -7,355 +8,166 @@
     tools:ignore="UseSwitchCompatOrMaterialXml, UseAppTint, UseCompatTextViewDrawableXml"
     tools:context=".activities.SettingsActivity">
 
-    <!--<View
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/settings_button_back"
+            style="@style/title_back_button_style"/>
+
+        <TextView
+            style="@style/title_text_style"
+            android:text="@string/settings_title" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/settings_button_kill"
+            android:src="@drawable/ic_kill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:tint="@color/bad_red"
+            android:layout_margin="15dp"/>
+
+    </LinearLayout>
+    <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_marginTop="110dp"
-        android:background="?android:attr/colorControlActivated"/>-->
-
-    <LinearLayout android:id="@+id/settings_master_layout"
-        android:orientation="vertical"
+        android:background="?android:attr/colorControlActivated"/>
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/black"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/settings_button_back"
-                style="@style/title_back_button_style"/>
-
-            <TextView
-                style="@style/title_text_style"
-                android:text="@string/settings_title" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-
-            <ImageButton
-                android:id="@+id/settings_button_kill"
-                android:src="@drawable/ic_kill"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:tint="@color/bad_red"
-                android:layout_margin="15dp"/>
-
-        </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="?android:attr/colorControlActivated"/>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ScrollView
-                android:layout_above="@+id/settings_version_text"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginVertical="10dp"
-                    android:orientation="vertical">
-
-                    <Switch
-                        android:id="@+id/settings_switch_notifications"
-                        style="@style/menu_standard_switch_style"
-                        android:text="@string/settings_notifications" />
-                    <View
-                        style="@style/menu_divider_style"
-                        android:background="?android:attr/listDivider"/>
-                    <Switch
-                        android:id="@+id/settings_switch_consumption_unit"
-                        style="@style/menu_standard_switch_style"
-                        android:text="@string/settings_consumption_unit"/>
-                    <View
-                        style="@style/menu_divider_style"
-                        android:background="?android:attr/listDivider"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            style="@style/menu_standard_row_label"
-                            android:text="@string/settings_select_trip"/>
-                        <ImageButton
-                            android:id="@+id/settings_button_main_trip_prev"
-                            android:layout_marginStart="25dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/ic_chevron_left"
-                            android:background="@android:color/transparent"/>
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:orientation="vertical">
-                            <TextView
-                                android:id="@+id/settings_main_trip_name_text"
-                                style="@style/menu_standard_row_label"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="15dp"
-                                android:gravity="center"/>
-                            <LinearLayout
-                                android:id="@+id/settings_selected_trip_bar"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:weightSum="4"
-                                android:orientation="horizontal">
-                                <View
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
-                                    android:layout_height="5dp"
-                                    android:background="@color/disable_background"/>
-                                <View
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
-                                    android:layout_height="5dp"
-                                    android:background="@color/disable_background"/>
-                                <View
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
-                                    android:layout_height="5dp"
-                                    android:background="@color/disable_background"/>
-                                <View
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
-                                    android:layout_height="5dp"
-                                    android:background="@color/disable_background"/>
-                            </LinearLayout>
-                        </LinearLayout>
-                        <ImageButton
-                            android:id="@+id/settings_button_main_trip_next"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/ic_chevron_right"
-                            android:background="@android:color/transparent"/>
-                    </LinearLayout>
-                    <View
-                        style="@style/menu_divider_style"
-                        android:background="?android:attr/listDivider"/>
-                    <TextView
-                        android:id="@+id/settings_consumption_plot"
-                        android:text="@string/settings_consumption_plot"
-                        android:drawableStart="@drawable/ic_diagram"
-                        style="@style/menu_button_row_style"/>
-                    <View
-                        style="@style/menu_divider_style"
-                        android:background="?android:attr/listDivider"/>
-                    <TextView
-                        android:id="@+id/settings_charge_plot"
-                        android:text="@string/settings_charge_plot"
-                        android:drawableStart="@drawable/ic_charger"
-                        style="@style/menu_button_row_style" />
-                    <View
-                        style="@style/menu_divider_style"
-                        android:background="?android:attr/listDivider"/>
-                    <TextView
-                        android:id="@+id/settings_about"
-                        android:text="@string/settings_about"
-                        android:drawableStart="@drawable/ic_info"
-                        style="@style/menu_button_row_style" />
-                    <View
-                        style="@style/menu_divider_style"
-                        android:background="?android:attr/listDivider"/>
-                    <Switch
-                        android:visibility="gone"
-                        android:id="@+id/settings_switch_distance_unit"
-                        style="@style/menu_standard_switch_style"
-                        android:text="@string/settings_distance_unit"/>
-
-                </LinearLayout>
-            </ScrollView>
-            <TextView
-                android:id="@+id/settings_version_text"
-                android:layout_margin="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"/>
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <LinearLayout android:id="@+id/settings_consumption_plot_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/black"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/settings_consumption_plot_button_back"
-                style="@style/title_back_button_style" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_diagram" />
-
-            <TextView
-                style="@style/title_text_style"
-                android:layout_marginStart="0dp"
-                android:text="@string/settings_consumption_plot"/>
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-        </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="?android:attr/colorControlActivated"/>
-
         <ScrollView
+            android:layout_above="@+id/settings_version_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
+            android:layout_height="match_parent">
             <LinearLayout
+                android:id="@+id/master_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginVertical="10dp"
                 android:orientation="vertical">
-
-                <Switch
-                    android:id="@+id/settings_consumption_plot_switch_secondary_color"
-                    style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_plot_secondary_color"/>
-
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-
-                <Switch
-                    android:visibility="gone"
-                    android:id="@+id/settings_consumption_plot_speed_switch"
-                    style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_consumption_plot_speed"/>
-
-                <View
-                    android:visibility="gone"
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-
-                <Switch
-                    android:id="@+id/settings_consumption_plot_switch_visible_gages"
-                    style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_visible_gages"/>
-
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-
-                <Switch
-                    android:id="@+id/settings_consumption_plot_switch_single_motor"
-                    style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_consumption_plot_single_motor" />
-
-            </LinearLayout>
-        </ScrollView>
-
-    </LinearLayout>
-
-    <LinearLayout android:id="@+id/settings_charge_plot_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/black"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/settings_charge_plot_button_back"
-                style="@style/title_back_button_style" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_charger" />
-
-            <TextView
-                style="@style/title_text_style"
-                android:layout_marginStart="0dp"
-                android:text="@string/settings_charge_plot"/>
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-        </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="?android:attr/colorControlActivated"/>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginVertical="10dp"
-                android:orientation="vertical">
-
-                <Switch
-                    android:id="@+id/settings_charge_plot_switch_secondary_color"
-                    style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_plot_secondary_color"/>
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-
-                <Switch
-                    android:id="@+id/settings_charge_plot_switch_visible_gages"
-                    style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_visible_gages"/>
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
 
                 <TextView
-                    android:visibility="gone"
-                    android:layout_height="101dp"
-                    android:id="@+id/settings_save_charge_curve"
-                    android:drawableStart="@drawable/ic_save"
-                    style="@style/menu_standard_row_label"
-                    android:text="Manually save last charge curve"/>
-
-                <Switch
-                    android:visibility="gone"
-                    android:id="@+id/settings_charge_plot_switch_state_of_charge_dimension"
-                    style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_plot_state_of_charge_dimension"/>
+                    style="@style/menu_section_title_style"
+                    android:text="@string/settings_title_generic"/>
                 <View
-                    android:visibility="gone"
                     style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>
 
+                <Switch
+                    android:id="@+id/settings_switch_notifications"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_notifications" />
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+                <Switch
+                    android:id="@+id/settings_switch_consumption_unit"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_consumption_unit"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+                <Switch
+                    android:id="@+id/settings_switch_use_location"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_use_location"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+                <Switch
+                    android:id="@+id/settings_switch_autostart"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_autostart"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+                <TextView
+                    style="@style/menu_section_title_style"
+                    android:text="@string/settings_title_misc"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+                <TextView
+                    android:id="@+id/settings_button_main_view"
+                    style="@style/menu_button_row_style"
+                    android:text="@string/settings_main_view"
+                    android:drawableStart="@drawable/ic_diagram" />
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+                <TextView
+                    android:id="@+id/settings_button_vehicle"
+                    style="@style/menu_button_row_style"
+                    android:text="@string/vehicle_title"
+                    android:drawableStart="@drawable/ic_car"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+                <!--<com.ixam97.carStatsViewer.views.MultiSelectWidget
+                    android:id="@+id/settings_multiselect_trip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:title="@string/settings_select_trip" />
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+                <TextView
+                    android:id="@+id/settings_consumption_plot"
+                    android:text="@string/settings_consumption_plot"
+                    android:drawableStart="@drawable/ic_diagram"
+                    style="@style/menu_button_row_style"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+                <TextView
+                    android:id="@+id/settings_charge_plot"
+                    android:text="@string/settings_charge_plot"
+                    android:drawableStart="@drawable/ic_charger"
+                    style="@style/menu_button_row_style" />
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>-->
+                <TextView
+                    android:id="@+id/settings_button_apis"
+                    style="@style/menu_button_row_style"
+                    android:drawableStart="@drawable/ic_api"
+                    android:text="@string/settings_apis_title"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+                <TextView
+                    android:id="@+id/settings_button_about"
+                    android:text="@string/settings_about"
+                    android:drawableStart="@drawable/ic_info"
+                    style="@style/menu_button_row_style" />
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+
+                <Switch
+                    android:visibility="gone"
+                    android:id="@+id/settings_switch_distance_unit"
+                    style="@style/menu_standard_switch_style"
+                    android:text="@string/settings_distance_unit"/>
+
             </LinearLayout>
         </ScrollView>
+        <TextView
+            android:id="@+id/settings_version_text"
+            android:layout_margin="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
 
-    </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>

@@ -2,7 +2,7 @@ package com.ixam97.carStatsViewer.appPreferences
 
 import android.content.SharedPreferences
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
-import com.ixam97.carStatsViewer.plot.enums.PlotDimension
+import com.ixam97.carStatsViewer.plot.enums.PlotDimensionX
 
 class AppPreference<T>(
     private val key: String,
@@ -15,7 +15,7 @@ class AppPreference<T>(
                 is Boolean -> sharedPref.getBoolean(key, default) as T
                 is Int -> sharedPref.getInt(key, default) as T
                 is String -> sharedPref.getString(key, default) as T
-                is PlotDimension -> PlotDimension.valueOf(sharedPref.getString(key, default.name)!!) as T
+                is PlotDimensionX -> PlotDimensionX.valueOf(sharedPref.getString(key, default.name)!!) as T
                 is DistanceUnitEnum -> DistanceUnitEnum.valueOf(sharedPref.getString(key, default.name)!!) as T
                 else -> default
             }
@@ -25,7 +25,7 @@ class AppPreference<T>(
                 is Boolean -> sharedPref.edit().putBoolean(key, value as Boolean).apply()
                 is Int -> sharedPref.edit().putInt(key, value as Int).apply()
                 is String -> sharedPref.edit().putString(key, value as String).apply()
-                is PlotDimension -> sharedPref.edit().putString(key, (value as PlotDimension).name).apply()
+                is PlotDimensionX -> sharedPref.edit().putString(key, (value as PlotDimensionX).name).apply()
                 is DistanceUnitEnum ->sharedPref.edit().putString(key, (value as DistanceUnitEnum).name).apply()
                 //else ->
             }

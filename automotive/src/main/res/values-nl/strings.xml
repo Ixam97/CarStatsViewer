@@ -14,8 +14,6 @@
     <string name="main_button_reset_stats">Statistieken resetten</string>
     <string name="main_consumption">Verbruik over de laatste 3 km:</string>
     <string name="main_speed">Snelheid</string>
-    <string name="main_dialog_reset_title">Statistieken resetten?</string>
-    <string name="main_dialog_reset_message">Alle opgeslagen ritgegevens worden op nul gezet.</string>
     <string name="main_gage_speed">Snelheid</string>
     <string name="main_gage_power">Power</string>
     <string name="main_gage_charging_power">Laadvermogen</string>
@@ -46,7 +44,6 @@
     <string name="settings_button_quit">App afsluiten</string>
     <string name="settings_notifications">Meldingen</string>
     <string name="settings_consumption_unit">Wh/km als eenheid van verbruik</string>
-    <string name="settings_distance_unit">Mijlen als afstandseenheid</string>
     <string name="settings_debug">Debug-informatie</string>
     <string name="settings_experimental_layout">Toon experimentele layout</string>
     <string name="settings_consumption_plot">Verbruikscurve</string>
@@ -106,4 +103,64 @@
         <item>Diverse bugfixes en stabiliteitsverbeteringen</item>
     </string-array>
     <string name="main_changelog_dialog_title">Wijzigingen in versie %s:</string>
+    <string name="main_dialog_reset_title">Statistieken resetten?</string>
+    <string name="main_dialog_reset_message">Alle opgeslagen ritgegevens worden op nul gezet.</string>
+    <string name="settings_distance_unit">Mijlen als afstandseenheid</string>
+    <string name="settings_apis_title">API-instellingen</string>
+    <!-- Restart Dialog -->
+    <string name="restart_notification_title" formatted="false">%s is opnieuw opgestart na %s.</string>
+    <string name="restart_notification_reason_crash">een crash</string>
+    <string name="restart_notification_reason_reboot">een herstart</string>
+    <string name="restart_notification_reason_update">een update</string>
+    <string name="restart_notification_message">Herstart de service voor het bijhouden van statistieken.</string>
+    <string name="restart_notification_dismiss">Afwijzen</string>
+    <string name="restart_notification_app">App starten</string>
+    <string name="restart_notification_service">Service starten</string>
+    <string name="restart_toast_background">De service voor het bijhouden van statistieken is op de achtergrond gestart</string>
+    <string name="settings_title_generic">Algemene instellingen</string>
+    <string name="settings_title_misc">Diverse instellingen:</string>
+    <string name="settings_main_view">Hoofdaanzicht</string>
+    <string name="settings_apis_abrp">ABRP Live-gegevens</string>
+    <string name="settings_apis_http">HT,TP Webhook</string>
+    <string name="settings_apis_smtp">SMTP-login</string>
+    <string name="settings_apis_use">Gebruik API</string>
+    <!-- ABRP -->
+    <string name="abrp_description">Voer een generiek ABRP-token in om over-the-air live gegevens te verzenden naar de ABRP-servers. Dit omvat locatiegegevens indien deze niet zijn uitgeschakeld.</string>
+    <string name="abrp_generic_token">Generiek token</string>
+    <!-- HTTP -->
+    <string name="http_description">Voer HTTP URL en (optioneel) basic auth credentials in om live gegevens naar de opgegeven URL te sturen. Gebruikt POST verzoek met JSON inhoud. Dit omvat locatiegegevens indien niet uitgeschakeld. -</string>
+    <string name="http_username">BasicAuth gebruikersnaam</string>
+    <string name="http_password">BasicAuth-wachtwoord</string>
+    <string name="http_invalid_url">Ongeldige URL!</string>
+    <!-- SMTP -->
+    <string name="smtp_description">Voer uw SMTP-gegevens in die u van uw e-mailprovider heeft gekregen. Dit wordt gebruikt om opgeslagen statistieken en debug-logs naar een door de gebruiker opgegeven doeladres te sturen.</string>
+    <string name="smtp_address">E-mailadres</string>
+    <string name="smtp_password">E-mail wachtwoord</string>
+    <!--Is this really a URL or a plain hostname?-->
+    <string name="smtp_server">SMTP-server-hostnaam</string>
+    <string name="smtp_port">SMTP-serverpoort</string>
+    <string name="smtp_use_STARTTLS">Gebruik STARTTLS</string>
+    <!-- Vehicle Setup -->
+    <string name="vehicle_title">Voertuigconfiguratie</string>
+    <string name="vehicle_my">Modeljaar</string>
+    <string name="vehicle_drivetrain">Aandrijving</string>
+    <string name="vehicle_plus">Plus pakket</string>
+    <string name="vehicle_performance">Performance upgrade</string>
+    <string name="vehicle_bst">BST Editie</string>
+    <string name="vehicle_launch">Lanceringseditie</string>
+    <string-array name="changes_0_24">
+        <item>Meerdere live data-API\'s toegevoegd:
+ - ABRP OTA live-gegevens
+ - HTTP-webhook met BasicAuth</item>
+        <item>Locatietracking en hoogtegeschiedenis toegevoegd</item>
+        <item>Herstartmelding toegevoegd na een herstart, update of app-crash</item>
+        <item>Voertuigconfiguratie toegevoegd</item>
+        <item>Instellingenmenu geherstructureerd</item>
+        <item>Probleem opgelost dat eenheden in de hoofdweergave niet werden ververst</item>
+        <item>Algemene bugfixes en stabiliteitsverbeteringen</item>
+    </string-array>
+    <string name="settings_use_location">Locatie volgen</string>
+    <string name="settings_autostart">Automatische start van de app</string>
+    <string name="plot_dimensionY_SPEED">Snelheid</string>
+    <string name="plot_dimensionY_ALTITUDE">Hoogte</string>
 </resources>

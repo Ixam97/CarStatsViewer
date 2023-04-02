@@ -3,12 +3,12 @@ package com.ixam97.carStatsViewer.dataManager
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
+import android.location.Location
 import android.util.Log
 import com.ixam97.carStatsViewer.BuildConfig
-import com.ixam97.carStatsViewer.InAppLogger
-import com.ixam97.carStatsViewer.plot.enums.PlotDimension
+import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.plot.enums.PlotDimensionX
 import com.ixam97.carStatsViewer.plot.enums.PlotHighlightMethod
-import com.ixam97.carStatsViewer.plot.enums.PlotLabelPosition
 import com.ixam97.carStatsViewer.plot.enums.PlotLineLabelFormat
 import com.ixam97.carStatsViewer.plot.objects.*
 import java.util.Date
@@ -54,7 +54,7 @@ class DataManager(val printableName: String) {
     /** Current speed in m/s */
     val currentSpeed get() = ((CurrentSpeed.value?: 0F) as Float).absoluteValue
     /** Current power in mW */
-    val currentPower get() = com.ixam97.carStatsViewer.activities.emulatorPowerSign * (CurrentPower.value ?: 0F) as Float
+    val currentPower get() = com.ixam97.carStatsViewer.emulatorPowerSign * (CurrentPower.value ?: 0F) as Float
     /** Current gear selection */
     val currentGear get() = (CurrentGear.value?: 0) as Int
     /** Connection status of the charge port */
@@ -97,6 +97,10 @@ class DataManager(val printableName: String) {
     var plotMarkers = PlotMarkers()
     /** ArrayList of the past charging sessions during the current trip */
     var chargeCurves: ArrayList<ChargeCurve> = ArrayList()
+    /** current location of the Vehicle */
+    var location: Location? = null
+
+    var model: String = ""
 
     // Plot values
     var consumptionPlotEnergyDelta = 0F
@@ -107,7 +111,6 @@ class DataManager(val printableName: String) {
         PlotLineConfiguration(
             PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
             PlotLineLabelFormat.NUMBER,
-            PlotLabelPosition.LEFT,
             PlotHighlightMethod.AVG_BY_DISTANCE,
             "Wh/km"
         ),
@@ -117,7 +120,6 @@ class DataManager(val printableName: String) {
         PlotLineConfiguration(
             PlotRange(0f, 20f, 0f, 160f, 20f),
             PlotLineLabelFormat.FLOAT,
-            PlotLabelPosition.LEFT,
             PlotHighlightMethod.AVG_BY_TIME,
             "kW"
         ),
@@ -143,7 +145,7 @@ class DataManager(val printableName: String) {
      * @return Int representing the success of the update. 0 means a valid update.
      */
     fun update(value: CarPropertyValue<*>, doLog: Boolean = false, valueMustChange: Boolean = false, allowInvalidTimestamps: Boolean = false): Int {
-        if (value.status != CarPropertyValue.STATUS_AVAILABLE) InAppLogger.log("PropertyStatus ${getVehiclePropertyById(value.propertyId)?.printableName}: ${value.status}")
+        if (value.status != CarPropertyValue.STATUS_AVAILABLE) InAppLogger.d("PropertyStatus ${getVehiclePropertyById(value.propertyId)?.printableName}: ${value.status}")
         return update(value.value, value.timestamp, value.propertyId, doLog, valueMustChange, allowInvalidTimestamps)
     }
 
@@ -200,8 +202,8 @@ class DataManager(val printableName: String) {
             chargeTime = chargeTime,
             markers = plotMarkers.markers.toList(),
             chargeCurves = chargeCurves.toList(),
-            consumptionPlotLine = consumptionPlotLine.getDataPoints(PlotDimension.DISTANCE).toList(),
-            chargePlotLine = chargePlotLine.getDataPoints(PlotDimension.TIME).toList()
+            consumptionPlotLine = consumptionPlotLine.getDataPoints(PlotDimensionX.DISTANCE).toList(),
+            chargePlotLine = chargePlotLine.getDataPoints(PlotDimensionX.TIME).toList()
         )
         set(value) {
             tripStartDate = value?.tripStartDate?: Date()

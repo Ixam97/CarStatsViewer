@@ -5,8 +5,9 @@
     <color name="button_background_inactive">#121212</color>
     <color name="button_background_active">#D96C00</color>
     <color name="secondary_text_color">#B3B3B3</color>
-    <color name="disabled_tint">#FF757575</color>
+    <color name="disabled_tint">#FF4D4D4D</color>
     <color name="disable_background">#1F1F1F</color>
+    <color name="slideup_activity_background">#090909</color>
     <color name="primary_plot_color">#FFD96C00</color>
     <color name="secondary_plot_color">#FF00C400</color>
     <color name="secondary_plot_color_alt">#FFCCCCCC</color>
@@ -14,5 +15,6 @@
     <color name="charge_marker">#2693ff</color>
     <color name="park_marker">@color/disabled_tint</color>
     <color name="bad_red">#771515</color>
+    <color name="connected_blue">#2595FF</color>
     <color name="grid_line_color">#272727</color>
 </resources>

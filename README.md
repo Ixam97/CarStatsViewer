@@ -6,6 +6,7 @@
 - View details of the current trip
 - Visualizes consumption, speed and state of charge along the trip
 - Visualizes and saves charge curves during a trip
+- Live Data API for ABRP and HTTP Webhook
 
 ## Planned:
 - Estimate range based on the current trip's consumption
@@ -29,6 +30,12 @@ Please let me now if you do not want to be listed in the supporters list.
  * Robin Hellström 
  * Benjamin Stegmann
  * Horst Zimmermann
+ * Michael Roehn
+ * Man8ck
+ * Björn Befuß
+ * Peter Füllhase
+ * Lukas Bruckenberger
+ * Stefan Süssenguth
 
 </details>
 
@@ -83,6 +90,18 @@ Discussion in the international Polestar forums: [Polestar Forum](https://www.po
 ---
 
 ## Changelog [DE]:
+
+### 0.24.0 (02.04.2023)
+- Mehrere Live-Daten-APIs hinzugefügt:
+  - ABRP OTA Live Data
+  - HTTP Webhook mit BasicAuth
+- Standorterfassung mit Höhenverlauf hinzugefügt
+- Neustart-Benachrichtigung nach Update, Reboot oder Absturz hinzugefügt
+- Fahrzeugkonfiguration hinzugefügt
+- Einstellungsmenü umstrukturiert
+- Fehler behoben, der das aktualisieren der Einheiten in der Hauptansicht verhindert hat
+- Laden und Speichern des Debug-Log wurde drastisch optimiert.
+- Allgemeine Bugfixes und Stabilitätsverbesserungen.
 
 ### 0.23.0 (24.02.2023)
 - Datenstruktur grundlegend überarbeitet, um die Stabilität und Sklaierbarkeit zu verbessern

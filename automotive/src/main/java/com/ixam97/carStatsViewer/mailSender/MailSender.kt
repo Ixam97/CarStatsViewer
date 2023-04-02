@@ -26,6 +26,7 @@ class MailSender(private val user: String, private val password: String, private
         props.setProperty("mail.host", server)
         props["mail.smtp.auth"] = "true"
         props["mail.smtp.port"] = "465"
+        props["mail.smtp.starttls.enable"] = "true"
         props["mail.smtp.socketFactory.port"] = "465"
         props["mail.smtp.socketFactory.class"] = "javax.net.ssl.SSLSocketFactory"
         props["mail.smtp.socketFactory.fallback"] = "false"

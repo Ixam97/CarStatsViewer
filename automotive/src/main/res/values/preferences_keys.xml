@@ -26,4 +26,11 @@
     <string name="preference_log_target_address_key" translatable="false">preference_log_target_address</string>
     <string name="preference_log_user_name_key" translatable="false">preference_log_user_name</string>
     <string name="preference_version_key" translatable="false">preference_version</string>
+    <string name="preference_use_location_key" translatable="false">preference_use_location</string>
+    <string name="preference_autostart_key" translatable="false">preference_autostart</string>
+    <string name="preference_model_year_key" translatable="false">preference_model_year</string>
+    <string name="preference_drive_train_key" translatable="false">preference_drive_train</string>
+    <string name="preference_plus_key" translatable="false">preference_plus</string>
+    <string name="preference_performance_key" translatable="false">preference_performance</string>
+    <string name="preference_bst_key" translatable="false">preference_bst</string>
 </resources>

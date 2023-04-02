@@ -6,26 +6,34 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/smtp_dialog_address"
+        android:id="@+id/http_live_data_url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_font_size"
-        android:hint="Mail address"
-        android:inputType="textEmailAddress"/>
+        android:hint="URL"
+        android:inputType="text"/>
+
     <EditText
-        android:id="@+id/smtp_dialog_password"
-        android:layout_marginTop="10dp"
+        android:id="@+id/http_live_data_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_font_size"
-        android:hint="Mail password"
-        android:inputType="textPassword"/>
+        android:hint="@string/http_username"
+        android:inputType="text"/>
+
     <EditText
-        android:id="@+id/smtp_dialog_server"
-        android:layout_marginTop="10dp"
+        android:id="@+id/http_live_data_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/http_password"
+        android:inputType="textPassword"
+        android:textSize="@dimen/std_font_size" />
+
+    <Switch
+        android:id="@+id/http_live_data_enabled"
+        android:layout_marginTop="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_font_size"
-        android:hint="SMTP server"
-        android:inputType="textUri"/>
+        android:text="@string/settings_apis_use" />
 </LinearLayout>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/settings_main_view_back"
+            style="@style/title_back_button_style" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_diagram" />
+
+        <TextView
+            style="@style/title_text_style"
+            android:layout_marginStart="0dp"
+            android:text="@string/settings_main_view"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="?android:attr/colorControlActivated"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
+            android:orientation="vertical">
+
+            <com.ixam97.carStatsViewer.views.MultiSelectWidget
+                android:id="@+id/settings_multiselect_trip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/settings_select_trip" />
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                style="@style/menu_section_title_style"
+                android:text="@string/settings_consumption_plot"/>
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <Switch
+                android:id="@+id/settings_consumption_plot_switch_secondary_color"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_plot_secondary_color"/>
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <View
+                android:visibility="gone"
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <Switch
+                android:id="@+id/settings_consumption_plot_switch_visible_gages"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_visible_gages"/>
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                style="@style/menu_section_title_style"
+                android:text="@string/settings_charge_plot"/>
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <Switch
+                android:id="@+id/settings_charge_plot_switch_secondary_color"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_plot_secondary_color"/>
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <Switch
+                android:id="@+id/settings_charge_plot_switch_visible_gages"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_visible_gages"/>
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <Switch
+                android:visibility="gone"
+                android:id="@+id/settings_charge_plot_switch_state_of_charge_dimension"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_plot_state_of_charge_dimension"/>
+            <View
+                android:visibility="gone"
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

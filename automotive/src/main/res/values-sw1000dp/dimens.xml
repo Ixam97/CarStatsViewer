@@ -7,8 +7,10 @@
     <dimen name="chevron_icon_size">74dp</dimen>
     <dimen name="std_font_size">32sp</dimen>
     <dimen name="reduced_font_size">27sp</dimen>
+    <dimen name="log_font_size">22sp</dimen>
     <dimen name="title_font_size">47sp</dimen>
-    <integer name="title_font_weight">550</integer>
+    <integer name="title_font_weight">500</integer>
+    <integer name="std_font_weight">400</integer>
     <dimen name="section_title_font_size">32sp</dimen>
     <dimen name="divider_height">2dp</dimen>
     <dimen name="plot_x_margin">70dp</dimen>

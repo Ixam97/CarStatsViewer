@@ -14,14 +14,18 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROLS" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <!--<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
     <uses-feature
         android:name="android.hardware.type.automotive"
         android:required="true"/>
 
     <application
+        android:name=".CarStatsViewer"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -29,6 +33,21 @@
         android:supportsRtl="true"
         android:hasFragileUserData="true"
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
+        <receiver android:name=".AutoStartReceiver"
+            android:exported="true"
+            android:enabled="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.ixam97.carStatsViewer.RestartAction" />
+            </intent-filter>
+        </receiver>
+
         <activity android:name=".activities.PermissionsActivity"
             android:exported="true">
             <intent-filter>
@@ -49,18 +68,19 @@
             android:exported="false">
             <meta-data android:name="distractionOptimized" android:value="true"/>
         </activity>
-        <activity android:name=".LogActivity"
+        <activity android:name=".activities.SettingsMainViewActivity" android:exported="false"/>
+        <activity android:name=".activities.SettingsVehicleActivity" android:exported="false"/>
+        <activity android:name=".activities.LibsActivity" android:exported="false" />
+        <activity android:name=".activities.AboutActivity" android:exported="false" />
+        <activity android:name=".activities.SettingsApisActivity" android:exported="false" />
+        <activity android:name=".activities.LogActivity"
             android:exported="false">
             <meta-data android:name="distractionOptimized" android:value="true"/>
         </activity>
-        <activity
-            android:name=".activities.LibsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activities.AboutActivity"
-            android:exported="false" />
-        <service android:name=".services.LocCollector"/>
-        <service android:name=".dataManager.DataCollector"/>
+        <service android:name=".dataManager.DataCollector"
+            android:foregroundServiceType="location"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

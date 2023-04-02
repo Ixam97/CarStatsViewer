@@ -14,13 +14,11 @@
     <string name="main_button_reset_stats">Återställ statistik</string>
     <string name="main_consumption">Förbrukning under de senaste 3 km:</string>
     <string name="main_speed">Hastighet</string>
-    <string name="main_dialog_reset_title">Återställa statistik?</string>
-    <string name="main_dialog_reset_message">Alla sparade tripdata kommer att nollställas.</string>
     <string name="main_gage_speed">Hastighet</string>
     <string name="main_gage_power">Effekt</string>
     <string name="main_gage_charging_power">Laddningseffekt</string>
     <string name="main_gage_SoC">Laddningsnivå</string>
-    <string name="main_gage_consumption">Momentanförbrukning</string>
+    <string name="main_gage_consumption">Aktuell förbrukning</string>
     <string name="main_dismiss_charge_plot">Stäng laddningskurva</string>
     <string name="main_button_reset_charge_plot">Återställ laddningskurva</string>
     <string name="main_button_trip_summary">Reseöversikt</string>
@@ -30,7 +28,7 @@
     <string name="summary_title">Reseöversikt</string>
     <string name="summary_button_reset_trip">Återställ trippmätare</string>
     <string name="summary_parked_warning">Vyn enbart tillgänglig vid parkering.</string>
-    <string name="summary_trip_history">Resehistoria</string>
+    <string name="summary_trip_history">Resehistorik</string>
     <string name="summary_charging_sessions">Laddningstillfällen</string>
     <string name="summary_trip_start_date">Resan påbörjad: %s</string>
     <string name="summary_used_energy">Använd energi</string>
@@ -46,7 +44,6 @@
     <string name="settings_button_quit">Avsluta appen</string>
     <string name="settings_notifications">Aviseringar</string>
     <string name="settings_consumption_unit">Wh/km som förbrukningsenhet</string>
-    <string name="settings_distance_unit">Miles som distansenhet</string>
     <string name="settings_debug">Felsökningsinformation</string>
     <string name="settings_experimental_layout">Visa experimentell layout</string>
     <string name="settings_consumption_plot">Förbrukningsvy</string>
@@ -106,4 +103,64 @@
         <item>Diverse felrättningar och stabilitetsförbättringar</item>
     </string-array>
     <string name="main_changelog_dialog_title">Ändringar i version %s:</string>
+    <string name="main_dialog_reset_title">Radera statistik</string>
+    <string name="main_dialog_reset_message">Alla sparade resor raderas.</string>
+    <string name="settings_distance_unit">Miles som distansenhet</string>
+    <string name="settings_apis_title">API-inställningar</string>
+    <!-- Restart Dialog -->
+    <string name="restart_notification_title" formatted="false">%s har startat om efter %s.</string>
+    <string name="restart_notification_reason_crash">en krash</string>
+    <string name="restart_notification_reason_reboot">en omstart</string>
+    <string name="restart_notification_reason_update">en uppdatering</string>
+    <string name="restart_notification_message">Vänligen starta om tjänsten för statistikuppföljning.</string>
+    <string name="restart_notification_dismiss">Avfärda</string>
+    <string name="restart_notification_app">Starta appen</string>
+    <string name="restart_notification_service">Starta tjänsten</string>
+    <string name="restart_toast_background">Tjänsten för statistikspårning startade i bakgrunden</string>
+    <string name="settings_title_generic">Allmänna inställningar:</string>
+    <string name="settings_title_misc">Diverse inställningar:</string>
+    <string name="settings_main_view">Huvudvy</string>
+    <string name="settings_apis_abrp">Realtidsdata för ABRP</string>
+    <string name="settings_apis_http">HTTP Webhook</string>
+    <string name="settings_apis_smtp">Användarnamn för SMTP</string>
+    <string name="settings_apis_use">Använd API</string>
+    <!-- ABRP -->
+    <string name="abrp_description">Ange en generisk ABRP-token för att överföra realtidsdata till ABRP-servrarna. Detta inkluderar platsdata om det inte är inaktiverat.</string>
+    <string name="abrp_generic_token">Generisk token</string>
+    <!-- HTTP -->
+    <string name="http_description">Ange HTTP URL och (valfritt) grundläggande autentiseringsuppgifter för att överföra livedata till den angivna URL:en. Funktionen använder HTTP POST med JSON-innehåll. Detta inkluderar platsdata om det inte är inaktiverat.</string>
+    <string name="http_username">BasicAuth användarnamn</string>
+    <string name="http_password">BasicAuth lösenord</string>
+    <string name="http_invalid_url">Ogiltig URL!</string>
+    <!-- SMTP -->
+    <string name="smtp_description">Ange dina SMTP-uppgifter från din e-postleverantör. Detta används för att skicka sparad statistik och felsökningsloggar till en e-postadress som anges av användaren.</string>
+    <string name="smtp_address">E-postadress</string>
+    <string name="smtp_password">Lösenord för SMTP</string>
+    <!--Is this really a URL or a plain hostname?-->
+    <string name="smtp_server">SMTP server</string>
+    <string name="smtp_port">SMTP server port</string>
+    <string name="smtp_use_STARTTLS">Använd STARTTLS</string>
+    <!-- Vehicle Setup -->
+    <string name="vehicle_title">Bilinställningar</string>
+    <string name="vehicle_my">Modellår</string>
+    <string name="vehicle_drivetrain">Drivlina</string>
+    <string name="vehicle_plus">Pluspaket</string>
+    <string name="vehicle_performance">Mjukvaruuppgraderingen för prestanda</string>
+    <string name="vehicle_bst">BST Edition</string>
+    <string name="vehicle_launch">Launch Edition</string>
+    <string-array name="changes_0_24">
+        <item>Flera API:er för levande data har lagts till:
+- ABRP OTA live data
+- HTTP Webhook med BasicAuth</item>
+        <item>Lade till platsspårning och höjdhistorik</item>
+        <item>Lägg till meddelande om omstart efter omstart, uppdatering eller krasch av appen</item>
+        <item>Lagt till fordonsinställning</item>
+        <item>Omstrukturerad inställningsmeny</item>
+        <item>Rättat att enheter i huvudvyn inte uppdaterades</item>
+        <item>Diverse felrättningar och stabilitetsförbättringar</item>
+    </string-array>
+    <string name="settings_use_location">Platsspårning</string>
+    <string name="settings_autostart">Automatisk start av appen</string>
+    <string name="plot_dimensionY_SPEED">Hastighet</string>
+    <string name="plot_dimensionY_ALTITUDE">Höjd</string>
 </resources>

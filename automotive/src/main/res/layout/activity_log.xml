@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/slideup_activity_background"
     tools:context=".activities.SettingsActivity">
 
     <LinearLayout
@@ -13,7 +14,9 @@
 
         <ImageButton
             android:id="@+id/log_button_back"
-            style="@style/title_back_button_style"/>
+            style="@style/title_back_button_style"
+            android:tint="@color/bad_red"
+            android:src="@drawable/ic_close"/>
 
         <TextView
             style="@style/title_text_style"
@@ -21,20 +24,20 @@
 
         <View style="@style/filler"/>
 
-        <Button
-            android:id="@+id/log_button_show_json"
-            android:layout_height="match_parent"
-            android:layout_width="wrap_content"
-            android:textSize="47sp"
-            android:textFontWeight="600"
-            android:text="JSON"
-            android:backgroundTint="@android:color/transparent"/>
-
         <ImageButton
-            android:id="@+id/log_button_login"
-            android:src="@drawable/ic_login"
+            android:id="@+id/log_settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/ic_settings"
+            android:background="@android:color/transparent"
+            android:layout_marginVertical="15dp"
+            android:layout_marginEnd="10dp"/>
+
+        <ImageButton
+            android:id="@+id/log_reset_log"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_delete"
             android:background="@android:color/transparent"
             android:layout_marginVertical="15dp"
             android:layout_marginEnd="10dp"/>
@@ -53,41 +56,22 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="?android:attr/colorControlActivated"/>
+        android:background="@color/bad_red"/>
 
     <LinearLayout
+        android:theme="@style/redTextEdit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginVertical="10dp"
         android:orientation="vertical">
 
-        <Switch
-            android:visibility="gone"
-            android:id="@+id/log_switch_deep_log"
-            style="@style/menu_standard_switch_style"
-            android:text="Deep Log"/>
-
-        <View
-            android:visibility="gone"
-            style="@style/menu_divider_style"
-            android:background="?android:attr/listDivider" />
-
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/log_reset_log"
-            style="@style/menu_button_row_style"
-            android:text="Empty Log"
-            android:drawableEnd="@drawable/ic_delete"/>
-
-        <View
-            android:visibility="gone"
-            style="@style/menu_divider_style"
-            android:background="?android:attr/listDivider" />
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <ScrollView
+                android:id="@+id/log_scrollview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/log_send_container">
@@ -100,6 +84,7 @@
                         android:id="@+id/log_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textSize="@dimen/log_font_size"
                         android:typeface="monospace"/>
                 </LinearLayout>
             </ScrollView>
@@ -166,6 +151,16 @@
                         android:layout_marginEnd="10dp"/>
                 </LinearLayout>
             </LinearLayout>
+
+
+            <ProgressBar
+                android:id="@+id/log_progress_bar"
+                android:visibility="gone"
+                android:indeterminateTint="@color/bad_red"
+                android:layout_centerInParent="true"
+                android:layout_width="200dp"
+                android:layout_height="200dp"/>
+
         </RelativeLayout>
     </LinearLayout>
 

@@ -26,14 +26,27 @@
     <style name="menu_standard_switch_style">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/std_row_height</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
         <item name="android:textSize">@dimen/std_font_size</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textFontWeight">@integer/std_font_weight</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
     </style>
     <style name="menu_standard_row_label">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/std_row_height</item>
         <item name="android:textSize">@dimen/std_font_size</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:textFontWeight">@integer/std_font_weight</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+    <style name="menu_standard_row_label_disabled">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/std_row_height</item>
+        <item name="android:textSize">@dimen/std_font_size</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textFontWeight">@integer/std_font_weight</item>
+        <item name="android:alpha">?android:attr/disabledAlpha</item>
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
         <item name="android:gravity">center_vertical</item>
     </style>
@@ -41,6 +54,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">@dimen/std_font_size</item>
+        <item name="android:textFontWeight">@integer/std_font_weight</item>
         <item name="android:layout_marginTop">3.5dp</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
@@ -48,6 +62,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">@dimen/reduced_font_size</item>
+        <item name="android:textFontWeight">@integer/std_font_weight</item>
         <item name="android:layout_marginBottom">3.5dp</item>
         <item name="android:textColor">@color/secondary_text_color</item>
     </style>
@@ -56,6 +71,7 @@
         <item name="android:layout_height">@dimen/std_row_height</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">@dimen/std_font_size</item>
+        <item name="android:textFontWeight">@integer/std_font_weight</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:drawableEnd">@drawable/ic_chevron_right</item>
     </style>
@@ -65,6 +81,7 @@
         <item name="android:textColor">@color/disabled_tint</item>
         <item name="android:drawableTint">@color/disabled_tint</item>
         <item name="android:textSize">@dimen/std_font_size</item>
+        <item name="android:textFontWeight">@integer/std_font_weight</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:drawableEnd">@drawable/ic_chevron_right</item>
     </style>
@@ -86,5 +103,15 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:orientation">vertical</item>
+    </style>
+    <style name="widget_bar">
+        <item name ="android:layout_width">0dp</item>
+        <item name ="android:layout_weight">1</item>
+        <item name ="android:layout_height">5dp</item>
+        <item name ="android:background">@color/disable_background</item>
+    </style>
+    <style name="redTextEdit" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <item name="android:colorControlHighlight">@color/bad_red</item>
+        <item name="android:colorControlActivated">@color/bad_red</item>
     </style>
 </resources>

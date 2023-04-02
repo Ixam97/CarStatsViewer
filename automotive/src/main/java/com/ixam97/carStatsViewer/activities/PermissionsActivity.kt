@@ -6,18 +6,17 @@ import android.car.Car
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import com.ixam97.carStatsViewer.InAppLogger
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
 import kotlin.system.exitProcess
 
 class PermissionsActivity: Activity() {
     companion object {
-        private val PERMISSIONS = arrayOf(
+        val PERMISSIONS = arrayOf(
             Car.PERMISSION_ENERGY,
             Car.PERMISSION_SPEED,
             android.Manifest.permission.ACCESS_FINE_LOCATION,
             android.Manifest.permission.ACCESS_COARSE_LOCATION
-            //android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
         )
     }
 
@@ -35,7 +34,7 @@ class PermissionsActivity: Activity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        InAppLogger.log("onRequestPermissionResult")
+        InAppLogger.d("onRequestPermissionResult")
 
         if (unGrantedPermissions().isEmpty()) {
             finish()
@@ -58,14 +57,14 @@ class PermissionsActivity: Activity() {
     }
 
     private fun checkPermissions(): Boolean {
-        InAppLogger.log("Checking permissions...")
+        InAppLogger.i("Checking permissions...")
         val unGrantedPermissions = unGrantedPermissions()
         if (unGrantedPermissions.isNotEmpty()) {
-            InAppLogger.log("Requesting missing Permissions...")
+            InAppLogger.i("Requesting missing Permissions...")
             requestPermissions(unGrantedPermissions.toTypedArray(), 0)
             return false
         }
-        InAppLogger.log("Permissions already granted.")
+        InAppLogger.i("Permissions already granted.")
         return true
     }
 

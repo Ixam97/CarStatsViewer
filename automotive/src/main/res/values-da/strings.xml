@@ -14,8 +14,6 @@
     <string name="main_button_reset_stats">Nulstil statistik</string>
     <string name="main_consumption">Forbrug over de sidste 3 km:</string>
     <string name="main_speed">Hastighed</string>
-    <string name="main_dialog_reset_title">Nulstil statistik?</string>
-    <string name="main_dialog_reset_message">Alle gemte turdata vil blive nulstillet.</string>
     <string name="main_gage_speed">Hastighed</string>
     <string name="main_gage_power">Effekt</string>
     <string name="main_gage_charging_power">Ladeeffekt</string>
@@ -46,7 +44,6 @@
     <string name="settings_button_quit">Afslut app</string>
     <string name="settings_notifications">Notifikationer</string>
     <string name="settings_consumption_unit">Wh/km som forbrugsenhed</string>
-    <string name="settings_distance_unit">Mil som afstandsenhed</string>
     <string name="settings_debug">Debug information</string>
     <string name="settings_experimental_layout">Vis eksperimentelt layout</string>
     <string name="settings_consumption_plot">Forbrugsoversigt</string>
@@ -105,5 +102,65 @@
         <item>Optimeret optimering af chaufførens distraktion</item>
         <item>Forskellige fejlrettelser og stabilitetsforbedringer</item>
     </string-array>
-    <string name="main_changelog_dialog_title">Ændringer i version %s :</string>
+    <string name="main_changelog_dialog_title">Ændringer i version %s:</string>
+    <string name="main_dialog_reset_title">Nulstil statistik?</string>
+    <string name="main_dialog_reset_message">Alle gemte turdata vil blive nulstillet.</string>
+    <string name="settings_distance_unit">Mil som afstandsenhed</string>
+    <string name="settings_apis_title">API-indstillinger</string>
+    <!-- Restart Dialog -->
+    <string name="restart_notification_title" formatted="false">%s er genstartet efter %s.</string>
+    <string name="restart_notification_reason_crash">et nedbrud</string>
+    <string name="restart_notification_reason_reboot">en genstart</string>
+    <string name="restart_notification_reason_update">en opdatering</string>
+    <string name="restart_notification_message">Genstart tjenesten til statistiksporing.</string>
+    <string name="restart_notification_dismiss">Afvis</string>
+    <string name="restart_notification_app">Start app</string>
+    <string name="restart_notification_service">Start tjeneste</string>
+    <string name="restart_toast_background">Statistiksporingstjeneste startede i baggrunden</string>
+    <string name="settings_title_generic">Generiske indstillinger:</string>
+    <string name="settings_title_misc">Diverse indstillinger:</string>
+    <string name="settings_main_view">Hovedvisning</string>
+    <string name="settings_apis_abrp">ABRP Live Data</string>
+    <string name="settings_apis_http">HTTP Webhook</string>
+    <string name="settings_apis_smtp">SMTP-login</string>
+    <string name="settings_apis_use">Brug API</string>
+    <!-- ABRP -->
+    <string name="abrp_description">Indtast et generisk ABRP-token for at overføre live-data til ABRP-serverne. Dette inkluderer placeringsdata, hvis det ikke er deaktiveret.</string>
+    <string name="abrp_generic_token">Generisk token</string>
+    <!-- HTTP -->
+    <string name="http_description">Indtast HTTP URL og (valgfrit) BasicAuth godkendelsesoplysninger for at overføre live data til den angivne URL. Bruger POST-anmodning med JSON-indhold. Dette inkluderer placeringsdata, hvis det ikke er deaktiveret.</string>
+    <string name="http_username">BasicAuth brugernavn</string>
+    <string name="http_password">BasicAuth adgangskode</string>
+    <string name="http_invalid_url">Ugyldig URL!</string>
+    <!-- SMTP -->
+    <string name="smtp_description">Indtast dine SMTP-legitimationsoplysninger givet af din e-mail-udbyder. Dette bruges til at sende gemte statistikker og fejlretningslogfiler til en email adresse angivet af brugeren.</string>
+    <string name="smtp_address">Email adresse</string>
+    <string name="smtp_password">SMTP adgangskode</string>
+    <!--Is this really a URL or a plain hostname?-->
+    <string name="smtp_server">SMTP-server værtsnavn</string>
+    <string name="smtp_port">SMTP serverport</string>
+    <string name="smtp_use_STARTTLS">Brug STARTTLS</string>
+    <!-- Vehicle Setup -->
+    <string name="vehicle_title">Køretøjsopsætning</string>
+    <string name="vehicle_my">Model årgang</string>
+    <string name="vehicle_drivetrain">Drivlinje</string>
+    <string name="vehicle_plus">Plus-pakke</string>
+    <string name="vehicle_performance">Performance opgradering</string>
+    <string name="vehicle_bst">BST-udgave</string>
+    <string name="vehicle_launch">Launch Edition</string>
+    <string-array name="changes_0_24">
+        <item>Der er tilføjet flere API\'er til live data:
+- ABRP OTA live data
+- HTTP Webhook med BasicAuth</item>
+        <item>Tilføjet placeringssporing og højdehistorik</item>
+        <item>Tilføjet meddelelse om genstart efter genstart, opdatering eller app-nedbrud</item>
+        <item>Tilføjet køretøjsopsætning</item>
+        <item>Omstruktureret indstillingsmenu</item>
+        <item>Rettede hovedvisningsenheder, der ikke opdateres</item>
+        <item>Generelle fejlrettelser og stabilitetsforbedringer</item>
+    </string-array>
+    <string name="settings_use_location">Sporing af placering</string>
+    <string name="settings_autostart">Automatisk start af app</string>
+    <string name="plot_dimensionY_SPEED">Hastighed</string>
+    <string name="plot_dimensionY_ALTITUDE">Højde</string>
 </resources>

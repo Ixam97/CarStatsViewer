@@ -6,13 +6,13 @@ import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
-import com.ixam97.carStatsViewer.plot.enums.PlotDimension
+import com.ixam97.carStatsViewer.plot.enums.PlotDimensionX
 import com.ixam97.carStatsViewer.utils.Exclude
 
 class AppPreferences(
     val context: Context
 ) {
-    private var sharedPref: SharedPreferences = context.getSharedPreferences(
+    var sharedPref: SharedPreferences = context.getSharedPreferences(
         context.getString(R.string.preferences_file_key), Context.MODE_PRIVATE
     )
 
@@ -30,7 +30,7 @@ class AppPreferences(
     private val ConsumptionPlotVisibleGages = AppPreference<Boolean>(context.getString(R.string.preference_consumption_plot_visible_gages_key), true, sharedPref)
     private val ChagrPlotSecondaryColor = AppPreference<Boolean>(context.getString(R.string.preference_charge_plot_secondary_color_key), false, sharedPref)
     private val ChargePlotVisibleGages = AppPreference<Boolean>(context.getString(R.string.preference_charge_plot_visible_gages_key), true, sharedPref)
-    private val ChargePlotDimension = AppPreference<PlotDimension>(context.getString(R.string.preference_charge_plot_dimension_key), PlotDimension.TIME, sharedPref)
+    private val ChargePlotDimension = AppPreference<PlotDimensionX>(context.getString(R.string.preference_charge_plot_dimension_key), PlotDimensionX.TIME, sharedPref)
     private val DistanceUnit = AppPreference<DistanceUnitEnum>(context.getString(R.string.preference_distance_unit_key), DistanceUnitEnum.KM, sharedPref)
     private val SecondaryConsumptionDimension = AppPreference<Int>(context.getString(R.string.preference_secondary_dimension_key), 0, sharedPref)
     private val MainViewTrip = AppPreference<Int>(context.getString(R.string.preference_main_view_trip_key), 0, sharedPref)
@@ -39,7 +39,13 @@ class AppPreferences(
     private val SmtpServer = AppPreference<String>(context.getString(R.string.preference_smtp_server_key), "", sharedPref)
     private val LogTargetAddress = AppPreference<String>(context.getString(R.string.preference_log_target_address_key), "ixam97@ixam97.de", sharedPref)
     private val LogUserName = AppPreference<String>(context.getString(R.string.preference_log_user_name_key), "", sharedPref)
-
+    private val UseLocation = AppPreference<Boolean>(context.getString(R.string.preference_use_location_key), false, sharedPref)
+    private val Autostart = AppPreference<Boolean>(context.getString(R.string.preference_autostart_key), false, sharedPref)
+    private val ModelYear = AppPreference<Int>(context.getString(R.string.preference_model_year_key), 0, sharedPref)
+    private val DriveTrain = AppPreference<Int>(context.getString(R.string.preference_drive_train_key), 0, sharedPref)
+    private val PlusPack = AppPreference<Boolean>(context.getString(R.string.preference_plus_key), false, sharedPref)
+    private val PerformanceUpgrade = AppPreference<Boolean>(context.getString(R.string.preference_performance_key), false, sharedPref)
+    private val BstEdition = AppPreference<Boolean>(context.getString(R.string.preference_bst_key), false, sharedPref)
 
     var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
@@ -52,7 +58,7 @@ class AppPreferences(
     var consumptionPlotVisibleGages: Boolean get() = ConsumptionPlotVisibleGages.value; set(value) {ConsumptionPlotVisibleGages.value = value}
     var chargePlotSecondaryColor: Boolean get() = ChagrPlotSecondaryColor.value; set(value) {ChagrPlotSecondaryColor.value = value}
     var chargePlotVisibleGages: Boolean get() = ChargePlotVisibleGages.value; set(value) {ChargePlotVisibleGages.value = value}
-    var chargePlotDimension: PlotDimension get() = ChargePlotDimension.value; set(value) {ChargePlotDimension.value = value}
+    var chargePlotDimension: PlotDimensionX get() = ChargePlotDimension.value; set(value) {ChargePlotDimension.value = value}
     var distanceUnit: DistanceUnitEnum get() = DistanceUnit.value; set(value) {DistanceUnit.value = value}
     var secondaryConsumptionDimension: Int get() = SecondaryConsumptionDimension.value; set(value) {SecondaryConsumptionDimension.value = value}
     var mainViewTrip: Int get() = MainViewTrip.value; set(value) {MainViewTrip.value = value}
@@ -61,6 +67,13 @@ class AppPreferences(
     var smtpServer: String get() = SmtpServer.value; set(value) {SmtpServer.value = value}
     var logUserName: String get() = LogUserName.value; set(value) {LogUserName.value = value}
     var logTargetAddress: String get() = LogTargetAddress.value; set(value) {LogTargetAddress.value = value}
+    var useLocation: Boolean get() = UseLocation.value; set(value) {UseLocation.value = value}
+    var autostart: Boolean get() = Autostart.value; set(value) {Autostart.value = value}
+    var modelYear: Int get() = ModelYear.value; set(value) {ModelYear.value = value}
+    var driveTrain: Int get() = DriveTrain.value; set(value) {DriveTrain.value = value}
+    var plusPack: Boolean get() = PlusPack.value; set(value) {PlusPack.value = value}
+    var performanceUpgrade: Boolean get() = PerformanceUpgrade.value; set(value) {PerformanceUpgrade.value = value}
+    var bstEdition: Boolean get() = BstEdition.value; set(value) {BstEdition.value = value}
 
     // Preferences not saved permanently:
     val exclusionStrategy = AppPreferences.exclusionStrategy

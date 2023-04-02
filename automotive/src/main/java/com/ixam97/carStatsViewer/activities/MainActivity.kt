@@ -1,44 +1,50 @@
 package com.ixam97.carStatsViewer.activities
 
-import com.ixam97.carStatsViewer.*
-import com.ixam97.carStatsViewer.dataManager.*
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.PendingIntent
+import android.car.Car
 import android.car.VehicleGear
 import android.car.VehiclePropertyIds
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.text.format.DateFormat
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.dataManager.*
+import com.ixam97.carStatsViewer.fragments.SummaryFragment
+import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.plot.enums.*
-import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
-import com.ixam97.carStatsViewer.views.PlotView
-import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
+import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
-import com.ixam97.carStatsViewer.services.LocCollector
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.GageView
+import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
-var emulatorMode = false
-var emulatorPowerSign = -1
-
-class MainActivity : Activity() {
+class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedListener {
     companion object {
         private const val UI_UPDATE_INTERVAL = 1000L
         const val DISTANCE_TRIP_DIVIDER = 5_000L
@@ -51,9 +57,7 @@ class MainActivity : Activity() {
     private lateinit var chargePlotLinePaint : PlotLinePaint
 
     private lateinit var timerHandler: Handler
-    private lateinit var starterIntent: Intent
     private lateinit var context: Context
-    // private lateinit var appPreferences: AppPreferences
 
     private var selectedDataManager = DataManagers.CURRENT_TRIP.dataManager
 
@@ -72,8 +76,14 @@ class MainActivity : Activity() {
             when (intent.action) {
                 getString(R.string.ui_update_plot_broadcast) -> updatePlots()
                 getString(R.string.ui_update_gages_broadcast) -> updateGages()
+                CarStatsViewer.liveDataApis[0].broadcastAction -> updateAbrpStatus(LiveDataApi.ConnectionStatus.fromInt(intent.getIntExtra("status", 0)))
+                CarStatsViewer.liveDataApis[1].broadcastAction -> updateAbrpStatus(LiveDataApi.ConnectionStatus.fromInt(intent.getIntExtra("status", 0)))
             }
         }
+    }
+
+    override fun onSelectedTripChanged() {
+        onResume()
     }
 
     /** Overrides */
@@ -81,13 +91,21 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
 
+        updateAbrpStatus(CarStatsViewer.liveDataApis[0].connectionStatus)
+
         val preferenceDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
         if (selectedDataManager != preferenceDataManager) {
-            finish()
-            startActivity(intent)
+            // Delay refresh for 400ms to ensure transition animation has finished
+            CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+                delay(400)
+                runOnUiThread {
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    finish()
+                    overridePendingTransition(0, 0)
+                }
+            }
         }
-
-        // InAppLogger.log("MainActivity.onResume")
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
@@ -107,8 +125,25 @@ class MainActivity : Activity() {
             }
         }
 
-        main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
-        main_power_gage.minValue = if (appPreferences.consumptionPlotSingleMotor) -100f else -150f
+        if (appPreferences.bstEdition) {
+            main_power_gage.maxValue = 350f
+            main_power_gage.minValue = -175f
+        } else if (appPreferences.driveTrain == 2) {
+            main_power_gage.maxValue = 300f
+            main_power_gage.minValue = -150f
+        } else {
+            main_power_gage.maxValue = 170f
+            main_power_gage.minValue = -100f
+        }
+
+        main_button_secondary_dimension.text = when (appPreferences.secondaryConsumptionDimension) {
+            1 -> getString(R.string.main_secondary_axis, getString(R.string.main_speed))
+            2 -> getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
+            3 -> getString(R.string.main_secondary_axis, getString(R.string.plot_dimensionY_ALTITUDE))
+            else -> getString(R.string.main_secondary_axis, "-")
+        }
+        main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[appPreferences.secondaryConsumptionDimension]
+
 
         main_power_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
         main_consumption_gage.barVisibility = appPreferences.consumptionPlotVisibleGages
@@ -116,30 +151,6 @@ class MainActivity : Activity() {
         main_charge_gage.barVisibility = appPreferences.chargePlotVisibleGages
 
         main_checkbox_speed.isChecked = appPreferences.plotSpeed
-        main_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
-            1 -> {
-                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.main_speed))
-                PlotSecondaryDimension.SPEED
-            }
-            2 -> {
-                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
-                PlotSecondaryDimension.STATE_OF_CHARGE
-            }
-            else -> {
-                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
-                null
-            }
-        }
-
-        /* when (appPreferences.plotSpeed) {
-            true -> PlotSecondaryDimension.SPEED
-            else -> null
-        }
-
-        main_button_secondary_dimension.text = when {
-            main_consumption_plot.secondaryDimension != null -> getString(R.string.main_button_hide_speed)
-            else -> getString(R.string.main_button_show_speed)
-        }*/
 
         main_consumption_plot.invalidate()
 
@@ -148,11 +159,25 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // InAppLogger.log("MainActivity.onCreate")
+
+        /*
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val carStatsViewer = applicationContext as CarStatsViewer
+                carStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
+                    // Do stuff with live data
+                    InAppLogger.v("State flow value: $it")
+                }
+            }
+        }
+         */
+
+        startForegroundService(Intent(applicationContext, DataCollector::class.java))
 
         context = applicationContext
         val displayMetrics = context.resources.displayMetrics
-        InAppLogger.log("Display size: ${displayMetrics.widthPixels/displayMetrics.density}x${displayMetrics.heightPixels/displayMetrics.density}")
+        InAppLogger.d("Display size: ${displayMetrics.widthPixels/displayMetrics.density}x${displayMetrics.heightPixels/displayMetrics.density}")
+        InAppLogger.d("Main view created")
 
         PlotView.textSize = resources.getDimension(R.dimen.reduced_font_size)
         PlotView.xMargin = resources.getDimension(R.dimen.plot_x_margin).toInt()
@@ -161,12 +186,6 @@ class MainActivity : Activity() {
         GageView.descriptionTextSize = resources.getDimension(R.dimen.gage_desc_text_size)
 
         appPreferences = AppPreferences(context)
-        StringFormatters.initFormatter(
-            DateFormat.getDateFormat(context),
-            DateFormat.getTimeFormat(context),
-            appPreferences.consumptionUnit,
-            appPreferences.distanceUnit
-        )
 
         consumptionPlotLinePaint = PlotLinePaint(
             PlotPaint.byColor(getColor(R.color.primary_plot_color), PlotView.textSize),
@@ -181,18 +200,16 @@ class MainActivity : Activity() {
         ) { appPreferences.chargePlotSecondaryColor }
 
         selectedDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
-        InAppLogger.log("selected Trip: ${selectedDataManager.printableName}")
+        InAppLogger.i("selected Trip: ${selectedDataManager.printableName}")
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
-
-        startForegroundService(Intent(this, DataCollector::class.java))
-        startService(Intent(this, LocCollector::class.java))
 
         DataCollector.mainActivityPendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
         setContentView(R.layout.activity_main)
+
         setupDefaultUi()
         setUiEventListeners()
 
@@ -206,8 +223,12 @@ class MainActivity : Activity() {
             broadcastReceiver,
             IntentFilter(getString(R.string.ui_update_gages_broadcast))
         )
+        registerReceiver(
+            broadcastReceiver,
+            IntentFilter(CarStatsViewer.liveDataApis[0].broadcastAction)
+        )
 
-        main_button_performance.isEnabled = false
+        main_button_performance.isEnabled = true
         main_button_performance.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
 
         enableUiUpdates()
@@ -218,7 +239,7 @@ class MainActivity : Activity() {
                     dialog.cancel()
                 }
                 setTitle(getString(R.string.main_changelog_dialog_title, BuildConfig.VERSION_NAME))
-                val changesArray = resources.getStringArray(R.array.changes_0_23)
+                val changesArray = resources.getStringArray(R.array.changes_0_24)
                 var changelog = ""
                 for ((index, change) in changesArray.withIndex()) {
                     changelog += "• $change"
@@ -237,19 +258,17 @@ class MainActivity : Activity() {
         super.onDestroy()
         disableUiUpdates()
         unregisterReceiver(broadcastReceiver)
-        // InAppLogger.log("MainActivity.onDestroy")
+        InAppLogger.d("Main view destroyed")
     }
 
     override fun onPause() {
         super.onPause()
         disableUiUpdates()
-        // InAppLogger.log("MainActivity.onPause")
     }
 
     /** Private functions */
 
     private fun updateActivity() {
-        // InAppLogger.logUIUpdate()
         /** Use data from DataManager to Update MainActivity text */
 
         DataCollector.gagePowerValue = selectedDataManager.currentPower
@@ -275,7 +294,6 @@ class MainActivity : Activity() {
 
         if (main_button_dismiss_charge_plot.isEnabled == selectedDataManager.chargePortConnected)
             main_button_dismiss_charge_plot.isEnabled = !selectedDataManager.chargePortConnected
-
         if (main_charge_layout.visibility == View.GONE && selectedDataManager.chargePortConnected) {
             main_consumption_layout.visibility = View.GONE
             main_charge_layout.visibility = View.VISIBLE
@@ -320,12 +338,9 @@ class MainActivity : Activity() {
         main_power_gage.invalidate()
         main_charge_gage.invalidate()
         main_SoC_gage.invalidate()
-        // Log.i("Gages", "updated")
     }
 
     private fun updatePlots(){
-        // if (appPreferences.plotDistance == 3) main_consumption_plot.dimensionRestriction = dimensionRestrictionById(appPreferences.plotDistance)
-
         main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(selectedDataManager.chargeTime) / 5) + 1) * 5 + 1
 
         if (SystemClock.elapsedRealtime() - lastPlotUpdate > 1_000L) {
@@ -341,12 +356,18 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun resetStats() {
-        finish()
-        startActivity(intent)
-        // InAppLogger.log("MainActivity.resetStats")
-        selectedDataManager.reset()
-        sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
+    private fun updateAbrpStatus(status: LiveDataApi.ConnectionStatus) {
+        when (status) {
+            LiveDataApi.ConnectionStatus.CONNECTED -> {
+                main_icon_abrp_status.setColorFilter(Color.parseColor("#2595FF"))
+                main_icon_abrp_status.visibility = View.VISIBLE
+            }
+            LiveDataApi.ConnectionStatus.ERROR -> {
+                main_icon_abrp_status.setColorFilter(getColor(R.color.bad_red))
+                main_icon_abrp_status.visibility = View.VISIBLE
+            }
+            else -> main_icon_abrp_status.visibility = View.GONE
+        }
     }
 
     private fun setupDefaultUi() {
@@ -356,38 +377,22 @@ class MainActivity : Activity() {
         main_consumption_plot.reset()
         main_consumption_plot.addPlotLine(selectedDataManager.consumptionPlotLine, consumptionPlotLinePaint)
 
-        main_button_secondary_dimension.text = "Toggle secondary dimension"
-
-        main_consumption_plot.dimension = PlotDimension.DISTANCE
+        main_consumption_plot.dimension = PlotDimensionX.DISTANCE
         main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(CONSUMPTION_DISTANCE_RESTRICTION)
-        main_consumption_plot.dimensionSmoothingPercentage = 0.02f
+        main_consumption_plot.dimensionSmoothing = 0.02f
+        main_consumption_plot.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
         main_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
-        main_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
-            1 -> {
-                main_button_secondary_dimension.text =
-                    getString(R.string.main_secondary_axis, getString(R.string.main_speed))
-                PlotSecondaryDimension.SPEED
-            }
-            2 -> {
-                main_button_secondary_dimension.text =
-                    getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
-                PlotSecondaryDimension.STATE_OF_CHARGE
-            }
-            else -> {
-                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
-                null
-            }
-        }
+        main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[appPreferences.secondaryConsumptionDimension]
 
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
         main_charge_plot.addPlotLine(DataManagers.CURRENT_TRIP.dataManager.chargePlotLine, chargePlotLinePaint)
 
-        main_charge_plot.dimension = PlotDimension.TIME
+        main_charge_plot.dimension = PlotDimensionX.TIME
         main_charge_plot.dimensionRestriction = null
         main_charge_plot.sessionGapRendering = PlotSessionGapRendering.GAP
-        main_charge_plot.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
+        main_charge_plot.dimensionYSecondary = PlotDimensionY.STATE_OF_CHARGE
         main_charge_plot.invalidate()
 
         main_power_gage.gageName = getString(R.string.main_gage_power)
@@ -455,47 +460,76 @@ class MainActivity : Activity() {
 
         main_button_settings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }
-
         main_button_secondary_dimension.setOnClickListener {
             var currentIndex = appPreferences.secondaryConsumptionDimension
             currentIndex++
-            if (currentIndex > 2) currentIndex = 0
+            if (currentIndex > 3) currentIndex = 0
             appPreferences.secondaryConsumptionDimension = currentIndex
-            main_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
+            main_consumption_plot.dimensionYSecondary = when (appPreferences.secondaryConsumptionDimension) {
                 1 -> {
                     main_button_secondary_dimension.text =
                         getString(R.string.main_secondary_axis, getString(R.string.main_speed))
-                    PlotSecondaryDimension.SPEED
+                    PlotDimensionY.SPEED
                 }
                 2 -> {
                     main_button_secondary_dimension.text =
                         getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
-                    PlotSecondaryDimension.STATE_OF_CHARGE
+                    PlotDimensionY.STATE_OF_CHARGE
+                }
+                3 -> {
+                    main_button_secondary_dimension.text =
+                        getString(R.string.main_secondary_axis, getString(R.string.plot_dimensionY_ALTITUDE))
+                    PlotDimensionY.ALTITUDE
                 }
                 else -> {
-                    main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
+                    main_button_secondary_dimension.text =
+                        getString(R.string.main_secondary_axis, "-")
                     null
                 }
             }
-            //main_consumption_plot.secondaryDimension = when (main_consumption_plot.secondaryDimension) {
-            //    null -> PlotSecondaryDimension.SPEED
-            //    else -> null
-            //}
-            //
-            //appPreferences.plotSpeed = main_consumption_plot.secondaryDimension != null
-            //main_consumption_plot.invalidate()
-            //main_button_speed.text = when {
-            //    main_consumption_plot.secondaryDimension != null -> getString(R.string.main_button_hide_speed)
-            //    else -> getString(R.string.main_button_show_speed)
-            //}
+        }
+        /*
+        main_dimension_y_secondary.entries = arrayListOf<String>().apply {
+            PlotDimensionY.IndexMap.forEach {
+                val id = resources.getIdentifier("plot_dimensionY_" + (it.value?.name?:"CONSUMPTION"), "string", packageName)
+                add(
+                    when (id != 0) {
+                        true -> getString(id)
+                        else -> (it.value?.name?:"-")
+                    }
+                )
+            }
+        }
+        main_dimension_y_secondary.selectedIndex = appPreferences.secondaryConsumptionDimension
+        main_dimension_y_secondary.setOnIndexChangedListener {
+            appPreferences.secondaryConsumptionDimension = main_dimension_y_secondary.selectedIndex
+            main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[main_dimension_y_secondary.selectedIndex]
         }
 
+         */
+
         main_button_summary.setOnClickListener {
-            val summaryIntent = Intent(this, SummaryActivity::class.java)
-            // summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
-            summaryIntent.putExtra("dataManager", appPreferences.mainViewTrip)
-            startActivity(summaryIntent)
+            //val summaryIntent = Intent(this, SummaryActivity::class.java)
+            //// summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
+            //summaryIntent.putExtra("dataManager", appPreferences.mainViewTrip)
+            //startActivity(summaryIntent)
+            //overridePendingTransition(R.anim.slide_in_up, R.anim.stay_still)
+            main_fragment_container.visibility = View.VISIBLE
+            supportFragmentManager.commit {
+                setCustomAnimations(
+                    R.anim.slide_in_up,
+                    R.anim.stay_still,
+                    R.anim.stay_still,
+                    R.anim.slide_out_down
+                )
+                val summaryDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
+                CarStatsViewer.dataManager = summaryDataManager
+                CarStatsViewer.tripData = summaryDataManager.tripData
+                add(R.id.main_fragment_container, SummaryFragment())
+            }
+
         }
 
         main_button_summary_charge.setOnClickListener {
@@ -503,6 +537,7 @@ class MainActivity : Activity() {
             // summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
             summaryIntent.putExtra("dataManager", appPreferences.mainViewTrip)
             startActivity(summaryIntent)
+            overridePendingTransition(R.anim.slide_in_up, R.anim.stay_still)
         }
 
         main_button_dismiss_charge_plot.setOnClickListener {
@@ -512,10 +547,13 @@ class MainActivity : Activity() {
             // DataManager.chargedEnergy = 0f
             // DataManager.chargeTime = 0L
         }
+
+        main_button_performance.setOnClickListener {
+            throw IOException()
+        }
     }
 
     private fun enableUiUpdates() {
-        // InAppLogger.log("Enabling UI updates")
         updateUi = true
         if (this::timerHandler.isInitialized) {
             timerHandler.removeCallbacks(updateActivityTask)
@@ -525,7 +563,6 @@ class MainActivity : Activity() {
     }
 
     private fun disableUiUpdates() {
-        // InAppLogger.log("Disabling UI Updates")
         updateUi = false
         if (this::timerHandler.isInitialized) {
             timerHandler.removeCallbacks(updateActivityTask)

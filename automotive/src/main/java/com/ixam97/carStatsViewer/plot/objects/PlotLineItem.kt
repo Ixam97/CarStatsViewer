@@ -2,8 +2,6 @@ package com.ixam97.carStatsViewer.plot.objects
 
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.utils.Exclude
-import java.time.LocalDate
-import java.util.*
 import kotlin.math.roundToInt
 
 class PlotLineItem (
@@ -13,42 +11,45 @@ class PlotLineItem (
     val NanoTime: Long?,
     val Distance: Float,
     var StateOfCharge: Float,
+    var Altitude: Float?,
     var TimeDelta: Long?,
     var DistanceDelta: Float?,
     var StateOfChargeDelta: Float?,
+    var AltitudeDelta: Float?,
 
     var Marker: PlotLineMarkerType?
 ){
-    fun group(index: Int, dimension: PlotDimension, dimensionSmoothing: Float?): Any {
+    fun group(index: Int, dimension: PlotDimensionX, dimensionSmoothing: Float?): Any {
         val value = when(dimension) {
-            PlotDimension.INDEX -> index
-            PlotDimension.DISTANCE -> Distance
-            PlotDimension.TIME -> EpochTime
-            PlotDimension.STATE_OF_CHARGE -> StateOfCharge
+            PlotDimensionX.INDEX -> index
+            PlotDimensionX.DISTANCE -> Distance
+            PlotDimensionX.TIME -> EpochTime
+            PlotDimensionX.STATE_OF_CHARGE -> StateOfCharge
         }
 
         return when (dimensionSmoothing) {
             null -> value
             0f -> value
             else -> when(dimension) {
-                PlotDimension.INDEX -> (value as Int / dimensionSmoothing).roundToInt()
-                PlotDimension.DISTANCE, PlotDimension.STATE_OF_CHARGE -> (value as Float / dimensionSmoothing).roundToInt()
-                PlotDimension.TIME ->  (value as Long / dimensionSmoothing).roundToInt()
+                PlotDimensionX.INDEX -> (value as Int / dimensionSmoothing).roundToInt()
+                PlotDimensionX.DISTANCE, PlotDimensionX.STATE_OF_CHARGE -> (value as Float / dimensionSmoothing).roundToInt()
+                PlotDimensionX.TIME -> value as Long / dimensionSmoothing.toLong()
             }
         }
     }
 
-    fun bySecondaryDimension(secondaryDimension: PlotSecondaryDimension? = null): Float? {
-        return when (secondaryDimension) {
-            PlotSecondaryDimension.SPEED -> {
+    fun byDimensionY(dimensionY: PlotDimensionY? = null): Float? {
+        return when (dimensionY) {
+            PlotDimensionY.SPEED -> {
                 when {
                     (TimeDelta?:0L) <= 0 -> null
                     else -> (DistanceDelta ?: 0f) / ((TimeDelta ?: 1L) / 1_000_000_000f) * 3.6f
                 }
             }
-            PlotSecondaryDimension.DISTANCE -> Distance
-            PlotSecondaryDimension.TIME -> EpochTime.toFloat()
-            PlotSecondaryDimension.STATE_OF_CHARGE -> StateOfCharge?:0f
+            PlotDimensionY.DISTANCE -> Distance
+            PlotDimensionY.TIME -> EpochTime.toFloat()
+            PlotDimensionY.STATE_OF_CHARGE -> StateOfCharge
+            PlotDimensionY.ALTITUDE -> Altitude
             else -> Value
         }
     }

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="UseSwitchCompatOrMaterialXml, UseAppTint, UseCompatTextViewDrawableXml"
+    tools:context=".activities.SettingsApisActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/settings_apis_button_back"
+            style="@style/title_back_button_style"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_api" />
+
+        <TextView
+            style="@style/title_text_style"
+            android:text="@string/settings_apis_title" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="?android:attr/colorControlActivated"/>
+
+    <ScrollView
+        android:layout_above="@+id/settings_version_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/std_row_height"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:id="@+id/settings_apis_abrp_token"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/row_icon_width"
+                        android:layout_height="@dimen/std_icon_size"
+                        android:layout_gravity="center"
+                        android:scaleType="fitStart"
+                        android:adjustViewBounds="true"
+                        android:src="@mipmap/abrp_icon_png"/>
+
+                    <TextView
+                        style="@style/menu_standard_row_label"
+                        android:text="@string/settings_apis_abrp"/>
+
+                    <ImageView
+                        android:id="@+id/abrp_connection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="30dp"
+                        android:alpha="?android:attr/disabledAlpha"
+                        android:src="@drawable/ic_connected"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="@dimen/divider_height"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="25dp"
+                    android:layout_marginVertical="7dp"
+                    android:background="?android:attr/listDivider" />
+
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_help"/>
+            </LinearLayout>
+
+
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/settings_apis_http_live_data"
+                style="@style/menu_button_row_style"
+                android:drawableStart="@drawable/ic_webhook"
+                android:text="@string/settings_apis_http" />
+
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
+                android:id="@+id/settings_apis_smtp_login"
+                style="@style/menu_button_row_style"
+                android:text="@string/settings_apis_smtp"
+                android:drawableStart="@drawable/ic_mail"/>
+
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

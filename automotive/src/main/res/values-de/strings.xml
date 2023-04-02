@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string-array name="changes_0_24">
+        <item>Mehrere Live-Daten-APIs hinzugefügt:\n- ABRP OTA Live Data\n- HTTP Webhook mit BasicAuth</item>
+        <item>Standorterfassung mit Höhenverlauf hinzugefügt</item>
+        <item>Neustart-Benachrichtigung nach Update, Reboot oder Absturz hinzugefügt</item>
+        <item>Fahrzeugkonfiguration hinzugefügt</item>
+        <item>Einstellungsmenü umstrukturiert</item>
+        <item>Fehler behoben, der das aktualisieren der Einheiten in der Hauptansicht verhindert hat</item>
+        <item>Allgemeine Bugfixes und Stabilitätsverbesserungen.</item>
+    </string-array>
+
     <string-array name="changes_0_23">
         <item>Datenstruktur grundlegend überarbeitet, um die Stabilität und Skalierbarkeit zu verbessern</item>
         <item>Dänische Übersetzung hinzugefügt</item>
@@ -14,11 +24,24 @@
         <item>Zahlreiche weitere Bugfixes und Stabilitätsverbesserungen.</item>
     </string-array>
 
+    <!-- Restart Dialog -->
+    <string name="restart_notification_title">%s wurde nach einem %s neugestartet.</string>
+    <string name="restart_notification_reason_crash">Absturz</string>
+    <string name="restart_notification_reason_reboot">Systemneustart</string>
+    <string name="restart_notification_reason_update">Update</string>
+    <string name="restart_notification_message">Bitte Service für Fahrdatenerfassung starten.</string>
+    <string name="restart_notification_dismiss">Abbrechen</string>
+    <string name="restart_notification_app">App starten</string>
+    <string name="restart_notification_service">Service starten</string>
+    <string name="restart_toast_background">Fahrdatenerfassung im Hintergrund gestartet</string>
+
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Berechtigungen notwendig</string>
     <string name="permissions_dialog_text">Diese App benötigt Berechtigungen, um genuzt zu werden. Ohne die angeforderten Berechtigungen können keine Daten des Fahrzugs erfasst werden.</string>
     <string name="permissions_dialog_quit">Car Stats Viewer beenden</string>
     <string name="permissions_dialog_grant">Berechtigungen erteilen</string>
+
+    <string name="plot_dimensionY_SPEED">Geschwindigkeit</string>
 
     <!-- MainActivity -->
     <string name="main_port_connected">Ladekabel angeschlossen:</string>
@@ -62,14 +85,19 @@
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
+    <string name="settings_title_generic">Allgemeine Einstellungen:</string>
+    <string name="settings_title_misc">Sonstige Einstellungen:</string>
     <string name="settings_button_back">Zurück</string>
     <string name="settings_button_quit">App beenden</string>
-    <string name="settings_notifications">Benachrichtigungen</string>
-    <string name="settings_consumption_unit">Wh/km als Verbrauchseinheit</string>
+    <string name="settings_notifications">Detaillierte Benachrichtigung</string>
+    <string name="settings_consumption_unit">Wh/Distanz als Verbrauchseinheit</string>
+    <string name="settings_use_location">Standorterfassung</string>
+    <string name="settings_autostart">Automatischer App-Start</string>
     <string name="settings_debug">Debug-Informationen</string>
+    <string name="settings_main_view">Hauptansicht</string>
     <string name="settings_experimental_layout">Zeige experimentelles Layout</string>
-    <string name="settings_consumption_plot">Verbrauchsansicht</string>
-    <string name="settings_charge_plot">Ladeansicht</string>
+    <string name="settings_consumption_plot">Verbrauchsansicht:</string>
+    <string name="settings_charge_plot">Ladeansicht:</string>
     <string name="settings_about">Über Car Stats Viewer</string>
     <string name="settings_consumption_plot_single_motor">Single Motor Modell</string>
     <string name="settings_plot_secondary_color">Grau als sekundäre Diagrammfarbe</string>
@@ -80,11 +108,43 @@
     <string name="settings_sub_title_current_cons_plot">Aktuelle Verbrauchskurve:</string>
     <string name="settings_sub_title_last_charge_plot">Letzte Ladekurven:</string>
     <string name="settings_select_trip">Trip in Hauptansicht:</string>
+    <string name="settings_apis_title">API-Einstellungen</string>
+    <string name="settings_apis_abrp">ABRP Live-Daten</string>
+    <string name="settings_apis_http">HTTP Webhook</string>
+    <string name="settings_apis_smtp">SMTP-Logindaten</string>
+    <string name="settings_apis_use">API nutzen</string>
+
+    <!-- ABRP -->
+    <string name="abrp_description">ABRP Generic Token eingeben, um Over-the-Air Live-Daten an die ABRP-Server zu senden. Dies beinhaltet Standortdaten, falls nicht deaktiviert.</string>
+    <string name="abrp_generic_token">Generic Token</string>
+
+    <!-- HTTP -->
+    <string name="http_description">HTTPS-URL und BasicAuth-Logindaten eingeben, um Live-Daten an die angegebene URL zu senden. Nutzt POST-Requests mit JSON-Inhalt. Dies beinhaltet Standortdaten, falls nicht deaktiviert.</string>
+    <string name="http_username">BasicAuth Nutzername</string>
+    <string name="http_password">BasicAuth Passwort</string>
+    <string name="http_invalid_url">Ungültige URL!</string>
+
+    <!-- SMTP -->
+    <string name="smtp_description">SMTP-Logindaten des E-Mail-Providers eingeben. Diese werden genutzt, um gespeicherte Statistiken und Debug-Logs an eine vom Nutzer angegebene Zieladresse zu senden.</string>
+    <string name="smtp_address">E-Mail Adresse</string>
+    <string name="smtp_password">E-Mail Passwort</string>
+    <string name="smtp_server">SMTP Server Hostname</string>
+    <string name="smtp_port">SMTP Server Port</string>
+    <string name="smtp_use_STARTTLS">STARTTLS nutzen</string>
 
     <string name="CurrentTripData">Manueller Trip</string>
     <string name="SinceChargeData">Seit letzter Ladung</string>
     <string name="AutoTripData">Automatischer Trip</string>
     <string name="CurrentMonthData">Aktueller Monat</string>
+
+    <!-- Vehicle Setup -->
+    <string name="vehicle_title">Fahrzeugeinstellung</string>
+    <string name="vehicle_my">Modelljahr</string>
+    <string name="vehicle_drivetrain">Motorisierung</string>
+    <string name="vehicle_plus">Plus-Paket</string>
+    <string name="vehicle_performance">Performance-Upgrade</string>
+    <string name="vehicle_bst">BST Edition</string>
+    <string name="vehicle_launch">Launch Edition</string>
     
     <!-- AboutActivity -->
     <string name="about_title">Über Car Stats Viewer</string>

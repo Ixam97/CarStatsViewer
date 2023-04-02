@@ -14,8 +14,6 @@
     <string name="main_button_reset_stats">Resett statistikker</string>
     <string name="main_consumption">Forbruk over de 3 sist km:</string>
     <string name="main_speed">Hastighet</string>
-    <string name="main_dialog_reset_title">Resett snitt?</string>
-    <string name="main_dialog_reset_message">Alle lagrede turer vil bli resatt til null.</string>
     <string name="main_gage_speed">Hastighet</string>
     <string name="main_gage_power">Effekt</string>
     <string name="main_gage_charging_power">Ladeeffekt</string>
@@ -46,7 +44,6 @@
     <string name="settings_button_quit">Avslutt app</string>
     <string name="settings_notifications">Varslinger</string>
     <string name="settings_consumption_unit">Wh/km som forbruksenhet</string>
-    <string name="settings_distance_unit">Miles som distanseenhet</string>
     <string name="settings_debug">Feilsøk informasjon</string>
     <string name="settings_experimental_layout">Vis eksperimentell visning</string>
     <string name="settings_consumption_plot">Forbruksvisning</string>
@@ -106,4 +103,64 @@
         <item>Forskjellige feilrettinger og stabilitetsforbedringer</item>
     </string-array>
     <string name="main_changelog_dialog_title">Changes in version %s:</string>
+    <string name="main_dialog_reset_title">Nullstill statistikker</string>
+    <string name="main_dialog_reset_message">All lagret turdata vil bli satt til null.</string>
+    <string name="settings_distance_unit">Miles som distanseenhet</string>
+    <string name="settings_apis_title">API-innstillinger</string>
+    <!-- Restart Dialog -->
+    <string name="restart_notification_title" formatted="false">%s har restartet etter %s,</string>
+    <string name="restart_notification_reason_crash">en krasj</string>
+    <string name="restart_notification_reason_reboot">en reboot</string>
+    <string name="restart_notification_reason_update">en oppdatering</string>
+    <string name="restart_notification_message">Vennligst restart services for statistikksporing</string>
+    <string name="restart_notification_dismiss">Avslå</string>
+    <string name="restart_notification_app">Start app</string>
+    <string name="restart_notification_service">Start service</string>
+    <string name="restart_toast_background">Service for sporingsstatistikk har startet i bakgrunnen</string>
+    <string name="settings_title_generic">Generiske innstillinger:</string>
+    <string name="settings_title_misc">Forskjellige innstillinger:</string>
+    <string name="settings_main_view">Hovedvisning</string>
+    <string name="settings_apis_abrp">ABRP Live Data</string>
+    <string name="settings_apis_http">HTTP Webhook</string>
+    <string name="settings_apis_smtp">SMTP Login</string>
+    <string name="settings_apis_use">Bruk API</string>
+    <!-- ABRP -->
+    <string name="abrp_description">Legg inn ABRP generisk token for å sende over-the-air live data til ABRP-servere. Dette inkluderer lokasjonsdata om det ikke er slått av.</string>
+    <string name="abrp_generic_token">Generisk token</string>
+    <!-- HTTP -->
+    <string name="http_description">Legg inn HTTP URL og (valgfri) BasicAuth legitimasjon for å sende live data til den spesifisert URL. Bruker POST forespørsel med JSON innhold. Dette inneholder lokasjonsdata om det ikke er slått av.</string>
+    <string name="http_username">BasicAuth brukernavn</string>
+    <string name="http_password">BasicAuth passord</string>
+    <string name="http_invalid_url">Ugyldig URL!</string>
+    <!-- SMTP -->
+    <string name="smtp_description">Legg inn dine SMTP legitimasjon fra din Epostleverandør. Den er brukt for å sende lagrede statistikker og feilllogger til måladressen gitt av brukeren.</string>
+    <string name="smtp_address">Epostadresse</string>
+    <string name="smtp_password">Epost passord</string>
+    <!--Is this really a URL or a plain hostname?-->
+    <string name="smtp_server">SMTP server-hostname</string>
+    <string name="smtp_port">SMPT server-port</string>
+    <string name="smtp_use_STARTTLS">Bruk STARTTLS</string>
+    <!-- Vehicle Setup -->
+    <string name="vehicle_title">Biloppsett</string>
+    <string name="vehicle_my">Årsmodell</string>
+    <string name="vehicle_drivetrain">Drivverk</string>
+    <string name="vehicle_plus">Plus-pakke</string>
+    <string name="vehicle_performance">Performance-oppgradering</string>
+    <string name="vehicle_bst">BST-utgave</string>
+    <string name="vehicle_launch">Launch-utgave</string>
+    <string-array name="changes_0_24">
+        <item>Lagt til flere live-data API:
+-APRP OTA live data
+-HTTP Webhook med BasicAuth</item>
+        <item>Lagt til lokasjonssporing og elevasjonshistorie</item>
+        <item>Lagt til notifikasjon for restart etter reboot, oppdatering eller app krasj</item>
+        <item>Lagt til bil oppsett</item>
+        <item>Restrukturert innstillingsmeny</item>
+        <item>Fikset hovedvisning enheter ikke oppdateres</item>
+        <item>Generelle bugfixer og stabilitetsforbedringer</item>
+    </string-array>
+    <string name="settings_use_location">Lokasjonssporing</string>
+    <string name="settings_autostart">Automatisk app-start</string>
+    <string name="plot_dimensionY_SPEED">Hastighet</string>
+    <string name="plot_dimensionY_ALTITUDE">Høyde</string>
 </resources>

@@ -2,42 +2,45 @@ package com.ixam97.carStatsViewer.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.car.VehicleGear
 import android.content.*
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.util.TypedValue
+import android.transition.Fade
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColor
-import androidx.core.view.children
 import androidx.core.view.get
-import com.ixam97.carStatsViewer.InAppLogger
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.*
 import com.ixam97.carStatsViewer.plot.enums.*
-import com.ixam97.carStatsViewer.plot.graphics.*
-import com.ixam97.carStatsViewer.plot.objects.*
+import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
+import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
+import com.ixam97.carStatsViewer.plot.objects.PlotLine
+import com.ixam97.carStatsViewer.plot.objects.PlotLineConfiguration
+import com.ixam97.carStatsViewer.plot.objects.PlotMarkers
+import com.ixam97.carStatsViewer.plot.objects.PlotRange
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.activity_summary.*
 import java.util.concurrent.TimeUnit
 
+
 class SummaryActivity: Activity() {
 
-    private var primaryColor: Int? = null
+    private var primaryColor = CarStatsViewer.primaryColor
 
     private var chargePlotLine = PlotLine(
         PlotLineConfiguration(
             PlotRange(0f, 20f, 0f, 160f, 20f),
             PlotLineLabelFormat.FLOAT,
-            PlotLabelPosition.LEFT,
             PlotHighlightMethod.AVG_BY_TIME,
             "kW"
         )
@@ -64,7 +67,7 @@ class SummaryActivity: Activity() {
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            InAppLogger.log(intent.action?: "")
+            InAppLogger.d(intent.action?: "")
             when (intent.action) {
                 getString(R.string.distraction_optimization_broadcast) -> {
                     updateDistractionOptimization()
@@ -76,6 +79,7 @@ class SummaryActivity: Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_summary)
 
         appPreferences = AppPreferences(applicationContext)
@@ -108,10 +112,6 @@ class SummaryActivity: Activity() {
 
         tripData = dataManager.tripData!!
         consumptionPlotLine = dataManager.consumptionPlotLine
-
-        val typedValue = TypedValue()
-        applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
-        primaryColor = typedValue.data
 
         summary_selected_trip_bar[appPreferences.mainViewTrip].background = primaryColor!!.toColor().toDrawable()
 
@@ -157,6 +157,7 @@ class SummaryActivity: Activity() {
 
         summary_button_back.setOnClickListener {
             finish()
+            overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
         }
 
         summary_button_reset.setOnClickListener {
@@ -193,26 +194,27 @@ class SummaryActivity: Activity() {
         plotMarkers.addMarkers(tripData.markers)
         summary_consumption_plot.addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
         summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
-        summary_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
+        summary_consumption_plot.dimensionYSecondary = when (appPreferences.secondaryConsumptionDimension) {
             1 -> {
                 summary_button_secondary_dimension.text =
                     getString(R.string.main_secondary_axis, getString(R.string.main_speed))
-                PlotSecondaryDimension.SPEED
+                PlotDimensionY.SPEED
             }
             2 -> {
                 summary_button_secondary_dimension.text =
                     getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
-                PlotSecondaryDimension.STATE_OF_CHARGE
+                PlotDimensionY.STATE_OF_CHARGE
             }
             else -> {
                 summary_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
                 null
             }
         }
-        summary_consumption_plot.dimension = PlotDimension.DISTANCE
+        summary_consumption_plot.dimension = PlotDimensionX.DISTANCE
         summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((appPreferences.distanceUnit.toUnit(tripData.traveledDistance) / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) + 1
         summary_consumption_plot.dimensionRestrictionMin = appPreferences.distanceUnit.asUnit(MainActivity.DISTANCE_TRIP_DIVIDER)
-        summary_consumption_plot.dimensionSmoothingPercentage = 0.02f
+        summary_consumption_plot.dimensionSmoothing = 0.02f
+        summary_consumption_plot.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
         summary_consumption_plot.setPlotMarkers(plotMarkers)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
@@ -229,16 +231,16 @@ class SummaryActivity: Activity() {
             currentIndex++
             if (currentIndex > 2) currentIndex = 0
             appPreferences.secondaryConsumptionDimension = currentIndex
-            summary_consumption_plot.secondaryDimension = when (appPreferences.secondaryConsumptionDimension) {
+            summary_consumption_plot.dimensionYSecondary = when (appPreferences.secondaryConsumptionDimension) {
                 1 -> {
                     summary_button_secondary_dimension.text =
                         getString(R.string.main_secondary_axis, getString(R.string.main_speed))
-                    PlotSecondaryDimension.SPEED
+                    PlotDimensionY.SPEED
                 }
                 2 -> {
                     summary_button_secondary_dimension.text =
                         getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
-                    PlotSecondaryDimension.STATE_OF_CHARGE
+                    PlotDimensionY.STATE_OF_CHARGE
                 }
                 else -> {
                     summary_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
@@ -298,10 +300,10 @@ class SummaryActivity: Activity() {
         }
         summary_charge_plot_view.addPlotLine(chargePlotLine, chargePlotLinePaint)
 
-        summary_charge_plot_view.dimension = PlotDimension.TIME
+        summary_charge_plot_view.dimension = PlotDimensionX.TIME
         // summary_charge_plot_view.dimensionSmoothingPercentage = 0.01f
         summary_charge_plot_view.sessionGapRendering = PlotSessionGapRendering.GAP
-        summary_charge_plot_view.secondaryDimension = PlotSecondaryDimension.STATE_OF_CHARGE
+        summary_charge_plot_view.dimensionYPrimary = PlotDimensionY.STATE_OF_CHARGE
         summary_charge_plot_view.invalidate()
 
         summary_charge_plot_seek_bar.max = (tripData.chargeCurves.size - 1).coerceAtLeast(0)
@@ -410,6 +412,7 @@ class SummaryActivity: Activity() {
                 DataCollector.CurrentTripDataManager.reset()
                 sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
                 this@SummaryActivity.finish()
+                this@SummaryActivity.overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
             }
             .setNegativeButton(R.string.dialog_reset_no_save) { _, _ ->
                 // DataCollector.CurrentTripDataManager.reset()
@@ -417,6 +420,7 @@ class SummaryActivity: Activity() {
                 DataManagers.CURRENT_TRIP.dataManager.reset()
                 sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
                 this@SummaryActivity.finish()
+                this@SummaryActivity.overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
             }
             .setNeutralButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
                 dialog.cancel()
@@ -429,7 +433,7 @@ class SummaryActivity: Activity() {
     }
 
     private fun updateDistractionOptimization() {
-        InAppLogger.log("Distraction optimization: ${appPreferences.doDistractionOptimization}")
+        InAppLogger.d("Distraction optimization: ${appPreferences.doDistractionOptimization}")
         summary_parked_warning.visibility =
             if (appPreferences.doDistractionOptimization) View.VISIBLE
             else View.GONE
