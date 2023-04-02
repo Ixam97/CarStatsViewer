@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name" translatable="false">Car Stats Viewer (Dev)</string>
-    <string name="app_name_short" translatable="false">CSV (Dev)</string>
+    <string name="app_name" translatable="false">Car Stats Viewer</string>
+    <string name="app_name_short" translatable="false">CSV</string>
 
     <!-- About -->
     <string name="readme_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/blob/master/README.md</string>
-    <string name="polestar_fans_link" translatable="false">https://polestar.fans/t/car-stats-viewer-0-22-x/14653</string>
+    <string name="polestar_fans_link" translatable="false">https://polestar.fans/t/car-stats-viewer-0-24-x/15350</string>
     <string name="polestar_forum_link" translatable="false">https://www.polestar-forum.com/threads/car-stats-viewer-a-better-range-assistant.10261/#post-188544</string>
     <string name="githug_issues_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/issues</string>
     <string-array name="contributors" translatable="false">
