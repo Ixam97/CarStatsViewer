@@ -23,6 +23,7 @@ import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.fragment_summary.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.absoluteValue
 
 class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
@@ -230,6 +231,17 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         summary_consumption_plot.invalidate()
 
         summary_distance_value_text.text = StringFormatters.getTraveledDistanceString(tripData.traveledDistance)
+
+        // val altList = tripData.consumptionPlotLine.mapNotNull { it.Altitude }
+        // val altFirst = if (altList.isEmpty()) altList.first() else null
+        // val altMax = altList.maxOrNull()
+        // val altMin = altList.minOrNull()
+        // var altLast = if (altList.isEmpty()) altList.last() else null
+
+        val altUp = tripData.consumptionPlotLine.mapNotNull { it.AltitudeDelta }.filter { it > 0 }.sum()
+        val altDown = tripData.consumptionPlotLine.mapNotNull { it.AltitudeDelta }.filter { it < 0 }.sum().absoluteValue
+
+        summary_altitude_value_text.text = StringFormatters.getAltitudeString(altUp, altDown)
         summary_used_energy_value_text.text = StringFormatters.getEnergyString(tripData.usedEnergy)
         summary_avg_consumption_value_text.text = StringFormatters.getAvgConsumptionString(tripData.usedEnergy, tripData.traveledDistance)
         summary_travel_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.travelTime)

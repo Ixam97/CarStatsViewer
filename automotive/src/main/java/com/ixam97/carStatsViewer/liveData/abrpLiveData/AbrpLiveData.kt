@@ -73,6 +73,7 @@ class AbrpLiveData (
                 flush()
                 close()
             }
+            InAppLogger.v("ABRP JSON object: ${jsonObject.toString(4)}")
             responseCode = con.responseCode
 
             if (detailedLog) {

@@ -42,6 +42,7 @@
     <string name="permissions_dialog_grant">Berechtigungen erteilen</string>
 
     <string name="plot_dimensionY_SPEED">Geschwindigkeit</string>
+    <string name="plot_dimensionY_ALTITUDE">Höhe</string>
 
     <!-- MainActivity -->
     <string name="main_port_connected">Ladekabel angeschlossen:</string>
