@@ -211,6 +211,16 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         summary_consumption_plot.addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
         summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
 
+        if (appPreferences.consumptionUnit) {
+            consumptionPlotLine.Configuration.Unit = "Wh/%s".format(appPreferences.distanceUnit.unit())
+            consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
+            consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 1f
+        } else {
+            consumptionPlotLine.Configuration.Unit = "kWh/100%s".format(appPreferences.distanceUnit.unit())
+            consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
+            consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 10f
+        }
+
         summary_button_secondary_dimension.text = when (appPreferences.secondaryConsumptionDimension) {
             1 -> getString(R.string.main_secondary_axis, getString(R.string.main_speed))
             2 -> getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
