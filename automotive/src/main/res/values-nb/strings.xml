@@ -103,9 +103,6 @@
         <item>Forskjellige feilrettinger og stabilitetsforbedringer</item>
     </string-array>
     <string name="main_changelog_dialog_title">Changes in version %s:</string>
-    <string name="main_dialog_reset_title">Nullstill statistikker</string>
-    <string name="main_dialog_reset_message">All lagret turdata vil bli satt til null.</string>
-    <string name="settings_distance_unit">Miles som distanseenhet</string>
     <string name="settings_apis_title">API-innstillinger</string>
     <!-- Restart Dialog -->
     <string name="restart_notification_title" formatted="false">%s har restartet etter %s,</string>
@@ -135,8 +132,7 @@
     <!-- SMTP -->
     <string name="smtp_description">Legg inn dine SMTP legitimasjon fra din Epostleverandør. Den er brukt for å sende lagrede statistikker og feilllogger til måladressen gitt av brukeren.</string>
     <string name="smtp_address">Epostadresse</string>
-    <string name="smtp_password">Epost passord</string>
-    <!--Is this really a URL or a plain hostname?-->
+    <string name="smtp_password">SMTP passord</string>
     <string name="smtp_server">SMTP server-hostname</string>
     <string name="smtp_port">SMPT server-port</string>
     <string name="smtp_use_STARTTLS">Bruk STARTTLS</string>
@@ -163,4 +159,7 @@
     <string name="settings_autostart">Automatisk app-start</string>
     <string name="plot_dimensionY_SPEED">Hastighet</string>
     <string name="plot_dimensionY_ALTITUDE">Høyde</string>
+    <string name="main_dialog_reset_title">Nullstill statistikker?</string>
+    <string name="main_dialog_reset_message">All lagret turdata vil bli satt til null.</string>
+    <string name="settings_distance_unit">Miles som distanseenhet</string>
 </resources>
