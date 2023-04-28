@@ -371,7 +371,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
                 getString(R.string.settings_sub_title_last_charge_plot),
                 progress + 1,
                 tripData.chargeCurves.size,
-                StringFormatters.getDateString(tripData.chargeCurves.last().chargeStartDate))
+                StringFormatters.getDateString(tripData.chargeCurves[progress].chargeStartDate))
 
             when (progress) {
                 0 -> {

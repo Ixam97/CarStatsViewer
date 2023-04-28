@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string-array name="changes_0_24_1">
+        <item>Höhenunterschied in der Zusammenfassung hinzugefügt (experimentell)</item>
+        <item>Falsche Einheitem im Diagramm der Zusammenfassung behoben</item>
+        <item>Falsche Datumsangaben der Ladekurven in der Zusammenfassung behoben</item>
+    </string-array>
+
     <string-array name="changes_0_24">
         <item>Mehrere Live-Daten-APIs hinzugefügt:\n- ABRP OTA Live Data\n- HTTP Webhook mit BasicAuth</item>
         <item>Standorterfassung mit Höhenverlauf hinzugefügt</item>
@@ -83,6 +89,7 @@
     <string name="summary_charge_time">Ladezeit</string>
     <string name="summary_charge_ambient_temp">Außentemperatur</string>
     <string name="summary_interruption_warning">Aufzeichnung der Ladekurve unterbrochen. Dieser Wert ist vermutlich nicht korrekt.</string>
+    <string name="summary_altitude">Höhenunterschied</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>

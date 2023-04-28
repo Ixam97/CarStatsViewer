@@ -31,6 +31,16 @@
         <item>Stefan Süssenguth</item>
     </string-array>
 
+    <string-array name="changes_0_24_1">
+        <item>Added multiple live data APIs:\n- ABRP OTA live data\n- HTTP Webhook with BasicAuth</item>
+        <item>Added location tracking and elevation history</item>
+        <item>Added restart notification after a reboot, update or app crash</item>
+        <item>Added vehicle setup</item>
+        <item>Restructured settings menu</item>
+        <item>Fixed main view units not updating</item>
+        <item>General bugfixes and stability improvements</item>
+    </string-array>
+
     <string-array name="changes_0_24">
         <item>Added multiple live data APIs:\n- ABRP OTA live data\n- HTTP Webhook with BasicAuth</item>
         <item>Added location tracking and elevation history</item>
@@ -121,6 +131,7 @@
     <string name="summary_charge_time">Charge time</string>
     <string name="summary_charge_ambient_temp">Ambient temperature</string>
     <string name="summary_interruption_warning">Recording of charging session has been interrupted. This value is probably incorrect.</string>
+    <string name="summary_altitude">Altitude change</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>

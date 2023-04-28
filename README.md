@@ -91,6 +91,11 @@ Discussion in the international Polestar forums: [Polestar Forum](https://www.po
 
 ## Changelog [DE]:
 
+### 0.24.1 ()
+- Höhenunterschied in der Zusammenfassung hinzugefügt (experimentell)
+- Falsche Einheitem im Diagramm der Zusammenfassung behoben
+- Falsche Datumsangaben der Ladekurven in der Zusammenfassung behoben
+
 ### 0.24.0 (02.04.2023)
 - Mehrere Live-Daten-APIs hinzugefügt:
   - ABRP OTA Live Data

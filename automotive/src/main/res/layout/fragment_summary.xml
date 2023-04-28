@@ -181,7 +181,7 @@
                 style="@style/menu_row_top_text"/>
             <TextView
                 style="@style/menu_row_content_text"
-                android:text="Altitude change"/>
+                android:text="@string/summary_altitude"/>
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
