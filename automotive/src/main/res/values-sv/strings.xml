@@ -103,9 +103,6 @@
         <item>Diverse felrättningar och stabilitetsförbättringar</item>
     </string-array>
     <string name="main_changelog_dialog_title">Ändringar i version %s:</string>
-    <string name="main_dialog_reset_title">Radera statistik</string>
-    <string name="main_dialog_reset_message">Alla sparade resor raderas.</string>
-    <string name="settings_distance_unit">Miles som distansenhet</string>
     <string name="settings_apis_title">API-inställningar</string>
     <!-- Restart Dialog -->
     <string name="restart_notification_title" formatted="false">%s har startat om efter %s.</string>
@@ -122,7 +119,7 @@
     <string name="settings_main_view">Huvudvy</string>
     <string name="settings_apis_abrp">Realtidsdata för ABRP</string>
     <string name="settings_apis_http">HTTP Webhook</string>
-    <string name="settings_apis_smtp">Användarnamn för SMTP</string>
+    <string name="settings_apis_smtp">Inloggningsuppgifter för SMTP</string>
     <string name="settings_apis_use">Använd API</string>
     <!-- ABRP -->
     <string name="abrp_description">Ange en generisk ABRP-token för att överföra realtidsdata till ABRP-servrarna. Detta inkluderar platsdata om det inte är inaktiverat.</string>
@@ -136,7 +133,6 @@
     <string name="smtp_description">Ange dina SMTP-uppgifter från din e-postleverantör. Detta används för att skicka sparad statistik och felsökningsloggar till en e-postadress som anges av användaren.</string>
     <string name="smtp_address">E-postadress</string>
     <string name="smtp_password">Lösenord för SMTP</string>
-    <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">SMTP server</string>
     <string name="smtp_port">SMTP server port</string>
     <string name="smtp_use_STARTTLS">Använd STARTTLS</string>
@@ -163,4 +159,7 @@
     <string name="settings_autostart">Automatisk start av appen</string>
     <string name="plot_dimensionY_SPEED">Hastighet</string>
     <string name="plot_dimensionY_ALTITUDE">Höjd</string>
+    <string name="main_dialog_reset_title">Återställ statistik?</string>
+    <string name="main_dialog_reset_message">All sparad resedata kommer att nollställas.</string>
+    <string name="settings_distance_unit">Miles som avståndsenhet</string>
 </resources>

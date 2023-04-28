@@ -96,16 +96,13 @@
         <item>\"Over Car Stats Viewer\" toegevoegd (incl. gereviseerde ReadMe met informatie over ondersteuning en bijdragen)</item>
         <item>Meerdere rittrackers toegevoegd die tegelijkertijd worden uitgevoerd (handmatige rit, sinds laatste lading, automatische rit, huidige maand)</item>
         <item>Diverse visuele verbeteringen voor de plotweergaven</item>
-        <item>Specifieke waarden in plotweergaven kunnen worden gemarkeerd door dubbel te tikken</item>
+        <item>Specifieke waarden in de grafiek kunnen worden gemarkeerd door op de grafiek te dubbelklikken.</item>
         <item>Debug-Logs kunnen worden verzonden via SMTP (experimenteel!)</item>
         <item>Gestabiliseerd gedrag van de laadcurve wanneer de app wordt gepauzeerd tijdens het laden</item>
         <item>Geoptimaliseerde afleiding van de bestuurder</item>
         <item>Diverse bugfixes en stabiliteitsverbeteringen</item>
     </string-array>
     <string name="main_changelog_dialog_title">Wijzigingen in versie %s:</string>
-    <string name="main_dialog_reset_title">Statistieken resetten?</string>
-    <string name="main_dialog_reset_message">Alle opgeslagen ritgegevens worden op nul gezet.</string>
-    <string name="settings_distance_unit">Mijlen als afstandseenheid</string>
     <string name="settings_apis_title">API-instellingen</string>
     <!-- Restart Dialog -->
     <string name="restart_notification_title" formatted="false">%s is opnieuw opgestart na %s.</string>
@@ -121,7 +118,7 @@
     <string name="settings_title_misc">Diverse instellingen:</string>
     <string name="settings_main_view">Hoofdaanzicht</string>
     <string name="settings_apis_abrp">ABRP Live-gegevens</string>
-    <string name="settings_apis_http">HT,TP Webhook</string>
+    <string name="settings_apis_http">HTTP Webhook</string>
     <string name="settings_apis_smtp">SMTP-login</string>
     <string name="settings_apis_use">Gebruik API</string>
     <!-- ABRP -->
@@ -135,8 +132,7 @@
     <!-- SMTP -->
     <string name="smtp_description">Voer uw SMTP-gegevens in die u van uw e-mailprovider heeft gekregen. Dit wordt gebruikt om opgeslagen statistieken en debug-logs naar een door de gebruiker opgegeven doeladres te sturen.</string>
     <string name="smtp_address">E-mailadres</string>
-    <string name="smtp_password">E-mail wachtwoord</string>
-    <!--Is this really a URL or a plain hostname?-->
+    <string name="smtp_password">E-mail (SMTP) wachtwoord</string>
     <string name="smtp_server">SMTP-server-hostnaam</string>
     <string name="smtp_port">SMTP-serverpoort</string>
     <string name="smtp_use_STARTTLS">Gebruik STARTTLS</string>
@@ -163,4 +159,7 @@
     <string name="settings_autostart">Automatische start van de app</string>
     <string name="plot_dimensionY_SPEED">Snelheid</string>
     <string name="plot_dimensionY_ALTITUDE">Hoogte</string>
+    <string name="main_dialog_reset_title">Statistieken resetten?</string>
+    <string name="main_dialog_reset_message">Alle opgeslagen ritgegevens worden op nul gezet.</string>
+    <string name="settings_distance_unit">Mijlen als afstandseenheid</string>
 </resources>
