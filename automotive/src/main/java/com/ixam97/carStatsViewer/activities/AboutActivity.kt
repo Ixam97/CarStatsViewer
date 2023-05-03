@@ -51,6 +51,26 @@ class AboutActivity : Activity() {
         }
         about_contributors_text.text = contributors
 
+
+        about_translators.setOnClickListener {
+            val translatorsDialog = AlertDialog.Builder(this).apply {
+                setPositiveButton(getString(R.string.dialog_close)) { dialog, _ ->
+                    dialog.cancel()
+                }
+                setTitle(getString(R.string.about_translators))
+                val translatorsArray = resources.getStringArray(R.array.translators)
+                var translators = ""
+                for ((index, translator) in translatorsArray.withIndex()) {
+                    translators += translator
+                    if (index < translatorsArray.size - 1) translators += ", "
+                }
+                setMessage(translators)
+                setCancelable(true)
+                create()
+            }
+            translatorsDialog.show()
+        }
+
         about_supporters.setOnClickListener {
             val supportersDialog = AlertDialog.Builder(this).apply {
                 setPositiveButton(getString(R.string.dialog_close)) { dialog, _ ->

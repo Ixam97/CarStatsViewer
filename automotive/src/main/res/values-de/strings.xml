@@ -5,6 +5,8 @@
         <item>Höhenunterschied in der Zusammenfassung hinzugefügt (experimentell)</item>
         <item>Falsche Einheitem im Diagramm der Zusammenfassung behoben</item>
         <item>Falsche Datumsangaben der Ladekurven in der Zusammenfassung behoben</item>
+        <item>Bedingungen für Neustart-Benachrichtigungen verbessert</item>
+        <item>Bedingungen für Energieerfassung angepasst (experimentell)</item>
     </string-array>
 
     <string-array name="changes_0_24">
@@ -160,6 +162,7 @@
     <string name="about_support">Entwicklung unterstützen</string>
     <string name="about_support_description">Besuche das GitHub-Repository um mehr darüber erfahren, wie die Entwicklung der App unterstützt werden kann.</string>
     <string name="about_contributors">Mitwirkende</string>
+    <string name="about_translators">Übersetzer</string>
     <string name="about_section_feedback">Kontakt:</string>
     <string name="about_section_misc">Sonstiges:</string>
     <string name="about_github_issues_description">Dies ist der beste Ort, um Fehler zu melden oder Wünsche zu äußern. Bitte vor dem Erstellen eines neuen Tickets die bereits vorhandenen beachten.</string>
