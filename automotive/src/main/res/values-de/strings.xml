@@ -3,7 +3,7 @@
 
     <string-array name="changes_0_24_1">
         <item>Höhenunterschied in der Zusammenfassung hinzugefügt (experimentell)</item>
-        <item>Falsche Einheitem im Diagramm der Zusammenfassung behoben</item>
+        <item>Falsche Einheiten im Diagramm der Zusammenfassung behoben</item>
         <item>Falsche Datumsangaben der Ladekurven in der Zusammenfassung behoben</item>
         <item>Bedingungen für Neustart-Benachrichtigungen verbessert</item>
         <item>Bedingungen für Energieerfassung angepasst (experimentell)</item>
