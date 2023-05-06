@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Käyttöön tarvittavat käyttöoikeudet</string>
     <string name="permissions_dialog_text">Tämän sovelluksen käyttäminen edellyttää käyttöoikeuksia. Ilman vaadittuja käyttöoikeuksia sovellus ei voi lukea tietoja autosta.</string>
     <string name="permissions_dialog_quit">Lopeta Car Stats Viewer</string>
     <string name="permissions_dialog_grant">Myönnä käyttöoikeudet</string>
+    <!-- MainActivity -->
     <string name="main_port_connected">Latausportti kytketty:</string>
     <string name="main_current_power">Tämänhetkinen virrankulutus:</string>
     <string name="main_used_energy">Käytetty energia:</string>
@@ -17,7 +19,7 @@
     <string name="main_gage_speed">Nopeus</string>
     <string name="main_gage_power">Teho</string>
     <string name="main_gage_charging_power">Latausteho</string>
-    <string name="main_gage_SoC">Akun varaus</string>
+    <string name="main_gage_SoC">Akun varaustaso</string>
     <string name="main_gage_consumption">Hetkellinen kulutus</string>
     <string name="main_dismiss_charge_plot">Hylkää latauskaavio</string>
     <string name="main_button_reset_charge_plot">Nollaa latauskaavio</string>
@@ -25,6 +27,7 @@
     <string name="main_button_hide_speed">Piilota nopeus</string>
     <string name="main_button_show_speed">Näytä nopeus</string>
     <string name="main_secondary_axis">Toissijainen akseli: %s</string>
+    <!-- SummaryActivity -->
     <string name="summary_title">Osamatkan yhteenveto</string>
     <string name="summary_button_reset_trip">Nollaa osamatkan tiedot</string>
     <string name="summary_parked_warning">Näkymä on käytettävissä vain pysäköitynä.</string>
@@ -39,6 +42,7 @@
     <string name="summary_charge_time">Latausaika</string>
     <string name="summary_charge_ambient_temp">Ulkolämpötila</string>
     <string name="summary_interruption_warning">Latausistunnon tallennus on keskeytynyt. Tämä arvo on todennäköisesti virheellinen.</string>
+    <!-- SettingsActivity -->
     <string name="settings_title">Asetukset</string>
     <string name="settings_button_back">Takaisin</string>
     <string name="settings_button_quit">Sulje sovellus</string>
@@ -57,6 +61,7 @@
     <string name="settings_sub_title_settings">Asetukset:</string>
     <string name="settings_sub_title_current_cons_plot">Nykyinen kulutuskaavio:</string>
     <string name="settings_sub_title_last_charge_plot">Viimeisimmät latauskäyrät:</string>
+    <!-- AboutActivity -->
     <string name="about_title">Tietoja Car Stats Vieweristä</string>
     <string name="about_section_about">Tietoja Car Stats Vieweristä:</string>
     <string name="about_support">Tue kehitystä</string>
@@ -71,6 +76,7 @@
     <string name="about_supporters">Tukijat</string>
     <string name="about_thank_you">Kiitos!</string>
     <string name="about_supporters_message">Suuri kiitos kaikille Car Stats Viewerin kehitystä tukeneille!</string>
+    <!-- Quit Dialog -->
     <string name="quit_dialog_title">Lopetetaanko sovellus?</string>
     <string name="quit_dialog_message">Lokitiedot kopioidaan leikepöydälle.</string>
     <string name="dialog_close">Sulje</string>
@@ -81,7 +87,9 @@
     <string name="dialog_reset_cancel">Peruuta</string>
     <string name="dialog_confirm">Kyllä</string>
     <string name="dialog_dismiss">Ei</string>
+    <!-- LogActivity -->
     <string name="log_title">Vianmääritys</string>
+    <!-- Notifications -->
     <string name="notification_title">Nykyiset tilastot:</string>
     <string name="foreground_service_info">Tiedonkeruupalvelu käynnissä</string>
     <string name="toast_file_read_error">Virhe luettaessa osamatkatiedostoa</string>
@@ -159,7 +167,13 @@
     <string name="settings_autostart">Automaattinen sovelluksen käynnistys</string>
     <string name="plot_dimensionY_SPEED">Nopeus</string>
     <string name="plot_dimensionY_ALTITUDE">Korkeus merenpinnasta</string>
-    <string name="main_dialog_reset_title">Nollataanko tilastot?</string>
-    <string name="main_dialog_reset_message">Kaikki tallennetut matkatiedot nollataan.</string>
-    <string name="settings_distance_unit">Maili etäisyyden yksikkönä</string>
+    <string-array name="changes_0_24_1">
+        <item>Lisätty korkeuden muutos matkan yhteenvetoon (kokeellinen)</item>
+        <item>Korjattu yhteenvetokaavion virheelliset yksiköt</item>
+        <item>Korjattu latausistuntojen yhteenvedon väärät päivämäärät</item>
+        <item>Parannettu uudelleenkäynnistyksen ilmoitusehtoja</item>
+        <item>Muutettu energian seurannan ehtoja (kokeellinen)</item>
+    </string-array>
+    <string name="summary_altitude">Korkeuden muutos</string>
+    <string name="about_translators">Kääntäjät</string>
 </resources>
