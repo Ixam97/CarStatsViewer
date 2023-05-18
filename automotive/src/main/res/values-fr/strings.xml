@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <!-- PermissionsActivity -->
+    <string name="permissions_dialog_title">Permissions</string>
+    <string name="permissions_dialog_text">Cette application requiert certaines permissions pour pouvoir recueillir les données de la voiture.</string>
+    <string name="permissions_dialog_quit">Quitter</string>
+    <string name="permissions_dialog_grant">Accorder autorisations</string>
+    <!-- MainActivity -->
+    <string name="main_port_connected">Charge connectée:</string>
+    <string name="main_current_power">Consommation électrique:</string>
+    <string name="main_used_energy">Énergie utilisée:</string>
+    <string name="main_current_speed">Vitesse:</string>
+    <string name="main_traveled_distance">Distance parcourue:</string>
+    <string name="main_inst_consumption">Consommation actuelle:</string>
+    <string name="main_average_consumption">Consommation moyenne:</string>
+    <string name="main_button_reset_stats">Réinitialiser les statistiques</string>
+    <string name="main_consumption">Consommation des 3 derniers km</string>
+    <string name="main_speed">Vitesse</string>
+    <string name="main_gage_speed">Vitesse</string>
+    <string name="main_gage_power">Puissance</string>
+    <string name="main_gage_charging_power">Puissance de recharge</string>
+    <string name="main_gage_SoC">Niveau de batterie</string>
+    <string name="main_gage_consumption">Consommation</string>
+    <string name="main_dismiss_charge_plot">Fermer courbe de recharge</string>
+    <string name="main_button_reset_charge_plot">Réinitialiser courbe de recharge</string>
+    <string name="main_button_trip_summary">Sommaire</string>
+    <string name="main_button_hide_speed">Cacher vitesse</string>
+    <string name="main_button_show_speed">Afficher vitesse</string>
+    <string name="main_secondary_axis">2ième courbe: %s</string>
+    <!-- SummaryActivity -->
+    <string name="summary_title">Sommaire</string>
+    <string name="summary_button_reset_trip">Réinitialiser</string>
+    <string name="summary_parked_warning">Information seulement disponible à l\'arrêt.</string>
+    <string name="summary_trip_history">Historique de trajet</string>
+    <string name="summary_charging_sessions">Sessions de recharge</string>
+    <string name="summary_trip_start_date">Trajet débuté le %s</string>
+    <string name="summary_used_energy">Énergie consommée</string>
+    <string name="summary_traveled_distance">Distance parcourue</string>
+    <string name="summary_average_consumption">Consommation moyenne</string>
+    <string name="summary_travel_time">Durée du trajet</string>
+    <string name="summary_charged_energy">Énergie reçue</string>
+    <string name="summary_charge_time">Temps de recharge</string>
+    <string name="summary_charge_ambient_temp">Température ambiante</string>
+    <string name="summary_interruption_warning">Le suivi de données a été interrompu. Cette valeur est probablement incorrecte.</string>
+    <!-- SettingsActivity -->
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_button_back">Retour</string>
+    <string name="settings_button_quit">Quitter</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_consumption_unit">Consommation affichée en Wh/km</string>
+    <string name="settings_debug">Infos développeur</string>
+    <string name="settings_experimental_layout">Mise en page expérimentale</string>
+    <string name="settings_consumption_plot">Écran de consommation</string>
+    <string name="settings_charge_plot">Écran de recharge</string>
+    <string name="settings_about">À propos</string>
+    <string name="settings_plot_secondary_color">Couleur grise pour la deuxième courbe</string>
+    <string name="settings_plot_state_of_charge_dimension">Courbe d\'état de charge (expérimental)</string>
+    <string name="settings_consumption_plot_single_motor">Modèle un moteur</string>
+    <string name="settings_visible_gages">Afficher indicateur de puissance</string>
+    <string name="settings_consumption_plot_speed">Tracer la vitesse</string>
+    <string name="settings_sub_title_settings">Paramètres</string>
+    <string name="settings_sub_title_current_cons_plot">Graphique de consommation</string>
+    <string name="settings_sub_title_last_charge_plot">Dernières sessions de charge: </string>
+    <!-- AboutActivity -->
+    <string name="about_title">À propos</string>
+    <string name="about_section_about">À propos de Car Stats Viewer</string>
+    <string name="about_support">Contribuer au développement</string>
+    <string name="about_support_description">Consultez GitHub pour savoir comment contribuer au développement de l\'application.</string>
+    <string name="about_contributors">Contributeurs</string>
+    <string name="about_section_feedback">Commentaires</string>
+    <string name="about_section_misc">Divers</string>
+    <string name="about_github_issues_description">Le meilleur endroit pour les rapports de bogues et demandes. Merci de consulter les rubriques existantes avant d\'en rédiger une nouvelle.</string>
+    <string name="about_polestar_forum_description">Discussion à propos de Car Stats Viewer sur un forum international.</string>
+    <string name="about_polestar_fans_description">Discussion à propos de Car Stats Viewer sur un forum allemand.</string>
+    <string name="about_third_party_licenses">Licences logicielles</string>
+    <string name="about_supporters">Supporteurs</string>
+    <string name="about_thank_you">Merci!</string>
+    <string name="about_supporters_message">Remerciements pour tous les encouragements envers le développement de Car Stats Viewer!</string>
+    <!-- Quit Dialog -->
+    <string name="quit_dialog_title">Quitter l\'application?</string>
+    <string name="quit_dialog_message">Le journal sera copié dans le presse-papiers.</string>
+    <string name="dialog_close">Fermer</string>
+    <string name="dialog_reset_title">Réinitialiser ce trajet?</string>
+    <string name="dialog_reset_message">Ce trajet sera remis à zéro. Voulez-vous le sauvegarder?</string>
+    <string name="dialog_reset_do_save">Sauvegarder</string>
+    <string name="dialog_reset_no_save">Effacer</string>
+    <string name="dialog_reset_cancel">Annuler</string>
+    <string name="dialog_confirm">Oui</string>
+    <string name="dialog_dismiss">Non</string>
+    <!-- LogActivity -->
+    <string name="log_title">Débogage</string>
+    <!-- Notifications -->
+    <string name="notification_title">Statistiques actuelles</string>
+    <string name="foreground_service_info">Service de suivi de données activé</string>
+    <string name="toast_file_read_error">Erreur lors de la lecture des données</string>
+    <string name="settings_select_trip">Contexte préféré</string>
+    <string name="CurrentTripData">Trajet manuel</string>
+    <string name="SinceChargeData">Depuis la dernière charge</string>
+    <string name="AutoTripData">Trajet automatique</string>
+    <string name="CurrentMonthData">Ce mois-ci</string>
+    <string-array name="changes_0_23">
+        <item>Structure de données revue pour améliorer la stabilité</item>
+        <item>Ajout de langue (danois)</item>
+        <item>Ajout de la page \"À propos\"</item>
+        <item>Ajout de plusieurs contextes de suivi de données simultanés (Trajet manuel, Depuis dernière charge, Trajet automatique, Ce mois-ci)</item>
+        <item>Plusieurs améliorations apportées aux graphiques</item>
+        <item>Taper deux fois sur un graphique permet d\'afficher des valeurs précises</item>
+        <item>Journaux de débogage peuvent être envoyés par courriel (expérimental)</item>
+        <item>Correction du comportement de la courbe de recharge lorsque le conducteur quitte le véhicule</item>
+        <item>Réduction de la distraction du conducteur</item>
+        <item>Corrections et améliorations</item>
+    </string-array>
+    <string name="main_changelog_dialog_title">Changements dans la version %s.</string>
+    <string name="settings_apis_title">Configuration API</string>
+    <!-- Restart Dialog -->
+    <string name="restart_notification_title" formatted="false">%s a redémarré après %s.</string>
+    <string name="restart_notification_reason_crash">une erreur logicielle</string>
+    <string name="restart_notification_reason_reboot">un redémarrage système</string>
+    <string name="restart_notification_reason_update">une mise à jour</string>
+    <string name="restart_notification_message">Redémarrer le service pour le suivi de données.</string>
+    <string name="restart_notification_dismiss">Annuler</string>
+    <string name="restart_notification_app">Démarrer app</string>
+    <string name="restart_notification_service">Démarrer service</string>
+    <string name="restart_toast_background">Service de suivi de données lancé en arrière-plan</string>
+    <string name="settings_title_generic">Options</string>
+    <string name="settings_title_misc">Divers</string>
+    <string name="settings_main_view">Écran principal</string>
+    <string name="settings_apis_abrp">Données en direct ABRP</string>
+    <string name="settings_apis_http">Lien de rappel HTTP</string>
+    <string name="settings_apis_smtp">Envoi courriel</string>
+    <string name="settings_apis_use">Utiliser cet API</string>
+    <!-- ABRP -->
+    <string name="abrp_description">Entrez un lien générique ABRP pour transmettre les données en direct aux serveurs d\'ABRP.
+
+Le suivi de localisation est inclus, s\'il n\'est pas désactivé.</string>
+    <string name="abrp_generic_token">Lien générique</string>
+    <!-- HTTP -->
+    <string name="http_description">Entrez un URL HTTPS pour transmettre les données en direct. Utilise une requête POST avec du contenu JSON.
+
+Vous pouvez optionnellement spécifier des valeurs d\'authentification BasicAuth.
+
+Les données de localisation sont incluses, si elles ne sont pas désactivées.</string>
+    <string name="http_username">Nom d\'utilisateur BasicAuth</string>
+    <string name="http_password">Mot de passe BasicAuth</string>
+    <string name="http_invalid_url">URL invalide</string>
+    <!-- SMTP -->
+    <string name="smtp_description">Entrez vos informations d\'identification fournies par votre fournisseur de messagerie SMTP. Les statistiques et journaux de débogage seront envoyés à une adresse spécifiée par l\'utilisateur.</string>
+    <string name="smtp_address">Adresse courriel</string>
+    <string name="smtp_password">Mot de passe du serveur SMTP</string>
+    <string name="smtp_server">Nom du serveur SMTP</string>
+    <string name="smtp_port">Port du serveur SMTP</string>
+    <string name="smtp_use_STARTTLS">Utiliser STARTTLS</string>
+    <!-- Vehicle Setup -->
+    <string name="vehicle_title">Configuration du véhicule</string>
+    <string name="vehicle_my">Année</string>
+    <string name="vehicle_drivetrain">Version</string>
+    <string name="vehicle_plus">Groupe Plus</string>
+    <string name="vehicle_performance">Mise à niveau du logiciel de performance</string>
+    <string name="vehicle_bst">Édition BST</string>
+    <string name="vehicle_launch">Édition Lancement</string>
+    <string-array name="changes_0_24">
+        <item>Ajout d\'API pour données en temps réel:
+- Données en direct ABRP
+- Lien de rappel HTTP avec BasicAuth</item>
+        <item>Ajout de suivi de localisation et d\'altitude</item>
+        <item>Ajout d\'un message après redémarrage anormal de l\'application</item>
+        <item>Ajout de la configuration du véhicule</item>
+        <item>Menu d\'options restructuré</item>
+        <item>Correction du rafraîchissement des unités de l\'écran principal</item>
+        <item>Corrections et améliorations</item>
+    </string-array>
+    <string name="settings_use_location">Suivi de localisation</string>
+    <string name="settings_autostart">Lancement automatique de l\'application</string>
+    <string name="plot_dimensionY_SPEED">Vitesse</string>
+    <string name="plot_dimensionY_ALTITUDE">Altitude</string>
+    <string-array name="changes_0_24_1">
+        <item>Ajoute de la variation d\'altitude dans le sommaire (expérimental)</item>
+        <item>Correction des unités dans le graphique du sommaire</item>
+        <item>Correction des dates de sessions de recharge</item>
+        <item>Amélioration de la notification lors d\'une remise en marche</item>
+        <item>Modification des conditions de suivi de l\'énergie (expérimental)</item>
+    </string-array>
+    <string name="summary_altitude">Variation d\'altitude</string>
+    <string name="about_translators">Traducteurs</string>
+</resources>

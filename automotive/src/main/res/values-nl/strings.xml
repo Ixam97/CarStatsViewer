@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Noodzakelijke permissies</string>
     <string name="permissions_dialog_text">Deze app heeft bepaalde toelatingen nodig om te kunnen werken. Zonder de aangegeven toelatingen, kunnen de gegevens van het voertuig niet worden verzameld.</string>
     <string name="permissions_dialog_quit">Car Stats Viewer afsluiten</string>
     <string name="permissions_dialog_grant">Toelatingen goedkeuren</string>
+    <!-- MainActivity -->
     <string name="main_port_connected">Laadkabel aangesloten:</string>
     <string name="main_current_power">Huidig stroomverbruik:</string>
     <string name="main_used_energy">Verbruikte energie:</string>
@@ -25,6 +27,7 @@
     <string name="main_button_hide_speed">Snelheid verbergen</string>
     <string name="main_button_show_speed">Snelheid tonen</string>
     <string name="main_secondary_axis">Secundaire as: %s</string>
+    <!-- SummaryActivity -->
     <string name="summary_title">Samenvatting rit</string>
     <string name="summary_button_reset_trip">Rit resetten</string>
     <string name="summary_parked_warning">Enkel zichtbaar in parkeerstand.</string>
@@ -39,6 +42,7 @@
     <string name="summary_charge_time">Laadtijd</string>
     <string name="summary_charge_ambient_temp">Omgevingstemperatuur</string>
     <string name="summary_interruption_warning">Registratie van laadsessie is onderbroken. Deze waarde is waarschijnlijk onjuist.</string>
+    <!-- SettingsActivity -->
     <string name="settings_title">Instellingen</string>
     <string name="settings_button_back">Terug</string>
     <string name="settings_button_quit">App afsluiten</string>
@@ -57,6 +61,7 @@
     <string name="settings_sub_title_settings">Instellingen:</string>
     <string name="settings_sub_title_current_cons_plot">Actuele verbruikscurve:</string>
     <string name="settings_sub_title_last_charge_plot">Laatste laadcurven:</string>
+    <!-- AboutActivity -->
     <string name="about_title">Over Car Stats Viewer</string>
     <string name="about_section_about">Over Car Stats Viewer:</string>
     <string name="about_support">Ondersteun de ontwikkeling</string>
@@ -71,6 +76,7 @@
     <string name="about_supporters">Supporters</string>
     <string name="about_thank_you">Bedankt!</string>
     <string name="about_supporters_message">Veel dank aan iedereen die de ontwikkeling van Car Stats Viewer heeft gesteund!</string>
+    <!-- Quit Dialog -->
     <string name="quit_dialog_title">App afsluiten?</string>
     <string name="quit_dialog_message">Log wordt gekopieerd naar het klembord.</string>
     <string name="dialog_close">Sluit</string>
@@ -81,7 +87,9 @@
     <string name="dialog_reset_cancel">Cancel</string>
     <string name="dialog_confirm">Ja</string>
     <string name="dialog_dismiss">Neen</string>
+    <!-- LogActivity -->
     <string name="log_title">Debug</string>
+    <!-- Notifications -->
     <string name="notification_title">Huidige statistieken:</string>
     <string name="foreground_service_info">Gegevensverzameling is bezig</string>
     <string name="toast_file_read_error">Fout bij het inlezen van de ritgegevens</string>
@@ -96,16 +104,13 @@
         <item>\"Over Car Stats Viewer\" toegevoegd (incl. gereviseerde ReadMe met informatie over ondersteuning en bijdragen)</item>
         <item>Meerdere rittrackers toegevoegd die tegelijkertijd worden uitgevoerd (handmatige rit, sinds laatste lading, automatische rit, huidige maand)</item>
         <item>Diverse visuele verbeteringen voor de plotweergaven</item>
-        <item>Specifieke waarden in plotweergaven kunnen worden gemarkeerd door dubbel te tikken</item>
+        <item>Specifieke waarden in de grafiek kunnen worden gemarkeerd door op de grafiek te dubbelklikken.</item>
         <item>Debug-Logs kunnen worden verzonden via SMTP (experimenteel!)</item>
         <item>Gestabiliseerd gedrag van de laadcurve wanneer de app wordt gepauzeerd tijdens het laden</item>
         <item>Geoptimaliseerde afleiding van de bestuurder</item>
         <item>Diverse bugfixes en stabiliteitsverbeteringen</item>
     </string-array>
     <string name="main_changelog_dialog_title">Wijzigingen in versie %s:</string>
-    <string name="main_dialog_reset_title">Statistieken resetten?</string>
-    <string name="main_dialog_reset_message">Alle opgeslagen ritgegevens worden op nul gezet.</string>
-    <string name="settings_distance_unit">Mijlen als afstandseenheid</string>
     <string name="settings_apis_title">API-instellingen</string>
     <!-- Restart Dialog -->
     <string name="restart_notification_title" formatted="false">%s is opnieuw opgestart na %s.</string>
@@ -121,7 +126,7 @@
     <string name="settings_title_misc">Diverse instellingen:</string>
     <string name="settings_main_view">Hoofdaanzicht</string>
     <string name="settings_apis_abrp">ABRP Live-gegevens</string>
-    <string name="settings_apis_http">HT,TP Webhook</string>
+    <string name="settings_apis_http">HTTP Webhook</string>
     <string name="settings_apis_smtp">SMTP-login</string>
     <string name="settings_apis_use">Gebruik API</string>
     <!-- ABRP -->
@@ -135,8 +140,7 @@
     <!-- SMTP -->
     <string name="smtp_description">Voer uw SMTP-gegevens in die u van uw e-mailprovider heeft gekregen. Dit wordt gebruikt om opgeslagen statistieken en debug-logs naar een door de gebruiker opgegeven doeladres te sturen.</string>
     <string name="smtp_address">E-mailadres</string>
-    <string name="smtp_password">E-mail wachtwoord</string>
-    <!--Is this really a URL or a plain hostname?-->
+    <string name="smtp_password">E-mail (SMTP) wachtwoord</string>
     <string name="smtp_server">SMTP-server-hostnaam</string>
     <string name="smtp_port">SMTP-serverpoort</string>
     <string name="smtp_use_STARTTLS">Gebruik STARTTLS</string>
@@ -163,4 +167,13 @@
     <string name="settings_autostart">Automatische start van de app</string>
     <string name="plot_dimensionY_SPEED">Snelheid</string>
     <string name="plot_dimensionY_ALTITUDE">Hoogte</string>
+    <string-array name="changes_0_24_1">
+        <item>Hoogteverandering toegevoegd in ritoverzicht (experimenteel)</item>
+        <item>Verkeerde eenheden in overzichtsdiagram verholpen</item>
+        <item>Foute data van laadsessies in samenvatting verholpen</item>
+        <item>Verbeterde voorwaarden voor herstartmeldingen</item>
+        <item>Gewijzigde condities voor het volgen van energie (experimenteel)</item>
+    </string-array>
+    <string name="summary_altitude">Hoogteverandering</string>
+    <string name="about_translators">Vertalers</string>
 </resources>

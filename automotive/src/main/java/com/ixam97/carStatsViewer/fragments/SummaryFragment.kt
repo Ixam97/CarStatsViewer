@@ -23,6 +23,7 @@ import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.fragment_summary.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.absoluteValue
 
 class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
@@ -210,6 +211,16 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         summary_consumption_plot.addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
         summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
 
+        if (appPreferences.consumptionUnit) {
+            consumptionPlotLine.Configuration.Unit = "Wh/%s".format(appPreferences.distanceUnit.unit())
+            consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
+            consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 1f
+        } else {
+            consumptionPlotLine.Configuration.Unit = "kWh/100%s".format(appPreferences.distanceUnit.unit())
+            consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
+            consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 10f
+        }
+
         summary_button_secondary_dimension.text = when (appPreferences.secondaryConsumptionDimension) {
             1 -> getString(R.string.main_secondary_axis, getString(R.string.main_speed))
             2 -> getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
@@ -230,6 +241,17 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         summary_consumption_plot.invalidate()
 
         summary_distance_value_text.text = StringFormatters.getTraveledDistanceString(tripData.traveledDistance)
+
+        // val altList = tripData.consumptionPlotLine.mapNotNull { it.Altitude }
+        // val altFirst = if (altList.isEmpty()) altList.first() else null
+        // val altMax = altList.maxOrNull()
+        // val altMin = altList.minOrNull()
+        // var altLast = if (altList.isEmpty()) altList.last() else null
+
+        val altUp = tripData.consumptionPlotLine.mapNotNull { it.AltitudeDelta }.filter { it > 0 }.sum()
+        val altDown = tripData.consumptionPlotLine.mapNotNull { it.AltitudeDelta }.filter { it < 0 }.sum().absoluteValue
+
+        summary_altitude_value_text.text = StringFormatters.getAltitudeString(altUp, altDown)
         summary_used_energy_value_text.text = StringFormatters.getEnergyString(tripData.usedEnergy)
         summary_avg_consumption_value_text.text = StringFormatters.getAvgConsumptionString(tripData.usedEnergy, tripData.traveledDistance)
         summary_travel_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.travelTime)
@@ -349,7 +371,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
                 getString(R.string.settings_sub_title_last_charge_plot),
                 progress + 1,
                 tripData.chargeCurves.size,
-                StringFormatters.getDateString(tripData.chargeCurves.last().chargeStartDate))
+                StringFormatters.getDateString(tripData.chargeCurves[progress].chargeStartDate))
 
             when (progress) {
                 0 -> {

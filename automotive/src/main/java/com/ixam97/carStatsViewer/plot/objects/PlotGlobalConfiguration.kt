@@ -12,7 +12,11 @@ object PlotGlobalConfiguration {
                 PlotRange(0f, 40f, 0f, 240f, 40f),
                 PlotLineLabelFormat.NUMBER,
                 PlotHighlightMethod.AVG_BY_TIME,
-                "km/h"
+                "km/h",
+                DimensionSmoothing = 0.005f,
+                DimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE,
+                SessionGapRendering = PlotSessionGapRendering.JOIN,
+                DimensionSmoothingHighlightMethod = PlotHighlightMethod.AVG_BY_TIME
             ),
             PlotDimensionY.DISTANCE to PlotLineConfiguration(
                 PlotRange(),
@@ -31,9 +35,9 @@ object PlotGlobalConfiguration {
                 PlotLineLabelFormat.PERCENTAGE,
                 PlotHighlightMethod.LAST,
                 "% SoC",
-                DimensionSmoothing = 1f,
-                DimensionSmoothingType = PlotDimensionSmoothingType.PIXEL,
-                DimensionSmoothingHighlightMethod = PlotHighlightMethod.MAX,
+                DimensionSmoothing = 0.005f,
+                DimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE,
+                DimensionSmoothingHighlightMethod = PlotHighlightMethod.LAST,
                 SessionGapRendering = PlotSessionGapRendering.GAP
             ),
             PlotDimensionY.ALTITUDE to PlotLineConfiguration(

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Tilladelser nødvendigt for brug</string>
     <string name="permissions_dialog_text">Denne app kræver tilladelser for at blive brugt. Uden de påkrævede tilladelser kan appen ikke læse data fra bilen.</string>
     <string name="permissions_dialog_quit">Afslut Car Stats Viewer</string>
     <string name="permissions_dialog_grant">Giv tilladelse</string>
+    <!-- MainActivity -->
     <string name="main_port_connected">Ladeport forbundet:</string>
     <string name="main_current_power">Nuværende strømforbrug:</string>
     <string name="main_used_energy">Brugt energi:</string>
@@ -25,6 +27,7 @@
     <string name="main_button_hide_speed">Skjul hastighed</string>
     <string name="main_button_show_speed">Vis hastighed</string>
     <string name="main_secondary_axis">Sekundær akse: %s</string>
+    <!-- SummaryActivity -->
     <string name="summary_title">Resumé af turen</string>
     <string name="summary_button_reset_trip">Nulstil tur</string>
     <string name="summary_parked_warning">Visning kun tilgængelig ved stilstand.</string>
@@ -39,6 +42,7 @@
     <string name="summary_charge_time">Opladningstid</string>
     <string name="summary_charge_ambient_temp">Omgivelsestemperatur</string>
     <string name="summary_interruption_warning">Optagelse af opladningssession er blevet afbrudt. Denne værdi er sandsynligvis forkert.</string>
+    <!-- SettingsActivity -->
     <string name="settings_title">Indstillinger</string>
     <string name="settings_button_back">Tilbage</string>
     <string name="settings_button_quit">Afslut app</string>
@@ -57,6 +61,7 @@
     <string name="settings_sub_title_settings">Indstillinger:</string>
     <string name="settings_sub_title_current_cons_plot">Nuværende forbrug plot:</string>
     <string name="settings_sub_title_last_charge_plot">Sidste opladningskurver:</string>
+    <!-- AboutActivity -->
     <string name="about_title">Om Car Stats Viewer</string>
     <string name="about_section_about">Om Car Stats Viewer:</string>
     <string name="about_support">Støt udviklingen</string>
@@ -71,6 +76,7 @@
     <string name="about_supporters">Supporters</string>
     <string name="about_thank_you">Tak!</string>
     <string name="about_supporters_message">Mange tak til alle, der har støttet udviklingen af Car Stats Viewer!</string>
+    <!-- Quit Dialog -->
     <string name="quit_dialog_title">Afslutte appen?</string>
     <string name="quit_dialog_message">Log vil blive kopieret til udklipsholder.</string>
     <string name="dialog_close">Luk</string>
@@ -81,7 +87,9 @@
     <string name="dialog_reset_cancel">Annullere</string>
     <string name="dialog_confirm">Ja</string>
     <string name="dialog_dismiss">Nej</string>
+    <!-- LogActivity -->
     <string name="log_title">Debug</string>
+    <!-- Notifications -->
     <string name="notification_title">Aktuel statistik:</string>
     <string name="foreground_service_info">Dataindsamlingstjeneste kører</string>
     <string name="toast_file_read_error">Fejl ved læsning af rejsefil</string>
@@ -103,9 +111,6 @@
         <item>Forskellige fejlrettelser og stabilitetsforbedringer</item>
     </string-array>
     <string name="main_changelog_dialog_title">Ændringer i version %s:</string>
-    <string name="main_dialog_reset_title">Nulstil statistik?</string>
-    <string name="main_dialog_reset_message">Alle gemte turdata vil blive nulstillet.</string>
-    <string name="settings_distance_unit">Mil som afstandsenhed</string>
     <string name="settings_apis_title">API-indstillinger</string>
     <!-- Restart Dialog -->
     <string name="restart_notification_title" formatted="false">%s er genstartet efter %s.</string>
@@ -136,7 +141,6 @@
     <string name="smtp_description">Indtast dine SMTP-legitimationsoplysninger givet af din e-mail-udbyder. Dette bruges til at sende gemte statistikker og fejlretningslogfiler til en email adresse angivet af brugeren.</string>
     <string name="smtp_address">Email adresse</string>
     <string name="smtp_password">SMTP adgangskode</string>
-    <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">SMTP-server værtsnavn</string>
     <string name="smtp_port">SMTP serverport</string>
     <string name="smtp_use_STARTTLS">Brug STARTTLS</string>
@@ -163,4 +167,13 @@
     <string name="settings_autostart">Automatisk start af app</string>
     <string name="plot_dimensionY_SPEED">Hastighed</string>
     <string name="plot_dimensionY_ALTITUDE">Højde</string>
+    <string-array name="changes_0_24_1">
+        <item>Højdeændring tilføjet i turoversigt (eksperimentel)</item>
+        <item>Rettede forkerte enheder i oversigtsdiagrammet</item>
+        <item>Rettet forkerte datoer for opladningssessioner i oversigten</item>
+        <item>Forbedrede betingelser for genstartsmeddelelser</item>
+        <item>Ændrede betingelser for energisporing (eksperimentelt)</item>
+    </string-array>
+    <string name="summary_altitude">Højdeændring</string>
+    <string name="about_translators">Oversættere</string>
 </resources>

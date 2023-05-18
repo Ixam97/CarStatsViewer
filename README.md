@@ -36,6 +36,11 @@ Please let me now if you do not want to be listed in the supporters list.
  * Peter Füllhase
  * Lukas Bruckenberger
  * Stefan Süssenguth
+ * Jürgen Bereuter
+ * Markus Enseroth
+ * Jacob Frostholm
+ * Christoffer Gennerud
+ * Samuel Lodyga
 
 </details>
 
@@ -56,6 +61,28 @@ Currently the following languages are already available:
  - :sweden: Swedish
  - :norway: Norwegian
  - :denmark: Danish
+ - :fr: French
+ - :pt: Portuguese
+ - :fn: Finnish
+
+<details>
+<summary><h3>Translators</h3></summary>
+
+ * DoubleYouEl
+ * Robin Hellström
+ * Jakob Schlyter
+ * Oddvarr
+ * Emil Blixt Hansen
+ * Ian Mascarenhas
+ * Dominik Brüning
+ * Juha Mönkkönen
+ * Ossi Lahtinen
+ * J-P
+ * Laurent Vitalis
+ * Jere Kataja
+ * Pedro Leite
+
+</details>
 
 ### Rules for contributing code:
 <details>
@@ -72,12 +99,9 @@ Please also be aware that I will not just include everything. It has to fit into
 
 ## Contributors:
 - Dario Bosshard (Consumption and charge curve diagrams)
-- Dutch translation: DoubleYouEl
-- Swedish translation: Robin Hellström, jschlyter
-- Norwegian translation: Oddvarr
-- Danish translation: Emil Blixt Hansen
 - FreshDave29
 - rdu
+- Jannick Fahlbusch
 
 ## Links:
 
@@ -90,6 +114,14 @@ Discussion in the international Polestar forums: [Polestar Forum](https://www.po
 ---
 
 ## Changelog [DE]:
+
+### 0.24.1 (18.05.2023)
+- Höhenunterschied in der Zusammenfassung hinzugefügt (experimentell)
+- Falsche Einheitem im Diagramm der Zusammenfassung behoben
+- Falsche Datumsangaben der Ladekurven in der Zusammenfassung behoben
+- Bedingungen für Neustart-Benachrichtigungen verbessert
+- Bedingungen für Energieerfassung angepasst (experimentell)
+- Französische, portugisische und finnische Übersetzungen hinzugefügt
 
 ### 0.24.0 (02.04.2023)
 - Mehrere Live-Daten-APIs hinzugefügt:

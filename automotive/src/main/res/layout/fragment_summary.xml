@@ -177,6 +177,15 @@
                 android:background="?android:attr/listDivider"/>
 
             <TextView
+                android:id="@+id/summary_altitude_value_text"
+                style="@style/menu_row_top_text"/>
+            <TextView
+                style="@style/menu_row_content_text"
+                android:text="@string/summary_altitude"/>
+            <View style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider"/>
+
+            <TextView
                 android:id="@+id/summary_used_energy_value_text"
                 style="@style/menu_row_top_text"/>
             <TextView

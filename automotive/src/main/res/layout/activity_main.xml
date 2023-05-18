@@ -62,12 +62,12 @@
             android:src="@drawable/ic_performance"/>
 
         <ImageButton
+            android:id="@+id/main_button_history"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="15dp"
             android:layout_marginEnd="15dp"
             android:background="@android:color/transparent"
-            android:tint="@color/disabled_tint"
             android:src="@drawable/ic_history"/>
 
         <ImageButton
@@ -410,7 +410,7 @@
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:layout_margin="20dp"
+            android:layout_marginHorizontal="20dp"
             android:id="@+id/main_charge_plot"/>
 
         <LinearLayout

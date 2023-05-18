@@ -230,6 +230,8 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
 
         main_button_performance.isEnabled = true
         main_button_performance.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+        main_button_history.isEnabled = false
+        main_button_history.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
 
         enableUiUpdates()
 
@@ -238,8 +240,8 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
                 setPositiveButton(getString(R.string.dialog_close)) { dialog, _ ->
                     dialog.cancel()
                 }
-                setTitle(getString(R.string.main_changelog_dialog_title, BuildConfig.VERSION_NAME))
-                val changesArray = resources.getStringArray(R.array.changes_0_24)
+                setTitle(getString(R.string.main_changelog_dialog_title, BuildConfig.VERSION_NAME.dropLast(5)))
+                val changesArray = resources.getStringArray(R.array.changes_0_24_1)
                 var changelog = ""
                 for ((index, change) in changesArray.withIndex()) {
                     changelog += "• $change"

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Behörigheter krävs för användning</string>
     <string name="permissions_dialog_text">Denna app kräver behörigheter för att kunna användas. Utan de nödvändiga behörigheterna kan appen inte läsa någon data från bilen.</string>
     <string name="permissions_dialog_quit">Avsluta Car Stats Viewer</string>
     <string name="permissions_dialog_grant">Bevilja behörigheter</string>
+    <!-- MainActivity -->
     <string name="main_port_connected">Laddkabel ansluten:</string>
     <string name="main_current_power">Aktuell strömförbrukning:</string>
     <string name="main_used_energy">Använd energi:</string>
@@ -25,6 +27,7 @@
     <string name="main_button_hide_speed">Dölj hastighet</string>
     <string name="main_button_show_speed">Visa hastighet</string>
     <string name="main_secondary_axis">Sekundär axel: %s</string>
+    <!-- SummaryActivity -->
     <string name="summary_title">Reseöversikt</string>
     <string name="summary_button_reset_trip">Återställ trippmätare</string>
     <string name="summary_parked_warning">Vyn enbart tillgänglig vid parkering.</string>
@@ -39,6 +42,7 @@
     <string name="summary_charge_time">Laddtid</string>
     <string name="summary_charge_ambient_temp">Utomhustemperatur</string>
     <string name="summary_interruption_warning">Inspelning av laddningssession har avbrutits. Detta värde är förmodligen felaktigt.</string>
+    <!-- SettingsActivity -->
     <string name="settings_title">Inställningar</string>
     <string name="settings_button_back">Tillbaka</string>
     <string name="settings_button_quit">Avsluta appen</string>
@@ -57,6 +61,7 @@
     <string name="settings_sub_title_settings">Inställningar:</string>
     <string name="settings_sub_title_current_cons_plot">Plott för nuvarande förbrukning:</string>
     <string name="settings_sub_title_last_charge_plot">Senaste laddningskurvor:</string>
+    <!-- AboutActivity -->
     <string name="about_title">Om Car Stats Viewer</string>
     <string name="about_section_about">Om Car Stats Viewer:</string>
     <string name="about_support">Stöd utvecklingen</string>
@@ -71,6 +76,7 @@
     <string name="about_supporters">Supporters</string>
     <string name="about_thank_you">Tack!</string>
     <string name="about_supporters_message">Tack till alla alla som stödjer utvecklingen av Car Stats Viewer!</string>
+    <!-- Quit Dialog -->
     <string name="quit_dialog_title">Avsluta appen?</string>
     <string name="quit_dialog_message">Logg kommer att kopieras till urklipp.</string>
     <string name="dialog_close">Stäng</string>
@@ -81,7 +87,9 @@
     <string name="dialog_reset_cancel">Avbryt</string>
     <string name="dialog_confirm">Ja</string>
     <string name="dialog_dismiss">Nej</string>
+    <!-- LogActivity -->
     <string name="log_title">Felsök</string>
+    <!-- Notifications -->
     <string name="notification_title">Aktuell statistik:</string>
     <string name="foreground_service_info">Datainsamlingstjänst aktiv</string>
     <string name="toast_file_read_error">Fel vid läsning av tripp-fil</string>
@@ -103,9 +111,6 @@
         <item>Diverse felrättningar och stabilitetsförbättringar</item>
     </string-array>
     <string name="main_changelog_dialog_title">Ändringar i version %s:</string>
-    <string name="main_dialog_reset_title">Radera statistik</string>
-    <string name="main_dialog_reset_message">Alla sparade resor raderas.</string>
-    <string name="settings_distance_unit">Miles som distansenhet</string>
     <string name="settings_apis_title">API-inställningar</string>
     <!-- Restart Dialog -->
     <string name="restart_notification_title" formatted="false">%s har startat om efter %s.</string>
@@ -122,7 +127,7 @@
     <string name="settings_main_view">Huvudvy</string>
     <string name="settings_apis_abrp">Realtidsdata för ABRP</string>
     <string name="settings_apis_http">HTTP Webhook</string>
-    <string name="settings_apis_smtp">Användarnamn för SMTP</string>
+    <string name="settings_apis_smtp">Inloggningsuppgifter för SMTP</string>
     <string name="settings_apis_use">Använd API</string>
     <!-- ABRP -->
     <string name="abrp_description">Ange en generisk ABRP-token för att överföra realtidsdata till ABRP-servrarna. Detta inkluderar platsdata om det inte är inaktiverat.</string>
@@ -136,7 +141,6 @@
     <string name="smtp_description">Ange dina SMTP-uppgifter från din e-postleverantör. Detta används för att skicka sparad statistik och felsökningsloggar till en e-postadress som anges av användaren.</string>
     <string name="smtp_address">E-postadress</string>
     <string name="smtp_password">Lösenord för SMTP</string>
-    <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">SMTP server</string>
     <string name="smtp_port">SMTP server port</string>
     <string name="smtp_use_STARTTLS">Använd STARTTLS</string>
@@ -163,4 +167,13 @@
     <string name="settings_autostart">Automatisk start av appen</string>
     <string name="plot_dimensionY_SPEED">Hastighet</string>
     <string name="plot_dimensionY_ALTITUDE">Höjd</string>
+    <string-array name="changes_0_24_1">
+        <item>Höjdförändring tillagd i resesammanfattningen (experimentellt)</item>
+        <item>Fixade fel enheter i sammanfattningsdiagrammet</item>
+        <item>Fixade fel datum för laddningssessioner i sammanfattning</item>
+        <item>Förbättrade notifieringar vid omstart</item>
+        <item>Ändrade villkor för energispårning (experimentellt)</item>
+    </string-array>
+    <string name="summary_altitude">Höjdförändring</string>
+    <string name="about_translators">Översättare</string>
 </resources>

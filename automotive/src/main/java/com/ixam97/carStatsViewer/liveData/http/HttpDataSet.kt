@@ -32,4 +32,7 @@ data class HttpDataSet(
     val isCharging: Boolean,
     val isParked: Boolean,
     val isFastCharging: Boolean,
+
+    // ABRP debug
+    val abrpPackage: String? = null
 )

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <!-- PermissionsActivity -->
+    <string name="permissions_dialog_title">Käyttöön tarvittavat käyttöoikeudet</string>
+    <string name="permissions_dialog_text">Tämän sovelluksen käyttäminen edellyttää käyttöoikeuksia. Ilman vaadittuja käyttöoikeuksia sovellus ei voi lukea tietoja autosta.</string>
+    <string name="permissions_dialog_quit">Lopeta Car Stats Viewer</string>
+    <string name="permissions_dialog_grant">Myönnä käyttöoikeudet</string>
+    <!-- MainActivity -->
+    <string name="main_port_connected">Latausportti kytketty:</string>
+    <string name="main_current_power">Tämänhetkinen virrankulutus:</string>
+    <string name="main_used_energy">Käytetty energia:</string>
+    <string name="main_current_speed">Tämänhetkinen nopeus:</string>
+    <string name="main_traveled_distance">Kuljettu matka:</string>
+    <string name="main_inst_consumption">Hetkellinen kulutus:</string>
+    <string name="main_average_consumption">Keskimääräinen kulutus:</string>
+    <string name="main_button_reset_stats">Nollaa tilastot</string>
+    <string name="main_consumption">Kulutus viimeisen 3 km:n matkalta:</string>
+    <string name="main_speed">Nopeus</string>
+    <string name="main_gage_speed">Nopeus</string>
+    <string name="main_gage_power">Teho</string>
+    <string name="main_gage_charging_power">Latausteho</string>
+    <string name="main_gage_SoC">Akun varaustaso</string>
+    <string name="main_gage_consumption">Hetkellinen kulutus</string>
+    <string name="main_dismiss_charge_plot">Hylkää latauskaavio</string>
+    <string name="main_button_reset_charge_plot">Nollaa latauskaavio</string>
+    <string name="main_button_trip_summary">Osamatkan yhteenveto</string>
+    <string name="main_button_hide_speed">Piilota nopeus</string>
+    <string name="main_button_show_speed">Näytä nopeus</string>
+    <string name="main_secondary_axis">Toissijainen akseli: %s</string>
+    <!-- SummaryActivity -->
+    <string name="summary_title">Osamatkan yhteenveto</string>
+    <string name="summary_button_reset_trip">Nollaa osamatkan tiedot</string>
+    <string name="summary_parked_warning">Näkymä on käytettävissä vain pysäköitynä.</string>
+    <string name="summary_trip_history">Osamatkan historia</string>
+    <string name="summary_charging_sessions">Lataukset</string>
+    <string name="summary_trip_start_date">Osamatka alkoi: %s</string>
+    <string name="summary_used_energy">Käytetty energia</string>
+    <string name="summary_traveled_distance">Kuljettu matka</string>
+    <string name="summary_average_consumption">Keskimääräinen kulutus</string>
+    <string name="summary_travel_time">Matka-aika</string>
+    <string name="summary_charged_energy">Ladattu energia</string>
+    <string name="summary_charge_time">Latausaika</string>
+    <string name="summary_charge_ambient_temp">Ulkolämpötila</string>
+    <string name="summary_interruption_warning">Latausistunnon tallennus on keskeytynyt. Tämä arvo on todennäköisesti virheellinen.</string>
+    <!-- SettingsActivity -->
+    <string name="settings_title">Asetukset</string>
+    <string name="settings_button_back">Takaisin</string>
+    <string name="settings_button_quit">Sulje sovellus</string>
+    <string name="settings_notifications">Ilmoitukset</string>
+    <string name="settings_consumption_unit">Wh/km kulutusyksikkönä</string>
+    <string name="settings_debug">Virheenkorjaustiedot</string>
+    <string name="settings_experimental_layout">Näytä kokeellinen asettelu</string>
+    <string name="settings_consumption_plot">Kulutusnäkymä</string>
+    <string name="settings_charge_plot">Latausnäkymä</string>
+    <string name="settings_about">Tietoja Car Stats Vieweristä</string>
+    <string name="settings_plot_secondary_color">Harmaa toissijaisena kaavion värinä</string>
+    <string name="settings_plot_state_of_charge_dimension">Kokeellinen SoC-akseli</string>
+    <string name="settings_consumption_plot_single_motor">Yksimoottorinen malli</string>
+    <string name="settings_visible_gages">Näytä tehomittarit</string>
+    <string name="settings_consumption_plot_speed">Näytä nopeuskaavio</string>
+    <string name="settings_sub_title_settings">Asetukset:</string>
+    <string name="settings_sub_title_current_cons_plot">Nykyinen kulutuskaavio:</string>
+    <string name="settings_sub_title_last_charge_plot">Viimeisimmät latauskäyrät:</string>
+    <!-- AboutActivity -->
+    <string name="about_title">Tietoja Car Stats Vieweristä</string>
+    <string name="about_section_about">Tietoja Car Stats Vieweristä:</string>
+    <string name="about_support">Tue kehitystä</string>
+    <string name="about_support_description">Vieraile GitHubissa saadaksesi lisätietoja sovelluksen kehittämisen tukemisesta.</string>
+    <string name="about_contributors">Avustajat</string>
+    <string name="about_section_feedback">Palaute:</string>
+    <string name="about_section_misc">Sekalaista:</string>
+    <string name="about_github_issues_description">Tämä on paras paikka virheraporteille ja ominaisuuspyynnöille. Lue nykyiset pyynnöt ennen kuin avaat uuden.</string>
+    <string name="about_polestar_forum_description">Keskustelua Car Stats Vieweristä kansainvälisellä foorumilla.</string>
+    <string name="about_polestar_fans_description">Keskustelua Car Stats Vieweristä saksankielisellä foorumilla.</string>
+    <string name="about_third_party_licenses">Lisenssit</string>
+    <string name="about_supporters">Tukijat</string>
+    <string name="about_thank_you">Kiitos!</string>
+    <string name="about_supporters_message">Suuri kiitos kaikille Car Stats Viewerin kehitystä tukeneille!</string>
+    <!-- Quit Dialog -->
+    <string name="quit_dialog_title">Lopetetaanko sovellus?</string>
+    <string name="quit_dialog_message">Lokitiedot kopioidaan leikepöydälle.</string>
+    <string name="dialog_close">Sulje</string>
+    <string name="dialog_reset_title">Nollataanko osamatkatiedot?</string>
+    <string name="dialog_reset_message">Nykyiset osamatkatiedot nollataan. Haluatko tallentaa osamatkan?</string>
+    <string name="dialog_reset_do_save">Tallenna</string>
+    <string name="dialog_reset_no_save">"Älä tallenna"</string>
+    <string name="dialog_reset_cancel">Peruuta</string>
+    <string name="dialog_confirm">Kyllä</string>
+    <string name="dialog_dismiss">Ei</string>
+    <!-- LogActivity -->
+    <string name="log_title">Vianmääritys</string>
+    <!-- Notifications -->
+    <string name="notification_title">Nykyiset tilastot:</string>
+    <string name="foreground_service_info">Tiedonkeruupalvelu käynnissä</string>
+    <string name="toast_file_read_error">Virhe luettaessa osamatkatiedostoa</string>
+    <string name="settings_select_trip">Osamatka päänäkymässä:</string>
+    <string name="CurrentTripData">Manuaalinen osamatka</string>
+    <string name="SinceChargeData">Viimeisen latauksen jälkeen</string>
+    <string name="AutoTripData">Automaattinen osamatka</string>
+    <string name="CurrentMonthData">Kuluva kuukausi</string>
+    <string-array name="changes_0_23">
+        <item>Tietorakennetta uusittu vakauden ja skaalautuvuuden lisäämiseksi</item>
+        <item>Lisätty tanskankielinen käännös</item>
+        <item>Lisätty \"About Car Stats Viewer\" (sis. peruskorjauksen ReadMe ja tiedot tukemisesta ja osallistumisesta kehitystyöhön)</item>
+        <item>Lisätty useita samanaikaisesti käynnissä olevia osamatkaseurannan vaihtoehtoja (manuaalinen osamatka, edellisestä latauksesta, automaattinen osamatka, kuluva kuukausi)</item>
+        <item>Erilaisia visuaalisia parannuksia kaavionäkymissä.</item>
+        <item>Tiettyjä arvoja kaavionäkymässä voidaan korostaa kaksoisnapauttamalla</item>
+        <item>Debug-logit voidaan lähettää SMTP:n kautta (kokeellinen!)</item>
+        <item>Vakautettu latauskäyrän näkymää, kun sovellus on keskeytetty latauksen aikana</item>
+        <item>Kuljettajan häiriötekijöiden optimointi</item>
+        <item>Erilaisia virheenkorjauksia ja vakauden parannuksia</item>
+    </string-array>
+    <string name="main_changelog_dialog_title">Muutokset versiossa %s :</string>
+    <string name="settings_apis_title">API-asetukset</string>
+    <!-- Restart Dialog -->
+    <string name="restart_notification_title" formatted="false">%s on käynnistynyt uudelleen %s jälkeen.</string>
+    <string name="restart_notification_reason_crash">ohjelmiston kaatuminen</string>
+    <string name="restart_notification_reason_reboot">uudelleenkäynnistys</string>
+    <string name="restart_notification_reason_update">päivitys</string>
+    <string name="restart_notification_message">Käynnistä palvelu uudelleen tilastojen seurantaa varten.</string>
+    <string name="restart_notification_dismiss">Hylkää</string>
+    <string name="restart_notification_app">Käynnistä sovellus</string>
+    <string name="restart_notification_service">Käynnistä palvelu</string>
+    <string name="restart_toast_background">Tilastojen seurantapalvelu käynnistettiin taustalla</string>
+    <string name="settings_title_generic">Yleiset asetukset:</string>
+    <string name="settings_title_misc">Sekalaiset asetukset:</string>
+    <string name="settings_main_view">Päänäkymä</string>
+    <string name="settings_apis_abrp">ABRP Live Data</string>
+    <string name="settings_apis_http">HTTP Webhook</string>
+    <string name="settings_apis_smtp">SMTP-kirjautuminen</string>
+    <string name="settings_apis_use">Käytä API:a</string>
+    <!-- ABRP -->
+    <string name="abrp_description">Anna ABRP:n yleinen tunnus (Generic Token) lähettääksesi reaaliaikaista dataa ABRP-palvelimille. Tämä sisältää sijaintitietoja, jos niitä ei ole poistettu käytöstä.</string>
+    <string name="abrp_generic_token">Yleinen tunnus (Generic Token)</string>
+    <!-- HTTP -->
+    <string name="http_description">Anna HTTP-osoite ja (valinnaiset) perustason todentamistiedot lähettääksesi reaaliaikaista tietoa määritettyyn URL-osoitteeseen. Sovellus käyttää POST-pyyntöä JSON-sisällön kanssa. Tämä sisältää sijaintitietoja, jos niitä ei ole poistettu käytöstä.</string>
+    <string name="http_username">BasicAuth-käyttäjätunnus</string>
+    <string name="http_password">BasicAuth-salasana</string>
+    <string name="http_invalid_url">Virheellinen URL-osoite!</string>
+    <!-- SMTP -->
+    <string name="smtp_description">Anna sähköpostipalveluntarjoajaltasi saadut SMTP-tunnistetietosi. Tätä käytetään tallennettujen tilastojen ja virheenkorjauslokien lähettämiseen käyttäjän määrittelemälle vastaanottajalle.</string>
+    <string name="smtp_address">Sähköpostiosoite</string>
+    <string name="smtp_password">SMTP-salasana</string>
+    <string name="smtp_server">SMTP-palvelimen isäntänimi</string>
+    <string name="smtp_port">SMTP-palvelimen portti</string>
+    <string name="smtp_use_STARTTLS">Käytä STARTTLS:ää</string>
+    <!-- Vehicle Setup -->
+    <string name="vehicle_title">Ajoneuvon asetukset</string>
+    <string name="vehicle_my">Vuosimalli</string>
+    <string name="vehicle_drivetrain">Voimalinja</string>
+    <string name="vehicle_plus">Plus-paketti</string>
+    <string name="vehicle_performance">Performance -päivitys</string>
+    <string name="vehicle_bst">BST Edition</string>
+    <string name="vehicle_launch">Launch Edition</string>
+    <string-array name="changes_0_24">
+        <item>Lisätty useita live-datan sovellusliittymiä:
+ - ABRP OTA live-data
+ - HTTP Webhook BasicAuthilla</item>
+        <item>Lisätty sijainnin seuranta ja korkeushistoria</item>
+        <item>Lisätty uudelleenkäynnistysilmoitus uudelleenkäynnistyksen, päivityksen tai sovelluksen kaatumisen jälkeen</item>
+        <item>Lisätty ajoneuvon asetukset/varusteet</item>
+        <item>Uudelleenjärjestetty asetusvalikko</item>
+        <item>Korjattu, \"päänäkymän yksiköt\" eivät päivity</item>
+        <item>Yleisiä virheenkorjauksia ja vakauden parannuksia</item>
+    </string-array>
+    <string name="settings_use_location">Sijainnin seuranta</string>
+    <string name="settings_autostart">Automaattinen sovelluksen käynnistys</string>
+    <string name="plot_dimensionY_SPEED">Nopeus</string>
+    <string name="plot_dimensionY_ALTITUDE">Korkeus merenpinnasta</string>
+    <string-array name="changes_0_24_1">
+        <item>Lisätty korkeuden muutos matkan yhteenvetoon (kokeellinen)</item>
+        <item>Korjattu yhteenvetokaavion virheelliset yksiköt</item>
+        <item>Korjattu latausistuntojen yhteenvedon väärät päivämäärät</item>
+        <item>Parannettu uudelleenkäynnistyksen ilmoitusehtoja</item>
+        <item>Muutettu energian seurannan ehtoja (kokeellinen)</item>
+    </string-array>
+    <string name="summary_altitude">Korkeuden muutos</string>
+    <string name="about_translators">Kääntäjät</string>
+    <string name="main_dialog_reset_title">Nollataanko tilastot?</string>
+    <string name="main_dialog_reset_message">Kaikki tallennetut matkatiedot nollataan.</string>
+    <string name="settings_distance_unit">Maili etäisyyden yksikkönä</string>
+</resources>

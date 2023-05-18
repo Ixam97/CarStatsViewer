@@ -20,7 +20,9 @@ import java.net.URL
 class AbrpLiveData (
     private val apiKey : String,
     detailedLog : Boolean = true
-): LiveDataApi("com.ixam97.carStatsViewer_dev.abrp_connection_broadcast", detailedLog) {
+): LiveDataApi("com.ixam97.carStatsViewer.abrp_connection_broadcast", detailedLog) {
+
+    var lastPackage: String = ""
 
     private fun send(
         abrpDataSet: AbrpDataSet,
@@ -73,6 +75,8 @@ class AbrpLiveData (
                 flush()
                 close()
             }
+            lastPackage = jsonObject.toString(4)
+            // InAppLogger.v("ABRP JSON object: ${jsonObject.toString(4)}")
             responseCode = con.responseCode
 
             if (detailedLog) {
