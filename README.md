@@ -19,14 +19,14 @@ Currently the app is not available in the public Play Store. This is due to stri
 Once the app has reached a more finished state I will try to reach out to Polestar directly to potentially make it available through them. Just like ABRP or the Vivaldi browser which also do not comply with Google's restrictions.
 
 ## Support the development of the app:
-Any form of support and feedback is very welcome! If you like the app and want to buy me a beer, feel free (but never obliged! This is a hobby for me) to use this link: https://paypal.me/Ixam
-Pleas let me now if you do not want to be listed in the supporters list.
+Any form of support and feedback is very welcome! If you like the app and want to buy me a beer, feel free (but never obliged! This is a hobby for me) to use this link: https://paypal.me/Ixam </br>
+Please let me now if you do not want to be listed in the supporters list.
 
 <b>Many thanks to everyone who has supported the development of Car Stats Viewer!</b>
 <details>
 <summary><h3>Supporters</h3></summary>
 
- * Ahti Hinnov </br>
+ * Ahti Hinnov
  * Robin Hellström 
  * Benjamin Stegmann
  * Horst Zimmermann
@@ -107,7 +107,7 @@ Please also be aware that I will not just include everything. It has to fit into
 
 Original impulse cam from here: [CarGearViewerKotlin](https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerKotlin)
 
-Discussion in the german Polestar forums: [Polestar Club](https://polestar.fans/t/car-stats-viewer-0-22-x/14653)
+Discussion in the german Polestar forums: [Polestar Club](https://polestar.fans/t/car-stats-viewer-0-23-x/14983)
 
 Discussion in the international Polestar forums: [Polestar Forum](https://www.polestar-forum.com/threads/car-stats-viewer-a-better-range-assistant.10261/)
 

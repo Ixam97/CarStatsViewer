@@ -138,7 +138,7 @@
     <string name="smtp_description">SMTP-Logindaten des E-Mail-Providers eingeben. Diese werden genutzt, um gespeicherte Statistiken und Debug-Logs an eine vom Nutzer angegebene Zieladresse zu senden.</string>
     <string name="smtp_address">E-Mail Adresse</string>
     <string name="smtp_password">E-Mail Passwort</string>
-    <string name="smtp_server">SMTP Server URL</string>
+    <string name="smtp_server">SMTP Server Hostname</string>
     <string name="smtp_port">SMTP Server Port</string>
     <string name="smtp_use_STARTTLS">STARTTLS nutzen</string>
 
