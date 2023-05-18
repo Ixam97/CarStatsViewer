@@ -115,12 +115,13 @@ Discussion in the international Polestar forums: [Polestar Forum](https://www.po
 
 ## Changelog [DE]:
 
-### 0.24.1 ()
+### 0.24.1 (18.05.2023)
 - Höhenunterschied in der Zusammenfassung hinzugefügt (experimentell)
 - Falsche Einheitem im Diagramm der Zusammenfassung behoben
 - Falsche Datumsangaben der Ladekurven in der Zusammenfassung behoben
 - Bedingungen für Neustart-Benachrichtigungen verbessert
 - Bedingungen für Energieerfassung angepasst (experimentell)
+- Französische, portugisische und finnische Übersetzungen hinzugefügt
 
 ### 0.24.0 (02.04.2023)
 - Mehrere Live-Daten-APIs hinzugefügt:
