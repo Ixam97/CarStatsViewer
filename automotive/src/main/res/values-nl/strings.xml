@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Noodzakelijke permissies</string>
     <string name="permissions_dialog_text">Deze app heeft bepaalde toelatingen nodig om te kunnen werken. Zonder de aangegeven toelatingen, kunnen de gegevens van het voertuig niet worden verzameld.</string>
     <string name="permissions_dialog_quit">Car Stats Viewer afsluiten</string>
     <string name="permissions_dialog_grant">Toelatingen goedkeuren</string>
+    <!-- MainActivity -->
     <string name="main_port_connected">Laadkabel aangesloten:</string>
     <string name="main_current_power">Huidig stroomverbruik:</string>
     <string name="main_used_energy">Verbruikte energie:</string>
@@ -25,6 +27,7 @@
     <string name="main_button_hide_speed">Snelheid verbergen</string>
     <string name="main_button_show_speed">Snelheid tonen</string>
     <string name="main_secondary_axis">Secundaire as: %s</string>
+    <!-- SummaryActivity -->
     <string name="summary_title">Samenvatting rit</string>
     <string name="summary_button_reset_trip">Rit resetten</string>
     <string name="summary_parked_warning">Enkel zichtbaar in parkeerstand.</string>
@@ -39,6 +42,7 @@
     <string name="summary_charge_time">Laadtijd</string>
     <string name="summary_charge_ambient_temp">Omgevingstemperatuur</string>
     <string name="summary_interruption_warning">Registratie van laadsessie is onderbroken. Deze waarde is waarschijnlijk onjuist.</string>
+    <!-- SettingsActivity -->
     <string name="settings_title">Instellingen</string>
     <string name="settings_button_back">Terug</string>
     <string name="settings_button_quit">App afsluiten</string>
@@ -57,6 +61,7 @@
     <string name="settings_sub_title_settings">Instellingen:</string>
     <string name="settings_sub_title_current_cons_plot">Actuele verbruikscurve:</string>
     <string name="settings_sub_title_last_charge_plot">Laatste laadcurven:</string>
+    <!-- AboutActivity -->
     <string name="about_title">Over Car Stats Viewer</string>
     <string name="about_section_about">Over Car Stats Viewer:</string>
     <string name="about_support">Ondersteun de ontwikkeling</string>
@@ -71,6 +76,7 @@
     <string name="about_supporters">Supporters</string>
     <string name="about_thank_you">Bedankt!</string>
     <string name="about_supporters_message">Veel dank aan iedereen die de ontwikkeling van Car Stats Viewer heeft gesteund!</string>
+    <!-- Quit Dialog -->
     <string name="quit_dialog_title">App afsluiten?</string>
     <string name="quit_dialog_message">Log wordt gekopieerd naar het klembord.</string>
     <string name="dialog_close">Sluit</string>
@@ -81,7 +87,9 @@
     <string name="dialog_reset_cancel">Cancel</string>
     <string name="dialog_confirm">Ja</string>
     <string name="dialog_dismiss">Neen</string>
+    <!-- LogActivity -->
     <string name="log_title">Debug</string>
+    <!-- Notifications -->
     <string name="notification_title">Huidige statistieken:</string>
     <string name="foreground_service_info">Gegevensverzameling is bezig</string>
     <string name="toast_file_read_error">Fout bij het inlezen van de ritgegevens</string>
@@ -159,7 +167,13 @@
     <string name="settings_autostart">Automatische start van de app</string>
     <string name="plot_dimensionY_SPEED">Snelheid</string>
     <string name="plot_dimensionY_ALTITUDE">Hoogte</string>
-    <string name="main_dialog_reset_title">Statistieken resetten?</string>
-    <string name="main_dialog_reset_message">Alle opgeslagen ritgegevens worden op nul gezet.</string>
-    <string name="settings_distance_unit">Mijlen als afstandseenheid</string>
+    <string-array name="changes_0_24_1">
+        <item>Hoogteverandering toegevoegd in ritoverzicht (experimenteel)</item>
+        <item>Verkeerde eenheden in overzichtsdiagram verholpen</item>
+        <item>Foute data van laadsessies in samenvatting verholpen</item>
+        <item>Verbeterde voorwaarden voor herstartmeldingen</item>
+        <item>Gewijzigde condities voor het volgen van energie (experimenteel)</item>
+    </string-array>
+    <string name="summary_altitude">Hoogteverandering</string>
+    <string name="about_translators">Vertalers</string>
 </resources>

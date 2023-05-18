@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Permissions</string>
     <string name="permissions_dialog_text">Cette application requiert certaines permissions pour pouvoir recueillir les données de la voiture.</string>
     <string name="permissions_dialog_quit">Quitter</string>
     <string name="permissions_dialog_grant">Accorder autorisations</string>
+    <!-- MainActivity -->
     <string name="main_port_connected">Charge connectée:</string>
     <string name="main_current_power">Consommation électrique:</string>
     <string name="main_used_energy">Énergie utilisée:</string>
@@ -25,6 +27,7 @@
     <string name="main_button_hide_speed">Cacher vitesse</string>
     <string name="main_button_show_speed">Afficher vitesse</string>
     <string name="main_secondary_axis">2ième courbe: %s</string>
+    <!-- SummaryActivity -->
     <string name="summary_title">Sommaire</string>
     <string name="summary_button_reset_trip">Réinitialiser</string>
     <string name="summary_parked_warning">Information seulement disponible à l\'arrêt.</string>
@@ -39,6 +42,7 @@
     <string name="summary_charge_time">Temps de recharge</string>
     <string name="summary_charge_ambient_temp">Température ambiante</string>
     <string name="summary_interruption_warning">Le suivi de données a été interrompu. Cette valeur est probablement incorrecte.</string>
+    <!-- SettingsActivity -->
     <string name="settings_title">Paramètres</string>
     <string name="settings_button_back">Retour</string>
     <string name="settings_button_quit">Quitter</string>
@@ -57,6 +61,7 @@
     <string name="settings_sub_title_settings">Paramètres</string>
     <string name="settings_sub_title_current_cons_plot">Graphique de consommation</string>
     <string name="settings_sub_title_last_charge_plot">Dernières sessions de charge: </string>
+    <!-- AboutActivity -->
     <string name="about_title">À propos</string>
     <string name="about_section_about">À propos de Car Stats Viewer</string>
     <string name="about_support">Contribuer au développement</string>
@@ -71,6 +76,7 @@
     <string name="about_supporters">Supporteurs</string>
     <string name="about_thank_you">Merci!</string>
     <string name="about_supporters_message">Remerciements pour tous les encouragements envers le développement de Car Stats Viewer!</string>
+    <!-- Quit Dialog -->
     <string name="quit_dialog_title">Quitter l\'application?</string>
     <string name="quit_dialog_message">Le journal sera copié dans le presse-papiers.</string>
     <string name="dialog_close">Fermer</string>
@@ -81,7 +87,9 @@
     <string name="dialog_reset_cancel">Annuler</string>
     <string name="dialog_confirm">Oui</string>
     <string name="dialog_dismiss">Non</string>
+    <!-- LogActivity -->
     <string name="log_title">Débogage</string>
+    <!-- Notifications -->
     <string name="notification_title">Statistiques actuelles</string>
     <string name="foreground_service_info">Service de suivi de données activé</string>
     <string name="toast_file_read_error">Erreur lors de la lecture des données</string>
@@ -165,7 +173,13 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
     <string name="settings_autostart">Lancement automatique de l\'application</string>
     <string name="plot_dimensionY_SPEED">Vitesse</string>
     <string name="plot_dimensionY_ALTITUDE">Altitude</string>
-    <string name="main_dialog_reset_title">Réinitialiser?</string>
-    <string name="main_dialog_reset_message">Toutes les données de trajets vont être réinitialisées.</string>
-    <string name="settings_distance_unit">Unités impériales</string>
+    <string-array name="changes_0_24_1">
+        <item>Ajoute de la variation d\'altitude dans le sommaire (expérimental)</item>
+        <item>Correction des unités dans le graphique du sommaire</item>
+        <item>Correction des dates de sessions de recharge</item>
+        <item>Amélioration de la notification lors d\'une remise en marche</item>
+        <item>Modification des conditions de suivi de l\'énergie (expérimental)</item>
+    </string-array>
+    <string name="summary_altitude">Variation d\'altitude</string>
+    <string name="about_translators">Traducteurs</string>
 </resources>
