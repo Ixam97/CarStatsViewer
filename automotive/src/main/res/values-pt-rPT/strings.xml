@@ -176,4 +176,7 @@
     </string-array>
     <string name="summary_altitude">Mudança de altitude</string>
     <string name="about_translators">Tradutores</string>
+    <string name="main_dialog_reset_title">Redefinir estatísticas?</string>
+    <string name="main_dialog_reset_message">Todos os dados de viagem salvos serão redefinidos para zero.</string>
+    <string name="settings_distance_unit">Milhas como unidade de distância</string>
 </resources>
