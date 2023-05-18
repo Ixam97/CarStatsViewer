@@ -176,4 +176,7 @@
     </string-array>
     <string name="summary_altitude">Korkeuden muutos</string>
     <string name="about_translators">Kääntäjät</string>
+    <string name="main_dialog_reset_title">Nollataanko tilastot?</string>
+    <string name="main_dialog_reset_message">Kaikki tallennetut matkatiedot nollataan.</string>
+    <string name="settings_distance_unit">Maili etäisyyden yksikkönä</string>
 </resources>
