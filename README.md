@@ -40,6 +40,7 @@ Pleas let me now if you do not want to be listed in the supporters list.
  * Markus Enseroth
  * Jacob Frostholm
  * Christoffer Gennerud
+ * Samuel Lodyga
 
 </details>
 
