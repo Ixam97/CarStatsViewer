@@ -121,7 +121,7 @@ Discussion in the international Polestar forums: [Polestar Forum](https://www.po
 - Falsche Datumsangaben der Ladekurven in der Zusammenfassung behoben
 - Bedingungen für Neustart-Benachrichtigungen verbessert
 - Bedingungen für Energieerfassung angepasst (experimentell)
-- Französische, portugisische und finnische Übersetzungen hinzugefügt
+- Französische, portugiesische und finnische Übersetzungen hinzugefügt
 
 ### 0.24.0 (02.04.2023)
 - Mehrere Live-Daten-APIs hinzugefügt:
