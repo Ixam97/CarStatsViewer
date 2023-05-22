@@ -50,6 +50,9 @@ Other than that, contributions to the app are always welcome. Be it in form of c
 If you have any bugs to report or want du suggest a new feature, please have a look at the GitHub issues. Don't forget to have a look at the existing issues to not create duplicates. Let me know if you support any of the existing feature request so I can adjust my priorities accordingly.
 
 ### Translations:
+
+![Lokalise](/docs/lokalise.png)
+
 If you are using the app and miss the translation into your language, feel free to create a translation yourself and contribute on the development of the app:
 
 [Lokalise project for Car Stats Viewer](https://app.lokalise.com/public/7279689963f1e922c08f26.64130521/)
