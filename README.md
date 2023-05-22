@@ -62,6 +62,8 @@ If you have any bugs to report or want du suggest a new feature, please have a l
 
 ### Translations
 
+![Lokalise](/docs/lokalise.png)
+
 If you are using the app and miss the translation into your language, feel free to create a translation yourself and contribute on the development of the app:
 
 [Lokalise project for Car Stats Viewer](https://app.lokalise.com/public/7279689963f1e922c08f26.64130521/)
