@@ -15,6 +15,8 @@
 - Save and export trip data for further analysis
 - More performance oriented real time drive stats
 
+## [Changes](/CHANGES.md)
+
 
 ## Installing the app on a car
 
