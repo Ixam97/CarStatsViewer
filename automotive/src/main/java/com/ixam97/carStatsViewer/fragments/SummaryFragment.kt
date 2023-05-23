@@ -14,6 +14,7 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.dataManager.*
+import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
@@ -22,6 +23,9 @@ import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.fragment_summary.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 
@@ -433,12 +437,14 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             .setCancelable(true)
             .setPositiveButton(getString(R.string.dialog_reset_do_save)) { _, _ ->
                 DataCollector.CurrentTripDataManager.reset()
+                (applicationContext as CarStatsViewer).dataProcessor.resetManualTrip()
                 applicationContext.sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
                 //applicationContext.finish()
                 //applicationContext.overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
             }
             .setNegativeButton(R.string.dialog_reset_no_save) { _, _ ->
                 DataManagers.CURRENT_TRIP.dataManager.reset()
+                (applicationContext as CarStatsViewer).dataProcessor.resetManualTrip()
                 applicationContext.sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
                 refreshActivity(dataManager!!)
             }

@@ -12,6 +12,7 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManager
 import com.ixam97.carStatsViewer.dataManager.DrivingState
+import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -115,7 +116,8 @@ class HttpLiveData (
         })
     }
 
-    override fun sendNow(dataManager: DataManager) {
+    override fun sendNow(realTimeData: RealTimeData) {
+        /*
         if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataEnabled) {
             connectionStatus = ConnectionStatus.UNUSED
             return
@@ -169,6 +171,8 @@ class HttpLiveData (
                 abrpPackage = (CarStatsViewer.liveDataApis[0] as AbrpLiveData).lastPackage
             )
         )
+
+         */
     }
 
     private fun send(dataSet: HttpDataSet, context: Context = CarStatsViewer.appContext): ConnectionStatus {

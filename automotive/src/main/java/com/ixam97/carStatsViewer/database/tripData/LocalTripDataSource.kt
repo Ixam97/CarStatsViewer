@@ -6,7 +6,8 @@ class LocalTripDataSource(
 
     override suspend fun addDrivingPoint(drivingPoint: DrivingPoint) {
         val activeSessionIds = tripDao.getActiveDrivingSessionIds()
-        tripDao.insertDrivingPoint(drivingPoint)
+        if (!tripDao.drivingPointExists(drivingPoint.driving_point_epoch_time))
+            tripDao.insertDrivingPoint(drivingPoint)
         for (sessionId in activeSessionIds) {
             tripDao.insertDrivingSessionPointCrossRef(DrivingSessionPointCrossRef(sessionId, drivingPoint.driving_point_epoch_time))
         }

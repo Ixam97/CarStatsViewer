@@ -74,7 +74,7 @@ class NeoDataCollector: Service() {
                 PendingIntent.FLAG_IMMUTABLE
             )
         )
-
+/*
         locationClient = DefaultLocationClient(
             CarStatsViewer.appContext,
             LocationServices.getFusedLocationProviderClient(this)
@@ -87,18 +87,19 @@ class NeoDataCollector: Service() {
             }
             .onEach { location ->
                 if (location != null) {
-                    InAppLogger.d("Location: lat: %.5f, lon: %.5f, alt: %.2fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
+                    InAppLogger.d("[NEO] Location: lat: %.5f, lon: %.5f, alt: %.2fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
                     dataProcessor.processLocation(location.latitude, location.longitude, location.altitude)
                 } else {
                     dataProcessor.processLocation(null, null, null)
                 }
             }
             .launchIn(serviceScope)
+*/
 
         CarStatsViewer.liveDataApis[0]
             .requestFlow(
                 serviceScope,
-                dataManager = DataManagers.CURRENT_TRIP.dataManager,
+                realTimeData = (applicationContext as CarStatsViewer).dataProcessor.realTimeData,
                 LIVE_DATA_TASK_INTERVAL
             ).catch { e -> InAppLogger.e("requestFlow: ${e.message}") }
             .launchIn(serviceScope)
@@ -106,7 +107,7 @@ class NeoDataCollector: Service() {
         CarStatsViewer.liveDataApis[1]
             .requestFlow(
                 serviceScope,
-                dataManager = DataManagers.CURRENT_TRIP.dataManager,
+                realTimeData = (applicationContext as CarStatsViewer).dataProcessor.realTimeData,
                 LIVE_DATA_TASK_INTERVAL
             ).catch { e -> InAppLogger.e("requestFlow: ${e.message}") }
             .launchIn(serviceScope)

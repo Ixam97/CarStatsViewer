@@ -69,7 +69,7 @@ class CarStatsViewer : Application() {
 
         CoroutineScope(Dispatchers.IO).launch {
 
-            tripDatabase.clearAllTables()
+            // tripDatabase.clearAllTables()
 
             val drivingSessionIds = tripDataSource.getActiveDrivingSessionsIdsMap()
             InAppLogger.d("Trip Database: $drivingSessionIds")

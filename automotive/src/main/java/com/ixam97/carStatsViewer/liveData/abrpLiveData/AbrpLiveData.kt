@@ -12,6 +12,7 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManager
 import com.ixam97.carStatsViewer.dataManager.DrivingState
+import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import org.json.JSONObject
 import java.io.DataOutputStream
 import java.net.HttpURLConnection
@@ -136,7 +137,7 @@ class AbrpLiveData (
         tokenDialog.show()
     }
 
-    override fun sendNow(dataManager: DataManager) {
+    override fun sendNow(realTimeData: RealTimeData) {
         if (!AppPreferences(CarStatsViewer.appContext).abrpUseApi) {
             connectionStatus = ConnectionStatus.UNUSED
             return
@@ -146,24 +147,16 @@ class AbrpLiveData (
         var lon: Double? = null
         var alt: Double? = null
 
-        dataManager.location?.let {
-            if (it.time + 20_000 > System.currentTimeMillis()) {
-                lat = it.latitude
-                lon = it.longitude
-                alt = it.altitude
-            }
-        }
-
         connectionStatus = send(AbrpDataSet(
-            stateOfCharge = dataManager.stateOfCharge,
-            power = dataManager.currentPower,
-            speed = dataManager.currentSpeed,
-            isCharging = dataManager.chargePortConnected,
-            isParked = (dataManager.driveState == DrivingState.PARKED || dataManager.driveState == DrivingState.CHARGE),
-            lat = lat,
-            lon = lon,
-            alt = alt,
-            temp = dataManager.ambientTemperature
+            stateOfCharge = (realTimeData.stateOfCharge * 100f).toInt(),
+            power = realTimeData.power,
+            speed = realTimeData.speed,
+            isCharging = realTimeData.chargePortConnected,
+            isParked = (realTimeData.drivingState == DrivingState.PARKED || realTimeData.drivingState == DrivingState.CHARGE),
+            lat = realTimeData.lat as Double?,
+            lon = realTimeData.lon as Double?,
+            alt = realTimeData.alt as Double?,
+            temp = realTimeData.ambientTemperature
         ))
     }
 }

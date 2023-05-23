@@ -37,8 +37,8 @@ class DataProcessor(
 
     var staticVehicleData = StaticVehicleData()
 
-    private var realTimeData = RealTimeData()
-        set(value) {
+    var realTimeData = RealTimeData()
+        private set(value) {
             field = value
             _realTimeDataFlow.value = value
         }
@@ -72,6 +72,10 @@ class DataProcessor(
             CarProperties.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE -> powerUpdate()
             CarProperties.IGNITION_STATE, CarProperties.EV_CHARGE_PORT_CONNECTED -> stateUpdate()
         }
+    }
+
+    fun resetManualTrip() {
+        updateDrivingDataPoint(null, true)
     }
 
     private fun speedUpdate() {
@@ -112,7 +116,7 @@ class DataProcessor(
         previousDrivingState = drivingState
     }
 
-    private fun updateDrivingDataPoint(markerType: Int? = null) {
+    private fun updateDrivingDataPoint(markerType: Int? = null, doReset: Boolean = false) {
         usedEnergySum += pointUsedEnergy
         InAppLogger.v("Driven distance: $pointDrivenDistance, Used energy: $usedEnergySum")
 
@@ -129,16 +133,18 @@ class DataProcessor(
 
         CoroutineScope(Dispatchers.IO).launch {
             CarStatsViewer.tripDataSource.addDrivingPoint(drivingPoint)
+
+            pointUsedEnergy = 0.0
+            pointDrivenDistance = 0.0
+
+            updateTripDataValues(DrivingState.DRIVE)
+
             CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[TripType.MANUAL]?.let {
-                val fullDrivingSession = CarStatsViewer.tripDataSource.getFullDrivingSession(it)
-                Log.v("Database trip dump", GsonBuilder().setPrettyPrinting().create().toJson(fullDrivingSession))
+                if (doReset) {
+                    CarStatsViewer.tripDataSource.supersedeDrivingSession(it, System.currentTimeMillis())
+                }
             }
         }
-
-        pointUsedEnergy = 0.0
-        pointDrivenDistance = 0.0
-
-        updateTripDataValues(DrivingState.DRIVE)
     }
 
     private fun updateChargingDataPoint(markerType: Int? = null) {

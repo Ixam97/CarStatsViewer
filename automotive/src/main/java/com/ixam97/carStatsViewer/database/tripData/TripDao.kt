@@ -20,6 +20,9 @@ interface TripDao {
     @Upsert
     fun upsertSessionMarker(sessionMarker: SessionMarker)
 
+    @Query("SELECT count(*)!=0 FROM DrivingPoint WHERE driving_point_epoch_time = :epoch_time ")
+    fun drivingPointExists(epoch_time: Long): Boolean
+
     @Query("SELECT * FROM DrivingSession WHERE driving_session_id = :sessionId")
     fun getDrivingSessionById(sessionId: Long): DrivingSession?
 

@@ -1,5 +1,7 @@
 package com.ixam97.carStatsViewer.dataProcessor
 
+import android.util.Log
+import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.CarStatsViewer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,26 +30,36 @@ class TripDataManager {
     val chargingTripDataFlow = _chargingTripDataFlow.asStateFlow()
 
     fun newDrivingState(drivingState: Int) {
-
     }
 
     fun newDrivingDeltas(distanceDelta: Double, energyDelta: Double) {
-        val currentDrivingDistance = drivingTripData.drivenDistance + distanceDelta
-        val currentDrivingEnergy = drivingTripData.usedEnergy + energyDelta
+        // val currentDrivingDistance = drivingTripData.drivenDistance + distanceDelta
+        // val currentDrivingEnergy = drivingTripData.usedEnergy + energyDelta
 
-        drivingTripData = drivingTripData.copy(
-            drivenDistance = currentDrivingDistance,
-            usedEnergy = currentDrivingEnergy
-        )
+        // drivingTripData = drivingTripData.copy(
+        //     drivenDistance = currentDrivingDistance,
+        //     usedEnergy = currentDrivingEnergy
+        // )
 
         CoroutineScope(Dispatchers.IO).launch {
             CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds().forEach { sessionIds ->
+
                 CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
                     CarStatsViewer.tripDataSource.updateDrivingSession(session.copy(
                         driven_distance = session.driven_distance + distanceDelta,
                         used_energy = session.used_energy + energyDelta
                     ))
                 }
+
+                CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
+                    drivingTripData = drivingTripData.copy(
+                        drivenDistance = session.driven_distance,
+                        usedEnergy = session.used_energy
+                    )
+                }
+
+                val fullDrivingSession = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionIds)
+                Log.v("Database trip dump", GsonBuilder().setPrettyPrinting().create().toJson(fullDrivingSession))
             }
         }
 

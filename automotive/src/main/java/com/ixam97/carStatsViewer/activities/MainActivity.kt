@@ -63,6 +63,8 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
     private var updateUi = false
     private var lastPlotUpdate: Long = 0L
 
+    private var neoDistance: Double = 0.0
+
     private val updateActivityTask = object : Runnable {
         override fun run() {
             updateActivity()
@@ -74,7 +76,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 getString(R.string.ui_update_plot_broadcast) -> updatePlots()
-                getString(R.string.ui_update_gages_broadcast) -> updateGages()
+                // getString(R.string.ui_update_gages_broadcast) -> updateGages()
                 CarStatsViewer.liveDataApis[0].broadcastAction -> updateAbrpStatus(LiveDataApi.ConnectionStatus.fromInt(intent.getIntExtra("status", 0)))
                 CarStatsViewer.liveDataApis[1].broadcastAction -> updateAbrpStatus(LiveDataApi.ConnectionStatus.fromInt(intent.getIntExtra("status", 0)))
             }
@@ -91,6 +93,18 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
         super.onResume()
 
         updateAbrpStatus(CarStatsViewer.liveDataApis[0].connectionStatus)
+
+        // val nullValue: Float? = null
+        if (appPreferences.consumptionUnit) {
+            main_consumption_gage.gageUnit = "Wh/%s".format(appPreferences.distanceUnit.unit())
+            main_consumption_gage.minValue = appPreferences.distanceUnit.asUnit(-300f)
+            main_consumption_gage.maxValue = appPreferences.distanceUnit.asUnit(600f)
+
+        } else {
+            main_consumption_gage.gageUnit = "kWh/100%s".format(appPreferences.distanceUnit.unit())
+            main_consumption_gage.minValue = appPreferences.distanceUnit.asUnit(-30f)
+            main_consumption_gage.maxValue = appPreferences.distanceUnit.asUnit(60f)
+        }
 
         val preferenceDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
         if (selectedDataManager != preferenceDataManager) {
@@ -163,9 +177,37 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 val carStatsViewer = applicationContext as CarStatsViewer
+
                 carStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
                     // Do stuff with live data
-                    InAppLogger.v("State flow value: Drive state: ${DrivingState.nameMap[it.drivingState]}, Inst. cons.: ${it.instConsumption}")
+                    InAppLogger.v("RealTimeData: Drive state: ${DrivingState.nameMap[it.drivingState]}, Inst. cons.: ${it.instConsumption}")
+
+                    val instCons = it.instConsumption
+                    val nullValue: Float? = null
+
+                    if (instCons != null && it.speed * 3.6 > 3) {
+                        if (appPreferences.consumptionUnit) {
+                            main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(instCons).roundToInt())
+                        } else {
+                            main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(instCons) / 10)
+                        }
+
+                    } else {
+                        main_consumption_gage.setValue(nullValue)
+                    }
+
+                    main_power_gage.setValue(it.power / 1_000_000f)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val carStatsViewer = applicationContext as CarStatsViewer
+                carStatsViewer.tripDataManager.drivingTripDataFlow.collectLatest {
+                    // InAppLogger.v("TripData: Driven Distance: ${it.drivenDistance}")
+                    neoDistance = it.drivenDistance
+                    updateActivity()
                 }
             }
         }
@@ -280,10 +322,10 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
         }
 
         setUiVisibilities()
-        updateGages()
+        // updateGages()
 
         main_gage_avg_consumption_text_view.text = "  Ø %s".format(StringFormatters.getAvgConsumptionString(selectedDataManager.usedEnergy, selectedDataManager.traveledDistance))
-        main_gage_distance_text_view.text = "  %s".format(StringFormatters.getTraveledDistanceString(selectedDataManager.traveledDistance))
+        main_gage_distance_text_view.text = "  %s (neo: %.1f)".format(StringFormatters.getTraveledDistanceString(selectedDataManager.traveledDistance), neoDistance/1000.0)
         main_gage_used_power_text_view.text = "  %s".format(StringFormatters.getEnergyString(selectedDataManager.usedEnergy))
         main_gage_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(selectedDataManager.travelTime))
         main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getEnergyString(DataManagers.CURRENT_TRIP.dataManager.chargedEnergy))
@@ -291,6 +333,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
         main_gage_remaining_range_text_view.text = "  -/-  %s".format(appPreferences.distanceUnit.unit())
         main_gage_ambient_temperature_text_view.text = "  %s".format( StringFormatters.getTemperatureString(selectedDataManager.ambientTemperature))
     }
+
 
     private fun setUiVisibilities() {
 
@@ -301,7 +344,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
             main_charge_layout.visibility = View.VISIBLE
         }
     }
-
+/*
     private fun updateGages() {
         if ((selectedDataManager.currentPower / 1_000_000).absoluteValue >= 100 && true) { // Add Setting!
             main_power_gage.setValue((DataCollector.gagePowerValue / 1_000_000).toInt())
@@ -341,6 +384,8 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
         main_charge_gage.invalidate()
         main_SoC_gage.invalidate()
     }
+
+ */
 
     private fun updatePlots(){
         main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(selectedDataManager.chargeTime) / 5) + 1) * 5 + 1

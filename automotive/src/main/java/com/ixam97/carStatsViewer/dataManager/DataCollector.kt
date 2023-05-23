@@ -152,7 +152,7 @@ class DataCollector : Service() {
              */
             exitProcess(0)
         }
-
+/*
         CarStatsViewer.liveDataApis[0]
             .requestFlow(
                 serviceScope,
@@ -168,6 +168,8 @@ class DataCollector : Service() {
                 LIVE_DATA_TASK_INTERVAL
             ).catch { e -> InAppLogger.e("requestFlow: ${e.message}") }
             .launchIn(serviceScope)
+
+ */
 
         var tripRestoreComplete = false
         runBlocking {
@@ -307,7 +309,7 @@ class DataCollector : Service() {
                 PendingIntent.FLAG_ONE_SHOT
             )
             while (true) {
-                InAppLogger.d("Keep Alive Alarm")
+                // InAppLogger.d("Keep Alive Alarm")
                 serviceIntent.action = "com.ixam97.carStatsViewer.RestartAction"
                 serviceIntent.putExtra("reason", "termination")
                 // serviceIntent.putExtra("dismiss", false)

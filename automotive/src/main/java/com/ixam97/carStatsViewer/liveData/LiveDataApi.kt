@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Handler
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.dataManager.DataManager
+import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -46,14 +47,15 @@ abstract class LiveDataApi(
      * timed intervals.
      */
     open fun createLiveDataTask(
-        dataManager: DataManager,
+        // dataManager: DataManager,
+        realTimeData: RealTimeData,
         handler: Handler,
         interval: Long
     ): Runnable? {
         timeout = interval.toInt()
         return object : Runnable {
             override fun run() {
-                coroutineSendNow(dataManager)
+                coroutineSendNow(realTimeData)
                 handler.postDelayed(this, interval)
             }
         }
@@ -62,18 +64,18 @@ abstract class LiveDataApi(
     /**
      * sendNow, but wrapped in a coroutine to not block main thread.
      */
-    fun coroutineSendNow(dataManager: DataManager) {
+    fun coroutineSendNow(realTimeData: RealTimeData) {
         CoroutineScope(Dispatchers.Default).launch {
-            sendNow(dataManager)
+            sendNow(realTimeData)
             sendStatusBroadcast(CarStatsViewer.appContext)
         }
     }
 
-    fun requestFlow(serviceScope: CoroutineScope, dataManager: DataManager, interval: Long): Flow<Unit> {
+    fun requestFlow(serviceScope: CoroutineScope, realTimeData: RealTimeData, interval: Long): Flow<Unit> {
         timeout = interval.toInt()
         return flow {
             while (true) {
-                coroutineSendNow(dataManager)
+                coroutineSendNow(realTimeData)
                 delay(interval)
             }
         }
@@ -83,7 +85,7 @@ abstract class LiveDataApi(
      * Code to be executed in coroutineSendNow. This function should not be called outside a
      * coroutine to not block main thread.
      */
-    protected abstract fun sendNow(dataManager: DataManager)
+    protected abstract fun sendNow(realTimeData: RealTimeData)
 
     private fun sendStatusBroadcast(context: Context) {
         val broadcastIntent = Intent(broadcastAction)
