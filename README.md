@@ -1,28 +1,38 @@
-
 ![Banner](/docs/banner.png)
 
-## Features:
+## Features
+
 - View instantaneous power and consumption
 - View details of the current trip
 - Visualizes consumption, speed and state of charge along the trip
 - Visualizes and saves charge curves during a trip
 - Live Data API for ABRP and HTTP Webhook
 
-## Planned:
+
+## Planned
+
 - Estimate range based on the current trip's consumption
 - Save and export trip data for further analysis
 - More performance oriented real time drive stats
 
-## Installing the app on a car:
+## [Changes](/CHANGES.md)
+
+
+## Installing the app on a car
+
 Currently the app is not available in the public Play Store. This is due to strict requirements by Google what kind of apps are allowed to be installed on cars. As of now the App is only available via internal test tracks which are limited to 100 users each. Currently there are no free internal test slots in any of the existing forks.
 
 Once the app has reached a more finished state I will try to reach out to Polestar directly to potentially make it available through them. Just like ABRP or the Vivaldi browser which also do not comply with Google's restrictions.
 
-## Support the development of the app:
-Any form of support and feedback is very welcome! If you like the app and want to buy me a beer, feel free (but never obliged! This is a hobby for me) to use this link: https://paypal.me/Ixam </br>
+
+## Support the development of the app
+
+Any form of support and feedback is very welcome! If you like the app and want to buy me a beer, feel free (but never obliged, this is a hobby for me) to use this link: https://paypal.me/Ixam
+
 Please let me now if you do not want to be listed in the supporters list.
 
-<b>Many thanks to everyone who has supported the development of Car Stats Viewer!</b>
+**Many thanks to everyone who has supported the development of Car Stats Viewer!**
+
 <details>
 <summary><h3>Supporters</h3></summary>
 
@@ -46,15 +56,22 @@ Please let me now if you do not want to be listed in the supporters list.
 
 Other than that, contributions to the app are always welcome. Be it in form of code contributions, constructive feedback, bug reports or translations.
 
-### Bug reports and feature requests:
+
+### Bug reports and feature requests
+
 If you have any bugs to report or want du suggest a new feature, please have a look at the GitHub issues. Don't forget to have a look at the existing issues to not create duplicates. Let me know if you support any of the existing feature request so I can adjust my priorities accordingly.
 
-### Translations:
+
+### Translations
+
+![Lokalise](/docs/lokalise.png)
+
 If you are using the app and miss the translation into your language, feel free to create a translation yourself and contribute on the development of the app:
 
 [Lokalise project for Car Stats Viewer](https://app.lokalise.com/public/7279689963f1e922c08f26.64130521/)
 
 Currently the following languages are already available:
+
  - :gb: English
  - :de: German
  - :netherlands: Dutch
@@ -62,8 +79,8 @@ Currently the following languages are already available:
  - :norway: Norwegian
  - :denmark: Danish
  - :fr: French
- - :pt: Portuguese
- - :fn: Finnish
+ - :portugal: Portuguese
+ - :finland: Finnish
 
 <details>
 <summary><h3>Translators</h3></summary>
@@ -84,179 +101,33 @@ Currently the following languages are already available:
 
 </details>
 
-### Rules for contributing code:
+
+### Rules for contributing code
 <details>
 
 <summary>Please read before contributing and creating Pull Requests!</summary>
 
 
 - If you want to contribute code you are very welcome to. When creating a Pull Request, make sure to use [active_development](https://github.com/Ixam97/CarStatsViewer/tree/active_development). With the exception of hotfixes I will not merge any PRs into master since that branch is used by other forks to build the app bundle for the Play Store.
+- Also describe what you want to archive with your code contribution. Uncommented PRs with no context on what they do are hard to understand and review. To make it easier for me to review and test your contribution make sure to [allow edits from maintainers](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork).
 
-- Also describe what you want to archive with your code contribution. Uncommented PRs with no context on what they do are hard to understand and review. To make it easyer for me to review and test your contribution make sure to [allow edits from maintainers](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork). </br>
-Please also be aware that I will not just include everything. It has to fit into my goals I want to archive with this app. I may just say "I don't feel it" (yes, I konw, this joke is getting old 😅). It would be best to open an issue beforehand, describing what you want to see in the app and offer your help before starting to code. This way it is possible to exchange ideas before spending hours in coding.
+Please also be aware that I will not just include everything. It has to fit into my goals I want to archive with this app. I may just say "I don't feel it" (yes, I know, this joke is getting old 😅). It would be best to open an issue beforehand, describing what you want to see in the app and offer your help before starting to code. This way it is possible to exchange ideas before spending hours in coding.
 
 </details>
 
-## Contributors:
+
+## Contributors
+
 - Dario Bosshard (Consumption and charge curve diagrams)
 - FreshDave29
 - rdu
 - Jannick Fahlbusch
 
-## Links:
+
+## Links
 
 Original impulse cam from here: [CarGearViewerKotlin](https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerKotlin)
 
-Discussion in the german Polestar forums: [Polestar Club](https://polestar.fans/t/car-stats-viewer-0-23-x/14983)
+Discussion in the german Polestar forums: [Polestar Club](https://polestar.fans/t/car-stats-viewer-0-22-x/14653)
 
 Discussion in the international Polestar forums: [Polestar Forum](https://www.polestar-forum.com/threads/car-stats-viewer-a-better-range-assistant.10261/)
-
----
-
-## Changelog [DE]:
-
-### 0.24.1 (18.05.2023)
-- Höhenunterschied in der Zusammenfassung hinzugefügt (experimentell)
-- Falsche Einheitem im Diagramm der Zusammenfassung behoben
-- Falsche Datumsangaben der Ladekurven in der Zusammenfassung behoben
-- Bedingungen für Neustart-Benachrichtigungen verbessert
-- Bedingungen für Energieerfassung angepasst (experimentell)
-- Französische, portugiesische und finnische Übersetzungen hinzugefügt
-
-### 0.24.0 (02.04.2023)
-- Mehrere Live-Daten-APIs hinzugefügt:
-  - ABRP OTA Live Data
-  - HTTP Webhook mit BasicAuth
-- Standorterfassung mit Höhenverlauf hinzugefügt
-- Neustart-Benachrichtigung nach Update, Reboot oder Absturz hinzugefügt
-- Fahrzeugkonfiguration hinzugefügt
-- Einstellungsmenü umstrukturiert
-- Fehler behoben, der das aktualisieren der Einheiten in der Hauptansicht verhindert hat
-- Laden und Speichern des Debug-Log wurde drastisch optimiert.
-- Allgemeine Bugfixes und Stabilitätsverbesserungen.
-
-### 0.23.0 (24.02.2023)
-- Datenstruktur grundlegend überarbeitet, um die Stabilität und Sklaierbarkeit zu verbessern
-- Dänische Übersetzung hinzugefügt
-- "Über Car Stats Viewer" hinzugefügt, (inkl. grundlegende Überarbeitung der ReadMe mit Hinweisen zur Unterstützung und Mitwirkung)
-- Es können neben dem manuellen Trip mehrere, automatisch zurückgesetzte Trips ausgewählt werden
-- Verschiedene optische Anpassungen an den Diagrammen
-- Einzelne Werte eines Diagramms können per Doppeltipp hervorgehoben werden
-- Möglichkeit zum verschicken von Debug-Logs per SMTP (experimentell!)
-- Stabilisierung des Verhaltens der Ladekurve, wenn die Ausführung der App zwischenzeitlich unterbrochen wird
-- Optimierung der Fahrerablenkung
-- Zahlreiche weitere Bugfixes und Stabilitätsverbesserungen.
-
-### 0.22.1 (02.02.2023)
-- Falsche Lokalisierung für Norwegisch behoben.
-
-### 0.22.0 ()
-- Tripzusammenfassung für den aktuellen Trip hinzugefügt. (Um einen Trip-Reset durchzuführen kann es erforderlich sein, die App neu zu installieren, da Änderungen im Manifest vorgnommen wurden)
-- Stabilitätsverbresserungen bei der Abfrage und Verarbeitung von Fahrzeugdaten
-- Schwedische Übersetzung hinzugefügt
-- Norwegische Übersetzung hinzugefügt
-
-### 0.21.2
-- Zurücksetzen der Ladekurve beim erneuten Betreten des Fahrzeugs wurde behoben
-
-### 0.21.1
-- Hardcoded Text durch variablen String ersetzt
-
-### 0.21.0 (25.01.2023)
-- Optische Differenzierung der Ladekurvenansicht
-- Mehrere Ladekurven in einem Trip gespeichert und können in den Einstellungen betrachtet werden
-- Die Verbrauchsanzeige in der Hauptansicht ist fest auf 10 km eingestellt
-- Die Verbrauchsanzeige in den Einstellungen kann mit einer Zoom-Geste vergrößert und seitlich verschoben werden.
-- Die Verbrauchsanzeige in den Einstellungen beinhaltet nun Markierungen fürs Parken und Laden
-- Grundstein für Tripzusammenfassung gelegt (Work in Progrss, momentan nur zum Zurücksetzen des Trips)
-- Niederländische Übersetzung hinzugefügt
-
-### 0.20.0 (18.01.2023)
-- Wake Lock wieder entfernt.
-- Debug Logging für Zündungsstatus wieder entfernt
-- Der Energiezähler erfasst nur noch Werte, wenn das Fahrzug nicht in Fahrstufe P ist
-- Trips werden auch nach vollständigem Beenden der App fortgesetzt
-- Es kann nun durch den Verbrauchsplot gescrollt werden
-
-### 0.19.2 (16.01.2023)
-- Wake Lock hinzugefügt
-
-### 0.19.1 (16.01.2023)
-- Zusätzliches Debug-Logging für den Zündungsstatus
-- Zeiterfassung korrigiert
-- Untermenüs werden während der Fahrt deaktiviert
-
-### 0.19.0 (15.01.2023)
-- Die Ladekurve wird solange angezeigt, bis sie manuell geschlossen wird, nachdem das Ladekabel abgezogen wurde
-- Die Lade- und Verbrauchskurven sind in ihrem jemweiligen Einstellungsmenü sichtbar
-- Die Ladekurve ist nun (versuchsweise) blau eingefärbt
-
-### 0.18.2 (14.01.2023)
-- UI-Updates optimiert
-
-### 0.18.1 (13.01.2023)
-- Aktualisierungsrate der Hauptansicht reduziert
-
-### 0.18.0
-- Neues Icon
-- Optische verbesserungen am Diagramm
-- Neue Diagrammoptionen (vorerst beschränkt auf das Verbrauchsdiagramm)
-- Allgemeine Stabilitätsverbresserung, insbesondere bei der Rundung und Zeiterfassung
-
-### 0.17 (11.01.2023)
-- Diagrammachsen aufgehellt
-- Versuchsweise hellgrauer statt grüner Graph für die Geschwindigkeit
-- Min- und Max-Grenzen für die Diagrammskalierung (WIP)
-- Farbe und Grenzwerte für Balkenanzeigen angepasst
-- Fahrzeit sollte nun korrekt funktionieren
-
-### 0.16 (10.01.2023)
-- Labels der Diagramme hervorgehoben
-- 50km bei Diagrammen durch "Trip" ersetzt (Zeigt die gesamte Strecke seit dem letzten Reset in 10km-Schritten an)
-- Zwischen den Distanzen kann durch ein Tippen auf das Diagramm durchgeschaltet werden
-- Kleinere UI-Anpassungen
-- Fahrzeit hinzugefügt
-- Mittelwertberechnung in den Diagrammen korrigiert
-- Allgemeine Stabilitätsverbessrungen
-
-### 0.15 (08.01.2023)
-- Ladekurve hinzugefügt.
-- Experimentelles Layout erweitert
-- Allgemeine Stabilitätsverbesserungen
-
-### 0.14 (07.01.2023)
-- Experimentelle Messwertansicht hinzugefügt
-
-### 0.13 (06.01.2023)
-- Achsenbeschriftung im Verbrauchsdiagramm mit sinnvollerer Einteilung
-- Diagrammaktualisierung stabilisiert
-- Service für die Fahrdatenerfassung ist jetzt (hoffentlich) stabiler und es sollten keine Werte mehr einfrieren
-- Diagramme werden bei größeren Distanzen geglättet
-
-### 0.12 (05.01.2023)
-- Diagramm für die Geschwindigkeit hinzugefügt.
-- Leichte Anpassungen am Logging.
-
-### 0.11 (04.01.2023)
-- Debug-Log hinzugefügt
-
-### 0.10 (04.01.2023)
-- Verbrauchsdiagramm verbessert
-
-### 0.9 (02.01.2023)
-- Experimentelle Verbrauchsanzeige hinzugefügt
-- Layout für bessere Leserlichkeit angepasst
-
-### 0.8 (31.12.2022)
-- (Hoffentlich) Fix für einfrierende Werte bei Aktivierung der Kamera
-
-### 0.7 (30.12.2022)
-- Einstellungsmenü hinzugefügt
-- Datenerfassung in Service ausgelagert
-
-### 0.6 (24.12.2022)
-- Benachrichtigung mit den aktuellen Fahrdaten
-- Kein Neustart der App mehr erforderlich, wenn die Berechtigungen erteilt wurden
-
-### 0.5 (21.12.2022)
-- Deutsche Lokalisierung und Styling-Anpassungen
