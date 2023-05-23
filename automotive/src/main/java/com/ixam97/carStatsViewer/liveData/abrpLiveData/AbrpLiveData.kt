@@ -1,11 +1,11 @@
-package com.ixam97.carStatsViewer.liveDataApi.abrpLiveData
+package com.ixam97.carStatsViewer.liveData.abrpLiveData
 
 import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.Switch
-import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
+import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R

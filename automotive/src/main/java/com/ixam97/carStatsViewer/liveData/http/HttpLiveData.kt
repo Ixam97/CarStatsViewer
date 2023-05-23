@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.liveDataApi.http
+package com.ixam97.carStatsViewer.liveData.http
 
 import android.app.AlertDialog
 import android.content.Context
@@ -12,7 +12,7 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManager
 import com.ixam97.carStatsViewer.dataManager.DrivingState
-import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
+import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import java.io.DataOutputStream
 import java.net.HttpURLConnection

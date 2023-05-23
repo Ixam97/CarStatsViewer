@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.liveDataApi.http
+package com.ixam97.carStatsViewer.liveData.http
 
 import java.util.*
 

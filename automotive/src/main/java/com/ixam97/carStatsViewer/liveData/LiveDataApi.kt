@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.liveDataApi
+package com.ixam97.carStatsViewer.liveData
 
 import android.content.Context
 import android.content.Intent

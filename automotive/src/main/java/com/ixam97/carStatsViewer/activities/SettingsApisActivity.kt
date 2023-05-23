@@ -13,7 +13,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
+import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import kotlinx.android.synthetic.main.activity_settings_apis.*
 
 class SettingsApisActivity: Activity() {

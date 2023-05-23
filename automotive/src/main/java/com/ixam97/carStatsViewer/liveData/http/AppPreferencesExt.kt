@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.liveDataApi.http
+package com.ixam97.carStatsViewer.liveData.http
 
 /**
  * This file extends the AppPreferences to contain keys used by the API implementation. The rest of

@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.liveDataApi.abrpLiveData
+package com.ixam97.carStatsViewer.liveData.abrpLiveData
 
 data class AbrpDataSet(
     val stateOfCharge: Int,

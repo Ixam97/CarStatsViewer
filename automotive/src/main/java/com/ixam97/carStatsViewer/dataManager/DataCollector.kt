@@ -18,7 +18,7 @@ import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
-import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
+import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
 import com.ixam97.carStatsViewer.plot.enums.*

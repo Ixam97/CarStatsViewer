@@ -26,7 +26,7 @@ import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.*
 import com.ixam97.carStatsViewer.fragments.SummaryFragment
-import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
+import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
