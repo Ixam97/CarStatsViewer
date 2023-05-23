@@ -69,4 +69,16 @@ object StringFormatters {
         val unitString = "°C"
         return "%d %s".format(temperature.toInt(), unitString)
     }
+
+    fun getAltitudeString(altUp: Float?, altDown: Float?): String {
+        if (altUp == null || altDown == null) return ""
+        val unitAltUp = appPreferences.distanceUnit.asSubUnit(altUp).toInt()
+        val unitAltDown = appPreferences.distanceUnit.asSubUnit(altDown).toInt()
+        val unitString = appPreferences.distanceUnit.subUnit()
+        val formattedAltUp = "%d %s".format(unitAltUp, unitString)
+        val formattedAltDown = "%d %s".format(unitAltDown, unitString)
+        val formattedDelta = "%d %s".format(unitAltUp - unitAltDown, unitString)
+
+        return "↑$formattedAltUp, ↓$formattedAltDown, Δ$formattedDelta"
+    }
 }

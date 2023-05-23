@@ -22,6 +22,8 @@ class AbrpLiveData (
     detailedLog : Boolean = true
 ): LiveDataApi("com.ixam97.carStatsViewer_dev.abrp_connection_broadcast", detailedLog) {
 
+    var lastPackage: String = ""
+
     private fun send(
         abrpDataSet: AbrpDataSet,
         context: Context = CarStatsViewer.appContext
@@ -73,6 +75,8 @@ class AbrpLiveData (
                 flush()
                 close()
             }
+            lastPackage = jsonObject.toString(4)
+            // InAppLogger.v("ABRP JSON object: ${jsonObject.toString(4)}")
             responseCode = con.responseCode
 
             if (detailedLog) {

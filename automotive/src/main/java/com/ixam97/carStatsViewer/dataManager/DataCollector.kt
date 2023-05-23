@@ -2,6 +2,7 @@ package com.ixam97.carStatsViewer.dataManager
 
 import android.app.*
 import android.car.Car
+import android.car.VehicleIgnitionState
 import android.car.VehiclePropertyIds
 import android.car.VehicleUnit
 import android.car.hardware.CarPropertyValue
@@ -57,6 +58,7 @@ class DataCollector : Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private lateinit var locationClient: LocationClient
+    private var locationClientJob: Job? = null
 
     private var startupTimestamp: Long = 0L
 
@@ -134,6 +136,7 @@ class DataCollector : Service() {
 
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
             InAppLogger.e("Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
+            /*
             val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val serviceIntent = Intent(applicationContext, AutoStartReceiver::class.java)
             serviceIntent.action = "com.ixam97.carStatsViewer.RestartAction"
@@ -145,28 +148,10 @@ class DataCollector : Service() {
                 PendingIntent.FLAG_ONE_SHOT
             )
             alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent)
+
+             */
             exitProcess(0)
         }
-
-        locationClient = DefaultLocationClient(
-            CarStatsViewer.appContext,
-            LocationServices.getFusedLocationProviderClient(this)
-        )
-
-        locationClient
-            .getLocationUpdates(5_000L)
-            .catch { e ->
-                InAppLogger.e("LocationClient: ${e.message}")
-            }
-            .onEach { location ->
-                enumValues<DataManagers>().forEach {
-                    it.dataManager.location = location
-                }
-                if (location != null) {
-                    InAppLogger.d("Location: lat: %.5f, lon: %.5f, alt: %.2fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
-                }
-            }
-            .launchIn(serviceScope)
 
         CarStatsViewer.liveDataApis[0]
             .requestFlow(
@@ -312,6 +297,25 @@ class DataCollector : Service() {
                 delay(10_000)
             }
         }
+
+        serviceScope.launch {
+            val serviceIntent = Intent(applicationContext, AutoStartReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                applicationContext,
+                0,
+                serviceIntent,
+                PendingIntent.FLAG_ONE_SHOT
+            )
+            while (true) {
+                InAppLogger.d("Keep Alive Alarm")
+                serviceIntent.action = "com.ixam97.carStatsViewer.RestartAction"
+                serviceIntent.putExtra("reason", "termination")
+                // serviceIntent.putExtra("dismiss", false)
+                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 5000, pendingIntent)
+                delay(4000)
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -332,6 +336,8 @@ class DataCollector : Service() {
         }
 
         startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID, foregroundServiceNotification.build())
+
+        startLocationClient()
 
         return START_NOT_STICKY
     }
@@ -407,13 +413,13 @@ class DataCollector : Service() {
             if (gageValueChanged) sendBroadcast(Intent(getString(R.string.ui_update_gages_broadcast)))
         }
         when (dataManager.driveState) {
-            DrivingState.DRIVE -> {
-                if (!dataManager.CurrentPower.isInitialValue) {
-                    val usedEnergyDelta = (dataManager.currentPower / 1_000) * ((dataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
-                    dataManager.usedEnergy += usedEnergyDelta
-                    dataManager.consumptionPlotEnergyDelta += usedEnergyDelta
-                }
-            }
+            // DrivingState.DRIVE -> {
+            //     if (!dataManager.CurrentPower.isInitialValue) {
+            //         val usedEnergyDelta = (dataManager.currentPower / 1_000) * ((dataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
+            //         dataManager.usedEnergy += usedEnergyDelta
+            //         dataManager.consumptionPlotEnergyDelta += usedEnergyDelta
+            //     }
+            // }
             DrivingState.CHARGE -> {
                 refreshProperty(dataManager.BatteryLevel.propertyId, dataManager)
                 if (!dataManager.CurrentPower.isInitialValue && !dataManager.BatteryLevel.isInitialValue && dataManager.CurrentPower.timeDelta < CHARGE_PLOT_MARKER_THRESHOLD_NANOS && dataManager.BatteryLevel.timeDelta < CHARGE_PLOT_MARKER_THRESHOLD_NANOS) {
@@ -442,6 +448,11 @@ class DataCollector : Service() {
             }
             else -> {
                 // Supplemental energy usage?
+                if (!dataManager.CurrentPower.isInitialValue && dataManager.currentIgnitionState >= VehicleIgnitionState.ON) {
+                    val usedEnergyDelta = (dataManager.currentPower / 1_000) * ((dataManager.CurrentPower.timeDelta / 3.6E12).toFloat())
+                    dataManager.usedEnergy += usedEnergyDelta
+                    dataManager.consumptionPlotEnergyDelta += usedEnergyDelta
+                }
             }
         }
     }
@@ -550,12 +561,17 @@ class DataCollector : Service() {
     private fun ignitionUpdater(dataManager: DataManager) {
         if (dataManager == DataManagers.values().first().dataManager) {
             InAppLogger.d("Ignition switched to: ${ignitionList[dataManager.currentIgnitionState]}")
+
         }
+        val previousDrivingState = dataManager.DriveState.lastDriveState
+        resetAutoTrips(previousDrivingState, dataManager, dataManager.currentIgnitionState)
         driveStateUpdater(dataManager)
     }
 
     private fun driveState(previousDrivingState: Int, dataManager: DataManager) {
-        resetAutoTrips(previousDrivingState, DrivingState.DRIVE, dataManager)
+        if (dataManager == DataManagers.CURRENT_TRIP.dataManager) startLocationClient()
+        // resetAutoTrips(previousDrivingState, DrivingState.DRIVE, dataManager)
+        resetAutoTrips(previousDrivingState, dataManager, dataManager.currentIgnitionState)
         resumeTrip(dataManager)
         if (previousDrivingState == DrivingState.CHARGE) stopChargingSession(dataManager)
         if (previousDrivingState != DrivingState.UNKNOWN) dataManager.plotMarkers.endMarker(System.currentTimeMillis(), dataManager.traveledDistance)
@@ -573,7 +589,8 @@ class DataCollector : Service() {
     }
 
     private fun parkState(previousDrivingState: Int, dataManager: DataManager) {
-        resetAutoTrips(previousDrivingState, DrivingState.PARKED, dataManager)
+        // resetAutoTrips(previousDrivingState, DrivingState.PARKED, dataManager)
+        resetAutoTrips(previousDrivingState, dataManager, dataManager.currentIgnitionState)
         if (previousDrivingState == DrivingState.DRIVE){
             pauseTrip(dataManager)
             dataManager.plotMarkers.addMarker(PlotMarkerType.PARK, System.currentTimeMillis(), dataManager.traveledDistance)
@@ -808,11 +825,12 @@ class DataCollector : Service() {
         }
     }
 
-    private fun resetAutoTrips(previousDrivingState: Int, newDrivingState: Int, dataManager: DataManager) {
+    private fun resetAutoTrips(previousDrivingState: Int, /*newDrivingState: Int, */ dataManager: DataManager, newIgnitionState: Int) {
         // Handle resets on different dataManagers
         if (DataManagers.CURRENT_MONTH.dataManager == dataManager &&
             DataManagers.CURRENT_MONTH.doTrack &&
-            newDrivingState == DrivingState.DRIVE) {
+            // newDrivingState == DrivingState.DRIVE) {
+            newIgnitionState == VehicleIgnitionState.ON) {
             // Reset if in different Month than start and save old month
             if (Date().month != DataManagers.CURRENT_MONTH.dataManager.tripStartDate.month) {
                 InAppLogger.i("TRIP DATA: Saving past Month")
@@ -826,7 +844,8 @@ class DataCollector : Service() {
         }
         if (DataManagers.AUTO_DRIVE.dataManager == dataManager &&
             DataManagers.AUTO_DRIVE.doTrack &&
-            newDrivingState == DrivingState.DRIVE) {
+            // newDrivingState == DrivingState.DRIVE) {
+            newIgnitionState == VehicleIgnitionState.ON) {
             // Reset if parked for x hours
             if (DataManagers.AUTO_DRIVE.dataManager.plotMarkers.markers.isNotEmpty()) {
                 if (
@@ -844,6 +863,30 @@ class DataCollector : Service() {
             DataManagers.SINCE_CHARGE.dataManager.reset()
             InAppLogger.i("Resetting ${DataManagers.SINCE_CHARGE.dataManager.printableName}")
         }
+    }
+
+    private fun startLocationClient() {
+        locationClientJob?.cancel()
+
+        locationClient = DefaultLocationClient(
+            CarStatsViewer.appContext,
+            LocationServices.getFusedLocationProviderClient(this)
+        )
+
+        locationClientJob = locationClient
+            .getLocationUpdates(5_000L)
+            .catch { e ->
+                InAppLogger.e("LocationClient: ${e.message}")
+            }
+            .onEach { location ->
+                enumValues<DataManagers>().forEach {
+                    it.dataManager.location = location
+                }
+                if (location != null) {
+                    InAppLogger.d("Location: lat: %.5f, lon: %.5f, alt: %.2fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
+                }
+            }
+            .launchIn(serviceScope)
     }
 
     private val ignitionList = listOf<String>(

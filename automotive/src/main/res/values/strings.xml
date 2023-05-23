@@ -9,14 +9,24 @@
     <string name="githug_issues_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/issues</string>
     <string-array name="contributors" translatable="false">
         <item>Dario Bosshard</item>
-        <item>DoubleYouEl</item>
-        <item>Robin Hellström</item>
-        <item>jschlyter</item>
-        <item>Oddvarr</item>
         <item>FreshDave29</item>
         <item>rdu</item>
-        <item>Emil Blixt Hansen</item>
         <item>Jannick Fahlbusch</item>
+    </string-array>
+    <string-array name="translators" translatable="false">
+        <item>DoubleYouEl</item>
+        <item>Robin Hellström</item>
+        <item>Jakob Schlyter</item>
+        <item>Oddvarr</item>
+        <item>Emil Blixt Hansen</item>
+        <item>Ian Mascarenhas</item>
+        <item>Dominik Brüning</item>
+        <item>Juha Mönkkönen</item>
+        <item>Ossi Lahtinen</item>
+        <item>J-P</item>
+        <item>Laurent Vitalis</item>
+        <item>Jere Kataja</item>
+        <item>Pedro Leite</item>
     </string-array>
     <string-array name="supporters" translatable="false">
         <item>Ahti Hinnov</item>
@@ -29,6 +39,19 @@
         <item>Peter Füllhase</item>
         <item>Lukas Bruckenberger</item>
         <item>Stefan Süssenguth</item>
+        <item>Jürgen Bereuter</item>
+        <item>Markus Enseroth</item>
+        <item>Jacob Frostholm</item>
+        <item>Christoffer Gennerud</item>
+        <item>Samuel Lodyga</item>
+    </string-array>
+
+    <string-array name="changes_0_24_1">
+        <item>Altitude change added in trip summary (experimental)</item>
+        <item>Fixed wrong units in summary diagram</item>
+        <item>Fixed wrong dates of charging sessions in summary</item>
+        <item>Improved restart notification conditions</item>
+        <item>Changed energy tracking conditions (experimental)</item>
     </string-array>
 
     <string-array name="changes_0_24">
@@ -121,6 +144,7 @@
     <string name="summary_charge_time">Charge time</string>
     <string name="summary_charge_ambient_temp">Ambient temperature</string>
     <string name="summary_interruption_warning">Recording of charging session has been interrupted. This value is probably incorrect.</string>
+    <string name="summary_altitude">Altitude change</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
@@ -192,6 +216,7 @@
     <string name="about_support">Support the development</string>
     <string name="about_support_description">View the GitHub-repository to learn more about how to support the development of the app.</string>
     <string name="about_contributors">Contributors</string>
+    <string name="about_translators">Translators</string>
     <string name="about_section_feedback">Feedback:</string>
     <string name="about_section_misc">Miscellaneous:</string>
     <string name="about_github_issues_description">This is the best place for bug reports and feature requests. Please read the existing issues before opening a new one.</string>

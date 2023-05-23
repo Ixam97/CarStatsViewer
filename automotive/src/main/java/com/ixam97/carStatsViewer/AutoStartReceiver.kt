@@ -19,17 +19,32 @@ class AutoStartReceiver: BroadcastReceiver() {
             "crash" to context.getString(R.string.restart_notification_reason_crash),
             "reboot" to context.getString(R.string.restart_notification_reason_reboot),
             "update" to context.getString(R.string.restart_notification_reason_update),
+            "termination" to "an unexpected termination"
         )
         var reason: String? = null
 
+        InAppLogger.d("AutoStartReceiver, Service started: ${CarStatsViewer.foregroundServiceStarted}, dismissed: ${CarStatsViewer.restartNotificationDismissed}")
+
         if (!CarStatsViewer.appPreferences.autostart) return
+        if (CarStatsViewer.foregroundServiceStarted) return
+        if (CarStatsViewer.restartNotificationDismissed) return
 
         intent?.let {
+            InAppLogger.d("${intent.toString()} ${intent.extras?.keySet().let { key ->
+                val stringBuilder = StringBuilder()
+                key?.forEach { 
+                    stringBuilder.append("$it ")
+                }
+                stringBuilder.toString()
+            }}")
             if (intent.hasExtra("dismiss"))
             {
-                CarStatsViewer.restartNotificationDismissed = true
-                CarStatsViewer.notificationManager.cancel(CarStatsViewer.RESTART_NOTIFICATION_ID)
-                return
+                if (intent.getBooleanExtra("dismiss", false)) {
+                    CarStatsViewer.restartNotificationDismissed = true
+                    CarStatsViewer.notificationManager.cancel(CarStatsViewer.RESTART_NOTIFICATION_ID)
+                    InAppLogger.d("AutoStartReceiver: Dismiss intent")
+                    return
+                }
             }
             reason = if (intent.hasExtra("reason")) {
                 reasonMap[intent.getStringExtra("reason")]
@@ -42,7 +57,7 @@ class AutoStartReceiver: BroadcastReceiver() {
             }
         }
 
-        InAppLogger.i("AutStartReceiver fired. Reason: $reason")
+        InAppLogger.i("AutoStartReceiver fired. Reason: $reason")
 
         val notificationText =
             if (reason != null) {
@@ -59,15 +74,6 @@ class AutoStartReceiver: BroadcastReceiver() {
             },
             PendingIntent.FLAG_IMMUTABLE
         )
-
-        val actionDismissPendingIntent = PendingIntent.getBroadcast(
-            context.applicationContext,
-            0,
-            Intent(context.applicationContext, this.javaClass).apply {
-                putExtra("dismiss", "")
-            },
-            PendingIntent.FLAG_ONE_SHOT
-        )
         val actionActivityPendingIntent = PendingIntent.getActivity(
             context.applicationContext,
             0,
@@ -82,7 +88,7 @@ class AutoStartReceiver: BroadcastReceiver() {
             .setContentTitle(notificationText)
             .setContentText(context.getString(R.string.restart_notification_message))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setOngoing(true)
+            .setOngoing(false)
 
         startupNotificationBuilder.apply {
             addAction(Notification.Action.Builder(
@@ -98,7 +104,14 @@ class AutoStartReceiver: BroadcastReceiver() {
             addAction(Notification.Action.Builder(
                     null,
                 context.getString(R.string.restart_notification_dismiss),
-                    actionDismissPendingIntent
+                PendingIntent.getBroadcast(
+                    context.applicationContext,
+                    0,
+                    Intent(context.applicationContext, AutoStartReceiver::class.java).apply {
+                        putExtra("dismiss", true)
+                    },
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
             ).build())
         }
 

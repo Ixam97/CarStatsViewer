@@ -13,6 +13,7 @@ import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManager
 import com.ixam97.carStatsViewer.dataManager.DrivingState
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
+import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import java.io.DataOutputStream
 import java.net.HttpURLConnection
@@ -162,7 +163,10 @@ class HttpLiveData (
                 // Helpers
                 isCharging = dataManager.chargePortConnected,
                 isParked = (dataManager.driveState == DrivingState.PARKED || dataManager.driveState == DrivingState.CHARGE),
-                isFastCharging = (dataManager.chargePortConnected && dataManager.currentPower < -11_000_000)
+                isFastCharging = (dataManager.chargePortConnected && dataManager.currentPower < -11_000_000),
+
+                // ABRP debug
+                abrpPackage = (CarStatsViewer.liveDataApis[0] as AbrpLiveData).lastPackage
             )
         )
     }

@@ -119,6 +119,12 @@
             <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
 
             <TextView
+                android:id="@+id/about_translators"
+                style="@style/menu_button_row_style"
+                android:text="@string/about_translators"/>
+            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+
+            <TextView
                 android:id="@+id/about_supporters"
                 style="@style/menu_button_row_style"
                 android:text="@string/about_supporters"/>
@@ -260,6 +266,7 @@
                 android:text="@string/about_third_party_licenses"/>
             <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
             <TextView
+                android:visibility="gone"
                 android:id="@+id/privacy_info"
                 style="@style/menu_button_row_style"
                 android:text="Privacy information"/>

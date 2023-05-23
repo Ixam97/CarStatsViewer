@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Tillatelser er nødvendig for bruk</string>
     <string name="permissions_dialog_text">Denne appen trenger Tillatelser for å kunne brukes. Uten nødvendige tillatelser kan ikke appen lese data fra bilen.</string>
     <string name="permissions_dialog_quit">Avslutt Car Stats Viewer</string>
     <string name="permissions_dialog_grant">Gi tillatelser</string>
-    <string name="plot_dimensionY_SPEED">Hastighet</string>
+    <!-- MainActivity -->
     <string name="main_port_connected">Ladeport tilkoblet:</string>
     <string name="main_current_power">Nåværende effekt trekk:</string>
     <string name="main_used_energy">Brukt energi:</string>
@@ -15,8 +16,6 @@
     <string name="main_button_reset_stats">Resett statistikker</string>
     <string name="main_consumption">Forbruk over de 3 sist km:</string>
     <string name="main_speed">Hastighet</string>
-    <string name="main_dialog_reset_title">Resett snitt?</string>
-    <string name="main_dialog_reset_message">Alle lagrede turer vil bli resatt til null.</string>
     <string name="main_gage_speed">Hastighet</string>
     <string name="main_gage_power">Effekt</string>
     <string name="main_gage_charging_power">Ladeeffekt</string>
@@ -28,6 +27,7 @@
     <string name="main_button_hide_speed">Skjul hastighet</string>
     <string name="main_button_show_speed">Vis hastighet</string>
     <string name="main_secondary_axis">Sekundær akse:%s</string>
+    <!-- SummaryActivity -->
     <string name="summary_title">Tur oppsummering</string>
     <string name="summary_button_reset_trip">Resett tur</string>
     <string name="summary_parked_warning">Visning er kun tilgjengelig når parkert.</string>
@@ -42,12 +42,12 @@
     <string name="summary_charge_time">Ladetid</string>
     <string name="summary_charge_ambient_temp">Omgivelsestemperatur</string>
     <string name="summary_interruption_warning">Opptak av ladesesjonen er avbrutt. Denne verdien er sannsynligvis feil.</string>
+    <!-- SettingsActivity -->
     <string name="settings_title">Innstillinger</string>
     <string name="settings_button_back">Tilbake</string>
     <string name="settings_button_quit">Avslutt app</string>
     <string name="settings_notifications">Varslinger</string>
     <string name="settings_consumption_unit">Wh/km som forbruksenhet</string>
-    <string name="settings_distance_unit">Miles som distanseenhet</string>
     <string name="settings_debug">Feilsøk informasjon</string>
     <string name="settings_experimental_layout">Vis eksperimentell visning</string>
     <string name="settings_consumption_plot">Forbruksvisning</string>
@@ -61,6 +61,7 @@
     <string name="settings_sub_title_settings">Innstillinger:</string>
     <string name="settings_sub_title_current_cons_plot">Nåværende forbruksgraf:</string>
     <string name="settings_sub_title_last_charge_plot">Siste ladekurver:</string>
+    <!-- AboutActivity -->
     <string name="about_title">Om Car Stats Viewer</string>
     <string name="about_section_about">Om Car Stats Viewer:</string>
     <string name="about_support">Støtt utviklingen</string>
@@ -75,6 +76,7 @@
     <string name="about_supporters">Supportere</string>
     <string name="about_thank_you">Takk!</string>
     <string name="about_supporters_message">Mange takk til alle som har støttet utviklingen av Car Stats Viewer!</string>
+    <!-- Quit Dialog -->
     <string name="quit_dialog_title">Avslutt app?</string>
     <string name="quit_dialog_message">Loggen vil bli kopiert til utklippstavlen.</string>
     <string name="dialog_close">Lukk</string>
@@ -85,7 +87,9 @@
     <string name="dialog_reset_cancel">Avbryt</string>
     <string name="dialog_confirm">Ja</string>
     <string name="dialog_dismiss">Nei</string>
+    <!-- LogActivity -->
     <string name="log_title">Feilsøk</string>
+    <!-- Notifications -->
     <string name="notification_title">Nåværende statistikker:</string>
     <string name="foreground_service_info">Service for datainnsamling kjører</string>
     <string name="toast_file_read_error">Feil ved lesing av turfil</string>
@@ -107,4 +111,69 @@
         <item>Forskjellige feilrettinger og stabilitetsforbedringer</item>
     </string-array>
     <string name="main_changelog_dialog_title">Changes in version %s:</string>
+    <string name="settings_apis_title">API-innstillinger</string>
+    <!-- Restart Dialog -->
+    <string name="restart_notification_title" formatted="false">%s har restartet etter %s,</string>
+    <string name="restart_notification_reason_crash">en krasj</string>
+    <string name="restart_notification_reason_reboot">en reboot</string>
+    <string name="restart_notification_reason_update">en oppdatering</string>
+    <string name="restart_notification_message">Vennligst restart services for statistikksporing</string>
+    <string name="restart_notification_dismiss">Avslå</string>
+    <string name="restart_notification_app">Start app</string>
+    <string name="restart_notification_service">Start service</string>
+    <string name="restart_toast_background">Service for sporingsstatistikk har startet i bakgrunnen</string>
+    <string name="settings_title_generic">Generiske innstillinger:</string>
+    <string name="settings_title_misc">Forskjellige innstillinger:</string>
+    <string name="settings_main_view">Hovedvisning</string>
+    <string name="settings_apis_abrp">ABRP Live Data</string>
+    <string name="settings_apis_http">HTTP Webhook</string>
+    <string name="settings_apis_smtp">SMTP Login</string>
+    <string name="settings_apis_use">Bruk API</string>
+    <!-- ABRP -->
+    <string name="abrp_description">Legg inn ABRP generisk token for å sende over-the-air live data til ABRP-servere. Dette inkluderer lokasjonsdata om det ikke er slått av.</string>
+    <string name="abrp_generic_token">Generisk token</string>
+    <!-- HTTP -->
+    <string name="http_description">Legg inn HTTP URL og (valgfri) BasicAuth legitimasjon for å sende live data til den spesifisert URL. Bruker POST forespørsel med JSON innhold. Dette inneholder lokasjonsdata om det ikke er slått av.</string>
+    <string name="http_username">BasicAuth brukernavn</string>
+    <string name="http_password">BasicAuth passord</string>
+    <string name="http_invalid_url">Ugyldig URL!</string>
+    <!-- SMTP -->
+    <string name="smtp_description">Legg inn dine SMTP legitimasjon fra din Epostleverandør. Den er brukt for å sende lagrede statistikker og feilllogger til måladressen gitt av brukeren.</string>
+    <string name="smtp_address">Epostadresse</string>
+    <string name="smtp_password">SMTP passord</string>
+    <string name="smtp_server">SMTP server-hostname</string>
+    <string name="smtp_port">SMPT server-port</string>
+    <string name="smtp_use_STARTTLS">Bruk STARTTLS</string>
+    <!-- Vehicle Setup -->
+    <string name="vehicle_title">Biloppsett</string>
+    <string name="vehicle_my">Årsmodell</string>
+    <string name="vehicle_drivetrain">Drivverk</string>
+    <string name="vehicle_plus">Plus-pakke</string>
+    <string name="vehicle_performance">Performance-oppgradering</string>
+    <string name="vehicle_bst">BST-utgave</string>
+    <string name="vehicle_launch">Launch-utgave</string>
+    <string-array name="changes_0_24">
+        <item>Lagt til flere live-data API:
+-APRP OTA live data
+-HTTP Webhook med BasicAuth</item>
+        <item>Lagt til lokasjonssporing og elevasjonshistorie</item>
+        <item>Lagt til notifikasjon for restart etter reboot, oppdatering eller app krasj</item>
+        <item>Lagt til bil oppsett</item>
+        <item>Restrukturert innstillingsmeny</item>
+        <item>Fikset hovedvisning enheter ikke oppdateres</item>
+        <item>Generelle bugfixer og stabilitetsforbedringer</item>
+    </string-array>
+    <string name="settings_use_location">Lokasjonssporing</string>
+    <string name="settings_autostart">Automatisk app-start</string>
+    <string name="plot_dimensionY_SPEED">Hastighet</string>
+    <string name="plot_dimensionY_ALTITUDE">Høyde</string>
+    <string-array name="changes_0_24_1">
+        <item>Høydeendring lagt til i tursammendrag (eksperimentell)</item>
+        <item>Rettet feil enheter i oppsummeringsdiagram</item>
+        <item>Rettet feil datoer for ladeøkter i oppsummering</item>
+        <item>Forbedret restartsvarsler forhold</item>
+        <item>Endret energisporingsforhold (eksperimentell)</item>
+    </string-array>
+    <string name="summary_altitude">Høydeendring</string>
+    <string name="about_translators">Oversettere</string>
 </resources>
