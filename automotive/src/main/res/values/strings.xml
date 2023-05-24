@@ -178,6 +178,9 @@
     <string name="settings_apis_smtp">SMTP Login</string>
     <string name="settings_apis_use">Use API</string>
 
+    <!-- HistoryActivity -->
+    <string name="history_title">Trip history</string>
+
     <!-- ABRP -->
     <string name="abrp_description">Enter an ABRP generic token to transmit over-the-air live data to the ABRP servers. This includes location data if not disabled.</string>
     <string name="abrp_generic_token">Generic token</string>
@@ -200,6 +203,14 @@
     <string name="SinceChargeData">Since last charge</string>
     <string name="AutoTripData">Automatic trip</string>
     <string name="CurrentMonthData">Current month</string>
+
+    <string-array name="trip_type_names">
+        <item>Unknown trip type</item>
+        <item>Manual trip</item>
+        <item>Automatic trip</item>
+        <item>Since charge</item>
+        <item>Month</item>
+    </string-array>
 
     <!-- Vehicle Setup -->
     <string name="vehicle_title">Vehicle setup</string>

@@ -58,6 +58,8 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
     private lateinit var timerHandler: Handler
     private lateinit var context: Context
 
+    private lateinit var carStatsViewer: CarStatsViewer
+
     private var selectedDataManager = DataManagers.CURRENT_TRIP.dataManager
 
     private var updateUi = false
@@ -172,11 +174,11 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        carStatsViewer = applicationContext as CarStatsViewer
 
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val carStatsViewer = applicationContext as CarStatsViewer
 
                 carStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
                     // Do stuff with live data
@@ -203,7 +205,6 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val carStatsViewer = applicationContext as CarStatsViewer
                 carStatsViewer.tripDataManager.drivingTripDataFlow.collectLatest {
                     // InAppLogger.v("TripData: Driven Distance: ${it.drivenDistance}")
                     neoDistance = it.drivenDistance
@@ -271,7 +272,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
 
         main_button_performance.isEnabled = true
         main_button_performance.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
-        main_button_history.isEnabled = false
+        main_button_history.isEnabled = true
         main_button_history.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
 
 
@@ -597,6 +598,18 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
 
         main_button_performance.setOnClickListener {
             throw IOException()
+        }
+
+        main_button_history.setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
+            CoroutineScope(Dispatchers.IO).launch {
+                val drivingSessions = CarStatsViewer.tripDataSource.getPastDrivingSessions()
+
+                drivingSessions.forEach {
+                    InAppLogger.d("Driving Session: ${it.driving_session_id}, Type: ${it.session_type}, Distance: ${it.driven_distance}, Energy: ${it.used_energy}")
+                }
+            }
         }
     }
 
