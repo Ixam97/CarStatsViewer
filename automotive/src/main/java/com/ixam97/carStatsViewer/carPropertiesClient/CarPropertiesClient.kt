@@ -18,6 +18,7 @@ class CarPropertiesClient(
 
     fun updateProperty(propertyId: Int) {
         carPropertiesData.update(carPropertyManager.getProperty<Any>(propertyId, 0), allowInvalidTimestamps = true)
+        propertiesProcessor(propertyId)
     }
 
     fun getIntProperty(propertyId: Int, areaId: Int = 0) = carPropertyManager.getIntProperty(propertyId,areaId)

@@ -17,10 +17,10 @@ class LocalTripDataSource(
 
     override suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long? {
         endDrivingSession(timestamp, prevSessionId)?.let {
-            InAppLogger.i("Driving session with ID $prevSessionId has been superseded")
+            InAppLogger.d("[DB] Driving session with ID $prevSessionId has been superseded")
             return startDrivingSession(timestamp, it)
         }
-        InAppLogger.w("Driving session with ID $prevSessionId has not been superseded!")
+        InAppLogger.w("[DB] Driving session with ID $prevSessionId has not been superseded!")
         return null
     }
 
@@ -90,7 +90,7 @@ class LocalTripDataSource(
         val earliestEpochTime = tripDao.getEarliestEpochTime()
         val deletedCrossRefs = tripDao.clearOldDrivingSessionPointCrossRefs(sessionId)
         val deletedDrivingPoints = tripDao.clearOldDrivingPoints(earliestEpochTime)
-        InAppLogger.i("Deleted session ID: $sessionId ($deletedSessions sessions, $deletedCrossRefs cross refs, $deletedDrivingPoints driving points)")
+        InAppLogger.d("[DB] Deleted session ID: $sessionId ($deletedSessions sessions, $deletedCrossRefs cross refs, $deletedDrivingPoints driving points)")
     }
 
     override suspend fun addChargingPoint(chargingPoint: ChargingPoint) {

@@ -5,4 +5,11 @@ object TripType {
     val AUTO = 2
     val SINCE_CHARGE = 3
     val MONTH = 4
+
+    val tripTypesNameMap = mapOf(
+        MANUAL to "manual",
+        AUTO to "auto",
+        SINCE_CHARGE to "since charge",
+        MONTH to "monthly"
+    )
 }

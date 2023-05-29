@@ -73,10 +73,6 @@ class CarStatsViewer : Application() {
 
             val drivingSessionIds = tripDataSource.getActiveDrivingSessionsIdsMap()
             InAppLogger.d("Trip Database: $drivingSessionIds")
-
-            if (drivingSessionIds.isEmpty()) {
-                tripDataSource.startDrivingSession(System.currentTimeMillis(), TripType.MANUAL)
-            }
         }
 
         val typedValue = TypedValue()

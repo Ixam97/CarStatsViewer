@@ -1,8 +1,9 @@
 package com.ixam97.carStatsViewer.dataProcessor
 
-import android.util.Log
-import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.dataManager.DrivingState
+import com.ixam97.carStatsViewer.database.tripData.TripType
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +30,36 @@ class TripDataManager {
     private val _chargingTripDataFlow = MutableStateFlow(chargingTripData)
     val chargingTripDataFlow = _chargingTripDataFlow.asStateFlow()
 
-    fun newDrivingState(drivingState: Int) {
+    fun newDrivingState(drivingState: Int, oldDrivingState: Int) {
+        /** Reset "since charge" after unplugging" */
+        if (drivingState != DrivingState.CHARGE && oldDrivingState == DrivingState.CHARGE) {
+            CoroutineScope(Dispatchers.IO).launch {
+                resetTrip(TripType.SINCE_CHARGE)
+            }
+        }
+        /** Reset "monthly" when last driving point has date in last month */
+        /** Reset "Auto" when last driving point is more than 4h old */
+    }
+
+    suspend fun resetTrip(tripType: Int) {
+        /** Reset the specified trip type. If none exists, create a new one */
+        //CoroutineScope(Dispatchers.IO).launch {
+            val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
+            val drivingSessionId = drivingSessionsIdsMap[tripType]
+            if (drivingSessionId != null) {
+                CarStatsViewer.tripDataSource.supersedeDrivingSession(
+                    drivingSessionId,
+                    System.currentTimeMillis()
+                )
+                InAppLogger.i("[NEO] Superseded trip of type ${TripType.tripTypesNameMap[tripType]}")
+            } else {
+                CarStatsViewer.tripDataSource.startDrivingSession(
+                    System.currentTimeMillis(),
+                    tripType
+                )
+                InAppLogger.w("[NEO] No trip of type ${TripType.tripTypesNameMap[tripType]} existing, starting new trip")
+            }
+        //}
     }
 
     fun newDrivingDeltas(distanceDelta: Double, energyDelta: Double) {
@@ -74,5 +104,27 @@ class TripDataManager {
         )
 
         // Update database
+    }
+
+    fun checkTrips() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
+            if (!drivingSessionsIdsMap.contains(TripType.MANUAL)) {
+                CarStatsViewer.tripDataSource.startDrivingSession(System.currentTimeMillis(), TripType.MANUAL)
+                InAppLogger.i("[NEO] Created manual trip")
+            }
+            if (!drivingSessionsIdsMap.contains(TripType.MONTH)) {
+                CarStatsViewer.tripDataSource.startDrivingSession(System.currentTimeMillis(), TripType.MONTH)
+                InAppLogger.i("[NEO] Created monthly trip")
+            }
+            if (!drivingSessionsIdsMap.contains(TripType.SINCE_CHARGE)) {
+                CarStatsViewer.tripDataSource.startDrivingSession(System.currentTimeMillis(), TripType.SINCE_CHARGE)
+                InAppLogger.i("[NEO] Created since charge trip")
+            }
+            if (!drivingSessionsIdsMap.contains(TripType.AUTO)) {
+                CarStatsViewer.tripDataSource.startDrivingSession(System.currentTimeMillis(), TripType.AUTO)
+                InAppLogger.i("[NEO] Created auto trip")
+            }
+        }
     }
 }

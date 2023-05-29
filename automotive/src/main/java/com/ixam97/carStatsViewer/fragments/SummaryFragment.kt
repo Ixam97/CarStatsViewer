@@ -437,7 +437,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             .setCancelable(true)
             .setPositiveButton(getString(R.string.dialog_reset_do_save)) { _, _ ->
                 // DataCollector.CurrentTripDataManager.reset()
-                (applicationContext as CarStatsViewer).dataProcessor.resetManualTrip()
+                // (applicationContext as CarStatsViewer).dataProcessor.resetManualTrip()
                 applicationContext.sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
                 //applicationContext.finish()
                 //applicationContext.overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)

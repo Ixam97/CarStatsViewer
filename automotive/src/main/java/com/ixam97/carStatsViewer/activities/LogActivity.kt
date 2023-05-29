@@ -7,6 +7,7 @@ import android.util.Patterns
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -153,6 +154,7 @@ class LogActivity : FragmentActivity() {
                 val layout = LayoutInflater.from(context).inflate(R.layout.dialog_log_settings, null)
 
                 val log_level_multiselect = layout.findViewById<MultiSelectWidget>(R.id.log_level_multiselect)
+                val log_limit_edit_text = layout.findViewById<EditText>(R.id.log_limit_edit_text)
 
                 log_level_multiselect.entries = arrayListOf<String>(
                     "Verbose",

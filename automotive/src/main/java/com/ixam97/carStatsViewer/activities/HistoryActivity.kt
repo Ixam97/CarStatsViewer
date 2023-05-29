@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.airbnb.paris.extensions.style
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.MultiLineRowButtonWidget
 import kotlinx.android.synthetic.main.activity_history.*
@@ -49,14 +50,13 @@ class HistoryActivity  : Activity() {
         }
 
         history_button_reset.setOnClickListener {
-            (applicationContext as CarStatsViewer).dataProcessor.resetManualTrip()
             CoroutineScope(Dispatchers.Default).launch {
                 val newIntent = Intent(intent)
                 newIntent.putExtra("noTransition", true)
                 runOnUiThread {
                     history_linear_layout.removeAllViews()
                 }
-                delay(500)
+                (applicationContext as CarStatsViewer).tripDataManager.resetTrip(TripType.MANUAL)
                 finish();
                 startActivity(newIntent);
             }
@@ -65,7 +65,7 @@ class HistoryActivity  : Activity() {
         CoroutineScope(Dispatchers.IO).launch {
             runOnUiThread {
                 val currentSessionsHeadLine = TextView(this@HistoryActivity)
-                currentSessionsHeadLine.text = "Current sessions:"
+                currentSessionsHeadLine.text = "Current trips:"
                 currentSessionsHeadLine.style(R.style.menu_section_title_style)
                 history_linear_layout.addView(currentSessionsHeadLine)
                 val divider = View(this@HistoryActivity)
@@ -99,7 +99,7 @@ class HistoryActivity  : Activity() {
 
             runOnUiThread {
                 val pastSessionsHeadLine = TextView(this@HistoryActivity)
-                pastSessionsHeadLine.text = "Past sessions:"
+                pastSessionsHeadLine.text = "Past trips:"
                 pastSessionsHeadLine.style(R.style.menu_section_title_style)
                 history_linear_layout.addView(pastSessionsHeadLine)
                 val divider = View(this@HistoryActivity)

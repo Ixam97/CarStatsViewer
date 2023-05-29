@@ -74,9 +74,9 @@ class DataProcessor(
         }
     }
 
-    fun resetManualTrip() {
-        updateDrivingDataPoint(null, true)
-    }
+    // fun resetManualTrip() {
+    //     updateDrivingDataPoint(null, true)
+    // }
 
     private fun speedUpdate() {
         if (carPropertiesData.CurrentSpeed.timeDelta > 0 && realTimeData.drivingState == DrivingState.DRIVE) {
@@ -111,12 +111,14 @@ class DataProcessor(
                 DrivingState.DRIVE -> updateDrivingDataPoint(PlotLineMarkerType.BEGIN_SESSION.int)
                 DrivingState.PARKED -> updateDrivingDataPoint(PlotLineMarkerType.END_SESSION.int)
             }
-            tripDataManager.newDrivingState(drivingState)
+            tripDataManager.newDrivingState(drivingState, previousDrivingState)
+        } else if (drivingState != previousDrivingState && previousDrivingState == DrivingState.UNKNOWN) {
+            InAppLogger.i("[NEO] Initial drive state: ${DrivingState.nameMap[drivingState]}")
         }
         previousDrivingState = drivingState
     }
 
-    private fun updateDrivingDataPoint(markerType: Int? = null, doReset: Boolean = false) {
+    private fun updateDrivingDataPoint(markerType: Int? = null) {
         usedEnergySum += pointUsedEnergy
         InAppLogger.v("[NEO] Driven distance: $pointDrivenDistance, Used energy: $usedEnergySum")
 
@@ -140,16 +142,16 @@ class DataProcessor(
 
             updateTripDataValues(DrivingState.DRIVE)
 
-            if (doReset) {
-                val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
-                InAppLogger.i("[NEO] drivingSessionsIdsMap: $drivingSessionsIdsMap")
-                val drivingSessionId = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[TripType.MANUAL]
-                if (drivingSessionId != null) {
-                    CarStatsViewer.tripDataSource.supersedeDrivingSession(drivingSessionId, System.currentTimeMillis())
-                } else {
-                    CarStatsViewer.tripDataSource.startDrivingSession(System.currentTimeMillis(), TripType.MANUAL)
-                }
-            }
+            // if (doReset) {
+            //     val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
+            //     InAppLogger.i("[NEO] drivingSessionsIdsMap: $drivingSessionsIdsMap")
+            //     val drivingSessionId = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[TripType.MANUAL]
+            //     if (drivingSessionId != null) {
+            //         CarStatsViewer.tripDataSource.supersedeDrivingSession(drivingSessionId, System.currentTimeMillis())
+            //     } else {
+            //         CarStatsViewer.tripDataSource.startDrivingSession(System.currentTimeMillis(), TripType.MANUAL)
+            //     }
+            // }
         }
     }
 

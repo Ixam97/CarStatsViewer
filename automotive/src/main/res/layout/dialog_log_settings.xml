@@ -13,4 +13,26 @@
         android:layout_height="wrap_content"
         app:title="Logging level"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/menu_row_top_text"
+            android:layout_width="wrap_content"
+            android:text="Number of log entries:"
+            android:layout_marginEnd="20dp"/>
+
+        <EditText
+            android:id="@+id/log_limit_edit_text"
+            android:hint="Number of log entries"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/std_font_size"
+            android:inputType="number|numberDecimal"/>
+
+    </LinearLayout>
+
 </LinearLayout>

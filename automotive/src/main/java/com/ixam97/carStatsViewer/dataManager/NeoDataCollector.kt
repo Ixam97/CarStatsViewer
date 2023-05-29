@@ -13,6 +13,7 @@ import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesClient
 import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
+import com.ixam97.carStatsViewer.dataProcessor.TripDataManager
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
@@ -34,6 +35,7 @@ class NeoDataCollector: Service() {
 
     private lateinit var carPropertiesClient: CarPropertiesClient
     private lateinit var dataProcessor: DataProcessor
+    private lateinit var tripDataManager: TripDataManager
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -61,6 +63,10 @@ class NeoDataCollector: Service() {
         }
 
         dataProcessor  = (applicationContext as CarStatsViewer).dataProcessor
+        tripDataManager = (applicationContext as CarStatsViewer).tripDataManager
+
+        tripDataManager.checkTrips()
+
         carPropertiesClient = CarPropertiesClient(
             context = applicationContext,
             propertiesProcessor = dataProcessor::processProperty,
@@ -80,6 +86,10 @@ class NeoDataCollector: Service() {
                 Intent(applicationContext, MainActivity::class.java),
                 PendingIntent.FLAG_IMMUTABLE
             )
+        )
+
+        dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
+            batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY)
         )
 
         if (carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL) == "Speedy Model") {
@@ -126,16 +136,8 @@ class NeoDataCollector: Service() {
 
         carPropertiesClient.getCarPropertiesUpdates()
 
-        dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
-            batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY)
-        )
-
         CarProperties.usedProperties.forEach {
             carPropertiesClient.updateProperty(it)
-        }
-
-        serviceScope.launch {
-
         }
     }
 
