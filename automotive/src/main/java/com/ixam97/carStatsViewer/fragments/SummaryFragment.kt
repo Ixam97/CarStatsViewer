@@ -25,6 +25,7 @@ import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.fragment_summary.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
@@ -492,5 +493,8 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
     }
     private fun refreshActivity(index: Int) {
         refreshActivity(DataManagers.values()[index].dataManager)
+        CoroutineScope(Dispatchers.IO).launch {
+            (applicationContext as CarStatsViewer).tripDataManager.changeSelectedTrip(index + 1)
+        }
     }
 }

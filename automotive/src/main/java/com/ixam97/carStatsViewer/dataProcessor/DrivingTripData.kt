@@ -5,5 +5,6 @@ data class DrivingTripData(
     val usedEnergy: Double = 0.0,
     val avgConsumption: Float = 0f,
     val travelTime: Long = 0L,
-    val remainingRange: Double = 0.0
+    val remainingRange: Double = 0.0,
+    val selectedTripType: Int = 1
 )

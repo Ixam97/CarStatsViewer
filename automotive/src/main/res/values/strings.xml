@@ -207,8 +207,8 @@
     <string-array name="trip_type_names">
         <item>Unknown trip type</item>
         <item>Manual trip</item>
-        <item>Automatic trip</item>
         <item>Since charge</item>
+        <item>Automatic trip</item>
         <item>Month</item>
     </string-array>
 

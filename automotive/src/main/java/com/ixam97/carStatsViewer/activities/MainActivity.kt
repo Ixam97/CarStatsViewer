@@ -66,6 +66,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
     private var lastPlotUpdate: Long = 0L
 
     private var neoDistance: Double = 0.0
+    private var neoEnergy: Double = 0.0
 
     private val updateActivityTask = object : Runnable {
         override fun run() {
@@ -208,6 +209,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
                 carStatsViewer.tripDataManager.drivingTripDataFlow.collectLatest {
                     // InAppLogger.v("TripData: Driven Distance: ${it.drivenDistance}")
                     neoDistance = it.drivenDistance
+                    neoEnergy = it.usedEnergy
                     updateActivity()
                 }
             }
@@ -322,9 +324,9 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
         setUiVisibilities()
         // updateGages()
 
-        main_gage_avg_consumption_text_view.text = "  Ø %s".format(StringFormatters.getAvgConsumptionString(selectedDataManager.usedEnergy, selectedDataManager.traveledDistance))
-        main_gage_distance_text_view.text = "  %s (neo: %.1f)".format(StringFormatters.getTraveledDistanceString(selectedDataManager.traveledDistance), neoDistance/1000.0)
-        main_gage_used_power_text_view.text = "  %s".format(StringFormatters.getEnergyString(selectedDataManager.usedEnergy))
+        main_gage_avg_consumption_text_view.text = "  Ø %s".format(StringFormatters.getAvgConsumptionString(neoEnergy.toFloat(), neoDistance.toFloat()))
+        main_gage_distance_text_view.text = "  %s".format(StringFormatters.getTraveledDistanceString(neoDistance.toFloat()))
+        main_gage_used_power_text_view.text = "  %s".format(StringFormatters.getEnergyString(neoEnergy.toFloat()))
         main_gage_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(selectedDataManager.travelTime))
         main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getEnergyString(DataManagers.CURRENT_TRIP.dataManager.chargedEnergy))
         main_gage_charge_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(DataManagers.CURRENT_TRIP.dataManager.chargeTime))

@@ -41,6 +41,20 @@ class TripDataManager {
         /** Reset "Auto" when last driving point is more than 4h old */
     }
 
+    suspend fun changeSelectedTrip(tripType: Int) {
+        val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
+        val drivingSessionId = drivingSessionsIdsMap[tripType]
+        if (drivingSessionId != null) {
+            CarStatsViewer.tripDataSource.getDrivingSession(drivingSessionId)?.let { session ->
+                drivingTripData = drivingTripData.copy(
+                    selectedTripType = tripType,
+                    drivenDistance = session.driven_distance,
+                    usedEnergy = session.used_energy
+                )
+            }
+        }
+    }
+
     suspend fun resetTrip(tripType: Int) {
         /** Reset the specified trip type. If none exists, create a new one */
         //CoroutineScope(Dispatchers.IO).launch {
@@ -59,6 +73,7 @@ class TripDataManager {
                 )
                 InAppLogger.w("[NEO] No trip of type ${TripType.tripTypesNameMap[tripType]} existing, starting new trip")
             }
+        if (tripType == drivingTripData.selectedTripType) drivingTripData = DrivingTripData()
         //}
     }
 
@@ -82,10 +97,12 @@ class TripDataManager {
                 }
 
                 CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
-                    drivingTripData = drivingTripData.copy(
-                        drivenDistance = session.driven_distance,
-                        usedEnergy = session.used_energy
-                    )
+                    if (drivingTripData.selectedTripType == session.session_type) {
+                        drivingTripData = drivingTripData.copy(
+                            drivenDistance = session.driven_distance,
+                            usedEnergy = session.used_energy
+                        )
+                    }
                 }
 
                 val fullDrivingSession = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionIds)

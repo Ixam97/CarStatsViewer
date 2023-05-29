@@ -128,6 +128,16 @@ class HistoryActivity  : Activity() {
                     history_linear_layout.addView(rowView)
                 }
             }
+
+            if (pastDrivingSessions.isEmpty()) {
+                runOnUiThread {
+                    val noTripsTextView = TextView(this@HistoryActivity)
+                    // noTripsTextView.style(R.style.menu_row_content_text)
+                    noTripsTextView.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                    noTripsTextView.text = "No past trips have been saved."
+                    history_linear_layout.addView(noTripsTextView)
+                }
+            }
         }
     }
 
