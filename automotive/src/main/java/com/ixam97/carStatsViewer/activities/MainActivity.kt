@@ -182,7 +182,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
 
                 carStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
                     // Do stuff with live data
-                    InAppLogger.v("RealTimeData: Drive state: ${DrivingState.nameMap[it.drivingState]}, Inst. cons.: ${it.instConsumption}")
+                    // InAppLogger.v("RealTimeData: Drive state: ${DrivingState.nameMap[it.drivingState]}, Inst. cons.: ${it.instConsumption}")
 
                     val instCons = it.instConsumption
                     val nullValue: Float? = null
@@ -213,7 +213,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
             }
         }
 
-        startForegroundService(Intent(applicationContext, DataCollector::class.java))
+        // startForegroundService(Intent(applicationContext, DataCollector::class.java))
         startForegroundService(Intent(applicationContext, NeoDataCollector::class.java))
 
         context = applicationContext
@@ -246,9 +246,9 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
 
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
-        DataCollector.mainActivityPendingIntent = PendingIntent.getActivity(
-            this, 0, intent, PendingIntent.FLAG_IMMUTABLE
-        )
+        // DataCollector.mainActivityPendingIntent = PendingIntent.getActivity(
+        //     this, 0, intent, PendingIntent.FLAG_IMMUTABLE
+        // )
 
         setContentView(R.layout.activity_main)
 
@@ -272,9 +272,6 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
 
         main_button_performance.isEnabled = true
         main_button_performance.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
-        main_button_history.isEnabled = true
-        main_button_history.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
-
 
         enableUiUpdates()
 
@@ -316,11 +313,11 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
     private fun updateActivity() {
         /** Use data from DataManager to Update MainActivity text */
 
-        DataCollector.gagePowerValue = selectedDataManager.currentPower
-        DataCollector.gageConsValue = ((selectedDataManager.currentPower / 1000)/(selectedDataManager.currentSpeed * 3.6f)).let {
-            if (it.isFinite()) it
-            else 0F
-        }
+        // DataCollector.gagePowerValue = selectedDataManager.currentPower
+        // DataCollector.gageConsValue = ((selectedDataManager.currentPower / 1000)/(selectedDataManager.currentSpeed * 3.6f)).let {
+        //     if (it.isFinite()) it
+        //     else 0F
+        // }
 
         setUiVisibilities()
         // updateGages()

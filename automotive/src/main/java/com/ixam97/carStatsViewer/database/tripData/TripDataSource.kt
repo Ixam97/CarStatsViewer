@@ -33,6 +33,8 @@ interface TripDataSource {
 
     suspend fun endMarker(timestamp: Long)
 
+    suspend fun deleteDrivingSessionById(sessionId: Long)
+
     /*
         Charging sessions
      */

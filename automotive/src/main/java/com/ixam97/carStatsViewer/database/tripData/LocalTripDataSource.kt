@@ -1,5 +1,7 @@
 package com.ixam97.carStatsViewer.database.tripData
 
+import com.ixam97.carStatsViewer.utils.InAppLogger
+
 class LocalTripDataSource(
     private val tripDao: TripDao
 ): TripDataSource {
@@ -15,8 +17,10 @@ class LocalTripDataSource(
 
     override suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long? {
         endDrivingSession(timestamp, prevSessionId)?.let {
+            InAppLogger.i("Driving session with ID $prevSessionId has been superseded")
             return startDrivingSession(timestamp, it)
         }
+        InAppLogger.w("Driving session with ID $prevSessionId has not been superseded!")
         return null
     }
 
@@ -79,6 +83,14 @@ class LocalTripDataSource(
 
     override suspend fun endMarker(timestamp: Long) {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteDrivingSessionById(sessionId: Long) {
+        val deletedSessions = tripDao.deleteDrivingSessionByID(sessionId)
+        val earliestEpochTime = tripDao.getEarliestEpochTime()
+        val deletedCrossRefs = tripDao.clearOldDrivingSessionPointCrossRefs(sessionId)
+        val deletedDrivingPoints = tripDao.clearOldDrivingPoints(earliestEpochTime)
+        InAppLogger.i("Deleted session ID: $sessionId ($deletedSessions sessions, $deletedCrossRefs cross refs, $deletedDrivingPoints driving points)")
     }
 
     override suspend fun addChargingPoint(chargingPoint: ChargingPoint) {

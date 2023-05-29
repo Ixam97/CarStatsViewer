@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.system.exitProcess
 
-class DataCollector : Service() {
+class oDataCollector : Service() {
     companion object {
         lateinit var mainActivityPendingIntent: PendingIntent
         val CurrentTripDataManager = DataManagers.CURRENT_TRIP.dataManager
@@ -868,6 +868,7 @@ class DataCollector : Service() {
     }
 
     private fun startLocationClient() {
+        /*
         locationClientJob?.cancel()
 
         locationClient = DefaultLocationClient(
@@ -889,6 +890,7 @@ class DataCollector : Service() {
                 }
             }
             .launchIn(serviceScope)
+            */
     }
 
     private val ignitionList = listOf<String>(

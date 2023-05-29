@@ -89,6 +89,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_marginVertical">10dp</item>
         <item name="android:layout_height">@dimen/divider_height</item>
+        <item name="android:background">@color/disabled_tint</item>
     </style>
     <style name="menu_divider_style_no_margin">
         <item name="android:layout_width">match_parent</item>

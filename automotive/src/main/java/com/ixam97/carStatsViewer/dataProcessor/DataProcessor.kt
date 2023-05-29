@@ -105,7 +105,7 @@ class DataProcessor(
     private fun stateUpdate() {
         val drivingState = realTimeData.drivingState
         if (drivingState != previousDrivingState && previousDrivingState != DrivingState.UNKNOWN) {
-            InAppLogger.i("Drive state changed from ${DrivingState.nameMap[previousDrivingState]} to ${DrivingState.nameMap[drivingState]}")
+            InAppLogger.i("[NEO] Drive state changed from ${DrivingState.nameMap[previousDrivingState]} to ${DrivingState.nameMap[drivingState]}")
             // if (drivingState == DrivingState.DRIVE || drivingState == DrivingState.PARKED) updateTripData()
             when (drivingState) {
                 DrivingState.DRIVE -> updateDrivingDataPoint(PlotLineMarkerType.BEGIN_SESSION.int)
@@ -118,7 +118,7 @@ class DataProcessor(
 
     private fun updateDrivingDataPoint(markerType: Int? = null, doReset: Boolean = false) {
         usedEnergySum += pointUsedEnergy
-        InAppLogger.v("Driven distance: $pointDrivenDistance, Used energy: $usedEnergySum")
+        InAppLogger.v("[NEO] Driven distance: $pointDrivenDistance, Used energy: $usedEnergySum")
 
         val drivingPoint = DrivingPoint(
             driving_point_epoch_time = System.currentTimeMillis(),
@@ -131,17 +131,23 @@ class DataProcessor(
             alt = realTimeData.alt
         )
 
-        CoroutineScope(Dispatchers.IO).launch {
-            CarStatsViewer.tripDataSource.addDrivingPoint(drivingPoint)
+        pointUsedEnergy = 0.0
+        pointDrivenDistance = 0.0
 
-            pointUsedEnergy = 0.0
-            pointDrivenDistance = 0.0
+        CoroutineScope(Dispatchers.IO).launch {
+            val drivingPoint = drivingPoint.copy()
+            CarStatsViewer.tripDataSource.addDrivingPoint(drivingPoint)
 
             updateTripDataValues(DrivingState.DRIVE)
 
-            CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[TripType.MANUAL]?.let {
-                if (doReset) {
-                    CarStatsViewer.tripDataSource.supersedeDrivingSession(it, System.currentTimeMillis())
+            if (doReset) {
+                val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
+                InAppLogger.i("[NEO] drivingSessionsIdsMap: $drivingSessionsIdsMap")
+                val drivingSessionId = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[TripType.MANUAL]
+                if (drivingSessionId != null) {
+                    CarStatsViewer.tripDataSource.supersedeDrivingSession(drivingSessionId, System.currentTimeMillis())
+                } else {
+                    CarStatsViewer.tripDataSource.startDrivingSession(System.currentTimeMillis(), TripType.MANUAL)
                 }
             }
         }

@@ -409,7 +409,7 @@ class SummaryActivity: Activity() {
             .setMessage(getString(R.string.dialog_reset_message))
             .setCancelable(true)
             .setPositiveButton(getString(R.string.dialog_reset_do_save)) { _, _ ->
-                DataCollector.CurrentTripDataManager.reset()
+                // DataCollector.CurrentTripDataManager.reset()
                 sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
                 this@SummaryActivity.finish()
                 this@SummaryActivity.overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)

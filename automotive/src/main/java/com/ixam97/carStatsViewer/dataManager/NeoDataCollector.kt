@@ -13,11 +13,13 @@ import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesClient
 import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
+import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlin.system.exitProcess
 
 class NeoDataCollector: Service() {
 
@@ -53,6 +55,11 @@ class NeoDataCollector: Service() {
     override fun onCreate() {
         super.onCreate()
 
+        Thread.setDefaultUncaughtExceptionHandler { t, e ->
+            InAppLogger.e("[NEO] Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
+            exitProcess(0)
+        }
+
         dataProcessor  = (applicationContext as CarStatsViewer).dataProcessor
         carPropertiesClient = CarPropertiesClient(
             context = applicationContext,
@@ -74,7 +81,12 @@ class NeoDataCollector: Service() {
                 PendingIntent.FLAG_IMMUTABLE
             )
         )
-/*
+
+        if (carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL) == "Speedy Model") {
+            Toast.makeText(this, "Emulator Mode", Toast.LENGTH_LONG).show()
+            emulatorMode = true
+        }
+
         locationClient = DefaultLocationClient(
             CarStatsViewer.appContext,
             LocationServices.getFusedLocationProviderClient(this)
@@ -83,7 +95,7 @@ class NeoDataCollector: Service() {
         locationClient
             .getLocationUpdates(5_000L)
             .catch { e ->
-                InAppLogger.e("LocationClient: ${e.message}")
+                InAppLogger.e("[NEO] LocationClient: ${e.message}")
             }
             .onEach { location ->
                 if (location != null) {
@@ -94,14 +106,14 @@ class NeoDataCollector: Service() {
                 }
             }
             .launchIn(serviceScope)
-*/
+
 
         CarStatsViewer.liveDataApis[0]
             .requestFlow(
                 serviceScope,
                 realTimeData = (applicationContext as CarStatsViewer).dataProcessor.realTimeData,
                 LIVE_DATA_TASK_INTERVAL
-            ).catch { e -> InAppLogger.e("requestFlow: ${e.message}") }
+            ).catch { e -> InAppLogger.e("[NEO] requestFlow: ${e.message}") }
             .launchIn(serviceScope)
 
         CarStatsViewer.liveDataApis[1]
@@ -109,7 +121,7 @@ class NeoDataCollector: Service() {
                 serviceScope,
                 realTimeData = (applicationContext as CarStatsViewer).dataProcessor.realTimeData,
                 LIVE_DATA_TASK_INTERVAL
-            ).catch { e -> InAppLogger.e("requestFlow: ${e.message}") }
+            ).catch { e -> InAppLogger.e("[NEO] requestFlow: ${e.message}") }
             .launchIn(serviceScope)
 
         carPropertiesClient.getCarPropertiesUpdates()
@@ -120,6 +132,10 @@ class NeoDataCollector: Service() {
 
         CarProperties.usedProperties.forEach {
             carPropertiesClient.updateProperty(it)
+        }
+
+        serviceScope.launch {
+
         }
     }
 

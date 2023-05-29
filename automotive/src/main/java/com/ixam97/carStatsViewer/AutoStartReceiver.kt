@@ -6,7 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.ixam97.carStatsViewer.activities.PermissionsActivity
-import com.ixam97.carStatsViewer.dataManager.DataCollector
+import com.ixam97.carStatsViewer.dataManager.NeoDataCollector
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -69,7 +69,7 @@ class AutoStartReceiver: BroadcastReceiver() {
         val actionServicePendingIntent = PendingIntent.getForegroundService(
             context.applicationContext,
             0,
-            Intent(context.applicationContext, DataCollector::class.java).apply {
+            Intent(context.applicationContext, NeoDataCollector::class.java).apply {
                 putExtra("reason", reason)
             },
             PendingIntent.FLAG_IMMUTABLE

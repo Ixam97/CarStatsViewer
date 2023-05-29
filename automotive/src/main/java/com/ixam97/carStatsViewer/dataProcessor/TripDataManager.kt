@@ -59,7 +59,7 @@ class TripDataManager {
                 }
 
                 val fullDrivingSession = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionIds)
-                Log.v("Database trip dump", GsonBuilder().setPrettyPrinting().create().toJson(fullDrivingSession))
+                // Log.v("Database trip dump", GsonBuilder().setPrettyPrinting().create().toJson(fullDrivingSession))
             }
         }
 

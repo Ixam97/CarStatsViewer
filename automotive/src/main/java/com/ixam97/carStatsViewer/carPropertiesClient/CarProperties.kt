@@ -13,6 +13,10 @@ object CarProperties {
     const val ENV_OUTSIDE_TEMPERATURE = VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE
     const val INFO_EV_BATTERY_CAPACITY = VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY
 
+    const val INFO_MODEL = VehiclePropertyIds.INFO_MODEL
+    const val INFO_MAKE = VehiclePropertyIds.INFO_MAKE
+    const val INFO_MODEL_YEAR = VehiclePropertyIds.INFO_MODEL_YEAR
+
     val usedProperties = listOf(
         VehiclePropertyIds.PERF_VEHICLE_SPEED,
         VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE,
