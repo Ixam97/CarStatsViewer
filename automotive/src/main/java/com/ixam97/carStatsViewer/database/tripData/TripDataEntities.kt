@@ -15,6 +15,8 @@ data class DrivingSession(
     val session_type: Int,
     val drive_time: Long,
     val used_energy: Double,
+    val used_soc: Double,
+    val used_soc_energy: Double,
     val driven_distance: Double,
     val note: String
 ) {

@@ -15,6 +15,10 @@ class LocalTripDataSource(
         }
     }
 
+    override suspend fun getLatestDrivingPoint(): DrivingPoint? {
+        return tripDao.getLatestDrivingPoint()
+    }
+
     override suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long? {
         endDrivingSession(timestamp, prevSessionId)?.let {
             InAppLogger.d("[DB] Driving session with ID $prevSessionId has been superseded")
@@ -40,7 +44,9 @@ class LocalTripDataSource(
             used_energy = 0.0,
             driven_distance = 0.0,
             drive_time = 0,
-            note = ""
+            note = "",
+            used_soc = 0.0,
+            used_soc_energy = 0.0
         )
         return tripDao.upsertDrivingSession(session)
     }

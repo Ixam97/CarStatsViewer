@@ -2,12 +2,10 @@ package com.ixam97.carStatsViewer.activities
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.util.Patterns
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -16,14 +14,12 @@ import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManagers
 import com.ixam97.carStatsViewer.mailSender.MailSender
 import com.ixam97.carStatsViewer.utils.logLevel
+import com.ixam97.carStatsViewer.utils.logLength
 import com.ixam97.carStatsViewer.views.MultiSelectWidget
 import kotlinx.android.synthetic.main.activity_log.*
 import kotlinx.coroutines.*
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import java.io.File
 import java.util.*
-import kotlin.coroutines.CoroutineContext
 
 class LogActivity : FragmentActivity() {
 
@@ -32,18 +28,10 @@ class LogActivity : FragmentActivity() {
 
     private fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
 
+    private val logLengths = arrayOf(0, 500, 1000, 2000, 5000, 10_000)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-/*
-        CoroutineScope(Dispatchers.IO).launch {
-            val drivingPointsList = CarStatsViewer.tripDao.getAllDrivingPoints()
-            Log.i("TripDataDatabase","Size: ${drivingPointsList.size}")
-            drivingPointsList.forEach {
-                Log.i("TripDataDatabase", it.toString())
-            }
-        }
-
- */
 
         appPreferences = AppPreferences(applicationContext)
 
@@ -154,7 +142,7 @@ class LogActivity : FragmentActivity() {
                 val layout = LayoutInflater.from(context).inflate(R.layout.dialog_log_settings, null)
 
                 val log_level_multiselect = layout.findViewById<MultiSelectWidget>(R.id.log_level_multiselect)
-                val log_limit_edit_text = layout.findViewById<EditText>(R.id.log_limit_edit_text)
+                val log_length_multiselect = layout.findViewById<MultiSelectWidget>(R.id.log_length_multiselect)
 
                 log_level_multiselect.entries = arrayListOf<String>(
                     "Verbose",
@@ -164,10 +152,23 @@ class LogActivity : FragmentActivity() {
                     "Error"
                 )
 
+                log_length_multiselect.entries = arrayListOf(
+                    "all",
+                    "500",
+                    "1 000",
+                    "2 000",
+                    "5 000",
+                    "10 000"
+                )
+
                 log_level_multiselect.selectedIndex = appPreferences.logLevel
+                log_length_multiselect.selectedIndex = appPreferences.logLength
 
                 log_level_multiselect.setOnIndexChangedListener {
                     appPreferences.logLevel = log_level_multiselect.selectedIndex
+                }
+                log_length_multiselect.setOnIndexChangedListener {
+                    appPreferences.logLength = log_length_multiselect.selectedIndex
                 }
 
                 setView(layout)
@@ -198,7 +199,7 @@ class LogActivity : FragmentActivity() {
                     log_progress_bar.visibility = View.VISIBLE
                     log_text_view.text = ""
                 }
-                val logString = InAppLogger.getLogString(appPreferences.logLevel + 2)
+                val logString = InAppLogger.getLogString(appPreferences.logLevel + 2, logLengths[appPreferences.logLength])
                 val logLines = logString.split("[\n]+".toRegex()).toTypedArray()
 
                 runOnUiThread {

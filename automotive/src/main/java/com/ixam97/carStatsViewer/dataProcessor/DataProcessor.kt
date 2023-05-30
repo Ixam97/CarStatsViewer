@@ -1,16 +1,11 @@
 package com.ixam97.carStatsViewer.dataProcessor
 
-import android.util.Log
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.Defines
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
 import com.ixam97.carStatsViewer.dataManager.DrivingState
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
-import com.ixam97.carStatsViewer.database.tripData.SessionMarkerType
-import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.emulatorPowerSign
 import com.ixam97.carStatsViewer.plot.enums.PlotLineMarkerType
@@ -34,6 +29,7 @@ class DataProcessor(
 
     private var usedEnergySum = 0.0
     private var previousDrivingState: Int = DrivingState.UNKNOWN
+    private var previousStateOfCharge: Float = -1f
 
     var staticVehicleData = StaticVehicleData()
 
@@ -71,6 +67,7 @@ class DataProcessor(
             CarProperties.PERF_VEHICLE_SPEED -> speedUpdate()
             CarProperties.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE -> powerUpdate()
             CarProperties.IGNITION_STATE, CarProperties.EV_CHARGE_PORT_CONNECTED -> stateUpdate()
+            CarProperties.EV_BATTERY_LEVEL -> stateOfChargeUpdate()
         }
     }
 
@@ -84,36 +81,62 @@ class DataProcessor(
             pointDrivenDistance += distanceDelta
             valueDrivenDistance += distanceDelta
             if (emulatorMode) {
-                val powerDelta = (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentSpeed.timeDelta / 3.6E12)
-                pointUsedEnergy += powerDelta
-                valueUsedEnergy += powerDelta
+                val energyDelta = emulatorPowerSign * (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentSpeed.timeDelta / 3.6E12)
+                pointUsedEnergy += energyDelta
+                valueUsedEnergy += energyDelta
+
+                if (valueUsedEnergy > 100) {
+                    updateTripDataValues(DrivingState.DRIVE)
+                }
             }
             if (pointDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL) updateDrivingDataPoint()
+            if (valueDrivenDistance > 10) {
+                updateTripDataValues(DrivingState.DRIVE)
+            }
+        }
+    }
+
+    private fun stateOfChargeUpdate() {
+        staticVehicleData.batteryCapacity?.let { batteryCapacity ->
+            val currentStateOfCharge = realTimeData.stateOfCharge
+            if (previousStateOfCharge < 0) {
+                previousStateOfCharge = currentStateOfCharge
+                return
+            }
+            if (currentStateOfCharge != previousStateOfCharge) {
+                if (realTimeData.drivingState == DrivingState.DRIVE)
+                    tripDataManager.updateUsedStateOfCharge((previousStateOfCharge - currentStateOfCharge).toDouble())
+                previousStateOfCharge = currentStateOfCharge
+            }
         }
     }
 
     private fun powerUpdate() {
         if (!emulatorMode) {
             if (carPropertiesData.CurrentPower.timeDelta > 0 && (realTimeData.drivingState == DrivingState.DRIVE || realTimeData.drivingState == DrivingState.CHARGE)) {
-                val powerDelta = (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentPower.timeDelta / 3.6E12)
-                pointUsedEnergy += powerDelta
-                valueUsedEnergy += powerDelta
+                val energyDelta = emulatorPowerSign * (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentPower.timeDelta / 3.6E12)
+                pointUsedEnergy += energyDelta
+                valueUsedEnergy += energyDelta
+            }
+
+            if (valueUsedEnergy > 100) {
+                updateTripDataValues(DrivingState.DRIVE)
             }
         }
     }
 
     private fun stateUpdate() {
         val drivingState = realTimeData.drivingState
-        if (drivingState != previousDrivingState && previousDrivingState != DrivingState.UNKNOWN) {
+        if (drivingState != previousDrivingState) {
             InAppLogger.i("[NEO] Drive state changed from ${DrivingState.nameMap[previousDrivingState]} to ${DrivingState.nameMap[drivingState]}")
             // if (drivingState == DrivingState.DRIVE || drivingState == DrivingState.PARKED) updateTripData()
             when (drivingState) {
                 DrivingState.DRIVE -> updateDrivingDataPoint(PlotLineMarkerType.BEGIN_SESSION.int)
                 DrivingState.PARKED -> updateDrivingDataPoint(PlotLineMarkerType.END_SESSION.int)
             }
+            if (drivingState == DrivingState.DRIVE && previousDrivingState == DrivingState.CHARGE)
+                previousStateOfCharge = realTimeData.stateOfCharge
             tripDataManager.newDrivingState(drivingState, previousDrivingState)
-        } else if (drivingState != previousDrivingState && previousDrivingState == DrivingState.UNKNOWN) {
-            InAppLogger.i("[NEO] Initial drive state: ${DrivingState.nameMap[drivingState]}")
         }
         previousDrivingState = drivingState
     }

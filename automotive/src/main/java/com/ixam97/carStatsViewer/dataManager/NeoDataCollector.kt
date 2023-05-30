@@ -1,12 +1,15 @@
 package com.ixam97.carStatsViewer.dataManager
 
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.widget.Toast
 import com.google.android.gms.location.LocationServices
+import com.ixam97.carStatsViewer.AutoStartReceiver
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.activities.MainActivity
@@ -36,6 +39,12 @@ class NeoDataCollector: Service() {
     private lateinit var carPropertiesClient: CarPropertiesClient
     private lateinit var dataProcessor: DataProcessor
     private lateinit var tripDataManager: TripDataManager
+
+    init {
+        InAppLogger.i("[NEO] Neo DataCollector is initializing...")
+        CarStatsViewer.foregroundServiceStarted = true
+        CarStatsViewer.notificationManager.cancel(CarStatsViewer.RESTART_NOTIFICATION_ID)
+    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -109,7 +118,7 @@ class NeoDataCollector: Service() {
             }
             .onEach { location ->
                 if (location != null) {
-                    InAppLogger.d("[NEO] Location: lat: %.5f, lon: %.5f, alt: %.2fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
+                    InAppLogger.v("[NEO] %.2f, %.2f, %.0fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
                     dataProcessor.processLocation(location.latitude, location.longitude, location.altitude)
                 } else {
                     dataProcessor.processLocation(null, null, null)
@@ -138,6 +147,23 @@ class NeoDataCollector: Service() {
 
         CarProperties.usedProperties.forEach {
             carPropertiesClient.updateProperty(it)
+        }
+
+        serviceScope.launch {
+            val serviceIntent = Intent(applicationContext, AutoStartReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(
+                applicationContext,
+                0,
+                serviceIntent,
+                PendingIntent.FLAG_ONE_SHOT
+            )
+            while (true) {
+                serviceIntent.action = "com.ixam97.carStatsViewer.RestartAction"
+                serviceIntent.putExtra("reason", "termination")
+                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 5000, pendingIntent)
+                delay(4000)
+            }
         }
     }
 

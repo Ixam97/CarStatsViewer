@@ -38,6 +38,14 @@ object StringFormatters {
         return "%.1f %s".format(Locale.ENGLISH, kiloRounder(appPreferences.distanceUnit.toUnit(traveledDistance)), appPreferences.distanceUnit.unit())
     }
 
+    fun getRemainingRangeString(remainingRange: Float): String {
+        return "%d %s".format(
+            Locale.ENGLISH,
+            (((kiloRounder(appPreferences.distanceUnit.toUnit(remainingRange)).toInt()/10)*10)),
+            appPreferences.distanceUnit.unit()
+        )
+    }
+
     fun getAvgConsumptionString(usedEnergy: Float, traveledDistance: Float): String {
         val avgConsumption = appPreferences.distanceUnit.asUnit(usedEnergy / (traveledDistance / 1000))
         val unitString = when {

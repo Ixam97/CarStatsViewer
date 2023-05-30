@@ -56,7 +56,7 @@ class HistoryActivity  : Activity() {
                 runOnUiThread {
                     history_linear_layout.removeAllViews()
                 }
-                (applicationContext as CarStatsViewer).tripDataManager.resetTrip(TripType.MANUAL)
+                (applicationContext as CarStatsViewer).tripDataManager.resetTrip(TripType.MANUAL, (applicationContext as CarStatsViewer).dataProcessor.realTimeData.drivingState)
                 finish();
                 startActivity(newIntent);
             }
@@ -78,7 +78,13 @@ class HistoryActivity  : Activity() {
                 if (drivingSession != null) {
                     val rowView = MultiLineRowButtonWidget(this@HistoryActivity)
                     rowView.topText = "${StringFormatters.getDateString(Date(drivingSession.start_epoch_time))}, Type: ${tripTypeStringArray[drivingSession.session_type]}, ID: ${drivingSession.driving_session_id}"
-                    rowView.bottomText = String.format("%.1f km, %.1f kWh", drivingSession.driven_distance / 1000f, drivingSession.used_energy / 1000f)
+                    rowView.bottomText = String.format(
+                        "%s, %s, %s, %s",
+                        StringFormatters.getTraveledDistanceString(drivingSession.driven_distance.toFloat()),
+                        StringFormatters.getEnergyString(drivingSession.used_energy.toFloat()),
+                        StringFormatters.getAvgConsumptionString(drivingSession.used_energy.toFloat(), drivingSession.driven_distance.toFloat()),
+                        StringFormatters.getElapsedTimeString(drivingSession.drive_time)
+                    )
                     rowView.setOnClickListener {
                         CoroutineScope(Dispatchers.IO).launch {
                             //InAppLogger.v(GsonBuilder().setPrettyPrinting().create().toJson(CarStatsViewer.tripDataSource.getFullDrivingSession(drivingSession.driving_session_id)))
@@ -111,7 +117,13 @@ class HistoryActivity  : Activity() {
             pastDrivingSessions.forEach { drivingSession ->
                 val rowView = MultiLineRowButtonWidget(this@HistoryActivity)
                 rowView.topText = "${StringFormatters.getDateString(Date(drivingSession.start_epoch_time))}, Type: ${tripTypeStringArray[drivingSession.session_type]}, ID: ${drivingSession.driving_session_id}"
-                rowView.bottomText = String.format("%.1f km, %.1f kWh", drivingSession.driven_distance / 1000f, drivingSession.used_energy / 1000f)
+                rowView.bottomText = String.format(
+                    "%s, %s, %s, %s",
+                    StringFormatters.getTraveledDistanceString(drivingSession.driven_distance.toFloat()),
+                    StringFormatters.getEnergyString(drivingSession.used_energy.toFloat()),
+                    StringFormatters.getAvgConsumptionString(drivingSession.used_energy.toFloat(), drivingSession.driven_distance.toFloat()),
+                    StringFormatters.getElapsedTimeString(drivingSession.drive_time)
+                )
                 rowView.setOnClickListener {
                     CoroutineScope(Dispatchers.IO).launch {
                         //InAppLogger.v(GsonBuilder().setPrettyPrinting().create().toJson(CarStatsViewer.tripDataSource.getFullDrivingSession(drivingSession.driving_session_id)))

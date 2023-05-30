@@ -8,6 +8,9 @@ interface TripDao {
     @Insert
     fun insertDrivingPoint(drivingPoint: DrivingPoint)
 
+    @Query("SELECT * FROM DrivingPoint ORDER BY driving_point_epoch_time DESC LIMIT 1")
+    fun getLatestDrivingPoint(): DrivingPoint?
+
     @Insert
     fun insertChargingPoint(chargingPoint: ChargingPoint)
 

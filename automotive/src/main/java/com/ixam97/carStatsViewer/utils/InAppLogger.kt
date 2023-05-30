@@ -14,8 +14,11 @@ import java.text.SimpleDateFormat
 
 val AppPreferences.LogLevel: AppPreference<Int>
     get() = AppPreference<Int>("preference_log_level", Log.VERBOSE, sharedPref)
+val AppPreferences.LogLength: AppPreference<Int>
+    get() = AppPreference<Int>("preference_log_length", 0, sharedPref)
 
 var AppPreferences.logLevel: Int get() = LogLevel.value; set(value) {LogLevel.value = value}
+var AppPreferences.logLength: Int get() = LogLength.value; set(value) {LogLength.value = value}
 
 object InAppLogger {
 
@@ -58,11 +61,11 @@ object InAppLogger {
         }
     }
 
-    fun getLogString(logLevel: Int = Log.VERBOSE): String {
+    fun getLogString(logLevel: Int = Log.VERBOSE, logLength: Int = 0): String {
         val logStringBuilder = StringBuilder()
         try {
             val startTime = System.currentTimeMillis()
-            val logEntries: List<LogEntry> = logDao.getLevel(logLevel)
+            val logEntries: List<LogEntry> = if (logLength == 0) logDao.getLevel(logLevel) else logDao.getLevelAndLength(logLevel, logLength).reversed()
             val loadedTime = System.currentTimeMillis()
             logEntries.forEach {
                 if (it.message.contains("Car Stats Viewer")) logStringBuilder.append("------------------------------------------------------------\n")

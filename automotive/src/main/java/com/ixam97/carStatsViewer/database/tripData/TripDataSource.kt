@@ -9,6 +9,8 @@ interface TripDataSource {
      */
     suspend fun addDrivingPoint(drivingPoint: DrivingPoint)
 
+    suspend fun getLatestDrivingPoint(): DrivingPoint?
+
     suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long?
 
     suspend fun startDrivingSession(timestamp: Long, type: Int): Long

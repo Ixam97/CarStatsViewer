@@ -67,10 +67,16 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
 
     private var neoDistance: Double = 0.0
     private var neoEnergy: Double = 0.0
+    private var neoTime: Long = 0
+    private var neoSelectedTripType: Int = 1
+    private var neoUsedStateOfCharge: Double = 0.0
+    private var neoUsedStateOfChargeEnergy: Double = 0.0
 
     private val updateActivityTask = object : Runnable {
         override fun run() {
             updateActivity()
+            carStatsViewer.tripDataManager.updateTime()
+
             if (updateUi) timerHandler.postDelayed(this, UI_UPDATE_INTERVAL)
         }
     }
@@ -210,10 +216,29 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
                     // InAppLogger.v("TripData: Driven Distance: ${it.drivenDistance}")
                     neoDistance = it.drivenDistance
                     neoEnergy = it.usedEnergy
-                    updateActivity()
+                    neoTime = it.driveTime
+                    neoSelectedTripType = it.selectedTripType
+                    neoUsedStateOfCharge = it.usedStateOfCharge
+                    neoUsedStateOfChargeEnergy = it.usedStateOfChargeEnergy
+                    // updateActivity()
                 }
             }
         }
+
+
+        /*
+        lifecycleScope.launch {
+            var lastUpdateMillis: Long = 0
+            val currentTimerMillis = carStatsViewer.tripDataManager.timerMap[neoSelectedTripType]?.getTime()?:0
+            while (true) {
+                if (currentTimerMillis >= lastUpdateMillis + 1000) {
+                    lastUpdateMillis = currentTimerMillis
+                    carStatsViewer.tripDataManager.updateTime()
+                }
+                delay(100)
+            }
+        }
+        */
 
         // startForegroundService(Intent(applicationContext, DataCollector::class.java))
         startForegroundService(Intent(applicationContext, NeoDataCollector::class.java))
@@ -327,11 +352,19 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
         main_gage_avg_consumption_text_view.text = "  Ø %s".format(StringFormatters.getAvgConsumptionString(neoEnergy.toFloat(), neoDistance.toFloat()))
         main_gage_distance_text_view.text = "  %s".format(StringFormatters.getTraveledDistanceString(neoDistance.toFloat()))
         main_gage_used_power_text_view.text = "  %s".format(StringFormatters.getEnergyString(neoEnergy.toFloat()))
-        main_gage_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(selectedDataManager.travelTime))
+        main_gage_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(neoTime))
         main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getEnergyString(DataManagers.CURRENT_TRIP.dataManager.chargedEnergy))
         main_gage_charge_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(DataManagers.CURRENT_TRIP.dataManager.chargeTime))
-        main_gage_remaining_range_text_view.text = "  -/-  %s".format(appPreferences.distanceUnit.unit())
         main_gage_ambient_temperature_text_view.text = "  %s".format( StringFormatters.getTemperatureString(selectedDataManager.ambientTemperature))
+
+        val usedEnergyPerSoC = neoUsedStateOfChargeEnergy / neoUsedStateOfCharge / 100
+        val currentStateOfCharge = (applicationContext as CarStatsViewer).dataProcessor.realTimeData.stateOfCharge * 100
+        val remainingEnergy = usedEnergyPerSoC * currentStateOfCharge
+        val avgConsumption = neoEnergy / neoDistance * 1000
+        val remainingRange = (remainingEnergy / avgConsumption) * 1000
+
+        main_gage_remaining_range_text_view.text = "  %s (%.0f %% used)".format(StringFormatters.getRemainingRangeString(remainingRange.toFloat()), neoUsedStateOfCharge * 100)
+
     }
 
 
