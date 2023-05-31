@@ -19,6 +19,8 @@ interface TripDataSource {
 
     suspend fun getActiveDrivingSessionsIds(): List<Long>
 
+    suspend fun getActiveDrivingSessions(): List<DrivingSession>
+
     suspend fun getDrivingSession(sessionId: Long): DrivingSession?
 
     suspend fun updateDrivingSession(drivingSession: DrivingSession)

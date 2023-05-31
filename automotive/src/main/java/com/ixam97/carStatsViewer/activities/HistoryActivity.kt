@@ -11,11 +11,9 @@ import android.widget.CheckBox
 import android.widget.DatePicker
 import android.widget.TextView
 import com.airbnb.paris.extensions.style
-import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.tripData.TripType
-import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.views.TripHistoryRowWidget
 import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.coroutines.CoroutineScope
@@ -71,68 +69,33 @@ class HistoryActivity  : Activity() {
             filtersDialog.show()
         }
 
-        history_button_reset.setOnClickListener {
-            CoroutineScope(Dispatchers.Default).launch {
-                val newIntent = Intent(intent)
-                newIntent.putExtra("noTransition", true)
-                runOnUiThread {
-                    history_linear_layout.removeAllViews()
-                }
-                (applicationContext as CarStatsViewer).tripDataManager.resetTrip(TripType.MANUAL, (applicationContext as CarStatsViewer).dataProcessor.realTimeData.drivingState)
-                finish();
-                startActivity(newIntent);
-            }
-        }
-
         CoroutineScope(Dispatchers.IO).launch {
             runOnUiThread {
-                val currentSessionsHeadLine = TextView(this@HistoryActivity)
-                currentSessionsHeadLine.text = "Current trips:"
-                currentSessionsHeadLine.style(R.style.menu_section_title_style)
-                history_linear_layout.addView(currentSessionsHeadLine)
-                val divider = View(this@HistoryActivity)
-                divider.style(R.style.menu_divider_style)
-                history_linear_layout.addView(divider)
+                addSection("Current trips:")
             }
-            val currentDrivingSessions = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds().reversed()
-            currentDrivingSessions.forEach { drivingSessionId ->
-                val drivingSession = CarStatsViewer.tripDataSource.getDrivingSession(drivingSessionId)
-                if (drivingSession != null) {
-                    val rowView = TripHistoryRowWidget(this@HistoryActivity, session = drivingSession)
+            val currentDrivingSessions = CarStatsViewer.tripDataSource.getActiveDrivingSessions().sortedBy { it.session_type }
+            currentDrivingSessions.forEach { drivingSession ->
+                val rowView = TripHistoryRowWidget(this@HistoryActivity, session = drivingSession)
 
-                    rowView.setOnDeleteClickListener {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            CarStatsViewer.tripDataSource.deleteDrivingSessionById(drivingSession.driving_session_id)
-                            runOnUiThread {
-                                val newIntent = Intent(intent)
-                                newIntent.putExtra("noTransition", true)
-                                finish();
-                                startActivity(newIntent);
-                            }
-                        }
-                    }
+                rowView.setOnDeleteClickListener {
+                    // deleteTrip(drivingSession.driving_session_id)
+                    resetTrip(drivingSession.session_type)
+                }
 
-                    rowView.setOnMainClickListener {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val fullDrivingSession = CarStatsViewer.tripDataSource.getFullDrivingSession(drivingSessionId)
-                            // InAppLogger.v("[NEO]" + GsonBuilder().setPrettyPrinting().create().toJson(fullDrivingSession))
-                        }
+                rowView.setOnMainClickListener {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val fullDrivingSession = CarStatsViewer.tripDataSource.getFullDrivingSession(drivingSession.driving_session_id)
+                        // InAppLogger.v("[NEO]" + GsonBuilder().setPrettyPrinting().create().toJson(fullDrivingSession))
                     }
+                }
 
-                    runOnUiThread {
-                        history_linear_layout.addView(rowView)
-                    }
+                runOnUiThread {
+                    history_linear_layout.addView(rowView)
                 }
             }
 
             runOnUiThread {
-                val pastSessionsHeadLine = TextView(this@HistoryActivity)
-                pastSessionsHeadLine.text = "Past trips:"
-                pastSessionsHeadLine.style(R.style.menu_section_title_style)
-                history_linear_layout.addView(pastSessionsHeadLine)
-                val divider = View(this@HistoryActivity)
-                divider.style(R.style.menu_divider_style)
-                history_linear_layout.addView(divider)
+                addSection("Past trips:")
             }
 
             val pastDrivingSessions = CarStatsViewer.tripDataSource.getPastDrivingSessions().sortedBy { it.start_epoch_time }.reversed()
@@ -140,15 +103,7 @@ class HistoryActivity  : Activity() {
                 val rowView = TripHistoryRowWidget(this@HistoryActivity, session = drivingSession)
 
                 rowView.setOnDeleteClickListener {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        CarStatsViewer.tripDataSource.deleteDrivingSessionById(drivingSession.driving_session_id)
-                        runOnUiThread {
-                            val newIntent = Intent(intent)
-                            newIntent.putExtra("noTransition", true)
-                            finish();
-                            startActivity(newIntent);
-                        }
-                    }
+                    deleteTrip(drivingSession.driving_session_id)
                 }
 
                 rowView.setOnMainClickListener {
@@ -172,6 +127,41 @@ class HistoryActivity  : Activity() {
                     history_linear_layout.addView(noTripsTextView)
                 }
             }
+        }
+    }
+
+    private fun addSection(title: String) {
+        val sectionTitle = TextView(this@HistoryActivity)
+        sectionTitle.text = title
+        sectionTitle.style(R.style.menu_section_title_style)
+        history_linear_layout.addView(sectionTitle)
+        val divider = View(this@HistoryActivity)
+        divider.style(R.style.menu_divider_style)
+        history_linear_layout.addView(divider)
+    }
+
+    private fun deleteTrip(sessionId: Long) {
+        CoroutineScope(Dispatchers.IO).launch {
+            CarStatsViewer.tripDataSource.deleteDrivingSessionById(sessionId)
+            runOnUiThread {
+                val newIntent = Intent(intent)
+                newIntent.putExtra("noTransition", true)
+                finish();
+                startActivity(newIntent);
+            }
+        }
+    }
+
+    private fun resetTrip(tripType: Int) {
+        CoroutineScope(Dispatchers.Default).launch {
+            val newIntent = Intent(intent)
+            newIntent.putExtra("noTransition", true)
+            runOnUiThread {
+                history_linear_layout.removeAllViews()
+            }
+            (applicationContext as CarStatsViewer).tripDataManager.resetTrip(tripType, (applicationContext as CarStatsViewer).dataProcessor.realTimeData.drivingState)
+            finish();
+            startActivity(newIntent);
         }
     }
 

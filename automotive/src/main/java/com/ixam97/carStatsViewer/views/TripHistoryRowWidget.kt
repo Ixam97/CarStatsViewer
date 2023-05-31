@@ -55,6 +55,7 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
         View.inflate(context, R.layout.widget_trip_history_row, this)
 
         val rowIcon: ImageView = findViewById(R.id.row_start_icon)
+        val deleteIcon: ImageView = findViewById(R.id.row_end_icon)
 
         val topText: TextView = findViewById(R.id.row_top_text)
         val distanceText: TextView = findViewById(R.id.distance_text)
@@ -79,6 +80,10 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
             TripType.AUTO -> rowIcon.setImageResource(R.drawable.ic_day)
             TripType.MANUAL -> rowIcon.setImageResource(R.drawable.ic_hand)
             else -> rowIcon.setImageResource(R.drawable.ic_help)
+        }
+
+        if ((session.end_epoch_time?:0) <= 0) {
+            deleteIcon.setImageResource(R.drawable.ic_reset)
         }
 
 

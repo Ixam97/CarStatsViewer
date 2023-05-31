@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat
 val AppPreferences.LogLevel: AppPreference<Int>
     get() = AppPreference<Int>("preference_log_level", Log.VERBOSE, sharedPref)
 val AppPreferences.LogLength: AppPreference<Int>
-    get() = AppPreference<Int>("preference_log_length", 0, sharedPref)
+    get() = AppPreference<Int>("preference_log_length", 4, sharedPref)
 
 var AppPreferences.logLevel: Int get() = LogLevel.value; set(value) {LogLevel.value = value}
 var AppPreferences.logLength: Int get() = LogLength.value; set(value) {LogLength.value = value}

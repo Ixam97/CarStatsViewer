@@ -32,6 +32,9 @@ interface TripDao {
     @Query("SELECT driving_session_id FROM DrivingSession WHERE end_epoch_time = 0") //
     fun getActiveDrivingSessionIds(): List<Long>
 
+    @Query("SELECT * FROM DrivingSession WHERE end_epoch_time = 0")
+    fun getActiveDrivingSessions(): List<DrivingSession>
+
     @Query("SELECT driving_session_id FROM DrivingSession WHERE end_epoch_time != 0")
     fun getPastDrivingSessionIds(): List<Long>
 

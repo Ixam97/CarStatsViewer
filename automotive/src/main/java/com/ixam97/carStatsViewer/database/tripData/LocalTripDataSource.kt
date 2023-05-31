@@ -55,6 +55,10 @@ class LocalTripDataSource(
         return tripDao.getActiveDrivingSessionIds()
     }
 
+    override suspend fun getActiveDrivingSessions(): List<DrivingSession> {
+        return tripDao.getActiveDrivingSessions()
+    }
+
     override suspend fun getDrivingSession(sessionId: Long): DrivingSession? {
         return tripDao.getDrivingSessionById(sessionId)
     }

@@ -35,14 +35,6 @@
             android:src="@drawable/ic_filter"
             android:background="@android:color/transparent"/>
 
-        <ImageButton
-            android:layout_margin="15dp"
-            android:id="@+id/history_button_reset"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_reset"
-            android:background="@android:color/transparent"/>
-
     </LinearLayout>
     <View
         android:layout_width="match_parent"
