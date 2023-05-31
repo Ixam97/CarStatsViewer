@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="25dp"
+    android:orientation="vertical">
+
+    <CheckBox
+        android:id="@+id/history_filter_checkbox_manual"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/std_font_size"
+        android:text="Show manual trips"/>
+
+    <CheckBox
+        android:id="@+id/history_filter_checkbox_charge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/std_font_size"
+        android:text="Show since charge trips"/>
+
+    <CheckBox
+        android:id="@+id/history_filter_checkbox_auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/std_font_size"
+        android:text="Show automatic trips"/>
+
+    <CheckBox
+        android:id="@+id/history_filter_checkbox_month"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/std_font_size"
+        android:text="Show monthly trips"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <CheckBox
+            android:id="@+id/history_filter_checkbox_date"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Earliest start date"
+            android:textSize="@dimen/std_font_size"/>
+        <DatePicker
+            android:id="@+id/history_filter_date_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:datePickerMode="spinner"/>
+    </LinearLayout>
+
+</LinearLayout>

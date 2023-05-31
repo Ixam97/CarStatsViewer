@@ -26,9 +26,10 @@ class MultiLineRowButtonWidget @JvmOverloads constructor(context: Context, priva
     }
 
     private fun init() {
+        this.removeAllViews()
         View.inflate(context, R.layout.widget_multi_line_row_button, this)
         val topTextView: TextView = findViewById(R.id.row_top_text)
-        val bottomTextView: TextView = findViewById(R.id.row_bottom_text)
+        val bottomTextView: TextView = findViewById(R.id.distance_text)
         topTextView.text = topText
         bottomTextView.text = bottomText
     }

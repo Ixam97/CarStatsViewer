@@ -25,7 +25,7 @@
                 android:layout_marginEnd="20dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/about_support_container_imageView"
+                app:layout_constraintEnd_toStartOf="@+id/row_end_icon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.397">
@@ -33,16 +33,16 @@
                 <TextView
                     android:id="@+id/row_top_text"
                     style="@style/menu_row_top_text"
-                    android:text="" />
+                    android:text="Lorem Ipsum" />
 
                 <TextView
-                    android:id="@+id/row_bottom_text"
+                    android:id="@+id/distance_text"
                     style="@style/menu_row_content_text"
-                    android:text="" />
+                    android:text="Lorem Ipsum" />
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/about_support_container_imageView"
+                android:id="@+id/row_end_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"

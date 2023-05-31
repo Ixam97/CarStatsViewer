@@ -65,7 +65,11 @@ object StringFormatters {
         return "${(avgConsumption).toInt()} $unitString"
     }
 
-    fun getElapsedTimeString(elapsedTime: Long): String {
+    fun getElapsedTimeString(elapsedTime: Long, minutes: Boolean = false): String {
+        if (minutes) return String.format("%02d:%02d",
+            TimeUnit.MILLISECONDS.toHours(elapsedTime),
+            TimeUnit.MILLISECONDS.toMinutes(elapsedTime) % TimeUnit.HOURS.toMinutes(1))
+
         return String.format("%02d:%02d:%02d",
             TimeUnit.MILLISECONDS.toHours(elapsedTime),
             TimeUnit.MILLISECONDS.toMinutes(elapsedTime) % TimeUnit.HOURS.toMinutes(1),
