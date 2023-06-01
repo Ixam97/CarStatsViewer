@@ -228,7 +228,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
             IntentFilter(CarStatsViewer.liveDataApis[0].broadcastAction)
         )
 
-        main_button_performance.isEnabled = true
+        main_button_performance.isEnabled = false
         main_button_performance.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
         main_button_history.isEnabled = false
         main_button_history.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
