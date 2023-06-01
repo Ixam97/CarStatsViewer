@@ -101,6 +101,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+                    <CheckBox
+                        android:buttonTint="@color/bad_red"
+                        android:id="@+id/checkbox_send_current_trips"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Send current trips"/>
+                    <CheckBox
+                        android:buttonTint="@color/bad_red"
+                        android:id="@+id/checkbox_send_past_trips"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Send past trips"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="60dp"

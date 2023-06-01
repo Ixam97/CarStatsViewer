@@ -66,6 +66,13 @@ class MailSender(private val user: String, private val password: String, private
         _multipart.addBodyPart(messageBodyPart)
     }
 
+    fun addAttachment(content: String, fileName: String) {
+        val messageBodyPart: BodyPart = MimeBodyPart()
+        messageBodyPart.dataHandler = DataHandler(content, "text/plain")
+        messageBodyPart.fileName = fileName
+        _multipart.addBodyPart(messageBodyPart)
+    }
+
     inner class ByteArrayDataSource : DataSource {
         private var data: ByteArray
         private var type: String? = null

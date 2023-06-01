@@ -1,6 +1,7 @@
 package com.ixam97.carStatsViewer.activities
 
 import android.app.AlertDialog
+import android.car.Car
 import android.os.Bundle
 import android.util.Patterns
 import android.view.ContextThemeWrapper
@@ -8,10 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
+import com.google.gson.GsonBuilder
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManagers
+import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.mailSender.MailSender
 import com.ixam97.carStatsViewer.utils.logLevel
 import com.ixam97.carStatsViewer.utils.logLength
@@ -19,6 +23,7 @@ import com.ixam97.carStatsViewer.views.MultiSelectWidget
 import kotlinx.android.synthetic.main.activity_log.*
 import kotlinx.coroutines.*
 import java.io.File
+import java.io.FileWriter
 import java.util.*
 
 class LogActivity : FragmentActivity() {
@@ -83,30 +88,30 @@ class LogActivity : FragmentActivity() {
 
                         if (sender == null) return@launch
 
-                        enumValues<DataManagers>().forEach {
-                            try {
-                                val dir = File(applicationContext.filesDir, "TripData")
-                                if (!dir.exists()) {
-                                    InAppLogger.w("TRIP DATA: Directory TripData does not exist!")
-
-                                } else {
-                                    val gpxFile = File(dir, "${it.dataManager.printableName}.json")
-                                    if (!gpxFile.exists() && gpxFile.length() > 0) {
-                                        InAppLogger.w("TRIP_DATA File ${it.dataManager.printableName}.json does not exist!")
-                                    }
-                                    else {
-                                        sender.addAttachment(gpxFile)
-                                    }
-                                }
-                            } catch(e: java.lang.Exception) {
-                                InAppLogger.e("Can't attach file ${it.dataManager.printableName}")
+                        if (checkbox_send_current_trips.isChecked) {
+                            for (activeDrivingSessionsId in CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds()) {
+                                val trip = CarStatsViewer.tripDataSource.getFullDrivingSession(activeDrivingSessionsId)
+                                sender.addAttachment(
+                                    content = GsonBuilder().setPrettyPrinting().create().toJson(trip),
+                                    fileName = "${ TripType.tripTypesNameMap[trip.session_type] ?: "Unknown" }_current.json"
+                                )
                             }
-
                         }
+
+                        if (checkbox_send_past_trips.isChecked) {
+                            for (pastDrivingSession in CarStatsViewer.tripDataSource.getPastDrivingSessions()) {
+                                sender.addAttachment(
+                                    content = GsonBuilder().setPrettyPrinting().create().toJson(pastDrivingSession),
+                                    fileName = "${ TripType.tripTypesNameMap[pastDrivingSession.session_type] ?: "Unknown" }_${pastDrivingSession.start_epoch_time}.json"
+                                )
+                            }
+                        }
+
                         sender.sendMail("Debug Log ${Date()} from $senderName", InAppLogger.getLogString(), senderMail, mailAdr)
+
                         runOnUiThread {
                             log_progress_bar.visibility = View.GONE
-                            Toast.makeText(this@LogActivity, "Log and JSON sent to $mailAdr", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@LogActivity, "Log sent to $mailAdr", Toast.LENGTH_LONG).show()
                         }
                     } catch (e: java.lang.Exception) {
                         runOnUiThread {
