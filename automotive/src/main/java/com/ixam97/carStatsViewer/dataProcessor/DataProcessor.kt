@@ -71,30 +71,28 @@ class DataProcessor(
         }
     }
 
-    // fun resetManualTrip() {
-    //     updateDrivingDataPoint(null, true)
-    // }
-
     private fun speedUpdate() {
         if (carPropertiesData.CurrentSpeed.timeDelta > 0 && realTimeData.drivingState == DrivingState.DRIVE) {
             val distanceDelta = (carPropertiesData.CurrentSpeed.value as Float).absoluteValue * (carPropertiesData.CurrentSpeed.timeDelta / 1_000_000_000f)
             pointDrivenDistance += distanceDelta
             valueDrivenDistance += distanceDelta
 
-            if (pointDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL)
-                updateDrivingDataPoint()
+            CoroutineScope(Dispatchers.IO).launch {
+                if (pointDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL)
+                    updateDrivingDataPoint()
 
-            if (valueDrivenDistance > 10)
-                updateTripDataValues(DrivingState.DRIVE)
-
-            /** only relevant in emulator since power is not updated periodically */
-            if (emulatorMode) {
-                val energyDelta = emulatorPowerSign * (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentSpeed.timeDelta / 3.6E12)
-                pointUsedEnergy += energyDelta
-                valueUsedEnergy += energyDelta
-
-                if (valueUsedEnergy > 100)
+                if (valueDrivenDistance > 10)
                     updateTripDataValues(DrivingState.DRIVE)
+
+                /** only relevant in emulator since power is not updated periodically */
+                if (emulatorMode) {
+                    val energyDelta = emulatorPowerSign * (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentSpeed.timeDelta / 3.6E12)
+                    pointUsedEnergy += energyDelta
+                    valueUsedEnergy += energyDelta
+
+                    if (valueUsedEnergy > 100)
+                        updateTripDataValues(DrivingState.DRIVE)
+                }
             }
         }
     }
@@ -107,15 +105,17 @@ class DataProcessor(
             pointUsedEnergy += energyDelta
             valueUsedEnergy += energyDelta
 
-            if (realTimeData.drivingState == DrivingState.CHARGE) {
-                if (pointUsedEnergy.absoluteValue > Defines.PLOT_ENERGY_INTERVAL)
-                    updateChargingDataPoint()
-                if (valueUsedEnergy.absoluteValue > 100)
-                    updateTripDataValues(DrivingState.CHARGE)
-            }
+            CoroutineScope(Dispatchers.IO).launch {
+                if (realTimeData.drivingState == DrivingState.CHARGE) {
+                    if (pointUsedEnergy.absoluteValue > Defines.PLOT_ENERGY_INTERVAL)
+                        updateChargingDataPoint()
+                    if (valueUsedEnergy.absoluteValue > 100)
+                        updateTripDataValues(DrivingState.CHARGE)
+                }
 
-            if (valueUsedEnergy.absoluteValue > 100 && realTimeData.drivingState == DrivingState.DRIVE)
-                updateTripDataValues(DrivingState.DRIVE)
+                if (valueUsedEnergy.absoluteValue > 100 && realTimeData.drivingState == DrivingState.DRIVE)
+                    updateTripDataValues(DrivingState.DRIVE)
+            }
         }
     }
 
@@ -136,26 +136,29 @@ class DataProcessor(
 
     private fun stateUpdate() {
         val drivingState = realTimeData.drivingState
-        if (drivingState != previousDrivingState) {
-            InAppLogger.i("[NEO] Drive state changed from ${DrivingState.nameMap[previousDrivingState]} to ${DrivingState.nameMap[drivingState]}")
-            // if (drivingState == DrivingState.DRIVE || drivingState == DrivingState.PARKED) updateTripData()
+        CoroutineScope(Dispatchers.IO).launch {
+            if (drivingState != previousDrivingState) {
+                InAppLogger.i("[NEO] Drive state changed from ${DrivingState.nameMap[previousDrivingState]} to ${DrivingState.nameMap[drivingState]}")
+                // if (drivingState == DrivingState.DRIVE || drivingState == DrivingState.PARKED) updateTripData()
 
-            if (drivingState == DrivingState.DRIVE)
-                updateDrivingDataPoint(PlotLineMarkerType.BEGIN_SESSION.int)
-            if (drivingState != DrivingState.DRIVE && previousDrivingState == DrivingState.DRIVE)
-                updateDrivingDataPoint(PlotLineMarkerType.END_SESSION.int)
-            if (drivingState == DrivingState.CHARGE)
-                updateChargingDataPoint(PlotLineMarkerType.BEGIN_SESSION.int)
-            if (drivingState != DrivingState.CHARGE && previousDrivingState == DrivingState.CHARGE)
-                updateChargingDataPoint(PlotLineMarkerType.END_SESSION.int)
+                tripDataManager.newDrivingState(drivingState, previousDrivingState) // Reset Trips before inserting new data points
+
+                if (drivingState == DrivingState.DRIVE)
+                    updateDrivingDataPoint(PlotLineMarkerType.BEGIN_SESSION.int)
+                if (drivingState != DrivingState.DRIVE && previousDrivingState == DrivingState.DRIVE)
+                    updateDrivingDataPoint(PlotLineMarkerType.END_SESSION.int)
+                if (drivingState == DrivingState.CHARGE)
+                    updateChargingDataPoint(PlotLineMarkerType.BEGIN_SESSION.int)
+                if (drivingState != DrivingState.CHARGE && previousDrivingState == DrivingState.CHARGE)
+                    updateChargingDataPoint(PlotLineMarkerType.END_SESSION.int)
                 previousStateOfCharge = realTimeData.stateOfCharge
 
-            tripDataManager.newDrivingState(drivingState, previousDrivingState)
+            }
+            previousDrivingState = drivingState
         }
-        previousDrivingState = drivingState
     }
 
-    private fun updateDrivingDataPoint(markerType: Int? = null) {
+    private suspend fun updateDrivingDataPoint(markerType: Int? = null) {
         usedEnergySum += pointUsedEnergy
         InAppLogger.v("[NEO] Driven distance: $pointDrivenDistance, Used energy: $usedEnergySum")
 
@@ -173,32 +176,17 @@ class DataProcessor(
         pointUsedEnergy = 0.0
         pointDrivenDistance = 0.0
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val drivingPoint = drivingPoint.copy()
-            CarStatsViewer.tripDataSource.addDrivingPoint(drivingPoint)
-
-            updateTripDataValues(DrivingState.DRIVE)
-
-            // if (doReset) {
-            //     val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
-            //     InAppLogger.i("[NEO] drivingSessionsIdsMap: $drivingSessionsIdsMap")
-            //     val drivingSessionId = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[TripType.MANUAL]
-            //     if (drivingSessionId != null) {
-            //         CarStatsViewer.tripDataSource.supersedeDrivingSession(drivingSessionId, System.currentTimeMillis())
-            //     } else {
-            //         CarStatsViewer.tripDataSource.startDrivingSession(System.currentTimeMillis(), TripType.MANUAL)
-            //     }
-            // }
-        }
+        CarStatsViewer.tripDataSource.addDrivingPoint(drivingPoint)
+        updateTripDataValues(DrivingState.DRIVE)
     }
 
-    private fun updateChargingDataPoint(markerType: Int? = null) {
+    private suspend fun updateChargingDataPoint(markerType: Int? = null) {
 
         pointUsedEnergy = 0.0
         updateTripDataValues(DrivingState.CHARGE)
     }
 
-    private fun updateTripDataValues(drivingState: Int = realTimeData.drivingState) {
+    private suspend fun updateTripDataValues(drivingState: Int = realTimeData.drivingState) {
         when (drivingState) {
             DrivingState.DRIVE -> tripDataManager.newDrivingDeltas(valueDrivenDistance, valueUsedEnergy)
             DrivingState.CHARGE -> tripDataManager.newChargingDeltas(valueUsedEnergy)

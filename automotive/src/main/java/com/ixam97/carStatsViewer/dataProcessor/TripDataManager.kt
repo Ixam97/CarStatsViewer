@@ -42,26 +42,22 @@ class TripDataManager {
     private val _chargingTripDataFlow = MutableStateFlow(chargingTripData)
     val chargingTripDataFlow = _chargingTripDataFlow.asStateFlow()
 
-    fun newDrivingState(drivingState: Int, oldDrivingState: Int) {
+    suspend fun newDrivingState(drivingState: Int, oldDrivingState: Int) {
         /** Reset "since charge" after unplugging" */
         if (drivingState != DrivingState.CHARGE && oldDrivingState == DrivingState.CHARGE) {
-            CoroutineScope(Dispatchers.IO).launch {
-                resetTrip(TripType.SINCE_CHARGE, drivingState)
-            }
+            resetTrip(TripType.SINCE_CHARGE, drivingState)
         }
         /** Reset "monthly" when last driving point has date in last month */
         /** Reset "Auto" when last driving point is more than 4h old */
         if (drivingState == DrivingState.DRIVE && oldDrivingState != DrivingState.DRIVE) {
-            CoroutineScope(Dispatchers.IO).launch {
-                val lastDriveTime = CarStatsViewer.tripDataSource.getLatestDrivingPoint()?.driving_point_epoch_time
-                if (lastDriveTime != null) {
-                    if (Date().month != Date(lastDriveTime).month)
-                        resetTrip(TripType.MONTH, drivingState)
-                    if (lastDriveTime < (System.currentTimeMillis() - Defines.AUTO_RESET_TIME))
-                        resetTrip(TripType.AUTO, drivingState)
-                } else {
-                    InAppLogger.w("[NEO] No existing driving points for reset reference!")
-                }
+            val lastDriveTime = CarStatsViewer.tripDataSource.getLatestDrivingPoint()?.driving_point_epoch_time
+            if (lastDriveTime != null) {
+                if (Date().month != Date(lastDriveTime).month)
+                    resetTrip(TripType.MONTH, drivingState)
+                if (lastDriveTime < (System.currentTimeMillis() - Defines.AUTO_RESET_TIME))
+                    resetTrip(TripType.AUTO, drivingState)
+            } else {
+                InAppLogger.w("[NEO] No existing driving points for reset reference!")
             }
         }
 
@@ -96,74 +92,55 @@ class TripDataManager {
 
     suspend fun resetTrip(tripType: Int, drivingState: Int) {
         /** Reset the specified trip type. If none exists, create a new one */
-        //CoroutineScope(Dispatchers.IO).launch {
-            val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
-            val drivingSessionId = drivingSessionsIdsMap[tripType]
-            if (drivingSessionId != null) {
-                CarStatsViewer.tripDataSource.supersedeDrivingSession(
-                    drivingSessionId,
-                    System.currentTimeMillis()
-                )
-                InAppLogger.i("[NEO] Superseded trip of type ${TripType.tripTypesNameMap[tripType]}")
-            } else {
-                CarStatsViewer.tripDataSource.startDrivingSession(
-                    System.currentTimeMillis(),
-                    tripType
-                )
-                InAppLogger.w("[NEO] No trip of type ${TripType.tripTypesNameMap[tripType]} existing, starting new trip")
-            }
+        val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
+        val drivingSessionId = drivingSessionsIdsMap[tripType]
+        if (drivingSessionId != null) {
+            CarStatsViewer.tripDataSource.supersedeDrivingSession(
+                drivingSessionId,
+                System.currentTimeMillis()
+            )
+            InAppLogger.i("[NEO] Superseded trip of type ${TripType.tripTypesNameMap[tripType]}")
+        } else {
+            CarStatsViewer.tripDataSource.startDrivingSession(
+                System.currentTimeMillis(),
+                tripType
+            )
+            InAppLogger.w("[NEO] No trip of type ${TripType.tripTypesNameMap[tripType]} existing, starting new trip")
+        }
         if (tripType == drivingTripData.selectedTripType) drivingTripData = DrivingTripData(selectedTripType = drivingTripData.selectedTripType)
         timerMap[tripType]?.reset()
         if (drivingState == DrivingState.DRIVE) timerMap[tripType]?.start()
-        //}
     }
 
-    fun newDrivingDeltas(distanceDelta: Double, energyDelta: Double) {
-        // val currentDrivingDistance = drivingTripData.drivenDistance + distanceDelta
-        // val currentDrivingEnergy = drivingTripData.usedEnergy + energyDelta
+    suspend fun newDrivingDeltas(distanceDelta: Double, energyDelta: Double) {
+        CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds().forEach { sessionIds ->
 
-        // drivingTripData = drivingTripData.copy(
-        //     drivenDistance = currentDrivingDistance,
-        //     usedEnergy = currentDrivingEnergy
-        // )
+            CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
+                CarStatsViewer.tripDataSource.updateDrivingSession(session.copy(
+                    drive_time = timerMap[session.session_type]?.getTime()?:0L,
+                    driven_distance = session.driven_distance + distanceDelta,
+                    used_energy = session.used_energy + energyDelta
+                ))
+            }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds().forEach { sessionIds ->
-
-                CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
-                    CarStatsViewer.tripDataSource.updateDrivingSession(session.copy(
-                        drive_time = timerMap[session.session_type]?.getTime()?:0L,
-                        driven_distance = session.driven_distance + distanceDelta,
-                        used_energy = session.used_energy + energyDelta
-                    ))
+            CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
+                if (drivingTripData.selectedTripType == session.session_type) {
+                    drivingTripData = drivingTripData.copy(
+                        driveTime = session.drive_time,
+                        drivenDistance = session.driven_distance,
+                        usedEnergy = session.used_energy
+                    )
                 }
-
-                CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
-                    if (drivingTripData.selectedTripType == session.session_type) {
-                        drivingTripData = drivingTripData.copy(
-                            driveTime = session.drive_time,
-                            drivenDistance = session.driven_distance,
-                            usedEnergy = session.used_energy
-                        )
-                    }
-                }
-
-                // val fullDrivingSession = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionIds)
-                // Log.v("Database trip dump", GsonBuilder().setPrettyPrinting().create().toJson(fullDrivingSession))
             }
         }
-
-        // Update database
     }
 
-    fun newChargingDeltas(energyDelta: Double) {
+    suspend fun newChargingDeltas(energyDelta: Double) {
         val currentChargingEnergy = chargingTripData.chargedEnergy + energyDelta
 
         chargingTripData = chargingTripData.copy(
             chargedEnergy = currentChargingEnergy
         )
-
-        // Update database
     }
 
     fun updateTime() {

@@ -88,6 +88,10 @@ class LogActivity : FragmentActivity() {
 
                         if (sender == null) return@launch
 
+                        sender.addAttachment(
+                            content = InAppLogger.getLogString(),
+                            fileName ="log_${System.currentTimeMillis()}.txt")
+
                         if (checkbox_send_current_trips.isChecked) {
                             for (activeDrivingSessionsId in CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds()) {
                                 val trip = CarStatsViewer.tripDataSource.getFullDrivingSession(activeDrivingSessionsId)
@@ -99,15 +103,16 @@ class LogActivity : FragmentActivity() {
                         }
 
                         if (checkbox_send_past_trips.isChecked) {
-                            for (pastDrivingSession in CarStatsViewer.tripDataSource.getPastDrivingSessions()) {
+                            for (pastDrivingSessionId in CarStatsViewer.tripDataSource.getPastDrivingSessionIds()) {
+                                val trip = CarStatsViewer.tripDataSource.getFullDrivingSession(pastDrivingSessionId)
                                 sender.addAttachment(
-                                    content = GsonBuilder().setPrettyPrinting().create().toJson(pastDrivingSession),
-                                    fileName = "${ TripType.tripTypesNameMap[pastDrivingSession.session_type] ?: "Unknown" }_${pastDrivingSession.start_epoch_time}.json"
+                                    content = GsonBuilder().setPrettyPrinting().create().toJson(trip),
+                                    fileName = "${ TripType.tripTypesNameMap[trip.session_type] ?: "Unknown" }_${trip.start_epoch_time}.json"
                                 )
                             }
                         }
 
-                        sender.sendMail("Debug Log ${Date()} from $senderName", InAppLogger.getLogString(), senderMail, mailAdr)
+                        sender.sendMail("Debug Log ${Date()} from $senderName", "See attachments.", senderMail, mailAdr)
 
                         runOnUiThread {
                             log_progress_bar.visibility = View.GONE
