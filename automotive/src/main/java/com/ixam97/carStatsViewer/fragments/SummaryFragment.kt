@@ -494,7 +494,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
     private fun refreshActivity(index: Int) {
         refreshActivity(DataManagers.values()[index].dataManager)
         CoroutineScope(Dispatchers.IO).launch {
-            (applicationContext as CarStatsViewer).tripDataManager.changeSelectedTrip(index + 1)
+            (applicationContext as CarStatsViewer).dataProcessor.changeSelectedTrip(index + 1)
         }
     }
 }

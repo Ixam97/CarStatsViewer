@@ -159,7 +159,7 @@ class HistoryActivity  : Activity() {
             runOnUiThread {
                 history_linear_layout.removeAllViews()
             }
-            (applicationContext as CarStatsViewer).tripDataManager.resetTrip(tripType, (applicationContext as CarStatsViewer).dataProcessor.realTimeData.drivingState)
+            (applicationContext as CarStatsViewer).dataProcessor.resetTrip(tripType, (applicationContext as CarStatsViewer).dataProcessor.realTimeData.drivingState)
             finish();
             startActivity(newIntent);
         }

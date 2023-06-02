@@ -16,7 +16,6 @@ import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesClient
 import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
-import com.ixam97.carStatsViewer.dataProcessor.TripDataManager
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.locationTracking.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationTracking.LocationClient
@@ -38,7 +37,6 @@ class NeoDataCollector: Service() {
 
     private lateinit var carPropertiesClient: CarPropertiesClient
     private lateinit var dataProcessor: DataProcessor
-    private lateinit var tripDataManager: TripDataManager
 
     init {
         InAppLogger.i("[NEO] Neo DataCollector is initializing...")
@@ -71,10 +69,9 @@ class NeoDataCollector: Service() {
             exitProcess(0)
         }
 
-        dataProcessor  = (applicationContext as CarStatsViewer).dataProcessor
-        tripDataManager = (applicationContext as CarStatsViewer).tripDataManager
+        dataProcessor = (applicationContext as CarStatsViewer).dataProcessor
 
-        tripDataManager.checkTrips()
+        dataProcessor.checkTrips()
 
         carPropertiesClient = CarPropertiesClient(
             context = applicationContext,

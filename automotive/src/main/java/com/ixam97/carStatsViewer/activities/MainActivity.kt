@@ -75,7 +75,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
     private val updateActivityTask = object : Runnable {
         override fun run() {
             updateActivity()
-            carStatsViewer.tripDataManager.updateTime()
+            carStatsViewer.dataProcessor.updateTime()
 
             if (updateUi) timerHandler.postDelayed(this, UI_UPDATE_INTERVAL)
         }
@@ -212,7 +212,7 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                carStatsViewer.tripDataManager.drivingTripDataFlow.collectLatest {
+                carStatsViewer.dataProcessor.drivingTripDataFlow.collectLatest {
                     // InAppLogger.v("TripData: Driven Distance: ${it.drivenDistance}")
                     neoDistance = it.drivenDistance
                     neoEnergy = it.usedEnergy

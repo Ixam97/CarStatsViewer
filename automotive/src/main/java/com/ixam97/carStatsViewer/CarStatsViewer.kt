@@ -8,7 +8,6 @@ import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManager
 import com.ixam97.carStatsViewer.dataManager.TripData
 import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
-import com.ixam97.carStatsViewer.dataProcessor.TripDataManager
 import com.ixam97.carStatsViewer.database.tripData.*
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
@@ -53,8 +52,7 @@ class CarStatsViewer : Application() {
         lateinit var tripDataSource: LocalTripDataSource
     }
 
-    val tripDataManager = TripDataManager()
-    val dataProcessor = DataProcessor(tripDataManager)
+    val dataProcessor = DataProcessor()
 
     override fun onCreate() {
         super.onCreate()
