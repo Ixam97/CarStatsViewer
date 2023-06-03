@@ -1,8 +1,11 @@
 package com.ixam97.carStatsViewer.views
 
 import android.content.Context
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.util.AttributeSet
 import android.view.View
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -29,6 +32,7 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
 */
     private var mainClickListener: OnMainClickListener? = null
     private var deleteClickListener: OnDeleteClickListener? = null
+    private var mainLongClickListener: OnDeleteClickListener? = null
 
     init {
         init()
@@ -46,6 +50,10 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
         mainClickListener = listener
     }
 
+    fun setOnMainLongClickListener(listener: OnDeleteClickListener) {
+        mainLongClickListener = listener
+    }
+
     fun setOnDeleteClickListener(listener: OnDeleteClickListener) {
         deleteClickListener = listener
     }
@@ -55,7 +63,7 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
         View.inflate(context, R.layout.widget_trip_history_row, this)
 
         val rowIcon: ImageView = findViewById(R.id.row_start_icon)
-        val deleteIcon: ImageView = findViewById(R.id.row_end_icon)
+        val rowEndButton: ImageButton = findViewById(R.id.row_end_button)
 
         val topText: TextView = findViewById(R.id.row_top_text)
         val distanceText: TextView = findViewById(R.id.distance_text)
@@ -63,15 +71,19 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
         val consText: TextView = findViewById(R.id.consumption_text)
         val timeText: TextView = findViewById(R.id.time_text)
 
-        val rowDelete: ImageView = findViewById((R.id.row_end_icon))
         val rowBody: ConstraintLayout = findViewById(R.id.row_container_body)
 
-        rowDelete.setOnClickListener {
+        rowEndButton.setOnClickListener {
             deleteClickListener?.onDeleteClicked()
         }
 
         rowBody.setOnClickListener {
             mainClickListener?.onMainClicked()
+        }
+
+        rowBody.setOnLongClickListener {
+            mainLongClickListener?.onDeleteClicked()
+            true
         }
 
         when (session.session_type) {
@@ -83,7 +95,11 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
         }
 
         if ((session.end_epoch_time?:0) <= 0) {
-            deleteIcon.setImageResource(R.drawable.ic_reset)
+            rowEndButton.setImageResource(R.drawable.ic_reset)
+            if (session.session_type != TripType.MANUAL) {
+                rowEndButton.isEnabled = false
+                rowEndButton.setColorFilter(context.getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+            }
         }
 
 

@@ -132,15 +132,16 @@
                 android:layout_marginEnd="15dp"
                 android:background="@color/disabled_tint"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/row_end_icon"
+                app:layout_constraintEnd_toStartOf="@+id/row_end_button"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/row_end_icon"
+            <ImageButton
+                android:id="@+id/row_end_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_delete"
+                android:background="@android:color/transparent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

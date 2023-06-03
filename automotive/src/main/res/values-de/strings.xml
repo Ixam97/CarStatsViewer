@@ -212,4 +212,7 @@
     <string name="history_dialog_filters_auto">Zeige automatische Trips</string>
     <string name="history_dialog_filters_month">Zeige monatliche Trips</string>
     <string name="history_dialog_filters_date">Frühestes Startdatum</string>
+    <string name="history_dialog_delete_title">Trip Löschen?</string>
+    <string name="history_dialog_delete_message">Der Trip wird dauerhaft gelöscht.</string>
+    <string name="history_dialog_delete_confirm">Trip löschen</string>
 </resources>

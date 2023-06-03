@@ -1,6 +1,7 @@
 package com.ixam97.carStatsViewer.activities
 
 import android.app.AlertDialog
+import android.car.Car
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -9,11 +10,14 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.DatePicker
 import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 import com.airbnb.paris.extensions.style
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.views.TripHistoryRowWidget
 import kotlinx.android.synthetic.main.activity_history.*
@@ -77,19 +81,28 @@ class HistoryActivity  : FragmentActivity() {
             }
             val currentDrivingSessions = CarStatsViewer.tripDataSource.getActiveDrivingSessions().sortedBy { it.session_type }
             currentDrivingSessions.forEach { drivingSession ->
-                val rowView = TripHistoryRowWidget(this@HistoryActivity, session = drivingSession)
-
-                rowView.setOnDeleteClickListener {
-                    // deleteTrip(drivingSession.driving_session_id)
-                    resetTrip(drivingSession.session_type)
-                }
-
-                rowView.setOnMainClickListener {
-                    openSummary(drivingSession.driving_session_id)
-                }
-
                 runOnUiThread {
+                    val rowView = TripHistoryRowWidget(this@HistoryActivity, session = drivingSession)
+
+                    rowView.setOnDeleteClickListener {
+                        // deleteTrip(drivingSession.driving_session_id)
+                        createResetDialog(drivingSession.session_type)
+                    }
+
+                    rowView.setOnMainClickListener {
+                        openSummary(drivingSession.driving_session_id)
+                    }
+
+                    rowView.setOnMainLongClickListener {
+                        createDeleteDialog(drivingSession)
+                    }
+
                     history_linear_layout.addView(rowView)
+
+                    rowView.setOnLongClickListener {
+                        createDeleteDialog(drivingSession)
+                        true
+                    }
                 }
             }
 
@@ -99,17 +112,17 @@ class HistoryActivity  : FragmentActivity() {
 
             val pastDrivingSessions = CarStatsViewer.tripDataSource.getPastDrivingSessions().sortedBy { it.start_epoch_time }.reversed()
             pastDrivingSessions.forEach { drivingSession ->
-                val rowView = TripHistoryRowWidget(this@HistoryActivity, session = drivingSession)
-
-                rowView.setOnDeleteClickListener {
-                    deleteTrip(drivingSession.driving_session_id)
-                }
-
-                rowView.setOnMainClickListener {
-                    openSummary(drivingSession.driving_session_id)
-                }
-
                 runOnUiThread {
+                    val rowView = TripHistoryRowWidget(this@HistoryActivity, session = drivingSession)
+
+                    rowView.setOnDeleteClickListener {
+                        createDeleteDialog(drivingSession)
+                    }
+
+                    rowView.setOnMainClickListener {
+                        openSummary(drivingSession.driving_session_id)
+                    }
+
                     history_linear_layout.addView(rowView)
                 }
             }
@@ -161,6 +174,7 @@ class HistoryActivity  : FragmentActivity() {
     private fun deleteTrip(sessionId: Long) {
         CoroutineScope(Dispatchers.IO).launch {
             CarStatsViewer.tripDataSource.deleteDrivingSessionById(sessionId)
+            (applicationContext as CarStatsViewer).dataProcessor.checkTrips()
             runOnUiThread {
                 val newIntent = Intent(intent)
                 newIntent.putExtra("noTransition", true)
@@ -168,6 +182,40 @@ class HistoryActivity  : FragmentActivity() {
                 startActivity(newIntent);
             }
         }
+    }
+
+    private fun createDeleteDialog(session: DrivingSession) {
+        val builder = AlertDialog.Builder(this@HistoryActivity)
+        builder.setTitle(getString(R.string.history_dialog_delete_title))
+            .setCancelable(true)
+            .setPositiveButton(getString(R.string.history_dialog_delete_confirm)) {_,_->
+                deleteTrip(session.driving_session_id)
+            }
+            .setNegativeButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
+                dialog.cancel()
+            }
+        if ((session.end_epoch_time?:0) <= 0) {
+            builder.setMessage("You are about to delete an active Trip! This may cause unwanted behaviour and should only be used for bugged trips!")
+        } else {
+            builder.setMessage(R.string.history_dialog_delete_message)
+        }
+        val alert = builder.create()
+        alert.show()
+    }
+
+    private fun createResetDialog(tripType: Int) {
+        val builder = AlertDialog.Builder(this@HistoryActivity)
+        builder.setTitle(getString(R.string.dialog_reset_title))
+            .setMessage(getString(R.string.dialog_reset_message))
+            .setCancelable(true)
+            .setPositiveButton(getString(R.string.dialog_reset_confirm)) { _, _ ->
+                resetTrip(tripType)
+            }
+            .setNegativeButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
+                dialog.cancel()
+            }
+        val alert = builder.create()
+        alert.show()
     }
 
     private fun resetTrip(tripType: Int) {
