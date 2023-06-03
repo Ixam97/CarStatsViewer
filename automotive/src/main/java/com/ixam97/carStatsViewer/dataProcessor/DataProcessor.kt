@@ -181,27 +181,29 @@ class DataProcessor {
     /** Actions related to changes in the driving state */
     private fun stateUpdate() {
         val drivingState = realTimeData.drivingState
-        CoroutineScope(Dispatchers.IO).launch {
-            if (drivingState != previousDrivingState) {
-                InAppLogger.i("[NEO] Drive state changed from ${DrivingState.nameMap[previousDrivingState]} to ${DrivingState.nameMap[drivingState]}")
+        val prevState = previousDrivingState
+
+        previousDrivingState = drivingState
+
+        if (drivingState != prevState) {
+            CoroutineScope(Dispatchers.IO).launch {
+                InAppLogger.i("[NEO] Drive state changed from ${DrivingState.nameMap[prevState]} to ${DrivingState.nameMap[drivingState]}")
 
                 // Reset Trips before inserting new data points
-                newDrivingState(drivingState, previousDrivingState)
+                newDrivingState(drivingState, prevState)
 
                 // Begin or end plot sessions depending on driving state. Ensures exact values
                 // saved in data points and trip sums.
                 if (drivingState == DrivingState.DRIVE)
                     updateDrivingDataPoint(PlotLineMarkerType.BEGIN_SESSION.int)
-                if (drivingState != DrivingState.DRIVE && previousDrivingState == DrivingState.DRIVE)
+                if (drivingState != DrivingState.DRIVE && prevState == DrivingState.DRIVE)
                     updateDrivingDataPoint(PlotLineMarkerType.END_SESSION.int)
                 if (drivingState == DrivingState.CHARGE)
                     updateChargingDataPoint(PlotLineMarkerType.BEGIN_SESSION.int)
-                if (drivingState != DrivingState.CHARGE && previousDrivingState == DrivingState.CHARGE)
+                if (drivingState != DrivingState.CHARGE && prevState == DrivingState.CHARGE)
                     updateChargingDataPoint(PlotLineMarkerType.END_SESSION.int)
                 previousStateOfCharge = realTimeData.stateOfCharge
-
             }
-            previousDrivingState = drivingState
         }
     }
 
