@@ -115,8 +115,6 @@
     <string name="main_button_reset_stats">Reset statistics</string>
     <string name="main_consumption">Consumption over the last 3 km:</string>
     <string name="main_speed">Speed</string>
-    <string name="main_dialog_reset_title">Reset stats?</string>
-    <string name="main_dialog_reset_message">All saved trip data will be reset to zero.</string>
     <string name="main_gage_speed">Speed</string>
     <string name="main_gage_power">Power</string>
     <string name="main_gage_charging_power">Charging power</string>
@@ -179,9 +177,6 @@
     <string name="settings_apis_smtp">SMTP Login</string>
     <string name="settings_apis_use">Use API</string>
 
-    <!-- HistoryActivity -->
-    <string name="history_title">Trip history</string>
-
     <!-- ABRP -->
     <string name="abrp_description">Enter an ABRP generic token to transmit over-the-air live data to the ABRP servers. This includes location data if not disabled.</string>
     <string name="abrp_generic_token">Generic token</string>
@@ -243,12 +238,14 @@
     <string name="quit_dialog_title">Quit App?</string>
     <string name="quit_dialog_message">Log will be copied to clipboard.</string>
     <string name="dialog_close">Close</string>
-    <string name="dialog_reset_title">Reset trip data?</string>
-    <string name="dialog_reset_message">The current trip data will be reset to zero. Do you want to save the trip?</string>
+    <string name="dialog_reset_title">Reset manual trip data?</string>
+    <string name="dialog_reset_message">The current manual trip data will be reset to zero. It will be saved in the trip History</string>
     <string name="dialog_reset_do_save">Save</string>
     <string name="dialog_reset_no_save">"Don't save"</string>
     <string name="dialog_reset_cancel">Cancel</string>
+    <string name="dialog_reset_confirm">Reset</string>
     <string name="dialog_confirm">Yes</string>
+    <string name="dialog_apply">Apply</string>
     <string name="dialog_dismiss">No</string>
 
     <!-- LogActivity -->
@@ -258,4 +255,15 @@
     <string name="notification_title">Current stats:</string>
     <string name="foreground_service_info">Statistics tracking service running</string>
     <string name="toast_file_read_error">Error reading trip file</string>
+
+    <!-- Trip history -->
+    <string name="history_title">Trip history</string>
+    <string name="history_past_trips">Past trips:</string>
+    <string name="history_current_trips">Current trips:</string>
+    <string name="history_dialog_filters_title">Trip filters</string>
+    <string name="history_dialog_filters_manual">Show manual trips</string>
+    <string name="history_dialog_filters_charge">Show since charge trips</string>
+    <string name="history_dialog_filters_auto">Show automatic trips</string>
+    <string name="history_dialog_filters_month">Show monthly trips</string>
+    <string name="history_dialog_filters_date">Earliest start date</string>
 </resources>

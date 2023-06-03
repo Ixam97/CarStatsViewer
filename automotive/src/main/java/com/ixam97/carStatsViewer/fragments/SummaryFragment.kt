@@ -2,6 +2,9 @@ package com.ixam97.carStatsViewer.fragments
 
 import android.app.AlertDialog
 import android.content.*
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
@@ -14,6 +17,7 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.dataManager.*
+import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
@@ -27,20 +31,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 
-class SummaryFragment() : Fragment(R.layout.fragment_summary) {
-
-    companion object {
-    }
-
-    private var tripData = CarStatsViewer.tripData!!
-    private var dataManager = CarStatsViewer.dataManager
-
-    fun interface OnSelectedTripChangedListener {
-        fun onSelectedTripChanged()
-    }
+class SummaryFragment(val session: DrivingSession, var fragmentContainerId: Int) : Fragment(R.layout.fragment_summary) {
 
     val appPreferences = CarStatsViewer.appPreferences
     val applicationContext = CarStatsViewer.appContext
@@ -59,8 +54,6 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
     private lateinit var consumptionPlotLinePaint : PlotLinePaint
     private lateinit var chargePlotLinePaint : PlotLinePaint
-
-    private var mListener: OnSelectedTripChangedListener? = null
 
     private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -82,13 +75,6 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnSelectedTripChangedListener) {
-            mListener = context as OnSelectedTripChangedListener
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -104,9 +90,14 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             PlotPaint.byColor(applicationContext.getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
         ) { appPreferences.chargePlotSecondaryColor }
 
-        if (dataManager == null || (dataManager?.printableName != DataManagers.CURRENT_TRIP.dataManager.printableName)) {
+        // if (dataManager == null || (dataManager?.printableName != DataManagers.CURRENT_TRIP.dataManager.printableName)) {
+        //     summary_button_reset.isEnabled = false
+        //     summary_button_reset.setColorFilter(applicationContext.getColor(R.color.disabled_tint))
+        // }
+
+        if (session.session_type != TripType.MANUAL) {
             summary_button_reset.isEnabled = false
-            summary_button_reset.setColorFilter(applicationContext.getColor(R.color.disabled_tint))
+            summary_button_reset.colorFilter = PorterDuffColorFilter(applicationContext.getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
         }
 
         // tripData = dataManager.tripData!!
@@ -118,7 +109,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
                 "Wh/km"
             ),
         )
-        consumptionPlotLine.addDataPoints(tripData.consumptionPlotLine)
+        // consumptionPlotLine.addDataPoints(tripData.consumptionPlotLine)
 
         summary_selected_trip_bar[appPreferences.mainViewTrip].background = primaryColor.toColor().toDrawable()
 
@@ -139,40 +130,38 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         }
 
         summary_title.setOnClickListener {
-            var isMainDataManager = false
-            for (mainDataManager in DataManagers.values()) {
-                isMainDataManager = dataManager == mainDataManager.dataManager
-                if (isMainDataManager) break
-            }
-            if (isMainDataManager) {
                 var tripIndex = appPreferences.mainViewTrip
                 tripIndex++
                 if (tripIndex > 3) tripIndex = 0
                 appPreferences.mainViewTrip = tripIndex
                 refreshActivity(tripIndex)
-            } else
-                TODO("Don't use onClick when showing a specific trip, not one of the 4 main trips")
         }
 
-        dataManager?.let {
+        if ((session.end_epoch_time?:0) > 0 ) {
+            summary_title.text = "${StringFormatters.getDateString(Date(session.start_epoch_time))}, ${resources.getStringArray(R.array.trip_type_names)[session.session_type]}"
+        } else {
             summary_title.visibility = View.GONE
             summary_trip_selector.visibility = View.VISIBLE
-            summary_selector_title.text = getString(resources.getIdentifier(
-                it.printableName,
-                "string", applicationContext.packageName
-            ))
-            if(it.printableName != DataManagers.CURRENT_TRIP.dataManager.printableName) {
-                summary_button_reset.isEnabled = false;
-                summary_button_reset.alpha = CarStatsViewer.disabledAlpha
-            }
+            summary_selector_title.text = resources.getStringArray(R.array.trip_type_names)[session.session_type]
         }
+
+        // dataManager?.let {
+        //     summary_selector_title.text = getString(resources.getIdentifier(
+        //         it.printableName,
+        //         "string", applicationContext.packageName
+        //     ))
+        //     if(it.printableName != DataManagers.CURRENT_TRIP.dataManager.printableName) {
+        //         summary_button_reset.isEnabled = false;
+        //         summary_button_reset.alpha = CarStatsViewer.disabledAlpha
+        //     }
+        // }
 
         summary_button_reset.setOnClickListener {
             createResetDialog()
         }
 
         summary_trip_date_text.text = getString(R.string.summary_trip_start_date).format(
-            StringFormatters.getDateString(tripData.tripStartDate))
+            StringFormatters.getDateString(Date(session.start_epoch_time)))
 
         summary_button_show_consumption_container.isSelected = true
 
@@ -201,7 +190,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
                 )
                 remove(this@SummaryFragment)
             }
-            mListener?.onSelectedTripChanged()
+            // mListener?.onSelectedTripChanged()
         }
     }
 
@@ -212,7 +201,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
     private fun setupConsumptionLayout() {
         val plotMarkers = PlotMarkers()
-        plotMarkers.addMarkers(tripData.markers)
+        // plotMarkers.addMarkers(tripData.markers)
         summary_consumption_plot.addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
         summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
 
@@ -235,7 +224,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         summary_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[appPreferences.secondaryConsumptionDimension]
 
         summary_consumption_plot.dimension = PlotDimensionX.DISTANCE
-        summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((appPreferences.distanceUnit.toUnit(tripData.traveledDistance) / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) + 1
+        summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((appPreferences.distanceUnit.toUnit(session.driven_distance.toFloat()) / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) + 1
         summary_consumption_plot.dimensionRestrictionMin = appPreferences.distanceUnit.asUnit(MainActivity.DISTANCE_TRIP_DIVIDER)
         summary_consumption_plot.dimensionSmoothing = 0.02f
         summary_consumption_plot.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
@@ -245,7 +234,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
         summary_consumption_plot.invalidate()
 
-        summary_distance_value_text.text = StringFormatters.getTraveledDistanceString(tripData.traveledDistance)
+        summary_distance_value_text.text = StringFormatters.getTraveledDistanceString(session.driven_distance.toFloat())
 
         // val altList = tripData.consumptionPlotLine.mapNotNull { it.Altitude }
         // val altFirst = if (altList.isEmpty()) altList.first() else null
@@ -253,13 +242,13 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         // val altMin = altList.minOrNull()
         // var altLast = if (altList.isEmpty()) altList.last() else null
 
-        val altUp = tripData.consumptionPlotLine.mapNotNull { it.AltitudeDelta }.filter { it > 0 }.sum()
-        val altDown = tripData.consumptionPlotLine.mapNotNull { it.AltitudeDelta }.filter { it < 0 }.sum().absoluteValue
+        val altUp = session.drivingPoints?.mapNotNull { it.alt }?.filter { it > 0 }?.sum()
+        val altDown = session.drivingPoints?.mapNotNull { it.alt }?.filter { it < 0 }?.sum()?.absoluteValue
 
         summary_altitude_value_text.text = StringFormatters.getAltitudeString(altUp, altDown)
-        summary_used_energy_value_text.text = StringFormatters.getEnergyString(tripData.usedEnergy)
-        summary_avg_consumption_value_text.text = StringFormatters.getAvgConsumptionString(tripData.usedEnergy, tripData.traveledDistance)
-        summary_travel_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.travelTime)
+        summary_used_energy_value_text.text = StringFormatters.getEnergyString(session.used_energy.toFloat())
+        summary_avg_consumption_value_text.text = StringFormatters.getAvgConsumptionString(session.used_energy.toFloat(), session.driven_distance.toFloat())
+        summary_travel_time_value_text.text = StringFormatters.getElapsedTimeString(session.drive_time)
 
         summary_button_secondary_dimension.setOnClickListener {
             var currentIndex = appPreferences.secondaryConsumptionDimension
@@ -291,6 +280,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
     }
 
     private fun setupChargeLayout() {
+        /*
         summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
             getString(R.string.settings_sub_title_last_charge_plot),
             tripData.chargeCurves.size,
@@ -353,9 +343,11 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             }
             summary_charge_plot_view.dimensionShift = 0L
         }
+        */
     }
 
     private fun setVisibleChargeCurve(progress: Int) {
+        /*
         summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
             getString(R.string.settings_sub_title_last_charge_plot),
             tripData.chargeCurves.size,
@@ -412,6 +404,8 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         chargePlotLine.addDataPoints(tripData.chargeCurves[progress].chargePlotLine)
         summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves[progress].chargeTime) / 5) + 1) * 5 + 1
         summary_charge_plot_view.invalidate()
+
+         */
     }
 
     private fun switchToConsumptionLayout() {
@@ -436,26 +430,20 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         builder.setTitle(getString(R.string.dialog_reset_title))
             .setMessage(getString(R.string.dialog_reset_message))
             .setCancelable(true)
-            .setPositiveButton(getString(R.string.dialog_reset_do_save)) { _, _ ->
-                // DataCollector.CurrentTripDataManager.reset()
-                // (applicationContext as CarStatsViewer).dataProcessor.resetManualTrip()
-                applicationContext.sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
-                //applicationContext.finish()
-                //applicationContext.overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
+            .setPositiveButton(getString(R.string.dialog_reset_confirm)) { _, _ ->
+                CoroutineScope(Dispatchers.IO).launch {
+                    (applicationContext as CarStatsViewer).dataProcessor.resetTrip(
+                        TripType.MANUAL,
+                        (applicationContext as CarStatsViewer).dataProcessor.realTimeData.drivingState
+                    )
+                    refreshActivity(session.session_type - 1)
+                }
             }
-            .setNegativeButton(R.string.dialog_reset_no_save) { _, _ ->
-                DataManagers.CURRENT_TRIP.dataManager.reset()
-                applicationContext.sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
-                refreshActivity(dataManager!!)
-            }
-            .setNeutralButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
+            .setNegativeButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
                 dialog.cancel()
             }
         val alert = builder.create()
         alert.show()
-        alert.getButton(DialogInterface.BUTTON_POSITIVE).isEnabled = false
-        alert.getButton(DialogInterface.BUTTON_NEGATIVE).setBackgroundColor(applicationContext.getColor(R.color.bad_red))
-
     }
 
     private fun updateDistractionOptimization() {
@@ -475,26 +463,20 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         )
     }
 
-    private fun refreshActivity(tripData: TripData) {
-        requireActivity().supportFragmentManager.commit {
-            setCustomAnimations(0,0,0,0)
-            CarStatsViewer.dataManager = null
-            CarStatsViewer.tripData = tripData
-            replace(R.id.main_fragment_container, SummaryFragment())
-        }
-    }
-    private fun refreshActivity(dataManager: DataManager) {
-        requireActivity().supportFragmentManager.commit {
-            setCustomAnimations(0,0,0,0)
-            CarStatsViewer.dataManager = dataManager
-            CarStatsViewer.tripData = dataManager.tripData
-            replace(R.id.main_fragment_container, SummaryFragment())
-        }
-    }
     private fun refreshActivity(index: Int) {
-        refreshActivity(DataManagers.values()[index].dataManager)
+        InAppLogger.i("Trip index: ${appPreferences.mainViewTrip}")
+
         CoroutineScope(Dispatchers.IO).launch {
             (applicationContext as CarStatsViewer).dataProcessor.changeSelectedTrip(index + 1)
+            CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[index + 1]?.let {
+                val session = CarStatsViewer.tripDataSource.getFullDrivingSession(it)
+                requireActivity().runOnUiThread {
+                    requireActivity().supportFragmentManager.commit {
+                        setCustomAnimations(0, 0, 0, 0)
+                        replace(fragmentContainerId, SummaryFragment(session, fragmentContainerId))
+                    }
+                }
+            }
         }
     }
 }

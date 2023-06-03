@@ -1,7 +1,6 @@
 package com.ixam97.carStatsViewer.activities
 
 import android.app.AlertDialog
-import android.app.PendingIntent
 import android.car.VehicleGear
 import android.car.VehiclePropertyIds
 import android.content.BroadcastReceiver
@@ -40,10 +39,9 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import java.io.IOException
 import java.util.concurrent.TimeUnit
-import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
-class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedListener {
+class MainActivity : FragmentActivity() {
     companion object {
         private const val UI_UPDATE_INTERVAL = 1000L
         const val DISTANCE_TRIP_DIVIDER = 5_000L
@@ -92,16 +90,16 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
         }
     }
 
-    override fun onSelectedTripChanged() {
-        onResume()
-    }
-
     /** Overrides */
 
     override fun onResume() {
         super.onResume()
 
         updateAbrpStatus(CarStatsViewer.liveDataApis[0].connectionStatus)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            carStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
+        }
 
         // val nullValue: Float? = null
         if (appPreferences.consumptionUnit) {
@@ -591,25 +589,23 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
          */
 
         main_button_summary.setOnClickListener {
-            //val summaryIntent = Intent(this, SummaryActivity::class.java)
-            //// summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
-            //summaryIntent.putExtra("dataManager", appPreferences.mainViewTrip)
-            //startActivity(summaryIntent)
-            //overridePendingTransition(R.anim.slide_in_up, R.anim.stay_still)
-            main_fragment_container.visibility = View.VISIBLE
-            supportFragmentManager.commit {
-                setCustomAnimations(
-                    R.anim.slide_in_up,
-                    R.anim.stay_still,
-                    R.anim.stay_still,
-                    R.anim.slide_out_down
-                )
-                val summaryDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
-                CarStatsViewer.dataManager = summaryDataManager
-                CarStatsViewer.tripData = summaryDataManager.tripData
-                add(R.id.main_fragment_container, SummaryFragment())
+            CoroutineScope(Dispatchers.IO).launch {
+                CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[appPreferences.mainViewTrip + 1]?.let {
+                    val session = CarStatsViewer.tripDataSource.getFullDrivingSession(it)
+                    runOnUiThread {
+                        main_fragment_container.visibility = View.VISIBLE
+                        supportFragmentManager.commit {
+                            setCustomAnimations(
+                                R.anim.slide_in_up,
+                                R.anim.stay_still,
+                                R.anim.stay_still,
+                                R.anim.slide_out_down
+                            )
+                            add(R.id.main_fragment_container, SummaryFragment(session, R.id.main_fragment_container))
+                        }
+                    }
+                }
             }
-
         }
 
         main_button_summary_charge.setOnClickListener {
@@ -635,13 +631,6 @@ class MainActivity : FragmentActivity(), SummaryFragment.OnSelectedTripChangedLi
         main_button_history.setOnClickListener {
             startActivity(Intent(this, HistoryActivity::class.java))
             overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
-            CoroutineScope(Dispatchers.IO).launch {
-                val drivingSessions = CarStatsViewer.tripDataSource.getPastDrivingSessions()
-
-                drivingSessions.forEach {
-                    InAppLogger.d("Driving Session: ${it.driving_session_id}, Type: ${it.session_type}, Distance: ${it.driven_distance}, Energy: ${it.used_energy}")
-                }
-            }
         }
     }
 

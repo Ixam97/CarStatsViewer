@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.activities
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -10,17 +9,20 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.DatePicker
 import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.commit
 import com.airbnb.paris.extensions.style
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.database.tripData.TripType
+import com.ixam97.carStatsViewer.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.views.TripHistoryRowWidget
 import kotlinx.android.synthetic.main.activity_history.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class HistoryActivity  : Activity() {
+class HistoryActivity  : FragmentActivity() {
 
     private lateinit var context : Context
     private val appPreferences = CarStatsViewer.appPreferences
@@ -60,9 +62,9 @@ class HistoryActivity  : Activity() {
 
                 setView(layout)
 
-                setPositiveButton("Apply") { dialog, _ ->
+                setPositiveButton(getString(R.string.dialog_apply)) { dialog, _ ->
                 }
-                setTitle("Trip filters")
+                setTitle(getString(R.string.history_dialog_filters_title))
                 setCancelable(true)
             }
             filtersDialog.create()
@@ -71,7 +73,7 @@ class HistoryActivity  : Activity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             runOnUiThread {
-                addSection("Current trips:")
+                addSection(getString(R.string.history_current_trips))
             }
             val currentDrivingSessions = CarStatsViewer.tripDataSource.getActiveDrivingSessions().sortedBy { it.session_type }
             currentDrivingSessions.forEach { drivingSession ->
@@ -83,10 +85,7 @@ class HistoryActivity  : Activity() {
                 }
 
                 rowView.setOnMainClickListener {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val fullDrivingSession = CarStatsViewer.tripDataSource.getFullDrivingSession(drivingSession.driving_session_id)
-                        // InAppLogger.v("[NEO]" + GsonBuilder().setPrettyPrinting().create().toJson(fullDrivingSession))
-                    }
+                    openSummary(drivingSession.driving_session_id)
                 }
 
                 runOnUiThread {
@@ -95,7 +94,7 @@ class HistoryActivity  : Activity() {
             }
 
             runOnUiThread {
-                addSection("Past trips:")
+                addSection(getString(R.string.history_past_trips))
             }
 
             val pastDrivingSessions = CarStatsViewer.tripDataSource.getPastDrivingSessions().sortedBy { it.start_epoch_time }.reversed()
@@ -107,10 +106,7 @@ class HistoryActivity  : Activity() {
                 }
 
                 rowView.setOnMainClickListener {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val fullDrivingSession = CarStatsViewer.tripDataSource.getFullDrivingSession(drivingSession.driving_session_id)
-                        // InAppLogger.v("[NEO]" + GsonBuilder().setPrettyPrinting().create().toJson(fullDrivingSession))
-                    }
+                    openSummary(drivingSession.driving_session_id)
                 }
 
                 runOnUiThread {
@@ -125,6 +121,28 @@ class HistoryActivity  : Activity() {
                     noTripsTextView.textAlignment = View.TEXT_ALIGNMENT_CENTER
                     noTripsTextView.text = "No past trips have been saved."
                     history_linear_layout.addView(noTripsTextView)
+                }
+            }
+        }
+    }
+
+    private fun openSummary(sessionId: Long) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val session = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId)
+            if ((appPreferences.mainViewTrip + 1) != session.session_type) {
+                appPreferences.mainViewTrip = session.session_type - 1
+                (applicationContext as CarStatsViewer).dataProcessor.changeSelectedTrip(session.session_type)
+            }
+            runOnUiThread {
+                history_fragment_container.visibility = View.VISIBLE
+                supportFragmentManager.commit {
+                    setCustomAnimations(
+                        R.anim.slide_in_up,
+                        R.anim.stay_still,
+                        R.anim.stay_still,
+                        R.anim.slide_out_down
+                    )
+                    add(R.id.history_fragment_container, SummaryFragment(session, R.id.history_fragment_container))
                 }
             }
         }

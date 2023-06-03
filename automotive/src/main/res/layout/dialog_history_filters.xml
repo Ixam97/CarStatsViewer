@@ -10,28 +10,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_font_size"
-        android:text="Show manual trips"/>
+        android:text="@string/history_dialog_filters_manual"/>
 
     <CheckBox
         android:id="@+id/history_filter_checkbox_charge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_font_size"
-        android:text="Show since charge trips"/>
+        android:text="@string/history_dialog_filters_charge"/>
 
     <CheckBox
         android:id="@+id/history_filter_checkbox_auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_font_size"
-        android:text="Show automatic trips"/>
+        android:text="@string/history_dialog_filters_auto"/>
 
     <CheckBox
         android:id="@+id/history_filter_checkbox_month"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_font_size"
-        android:text="Show monthly trips"/>
+        android:text="@string/history_dialog_filters_month"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,7 +41,7 @@
             android:id="@+id/history_filter_checkbox_date"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Earliest start date"
+            android:text="@string/history_dialog_filters_date"
             android:textSize="@dimen/std_font_size"/>
         <DatePicker
             android:id="@+id/history_filter_date_picker"

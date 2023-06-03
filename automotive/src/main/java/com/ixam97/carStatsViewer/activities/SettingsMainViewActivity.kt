@@ -6,6 +6,9 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.dataManager.DataManagers
 import kotlinx.android.synthetic.main.activity_settings_main_view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SettingsMainViewActivity: Activity() {
 
@@ -33,6 +36,9 @@ class SettingsMainViewActivity: Activity() {
         settings_multiselect_trip.selectedIndex = appPreferences.mainViewTrip
         settings_multiselect_trip.setOnIndexChangedListener {
             appPreferences.mainViewTrip = settings_multiselect_trip.selectedIndex
+            CoroutineScope(Dispatchers.IO).launch {
+                (applicationContext as CarStatsViewer).dataProcessor.changeSelectedTrip(settings_multiselect_trip.selectedIndex + 1)
+            }
         }
 
         settings_consumption_plot_switch_secondary_color.setOnClickListener {

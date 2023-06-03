@@ -147,6 +147,14 @@
     <string name="AutoTripData">Automatischer Trip</string>
     <string name="CurrentMonthData">Aktueller Monat</string>
 
+    <string-array name="trip_type_names">
+        <item>Unbekannter Triptyp</item>
+        <item>Manueller Trip</item>
+        <item>Seit Ladung</item>
+        <item>Automatischer Trip</item>
+        <item>Monat</item>
+    </string-array>
+
     <!-- Vehicle Setup -->
     <string name="vehicle_title">Fahrzeugeinstellung</string>
     <string name="vehicle_my">Modelljahr</string>
@@ -178,11 +186,13 @@
     <string name="quit_dialog_message">Log wird in die Zwischenablage kopiert.</string>
     <string name="dialog_close">Schließen</string>
     <string name="dialog_reset_title">Tripdaten zurücksetzen?</string>
-    <string name="dialog_reset_message">Der manuelle Trip wird zurückgesetzt. Soll der Trip gespeichert werden?</string>
+    <string name="dialog_reset_message">Der manuelle Trip wird zurückgesetzt. Er wird im Tripverlauf gespeichert.</string>
     <string name="dialog_reset_do_save">Speichern</string>
     <string name="dialog_reset_no_save">Nicht speichern</string>
     <string name="dialog_reset_cancel">Abbrechen</string>
+    <string name="dialog_reset_confirm">Zurücksetzen</string>
     <string name="dialog_confirm">Ja</string>
+    <string name="dialog_apply">Anwenden</string>
     <string name="dialog_dismiss">Nein</string>
     <!-- LogActivity -->
     <string name="log_title">Debug</string>
@@ -191,4 +201,15 @@
     <string name="notification_title">Aktuelle Fahrdaten:</string>
     <string name="foreground_service_info">Fahrdatenerfassung aktiv</string>
     <string name="toast_file_read_error">Fehler beim Einlesen der Trip-Datei</string>
+
+    <!-- Trip history -->
+    <string name="history_title">Tripverlauf</string>
+    <string name="history_past_trips">Frühere Trips:</string>
+    <string name="history_current_trips">Aktuelle Trips:</string>
+    <string name="history_dialog_filters_title">Trips filtern</string>
+    <string name="history_dialog_filters_manual">Zeige manuelle Trips</string>
+    <string name="history_dialog_filters_charge">Zeige "Seit Ladung"-Trips</string>
+    <string name="history_dialog_filters_auto">Zeige automatische Trips</string>
+    <string name="history_dialog_filters_month">Zeige monatliche Trips</string>
+    <string name="history_dialog_filters_date">Frühestes Startdatum</string>
 </resources>
