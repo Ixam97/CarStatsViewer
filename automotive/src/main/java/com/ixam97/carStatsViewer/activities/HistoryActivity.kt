@@ -42,6 +42,68 @@ class HistoryActivity  : FragmentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        history_linear_layout.removeAllViews()
+        CoroutineScope(Dispatchers.IO).launch {
+            runOnUiThread {
+                addSection(getString(R.string.history_current_trips))
+            }
+            val currentDrivingSessions = CarStatsViewer.tripDataSource.getActiveDrivingSessions().sortedBy { it.session_type }
+            currentDrivingSessions.forEach { drivingSession ->
+                runOnUiThread {
+                    val rowView = TripHistoryRowWidget(this@HistoryActivity, session = drivingSession)
+
+                    rowView.setOnDeleteClickListener {
+                        // deleteTrip(drivingSession.driving_session_id)
+                        createResetDialog(drivingSession.session_type)
+                    }
+
+                    rowView.setOnMainClickListener {
+                        openSummary(drivingSession.driving_session_id)
+                    }
+
+                    rowView.setOnMainLongClickListener {
+                        createDeleteDialog(drivingSession, null)
+                    }
+
+                    history_linear_layout.addView(rowView)
+                }
+            }
+
+            runOnUiThread {
+                addSection(getString(R.string.history_past_trips))
+            }
+
+            val pastDrivingSessions = CarStatsViewer.tripDataSource.getPastDrivingSessions().sortedBy { it.start_epoch_time }.reversed()
+            pastDrivingSessions.forEach { drivingSession ->
+                runOnUiThread {
+                    val rowView = TripHistoryRowWidget(this@HistoryActivity, session = drivingSession)
+
+                    rowView.setOnDeleteClickListener {
+                        createDeleteDialog(drivingSession, rowView)
+                    }
+
+                    rowView.setOnMainClickListener {
+                        openSummary(drivingSession.driving_session_id)
+                    }
+
+                    history_linear_layout.addView(rowView)
+                }
+            }
+
+            if (pastDrivingSessions.isEmpty()) {
+                runOnUiThread {
+                    val noTripsTextView = TextView(this@HistoryActivity)
+                    // noTripsTextView.style(R.style.menu_row_content_text)
+                    noTripsTextView.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                    noTripsTextView.text = "No past trips have been saved."
+                    history_linear_layout.addView(noTripsTextView)
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -75,68 +137,6 @@ class HistoryActivity  : FragmentActivity() {
             filtersDialog.show()
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            runOnUiThread {
-                addSection(getString(R.string.history_current_trips))
-            }
-            val currentDrivingSessions = CarStatsViewer.tripDataSource.getActiveDrivingSessions().sortedBy { it.session_type }
-            currentDrivingSessions.forEach { drivingSession ->
-                runOnUiThread {
-                    val rowView = TripHistoryRowWidget(this@HistoryActivity, session = drivingSession)
-
-                    rowView.setOnDeleteClickListener {
-                        // deleteTrip(drivingSession.driving_session_id)
-                        createResetDialog(drivingSession.session_type)
-                    }
-
-                    rowView.setOnMainClickListener {
-                        openSummary(drivingSession.driving_session_id)
-                    }
-
-                    rowView.setOnMainLongClickListener {
-                        createDeleteDialog(drivingSession)
-                    }
-
-                    history_linear_layout.addView(rowView)
-
-                    rowView.setOnLongClickListener {
-                        createDeleteDialog(drivingSession)
-                        true
-                    }
-                }
-            }
-
-            runOnUiThread {
-                addSection(getString(R.string.history_past_trips))
-            }
-
-            val pastDrivingSessions = CarStatsViewer.tripDataSource.getPastDrivingSessions().sortedBy { it.start_epoch_time }.reversed()
-            pastDrivingSessions.forEach { drivingSession ->
-                runOnUiThread {
-                    val rowView = TripHistoryRowWidget(this@HistoryActivity, session = drivingSession)
-
-                    rowView.setOnDeleteClickListener {
-                        createDeleteDialog(drivingSession)
-                    }
-
-                    rowView.setOnMainClickListener {
-                        openSummary(drivingSession.driving_session_id)
-                    }
-
-                    history_linear_layout.addView(rowView)
-                }
-            }
-
-            if (pastDrivingSessions.isEmpty()) {
-                runOnUiThread {
-                    val noTripsTextView = TextView(this@HistoryActivity)
-                    // noTripsTextView.style(R.style.menu_row_content_text)
-                    noTripsTextView.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                    noTripsTextView.text = "No past trips have been saved."
-                    history_linear_layout.addView(noTripsTextView)
-                }
-            }
-        }
     }
 
     private fun openSummary(sessionId: Long) {
@@ -171,25 +171,29 @@ class HistoryActivity  : FragmentActivity() {
         history_linear_layout.addView(divider)
     }
 
-    private fun deleteTrip(sessionId: Long) {
+    private fun deleteTrip(sessionId: Long, view: View?) {
         CoroutineScope(Dispatchers.IO).launch {
             CarStatsViewer.tripDataSource.deleteDrivingSessionById(sessionId)
             (applicationContext as CarStatsViewer).dataProcessor.checkTrips()
             runOnUiThread {
-                val newIntent = Intent(intent)
-                newIntent.putExtra("noTransition", true)
-                finish();
-                startActivity(newIntent);
+                // val newIntent = Intent(intent)
+                // newIntent.putExtra("noTransition", true)
+                // finish();
+                // startActivity(newIntent);
+                if (view != null)
+                    history_linear_layout.removeView(view)
+                else
+                    onResume()
             }
         }
     }
 
-    private fun createDeleteDialog(session: DrivingSession) {
+    private fun createDeleteDialog(session: DrivingSession, view: View?) {
         val builder = AlertDialog.Builder(this@HistoryActivity)
         builder.setTitle(getString(R.string.history_dialog_delete_title))
             .setCancelable(true)
             .setPositiveButton(getString(R.string.history_dialog_delete_confirm)) {_,_->
-                deleteTrip(session.driving_session_id)
+                deleteTrip(session.driving_session_id, view)
             }
             .setNegativeButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
                 dialog.cancel()
@@ -220,14 +224,14 @@ class HistoryActivity  : FragmentActivity() {
 
     private fun resetTrip(tripType: Int) {
         CoroutineScope(Dispatchers.Default).launch {
-            val newIntent = Intent(intent)
-            newIntent.putExtra("noTransition", true)
-            runOnUiThread {
-                history_linear_layout.removeAllViews()
-            }
+            // val newIntent = Intent(intent)
+            // newIntent.putExtra("noTransition", true)
             (applicationContext as CarStatsViewer).dataProcessor.resetTrip(tripType, (applicationContext as CarStatsViewer).dataProcessor.realTimeData.drivingState)
-            finish();
-            startActivity(newIntent);
+            // finish();
+            //startActivity(newIntent);
+            runOnUiThread {
+                onResume()
+            }
         }
     }
 
