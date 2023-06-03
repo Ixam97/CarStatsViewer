@@ -73,8 +73,15 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
 
         val rowBody: ConstraintLayout = findViewById(R.id.row_container_body)
 
-        rowEndButton.setOnClickListener {
-            deleteClickListener?.onDeleteClicked()
+        if (session.session_type != TripType.MANUAL && (session.end_epoch_time?:0) <= 0) {
+            rowEndButton.setOnLongClickListener {
+                deleteClickListener?.onDeleteClicked()
+                true
+            }
+        } else {
+            rowEndButton.setOnClickListener {
+                deleteClickListener?.onDeleteClicked()
+            }
         }
 
         rowBody.setOnClickListener {
@@ -97,7 +104,7 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
         if ((session.end_epoch_time?:0) <= 0) {
             rowEndButton.setImageResource(R.drawable.ic_reset)
             if (session.session_type != TripType.MANUAL) {
-                rowEndButton.isEnabled = false
+                // rowEndButton.isEnabled = false
                 rowEndButton.setColorFilter(context.getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
             }
         }
