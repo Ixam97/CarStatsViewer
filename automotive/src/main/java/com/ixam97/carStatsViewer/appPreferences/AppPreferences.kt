@@ -47,6 +47,8 @@ class AppPreferences(
     private val PerformanceUpgrade = AppPreference<Boolean>(context.getString(R.string.preference_performance_key), false, sharedPref)
     private val BstEdition = AppPreference<Boolean>(context.getString(R.string.preference_bst_key), false, sharedPref)
 
+    private val AltLayout = AppPreference<Boolean>("preference_alt_layout", false, sharedPref)
+
     var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
     var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
@@ -74,6 +76,8 @@ class AppPreferences(
     var plusPack: Boolean get() = PlusPack.value; set(value) {PlusPack.value = value}
     var performanceUpgrade: Boolean get() = PerformanceUpgrade.value; set(value) {PerformanceUpgrade.value = value}
     var bstEdition: Boolean get() = BstEdition.value; set(value) {BstEdition.value = value}
+
+    var altLayout: Boolean get() = AltLayout.value; set(value) {AltLayout.value = value}
 
     // Preferences not saved permanently:
     val exclusionStrategy = AppPreferences.exclusionStrategy

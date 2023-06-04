@@ -71,6 +71,13 @@
                     style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>
                 <Switch
+                    android:id="@+id/settings_switch_alt_layout"
+                    style="@style/menu_standard_switch_style"
+                    android:text="Speed and SoC in main view gages"/>
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+                <Switch
                     android:id="@+id/settings_switch_consumption_unit"
                     style="@style/menu_standard_switch_style"
                     android:text="@string/settings_consumption_unit"/>

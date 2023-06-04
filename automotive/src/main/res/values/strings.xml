@@ -47,6 +47,10 @@
         <item>Konstantinos Theiakos</item>
     </string-array>
 
+    <string-array name="changes_0_25_0">
+        <item>Work in progress...</item>
+    </string-array>
+
     <string-array name="changes_0_24_1">
         <item>Altitude change added in trip summary (experimental)</item>
         <item>Fixed wrong units in summary diagram</item>

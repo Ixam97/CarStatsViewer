@@ -101,6 +101,23 @@ class MainActivity : FragmentActivity() {
             carStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
         }
 
+        if (appPreferences.altLayout) {
+            main_gage_layout.visibility = View.GONE
+            main_alternate_gage_layout.visibility = View.VISIBLE
+        } else {
+            main_gage_layout.visibility = View.VISIBLE
+            main_alternate_gage_layout.visibility = View.GONE
+        }
+
+        main_speed_gage.minValue = 0f
+        main_speed_gage.maxValue = appPreferences.distanceUnit.toUnit(205f)
+        main_speed_gage.gageUnit = "${appPreferences.distanceUnit.unit()}/h"
+        main_speed_gage.gageName = "Speed"
+        main_soc_gage.minValue = 0f
+        main_soc_gage.maxValue = 100f
+        main_soc_gage.gageName = "State of charge"
+        main_soc_gage.gageUnit = "%"
+
         // val nullValue: Float? = null
         if (appPreferences.consumptionUnit) {
             main_consumption_gage.gageUnit = "Wh/%s".format(appPreferences.distanceUnit.unit())
@@ -204,6 +221,12 @@ class MainActivity : FragmentActivity() {
                     }
 
                     main_power_gage.setValue(it.power / 1_000_000f)
+
+                    main_speed_gage.setValue(appPreferences.distanceUnit.toUnit(it.speed*3.6).toInt())
+                    carStatsViewer.dataProcessor.staticVehicleData.batteryCapacity?.let { batteryCapacity ->
+                        main_soc_gage.setValue((it.batteryLevel / (batteryCapacity) * 100).roundToInt())
+                    }
+
                 }
             }
         }
@@ -218,6 +241,7 @@ class MainActivity : FragmentActivity() {
                     neoSelectedTripType = it.selectedTripType
                     neoUsedStateOfCharge = it.usedStateOfCharge
                     neoUsedStateOfChargeEnergy = it.usedStateOfChargeEnergy
+
                     // updateActivity()
                 }
             }
@@ -306,7 +330,7 @@ class MainActivity : FragmentActivity() {
                     dialog.cancel()
                 }
                 setTitle(getString(R.string.main_changelog_dialog_title, BuildConfig.VERSION_NAME.dropLast(5)))
-                val changesArray = resources.getStringArray(R.array.changes_0_24_1)
+                val changesArray = resources.getStringArray(R.array.changes_0_25_0)
                 var changelog = ""
                 for ((index, change) in changesArray.withIndex()) {
                     changelog += "• $change"

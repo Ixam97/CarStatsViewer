@@ -99,6 +99,8 @@
             android:weightSum="14">
 
             <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/main_gage_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -113,6 +115,29 @@
 
                 <com.ixam97.carStatsViewer.views.GageView
                     android:id="@+id/main_consumption_gage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/main_alternate_gage_layout"
+                android:visibility="visible"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="8">
+
+                <com.ixam97.carStatsViewer.views.GageView
+                    android:id="@+id/main_speed_gage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginHorizontal="20dp"/>
+
+                <com.ixam97.carStatsViewer.views.GageView
+                    android:id="@+id/main_soc_gage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"/>

@@ -72,6 +72,7 @@ class SettingsActivity : Activity() {
         settings_switch_use_location.isChecked = appPreferences.useLocation
         settings_switch_autostart.isChecked = appPreferences.autostart
         settings_switch_distance_unit.isChecked = appPreferences.distanceUnit == DistanceUnitEnum.MILES
+        settings_switch_alt_layout.isChecked = appPreferences.altLayout
 
         settings_version_text.text = "Car Stats Viewer Version %s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 
@@ -122,6 +123,10 @@ class SettingsActivity : Activity() {
                 else -> DistanceUnitEnum.KM
             }
             PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
+        }
+
+        settings_switch_alt_layout.setOnClickListener {
+            appPreferences.altLayout = settings_switch_alt_layout.isChecked
         }
 
         settings_button_main_view.setOnClickListener {
