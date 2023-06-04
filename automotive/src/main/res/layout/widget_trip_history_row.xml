@@ -12,6 +12,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         >
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/section_title_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/section_title_text"
+                style="@style/menu_section_title_style"/>
+            <View style="@style/menu_divider_style"/>
+        </LinearLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/row_container"
             android:layout_width="match_parent"

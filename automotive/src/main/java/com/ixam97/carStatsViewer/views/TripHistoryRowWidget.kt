@@ -10,13 +10,20 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.airbnb.paris.extensions.style
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.utils.StringFormatters
+import kotlinx.android.synthetic.main.activity_history.*
+import kotlinx.android.synthetic.main.widget_trip_history_row.view.*
 import java.util.*
 
-class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = null, defStyleAttr: Int = 0,private val session: DrivingSession) :
+class TripHistoryRowWidget(
+    context: Context,
+    private val attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    private var session: DrivingSession? = null) :
     LinearLayout(context, attrs, defStyleAttr) {
 /*
     var topText = "Lorem Ipsum"
@@ -34,6 +41,8 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
     private var deleteClickListener: OnDeleteClickListener? = null
     private var mainLongClickListener: OnDeleteClickListener? = null
 
+    var dividerText = ""
+
     init {
         init()
     }
@@ -44,6 +53,12 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
 
     fun interface OnDeleteClickListener {
         fun onDeleteClicked()
+    }
+
+    fun setSession(newSession: DrivingSession, pDividerText: String = "") {
+        dividerText = pDividerText
+        session = newSession
+        init()
     }
 
     fun setOnMainClickListener(listener: OnMainClickListener) {
@@ -62,6 +77,13 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
         this.removeAllViews()
         View.inflate(context, R.layout.widget_trip_history_row, this)
 
+        if (dividerText != "") {
+            val sectionTitleContainer: LinearLayout = findViewById(R.id.section_title_container)
+            val sectionTitleText: TextView = findViewById(R.id.section_title_text)
+            sectionTitleContainer.visibility = View.VISIBLE
+            sectionTitleText.text = dividerText
+        }
+
         val rowIcon: ImageView = findViewById(R.id.row_start_icon)
         val rowEndButton: ImageButton = findViewById(R.id.row_end_button)
 
@@ -73,16 +95,6 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
 
         val rowBody: ConstraintLayout = findViewById(R.id.row_container_body)
 
-        if (session.session_type != TripType.MANUAL && (session.end_epoch_time?:0) <= 0) {
-            rowEndButton.setOnLongClickListener {
-                deleteClickListener?.onDeleteClicked()
-                true
-            }
-        } else {
-            rowEndButton.setOnClickListener {
-                deleteClickListener?.onDeleteClicked()
-            }
-        }
 
         rowBody.setOnClickListener {
             mainClickListener?.onMainClicked()
@@ -93,27 +105,40 @@ class TripHistoryRowWidget(context: Context, private val attrs: AttributeSet? = 
             true
         }
 
-        when (session.session_type) {
-            TripType.SINCE_CHARGE -> rowIcon.setImageResource(R.drawable.ic_charger_2)
-            TripType.MONTH -> rowIcon.setImageResource(R.drawable.ic_month)
-            TripType.AUTO -> rowIcon.setImageResource(R.drawable.ic_day)
-            TripType.MANUAL -> rowIcon.setImageResource(R.drawable.ic_hand)
-            else -> rowIcon.setImageResource(R.drawable.ic_help)
-        }
+        session?.let {
 
-        if ((session.end_epoch_time?:0) <= 0) {
-            rowEndButton.setImageResource(R.drawable.ic_reset)
-            if (session.session_type != TripType.MANUAL) {
-                // rowEndButton.isEnabled = false
-                rowEndButton.setColorFilter(context.getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+            if (it.session_type != TripType.MANUAL && (it.end_epoch_time?:0) <= 0) {
+                rowEndButton.setOnLongClickListener {
+                    deleteClickListener?.onDeleteClicked()
+                    true
+                }
+            } else {
+                rowEndButton.setOnClickListener {
+                    deleteClickListener?.onDeleteClicked()
+                }
             }
+
+            when (it.session_type) {
+                TripType.SINCE_CHARGE -> rowIcon.setImageResource(R.drawable.ic_charger_2)
+                TripType.MONTH -> rowIcon.setImageResource(R.drawable.ic_month)
+                TripType.AUTO -> rowIcon.setImageResource(R.drawable.ic_day)
+                TripType.MANUAL -> rowIcon.setImageResource(R.drawable.ic_hand)
+                else -> rowIcon.setImageResource(R.drawable.ic_help)
+            }
+
+            if ((it.end_epoch_time?:0) <= 0) {
+                rowEndButton.setImageResource(R.drawable.ic_reset)
+                if (it.session_type != TripType.MANUAL) {
+                    // rowEndButton.isEnabled = false
+                    rowEndButton.setColorFilter(context.getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+                }
+            }
+
+            topText.text = StringFormatters.getDateString(Calendar.getInstance().apply { timeInMillis = it.start_epoch_time })
+            distanceText.text = StringFormatters.getTraveledDistanceString(it.driven_distance.toFloat())
+            energyText.text = StringFormatters.getEnergyString(it.used_energy.toFloat())
+            consText.text = StringFormatters.getAvgConsumptionString(it.used_energy.toFloat(), it.driven_distance.toFloat())
+            timeText.text = StringFormatters.getElapsedTimeString(it.drive_time, minutes = true)
         }
-
-
-        topText.text = StringFormatters.getDateString(Calendar.getInstance().apply { timeInMillis = session.start_epoch_time })
-        distanceText.text = StringFormatters.getTraveledDistanceString(session.driven_distance.toFloat())
-        energyText.text = StringFormatters.getEnergyString(session.used_energy.toFloat())
-        consText.text = StringFormatters.getAvgConsumptionString(session.used_energy.toFloat(), session.driven_distance.toFloat())
-        timeText.text = StringFormatters.getElapsedTimeString(session.drive_time, minutes = true)
     }
 }

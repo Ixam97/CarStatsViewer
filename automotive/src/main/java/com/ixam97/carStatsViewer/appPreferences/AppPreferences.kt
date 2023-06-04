@@ -49,6 +49,12 @@ class AppPreferences(
 
     private val AltLayout = AppPreference<Boolean>("preference_alt_layout", false, sharedPref)
 
+    private val TripFilterManual = AppPreference<Boolean>(context.getString(R.string.preference_trip_filter_manual_key), true, sharedPref)
+    private val TripFilterCharge = AppPreference<Boolean>(context.getString(R.string.preference_trip_filter_charge_key), true, sharedPref)
+    private val TripFilterAuto = AppPreference<Boolean>(context.getString(R.string.preference_trip_filter_auto_key), true, sharedPref)
+    private val TripFilterMonth = AppPreference<Boolean>(context.getString(R.string.preference_trip_filter_month_key), true, sharedPref)
+    private val TripFilterTime = AppPreference<Long>(context.getString(R.string.preference_trip_filter_time_key), 0L, sharedPref)
+
     var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
     var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
@@ -78,6 +84,14 @@ class AppPreferences(
     var bstEdition: Boolean get() = BstEdition.value; set(value) {BstEdition.value = value}
 
     var altLayout: Boolean get() = AltLayout.value; set(value) {AltLayout.value = value}
+
+    var tripFilterManual: Boolean get() = TripFilterManual.value; set(value) {TripFilterManual.value = value}
+    var tripFilterCharge: Boolean get() = TripFilterCharge.value; set(value) {TripFilterCharge.value = value}
+    var tripFilterAuto: Boolean get() = TripFilterAuto.value; set(value) {TripFilterAuto.value = value}
+    var tripFilterMonth: Boolean get() = TripFilterMonth.value; set(value) {TripFilterMonth.value = value}
+    var tripFilterTime: Long get() = TripFilterTime.value; set(value) {TripFilterTime.value = value}
+
+
 
     // Preferences not saved permanently:
     val exclusionStrategy = AppPreferences.exclusionStrategy
