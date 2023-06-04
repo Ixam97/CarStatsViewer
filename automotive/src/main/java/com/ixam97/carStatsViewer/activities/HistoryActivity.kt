@@ -173,7 +173,6 @@ class HistoryActivity  : FragmentActivity() {
             monthCheckBox.isChecked = appPreferences.tripFilterMonth
             dateCheckbox.isChecked = appPreferences.tripFilterTime > 0
 
-            InAppLogger.v("preferences date: ${appPreferences.tripFilterTime}")
             if (appPreferences.tripFilterTime > 0) {
                 val date = Calendar.getInstance().apply{timeInMillis = appPreferences.tripFilterTime}
 
@@ -194,7 +193,6 @@ class HistoryActivity  : FragmentActivity() {
                 if (dateCheckbox.isChecked) {
                     val date = Calendar.getInstance()
                     date.set(datePicker.year, datePicker.month, datePicker.dayOfMonth)
-                    InAppLogger.v("DatePicker: ${date.timeInMillis}")
                     appPreferences.tripFilterTime = date.timeInMillis
                 } else appPreferences.tripFilterTime = 0L
                 CoroutineScope(Dispatchers.IO).launch {

@@ -234,59 +234,6 @@
             android:id="@+id/main_consumption_plot"/>
 
         <LinearLayout
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginHorizontal="15dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="5dp">
-
-            <RadioGroup
-                android:id="@+id/main_radio_group_distance"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:orientation="horizontal">
-                <RadioButton
-                    android:id="@+id/main_radio_10"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="20dp"
-                    android:textSize="@dimen/std_font_size"
-                    android:text="5 km"/>
-                <RadioButton
-                    android:id="@+id/main_radio_25"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="20dp"
-                    android:textSize="@dimen/std_font_size"
-                    android:text="15 km"/>
-                <RadioButton
-                    android:id="@+id/main_radio_50"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/std_font_size"
-                    android:text="Trip"/>
-            </RadioGroup>
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-
-            <CheckBox
-                android:id="@+id/main_checkbox_speed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/main_speed"
-                android:textSize="35sp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginHorizontal="15dp"/>
-        </LinearLayout>
-
-        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="2"
@@ -305,16 +252,7 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="80dp"
-                android:layout_marginStart="7.5dp"
-                />
-
-            <!--<com.ixam97.carStatsViewer.views.MultiSelectWidget
-                android:id="@+id/main_dimension_y_secondary"
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="80dp"
-                android:layout_marginStart="7.5dp"
-                app:title="" />-->
+                android:layout_marginStart="7.5dp"/>
 
         </LinearLayout>
 

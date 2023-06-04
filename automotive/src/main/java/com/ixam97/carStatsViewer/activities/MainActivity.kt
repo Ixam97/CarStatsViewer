@@ -187,8 +187,6 @@ class MainActivity : FragmentActivity() {
         main_SoC_gage.barVisibility = appPreferences.chargePlotVisibleGages
         main_charge_gage.barVisibility = appPreferences.chargePlotVisibleGages
 
-        main_checkbox_speed.isChecked = appPreferences.plotSpeed
-
         main_consumption_plot.invalidate()
 
         enableUiUpdates()
