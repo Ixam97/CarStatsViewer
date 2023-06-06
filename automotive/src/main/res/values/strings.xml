@@ -270,6 +270,7 @@
     <string name="history_dialog_filters_auto">Show automatic trips</string>
     <string name="history_dialog_filters_month">Show monthly trips</string>
     <string name="history_dialog_filters_date">Earliest start date</string>
+    <string name="history_dialog_filters_note">Note: The current trips are always shown regardless of applied filters.</string>
     <string name="history_dialog_delete_title">Delete trip?</string>
     <string name="history_dialog_delete_message">The trip will be deleted permanently.</string>
     <string name="history_dialog_delete_confirm">Delete trip</string>

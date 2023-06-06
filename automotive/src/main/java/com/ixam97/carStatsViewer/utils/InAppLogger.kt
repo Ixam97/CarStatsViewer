@@ -10,6 +10,8 @@ import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.database.log.LogDatabase
 import com.ixam97.carStatsViewer.database.log.LogEntry
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.text.SimpleDateFormat
 
 val AppPreferences.LogLevel: AppPreference<Int>
@@ -22,7 +24,10 @@ var AppPreferences.logLength: Int get() = LogLength.value; set(value) {LogLength
 
 object InAppLogger {
 
-    private fun typeSymbol(type: Int): String = when (type) {
+    private val _realTimeLog = MutableStateFlow<LogEntry?>(null)
+    val realTimeLog = _realTimeLog.asStateFlow()
+
+    fun typeSymbol(type: Int): String = when (type) {
         Log.VERBOSE -> "V"
         Log.DEBUG -> "D"
         Log.INFO -> "I"
@@ -51,17 +56,20 @@ object InAppLogger {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                logDao.insert(LogEntry(
+                val newLogEntry = LogEntry(
                     epochTime = logTime,
                     type = type,
-                    message = message))
+                    message = message
+                )
+                logDao.insert(newLogEntry)
+                _realTimeLog.value = newLogEntry// "${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(newLogEntry.epochTime)} ${typeSymbol(newLogEntry.type)}: ${newLogEntry.message}"
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
             }
         }
     }
 
-    fun getLogString(logLevel: Int = Log.VERBOSE, logLength: Int = 0): String {
+    suspend fun getLogString(logLevel: Int = Log.VERBOSE, logLength: Int = 0): String {
         val logStringBuilder = StringBuilder()
         try {
             val startTime = System.currentTimeMillis()
@@ -82,13 +90,14 @@ object InAppLogger {
         return logStringBuilder.toString()
     }
 
-    fun getLogArray(logLevel: Int = Log.VERBOSE): List<String> {
-        return logDao.getLevel(logLevel).map {
-            "${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(it.epochTime)} ${typeSymbol(it.type)}: ${it.message}\n"
+    fun getLogArray(logLevel: Int = Log.VERBOSE, logLength: Int = 0): List<String> {
+        val logEntries: List<LogEntry> = if (logLength == 0) logDao.getLevel(logLevel) else logDao.getLevelAndLength(logLevel, logLength).reversed()
+        return logEntries.map {
+            "${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(it.epochTime)} ${typeSymbol(it.type)}: ${it.message}"
         }
     }
 
-    fun resetLog() {
+    suspend fun resetLog() {
         try {
             logDao.clear()
         } catch (e: Exception) {

@@ -9,6 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_marginHorizontal="13dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         >
@@ -20,8 +21,7 @@
             android:orientation="vertical">
             <TextView
                 android:id="@+id/section_title_text"
-                style="@style/menu_section_title_style"/>
-            <View style="@style/menu_divider_style"/>
+                style="@style/menu_section_title_style" />
         </LinearLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/row_container"
@@ -141,7 +141,7 @@
                 android:layout_width="@dimen/divider_height"
                 android:layout_height="@dimen/std_icon_size"
                 android:layout_marginEnd="15dp"
-                android:background="@color/disabled_tint"
+                android:background="?android:attr/listDivider"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/row_end_button"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -159,7 +159,9 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <View style="@style/menu_divider_style"/>
+        <View
+            style="@style/menu_divider_style"
+            android:background="?android:attr/listDivider"/>
 
     </LinearLayout>
 

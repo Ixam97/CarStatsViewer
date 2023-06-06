@@ -230,8 +230,8 @@ class DataProcessor {
     }
 
     /** Make sure every type of trip has an active trip */
-    fun checkTrips() {
-        CoroutineScope(Dispatchers.IO).launch {
+    suspend fun checkTrips() {
+        // CoroutineScope(Dispatchers.IO).launch {
             val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
             if (!drivingSessionsIdsMap.contains(TripType.MANUAL)) {
                 CarStatsViewer.tripDataSource.startDrivingSession(System.currentTimeMillis(), TripType.MANUAL)
@@ -256,7 +256,7 @@ class DataProcessor {
                 val session = CarStatsViewer.tripDataSource.getDrivingSession(it)
                 timerMap[session?.session_type]?.restore(session?.drive_time?:0)
             }
-        }
+        // }
     }
 
     /**

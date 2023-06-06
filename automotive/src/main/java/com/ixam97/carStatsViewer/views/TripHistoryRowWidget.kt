@@ -23,25 +23,13 @@ class TripHistoryRowWidget(
     context: Context,
     private val attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    private var session: DrivingSession? = null) :
+    private var session: DrivingSession? = null
+) :
     LinearLayout(context, attrs, defStyleAttr) {
-/*
-    var topText = "Lorem Ipsum"
-        set(value) {
-            field = value
-            init()
-        }
-    var bottomText = "Lorem Ipsum"
-        set(value) {
-            field = value
-            init()
-        }
-*/
+
     private var mainClickListener: OnMainClickListener? = null
     private var deleteClickListener: OnDeleteClickListener? = null
     private var mainLongClickListener: OnDeleteClickListener? = null
-
-    var dividerText = ""
 
     init {
         init()
@@ -55,8 +43,7 @@ class TripHistoryRowWidget(
         fun onDeleteClicked()
     }
 
-    fun setSession(newSession: DrivingSession, pDividerText: String = "") {
-        dividerText = pDividerText
+    fun setSession(newSession: DrivingSession) {
         session = newSession
         init()
     }
@@ -76,13 +63,6 @@ class TripHistoryRowWidget(
     private fun init() {
         this.removeAllViews()
         View.inflate(context, R.layout.widget_trip_history_row, this)
-
-        if (dividerText != "") {
-            val sectionTitleContainer: LinearLayout = findViewById(R.id.section_title_container)
-            val sectionTitleText: TextView = findViewById(R.id.section_title_text)
-            sectionTitleContainer.visibility = View.VISIBLE
-            sectionTitleText.text = dividerText
-        }
 
         val rowIcon: ImageView = findViewById(R.id.row_start_icon)
         val rowEndButton: ImageButton = findViewById(R.id.row_end_button)
@@ -106,6 +86,15 @@ class TripHistoryRowWidget(
         }
 
         session?.let {
+
+            if (it.session_type == 5) {
+                val sectionTitleContainer: LinearLayout = findViewById(R.id.section_title_container)
+                val sectionTitleText: TextView = findViewById(R.id.section_title_text)
+                val rowContainer: ConstraintLayout = findViewById(R.id.row_container)
+                sectionTitleContainer.visibility = View.VISIBLE
+                rowContainer.visibility = View.GONE
+                sectionTitleText.text = it.note
+            }
 
             if (it.session_type != TripType.MANUAL && (it.end_epoch_time?:0) <= 0) {
                 rowEndButton.setOnLongClickListener {
@@ -134,7 +123,10 @@ class TripHistoryRowWidget(
                 }
             }
 
-            topText.text = StringFormatters.getDateString(Calendar.getInstance().apply { timeInMillis = it.start_epoch_time })
+            topText.text = "${
+                StringFormatters.getDateString(
+                    Calendar.getInstance().apply { timeInMillis = it.start_epoch_time })
+            } ID: ${session?.driving_session_id.toString()}"
             distanceText.text = StringFormatters.getTraveledDistanceString(it.driven_distance.toFloat())
             energyText.text = StringFormatters.getEnergyString(it.used_energy.toFloat())
             consText.text = StringFormatters.getAvgConsumptionString(it.used_energy.toFloat(), it.driven_distance.toFloat())

@@ -116,4 +116,7 @@
         <item name="android:colorControlHighlight">@color/bad_red</item>
         <item name="android:colorControlActivated">@color/bad_red</item>
     </style>
+    <style name="spinner_text_size" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <item name="android:textSize">@dimen/std_font_size</item>
+    </style>
 </resources>

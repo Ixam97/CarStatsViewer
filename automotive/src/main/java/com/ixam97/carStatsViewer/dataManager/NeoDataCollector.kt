@@ -71,7 +71,9 @@ class NeoDataCollector: Service() {
 
         dataProcessor = (applicationContext as CarStatsViewer).dataProcessor
 
-        dataProcessor.checkTrips()
+        CoroutineScope(Dispatchers.IO).launch {
+            dataProcessor.checkTrips()
+        }
 
         carPropertiesClient = CarPropertiesClient(
             context = applicationContext,
@@ -152,7 +154,7 @@ class NeoDataCollector: Service() {
                 applicationContext,
                 0,
                 serviceIntent,
-                PendingIntent.FLAG_ONE_SHOT
+                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
             )
             while (true) {
                 serviceIntent.action = "com.ixam97.carStatsViewer.RestartAction"

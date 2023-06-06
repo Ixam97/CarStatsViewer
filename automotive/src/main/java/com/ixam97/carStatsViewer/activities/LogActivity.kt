@@ -9,6 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -19,17 +24,24 @@ import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.mailSender.MailSender
 import com.ixam97.carStatsViewer.utils.logLevel
 import com.ixam97.carStatsViewer.utils.logLength
+import com.ixam97.carStatsViewer.views.LogAdapter
 import com.ixam97.carStatsViewer.views.MultiSelectWidget
 import kotlinx.android.synthetic.main.activity_log.*
+import kotlinx.android.synthetic.main.activity_settings_main_view.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import java.io.File
 import java.io.FileWriter
+import java.text.SimpleDateFormat
 import java.util.*
 
 class LogActivity : FragmentActivity() {
 
     private lateinit var appPreferences: AppPreferences
     private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    private val logList = mutableListOf<String>()
+    private val logAdapter = LogAdapter(logList)
 
     private fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
 
@@ -38,9 +50,34 @@ class LogActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                InAppLogger.realTimeLog.collectLatest {
+                    runOnUiThread {
+                        if (log_live_log.isChecked) {
+                            it?.let { logEntry ->
+                                if (logEntry.type >= appPreferences.logLevel + 2){
+                                    logList.add(0, "${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(logEntry.epochTime)} ${InAppLogger.typeSymbol(logEntry.type)}: ${logEntry.message}")
+                                    logAdapter.notifyDataSetChanged()
+                                    log_recyclerview.scrollToPosition(0)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         appPreferences = AppPreferences(applicationContext)
 
         setContentView(R.layout.activity_log)
+
+        log_live_log.isChecked = true
+
+        log_recyclerview.adapter = logAdapter
+        log_recyclerview.layoutManager = LinearLayoutManager(this).apply {
+            reverseLayout = true
+        }
 
         log_text_target_mail.setText(appPreferences.logTargetAddress)
         log_text_sender.setText(appPreferences.logUserName)
@@ -89,7 +126,7 @@ class LogActivity : FragmentActivity() {
                         if (sender == null) return@launch
 
                         sender.addAttachment(
-                            content = InAppLogger.getLogString(),
+                            content = InAppLogger.getLogString(appPreferences.logLevel + 2, logLengths[appPreferences.logLength]),
                             fileName ="log_${System.currentTimeMillis()}.txt")
 
                         if (checkbox_send_current_trips.isChecked) {
@@ -129,20 +166,32 @@ class LogActivity : FragmentActivity() {
             }
         }
 
-        log_text_view.setOnClickListener {
-            log_scrollview.fullScroll(View.FOCUS_DOWN)
-        }
+        // log_text_view.setOnClickListener {
+        //     log_scrollview.fullScroll(View.FOCUS_DOWN)
+        // }
 
         log_button_reload.setOnClickListener {
-            loadLog()
+            activityScope.launch {
+                withContext(Dispatchers.IO) {
+                    loadLog()
+                }
+            }
+        }
+
+        log_live_log.setOnClickListener {
+            activityScope.launch {
+                withContext(Dispatchers.IO) {
+                    loadLog()
+                }
+            }
         }
 
         log_reset_log.setOnClickListener {
-            activityScope.launch() {
-                InAppLogger.resetLog()
-                runOnUiThread {
+            activityScope.launch {
+                withContext(Dispatchers.IO) {
+                    InAppLogger.resetLog()
                     InAppLogger.i("Cleared log")
-                    log_text_view.text = ""
+                    loadLog()
                 }
             }
         }
@@ -184,7 +233,11 @@ class LogActivity : FragmentActivity() {
                 setView(layout)
 
                 setPositiveButton("OK") { dialog, _ ->
-                    loadLog()
+                    activityScope.launch {
+                        withContext(Dispatchers.IO) {
+                            loadLog()
+                        }
+                    }
                 }
                 setTitle("Logging settings")
                 setCancelable(true)
@@ -193,7 +246,11 @@ class LogActivity : FragmentActivity() {
             settingsDialog.show()
         }
 
-        loadLog()
+        activityScope.launch {
+            withContext(Dispatchers.IO) {
+                loadLog()
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -201,30 +258,25 @@ class LogActivity : FragmentActivity() {
         activityScope.cancel()
     }
 
-    private fun loadLog() {
-        activityScope.launch {
-            withContext(Dispatchers.IO) {
-                val startTime = System.currentTimeMillis()
-                runOnUiThread {
-                    log_progress_bar.visibility = View.VISIBLE
-                    log_text_view.text = ""
-                }
-                val logString = InAppLogger.getLogString(appPreferences.logLevel + 2, logLengths[appPreferences.logLength])
-                val logLines = logString.split("[\n]+".toRegex()).toTypedArray()
+    private suspend fun loadLog() {
+        val startTime = System.currentTimeMillis()
+        runOnUiThread {
+            log_progress_bar.visibility = View.VISIBLE
+        }
+        val logString = InAppLogger.getLogString(appPreferences.logLevel + 2, logLengths[appPreferences.logLength])
+        val logLines = logString.split("[\n]+".toRegex()).toTypedArray()
+        // val logLines = InAppLogger.getLogArray(appPreferences.logLevel + 2, logLengths[appPreferences.logLength])
 
-                runOnUiThread {
-                    logLines.forEach {
-                        log_text_view.append("$it\n")
-                    }
-                }
+        logList.clear()
+        logList.addAll(logLines.reversed())
 
-                delay(500)
-                runOnUiThread {
-                    log_text_view.append("Log loading time: ${System.currentTimeMillis() - startTime}ms")
-                    log_progress_bar.visibility = View.GONE
-                    log_scrollview.fullScroll(View.FOCUS_DOWN)
-                }
-            }
+        runOnUiThread {
+            logAdapter.notifyDataSetChanged()
+            logList.add(0,"Log displayed in ${System.currentTimeMillis() - startTime} ms")
+            logList.add(0, "------------------------------------------------------------")
+            logAdapter.notifyDataSetChanged()
+            log_recyclerview.scrollToPosition(0)
+            log_progress_bar.visibility = View.GONE
         }
     }
 }

@@ -12,6 +12,7 @@ interface LogDao {
     fun getLevel(logLevel: Int): List<LogEntry>
 
     @Query("SELECT * FROM LogEntries WHERE type >= :logLevel ORDER BY id DESC LIMIT :length")
+    // @Query("SELECT * FROM LogEntries WHERE type >= :logLevel LIMIT :length")
     fun getLevelAndLength(logLevel: Int, length: Int): List<LogEntry>
 
     @Query("SELECT * FROM LogEntries WHERE epochTime BETWEEN :firstTime AND :lastTime")
