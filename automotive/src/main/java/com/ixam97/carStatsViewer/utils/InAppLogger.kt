@@ -97,6 +97,8 @@ object InAppLogger {
         }
     }
 
+    fun getLogEntries(logLevel: Int = Log.VERBOSE, logLength: Int = 0) = if (logLength == 0) logDao.getLevel(logLevel) else logDao.getLevelAndLength(logLevel, logLength).reversed()
+
     suspend fun resetLog() {
         try {
             logDao.clear()

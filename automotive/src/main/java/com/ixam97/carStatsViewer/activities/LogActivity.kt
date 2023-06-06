@@ -20,6 +20,7 @@ import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManagers
+import com.ixam97.carStatsViewer.database.log.LogEntry
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.mailSender.MailSender
 import com.ixam97.carStatsViewer.utils.logLevel
@@ -40,7 +41,7 @@ class LogActivity : FragmentActivity() {
     private lateinit var appPreferences: AppPreferences
     private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    private val logList = mutableListOf<String>()
+    private val logList = mutableListOf<LogEntry>()
     private val logAdapter = LogAdapter(logList)
 
     private fun CharSequence?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
@@ -57,7 +58,7 @@ class LogActivity : FragmentActivity() {
                         if (log_live_log.isChecked) {
                             it?.let { logEntry ->
                                 if (logEntry.type >= appPreferences.logLevel + 2){
-                                    logList.add(0, "${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(logEntry.epochTime)} ${InAppLogger.typeSymbol(logEntry.type)}: ${logEntry.message}")
+                                    logList.add(0, it) //"${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(logEntry.epochTime)} ${InAppLogger.typeSymbol(logEntry.type)}: ${logEntry.message}")
                                     logAdapter.notifyDataSetChanged()
                                     log_recyclerview.scrollToPosition(0)
                                 }
@@ -263,19 +264,20 @@ class LogActivity : FragmentActivity() {
         runOnUiThread {
             log_progress_bar.visibility = View.VISIBLE
         }
-        val logString = InAppLogger.getLogString(appPreferences.logLevel + 2, logLengths[appPreferences.logLength])
-        val logLines = logString.split("[\n]+".toRegex()).toTypedArray()
+        // val logString = InAppLogger.getLogString(appPreferences.logLevel + 2, logLengths[appPreferences.logLength])
+        // val logLines = logString.split("[\n]+".toRegex()).toTypedArray()
         // val logLines = InAppLogger.getLogArray(appPreferences.logLevel + 2, logLengths[appPreferences.logLength])
 
         logList.clear()
-        logList.addAll(logLines.reversed())
+        logList.addAll(InAppLogger.getLogEntries(appPreferences.logLevel + 2, logLengths[appPreferences.logLength]).reversed())
 
         runOnUiThread {
+            // logAdapter.notifyDataSetChanged()
+            // logList.add(0,"Log displayed in ${System.currentTimeMillis() - startTime} ms")
+            // logList.add(0, "------------------------------------------------------------")
             logAdapter.notifyDataSetChanged()
-            logList.add(0,"Log displayed in ${System.currentTimeMillis() - startTime} ms")
-            logList.add(0, "------------------------------------------------------------")
-            logAdapter.notifyDataSetChanged()
-            log_recyclerview.scrollToPosition(0)
+            if (logList.size > 0)
+                log_recyclerview.scrollToPosition(0)
             log_progress_bar.visibility = View.GONE
         }
     }

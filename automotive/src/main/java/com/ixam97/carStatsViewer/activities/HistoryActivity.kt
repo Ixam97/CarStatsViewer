@@ -364,7 +364,7 @@ class HistoryActivity  : FragmentActivity() {
         lifecycleScope.launch { withContext(Dispatchers.IO) {
 
             InAppLogger.d("[Trip History] Animation duration: ${history_trips_recycler_view.itemAnimator?.removeDuration?:500}")
-            delay((history_trips_recycler_view.itemAnimator?.removeDuration?:500) + 1)
+            delay((history_trips_recycler_view.itemAnimator?.removeDuration?:500) + 100)
 
             reloadDataBase(false)
 
