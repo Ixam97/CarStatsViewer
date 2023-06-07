@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
@@ -9,14 +9,17 @@
     tools:context=".activities.SettingsActivity">
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/black"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/settings_button_back"
-            style="@style/title_back_button_style"/>
+            style="@style/title_back_button_style" />
 
         <TextView
             style="@style/title_text_style"
@@ -25,102 +28,124 @@
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
         <ImageButton
             android:id="@+id/settings_button_kill"
-            android:src="@drawable/ic_kill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="15dp"
             android:background="@android:color/transparent"
-            android:tint="@color/bad_red"
-            android:layout_margin="15dp"/>
+            android:src="@drawable/ic_kill"
+            android:tint="@color/bad_red" />
 
     </LinearLayout>
+
     <View
+        android:id="@+id/settings_title_divider"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="?android:attr/colorControlActivated"/>
-    <RelativeLayout
+        android:background="?android:attr/colorControlActivated"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        tools:layout_editor_absoluteX="97dp" />
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ScrollView
-            android:layout_above="@+id/settings_version_text"
+        android:layout_height="0dp"
+        android:layout_above="@+id/settings_version_text"
+        app:layout_constraintBottom_toTopOf="@+id/settings_version_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/settings_title_divider">
+
+        <LinearLayout
+            android:id="@+id/master_linear_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <LinearLayout
-                android:id="@+id/master_linear_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginVertical="10dp"
-                android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
+            android:orientation="vertical">
 
-                <TextView
-                    style="@style/menu_section_title_style"
-                    android:text="@string/settings_title_generic"/>
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
+            <TextView
+                style="@style/menu_section_title_style"
+                android:text="@string/settings_title_generic" />
 
-                <Switch
-                    android:id="@+id/settings_switch_notifications"
-                    style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_notifications" />
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-                <Switch
-                    android:id="@+id/settings_switch_alt_layout"
-                    style="@style/menu_standard_switch_style"
-                    android:text="Speed and SoC in main view gages"/>
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-                <Switch
-                    android:id="@+id/settings_switch_consumption_unit"
-                    style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_consumption_unit"/>
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-                <Switch
-                    android:id="@+id/settings_switch_use_location"
-                    style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_use_location"/>
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-                <Switch
-                    android:id="@+id/settings_switch_autostart"
-                    style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_autostart"/>
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-                <TextView
-                    style="@style/menu_section_title_style"
-                    android:text="@string/settings_title_misc"/>
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-                <TextView
-                    android:id="@+id/settings_button_main_view"
-                    style="@style/menu_button_row_style"
-                    android:text="@string/settings_main_view"
-                    android:drawableStart="@drawable/ic_diagram" />
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-                <TextView
-                    android:id="@+id/settings_button_vehicle"
-                    style="@style/menu_button_row_style"
-                    android:text="@string/vehicle_title"
-                    android:drawableStart="@drawable/ic_car"/>
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-                <!--<com.ixam97.carStatsViewer.views.MultiSelectWidget
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+
+            <Switch
+                android:id="@+id/settings_switch_notifications"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_notifications" />
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+
+            <Switch
+                android:id="@+id/settings_switch_alt_layout"
+                style="@style/menu_standard_switch_style"
+                android:text="Speed and SoC in main view gages" />
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+
+            <Switch
+                android:id="@+id/settings_switch_consumption_unit"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_consumption_unit" />
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+
+            <Switch
+                android:id="@+id/settings_switch_use_location"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_use_location" />
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+
+            <Switch
+                android:id="@+id/settings_switch_autostart"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_autostart" />
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                style="@style/menu_section_title_style"
+                android:text="@string/settings_title_misc" />
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                android:id="@+id/settings_button_main_view"
+                style="@style/menu_button_row_style"
+                android:drawableStart="@drawable/ic_diagram"
+                android:text="@string/settings_main_view" />
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                android:id="@+id/settings_button_vehicle"
+                style="@style/menu_button_row_style"
+                android:drawableStart="@drawable/ic_car"
+                android:text="@string/vehicle_title" />
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+            <!--<com.ixam97.carStatsViewer.views.MultiSelectWidget
                     android:id="@+id/settings_multiselect_trip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -144,37 +169,40 @@
                 <View
                     style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>-->
-                <TextView
-                    android:id="@+id/settings_button_apis"
-                    style="@style/menu_button_row_style"
-                    android:drawableStart="@drawable/ic_api"
-                    android:text="@string/settings_apis_title"/>
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-                <TextView
-                    android:id="@+id/settings_button_about"
-                    android:text="@string/settings_about"
-                    android:drawableStart="@drawable/ic_info"
-                    style="@style/menu_button_row_style" />
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
+            <TextView
+                android:id="@+id/settings_button_apis"
+                style="@style/menu_button_row_style"
+                android:drawableStart="@drawable/ic_api"
+                android:text="@string/settings_apis_title" />
 
-                <Switch
-                    android:visibility="gone"
-                    android:id="@+id/settings_switch_distance_unit"
-                    style="@style/menu_standard_switch_style"
-                    android:text="@string/settings_distance_unit"/>
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
 
-            </LinearLayout>
-        </ScrollView>
-        <TextView
-            android:id="@+id/settings_version_text"
-            android:layout_margin="15dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"/>
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/settings_button_about"
+                style="@style/menu_button_row_style"
+                android:drawableStart="@drawable/ic_info"
+                android:text="@string/settings_about" />
 
-</LinearLayout>
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+
+            <Switch
+                android:id="@+id/settings_switch_distance_unit"
+                style="@style/menu_standard_switch_style"
+                android:text="@string/settings_distance_unit"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/settings_version_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -456,7 +456,7 @@ class DataProcessor {
                         )
 
                         val usedEnergyPerSoC = drivingTripData.usedStateOfChargeEnergy / drivingTripData.usedStateOfCharge / 100
-                        val currentStateOfCharge = (CarStatsViewer.appContext as CarStatsViewer).dataProcessor.realTimeData.stateOfCharge * 100
+                        val currentStateOfCharge = CarStatsViewer.dataProcessor.realTimeData.stateOfCharge * 100
                         val remainingEnergy = usedEnergyPerSoC * currentStateOfCharge
                         val avgConsumption = drivingTripData.usedEnergy / drivingTripData.drivenDistance * 1000
                         val remainingRange = remainingEnergy / avgConsumption

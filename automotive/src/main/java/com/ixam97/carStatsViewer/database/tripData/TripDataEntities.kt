@@ -23,6 +23,7 @@ data class DrivingSession(
     @Ignore var drivingPoints: List<DrivingPoint>? = null
     @Ignore var chargingSessions: List<ChargingSession>? = null
     @Ignore var sessionMarkers: List<SessionMarker>? = null
+    @Ignore var deleteMarker = false
 }
 
 @Entity

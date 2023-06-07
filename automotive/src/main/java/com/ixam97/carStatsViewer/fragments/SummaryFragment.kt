@@ -432,9 +432,9 @@ class SummaryFragment(val session: DrivingSession, var fragmentContainerId: Int)
             .setCancelable(true)
             .setPositiveButton(getString(R.string.dialog_reset_confirm)) { _, _ ->
                 CoroutineScope(Dispatchers.IO).launch {
-                    (applicationContext as CarStatsViewer).dataProcessor.resetTrip(
+                    CarStatsViewer.dataProcessor.resetTrip(
                         TripType.MANUAL,
-                        (applicationContext as CarStatsViewer).dataProcessor.realTimeData.drivingState
+                        CarStatsViewer.dataProcessor.realTimeData.drivingState
                     )
                     refreshActivity(session.session_type - 1)
                 }
@@ -467,7 +467,7 @@ class SummaryFragment(val session: DrivingSession, var fragmentContainerId: Int)
         InAppLogger.i("Trip index: ${appPreferences.mainViewTrip}")
 
         CoroutineScope(Dispatchers.IO).launch {
-            (applicationContext as CarStatsViewer).dataProcessor.changeSelectedTrip(index + 1)
+            CarStatsViewer.dataProcessor.changeSelectedTrip(index + 1)
             CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[index + 1]?.let {
                 val session = CarStatsViewer.tripDataSource.getFullDrivingSession(it)
                 requireActivity().runOnUiThread {

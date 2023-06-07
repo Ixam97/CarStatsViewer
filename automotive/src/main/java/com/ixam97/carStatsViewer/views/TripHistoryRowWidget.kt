@@ -14,6 +14,7 @@ import com.airbnb.paris.extensions.style
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.android.synthetic.main.widget_trip_history_row.view.*
@@ -27,20 +28,18 @@ class TripHistoryRowWidget(
 ) :
     LinearLayout(context, attrs, defStyleAttr) {
 
-    private var mainClickListener: OnMainClickListener? = null
-    private var deleteClickListener: OnDeleteClickListener? = null
-    private var mainLongClickListener: OnDeleteClickListener? = null
+    private var mainClickListener: OnClickListener? = null
+    private var mainLongClickListener: OnClickListener? = null
+
+    private var endClickListener: OnClickListener? = null
+    private var endLongClickListener: OnClickListener? = null
 
     init {
         init()
     }
 
-    fun interface OnMainClickListener {
-        fun onMainClicked()
-    }
-
-    fun interface OnDeleteClickListener {
-        fun onDeleteClicked()
+    fun interface OnClickListener {
+        fun onClick()
     }
 
     fun setSession(newSession: DrivingSession) {
@@ -48,16 +47,29 @@ class TripHistoryRowWidget(
         init()
     }
 
-    fun setOnMainClickListener(listener: OnMainClickListener) {
+    fun setDeleteMarker(isSelected: Boolean) {
+        session?.apply {
+            deleteMarker = isSelected
+        }
+        init()
+    }
+
+    fun getSession() = session
+
+    fun setOnMainClickListener(listener: OnClickListener) {
         mainClickListener = listener
     }
 
-    fun setOnMainLongClickListener(listener: OnDeleteClickListener) {
+    fun setOnMainLongClickListener(listener: OnClickListener) {
         mainLongClickListener = listener
     }
 
-    fun setOnDeleteClickListener(listener: OnDeleteClickListener) {
-        deleteClickListener = listener
+    fun setOnRowEndClickListener(listener: OnClickListener) {
+        endClickListener = listener
+    }
+
+    fun setOnRowEndLongClickListener(listener: OnClickListener) {
+        endLongClickListener = listener
     }
 
     private fun init() {
@@ -77,13 +89,10 @@ class TripHistoryRowWidget(
 
 
         rowBody.setOnClickListener {
-            mainClickListener?.onMainClicked()
+            mainClickListener?.onClick()
         }
 
-        rowBody.setOnLongClickListener {
-            mainLongClickListener?.onDeleteClicked()
-            true
-        }
+
 
         session?.let {
 
@@ -96,15 +105,16 @@ class TripHistoryRowWidget(
                 sectionTitleText.text = it.note
             }
 
-            if (it.session_type != TripType.MANUAL && (it.end_epoch_time?:0) <= 0) {
-                rowEndButton.setOnLongClickListener {
-                    deleteClickListener?.onDeleteClicked()
-                    true
+            if ((it.end_epoch_time?:0) <= 0) {
+                rowBody.setOnLongClickListener { mainLongClickListener?.onClick(); true }
+                if (it.session_type == TripType.MANUAL) {
+                    rowEndButton.setOnClickListener { endClickListener?.onClick() }
+                } else {
+                    rowEndButton.setOnLongClickListener { endClickListener?.onClick(); true }
                 }
             } else {
-                rowEndButton.setOnClickListener {
-                    deleteClickListener?.onDeleteClicked()
-                }
+                rowEndButton.setOnClickListener { endClickListener?.onClick() }
+                rowEndButton.setOnLongClickListener { endLongClickListener?.onClick(); true }
             }
 
             when (it.session_type) {
@@ -115,11 +125,17 @@ class TripHistoryRowWidget(
                 else -> rowIcon.setImageResource(R.drawable.ic_help)
             }
 
-            if ((it.end_epoch_time?:0) <= 0) {
-                rowEndButton.setImageResource(R.drawable.ic_reset)
-                if (it.session_type != TripType.MANUAL) {
-                    // rowEndButton.isEnabled = false
-                    rowEndButton.setColorFilter(context.getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+            if (it.deleteMarker) {
+                rowEndButton.setImageDrawable(context.getDrawable(R.drawable.ic_checked_checkbox))
+            } else {
+                if ((it.end_epoch_time?:0) <= 0) {
+                    rowEndButton.setImageResource(R.drawable.ic_reset)
+                    if (it.session_type != TripType.MANUAL) {
+                        // rowEndButton.isEnabled = false
+                        rowEndButton.setColorFilter(context.getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+                    }
+                } else {
+                    rowEndButton.setImageDrawable(context.getDrawable(R.drawable.ic_delete))
                 }
             }
 

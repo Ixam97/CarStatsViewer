@@ -56,8 +56,6 @@ class MainActivity : FragmentActivity() {
     private lateinit var timerHandler: Handler
     private lateinit var context: Context
 
-    private lateinit var carStatsViewer: CarStatsViewer
-
     private var selectedDataManager = DataManagers.CURRENT_TRIP.dataManager
 
     private var updateUi = false
@@ -73,7 +71,7 @@ class MainActivity : FragmentActivity() {
     private val updateActivityTask = object : Runnable {
         override fun run() {
             updateActivity()
-            carStatsViewer.dataProcessor.updateTime()
+            CarStatsViewer.dataProcessor.updateTime()
 
             if (updateUi) timerHandler.postDelayed(this, UI_UPDATE_INTERVAL)
         }
@@ -98,7 +96,7 @@ class MainActivity : FragmentActivity() {
         updateAbrpStatus(CarStatsViewer.liveDataApis[0].connectionStatus)
 
         CoroutineScope(Dispatchers.IO).launch {
-            carStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
+            CarStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
         }
 
         if (appPreferences.altLayout) {
@@ -194,13 +192,12 @@ class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        carStatsViewer = applicationContext as CarStatsViewer
 
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                carStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
+                CarStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
                     // Do stuff with live data
                     // InAppLogger.v("RealTimeData: Drive state: ${DrivingState.nameMap[it.drivingState]}, Inst. cons.: ${it.instConsumption}")
 
@@ -221,7 +218,7 @@ class MainActivity : FragmentActivity() {
                     main_power_gage.setValue(it.power / 1_000_000f)
 
                     main_speed_gage.setValue(appPreferences.distanceUnit.toUnit(it.speed*3.6).toInt())
-                    carStatsViewer.dataProcessor.staticVehicleData.batteryCapacity?.let { batteryCapacity ->
+                    CarStatsViewer.dataProcessor.staticVehicleData.batteryCapacity?.let { batteryCapacity ->
                         main_soc_gage.setValue((it.batteryLevel / (batteryCapacity) * 100).roundToInt())
                     }
 
@@ -231,7 +228,7 @@ class MainActivity : FragmentActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                carStatsViewer.dataProcessor.drivingTripDataFlow.collectLatest {
+                CarStatsViewer.dataProcessor.drivingTripDataFlow.collectLatest {
                     // InAppLogger.v("TripData: Driven Distance: ${it.drivenDistance}")
                     neoDistance = it.drivenDistance
                     neoEnergy = it.usedEnergy
@@ -378,7 +375,7 @@ class MainActivity : FragmentActivity() {
         main_gage_ambient_temperature_text_view.text = "  %s".format( StringFormatters.getTemperatureString(selectedDataManager.ambientTemperature))
 
         val usedEnergyPerSoC = neoUsedStateOfChargeEnergy / neoUsedStateOfCharge / 100
-        val currentStateOfCharge = (applicationContext as CarStatsViewer).dataProcessor.realTimeData.stateOfCharge * 100
+        val currentStateOfCharge = CarStatsViewer.dataProcessor.realTimeData.stateOfCharge * 100
         val remainingEnergy = usedEnergyPerSoC * currentStateOfCharge
         val avgConsumption = neoEnergy / neoDistance * 1000
         val remainingRange = (remainingEnergy / avgConsumption) * 1000

@@ -37,7 +37,7 @@ class SettingsMainViewActivity: Activity() {
         settings_multiselect_trip.setOnIndexChangedListener {
             appPreferences.mainViewTrip = settings_multiselect_trip.selectedIndex
             CoroutineScope(Dispatchers.IO).launch {
-                (applicationContext as CarStatsViewer).dataProcessor.changeSelectedTrip(settings_multiselect_trip.selectedIndex + 1)
+                CarStatsViewer.dataProcessor.changeSelectedTrip(settings_multiselect_trip.selectedIndex + 1)
             }
         }
 

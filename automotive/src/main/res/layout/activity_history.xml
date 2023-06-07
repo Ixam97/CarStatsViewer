@@ -38,6 +38,27 @@
                 android:src="@drawable/ic_filter"
                 android:background="@android:color/transparent"/>
 
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/history_multi_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/history_multi_info"
+                    style="@style/title_text_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Selected: "/>
+                <ImageButton
+                    android:layout_margin="15dp"
+                    android:id="@+id/history_multi_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_delete"
+                    android:background="@android:color/transparent"/>
+            </LinearLayout>
+
         </LinearLayout>
         <View
             android:layout_width="match_parent"

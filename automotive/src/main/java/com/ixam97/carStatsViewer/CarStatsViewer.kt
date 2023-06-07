@@ -2,6 +2,7 @@ package com.ixam97.carStatsViewer
 
 import android.app.*
 import android.content.Context
+import android.provider.ContactsContract.Data
 import android.util.TypedValue
 import androidx.room.Room
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
@@ -50,12 +51,15 @@ class CarStatsViewer : Application() {
 
         lateinit var tripDatabase: TripDataDatabase
         lateinit var tripDataSource: LocalTripDataSource
+        lateinit var dataProcessor: DataProcessor
     }
 
-    val dataProcessor = DataProcessor()
+
 
     override fun onCreate() {
         super.onCreate()
+
+        dataProcessor = DataProcessor()
 
         tripDatabase = Room.databaseBuilder(
             applicationContext,
