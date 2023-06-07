@@ -114,6 +114,14 @@ class DataProcessor {
 
     /** Actions related to changes in speed */
     private fun speedUpdate() {
+        if (carPropertiesData.CurrentSpeed.isInitialValue) {
+            InAppLogger.w("[NEO] Dropped speed value, flagged as initial")
+            return
+        }
+        if (carPropertiesData.CurrentSpeed.timestamp < System.currentTimeMillis() - 500) {
+            InAppLogger.w("[NEO] Dropped speed value, timestamp too old")
+            return
+        }
         if (carPropertiesData.CurrentSpeed.timeDelta > 0 && realTimeData.drivingState == DrivingState.DRIVE) {
             val distanceDelta = (carPropertiesData.CurrentSpeed.value as Float).absoluteValue * (carPropertiesData.CurrentSpeed.timeDelta / 1_000_000_000f)
             pointDrivenDistance += distanceDelta
@@ -142,6 +150,14 @@ class DataProcessor {
     /** Actions related to changes in power draw */
     private fun powerUpdate() {
         if (emulatorMode) return /** skip if run in emulator, see speedUpdate() */
+        if (carPropertiesData.CurrentPower.isInitialValue) {
+            InAppLogger.w("[NEO] Dropped power value, flagged as initial")
+            return
+        }
+        if (carPropertiesData.CurrentPower.timestamp < System.currentTimeMillis() - 500) {
+            InAppLogger.w("[NEO] Dropped power value, timestamp too old")
+            return
+        }
 
         if (carPropertiesData.CurrentPower.timeDelta > 0 && (realTimeData.drivingState == DrivingState.DRIVE || realTimeData.drivingState == DrivingState.CHARGE)) {
             val energyDelta = emulatorPowerSign * (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentPower.timeDelta / 3.6E12)
@@ -305,8 +321,14 @@ class DataProcessor {
         val mDrivenDistance = pointDrivenDistance
         pointDrivenDistance = 0.0
 
+        if (mUsedEnergy.absoluteValue < .1 && mDrivenDistance.absoluteValue > 1) {
+            InAppLogger.w("[NEO] Driving point not written, implausible values: ${mDrivenDistance.toFloat()} m, ${mUsedEnergy.toFloat()} Wh")
+            drivingPointUpdating = false
+            return
+        }
+
         usedEnergySum += mUsedEnergy
-        InAppLogger.v("[NEO] Driven distance: $mDrivenDistance, Used energy: $mUsedEnergy")
+        InAppLogger.v("[NEO] Driving point written: ${mDrivenDistance.toFloat()} m, ${mUsedEnergy.toFloat()} Wh")
 
         val drivingPoint = DrivingPoint(
             driving_point_epoch_time = System.currentTimeMillis(),
