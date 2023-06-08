@@ -91,15 +91,17 @@ class TripHistoryAdapter(
                 sessions = newSessions
                 activity.runOnUiThread { differ.submitList(newSessions); InAppLogger.d("Submitting to differ") }
             } else {
-                val newSession = CarStatsViewer.tripDataSource.getActiveDrivingSessions().find { it.session_type == session.session_type }
-                if (newSession != null) {
-                    val newSessions = sessions.toMutableList()
-                    newSessions[position] = newSession
-                    sessions = newSessions
-                    activity.runOnUiThread { differ.submitList(sessions) }
-                } else {
-                    reloadDataBase()
-                }
+                // val newSession = CarStatsViewer.tripDataSource.getActiveDrivingSessions().find { it.session_type == session.session_type }
+                reloadDataBase()
+
+                // if (newSession != null) {
+                //     val newSessions = sessions.toMutableList()
+                //     newSessions[position] = newSession
+                //     sessions = newSessions
+                //     activity.runOnUiThread { differ.submitList(sessions) }
+                // } else {
+                //     reloadDataBase()
+                // }
             }
         }
     }

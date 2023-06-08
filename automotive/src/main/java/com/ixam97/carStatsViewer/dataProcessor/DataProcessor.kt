@@ -7,6 +7,7 @@ import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
 import com.ixam97.carStatsViewer.dataManager.DrivingState
 import com.ixam97.carStatsViewer.dataManager.TimeTracker
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
+import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.emulatorPowerSign
@@ -14,6 +15,7 @@ import com.ixam97.carStatsViewer.plot.enums.PlotLineMarkerType
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -23,7 +25,7 @@ import kotlin.math.absoluteValue
 class DataProcessor {
     val carPropertiesData = CarPropertiesData()
 
-    private var usedEnergySum = 0.0
+    // private var usedEnergySum = 0.0
     private var previousDrivingState: Int = DrivingState.UNKNOWN
     private var previousStateOfCharge: Float = -1f
 
@@ -33,15 +35,24 @@ class DataProcessor {
     private var valueUsedEnergy: Double = 0.0
 
     /**
+     * List of local copies of the current trips. Used for storing sum values and saving them to
+     * disk less frequently. This should prevent hiccups when adding sums of distance and energy.
+     */
+    private var localSessions: MutableList<DrivingSession> = mutableListOf()
+
+    /**
      * Due to the usage of coroutines for data bank access, these booleans make sure no duplicates
      * of deltas and points are created when new values come in at a fast rate and the deltas have
      * not been reset yet. This is just for safety since it should be sufficient if the point and
      * value vars above are copied and reset at the beginning of the corresponding functions. This
      * also ensures no changing data while it is used fot data base writes.
+     *
+     * These have been superseded by other means of ensuring correct execution oderder, preventing
+     * database blocks and reducing writes.
      */
-    private var drivingPointUpdating: Boolean = false
+    // private var drivingPointUpdating: Boolean = false
     private var chargingPointUpdating: Boolean = false
-    private var tripDataUpdating: Boolean = false
+    // private var tripDataUpdating: Boolean = false
 
     var staticVehicleData = StaticVehicleData()
 
@@ -79,6 +90,29 @@ class DataProcessor {
         TripType.AUTO to TimeTracker(),
         TripType.MONTH to TimeTracker(),
     )
+
+    init {
+        loadSessionsToMemory()
+    }
+
+    fun loadSessionsToMemory() {
+        CoroutineScope(Dispatchers.IO).launch {
+            localSessions.clear()
+            CarStatsViewer.tripDataSource.getActiveDrivingSessions().forEach {
+                localSessions.add(it)
+                if (it.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
+                    drivingTripData = drivingTripData.copy(
+                        driveTime = it.drive_time,
+                        selectedTripType = it.session_type,
+                        drivenDistance = it.driven_distance,
+                        usedEnergy = it.used_energy,
+                        usedStateOfCharge = it.used_soc,
+                        usedStateOfChargeEnergy = it.used_soc_energy
+                    )
+                }
+            }
+        }
+    }
 
     fun processLocation(lat: Double?, lon: Double?, alt: Double?) {
         realTimeData = realTimeData.copy(
@@ -127,7 +161,7 @@ class DataProcessor {
             pointDrivenDistance += distanceDelta
             valueDrivenDistance += distanceDelta
 
-            CoroutineScope(Dispatchers.IO).launch {
+            // CoroutineScope(Dispatchers.Default).launch {
                 if (pointDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL)
                     updateDrivingDataPoint()
 
@@ -143,7 +177,7 @@ class DataProcessor {
                     if (valueUsedEnergy > 100)
                         updateTripDataValues(DrivingState.DRIVE)
                 }
-            }
+            //}
         }
     }
 
@@ -164,7 +198,7 @@ class DataProcessor {
             pointUsedEnergy += energyDelta
             valueUsedEnergy += energyDelta
 
-            CoroutineScope(Dispatchers.IO).launch {
+            // CoroutineScope(Dispatchers.Default).launch {
                 if (realTimeData.drivingState == DrivingState.CHARGE) {
                     if (pointUsedEnergy.absoluteValue > Defines.PLOT_ENERGY_INTERVAL)
                         updateChargingDataPoint()
@@ -174,7 +208,7 @@ class DataProcessor {
 
                 if (valueUsedEnergy.absoluteValue > 100 && realTimeData.drivingState == DrivingState.DRIVE)
                     updateTripDataValues(DrivingState.DRIVE)
-            }
+            // }
         }
     }
 
@@ -272,6 +306,8 @@ class DataProcessor {
                 val session = CarStatsViewer.tripDataSource.getDrivingSession(it)
                 timerMap[session?.session_type]?.restore(session?.drive_time?:0)
             }
+
+        loadSessionsToMemory()
         // }
     }
 
@@ -313,64 +349,89 @@ class DataProcessor {
     }
 
     /** Update data points when driving */
-    private suspend fun updateDrivingDataPoint(markerType: Int? = null) {
-        if (drivingPointUpdating) return
-        drivingPointUpdating = true
+    private fun updateDrivingDataPoint(markerType: Int? = null) {
+        // if (drivingPointUpdating) return
+        // drivingPointUpdating = true
         val mUsedEnergy = pointUsedEnergy
         pointUsedEnergy = 0.0
         val mDrivenDistance = pointDrivenDistance
         pointDrivenDistance = 0.0
 
-        if (mUsedEnergy.absoluteValue < .1 && mDrivenDistance.absoluteValue > 1) {
-            InAppLogger.w("[NEO] Driving point not written, implausible values: ${mDrivenDistance.toFloat()} m, ${mUsedEnergy.toFloat()} Wh")
-            drivingPointUpdating = false
-            return
-        }
-
-        usedEnergySum += mUsedEnergy
-        InAppLogger.v("[NEO] Driving point written: ${mDrivenDistance.toFloat()} m, ${mUsedEnergy.toFloat()} Wh")
-
-        val drivingPoint = DrivingPoint(
-            driving_point_epoch_time = System.currentTimeMillis(),
-            energy_delta = mUsedEnergy.toFloat(),
-            distance_delta = mDrivenDistance.toFloat(),
-            point_marker_type = markerType,
-            state_of_charge = realTimeData.stateOfCharge,
-            lat = realTimeData.lat,
-            lon = realTimeData.lon,
-            alt = realTimeData.alt
-        )
-
-        CarStatsViewer.tripDataSource.addDrivingPoint(drivingPoint)
         updateTripDataValues(DrivingState.DRIVE)
 
-        drivingPointUpdating = false
+        CoroutineScope(Dispatchers.IO).launch { // Run database write in own coroutine to not Block fast Updates
+
+            if (mUsedEnergy.absoluteValue < .1 && mDrivenDistance.absoluteValue > 1) {
+                InAppLogger.w("[NEO] Driving point not written, implausible values: ${mDrivenDistance.toFloat()} m, ${mUsedEnergy.toFloat()} Wh")
+                // drivingPointUpdating = false
+                return@launch
+            }
+
+            // usedEnergySum += mUsedEnergy
+            InAppLogger.v("[NEO] Driving point written: ${mDrivenDistance.toFloat()} m, ${mUsedEnergy.toFloat()} Wh")
+
+            val drivingPoint = DrivingPoint(
+                driving_point_epoch_time = System.currentTimeMillis(),
+                energy_delta = mUsedEnergy.toFloat(),
+                distance_delta = mDrivenDistance.toFloat(),
+                point_marker_type = markerType,
+                state_of_charge = realTimeData.stateOfCharge,
+                lat = realTimeData.lat,
+                lon = realTimeData.lon,
+                alt = realTimeData.alt
+            )
+
+            CarStatsViewer.tripDataSource.addDrivingPoint(drivingPoint)
+            writeTripsToDatabase()
+        }
+
+        // drivingPointUpdating = false
     }
 
     /**
      * Update all active trips in the database with new sums for energy and distance.
      * Update driving trip data flow for UI.
      */
-    private suspend fun newDrivingDeltas(distanceDelta: Double, energyDelta: Double) {
-        CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds().forEach { sessionIds ->
+    private fun newDrivingDeltas(distanceDelta: Double, energyDelta: Double) {
+        //CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds().forEach { sessionIds ->
+        localSessions.forEach { localSession ->
+            localSessions[localSessions.indexOf(localSession)] = localSession.copy(
+                drive_time = timerMap[localSession.session_type]?.getTime()?:0L,
+                driven_distance = localSession.driven_distance + distanceDelta,
+                used_energy = localSession.used_energy + energyDelta
+            )
 
-            CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
-                CarStatsViewer.tripDataSource.updateDrivingSession(session.copy(
-                    drive_time = timerMap[session.session_type]?.getTime()?:0L,
-                    driven_distance = session.driven_distance + distanceDelta,
-                    used_energy = session.used_energy + energyDelta
-                ))
+            if (drivingTripData.selectedTripType == localSession.session_type) {
+                drivingTripData = drivingTripData.copy(
+                    driveTime = localSession.drive_time,
+                    drivenDistance = localSession.driven_distance,
+                    usedEnergy = localSession.used_energy
+                )
             }
 
-            CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
-                if (drivingTripData.selectedTripType == session.session_type) {
-                    drivingTripData = drivingTripData.copy(
-                        driveTime = session.drive_time,
-                        drivenDistance = session.driven_distance,
-                        usedEnergy = session.used_energy
-                    )
-                }
-            }
+            // CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
+            //     CarStatsViewer.tripDataSource.updateDrivingSession(session.copy(
+            //         drive_time = timerMap[session.session_type]?.getTime()?:0L,
+            //         driven_distance = session.driven_distance + distanceDelta,
+            //         used_energy = session.used_energy + energyDelta
+            //     ))
+            // }
+
+            // CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
+            //     if (drivingTripData.selectedTripType == session.session_type) {
+            //         drivingTripData = drivingTripData.copy(
+            //             driveTime = session.drive_time,
+            //             drivenDistance = session.driven_distance,
+            //             usedEnergy = session.used_energy
+            //         )
+            //     }
+            // }
+        }
+    }
+
+    private suspend fun writeTripsToDatabase() {
+        localSessions.forEach { localSession ->
+            CarStatsViewer.tripDataSource.updateDrivingSession(localSession)
         }
     }
 
@@ -378,7 +439,7 @@ class DataProcessor {
      * Update the active charging session in the database with new sums for energy and SoC.
      * Update charging trip data flow for UI.
      */
-    private suspend fun newChargingDeltas(energyDelta: Double) {
+    private fun newChargingDeltas(energyDelta: Double) {
         val currentChargingEnergy = chargingTripData.chargedEnergy + energyDelta
 
         chargingTripData = chargingTripData.copy(
@@ -387,7 +448,7 @@ class DataProcessor {
     }
 
     /** Update data points when charging */
-    private suspend fun updateChargingDataPoint(markerType: Int? = null) {
+    private fun updateChargingDataPoint(markerType: Int? = null) {
         if (chargingPointUpdating) return
         chargingPointUpdating = true
         val mUsedEnergy = pointUsedEnergy
@@ -399,20 +460,23 @@ class DataProcessor {
     }
 
     /** Update sums of a trip or charging session */
-    private suspend fun updateTripDataValues(drivingState: Int = realTimeData.drivingState) {
-        if (tripDataUpdating) return
-        tripDataUpdating = true
+    private fun updateTripDataValues(drivingState: Int = realTimeData.drivingState) {
+        // if (tripDataUpdating) return
+        // tripDataUpdating = true
         val mDrivenDistance = valueDrivenDistance
         valueDrivenDistance = 0.0
         val mUsedEnergy = valueUsedEnergy
         valueUsedEnergy = 0.0
 
+        // CoroutineScope(Dispatchers.IO).launch {
+            // InAppLogger.v("[NEO] Trip data updating")
         when (drivingState) {
             DrivingState.DRIVE -> newDrivingDeltas(mDrivenDistance, mUsedEnergy)
             DrivingState.CHARGE -> newChargingDeltas(mUsedEnergy)
         }
+        // }
 
-        tripDataUpdating = false
+        // tripDataUpdating = false
     }
 
     /** Change the selected trip type to update the trip data flow with */
@@ -432,14 +496,19 @@ class DataProcessor {
                     usedStateOfCharge = session.used_soc,
                     usedStateOfChargeEnergy = session.used_soc_energy
                 )
+                localSessions[localSessions.indexOfFirst { it.session_type == tripType }] = session
             }
         }
     }
 
     suspend fun resetTrip(tripType: Int, drivingState: Int) {
+        /** Create data point right before reset */
+        updateDrivingDataPoint()
+
         /** Reset the specified trip type. If none exists, create a new one */
         val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
         val drivingSessionId = drivingSessionsIdsMap[tripType]
+        writeTripsToDatabase()
         if (drivingSessionId != null) {
             CarStatsViewer.tripDataSource.supersedeDrivingSession(
                 drivingSessionId,
@@ -453,6 +522,7 @@ class DataProcessor {
             )
             InAppLogger.w("[NEO] No trip of type ${TripType.tripTypesNameMap[tripType]} existing, starting new trip")
         }
+        loadSessionsToMemory()
         if (tripType == drivingTripData.selectedTripType) drivingTripData = DrivingTripData(selectedTripType = drivingTripData.selectedTripType)
         timerMap[tripType]?.reset()
         if (drivingState == DrivingState.DRIVE) timerMap[tripType]?.start()

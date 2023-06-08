@@ -59,8 +59,6 @@ class CarStatsViewer : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        dataProcessor = DataProcessor()
-
         tripDatabase = Room.databaseBuilder(
             applicationContext,
             TripDataDatabase::class.java,
@@ -78,6 +76,8 @@ class CarStatsViewer : Application() {
             val drivingSessionIds = tripDataSource.getActiveDrivingSessionsIdsMap()
             InAppLogger.d("Trip Database: $drivingSessionIds")
         }
+
+        dataProcessor = DataProcessor()
 
         val typedValue = TypedValue()
         applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
