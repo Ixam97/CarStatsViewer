@@ -156,13 +156,13 @@
                 style="@style/menu_section_title_style"/>
 
             <com.ixam97.carStatsViewer.views.PlotView
-                android:visibility="gone"
+                android:visibility="visible"
                 android:id="@+id/summary_consumption_plot"
                 android:layout_width="match_parent"
                 android:layout_height="550dp"/>
 
             <Button
-                android:visibility="gone"
+                android:visibility="visible"
                 android:id="@+id/summary_button_secondary_dimension"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"/>

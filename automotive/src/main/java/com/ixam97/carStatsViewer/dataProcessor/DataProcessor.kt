@@ -156,10 +156,10 @@ class DataProcessor {
             InAppLogger.w("[NEO] Dropped speed value, flagged as initial")
             return
         }
-        if (carPropertiesData.CurrentSpeed.timestamp < System.currentTimeMillis() - 500) {
-            InAppLogger.w("[NEO] Dropped speed value, timestamp too old")
-            return
-        }
+        // if (carPropertiesData.CurrentSpeed.timestamp < System.currentTimeMillis() - 500) {
+        //     InAppLogger.w("[NEO] Dropped speed value, timestamp too old")
+        //     return
+        // }
         if (carPropertiesData.CurrentSpeed.timeDelta > 0 && realTimeData.drivingState == DrivingState.DRIVE) {
             val distanceDelta = (carPropertiesData.CurrentSpeed.value as Float).absoluteValue * (carPropertiesData.CurrentSpeed.timeDelta / 1_000_000_000f)
             pointDrivenDistance += distanceDelta

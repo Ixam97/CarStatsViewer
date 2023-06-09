@@ -23,17 +23,15 @@ import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.plot.objects.*
+import com.ixam97.carStatsViewer.utils.DataConverters
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.fragment_summary.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.util.*
-import java.util.concurrent.TimeUnit
-import kotlin.math.absoluteValue
 
 class SummaryFragment(val session: DrivingSession, var fragmentContainerId: Int) : Fragment(R.layout.fragment_summary) {
 
@@ -110,6 +108,14 @@ class SummaryFragment(val session: DrivingSession, var fragmentContainerId: Int)
             ),
         )
         // consumptionPlotLine.addDataPoints(tripData.consumptionPlotLine)
+
+        if (session.drivingPoints == null) {
+            InAppLogger.e("Trip summary requires complete sessions!")
+        }
+        session.drivingPoints?.let {
+            consumptionPlotLine.addDataPoints(DataConverters.consumptionPlotLineFromDrivingPoints(it))
+
+        }
 
         summary_selected_trip_bar[appPreferences.mainViewTrip].background = primaryColor.toColor().toDrawable()
 
@@ -236,14 +242,22 @@ class SummaryFragment(val session: DrivingSession, var fragmentContainerId: Int)
 
         summary_distance_value_text.text = StringFormatters.getTraveledDistanceString(session.driven_distance.toFloat())
 
-        // val altList = tripData.consumptionPlotLine.mapNotNull { it.Altitude }
-        // val altFirst = if (altList.isEmpty()) altList.first() else null
-        // val altMax = altList.maxOrNull()
-        // val altMin = altList.minOrNull()
-        // var altLast = if (altList.isEmpty()) altList.last() else null
+        var altUp = 0f
+        var altDown = 0f
 
-        val altUp = session.drivingPoints?.mapNotNull { it.alt }?.filter { it > 0 }?.sum()
-        val altDown = session.drivingPoints?.mapNotNull { it.alt }?.filter { it < 0 }?.sum()?.absoluteValue
+        session.drivingPoints?.let { drivingPoint ->
+            val altList = drivingPoint.map { it.alt }
+
+            altList.forEachIndexed { index, alt ->
+                if (index > 0) {
+                    val prevAlt = altList[index - 1]
+                    if (alt != null && prevAlt != null) {
+                        if (alt > prevAlt) altUp += alt - prevAlt
+                        if (alt < prevAlt) altDown += prevAlt - alt
+                    }
+                }
+            }
+        }
 
         summary_altitude_value_text.text = StringFormatters.getAltitudeString(altUp, altDown)
         summary_used_energy_value_text.text = StringFormatters.getEnergyString(session.used_energy.toFloat())
