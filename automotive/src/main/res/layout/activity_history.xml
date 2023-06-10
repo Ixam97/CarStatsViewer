@@ -49,7 +49,7 @@
                     style="@style/title_text_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Selected: "/>
+                    android:text="@string/history_selected"/>
                 <ImageButton
                     android:layout_margin="15dp"
                     android:id="@+id/history_multi_delete"

@@ -144,7 +144,7 @@ class HistoryActivity  : FragmentActivity() {
             tripsAdapter.selectTrip(sessionId, false)
             selectedIds.remove(sessionId)
         }
-        history_multi_info.text = "Selected: ${selectedIds.size}"
+        history_multi_info.text = "${getString(R.string.history_selected)} ${selectedIds.size}"
         InAppLogger.d("[Trip History] selected IDs: $selectedIds")
     }
 
@@ -207,9 +207,9 @@ class HistoryActivity  : FragmentActivity() {
 
     private fun createMultiDeleteDialog() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Delete multiple Trips?")
+        builder.setTitle(getString(R.string.history_dialog_multi_delete_title))
             .setCancelable(true)
-            .setPositiveButton("Delete ${selectedIds.size} trips") {_,_->
+            .setPositiveButton(getString(R.string.history_dialog_multi_delete_delete, selectedIds.size.toString())) {_,_->
                 CoroutineScope(Dispatchers.IO).launch {
                     selectedIds.forEach {
                         CarStatsViewer.tripDataSource.deleteDrivingSessionById(it)
@@ -219,7 +219,7 @@ class HistoryActivity  : FragmentActivity() {
                     runOnUiThread { multiSelectMode = false }
                 }
             }
-            .setNeutralButton("Deselect all") { dialog, _ ->
+            .setNeutralButton(getString(R.string.history_dialog_multi_delete_deselect)) { dialog, _ ->
                 CoroutineScope(Dispatchers.IO).launch {
                     selectedIds.forEach {
                         tripsAdapter.selectTrip(it, false)
@@ -236,7 +236,7 @@ class HistoryActivity  : FragmentActivity() {
             .setNegativeButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
                 dialog.cancel()
             }
-            .setMessage("You are about to delete ${selectedIds.size} trips. The trips will be deleted permanently.")
+            .setMessage(getString(R.string.history_dialog_multi_delete_message, selectedIds.size.toString()))
         val alert = builder.create()
         alert.show()
     }

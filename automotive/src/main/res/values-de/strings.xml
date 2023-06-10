@@ -204,6 +204,7 @@
 
     <!-- Trip history -->
     <string name="history_title">Tripverlauf</string>
+    <string name="history_selected">Ausgewählt:</string>
     <string name="history_past_trips">Frühere Trips:</string>
     <string name="history_current_trips">Aktuelle Trips:</string>
     <string name="history_dialog_filters_title">Trips filtern</string>
@@ -216,4 +217,9 @@
     <string name="history_dialog_delete_title">Trip Löschen?</string>
     <string name="history_dialog_delete_message">Der Trip wird dauerhaft gelöscht.</string>
     <string name="history_dialog_delete_confirm">Trip löschen</string>
+
+    <string name="history_dialog_multi_delete_title">Mehrere Trips löschen?</string>
+    <string name="history_dialog_multi_delete_message">Es sind %s Trips zum Löschen ausgewählt. Die trips werden dauerhaft gelöscht.</string>
+    <string name="history_dialog_multi_delete_delete">%s Trips löschen</string>
+    <string name="history_dialog_multi_delete_deselect">Alle abwählen</string>
 </resources>

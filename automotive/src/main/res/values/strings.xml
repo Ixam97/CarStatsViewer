@@ -242,8 +242,9 @@
     <string name="quit_dialog_title">Quit App?</string>
     <string name="quit_dialog_message">Log will be copied to clipboard.</string>
     <string name="dialog_close">Close</string>
-    <string name="dialog_reset_title">Reset manual trip data?</string>
-    <string name="dialog_reset_message">The current manual trip data will be reset to zero. It will be saved in the trip History</string>
+
+    <string name="dialog_reset_title">Reset trip data?</string>
+    <string name="dialog_reset_message">The current manual trip will be reset. It will be saved in the trip history.</string>
     <string name="dialog_reset_do_save">Save</string>
     <string name="dialog_reset_no_save">"Don't save"</string>
     <string name="dialog_reset_cancel">Cancel</string>
@@ -262,6 +263,7 @@
 
     <!-- Trip history -->
     <string name="history_title">Trip history</string>
+    <string name="history_selected">Selected:</string>
     <string name="history_past_trips">Past trips:</string>
     <string name="history_current_trips">Current trips:</string>
     <string name="history_dialog_filters_title">Trip filters</string>
@@ -274,4 +276,9 @@
     <string name="history_dialog_delete_title">Delete trip?</string>
     <string name="history_dialog_delete_message">The trip will be deleted permanently.</string>
     <string name="history_dialog_delete_confirm">Delete trip</string>
+
+    <string name="history_dialog_multi_delete_title">Delete multiple trips?</string>
+    <string name="history_dialog_multi_delete_message">You are about to delete %s trips. The trips will be deleted permanently.</string>
+    <string name="history_dialog_multi_delete_delete">Delete %s trips</string>
+    <string name="history_dialog_multi_delete_deselect">Deselect all</string>
 </resources>

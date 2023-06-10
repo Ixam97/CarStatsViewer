@@ -47,7 +47,7 @@ import kotlin.math.roundToInt
 
 class MainActivity : FragmentActivity() {
     companion object {
-        private const val UI_UPDATE_INTERVAL = 1000L
+        private const val UI_UPDATE_INTERVAL = 500L
         const val DISTANCE_TRIP_DIVIDER = 5_000L
         const val CONSUMPTION_DISTANCE_RESTRICTION = 10_000L
     }
@@ -73,11 +73,13 @@ class MainActivity : FragmentActivity() {
     private var neoUsedStateOfCharge: Double = 0.0
     private var neoUsedStateOfChargeEnergy: Double = 0.0
 
+    // Adding non-finite values to plot lines does not work atm.
+    // Use this to prevent loops until fixed
+    private var nonFiniteCounter = 0
+
     private val updateActivityTask = object : Runnable {
         override fun run() {
-            updateActivity()
             CarStatsViewer.dataProcessor.updateTime()
-
             if (updateUi) timerHandler.postDelayed(this, UI_UPDATE_INTERVAL)
         }
     }
@@ -126,11 +128,17 @@ class MainActivity : FragmentActivity() {
             main_consumption_gage.gageUnit = "Wh/%s".format(appPreferences.distanceUnit.unit())
             main_consumption_gage.minValue = appPreferences.distanceUnit.asUnit(-300f)
             main_consumption_gage.maxValue = appPreferences.distanceUnit.asUnit(600f)
+            consumptionPlotLine.Configuration.Unit = "Wh/%s".format(appPreferences.distanceUnit.unit())
+            consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
+            consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 1f
 
         } else {
             main_consumption_gage.gageUnit = "kWh/100%s".format(appPreferences.distanceUnit.unit())
             main_consumption_gage.minValue = appPreferences.distanceUnit.asUnit(-30f)
             main_consumption_gage.maxValue = appPreferences.distanceUnit.asUnit(60f)
+            consumptionPlotLine.Configuration.Unit = "kWh/100%s".format(appPreferences.distanceUnit.unit())
+            consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
+            consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 10f
         }
 
         val preferenceDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
@@ -238,12 +246,14 @@ class MainActivity : FragmentActivity() {
                     if (it?.drivingPoints == null || it.drivingPoints?.size == 0 || neoSelectedTripId != it.driving_session_id) {
                         consumptionPlotLine.reset()
                         main_consumption_plot.invalidate()
+                        nonFiniteCounter = 0
                     }
 
                     neoSelectedTripId = it?.driving_session_id
 
                     it?.drivingPoints?.let { drivingPoints ->
-                        var sizeDelta = drivingPoints.size - consumptionPlotLine.getDataPointsSize()
+                        var sizeDelta = drivingPoints.size - consumptionPlotLine.getDataPointsSize() - nonFiniteCounter
+                        // InAppLogger.d("Size delta: $sizeDelta (${drivingPoints.size} vs. ${consumptionPlotLine.getDataPointsSize()}, $nonFiniteCounter non-finite)")
                         if (sizeDelta > 0) {
                             while (sizeDelta > 0) {
                                 val prevDrivingPoint = if (consumptionPlotLine.getDataPointsSize() > 0) {
@@ -255,11 +265,14 @@ class MainActivity : FragmentActivity() {
                                         prevDrivingPoint
                                     )
                                 )
+                                if (drivingPoints[drivingPoints.size - sizeDelta].distance_delta <= 0) nonFiniteCounter++
+                                // InAppLogger.d("Added data point: ${drivingPoints[drivingPoints.size - sizeDelta]}")
                                 sizeDelta --
                             }
                             main_consumption_plot.invalidate()
                         }
                     }
+                    updateActivity()
                 }
             }
         }
