@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.dataProcessor
 
+import android.car.Car
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.Defines
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
@@ -59,11 +60,11 @@ class DataProcessor {
             _realTimeDataFlow.value = value
         }
 
-    private var drivingTripData = DrivingTripData()
-        set(value) {
-            field = value
-            _drivingTripDataFlow.value = value
-        }
+    // private var drivingTripData = DrivingTripData()
+    //     set(value) {
+    //         field = value
+    //         _drivingTripDataFlow.value = value
+    //     }
 
     private var chargingTripData = ChargingTripData()
         set(value) {
@@ -75,8 +76,11 @@ class DataProcessor {
     private val _realTimeDataFlow = MutableStateFlow(realTimeData)
     val realTimeDataFlow = _realTimeDataFlow.asStateFlow()
 
-    private val _drivingTripDataFlow = MutableStateFlow(drivingTripData)
-    val drivingTripDataFlow = _drivingTripDataFlow.asStateFlow()
+    private val _selectedSessionDataFlow = MutableStateFlow<DrivingSession?>(null)
+    val selectedSessionDataFlow = _selectedSessionDataFlow.asStateFlow()
+
+    // private val _drivingTripDataFlow = MutableStateFlow(drivingTripData)
+    // val drivingTripDataFlow = _drivingTripDataFlow.asStateFlow()
 
     private val _chargingTripDataFlow = MutableStateFlow(chargingTripData)
     val chargingTripDataFlow = _chargingTripDataFlow.asStateFlow()
@@ -102,17 +106,12 @@ class DataProcessor {
          */
         return CoroutineScope(Dispatchers.IO).launch {
             localSessions.clear()
-            CarStatsViewer.tripDataSource.getActiveDrivingSessions().forEach {
-                localSessions.add(it)
-                if (it.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
-                    drivingTripData = drivingTripData.copy(
-                        driveTime = it.drive_time,
-                        selectedTripType = it.session_type,
-                        drivenDistance = it.driven_distance,
-                        usedEnergy = it.used_energy,
-                        usedStateOfCharge = it.used_soc,
-                        usedStateOfChargeEnergy = it.used_soc_energy
-                    )
+            CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds().forEach { sessionId ->
+                CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId).let { session ->
+                    localSessions.add(session)
+                    if (session.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
+                        _selectedSessionDataFlow.value = session
+                    }
                 }
             }
         }
@@ -261,22 +260,30 @@ class DataProcessor {
     /** Get the current running time for each trip type and charging session from the timers */
     fun updateTime() {
         CoroutineScope(Dispatchers.IO).launch {
-            CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds().forEach { sessionIds ->
-
-                CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
-                    CarStatsViewer.tripDataSource.updateDrivingSession(session.copy(
-                        drive_time = timerMap[session.session_type]?.getTime()?:0L
-                    ))
-                }
-
-                CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
-                    if (drivingTripData.selectedTripType == session.session_type) {
-                        drivingTripData = drivingTripData.copy(
-                            driveTime = session.drive_time
-                        )
-                    }
+            localSessions.forEachIndexed { index, session ->
+                val drivingPoints = session.drivingPoints
+                localSessions[index] = session.copy(
+                    drive_time = timerMap[session.session_type]?.getTime()?:0L
+                )
+                localSessions[index].drivingPoints = drivingPoints
+                if (session.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
+                    _selectedSessionDataFlow.value = localSessions[index]
                 }
             }
+            //CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds().forEach { sessionIds ->
+//
+            //    CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
+            //        CarStatsViewer.tripDataSource.updateDrivingSession(session.copy(
+            //            drive_time = timerMap[session.session_type]?.getTime()?:0L
+            //        ))
+            //    }
+//
+            //    CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
+            //        if (session.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
+            //            _selectedSessionDataFlow.value = session
+            //        }
+            //    }
+            //}
         }
     }
 
@@ -383,6 +390,14 @@ class DataProcessor {
             )
 
             CarStatsViewer.tripDataSource.addDrivingPoint(drivingPoint)
+            localSessions.forEach { session ->
+                val drivingPoints = session.drivingPoints?.toMutableList()
+                drivingPoints?.add(drivingPoint)
+                session.drivingPoints = drivingPoints
+                if (session.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
+                    _selectedSessionDataFlow.value = session
+                }
+            }
             writeTripsToDatabase()
         }
     }
@@ -393,18 +408,15 @@ class DataProcessor {
      */
     private fun newDrivingDeltas(distanceDelta: Double, energyDelta: Double) {
         localSessions.forEachIndexed {index, localSession ->
+            val drivingPoints = localSession.drivingPoints
             localSessions[index] = localSession.copy(
                 drive_time = timerMap[localSession.session_type]?.getTime()?:0L,
                 driven_distance = localSession.driven_distance + distanceDelta,
                 used_energy = localSession.used_energy + energyDelta
             )
-
-            if (drivingTripData.selectedTripType == localSession.session_type) {
-                drivingTripData = drivingTripData.copy(
-                    driveTime = localSession.drive_time,
-                    drivenDistance = localSession.driven_distance,
-                    usedEnergy = localSession.used_energy
-                )
+            localSessions[index].drivingPoints = drivingPoints
+            if (localSession.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
+                _selectedSessionDataFlow.value = localSessions[index]
             }
         }
     }
@@ -455,22 +467,15 @@ class DataProcessor {
 
     /** Change the selected trip type to update the trip data flow with */
     suspend fun changeSelectedTrip(tripType: Int) {
-        if (tripType == drivingTripData.selectedTripType) return // skip if nothing changed
+        if (tripType == CarStatsViewer.appPreferences.mainViewTrip + 1) return // skip if nothing changed
 
         val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
         val drivingSessionId = drivingSessionsIdsMap[tripType]
         if (drivingSessionId != null) {
-            CarStatsViewer.tripDataSource.getDrivingSession(drivingSessionId)?.let { session ->
+            CarStatsViewer.tripDataSource.getFullDrivingSession(drivingSessionId).let { session ->
                 InAppLogger.i("[NEO] Selected trip type changed to ${TripType.tripTypesNameMap[tripType]}")
-                drivingTripData = drivingTripData.copy(
-                    driveTime = session.drive_time,
-                    selectedTripType = tripType,
-                    drivenDistance = session.driven_distance,
-                    usedEnergy = session.used_energy,
-                    usedStateOfCharge = session.used_soc,
-                    usedStateOfChargeEnergy = session.used_soc_energy
-                )
                 localSessions[localSessions.indexOfFirst { it.session_type == tripType }] = session
+                _selectedSessionDataFlow.value = session
             }
         }
     }
@@ -495,14 +500,14 @@ class DataProcessor {
             )
             InAppLogger.w("[NEO] No trip of type ${TripType.tripTypesNameMap[tripType]} existing, starting new trip")
         }
-        loadSessionsToMemory().join()
-        if (tripType == drivingTripData.selectedTripType) drivingTripData = DrivingTripData(selectedTripType = drivingTripData.selectedTripType)
         timerMap[tripType]?.reset()
+        loadSessionsToMemory().join()
         if (drivingState == DrivingState.DRIVE) timerMap[tripType]?.start()
     }
 
     /** Weird stuff for range estimate, not quite working as intended yet. */
     fun updateUsedStateOfCharge(usedStateOfChargeDelta: Double) {
+        /*
         CoroutineScope(Dispatchers.IO).launch {
             CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds().forEach { sessionIds ->
 
@@ -514,21 +519,21 @@ class DataProcessor {
                 }
 
                 CarStatsViewer.tripDataSource.getDrivingSession(sessionIds)?.let { session ->
-                    if (drivingTripData.selectedTripType == session.session_type) {
-                        drivingTripData = drivingTripData.copy(
-                            usedStateOfCharge = session.used_soc,
-                            usedStateOfChargeEnergy = session.used_soc_energy
-                        )
+                    if (session.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
+                        _selectedSessionDataFlow.value = session
 
-                        val usedEnergyPerSoC = drivingTripData.usedStateOfChargeEnergy / drivingTripData.usedStateOfCharge / 100
+
+                        val usedEnergyPerSoC = session.used_soc_energy / session.used_soc / 100
                         val currentStateOfCharge = CarStatsViewer.dataProcessor.realTimeData.stateOfCharge * 100
                         val remainingEnergy = usedEnergyPerSoC * currentStateOfCharge
-                        val avgConsumption = drivingTripData.usedEnergy / drivingTripData.drivenDistance * 1000
+                        val avgConsumption = session.used_energy / session.driven_distance * 1000
                         val remainingRange = remainingEnergy / avgConsumption
                         InAppLogger.i("[NEO] $usedEnergyPerSoC Wh/%, $currentStateOfCharge %, $remainingEnergy Wh, ${avgConsumption} Wh/km Remaining range: $remainingRange")
                     }
                 }
             }
         }
+
+         */
     }
 }

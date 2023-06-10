@@ -17,24 +17,24 @@ object DataConverters {
         return plotLine
     }
 
-    fun consumptionPlotLineItemFromDrivingPoint(drivingPoint: DrivingPoint, lastPlotLineItem: PlotLineItem? = null): PlotLineItem {
+    fun consumptionPlotLineItemFromDrivingPoint(drivingPoint: DrivingPoint, prevPlotLineItem: PlotLineItem? = null): PlotLineItem {
         return PlotLineItem(
             Value = drivingPoint.energy_delta / (drivingPoint.distance_delta / 1000) ,
             EpochTime = drivingPoint.driving_point_epoch_time,
             NanoTime = null,
-            Distance = if (lastPlotLineItem == null) {
+            Distance = if (prevPlotLineItem == null) {
                 drivingPoint.distance_delta
             } else {
-                lastPlotLineItem.Distance + drivingPoint.distance_delta
+                prevPlotLineItem.Distance + drivingPoint.distance_delta
             },
             StateOfCharge = drivingPoint.state_of_charge * 100,
             Altitude = drivingPoint.alt,
-            TimeDelta = if (lastPlotLineItem == null) 0 else {
-                (drivingPoint.driving_point_epoch_time - lastPlotLineItem.EpochTime) * 1_000_000
+            TimeDelta = if (prevPlotLineItem == null) 0 else {
+                (drivingPoint.driving_point_epoch_time - prevPlotLineItem.EpochTime) * 1_000_000
             },
             DistanceDelta = drivingPoint.distance_delta,
-            StateOfChargeDelta = if (lastPlotLineItem == null) 0f else {
-                drivingPoint.state_of_charge*100 - lastPlotLineItem.StateOfCharge
+            StateOfChargeDelta = if (prevPlotLineItem == null) 0f else {
+                drivingPoint.state_of_charge*100 - prevPlotLineItem.StateOfCharge
             },
             AltitudeDelta = null,
             Marker = PlotLineMarkerType.getType(drivingPoint.point_marker_type)

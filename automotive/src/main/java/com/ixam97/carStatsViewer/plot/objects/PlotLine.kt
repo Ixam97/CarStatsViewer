@@ -16,6 +16,8 @@ class PlotLine(
 
     var zeroAt: Float? = null
 
+    fun getDataPointsSize() = dataPoints.size
+
     fun addDataPoint(item: Float, epochTime: Long, nanoTime: Long, distance: Float, stateOfCharge: Float, altitude: Float? = null, timeDelta: Long? = null, distanceDelta: Float? = null, stateOfChargeDelta: Float? = null, altitudeDelta: Float? = null, plotLineMarkerType: PlotLineMarkerType? = null, autoMarkerTimeDeltaThreshold: Long? = null) {
         val prev = when (dataPoints[dataPoints.size - 1]?.Marker ?: PlotLineMarkerType.BEGIN_SESSION) {
             PlotLineMarkerType.BEGIN_SESSION -> dataPoints[dataPoints.size - 1]

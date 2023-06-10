@@ -30,6 +30,10 @@ import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
+import com.ixam97.carStatsViewer.plot.objects.PlotLine
+import com.ixam97.carStatsViewer.plot.objects.PlotLineConfiguration
+import com.ixam97.carStatsViewer.plot.objects.PlotRange
+import com.ixam97.carStatsViewer.utils.DataConverters
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.views.GageView
@@ -50,6 +54,7 @@ class MainActivity : FragmentActivity() {
 
     /** values and variables */
     private lateinit var appPreferences: AppPreferences
+    private lateinit var consumptionPlotLine: PlotLine
     private lateinit var consumptionPlotLinePaint : PlotLinePaint
     private lateinit var chargePlotLinePaint : PlotLinePaint
 
@@ -64,7 +69,7 @@ class MainActivity : FragmentActivity() {
     private var neoDistance: Double = 0.0
     private var neoEnergy: Double = 0.0
     private var neoTime: Long = 0
-    private var neoSelectedTripType: Int = 1
+    private var neoSelectedTripId: Long? = null
     private var neoUsedStateOfCharge: Double = 0.0
     private var neoUsedStateOfChargeEnergy: Double = 0.0
 
@@ -196,23 +201,17 @@ class MainActivity : FragmentActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-
                 CarStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
-                    // Do stuff with live data
-                    // InAppLogger.v("RealTimeData: Drive state: ${DrivingState.nameMap[it.drivingState]}, Inst. cons.: ${it.instConsumption}")
 
                     val instCons = it.instConsumption
-                    val nullValue: Float? = null
-
                     if (instCons != null && it.speed * 3.6 > 3) {
                         if (appPreferences.consumptionUnit) {
                             main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(instCons).roundToInt())
                         } else {
                             main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(instCons) / 10)
                         }
-
                     } else {
-                        main_consumption_gage.setValue(nullValue)
+                        main_consumption_gage.setValue(null as Float?)
                     }
 
                     main_power_gage.setValue(it.power / 1_000_000f)
@@ -228,16 +227,39 @@ class MainActivity : FragmentActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                CarStatsViewer.dataProcessor.drivingTripDataFlow.collectLatest {
-                    // InAppLogger.v("TripData: Driven Distance: ${it.drivenDistance}")
-                    neoDistance = it.drivenDistance
-                    neoEnergy = it.usedEnergy
-                    neoTime = it.driveTime
-                    neoSelectedTripType = it.selectedTripType
-                    neoUsedStateOfCharge = it.usedStateOfCharge
-                    neoUsedStateOfChargeEnergy = it.usedStateOfChargeEnergy
+                CarStatsViewer.dataProcessor.selectedSessionDataFlow.collectLatest {
 
-                    // updateActivity()
+                    neoDistance = it?.driven_distance?:0.0
+                    neoEnergy = it?.used_energy?:0.0
+                    neoTime = it?.drive_time?:0
+                    neoUsedStateOfCharge = it?.used_soc?:0.0
+                    neoUsedStateOfChargeEnergy = it?.used_soc_energy?:0.0
+
+                    if (it?.drivingPoints == null || it.drivingPoints?.size == 0 || neoSelectedTripId != it.driving_session_id) {
+                        consumptionPlotLine.reset()
+                        main_consumption_plot.invalidate()
+                    }
+
+                    neoSelectedTripId = it?.driving_session_id
+
+                    it?.drivingPoints?.let { drivingPoints ->
+                        var sizeDelta = drivingPoints.size - consumptionPlotLine.getDataPointsSize()
+                        if (sizeDelta > 0) {
+                            while (sizeDelta > 0) {
+                                val prevDrivingPoint = if (consumptionPlotLine.getDataPointsSize() > 0) {
+                                    consumptionPlotLine.getDataPoints(PlotDimensionX.DISTANCE).last()
+                                } else null
+                                consumptionPlotLine.addDataPoint(
+                                    DataConverters.consumptionPlotLineItemFromDrivingPoint(
+                                        drivingPoints[drivingPoints.size - sizeDelta],
+                                        prevDrivingPoint
+                                    )
+                                )
+                                sizeDelta --
+                            }
+                            main_consumption_plot.invalidate()
+                        }
+                    }
                 }
             }
         }
@@ -264,6 +286,15 @@ class MainActivity : FragmentActivity() {
         val displayMetrics = context.resources.displayMetrics
         InAppLogger.d("Display size: ${displayMetrics.widthPixels/displayMetrics.density}x${displayMetrics.heightPixels/displayMetrics.density}")
         InAppLogger.d("Main view created")
+
+        consumptionPlotLine = PlotLine(
+            PlotLineConfiguration(
+                PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
+                PlotLineLabelFormat.NUMBER,
+                PlotHighlightMethod.AVG_BY_DISTANCE,
+                "Wh/km"
+            ),
+        )
 
         PlotView.textSize = resources.getDimension(R.dimen.reduced_font_size)
         PlotView.xMargin = resources.getDimension(R.dimen.plot_x_margin).toInt()
@@ -472,7 +503,7 @@ class MainActivity : FragmentActivity() {
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
         main_consumption_plot.reset()
-        main_consumption_plot.addPlotLine(selectedDataManager.consumptionPlotLine, consumptionPlotLinePaint)
+        main_consumption_plot.addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
 
         main_consumption_plot.dimension = PlotDimensionX.DISTANCE
         main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(CONSUMPTION_DISTANCE_RESTRICTION)

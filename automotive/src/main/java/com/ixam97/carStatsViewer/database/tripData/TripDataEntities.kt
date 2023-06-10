@@ -19,11 +19,11 @@ data class DrivingSession(
     val used_soc_energy: Double,
     val driven_distance: Double,
     val note: String
-) {
+){
     @Ignore var drivingPoints: List<DrivingPoint>? = null
     @Ignore var chargingSessions: List<ChargingSession>? = null
     @Ignore var sessionMarkers: List<SessionMarker>? = null
-    @Ignore var deleteMarker = false
+    @Ignore var deleteMarker: Boolean = false
 }
 
 @Entity
