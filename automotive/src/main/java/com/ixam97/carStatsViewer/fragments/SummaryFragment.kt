@@ -193,6 +193,14 @@ class SummaryFragment(var session: DrivingSession, var fragmentContainerId: Int)
             summary_consumption_plot.invalidate()
         }
 
+        when (session.session_type) {
+            TripType.MANUAL -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_hand))
+            TripType.SINCE_CHARGE -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_charger_2))
+            TripType.AUTO -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_day))
+            TripType.MONTH -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_month))
+        }
+
+
         if ((session.end_epoch_time?:0) > 0 ) {
             summary_title.text = "${StringFormatters.getDateString(Date(session.start_epoch_time))}, ${resources.getStringArray(R.array.trip_type_names)[session.session_type]}"
         } else {

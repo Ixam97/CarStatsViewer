@@ -17,6 +17,15 @@
             android:id="@+id/summary_button_back"
             style="@style/title_back_button_style"
             android:src="@drawable/ic_close"/>
+
+        <ImageView
+            android:id="@+id/summary_type_icon"
+            android:layout_marginStart="10dp"
+            android:layout_marginVertical="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_hand"/>
+
         <TextView
             android:id="@+id/summary_title"
             android:text="@string/summary_title"
