@@ -188,27 +188,28 @@ class MainActivity : FragmentActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                CarStatsViewer.dataProcessor.selectedSessionDataFlow.collectLatest {
+                CarStatsViewer.dataProcessor.selectedSessionDataFlow.collectLatest { session ->
 
-                    neoDistance = it?.driven_distance?:0.0
-                    neoEnergy = it?.used_energy?:0.0
-                    neoTime = it?.drive_time?:0
-                    neoUsedStateOfCharge = it?.used_soc?:0.0
-                    neoUsedStateOfChargeEnergy = it?.used_soc_energy?:0.0
+                    neoDistance = session?.driven_distance?:0.0
+                    neoEnergy = session?.used_energy?:0.0
+                    neoTime = session?.drive_time?:0
+                    neoUsedStateOfCharge = session?.used_soc?:0.0
+                    neoUsedStateOfChargeEnergy = session?.used_soc_energy?:0.0
 
-                    if (it?.drivingPoints == null || it.drivingPoints?.size == 0 || neoSelectedTripId != it.driving_session_id) {
+                    if (session?.drivingPoints == null || session.drivingPoints?.size == 0 || neoSelectedTripId != session.driving_session_id) {
                         consumptionPlotLine.reset()
                         main_consumption_plot.invalidate()
                         nonFiniteCounter = 0
-                        setTripTypeIcon(it?.session_type?:0)
+                        setTripTypeIcon(session?.session_type?:0)
                     }
 
-                    neoSelectedTripId = it?.driving_session_id
+                    neoSelectedTripId = session?.driving_session_id
 
-                    it?.drivingPoints?.let { drivingPoints ->
+                    /** Add new plot points */
+                    session?.drivingPoints?.let { drivingPoints ->
                         var sizeDelta = drivingPoints.size - consumptionPlotLine.getDataPointsSize() - nonFiniteCounter
                         // InAppLogger.d("Size delta: $sizeDelta (${drivingPoints.size} vs. ${consumptionPlotLine.getDataPointsSize()}, $nonFiniteCounter non-finite)")
-                        if (sizeDelta > 0) {
+                        if (sizeDelta in 1..9) {
                             while (sizeDelta > 0) {
                                 val prevDrivingPoint = if (consumptionPlotLine.getDataPointsSize() > 0) {
                                     consumptionPlotLine.getDataPoints(PlotDimensionX.DISTANCE).last()
@@ -223,6 +224,12 @@ class MainActivity : FragmentActivity() {
                                 // InAppLogger.d("Added data point: ${drivingPoints[drivingPoints.size - sizeDelta]}")
                                 sizeDelta --
                             }
+                            main_consumption_plot.invalidate()
+                        } else if (sizeDelta > 10) {
+                            /** refresh entire plot for large numbers of new data Points */
+                            consumptionPlotLine.reset()
+                            consumptionPlotLine.addDataPoints(DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints))
+                            nonFiniteCounter = drivingPoints.filter { it.distance_delta <= 0 }.size
                             main_consumption_plot.invalidate()
                         }
                     }
@@ -358,7 +365,7 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    private fun setSecondaryConsumptionPlotDimension(secondaryConsumptionDimension: Int) {
+    fun setSecondaryConsumptionPlotDimension(secondaryConsumptionDimension: Int) {
         main_button_secondary_dimension.text = when (secondaryConsumptionDimension) {
             1 -> getString(R.string.main_secondary_axis, getString(R.string.main_speed))
             2 -> getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
