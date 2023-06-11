@@ -157,7 +157,7 @@
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:src="@drawable/ic_hand"
-                        android:alpha=".15"
+                        android:alpha=".2"
                         android:scaleType="fitEnd"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
