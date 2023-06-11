@@ -58,7 +58,7 @@ class NeoDataCollector: Service() {
         }
 
         startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     override fun onCreate() {

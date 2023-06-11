@@ -154,13 +154,13 @@
                     <ImageView
                         android:id="@+id/main_trip_type_icon"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="10dp"
-                        android:src="@drawable/ic_hand"
+                        android:layout_height="0dp"
                         android:alpha=".2"
                         android:scaleType="fitEnd"
+                        android:src="@drawable/ic_hand"
+                        app:layout_constraintBottom_toBottomOf="@+id/main_gage_remaining_range_text_view"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="@+id/main_gage_distance_text_view" />
 
                     <ImageButton
                         android:id="@+id/main_button_reset"

@@ -162,8 +162,8 @@ class DataProcessor {
 
             if (pointDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL)
                 updateDrivingDataPoint(timestamp = timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp))
-
-            if (valueDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL / 2)
+            // Put this else here to make sure only one of these functions is executed
+            else if (valueDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL / 2)
                 updateTripDataValues(DrivingState.DRIVE)
 
             /** only relevant in emulator since power is not updated periodically */
@@ -345,6 +345,8 @@ class DataProcessor {
         val mDrivenDistance = pointDrivenDistance
         pointDrivenDistance = 0.0
 
+        updateTripDataValues(DrivingState.DRIVE) // let's put this outside of the coroutine in the hope of fixing this stupid difference between point and trip values...
+
         /**
          * This job is returned by the function to ensure the database write is completed. Otherwise
          * a ConcurrentModificationException can occur when resetting a trip. This is caused by
@@ -378,10 +380,23 @@ class DataProcessor {
                     _selectedSessionDataFlow.value = session
                 }
             }
-            updateTripDataValues(DrivingState.DRIVE)
+
             writeTripsToDatabase()
             InAppLogger.v("[NEO] Driving point written: ${mDrivenDistance.toFloat()} m, ${mUsedEnergy.toFloat()} Wh")
 
+        }
+    }
+
+    /** Update sums of a trip or charging session */
+    private fun updateTripDataValues(drivingState: Int = realTimeData.drivingState) {
+        val mDrivenDistance = valueDrivenDistance
+        valueDrivenDistance = 0.0
+        val mUsedEnergy = valueUsedEnergy
+        valueUsedEnergy = 0.0
+
+        when (drivingState) {
+            DrivingState.DRIVE -> newDrivingDeltas(mDrivenDistance, mUsedEnergy)
+            DrivingState.CHARGE -> newChargingDeltas(mUsedEnergy)
         }
     }
 
@@ -432,19 +447,6 @@ class DataProcessor {
 
         return CoroutineScope(Dispatchers.IO).launch {
 
-        }
-    }
-
-    /** Update sums of a trip or charging session */
-    private fun updateTripDataValues(drivingState: Int = realTimeData.drivingState) {
-        val mDrivenDistance = valueDrivenDistance
-        valueDrivenDistance = 0.0
-        val mUsedEnergy = valueUsedEnergy
-        valueUsedEnergy = 0.0
-
-        when (drivingState) {
-            DrivingState.DRIVE -> newDrivingDeltas(mDrivenDistance, mUsedEnergy)
-            DrivingState.CHARGE -> newChargingDeltas(mUsedEnergy)
         }
     }
 
