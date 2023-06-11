@@ -1,10 +1,8 @@
 package com.ixam97.carStatsViewer.fragments
 
 import android.app.AlertDialog
-import android.content.*
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
@@ -16,13 +14,16 @@ import androidx.fragment.app.commit
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.activities.MainActivity
-import com.ixam97.carStatsViewer.dataManager.*
+import com.ixam97.carStatsViewer.dataManager.ChargeCurve
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.plot.enums.*
 import com.ixam97.carStatsViewer.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.plot.graphics.PlotPaint
-import com.ixam97.carStatsViewer.plot.objects.*
+import com.ixam97.carStatsViewer.plot.objects.PlotLine
+import com.ixam97.carStatsViewer.plot.objects.PlotLineConfiguration
+import com.ixam97.carStatsViewer.plot.objects.PlotMarkers
+import com.ixam97.carStatsViewer.plot.objects.PlotRange
 import com.ixam97.carStatsViewer.utils.DataConverters
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
@@ -61,17 +62,17 @@ class SummaryFragment(val session: DrivingSession, var fragmentContainerId: Int)
         override fun onStopTrackingTouch(seekBar: SeekBar?) {}
     }
 
-    private val broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            InAppLogger.d(intent.action?: "")
-            when (intent.action) {
-                getString(R.string.distraction_optimization_broadcast) -> {
-                    updateDistractionOptimization()
-                }
-                else -> {}
-            }
-        }
-    }
+    // private val broadcastReceiver = object : BroadcastReceiver() {
+    //     override fun onReceive(context: Context, intent: Intent) {
+    //         InAppLogger.d(intent.action?: "")
+    //         when (intent.action) {
+    //             getString(R.string.distraction_optimization_broadcast) -> {
+    //                 updateDistractionOptimization()
+    //             }
+    //             else -> {}
+    //         }
+    //     }
+    // }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -184,7 +185,7 @@ class SummaryFragment(val session: DrivingSession, var fragmentContainerId: Int)
         setupConsumptionLayout()
         setupChargeLayout()
 
-        applicationContext.registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.distraction_optimization_broadcast)))
+        // applicationContext.registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.distraction_optimization_broadcast)))
 
         summary_button_back.setOnClickListener {
             requireActivity().supportFragmentManager.commit {
@@ -202,7 +203,7 @@ class SummaryFragment(val session: DrivingSession, var fragmentContainerId: Int)
 
     override fun onDetach() {
         super.onDetach()
-        applicationContext.unregisterReceiver(broadcastReceiver)
+        // applicationContext.unregisterReceiver(broadcastReceiver)
     }
 
     private fun setupConsumptionLayout() {
@@ -487,7 +488,7 @@ class SummaryFragment(val session: DrivingSession, var fragmentContainerId: Int)
                 requireActivity().runOnUiThread {
                     requireActivity().supportFragmentManager.commit {
                         setCustomAnimations(0, 0, 0, 0)
-                        replace(fragmentContainerId, SummaryFragment(session, fragmentContainerId))
+                        replace(fragmentContainerId, SummaryFragment(session, fragmentContainerId), "SummaryFragment")
                     }
                 }
             }

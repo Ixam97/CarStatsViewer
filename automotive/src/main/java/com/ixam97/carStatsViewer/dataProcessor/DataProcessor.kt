@@ -450,7 +450,7 @@ class DataProcessor {
 
     /** Change the selected trip type to update the trip data flow with */
     suspend fun changeSelectedTrip(tripType: Int) {
-        if (tripType == CarStatsViewer.appPreferences.mainViewTrip + 1) return // skip if nothing changed
+        // if (tripType == CarStatsViewer.appPreferences.mainViewTrip + 1) return // skip if nothing changed
 
         val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
         val drivingSessionId = drivingSessionsIdsMap[tripType]

@@ -43,16 +43,6 @@
         <View style="@style/filler"/>
 
         <ImageButton
-            android:id="@+id/main_button_reset"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="15dp"
-            android:layout_marginEnd="10dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_reset"/>
-
-        <ImageButton
             android:id="@+id/main_button_performance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -156,66 +146,92 @@
                     android:background="?android:attr/listDivider"
                     android:layout_margin="15dp"/>
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/main_trip_data_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_height="279dp">
+
+                    <ImageView
+                        android:id="@+id/main_trip_type_icon"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:src="@drawable/ic_hand"
+                        android:alpha=".15"
+                        android:scaleType="fitEnd"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageButton
+                        android:id="@+id/main_button_reset"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_margin="15dp"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_reset"/>
 
                     <TextView
                         android:id="@+id/main_gage_distance_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:drawableStart="@drawable/ic_distance"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="@dimen/std_font_size"
-                        android:drawableStart="@drawable/ic_distance"
-                        />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
 
                     <TextView
                         android:id="@+id/main_gage_used_power_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginVertical="5dp"
+                        android:drawableStart="@drawable/ic_power"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="@dimen/std_font_size"
-                        android:drawableStart="@drawable/ic_power"
-                        />
+                        app:layout_constraintStart_toStartOf="@+id/main_gage_distance_text_view"
+                        app:layout_constraintTop_toBottomOf="@+id/main_gage_distance_text_view" />
 
                     <TextView
                         android:id="@+id/main_gage_avg_consumption_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginVertical="5dp"
+                        android:drawableStart="@drawable/ic_avg_consumption"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="@dimen/std_font_size"
-                        android:drawableStart="@drawable/ic_avg_consumption"
-                        />
+                        app:layout_constraintStart_toStartOf="@+id/main_gage_used_power_text_view"
+                        app:layout_constraintTop_toBottomOf="@+id/main_gage_used_power_text_view" />
 
                     <TextView
                         android:id="@+id/main_gage_time_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginVertical="5dp"
+                        android:drawableStart="@drawable/ic_time"
+                        android:text="  00:00:00"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="@dimen/std_font_size"
-                        android:text="  00:00:00"
-                        android:drawableStart="@drawable/ic_time"
-                        />
+                        app:layout_constraintStart_toStartOf="@+id/main_gage_avg_consumption_text_view"
+                        app:layout_constraintTop_toBottomOf="@+id/main_gage_avg_consumption_text_view" />
 
                     <TextView
                         android:id="@+id/main_gage_remaining_range_text_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="10dp"
+                        android:layout_marginVertical="5dp"
+                        android:drawableStart="@drawable/ic_remaining_range"
+                        android:text="  -/- km"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="@dimen/std_font_size"
-                        android:text="  -/- km"
-                        android:drawableStart="@drawable/ic_remaining_range"
-                        />
+                        app:layout_constraintStart_toStartOf="@+id/main_gage_time_text_view"
+                        app:layout_constraintTop_toBottomOf="@+id/main_gage_time_text_view" />
 
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 
         </LinearLayout>

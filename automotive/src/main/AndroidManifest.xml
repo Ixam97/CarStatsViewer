@@ -60,10 +60,6 @@
             android:exported="false">
             <meta-data android:name="distractionOptimized" android:value="true"/>
         </activity>
-        <activity android:name=".activities.SummaryActivity"
-            android:exported="false">
-            <meta-data android:name="distractionOptimized" android:value="true"/>
-        </activity>
         <activity android:name=".activities.SettingsActivity"
             android:exported="false">
             <meta-data android:name="distractionOptimized" android:value="true"/>
@@ -78,10 +74,6 @@
             android:exported="false">
             <meta-data android:name="distractionOptimized" android:value="true"/>
         </activity>
-        <service android:name=".dataManager.DataCollector"
-            android:foregroundServiceType="location"
-            android:enabled="true"
-            android:exported="true"/>
         <service android:name=".dataManager.NeoDataCollector"
             android:foregroundServiceType="location"
             android:enabled="true"

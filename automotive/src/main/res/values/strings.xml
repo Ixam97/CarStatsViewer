@@ -48,7 +48,9 @@
     </string-array>
 
     <string-array name="changes_0_25_0">
-        <item>Work in progress...</item>
+        <item>Implemented a local database for more robust and performant saving of trip data.</item>
+        <item>Added the trip history to view past trips.</item>
+        <item>Added an icon representing the selected trip type. Taping on the trip stats cycles between the 4 trip types.</item>
     </string-array>
 
     <string-array name="changes_0_24_1">

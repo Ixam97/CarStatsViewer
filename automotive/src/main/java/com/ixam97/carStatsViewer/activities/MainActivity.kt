@@ -1,19 +1,15 @@
 package com.ixam97.carStatsViewer.activities
 
 import android.app.AlertDialog
-import android.car.VehicleGear
-import android.car.VehiclePropertyIds
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.SystemClock
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
@@ -23,7 +19,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.dataManager.*
+import com.ixam97.carStatsViewer.dataManager.NeoDataCollector
+import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.liveData.LiveDataApi
 import com.ixam97.carStatsViewer.plot.enums.*
@@ -42,7 +39,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 class MainActivity : FragmentActivity() {
@@ -61,10 +57,9 @@ class MainActivity : FragmentActivity() {
     private lateinit var timerHandler: Handler
     private lateinit var context: Context
 
-    private var selectedDataManager = DataManagers.CURRENT_TRIP.dataManager
-
     private var updateUi = false
-    private var lastPlotUpdate: Long = 0L
+
+    private var moving = false
 
     private var neoDistance: Double = 0.0
     private var neoEnergy: Double = 0.0
@@ -87,7 +82,7 @@ class MainActivity : FragmentActivity() {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                getString(R.string.ui_update_plot_broadcast) -> updatePlots()
+                // getString(R.string.ui_update_plot_broadcast) -> updatePlots()
                 // getString(R.string.ui_update_gages_broadcast) -> updateGages()
                 CarStatsViewer.liveDataApis[0].broadcastAction -> updateAbrpStatus(LiveDataApi.ConnectionStatus.fromInt(intent.getIntExtra("status", 0)))
                 CarStatsViewer.liveDataApis[1].broadcastAction -> updateAbrpStatus(LiveDataApi.ConnectionStatus.fromInt(intent.getIntExtra("status", 0)))
@@ -106,6 +101,16 @@ class MainActivity : FragmentActivity() {
             CarStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
         }
 
+        when (appPreferences.mainViewTrip) {
+            0 -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_hand))
+            1 -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_charger_2))
+            2 -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_day))
+            3 -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_month))
+        }
+        main_button_reset.visibility = if (appPreferences.mainViewTrip + 1 == TripType.MANUAL) {
+            View.VISIBLE
+        } else View.GONE
+
         if (appPreferences.altLayout) {
             main_gage_layout.visibility = View.GONE
             main_alternate_gage_layout.visibility = View.VISIBLE
@@ -123,7 +128,6 @@ class MainActivity : FragmentActivity() {
         main_soc_gage.gageName = "State of charge"
         main_soc_gage.gageUnit = "%"
 
-        // val nullValue: Float? = null
         if (appPreferences.consumptionUnit) {
             main_consumption_gage.gageUnit = "Wh/%s".format(appPreferences.distanceUnit.unit())
             main_consumption_gage.minValue = appPreferences.distanceUnit.asUnit(-300f)
@@ -141,37 +145,9 @@ class MainActivity : FragmentActivity() {
             consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 10f
         }
 
-        val preferenceDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
-        if (selectedDataManager != preferenceDataManager) {
-            // Delay refresh for 400ms to ensure transition animation has finished
-            CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
-                delay(400)
-                runOnUiThread {
-                    startActivity(intent)
-                    overridePendingTransition(0, 0)
-                    finish()
-                    overridePendingTransition(0, 0)
-                }
-            }
-        }
-
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
         main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(CONSUMPTION_DISTANCE_RESTRICTION)
-
-        for (manager in DataManagers.values()) {
-            manager.dataManager.consumptionPlotLine.Configuration.UnitFactor = appPreferences.distanceUnit.toFactor()
-
-            if (appPreferences.consumptionUnit) {
-                manager.dataManager.consumptionPlotLine.Configuration.Unit = "Wh/%s".format(appPreferences.distanceUnit.unit())
-                manager.dataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
-                manager.dataManager.consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 1f
-            } else {
-                manager.dataManager.consumptionPlotLine.Configuration.Unit = "kWh/100%s".format(appPreferences.distanceUnit.unit())
-                manager.dataManager.consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
-                manager.dataManager.consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 10f
-            }
-        }
 
         if (appPreferences.bstEdition) {
             main_power_gage.maxValue = 350f
@@ -229,6 +205,30 @@ class MainActivity : FragmentActivity() {
                         main_soc_gage.setValue((it.batteryLevel / (batteryCapacity) * 100).roundToInt())
                     }
 
+                    if (it.speed > .1 && !moving) {
+                        moving = true
+                        val summaryFragment = supportFragmentManager.findFragmentByTag("SummaryFragment")
+                        if (summaryFragment != null) {
+                            supportFragmentManager.commit {
+                                setCustomAnimations(
+                                    R.anim.slide_in_up,
+                                    R.anim.slide_out_down,
+                                    R.anim.stay_still,
+                                    R.anim.slide_out_down
+                                )
+                                remove(summaryFragment)
+                            }
+                        }
+                        main_button_summary.isEnabled = false
+                        main_button_history.isEnabled = false
+                        main_button_history.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+                    } else if (it.speed <= .1 && moving) {
+                        moving = false
+                        main_button_summary.isEnabled = true
+                        main_button_history.isEnabled = true
+                        main_button_history.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
+                    }
+
                 }
             }
         }
@@ -247,6 +247,15 @@ class MainActivity : FragmentActivity() {
                         consumptionPlotLine.reset()
                         main_consumption_plot.invalidate()
                         nonFiniteCounter = 0
+                        when (it?.session_type) {
+                            1 -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_hand))
+                            2 -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_charger_2))
+                            3 -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_day))
+                            4 -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_month))
+                        }
+                        main_button_reset.visibility = if (it?.session_type == TripType.MANUAL) {
+                             View.VISIBLE
+                        } else View.GONE
                     }
 
                     neoSelectedTripId = it?.driving_session_id
@@ -277,22 +286,6 @@ class MainActivity : FragmentActivity() {
             }
         }
 
-
-        /*
-        lifecycleScope.launch {
-            var lastUpdateMillis: Long = 0
-            val currentTimerMillis = carStatsViewer.tripDataManager.timerMap[neoSelectedTripType]?.getTime()?:0
-            while (true) {
-                if (currentTimerMillis >= lastUpdateMillis + 1000) {
-                    lastUpdateMillis = currentTimerMillis
-                    carStatsViewer.tripDataManager.updateTime()
-                }
-                delay(100)
-            }
-        }
-        */
-
-        // startForegroundService(Intent(applicationContext, DataCollector::class.java))
         startForegroundService(Intent(applicationContext, NeoDataCollector::class.java))
 
         context = applicationContext
@@ -329,14 +322,7 @@ class MainActivity : FragmentActivity() {
             PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
         ) { appPreferences.chargePlotSecondaryColor }
 
-        selectedDataManager = DataManagers.values()[appPreferences.mainViewTrip].dataManager
-        InAppLogger.i("selected Trip: ${selectedDataManager.printableName}")
-
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
-
-        // DataCollector.mainActivityPendingIntent = PendingIntent.getActivity(
-        //     this, 0, intent, PendingIntent.FLAG_IMMUTABLE
-        // )
 
         setContentView(R.layout.activity_main)
 
@@ -359,7 +345,7 @@ class MainActivity : FragmentActivity() {
         )
 
         main_button_performance.isEnabled = true
-        main_button_performance.colorFilter = PorterDuffColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+        main_button_performance.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
 
         enableUiUpdates()
 
@@ -399,24 +385,16 @@ class MainActivity : FragmentActivity() {
     /** Private functions */
 
     private fun updateActivity() {
-        /** Use data from DataManager to Update MainActivity text */
-
-        // DataCollector.gagePowerValue = selectedDataManager.currentPower
-        // DataCollector.gageConsValue = ((selectedDataManager.currentPower / 1000)/(selectedDataManager.currentSpeed * 3.6f)).let {
-        //     if (it.isFinite()) it
-        //     else 0F
-        // }
 
         setUiVisibilities()
-        // updateGages()
 
         main_gage_avg_consumption_text_view.text = "  Ø %s".format(StringFormatters.getAvgConsumptionString(neoEnergy.toFloat(), neoDistance.toFloat()))
         main_gage_distance_text_view.text = "  %s".format(StringFormatters.getTraveledDistanceString(neoDistance.toFloat()))
         main_gage_used_power_text_view.text = "  %s".format(StringFormatters.getEnergyString(neoEnergy.toFloat()))
         main_gage_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(neoTime))
-        main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getEnergyString(DataManagers.CURRENT_TRIP.dataManager.chargedEnergy))
-        main_gage_charge_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(DataManagers.CURRENT_TRIP.dataManager.chargeTime))
-        main_gage_ambient_temperature_text_view.text = "  %s".format( StringFormatters.getTemperatureString(selectedDataManager.ambientTemperature))
+        // main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getEnergyString(DataManagers.CURRENT_TRIP.dataManager.chargedEnergy))
+        // main_gage_charge_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(DataManagers.CURRENT_TRIP.dataManager.chargeTime))
+        // main_gage_ambient_temperature_text_view.text = "  %s".format( StringFormatters.getTemperatureString(selectedDataManager.ambientTemperature))
 
         val usedEnergyPerSoC = neoUsedStateOfChargeEnergy / neoUsedStateOfCharge / 100
         val currentStateOfCharge = CarStatsViewer.dataProcessor.realTimeData.stateOfCharge * 100
@@ -431,70 +409,12 @@ class MainActivity : FragmentActivity() {
 
     private fun setUiVisibilities() {
 
-        if (main_button_dismiss_charge_plot.isEnabled == selectedDataManager.chargePortConnected)
-            main_button_dismiss_charge_plot.isEnabled = !selectedDataManager.chargePortConnected
-        if (main_charge_layout.visibility == View.GONE && selectedDataManager.chargePortConnected) {
-            main_consumption_layout.visibility = View.GONE
-            main_charge_layout.visibility = View.VISIBLE
-        }
-    }
-/*
-    private fun updateGages() {
-        if ((selectedDataManager.currentPower / 1_000_000).absoluteValue >= 100 && true) { // Add Setting!
-            main_power_gage.setValue((DataCollector.gagePowerValue / 1_000_000).toInt())
-            main_charge_gage.setValue((-DataCollector.gagePowerValue / 1_000_000).toInt())
-        } else {
-            main_power_gage.setValue(DataCollector.gagePowerValue / 1_000_000)
-            main_charge_gage.setValue(-DataCollector.gagePowerValue / 1_000_000)
-        }
-        main_SoC_gage.setValue(selectedDataManager.stateOfCharge)
-
-        val nullValue: Float? = null
-
-        if (appPreferences.consumptionUnit) {
-            main_consumption_gage.gageUnit = "Wh/%s".format(appPreferences.distanceUnit.unit())
-            main_consumption_gage.minValue = appPreferences.distanceUnit.asUnit(-300f)
-            main_consumption_gage.maxValue = appPreferences.distanceUnit.asUnit(600f)
-
-            if (selectedDataManager.currentSpeed * 3.6 > 3) {
-                main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(DataCollector.gageConsValue).roundToInt())
-            } else {
-                main_consumption_gage.setValue(nullValue)
-            }
-
-        } else {
-            main_consumption_gage.gageUnit = "kWh/100%s".format(appPreferences.distanceUnit.unit())
-            main_consumption_gage.minValue = appPreferences.distanceUnit.asUnit(-30f)
-            main_consumption_gage.maxValue = appPreferences.distanceUnit.asUnit(60f)
-
-            if (selectedDataManager.currentSpeed * 3.6 > 3) {
-                main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(DataCollector.gageConsValue) / 10)
-            } else {
-                main_consumption_gage.setValue(nullValue)
-            }
-        }
-        main_consumption_gage.invalidate()
-        main_power_gage.invalidate()
-        main_charge_gage.invalidate()
-        main_SoC_gage.invalidate()
-    }
-
- */
-
-    private fun updatePlots(){
-        main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(selectedDataManager.chargeTime) / 5) + 1) * 5 + 1
-
-        if (SystemClock.elapsedRealtime() - lastPlotUpdate > 1_000L) {
-            if (main_consumption_layout.visibility == View.VISIBLE) {
-                main_consumption_plot.invalidate()
-            }
-
-            if (main_charge_layout.visibility == View.VISIBLE) {
-                main_charge_plot.invalidate()
-            }
-
-            lastPlotUpdate = SystemClock.elapsedRealtime()
-        }
+        // if (main_button_dismiss_charge_plot.isEnabled == selectedDataManager.chargePortConnected)
+        //     main_button_dismiss_charge_plot.isEnabled = !selectedDataManager.chargePortConnected
+        // if (main_charge_layout.visibility == View.GONE && selectedDataManager.chargePortConnected) {
+        //     main_consumption_layout.visibility = View.GONE
+        //     main_charge_layout.visibility = View.VISIBLE
+        // }
     }
 
     private fun updateAbrpStatus(status: LiveDataApi.ConnectionStatus) {
@@ -528,7 +448,7 @@ class MainActivity : FragmentActivity() {
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
-        main_charge_plot.addPlotLine(DataManagers.CURRENT_TRIP.dataManager.chargePlotLine, chargePlotLinePaint)
+        // main_charge_plot.addPlotLine(DataManagers.CURRENT_TRIP.dataManager.chargePlotLine, chargePlotLinePaint)
 
         main_charge_plot.dimension = PlotDimensionX.TIME
         main_charge_plot.dimensionRestriction = null
@@ -567,30 +487,6 @@ class MainActivity : FragmentActivity() {
 
     private fun setUiEventListeners() {
 
-        main_title.setOnClickListener {
-            if (emulatorMode) {
-                val gearSimulationIntent = Intent(getString(R.string.VHAL_emulator_broadcast)).apply {
-                    putExtra(
-                        EmulatorIntentExtras.PROPERTY_ID,
-                        VehiclePropertyIds.GEAR_SELECTION
-                    )
-                    putExtra(EmulatorIntentExtras.TYPE, EmulatorIntentExtras.TYPE_INT)
-                    if (selectedDataManager.currentGear == VehicleGear.GEAR_PARK) {
-                        putExtra(
-                            EmulatorIntentExtras.VALUE,
-                            VehicleGear.GEAR_DRIVE
-                        )
-                        Toast.makeText(applicationContext, "Drive", Toast.LENGTH_SHORT).show()
-                    }
-                    else {
-                        putExtra(EmulatorIntentExtras.VALUE, VehicleGear.GEAR_PARK)
-                        Toast.makeText(applicationContext, "Park", Toast.LENGTH_SHORT).show()
-                    }
-                }
-                sendBroadcast(gearSimulationIntent)
-                sendBroadcast(Intent(getString(R.string.save_trip_data_broadcast)))
-            }
-        }
         main_title_icon.setOnClickListener {
             if (emulatorMode) {
                 emulatorPowerSign = if (emulatorPowerSign < 0) 1
@@ -631,25 +527,6 @@ class MainActivity : FragmentActivity() {
                 }
             }
         }
-        /*
-        main_dimension_y_secondary.entries = arrayListOf<String>().apply {
-            PlotDimensionY.IndexMap.forEach {
-                val id = resources.getIdentifier("plot_dimensionY_" + (it.value?.name?:"CONSUMPTION"), "string", packageName)
-                add(
-                    when (id != 0) {
-                        true -> getString(id)
-                        else -> (it.value?.name?:"-")
-                    }
-                )
-            }
-        }
-        main_dimension_y_secondary.selectedIndex = appPreferences.secondaryConsumptionDimension
-        main_dimension_y_secondary.setOnIndexChangedListener {
-            appPreferences.secondaryConsumptionDimension = main_dimension_y_secondary.selectedIndex
-            main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[main_dimension_y_secondary.selectedIndex]
-        }
-
-         */
 
         main_button_summary.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
@@ -664,7 +541,7 @@ class MainActivity : FragmentActivity() {
                                 R.anim.stay_still,
                                 R.anim.slide_out_down
                             )
-                            add(R.id.main_fragment_container, SummaryFragment(session, R.id.main_fragment_container))
+                            add(R.id.main_fragment_container, SummaryFragment(session, R.id.main_fragment_container), "SummaryFragment")
                         }
                     }
                 }
@@ -695,6 +572,36 @@ class MainActivity : FragmentActivity() {
             startActivity(Intent(this, HistoryActivity::class.java))
             overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }
+
+        main_button_reset.setOnClickListener {
+            createResetDialog()
+        }
+
+        main_trip_type_icon.setOnClickListener {
+            val newTripType = if (appPreferences.mainViewTrip >= 3) 0 else appPreferences.mainViewTrip + 1
+            CoroutineScope(Dispatchers.IO).launch { CarStatsViewer.dataProcessor.changeSelectedTrip(newTripType + 1) }
+            appPreferences.mainViewTrip = newTripType
+        }
+    }
+
+    private fun createResetDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.dialog_reset_title))
+            .setMessage(getString(R.string.dialog_reset_message))
+            .setCancelable(true)
+            .setPositiveButton(getString(R.string.dialog_reset_confirm)) { _, _ ->
+                CoroutineScope(Dispatchers.IO).launch {
+                    CarStatsViewer.dataProcessor.resetTrip(
+                        TripType.MANUAL,
+                        CarStatsViewer.dataProcessor.realTimeData.drivingState
+                    )
+                }
+            }
+            .setNegativeButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
+                dialog.cancel()
+            }
+        val alert = builder.create()
+        alert.show()
     }
 
     private fun enableUiUpdates() {
