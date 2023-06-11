@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="changes_0_25_0">
+        <item>Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips</item>
+        <item>Tripverlauf hinzugefügt, um vergangene Trips anzeigen zu können</item>
+        <item>Icon hinzugefügt, das den aktuell ausgewählten Trip-Typ symbolisiert. Tippen auf die Trip-Statistiken wechselt zum nächsten Triy-Typ.</item>
+        <item>Der manuelle Trip kann nun direkt aus der Hauptansicht heraus zurückgesetzt werden.</item>
+    </string-array>
 
     <string-array name="changes_0_24_1">
         <item>Höhenunterschied in der Zusammenfassung hinzugefügt (experimentell)</item>

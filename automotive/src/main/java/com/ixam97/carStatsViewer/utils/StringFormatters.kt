@@ -38,6 +38,10 @@ object StringFormatters {
         return "%.1f %s".format(Locale.ENGLISH, kiloRounder(appPreferences.distanceUnit.toUnit(traveledDistance)), appPreferences.distanceUnit.unit())
     }
 
+    fun getAvgSpeedString(traveledDistance: Float, timeDriven: Long): String {
+        return "Ø %.0f %s".format(Locale.ENGLISH, (appPreferences.distanceUnit.toUnit(traveledDistance) / 1000f) / (timeDriven.toFloat() / (1000 * 60 * 60)), appPreferences.distanceUnit.unit() + "/h")
+    }
+
     fun getRemainingRangeString(remainingRange: Float): String {
         return "%d %s".format(
             Locale.ENGLISH,
@@ -57,7 +61,7 @@ object StringFormatters {
             return "-/- $unitString"
         }
         if (!appPreferences.consumptionUnit) {
-            return "%.1f %s".format(
+            return "Ø %.1f %s".format(
                 Locale.ENGLISH,
                 (avgConsumption) / 10,
                 unitString)

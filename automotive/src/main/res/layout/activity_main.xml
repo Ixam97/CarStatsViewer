@@ -174,6 +174,7 @@
 
                     <TextView
                         android:id="@+id/main_gage_distance_text_view"
+                        android:drawablePadding="15dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -187,6 +188,7 @@
 
                     <TextView
                         android:id="@+id/main_gage_used_power_text_view"
+                        android:drawablePadding="15dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
@@ -198,6 +200,7 @@
 
                     <TextView
                         android:id="@+id/main_gage_avg_consumption_text_view"
+                        android:drawablePadding="15dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
@@ -209,11 +212,11 @@
 
                     <TextView
                         android:id="@+id/main_gage_time_text_view"
+                        android:drawablePadding="15dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
                         android:drawableStart="@drawable/ic_time"
-                        android:text="  00:00:00"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="@dimen/std_font_size"
                         app:layout_constraintStart_toStartOf="@+id/main_gage_avg_consumption_text_view"
@@ -221,11 +224,11 @@
 
                     <TextView
                         android:id="@+id/main_gage_remaining_range_text_view"
+                        android:drawablePadding="15dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
-                        android:drawableStart="@drawable/ic_remaining_range"
-                        android:text="  -/- km"
+                        android:drawableStart="@drawable/ic_speed"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="@dimen/std_font_size"
                         app:layout_constraintStart_toStartOf="@+id/main_gage_time_text_view"

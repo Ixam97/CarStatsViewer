@@ -387,21 +387,22 @@ class MainActivity : FragmentActivity() {
 
         setUiVisibilities()
 
-        main_gage_avg_consumption_text_view.text = "  Ø %s".format(StringFormatters.getAvgConsumptionString(neoEnergy.toFloat(), neoDistance.toFloat()))
-        main_gage_distance_text_view.text = "  %s".format(StringFormatters.getTraveledDistanceString(neoDistance.toFloat()))
-        main_gage_used_power_text_view.text = "  %s".format(StringFormatters.getEnergyString(neoEnergy.toFloat()))
-        main_gage_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(neoTime))
+        main_gage_avg_consumption_text_view.text = StringFormatters.getAvgConsumptionString(neoEnergy.toFloat(), neoDistance.toFloat())
+        main_gage_distance_text_view.text = StringFormatters.getTraveledDistanceString(neoDistance.toFloat())
+        main_gage_used_power_text_view.text = StringFormatters.getEnergyString(neoEnergy.toFloat())
+        main_gage_remaining_range_text_view.text = StringFormatters.getAvgSpeedString(neoDistance.toFloat(), neoTime)
+        main_gage_time_text_view.text = StringFormatters.getElapsedTimeString(neoTime)
         // main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getEnergyString(DataManagers.CURRENT_TRIP.dataManager.chargedEnergy))
         // main_gage_charge_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(DataManagers.CURRENT_TRIP.dataManager.chargeTime))
         // main_gage_ambient_temperature_text_view.text = "  %s".format( StringFormatters.getTemperatureString(selectedDataManager.ambientTemperature))
 
-        val usedEnergyPerSoC = neoUsedStateOfChargeEnergy / neoUsedStateOfCharge / 100
-        val currentStateOfCharge = CarStatsViewer.dataProcessor.realTimeData.stateOfCharge * 100
-        val remainingEnergy = usedEnergyPerSoC * currentStateOfCharge
-        val avgConsumption = neoEnergy / neoDistance * 1000
-        val remainingRange = (remainingEnergy / avgConsumption) * 1000
+        // val usedEnergyPerSoC = neoUsedStateOfChargeEnergy / neoUsedStateOfCharge / 100
+        // val currentStateOfCharge = CarStatsViewer.dataProcessor.realTimeData.stateOfCharge * 100
+        // val remainingEnergy = usedEnergyPerSoC * currentStateOfCharge
+        // val avgConsumption = neoEnergy / neoDistance * 1000
+        // val remainingRange = (remainingEnergy / avgConsumption) * 1000
 
-        main_gage_remaining_range_text_view.text = "  %s (%.0f %% used)".format(StringFormatters.getRemainingRangeString(remainingRange.toFloat()), neoUsedStateOfCharge * 100)
+        // main_gage_remaining_range_text_view.text = "  %s (%.0f %% used)".format(StringFormatters.getRemainingRangeString(remainingRange.toFloat()), neoUsedStateOfCharge * 100)
 
     }
 
