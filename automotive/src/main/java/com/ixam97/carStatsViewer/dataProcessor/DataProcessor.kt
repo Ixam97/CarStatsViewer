@@ -150,7 +150,7 @@ class DataProcessor {
         }
         if (timestampSynchronizer.isSynced()){
             if (timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp) < System.currentTimeMillis() - 100) {
-                InAppLogger.w("[NEO] Dropped power value, timestamp too old")
+                InAppLogger.w("[NEO] Dropped power value, timestamp too old. Time delta: ${timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp) - System.currentTimeMillis()}")
                 return
             }
         }
@@ -356,10 +356,10 @@ class DataProcessor {
          */
         return CoroutineScope(Dispatchers.IO).launch { // Run database write in own coroutine to not Block fast Updates
 
-            if (mUsedEnergy.absoluteValue < .1 && mDrivenDistance.absoluteValue > 1) {
-                InAppLogger.w("[NEO] Driving point not written, implausible values: ${mDrivenDistance.toFloat()} m, ${mUsedEnergy.toFloat()} Wh")
-                return@launch
-            }
+            // if (mUsedEnergy.absoluteValue < .1 && mDrivenDistance.absoluteValue > 1) {
+            //     InAppLogger.w("[NEO] Driving point not written, implausible values: ${mDrivenDistance.toFloat()} m, ${mUsedEnergy.toFloat()} Wh")
+            //     return@launch
+            // }
             val drivingPoint = DrivingPoint(
                 driving_point_epoch_time = timestamp?: System.currentTimeMillis(),
                 energy_delta = mUsedEnergy.toFloat(),
@@ -372,10 +372,22 @@ class DataProcessor {
             )
 
             CarStatsViewer.tripDataSource.addDrivingPoint(drivingPoint)
-            localSessions.forEach { session ->
+            localSessions.forEachIndexed { index, session ->
                 val drivingPoints = session.drivingPoints?.toMutableList()
                 drivingPoints?.add(drivingPoint)
                 session.drivingPoints = drivingPoints
+                /**
+                 * Calculate distance from driving points and compare with trip sum. Apply if
+                 * necessary to correct value. This Should not happen and is just a workaround!
+                 */
+                val totalDistance = session.drivingPoints?.sumOf { it.distance_delta.toDouble() }?:0.0
+                if ((totalDistance - session.driven_distance).absoluteValue > 1) {
+                    InAppLogger.w("[NEO] Calculated distance: ${totalDistance.toFloat()}, sum distance: ${session.driven_distance.toFloat()}, delta: ${(totalDistance - session.driven_distance).toFloat()}")
+                    val drivingPoints = session.drivingPoints
+                    localSessions[index] = session.copy(driven_distance = totalDistance)
+                    localSessions[index].drivingPoints = drivingPoints
+                    InAppLogger.w("[NEO] Sum distance has been corrected")
+                }
                 if (session.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
                     _selectedSessionDataFlow.value = session
                 }
@@ -453,21 +465,23 @@ class DataProcessor {
     /** Change the selected trip type to update the trip data flow with */
     suspend fun changeSelectedTrip(tripType: Int) {
         // if (tripType == CarStatsViewer.appPreferences.mainViewTrip + 1) return // skip if nothing changed
+        writeTripsToDatabase()
+        _selectedSessionDataFlow.value = localSessions[localSessions.indexOfFirst { it.session_type == tripType }]
 
-        val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
-        val drivingSessionId = drivingSessionsIdsMap[tripType]
-        if (drivingSessionId != null) {
-            CarStatsViewer.tripDataSource.getFullDrivingSession(drivingSessionId).let { session ->
-                InAppLogger.i("[NEO] Selected trip type changed to ${TripType.tripTypesNameMap[tripType]}")
-                localSessions[localSessions.indexOfFirst { it.session_type == tripType }] = session
-                _selectedSessionDataFlow.value = session
-            }
-        }
+        // val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
+        // val drivingSessionId = drivingSessionsIdsMap[tripType]
+        // if (drivingSessionId != null) {
+        //     CarStatsViewer.tripDataSource.getFullDrivingSession(drivingSessionId).let { session ->
+        //         InAppLogger.i("[NEO] Selected trip type changed to ${TripType.tripTypesNameMap[tripType]}")
+        //         localSessions[localSessions.indexOfFirst { it.session_type == tripType }] = session
+        //         _selectedSessionDataFlow.value = session
+        //     }
+        // }
     }
 
     suspend fun resetTrip(tripType: Int, drivingState: Int) {
-        /** Create data point right before reset */
-        updateDrivingDataPoint().join()
+        /** Create data point right before reset, but only while driving */
+        if (drivingState == DrivingState.DRIVE) updateDrivingDataPoint().join()
 
         /** Reset the specified trip type. If none exists, create a new one */
         val drivingSessionsIdsMap = CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()
