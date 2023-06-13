@@ -1,7 +1,9 @@
 package com.ixam97.carStatsViewer.views
 
+import android.app.ActionBar.LayoutParams
 import android.app.AlertDialog
 import android.view.ViewGroup
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -64,6 +66,11 @@ class TripHistoryAdapter(
             session.deleteMarker = true
 
         holder.tripView.setSession(session)
+        if (position == 0) {
+            val params = LayoutParams(holder.tripView.layoutParams)
+            params.topMargin = 10
+            holder.tripView.layoutParams = params
+        }
 
         holder.tripView.setOnMainClickListener { openSummary(session.driving_session_id) }
         holder.tripView.setOnMainLongClickListener { mainLongClickFun(session, position) }

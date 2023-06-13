@@ -236,6 +236,7 @@ class SummaryFragment(var session: DrivingSession, var fragmentContainerId: Int)
         summary_used_energy_value_text.text = StringFormatters.getEnergyString(session.used_energy.toFloat())
         summary_avg_consumption_value_text.text = StringFormatters.getAvgConsumptionString(session.used_energy.toFloat(), session.driven_distance.toFloat())
         summary_travel_time_value_text.text = StringFormatters.getElapsedTimeString(session.drive_time)
+        summary_avg_speed_value_text.text = StringFormatters.getAvgSpeedString(session.driven_distance.toFloat(), session.drive_time)
 
         summary_button_show_consumption_container.isSelected = true
     }

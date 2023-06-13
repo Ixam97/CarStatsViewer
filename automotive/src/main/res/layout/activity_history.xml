@@ -65,22 +65,13 @@
             android:layout_height="2dp"
             android:background="?android:attr/colorControlActivated"/>
 
-        <LinearLayout
-            android:id="@+id/history_linear_layout"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/history_trips_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginVertical="10dp"
-            android:orientation="vertical"
-            android:scrollbars="vertical">
+            android:layout_marginHorizontal="7dp"
+            android:scrollbars="vertical" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/history_trips_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="7dp"
-                android:scrollbars="vertical" />
-
-        </LinearLayout>
     </LinearLayout>
     <FrameLayout
     android:id="@+id/history_fragment_container"

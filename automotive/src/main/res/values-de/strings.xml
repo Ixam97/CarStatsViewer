@@ -98,6 +98,7 @@
     <string name="summary_charge_ambient_temp">Außentemperatur</string>
     <string name="summary_interruption_warning">Aufzeichnung der Ladekurve unterbrochen. Dieser Wert ist vermutlich nicht korrekt.</string>
     <string name="summary_altitude">Höhenunterschied</string>
+    <string name="summary_speed">Durchschnittsgeschwindigkeit</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
