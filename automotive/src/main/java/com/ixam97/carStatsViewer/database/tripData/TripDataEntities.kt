@@ -18,7 +18,8 @@ data class DrivingSession(
     val used_soc: Double,
     val used_soc_energy: Double,
     val driven_distance: Double,
-    val note: String
+    val note: String,
+    val last_edited_epoch_time: Long
 ){
     @Ignore var drivingPoints: List<DrivingPoint>? = null
     @Ignore var chargingSessions: List<ChargingSession>? = null

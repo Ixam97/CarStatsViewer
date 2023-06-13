@@ -46,7 +46,8 @@ class LocalTripDataSource(
             drive_time = 0,
             note = "",
             used_soc = 0.0,
-            used_soc_energy = 0.0
+            used_soc_energy = 0.0,
+            last_edited_epoch_time = timestamp
         )
         return tripDao.upsertDrivingSession(session)
     }

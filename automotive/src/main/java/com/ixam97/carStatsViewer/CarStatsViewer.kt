@@ -5,6 +5,8 @@ import android.content.Context
 import android.provider.ContactsContract.Data
 import android.util.TypedValue
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.DataManager
 import com.ixam97.carStatsViewer.dataManager.TripData
@@ -59,12 +61,19 @@ class CarStatsViewer : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        val MIGRATION_5_6 = object: Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE DrivingSession ADD COLUMN last_edited_epoch_time INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         tripDatabase = Room.databaseBuilder(
             applicationContext,
             TripDataDatabase::class.java,
             "TripDatabase"
         )
-            .fallbackToDestructiveMigration()
+            //.fallbackToDestructiveMigration()
+            .addMigrations(MIGRATION_5_6)
             .build()
 
         tripDataSource = LocalTripDataSource(tripDatabase.tripDao())

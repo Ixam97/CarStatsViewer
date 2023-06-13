@@ -39,7 +39,8 @@ object StringFormatters {
     }
 
     fun getAvgSpeedString(traveledDistance: Float, timeDriven: Long): String {
-        return "Ø %.0f %s".format(Locale.ENGLISH, (appPreferences.distanceUnit.toUnit(traveledDistance) / 1000f) / (timeDriven.toFloat() / (1000 * 60 * 60)), appPreferences.distanceUnit.unit() + "/h")
+        val speedString = if (timeDriven < 1) "-/-" else "%.0f".format((appPreferences.distanceUnit.toUnit(traveledDistance) / 1000f) / (timeDriven.toFloat() / (1000 * 60 * 60)))
+        return "Ø %s %s".format(Locale.ENGLISH, speedString, appPreferences.distanceUnit.unit() + "/h")
     }
 
     fun getRemainingRangeString(remainingRange: Float): String {

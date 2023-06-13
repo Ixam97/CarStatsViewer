@@ -18,8 +18,23 @@ object DataConverters {
     }
 
     fun consumptionPlotLineItemFromDrivingPoint(drivingPoint: DrivingPoint, prevPlotLineItem: PlotLineItem? = null): PlotLineItem {
+
+        var markerType: PlotLineMarkerType? = null
+
+        if (prevPlotLineItem == null) {
+            markerType = if (drivingPoint.point_marker_type == 2)
+                PlotLineMarkerType.SINGLE_SESSION
+            else
+                PlotLineMarkerType.BEGIN_SESSION
+        } else {
+            if (drivingPoint.point_marker_type == 2)
+                markerType = PlotLineMarkerType.END_SESSION
+        }
+
+        val pointValue = if (drivingPoint.distance_delta <= 0) 0f else drivingPoint.energy_delta / (drivingPoint.distance_delta / 1000)
+
         return PlotLineItem(
-            Value = drivingPoint.energy_delta / (drivingPoint.distance_delta / 1000) ,
+            Value = pointValue,
             EpochTime = drivingPoint.driving_point_epoch_time,
             NanoTime = null,
             Distance = if (prevPlotLineItem == null) {
@@ -37,7 +52,7 @@ object DataConverters {
                 drivingPoint.state_of_charge*100 - prevPlotLineItem.StateOfCharge
             },
             AltitudeDelta = null,
-            Marker = PlotLineMarkerType.getType(drivingPoint.point_marker_type)
+            Marker = markerType
         )
     }
 }

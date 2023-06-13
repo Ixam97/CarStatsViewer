@@ -66,10 +66,6 @@ class MainActivity : FragmentActivity() {
     private var neoUsedStateOfCharge: Double = 0.0
     private var neoUsedStateOfChargeEnergy: Double = 0.0
 
-    // Adding non-finite values to plot lines does not work atm.
-    // Use this to prevent loops until fixed
-    private var nonFiniteCounter = 0
-
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
@@ -90,9 +86,7 @@ class MainActivity : FragmentActivity() {
 
         updateAbrpStatus(CarStatsViewer.liveDataApis[0].connectionStatus)
 
-        CoroutineScope(Dispatchers.IO).launch {
-            CarStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
-        }
+        CarStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
 
         setTripTypeIcon(appPreferences.mainViewTrip + 1)
 
@@ -199,7 +193,6 @@ class MainActivity : FragmentActivity() {
                     if (session?.drivingPoints == null || session.drivingPoints?.size == 0 || neoSelectedTripId != session.driving_session_id) {
                         consumptionPlotLine.reset()
                         main_consumption_plot.invalidate()
-                        nonFiniteCounter = 0
                         setTripTypeIcon(session?.session_type?:0)
                     }
 
@@ -207,7 +200,7 @@ class MainActivity : FragmentActivity() {
 
                     /** Add new plot points */
                     session?.drivingPoints?.let { drivingPoints ->
-                        var sizeDelta = drivingPoints.size - consumptionPlotLine.getDataPointsSize() - nonFiniteCounter
+                        var sizeDelta = drivingPoints.size - consumptionPlotLine.getDataPointsSize()
                         // InAppLogger.d("Size delta: $sizeDelta (${drivingPoints.size} vs. ${consumptionPlotLine.getDataPointsSize()}, $nonFiniteCounter non-finite)")
                         if (sizeDelta in 1..9) {
                             while (sizeDelta > 0) {
@@ -220,8 +213,6 @@ class MainActivity : FragmentActivity() {
                                         prevDrivingPoint
                                     )
                                 )
-                                if (drivingPoints[drivingPoints.size - sizeDelta].distance_delta <= 0) nonFiniteCounter++
-                                // InAppLogger.d("Added data point: ${drivingPoints[drivingPoints.size - sizeDelta]}")
                                 sizeDelta --
                             }
                             main_consumption_plot.invalidate()
@@ -229,7 +220,6 @@ class MainActivity : FragmentActivity() {
                             /** refresh entire plot for large numbers of new data Points */
                             consumptionPlotLine.reset()
                             consumptionPlotLine.addDataPoints(DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints))
-                            nonFiniteCounter = drivingPoints.filter { it.distance_delta <= 0 }.size
                             main_consumption_plot.invalidate()
                         }
                     }
@@ -559,7 +549,7 @@ class MainActivity : FragmentActivity() {
 
         main_trip_type_icon.setOnClickListener {
             val newTripType = if (appPreferences.mainViewTrip >= 3) 0 else appPreferences.mainViewTrip + 1
-            CoroutineScope(Dispatchers.IO).launch { CarStatsViewer.dataProcessor.changeSelectedTrip(newTripType + 1) }
+            CarStatsViewer.dataProcessor.changeSelectedTrip(newTripType + 1)
             appPreferences.mainViewTrip = newTripType
         }
     }

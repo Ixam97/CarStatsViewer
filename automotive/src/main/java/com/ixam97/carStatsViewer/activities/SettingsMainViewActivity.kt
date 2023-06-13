@@ -36,9 +36,7 @@ class SettingsMainViewActivity: Activity() {
         settings_multiselect_trip.selectedIndex = appPreferences.mainViewTrip
         settings_multiselect_trip.setOnIndexChangedListener {
             appPreferences.mainViewTrip = settings_multiselect_trip.selectedIndex
-            CoroutineScope(Dispatchers.IO).launch {
-                CarStatsViewer.dataProcessor.changeSelectedTrip(settings_multiselect_trip.selectedIndex + 1)
-            }
+            CarStatsViewer.dataProcessor.changeSelectedTrip(settings_multiselect_trip.selectedIndex + 1)
         }
 
         settings_consumption_plot_switch_secondary_color.setOnClickListener {
