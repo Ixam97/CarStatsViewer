@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.activities
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.*
 import android.graphics.PorterDuff
@@ -8,25 +7,23 @@ import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.android.synthetic.main.activity_settings.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
-class SettingsActivity : Activity() {
+class SettingsActivity : FragmentActivity() {
 
     private lateinit var context : Context
     private val appPreferences = CarStatsViewer.appPreferences
-
-    private val broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.action) {
-                getString(R.string.distraction_optimization_broadcast) -> setDistractionOptimization(appPreferences.doDistractionOptimization)
-            }
-        }
-    }
 
     override fun startActivity(intent: Intent?) {
         super.startActivity(intent)
@@ -38,18 +35,19 @@ class SettingsActivity : Activity() {
 
         context = applicationContext
 
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                CarStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
+                    setDistractionOptimization(it.speed > 0)
+                }
+            }
+        }
+
         setContentView(R.layout.activity_settings)
 
         setupSettingsMaster()
 
-        registerReceiver(broadcastReceiver, IntentFilter(getString(R.string.distraction_optimization_broadcast)))
-
         setDistractionOptimization(appPreferences.doDistractionOptimization)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver(broadcastReceiver)
     }
 
     private fun setDistractionOptimization(doOptimize: Boolean) {
