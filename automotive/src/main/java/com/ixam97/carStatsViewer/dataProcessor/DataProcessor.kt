@@ -149,7 +149,7 @@ class DataProcessor {
             return
         }
         if (timestampSynchronizer.isSynced()){
-            if (timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp) < System.currentTimeMillis() - 100) {
+            if (timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp) < System.currentTimeMillis() - 500) {
                 InAppLogger.w("[NEO] Dropped power value, timestamp too old. Time delta: ${timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp) - System.currentTimeMillis()}")
                 return
             }
@@ -186,7 +186,7 @@ class DataProcessor {
             return
         }
         if (timestampSynchronizer.isSynced()){
-            if (timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentPower.timestamp) < System.currentTimeMillis() - 100) {
+            if (timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentPower.timestamp) < System.currentTimeMillis() - 500) {
                 InAppLogger.w("[NEO] Dropped power value, timestamp too old")
                 return
             }
