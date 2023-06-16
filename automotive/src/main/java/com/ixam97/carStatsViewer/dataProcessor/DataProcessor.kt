@@ -163,8 +163,8 @@ class DataProcessor {
             if (pointDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL)
                 updateDrivingDataPoint(timestamp = timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp))
             // Put this else here to make sure only one of these functions is executed
-            else if (valueDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL / 2)
-                updateTripDataValues(DrivingState.DRIVE)
+            // else if (valueDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL / 2)
+            //    updateTripDataValues(DrivingState.DRIVE)
 
             /** only relevant in emulator since power is not updated periodically */
             if (emulatorMode) {
@@ -256,21 +256,24 @@ class DataProcessor {
     }
 
     /** Get the current running time for each trip type and charging session from the timers */
+    /*
     fun updateTime() {
-        CoroutineScope(Dispatchers.IO).launch {
-            localSessions.forEachIndexed { index, session ->
-                val drivingPoints = session.drivingPoints
-                localSessions[index] = session.copy(
-                    drive_time = timerMap[session.session_type]?.getTime()?:0L,
-                    last_edited_epoch_time = System.currentTimeMillis()
-                )
-                localSessions[index].drivingPoints = drivingPoints
-                if (session.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
-                    _selectedSessionDataFlow.value = localSessions[index]
-                }
+        // Update trip data regularly to keep data up to date. Does not write to database.
+        updateTripDataValues(DrivingState.DRIVE)
+
+        localSessions.forEachIndexed { index, session ->
+            val drivingPoints = session.drivingPoints
+            localSessions[index] = session.copy(
+                drive_time = timerMap[session.session_type]?.getTime()?:0L,
+                last_edited_epoch_time = System.currentTimeMillis()
+            )
+            localSessions[index].drivingPoints = drivingPoints
+            if (session.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
+                _selectedSessionDataFlow.value = localSessions[index]
             }
         }
     }
+     */
 
     /** Make sure every type of trip has an active trip */
     suspend fun checkTrips() {
@@ -391,7 +394,7 @@ class DataProcessor {
     }
 
     /** Update sums of a trip or charging session */
-    private fun updateTripDataValues(drivingState: Int = realTimeData.drivingState) {
+    fun updateTripDataValues(drivingState: Int = realTimeData.drivingState) {
         val mDrivenDistance = valueDrivenDistance
         valueDrivenDistance = 0.0
         val mUsedEnergy = valueUsedEnergy

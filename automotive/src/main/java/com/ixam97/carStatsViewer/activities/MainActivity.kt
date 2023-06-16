@@ -34,11 +34,15 @@ import com.ixam97.carStatsViewer.plot.objects.PlotRange
 import com.ixam97.carStatsViewer.utils.DataConverters
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
+import com.ixam97.carStatsViewer.utils.Ticker
 import com.ixam97.carStatsViewer.views.GageView
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.io.IOException
 import kotlin.math.roundToInt
 
@@ -123,9 +127,10 @@ class MainActivity : FragmentActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                while (true) {
-                    CarStatsViewer.dataProcessor.updateTime()
-                    delay(500)
+                withContext(Dispatchers.Default) {
+                    Ticker.tickerFlow(1000).collectLatest {
+                        CarStatsViewer.dataProcessor.updateTripDataValues()
+                    }
                 }
             }
         }
