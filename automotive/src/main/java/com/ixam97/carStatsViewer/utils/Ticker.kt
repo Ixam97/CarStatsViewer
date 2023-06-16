@@ -7,13 +7,10 @@ object Ticker {
         val startTime = System.currentTimeMillis()
         var loops = 0L
 
-        InAppLogger.d("Ticker started")
-
         while (true) {
             while (true) {
                 if (System.currentTimeMillis() > (startTime + (loops * interval))) break
             }
-            InAppLogger.d("tick")
             loops ++
             emit(Unit)
         }

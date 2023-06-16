@@ -25,6 +25,8 @@ class SettingsActivity : FragmentActivity() {
     private lateinit var context : Context
     private val appPreferences = CarStatsViewer.appPreferences
 
+    private var moving = false
+
     override fun startActivity(intent: Intent?) {
         super.startActivity(intent)
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
@@ -46,22 +48,15 @@ class SettingsActivity : FragmentActivity() {
         setContentView(R.layout.activity_settings)
 
         setupSettingsMaster()
-
-        setDistractionOptimization(appPreferences.doDistractionOptimization)
     }
 
     private fun setDistractionOptimization(doOptimize: Boolean) {
-        if (doOptimize) {
-            setMenuRowIsEnabled(false, settings_button_main_view)
-            setMenuRowIsEnabled(false, settings_button_vehicle)
-            setMenuRowIsEnabled(false, settings_button_apis)
-            setMenuRowIsEnabled(false, settings_button_about)
-        } else {
-            setMenuRowIsEnabled(true, settings_button_main_view)
-            setMenuRowIsEnabled(true, settings_button_vehicle)
-            setMenuRowIsEnabled(true, settings_button_apis)
-            setMenuRowIsEnabled(true, settings_button_about)
-        }
+        if (moving == doOptimize) return
+        setMenuRowIsEnabled(!doOptimize, settings_button_main_view)
+        setMenuRowIsEnabled(!doOptimize, settings_button_vehicle)
+        setMenuRowIsEnabled(!doOptimize, settings_button_apis)
+        setMenuRowIsEnabled(!doOptimize, settings_button_about)
+        moving = doOptimize
     }
 
     private fun setupSettingsMaster() {

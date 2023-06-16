@@ -99,9 +99,11 @@ class LocalTripDataSource(
     override suspend fun deleteDrivingSessionById(sessionId: Long) {
         val deletedSessions = tripDao.deleteDrivingSessionByID(sessionId)
         val earliestEpochTime = tripDao.getEarliestEpochTime()
-        val deletedCrossRefs = tripDao.clearOldDrivingSessionPointCrossRefs(sessionId)
+        val deletedDrivingPointCrossRefs = tripDao.clearOldDrivingSessionPointCrossRefs(sessionId)
+        val getChargingSessionIds = tripDao.getChargingSessionIdsByDrivingSessionId(sessionId)
+        val deletedChargingCrossRefs = tripDao.clearOldDrivingChargingCrossRefs(sessionId)
         val deletedDrivingPoints = tripDao.clearOldDrivingPoints(earliestEpochTime)
-        InAppLogger.d("[DB] Deleted session ID: $sessionId ($deletedSessions sessions, $deletedCrossRefs cross refs, $deletedDrivingPoints driving points)")
+        InAppLogger.d("[DB] Deleted session ID: $sessionId ($deletedSessions sessions, $deletedDrivingPointCrossRefs cross refs, $deletedDrivingPoints driving points, $deletedChargingCrossRefs charging cross refs)")
     }
 
     override suspend fun addChargingPoint(chargingPoint: ChargingPoint) {
@@ -138,6 +140,18 @@ class LocalTripDataSource(
 
         val session = tripDao.getChargingSessionById(id)
         tripDao.upsertChargingSession(session.copy(end_epoch_time = timestamp))
+    }
+
+    override suspend fun getActiveChargingSessionIds(): List<Long> {
+        return tripDao.getActiveChargingSessionIds()
+    }
+
+    override suspend fun getChargingSessionById(chargingSessionId: Long): ChargingSession {
+        return tripDao.getChargingSessionById(chargingSessionId)
+    }
+
+    override suspend fun updateChargingSession(chargingSession: ChargingSession) {
+        tripDao.upsertChargingSession(chargingSession)
     }
 
 }

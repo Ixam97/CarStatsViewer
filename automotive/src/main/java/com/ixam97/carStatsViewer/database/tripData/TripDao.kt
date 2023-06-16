@@ -72,14 +72,26 @@ interface TripDao {
     @Query("SELECT min(start_epoch_time) FROM DrivingSession")
     fun getEarliestEpochTime(): Long
 
+    @Query("SELECT charging_session_id FROM DrivingChargingCrossRef WHERE driving_session_id = :sessionId")
+    fun getChargingSessionIdsByDrivingSessionId(sessionId: Long): List<Long>
+
     @Query("DELETE FROM DrivingPoint WHERE driving_point_epoch_time < :earliestEpochTime")
     fun clearOldDrivingPoints(earliestEpochTime: Long): Int
+
+    @Query("DELETE FROM ChargingPoint WHERE charging_session_id = :sessionId")
+    fun clearOldChargingPoints(sessionId: Long): Int
 
     @Query("DELETE FROM DrivingSessionPointCrossRef WHERE driving_session_id = :sessionId")
     fun clearOldDrivingSessionPointCrossRefs(sessionId: Long): Int
 
+    @Query("DELETE FROM DrivingChargingCrossRef WHERE driving_session_id = :sessionId")
+    fun clearOldDrivingChargingCrossRefs(sessionId: Long): Int
+
     @Query("DELETE FROM DrivingSession WHERE driving_session_id = :sessionId")
     fun deleteDrivingSessionByID(sessionId: Long): Int
+
+    @Query("DELETE FROM ChargingSession WHERE charging_session_id = :sessionId")
+    fun deleteChargingSessionById(sessionId: Long): Int
 
     /*
     @Insert

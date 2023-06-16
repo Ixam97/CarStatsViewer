@@ -20,6 +20,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.NeoDataCollector
+import com.ixam97.carStatsViewer.dataProcessor.ChargingTripData
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.fragments.SummaryFragment
@@ -69,6 +70,10 @@ class MainActivity : FragmentActivity() {
     private var neoSelectedTripId: Long? = null
     private var neoUsedStateOfCharge: Double = 0.0
     private var neoUsedStateOfChargeEnergy: Double = 0.0
+    private var neoChargePortConnected: Boolean = false
+
+    private var neoChargedEnergy: Double = 0.0
+    private var neoChargeTime: Long = 0
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -129,7 +134,8 @@ class MainActivity : FragmentActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 withContext(Dispatchers.Default) {
                     Ticker.tickerFlow(1000).collectLatest {
-                        CarStatsViewer.dataProcessor.updateTripDataValues()
+                        CarStatsViewer.dataProcessor.updateTripDataValuesByTick()
+                        runOnUiThread { updateActivity() }
                     }
                 }
             }
@@ -138,6 +144,8 @@ class MainActivity : FragmentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 CarStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
+
+                    neoChargePortConnected = it.chargePortConnected
 
                     val instCons = it.instConsumption
                     if (instCons != null && it.speed * 3.6 > 3) {
@@ -151,6 +159,9 @@ class MainActivity : FragmentActivity() {
                     }
 
                     main_power_gage.setValue(it.power / 1_000_000f)
+
+                    main_charge_gage.setValue(it.power / -1_000_000f)
+                    main_SoC_gage.setValue((it.stateOfCharge * 100f).roundToInt())
 
                     main_speed_gage.setValue(appPreferences.distanceUnit.toUnit(it.speed*3.6).toInt())
                     CarStatsViewer.dataProcessor.staticVehicleData.batteryCapacity?.let { batteryCapacity ->
@@ -181,6 +192,17 @@ class MainActivity : FragmentActivity() {
                         main_button_history.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
                     }
 
+                    setUiVisibilities()
+                }
+            }
+        }
+
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                CarStatsViewer.dataProcessor.chargingTripDataFlow.collectLatest { chargingTripData ->
+                    neoChargedEnergy = chargingTripData.chargedEnergy
+                    neoChargeTime = chargingTripData.chargeTime
                 }
             }
         }
@@ -199,6 +221,7 @@ class MainActivity : FragmentActivity() {
                         consumptionPlotLine.reset()
                         main_consumption_plot.invalidate()
                         setTripTypeIcon(session?.session_type?:0)
+                        updateActivity()
                     }
 
                     neoSelectedTripId = session?.driving_session_id
@@ -228,7 +251,7 @@ class MainActivity : FragmentActivity() {
                             main_consumption_plot.invalidate()
                         }
                     }
-                    updateActivity()
+                    // updateActivity()
                 }
             }
         }
@@ -387,8 +410,8 @@ class MainActivity : FragmentActivity() {
         main_gage_used_power_text_view.text = StringFormatters.getEnergyString(neoEnergy.toFloat())
         main_gage_remaining_range_text_view.text = StringFormatters.getAvgSpeedString(neoDistance.toFloat(), neoTime)
         main_gage_time_text_view.text = StringFormatters.getElapsedTimeString(neoTime)
-        // main_gage_charged_energy_text_view.text = "  %s".format(StringFormatters.getEnergyString(DataManagers.CURRENT_TRIP.dataManager.chargedEnergy))
-        // main_gage_charge_time_text_view.text = "  %s".format(StringFormatters.getElapsedTimeString(DataManagers.CURRENT_TRIP.dataManager.chargeTime))
+        main_gage_charged_energy_text_view.text = StringFormatters.getEnergyString(neoChargedEnergy.toFloat())
+        main_gage_charge_time_text_view.text = StringFormatters.getElapsedTimeString(neoChargeTime)
         // main_gage_ambient_temperature_text_view.text = "  %s".format( StringFormatters.getTemperatureString(selectedDataManager.ambientTemperature))
 
         // val usedEnergyPerSoC = neoUsedStateOfChargeEnergy / neoUsedStateOfCharge / 100
@@ -403,13 +426,15 @@ class MainActivity : FragmentActivity() {
 
 
     private fun setUiVisibilities() {
-
-        // if (main_button_dismiss_charge_plot.isEnabled == selectedDataManager.chargePortConnected)
-        //     main_button_dismiss_charge_plot.isEnabled = !selectedDataManager.chargePortConnected
-        // if (main_charge_layout.visibility == View.GONE && selectedDataManager.chargePortConnected) {
-        //     main_consumption_layout.visibility = View.GONE
-        //     main_charge_layout.visibility = View.VISIBLE
-        // }
+        if (main_button_dismiss_charge_plot.isEnabled == neoChargePortConnected)
+            main_button_dismiss_charge_plot.isEnabled = !neoChargePortConnected
+        if (main_charge_layout.visibility == View.GONE && neoChargePortConnected) {
+            main_consumption_layout.visibility = View.GONE
+            main_charge_layout.visibility = View.VISIBLE
+        } else if (moving && main_charge_layout.visibility == View.VISIBLE) {
+            main_charge_layout.visibility = View.GONE
+            main_consumption_layout.visibility = View.VISIBLE
+        }
     }
 
     private fun updateAbrpStatus(status: LiveDataApi.ConnectionStatus) {
@@ -504,31 +529,11 @@ class MainActivity : FragmentActivity() {
         }
 
         main_button_summary.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[appPreferences.mainViewTrip + 1]?.let {
-                    val session = CarStatsViewer.tripDataSource.getFullDrivingSession(it)
-                    runOnUiThread {
-                        main_fragment_container.visibility = View.VISIBLE
-                        supportFragmentManager.commit {
-                            setCustomAnimations(
-                                R.anim.slide_in_up,
-                                R.anim.stay_still,
-                                R.anim.stay_still,
-                                R.anim.slide_out_down
-                            )
-                            add(R.id.main_fragment_container, SummaryFragment(session, R.id.main_fragment_container), "SummaryFragment")
-                        }
-                    }
-                }
-            }
+            openSummaryFragment()
         }
 
         main_button_summary_charge.setOnClickListener {
-            val summaryIntent = Intent(this, SummaryActivity::class.java)
-            // summaryIntent.putExtra("dataManager", DataManagers.values().indexOf(DataManagers.CURRENT_TRIP))
-            summaryIntent.putExtra("dataManager", appPreferences.mainViewTrip)
-            startActivity(summaryIntent)
-            overridePendingTransition(R.anim.slide_in_up, R.anim.stay_still)
+            openSummaryFragment()
         }
 
         main_button_dismiss_charge_plot.setOnClickListener {
@@ -556,6 +561,26 @@ class MainActivity : FragmentActivity() {
             val newTripType = if (appPreferences.mainViewTrip >= 3) 0 else appPreferences.mainViewTrip + 1
             CarStatsViewer.dataProcessor.changeSelectedTrip(newTripType + 1)
             appPreferences.mainViewTrip = newTripType
+        }
+    }
+
+    private fun openSummaryFragment() {
+        CoroutineScope(Dispatchers.IO).launch {
+            CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[appPreferences.mainViewTrip + 1]?.let {
+                val session = CarStatsViewer.tripDataSource.getFullDrivingSession(it)
+                runOnUiThread {
+                    main_fragment_container.visibility = View.VISIBLE
+                    supportFragmentManager.commit {
+                        setCustomAnimations(
+                            R.anim.slide_in_up,
+                            R.anim.stay_still,
+                            R.anim.stay_still,
+                            R.anim.slide_out_down
+                        )
+                        add(R.id.main_fragment_container, SummaryFragment(session, R.id.main_fragment_container), "SummaryFragment")
+                    }
+                }
+            }
         }
     }
 
