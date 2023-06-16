@@ -871,16 +871,29 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
     private fun drawMarkerLine(canvas: Canvas, markerType: PlotMarkerType, x: Float?, multiplier: Int) {
         if (x == null) return
 
-        val top = yMargin.toFloat() + 1
-        val bottom = canvas.height - yMargin.toFloat() - 1
+        val center = x.roundToInt().toFloat() + multiplier
 
-        drawLine(canvas, x, top, x, bottom, markerPaint[markerType]!!.Line)
+        val top = yMargin.toFloat() + borderLinePaint.strokeWidth
+        val bottom = canvas.height - yMargin.toFloat() - borderLinePaint.strokeWidth - 1
+
+        val points = arrayOf(
+            PointF(center, top + 15f),
+            PointF(center + (multiplier * 10f), top),
+            PointF(center, top),
+            PointF(center, bottom),
+            PointF(center, top + 15f)
+        )
+
+        if (multiplier > 0) points.reverse()
 
         val trianglePath = Path()
-        trianglePath.moveTo(x, top)
-        trianglePath.lineTo(x, yMargin.toFloat() + 15f)
-        trianglePath.lineTo(x + (multiplier * 12f), top)
-        trianglePath.lineTo(x, top)
+
+        trianglePath.moveTo(center, top + 15f)
+
+        points.forEach {
+            trianglePath.lineTo(it.x, it.y)
+        }
+
         canvas.drawPath(trianglePath, markerPaint[markerType]!!.Mark)
     }
     
