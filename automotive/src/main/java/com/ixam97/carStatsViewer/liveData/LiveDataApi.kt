@@ -71,11 +71,11 @@ abstract class LiveDataApi(
         }
     }
 
-    fun requestFlow(serviceScope: CoroutineScope, realTimeData: RealTimeData, interval: Long): Flow<Unit> {
+    fun requestFlow(serviceScope: CoroutineScope, realTimeData: () -> RealTimeData, interval: Long): Flow<Unit> {
         timeout = interval.toInt()
         return flow {
             while (true) {
-                coroutineSendNow(realTimeData)
+                coroutineSendNow(realTimeData())
                 delay(interval)
             }
         }
