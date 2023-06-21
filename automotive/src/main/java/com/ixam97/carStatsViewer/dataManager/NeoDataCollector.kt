@@ -129,7 +129,7 @@ class NeoDataCollector: Service() {
         CarStatsViewer.liveDataApis[0]
             .requestFlow(
                 serviceScope,
-                realTimeData = CarStatsViewer.dataProcessor.realTimeData,
+                realTimeData = { CarStatsViewer.dataProcessor.realTimeData },
                 LIVE_DATA_TASK_INTERVAL
             ).catch { e -> InAppLogger.e("[NEO] requestFlow: ${e.message}") }
             .launchIn(serviceScope)
@@ -137,7 +137,7 @@ class NeoDataCollector: Service() {
         CarStatsViewer.liveDataApis[1]
             .requestFlow(
                 serviceScope,
-                realTimeData = CarStatsViewer.dataProcessor.realTimeData,
+                realTimeData = { CarStatsViewer.dataProcessor.realTimeData },
                 LIVE_DATA_TASK_INTERVAL
             ).catch { e -> InAppLogger.e("[NEO] requestFlow: ${e.message}") }
             .launchIn(serviceScope)
