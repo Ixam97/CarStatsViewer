@@ -17,6 +17,7 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.activities.MainActivity
 import com.ixam97.carStatsViewer.dataManager.ChargeCurve
+import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.plot.enums.*
@@ -36,6 +37,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class SummaryFragment(var session: DrivingSession, var fragmentContainerId: Int) : Fragment(R.layout.fragment_summary) {
 
@@ -174,9 +176,23 @@ class SummaryFragment(var session: DrivingSession, var fragmentContainerId: Int)
 
         summary_consumption_plot.addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
         summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
+
+        summary_charge_plot_view.dimension = PlotDimensionX.TIME
+        // summary_charge_plot_view.dimensionSmoothing = 0.01f
+        // summary_charge_plot_view.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
+        summary_charge_plot_view.dimensionYSecondary = PlotDimensionY.STATE_OF_CHARGE
+
+        summary_charge_plot_view.addPlotLine(chargePlotLine, chargePlotLinePaint)
+        summary_charge_plot_view.sessionGapRendering = PlotSessionGapRendering.GAP
     }
 
     private fun applySession(session: DrivingSession) {
+
+        switchToConsumptionLayout()
+
+        summary_button_show_charge_container.isEnabled =
+            !(session.chargingSessions == null || session.chargingSessions?.isEmpty() == true)
+
         if (session.session_type != TripType.MANUAL) {
             summary_button_reset.isEnabled = false
             summary_button_reset.setColorFilter(applicationContext.getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
@@ -191,6 +207,33 @@ class SummaryFragment(var session: DrivingSession, var fragmentContainerId: Int)
             summary_consumption_plot.setPlotMarkers(DataConverters.plotMarkersFromSession(session))
             summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((appPreferences.distanceUnit.toUnit(session.driven_distance.toFloat()) / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) + 1
             summary_consumption_plot.invalidate()
+        }
+
+        session.chargingSessions?.let { chargingSessions ->
+            // Setup charge layout
+
+
+            summary_charge_plot_seek_bar.max = (chargingSessions.size - 1).coerceAtLeast(0)
+            summary_charge_plot_seek_bar.progress = (chargingSessions.size - 1).coerceAtLeast(0)
+            summary_charge_plot_seek_bar.setOnSeekBarChangeListener(seekBarChangeListener)
+
+            summary_charge_plot_button_next.setOnClickListener {
+                val newProgress = summary_charge_plot_seek_bar.progress + 1
+                if (newProgress <= (chargingSessions.size - 1)) {
+                    summary_charge_plot_seek_bar.progress = newProgress
+                }
+                summary_charge_plot_view.dimensionShift = 0L
+            }
+
+            summary_charge_plot_button_prev.setOnClickListener {
+                val newProgress = summary_charge_plot_seek_bar.progress - 1
+                if (newProgress >= 0) {
+                    summary_charge_plot_seek_bar.progress = newProgress
+                }
+                summary_charge_plot_view.dimensionShift = 0L
+            }
+
+            setVisibleChargeCurve(chargingSessions.size - 1)
         }
 
         when (session.session_type) {
@@ -254,6 +297,10 @@ class SummaryFragment(var session: DrivingSession, var fragmentContainerId: Int)
         }
         summary_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[secondaryConsumptionDimension]
         summary_consumption_plot.invalidate()
+    }
+
+    private fun setChargeSessionSelectorLimits(chargingSessions: List<ChargingSession>) {
+
     }
 
     private fun setupChargeLayout() {
@@ -324,14 +371,13 @@ class SummaryFragment(var session: DrivingSession, var fragmentContainerId: Int)
     }
 
     private fun setVisibleChargeCurve(progress: Int) {
-        /*
-        summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
-            getString(R.string.settings_sub_title_last_charge_plot),
-            tripData.chargeCurves.size,
-            tripData.chargeCurves.size,
-            StringFormatters.getDateString(tripData.chargeCurves.last().chargeStartDate))
 
-        if (tripData.chargeCurves.size - 1 == 0) {
+        val chargingSessions = session.chargingSessions
+
+        summary_charge_plot_view.reset()
+        chargePlotLine.reset()
+
+        if (chargingSessions == null || chargingSessions.isEmpty()) {
             summary_charge_plot_sub_title_curve.text = "%s (0/0)".format(
                 getString(R.string.settings_sub_title_last_charge_plot))
 
@@ -340,12 +386,28 @@ class SummaryFragment(var session: DrivingSession, var fragmentContainerId: Int)
             summary_charge_plot_button_prev.isEnabled = false
             summary_charge_plot_button_prev.alpha = CarStatsViewer.disabledAlpha
 
+            summary_charged_energy_value_text.text = "-/-"
+            summary_charge_time_value_text.text = "-/-"
+            summary_charge_ambient_temp.text = "-/-"
+
+            return
+        }
+
+        summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
+            getString(R.string.settings_sub_title_last_charge_plot),
+            chargingSessions.size,
+            chargingSessions.size,
+            StringFormatters.getDateString(Date(chargingSessions.last().start_epoch_time))
+        )
+
+        if (chargingSessions.size - 1 == 0) {
+
         } else {
             summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
                 getString(R.string.settings_sub_title_last_charge_plot),
                 progress + 1,
-                tripData.chargeCurves.size,
-                StringFormatters.getDateString(tripData.chargeCurves[progress].chargeStartDate))
+                chargingSessions.size,
+                StringFormatters.getDateString(Date(chargingSessions[progress].start_epoch_time)))
 
             when (progress) {
                 0 -> {
@@ -354,7 +416,7 @@ class SummaryFragment(var session: DrivingSession, var fragmentContainerId: Int)
                     summary_charge_plot_button_next.isEnabled = true
                     summary_charge_plot_button_next.alpha = 1f
                 }
-                tripData.chargeCurves.size - 1 -> {
+                chargingSessions.size - 1 -> {
                     summary_charge_plot_button_next.isEnabled = false
                     summary_charge_plot_button_next.alpha = CarStatsViewer.disabledAlpha
                     summary_charge_plot_button_prev.isEnabled = true
@@ -368,21 +430,22 @@ class SummaryFragment(var session: DrivingSession, var fragmentContainerId: Int)
                 }
             }
         }
-        if (tripData.chargeCurves[progress].chargePlotLine.filter { it.Marker == PlotLineMarkerType.END_SESSION }.size > 1)
-        // Charge has been interrupted
-            summary_charged_energy_warning_text.visibility = View.VISIBLE
-        else summary_charged_energy_warning_text.visibility = View.GONE
+        // if (tripData.chargeCurves[progress].chargePlotLine.filter { it.Marker == PlotLineMarkerType.END_SESSION }.size > 1)
+        // // Charge has been interrupted
+        //     summary_charged_energy_warning_text.visibility = View.VISIBLE
+        // else summary_charged_energy_warning_text.visibility = View.GONE
 
-        summary_charged_energy_value_text.text = chargedEnergy(tripData.chargeCurves[progress])
-        summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString(tripData.chargeCurves[progress].chargeTime)
-        summary_charge_ambient_temp.text = StringFormatters.getTemperatureString(tripData.chargeCurves[progress].ambientTemperature)
+        summary_charged_energy_value_text.text = StringFormatters.getEnergyString(chargingSessions[progress].charged_energy.toFloat())
+        summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString((chargingSessions[progress].end_epoch_time?:0) - chargingSessions[progress].start_epoch_time)
+        summary_charge_ambient_temp.text = StringFormatters.getTemperatureString(chargingSessions[progress].outside_temp)
 
-        chargePlotLine.reset()
-        chargePlotLine.addDataPoints(tripData.chargeCurves[progress].chargePlotLine)
-        summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(tripData.chargeCurves[progress].chargeTime) / 5) + 1) * 5 + 1
+        chargePlotLine.addDataPoints(DataConverters.chargePlotLineFromChargingPoints(chargingSessions[progress].chargingPoints!!))
+        //summary_charge_plot_view.addPlotLine(chargePlotLine, chargePlotLinePaint)
+
+        summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes((chargingSessions[progress].end_epoch_time?:0) - chargingSessions[progress].start_epoch_time) / 5) + 1) * 5 + 1
         summary_charge_plot_view.invalidate()
 
-         */
+
     }
 
     private fun switchToConsumptionLayout() {
@@ -421,13 +484,6 @@ class SummaryFragment(var session: DrivingSession, var fragmentContainerId: Int)
             }
         val alert = builder.create()
         alert.show()
-    }
-
-    private fun chargedEnergy(chargeCurve: ChargeCurve): String {
-        return "%s (%d%%)".format(
-            StringFormatters.getEnergyString(chargeCurve.chargedEnergy),
-            (chargeCurve.chargePlotLine.last().StateOfCharge - chargeCurve.chargePlotLine.first().StateOfCharge).toInt()
-        )
     }
 
     private fun changeSelectedTrip(index: Int) {

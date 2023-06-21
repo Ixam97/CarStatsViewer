@@ -325,10 +325,11 @@ class DataProcessor {
      */
 
     suspend fun newDrivingState(drivingState: Int, oldDrivingState: Int) {
-        /** Reset "since charge" after unplugging" */
-        if (drivingState != DrivingState.CHARGE && oldDrivingState == DrivingState.CHARGE) {
-            resetTrip(TripType.SINCE_CHARGE, drivingState)
-        }
+        /** Reset "since charge" after plugging in" */
+        // Moved to charging session Start
+        // if (drivingState == DrivingState.CHARGE && oldDrivingState != DrivingState.CHARGE) {
+        //     resetTrip(TripType.SINCE_CHARGE, drivingState)
+        // }
         /** Reset "monthly" when last driving point has date in last month */
         /** Reset "Auto" when last driving point is more than 4h old */
         if (drivingState == DrivingState.DRIVE && oldDrivingState != DrivingState.DRIVE) {
@@ -475,16 +476,17 @@ class DataProcessor {
 
         updateTripDataValues(DrivingState.CHARGE)
 
-        val chargingPoint = ChargingPoint(
-            System.currentTimeMillis(),
-            chargingTripData.chargingSessionId,
-            mUsedEnergy.toFloat(),
-            realTimeData.power,
-            realTimeData.stateOfCharge,
-            markerType
-        )
-
         return CoroutineScope(Dispatchers.IO).launch {
+
+            val chargingPoint = ChargingPoint(
+                System.currentTimeMillis(),
+                chargingTripData.chargingSessionId,
+                mUsedEnergy.toFloat(),
+                realTimeData.power,
+                realTimeData.stateOfCharge,
+                markerType
+            )
+
             CarStatsViewer.tripDataSource.addChargingPoint(chargingPoint)
             localChargingSession?.let {
                 CarStatsViewer.tripDataSource.updateChargingSession(it)
@@ -544,6 +546,8 @@ class DataProcessor {
                 InAppLogger.i("[NEO] Resuming charging session with ID $id")
                 id
             } else {
+                // reset since charge before starting charging session to prevent unintended deletion
+                resetTrip(TripType.SINCE_CHARGE, DrivingState.CHARGE)
                 val id = CarStatsViewer.tripDataSource.startChargingSession(
                     System.currentTimeMillis(),
                     realTimeData.ambientTemperature,
@@ -579,7 +583,7 @@ class DataProcessor {
                 System.currentTimeMillis(),
                 chargingTripData.chargingSessionId
             )
-            InAppLogger.i("[NEO] Charging session ended")
+            InAppLogger.i("[NEO] Charging session with ID ${chargingTripData.chargingSessionId} ended")
         }
     }
 

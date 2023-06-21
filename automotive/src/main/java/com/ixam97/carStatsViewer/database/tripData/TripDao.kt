@@ -5,14 +5,17 @@ import androidx.room.*
 @Dao
 interface TripDao {
 
-    @Insert
-    fun insertDrivingPoint(drivingPoint: DrivingPoint)
+    @Upsert
+    fun upsertDrivingPoint(drivingPoint: DrivingPoint)
 
     @Query("SELECT * FROM DrivingPoint ORDER BY driving_point_epoch_time DESC LIMIT 1")
     fun getLatestDrivingPoint(): DrivingPoint?
 
-    @Insert
-    fun insertChargingPoint(chargingPoint: ChargingPoint)
+    @Upsert
+    fun upsertChargingPoint(chargingPoint: ChargingPoint)
+
+    @Query("SELECT * FROM ChargingPoint ORDER BY charging_point_epoch_time DESC LIMIT 1")
+    fun getLatestChargingPoint(): ChargingPoint?
 
     @Upsert
     fun upsertDrivingSession(drivingSession: DrivingSession): Long
@@ -78,8 +81,11 @@ interface TripDao {
     @Query("DELETE FROM DrivingPoint WHERE driving_point_epoch_time < :earliestEpochTime")
     fun clearOldDrivingPoints(earliestEpochTime: Long): Int
 
-    @Query("DELETE FROM ChargingPoint WHERE charging_session_id = :sessionId")
-    fun clearOldChargingPoints(sessionId: Long): Int
+    @Query("DELETE FROM ChargingPoint WHERE charging_point_epoch_time < :earliestEpochTime")
+    fun clearOldChargingPoints(earliestEpochTime: Long): Int
+
+    @Query("DELETE FROM ChargingSession WHERE start_epoch_time < :earliestEpochTime")
+    fun clearOldChargingSessions(earliestEpochTime: Long): Int
 
     @Query("DELETE FROM DrivingSessionPointCrossRef WHERE driving_session_id = :sessionId")
     fun clearOldDrivingSessionPointCrossRefs(sessionId: Long): Int

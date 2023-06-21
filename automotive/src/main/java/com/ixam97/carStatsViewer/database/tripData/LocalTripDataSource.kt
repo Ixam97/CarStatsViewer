@@ -8,8 +8,18 @@ class LocalTripDataSource(
 
     override suspend fun addDrivingPoint(drivingPoint: DrivingPoint) {
         val activeSessionIds = tripDao.getActiveDrivingSessionIds()
-        if (!tripDao.drivingPointExists(drivingPoint.driving_point_epoch_time))
-            tripDao.insertDrivingPoint(drivingPoint)
+        if (!tripDao.drivingPointExists(drivingPoint.driving_point_epoch_time)) {
+            if ((drivingPoint.point_marker_type?:0) == 1) {
+                tripDao.getLatestDrivingPoint()?.let {
+                    if ((it.point_marker_type?:0) != 2) {
+                        InAppLogger.d("[DB] Updated charging point marker type")
+                        tripDao.upsertDrivingPoint(it.copy(point_marker_type = 2))
+                    }
+                }
+            }
+            tripDao.upsertDrivingPoint(drivingPoint)
+        }
+
         for (sessionId in activeSessionIds) {
             tripDao.insertDrivingSessionPointCrossRef(DrivingSessionPointCrossRef(sessionId, drivingPoint.driving_point_epoch_time))
         }
@@ -100,14 +110,26 @@ class LocalTripDataSource(
         val deletedSessions = tripDao.deleteDrivingSessionByID(sessionId)
         val earliestEpochTime = tripDao.getEarliestEpochTime()
         val deletedDrivingPointCrossRefs = tripDao.clearOldDrivingSessionPointCrossRefs(sessionId)
-        val getChargingSessionIds = tripDao.getChargingSessionIdsByDrivingSessionId(sessionId)
         val deletedChargingCrossRefs = tripDao.clearOldDrivingChargingCrossRefs(sessionId)
         val deletedDrivingPoints = tripDao.clearOldDrivingPoints(earliestEpochTime)
-        InAppLogger.d("[DB] Deleted session ID: $sessionId ($deletedSessions sessions, $deletedDrivingPointCrossRefs cross refs, $deletedDrivingPoints driving points, $deletedChargingCrossRefs charging cross refs)")
+        val deletedChargingSessions = tripDao.clearOldChargingSessions(earliestEpochTime)
+        val deletedChargingPoints = tripDao.clearOldChargingPoints(earliestEpochTime)
+        InAppLogger.d("[DB] Deleted session ID: $sessionId ($deletedSessions sessions, $deletedDrivingPointCrossRefs cross refs, $deletedDrivingPoints driving points, $deletedChargingCrossRefs charging cross refs, $deletedChargingSessions charging sessions, $deletedChargingPoints charging points)")
     }
 
     override suspend fun addChargingPoint(chargingPoint: ChargingPoint) {
-        tripDao.insertChargingPoint(chargingPoint)
+        if ((chargingPoint.point_marker_type?:0) == 1) {
+            tripDao.getLatestChargingPoint()?.let {
+                InAppLogger.v("$it")
+                if ((it.point_marker_type?:0) != 2) {
+                    InAppLogger.d("[DB] Updated charging point marker type")
+                    val updatedChargingPoint = it.copy(point_marker_type = 2)
+                    InAppLogger.v("$updatedChargingPoint")
+                    tripDao.upsertChargingPoint(updatedChargingPoint)
+                }
+            }
+        }
+        tripDao.upsertChargingPoint(chargingPoint)
     }
 
     override suspend fun startChargingSession(timestamp: Long, outsideTemp: Float, lat: Float?, lon: Float?): Long {

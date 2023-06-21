@@ -137,7 +137,7 @@
             android:layout_weight="1"
             android:text="@string/summary_trip_history"/>
         <Button
-            android:enabled="false"
+            android:enabled="true"
             android:id="@+id/summary_button_show_charge_container"
             android:layout_width="0dp"
             android:layout_height="80dp"
