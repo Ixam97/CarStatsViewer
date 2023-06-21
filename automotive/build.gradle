@@ -6,14 +6,13 @@ apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
 android {
     compileSdkVersion 33
-    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "com.ixam97.carStatsViewer_dev"
         minSdkVersion 29
         targetSdkVersion 33
-        versionCode 134
-        versionName "0.25.0.0021"
+        versionCode 135
+        versionName "0.25.0.0022"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
