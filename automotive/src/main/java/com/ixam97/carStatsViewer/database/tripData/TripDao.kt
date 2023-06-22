@@ -68,9 +68,22 @@ interface TripDao {
         return drivingSession
     }
 
+    @Ignore
+    fun getCompleteChargingSessionById(sessionId: Long): ChargingSession {
+        val chargingSessionWithPoints = getChargingSessionWithPoints(sessionId)
+        val chargingSession = chargingSessionWithPoints.chargingSession
+        chargingSession.chargingPoints = chargingSessionWithPoints.chargingPoints
+
+        return chargingSession
+    }
+
     @Transaction
     @Query("SELECT * FROM DrivingSession WHERE driving_session_id = :sessionId")
     fun getCompleteTripData(sessionId: Long): CompleteTripData
+
+    @Transaction
+    @Query("SELECT * FROM ChargingSession WHERE charging_session_id = :sessionId")
+    fun getChargingSessionWithPoints(sessionId: Long): ChargingSessionWithPoints
 
     @Query("SELECT min(start_epoch_time) FROM DrivingSession")
     fun getEarliestEpochTime(): Long

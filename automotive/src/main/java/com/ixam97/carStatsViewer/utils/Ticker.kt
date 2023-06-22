@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.*
 object Ticker {
     fun tickerFlow(interval: Long) = flow {
         val startTime = System.currentTimeMillis()
-        var loops = 0L
+        var loops = 1L
 
         while (true) {
             while (true) {

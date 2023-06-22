@@ -111,7 +111,7 @@ class HistoryActivity  : FragmentActivity() {
                         R.anim.stay_still,
                         R.anim.slide_out_down
                     )
-                    add(R.id.history_fragment_container, SummaryFragment(session, R.id.history_fragment_container))
+                    add(R.id.history_fragment_container, SummaryFragment(session))
                 }
             }
         }
@@ -271,7 +271,7 @@ class HistoryActivity  : FragmentActivity() {
 
             setView(layout)
 
-            setPositiveButton(getString(R.string.dialog_apply)) { dialog, _ ->
+            setPositiveButton(getString(R.string.dialog_apply)) { _, _ ->
                 val filterTime = if (dateCheckbox.isChecked) {
                     val date = Calendar.getInstance()
                     date.set(datePicker.year, datePicker.month, datePicker.dayOfMonth)

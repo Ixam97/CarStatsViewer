@@ -8,8 +8,6 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
@@ -18,9 +16,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.*
-import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataManager.NeoDataCollector
-import com.ixam97.carStatsViewer.dataProcessor.ChargingTripData
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
 import com.ixam97.carStatsViewer.fragments.SummaryFragment
@@ -40,25 +36,46 @@ import com.ixam97.carStatsViewer.views.GageView
 import com.ixam97.carStatsViewer.views.PlotView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 class MainActivity : FragmentActivity() {
     companion object {
-        private const val UI_UPDATE_INTERVAL = 500L
         const val DISTANCE_TRIP_DIVIDER = 5_000L
         const val CONSUMPTION_DISTANCE_RESTRICTION = 10_000L
     }
 
     /** values and variables */
-    private lateinit var appPreferences: AppPreferences
-    private lateinit var consumptionPlotLine: PlotLine
-    private lateinit var consumptionPlotLinePaint : PlotLinePaint
-    private lateinit var chargePlotLinePaint : PlotLinePaint
+    private val appPreferences = CarStatsViewer.appPreferences
+
+    private val consumptionPlotLine = PlotLine(
+        PlotLineConfiguration(
+            PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
+            PlotLineLabelFormat.NUMBER,
+            PlotHighlightMethod.AVG_BY_DISTANCE,
+            "Wh/km"
+        ),
+    )
+    private val consumptionPlotLinePaint  = PlotLinePaint(
+        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.primary_plot_color), PlotView.textSize),
+        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color), PlotView.textSize),
+        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+    ) { appPreferences.consumptionPlotSecondaryColor }
+    private val chargePlotLine = PlotLine(
+        PlotLineConfiguration(
+            PlotRange(0f, 20f, 0f, 160f, 20f),
+            PlotLineLabelFormat.FLOAT,
+            PlotHighlightMethod.AVG_BY_TIME,
+            "kW"
+        )
+    )
+    private val chargePlotLinePaint = PlotLinePaint(
+        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.charge_plot_color), PlotView.textSize),
+        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color), PlotView.textSize),
+        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+    ) { appPreferences.chargePlotSecondaryColor }
 
     private lateinit var context: Context
 
@@ -200,9 +217,39 @@ class MainActivity : FragmentActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                CarStatsViewer.dataProcessor.chargingTripDataFlow.collectLatest { chargingTripData ->
-                    neoChargedEnergy = chargingTripData.chargedEnergy
-                    neoChargeTime = chargingTripData.chargeTime
+                CarStatsViewer.dataProcessor.currentChargingSessionDataFlow.collectLatest { chargingSession ->
+                    chargingSession?.let {
+                        neoChargedEnergy = it.charged_energy
+                        neoChargeTime = it.chargeTime
+                    }
+                    chargingSession?.chargingPoints?.let { chargingPoints ->
+                        var sizeDelta = chargingPoints.size - chargePlotLine.getDataPointsSize()
+
+                        // InAppLogger.d("[NEO] Updating charging plot. Size delta: $sizeDelta")
+
+                        if (sizeDelta in 1..9) {
+                            while (sizeDelta > 0) {
+                                val prevChargingPoint = if (chargePlotLine.getDataPointsSize() > 0) {
+                                    chargePlotLine.getDataPoints(PlotDimensionX.TIME).last()
+                                } else null
+                                chargePlotLine.addDataPoint(
+                                    DataConverters.chargePlotLineItemFromChargingPoint(
+                                        chargingPoints[chargingPoints.size - sizeDelta],
+                                        prevChargingPoint
+                                    )
+                                )
+                                sizeDelta --
+                            }
+                            main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(chargingSession.chargeTime) / 5) + 1) * 5 + 1
+                            main_charge_plot.invalidate()
+                        } else if (sizeDelta > 10 || sizeDelta < 0) {
+                            /** refresh entire plot for large numbers of new data Points */
+                            chargePlotLine.reset()
+                            chargePlotLine.addDataPoints(DataConverters.chargePlotLineFromChargingPoints(chargingPoints))
+                            main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(chargingSession.chargeTime) / 5) + 1) * 5 + 1
+                            main_charge_plot.invalidate()
+                        }
+                    }
                 }
             }
         }
@@ -263,34 +310,12 @@ class MainActivity : FragmentActivity() {
         InAppLogger.d("Display size: ${displayMetrics.widthPixels/displayMetrics.density}x${displayMetrics.heightPixels/displayMetrics.density}")
         InAppLogger.d("Main view created")
 
-        consumptionPlotLine = PlotLine(
-            PlotLineConfiguration(
-                PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
-                PlotLineLabelFormat.NUMBER,
-                PlotHighlightMethod.AVG_BY_DISTANCE,
-                "Wh/km"
-            ),
-        )
 
         PlotView.textSize = resources.getDimension(R.dimen.reduced_font_size)
         PlotView.xMargin = resources.getDimension(R.dimen.plot_x_margin).toInt()
         PlotView.yMargin = resources.getDimension(R.dimen.plot_y_margin).toInt()
         GageView.valueTextSize = resources.getDimension(R.dimen.gage_value_text_size)
         GageView.descriptionTextSize = resources.getDimension(R.dimen.gage_desc_text_size)
-
-        appPreferences = AppPreferences(context)
-
-        consumptionPlotLinePaint = PlotLinePaint(
-            PlotPaint.byColor(getColor(R.color.primary_plot_color), PlotView.textSize),
-            PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize),
-            PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-        ) { appPreferences.consumptionPlotSecondaryColor }
-
-        chargePlotLinePaint = PlotLinePaint(
-            PlotPaint.byColor(getColor(R.color.charge_plot_color), PlotView.textSize),
-            PlotPaint.byColor(getColor(R.color.secondary_plot_color), PlotView.textSize),
-            PlotPaint.byColor(getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
-        ) { appPreferences.chargePlotSecondaryColor }
 
         setContentView(R.layout.activity_main)
 
@@ -468,10 +493,10 @@ class MainActivity : FragmentActivity() {
         main_consumption_plot.invalidate()
 
         main_charge_plot.reset()
-        // main_charge_plot.addPlotLine(DataManagers.CURRENT_TRIP.dataManager.chargePlotLine, chargePlotLinePaint)
+        main_charge_plot.addPlotLine(chargePlotLine, chargePlotLinePaint)
 
         main_charge_plot.dimension = PlotDimensionX.TIME
-        main_charge_plot.dimensionRestriction = null
+        // main_charge_plot.dimensionRestriction = null
         main_charge_plot.sessionGapRendering = PlotSessionGapRendering.GAP
         main_charge_plot.dimensionYSecondary = PlotDimensionY.STATE_OF_CHARGE
         main_charge_plot.invalidate()
@@ -577,7 +602,7 @@ class MainActivity : FragmentActivity() {
                             R.anim.stay_still,
                             R.anim.slide_out_down
                         )
-                        add(R.id.main_fragment_container, SummaryFragment(session, R.id.main_fragment_container), "SummaryFragment")
+                        add(R.id.main_fragment_container, SummaryFragment(session), "SummaryFragment")
                     }
                 }
             }

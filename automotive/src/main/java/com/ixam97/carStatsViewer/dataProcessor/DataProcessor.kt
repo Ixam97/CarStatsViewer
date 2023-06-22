@@ -65,11 +65,11 @@ class DataProcessor {
             _realTimeDataFlow.value = value
         }
 
-    private var chargingTripData = ChargingTripData()
-        set(value) {
-            field = value
-            _chargingTripDataFlow.value = field
-        }
+    // private var chargingTripData = ChargingTripData()
+    //     set(value) {
+    //         field = value
+    //         _chargingTripDataFlow.value = field
+    //     }
 
 
     private val _realTimeDataFlow = MutableStateFlow(realTimeData)
@@ -78,20 +78,22 @@ class DataProcessor {
     private val _selectedSessionDataFlow = MutableStateFlow<DrivingSession?>(null)
     val selectedSessionDataFlow = _selectedSessionDataFlow.asStateFlow()
 
-    private val _chargingTripDataFlow = MutableStateFlow(chargingTripData)
-    val chargingTripDataFlow = _chargingTripDataFlow.asStateFlow()
+    // private val _chargingTripDataFlow = MutableStateFlow(chargingTripData)
+    // val chargingTripDataFlow = _chargingTripDataFlow.asStateFlow()
+
+    private val _currentChargingSessionDataFlow = MutableStateFlow<ChargingSession?>(null)
+    val currentChargingSessionDataFlow = _currentChargingSessionDataFlow.asStateFlow()
 
     var chargeTicker: Job? = null
 
-    val timerMap = mapOf(
+    private val timerMap = mapOf(
         TripType.MANUAL to TimeTracker(),
         TripType.SINCE_CHARGE to TimeTracker(),
         TripType.AUTO to TimeTracker(),
         TripType.MONTH to TimeTracker(),
     )
 
-    val chargeTimer = TimeTracker()
-    val chargeTickCounter: Int = 0
+    private val chargeTimer = TimeTracker()
 
     init {
         loadSessionsToMemory()
@@ -219,15 +221,15 @@ class DataProcessor {
 
     /** Actions related to changes in the state of charge/battery level */
     private fun stateOfChargeUpdate() {
-        staticVehicleData.batteryCapacity?.let { batteryCapacity ->
+        staticVehicleData.batteryCapacity?.let {
             val currentStateOfCharge = realTimeData.stateOfCharge
             if (previousStateOfCharge < 0) {
                 previousStateOfCharge = currentStateOfCharge
                 return
             }
             if (currentStateOfCharge != previousStateOfCharge) {
-                if (realTimeData.drivingState == DrivingState.DRIVE)
-                    updateUsedStateOfCharge((previousStateOfCharge - currentStateOfCharge).toDouble())
+                // if (realTimeData.drivingState == DrivingState.DRIVE)
+                //    updateUsedStateOfCharge((previousStateOfCharge - currentStateOfCharge).toDouble())
                 previousStateOfCharge = currentStateOfCharge
             }
         }
@@ -260,6 +262,10 @@ class DataProcessor {
                 }
                 if (drivingState != DrivingState.CHARGE && prevState == DrivingState.CHARGE) {
                     stopChargingSession().join()
+                }
+                if (prevState == DrivingState.UNKNOWN && drivingState != DrivingState.CHARGE) {
+                    // Check for stray charging session(s)
+                    checkChargingSessions().join()
                 }
                 previousStateOfCharge = realTimeData.stateOfCharge
             }
@@ -314,6 +320,20 @@ class DataProcessor {
         drivingSessionsIds.forEach {
             val session = CarStatsViewer.tripDataSource.getDrivingSession(it)
             timerMap[session?.session_type]?.restore(session?.drive_time?:0)
+        }
+    }
+
+    fun checkChargingSessions(): Job {
+        return CoroutineScope(Dispatchers.IO).launch {
+            val activeChargingSessions = CarStatsViewer.tripDataSource.getActiveChargingSessionIds()
+            if (activeChargingSessions.isNotEmpty()) {
+                InAppLogger.w("[NEO] Found ${activeChargingSessions.size} stray charging sessions")
+                activeChargingSessions.forEach { sessionId ->
+                    val timestamp = CarStatsViewer.tripDataSource.getLatestChargingPoint()?.charging_point_epoch_time?: System.currentTimeMillis()
+                    CarStatsViewer.tripDataSource.endChargingSession(timestamp, sessionId)
+                    InAppLogger.w("[NEO] Charging session ID $sessionId was ended")
+                }
+            }
         }
     }
 
@@ -400,7 +420,7 @@ class DataProcessor {
             }
 
             writeTripsToDatabase()
-            InAppLogger.v("[NEO] Driving point written: ${mDrivenDistance.toFloat()} m, ${mUsedEnergy.toFloat()} Wh")
+            InAppLogger.d("[NEO] Driving point written: ${mDrivenDistance.toFloat()} m, ${mUsedEnergy.toFloat()} Wh")
 
         }
     }
@@ -453,6 +473,7 @@ class DataProcessor {
      * Update charging trip data flow for UI.
      */
     private fun newChargingDeltas(energyDelta: Double) {
+        /*
         val currentChargingEnergy = chargingTripData.chargedEnergy - energyDelta
 
         chargingTripData = chargingTripData.copy(
@@ -460,11 +481,18 @@ class DataProcessor {
             chargeTime = chargeTimer.getTime()
         )
 
+         */
+
         localChargingSession?.let {
+            val chargingPoints = it.chargingPoints
             localChargingSession = it.copy(
                 charged_energy = it.charged_energy - energyDelta
             )
+            localChargingSession?.chargeTime = chargeTimer.getTime()
+            localChargingSession?.chargingPoints = chargingPoints
         }
+
+        _currentChargingSessionDataFlow.value = localChargingSession
 
 
     }
@@ -477,21 +505,28 @@ class DataProcessor {
         updateTripDataValues(DrivingState.CHARGE)
 
         return CoroutineScope(Dispatchers.IO).launch {
+            if (realTimeData.drivingState != DrivingState.CHARGE || localChargingSession?.charging_session_id == null) {
+                InAppLogger.w("[NEO] No charging session loaded yet!")
+            } else {
+                val chargingPoint = ChargingPoint(
+                    System.currentTimeMillis(),
+                    localChargingSession?.charging_session_id!!,
+                    mUsedEnergy.toFloat(),
+                    realTimeData.power,
+                    realTimeData.stateOfCharge,
+                    markerType
+                )
 
-            val chargingPoint = ChargingPoint(
-                System.currentTimeMillis(),
-                chargingTripData.chargingSessionId,
-                mUsedEnergy.toFloat(),
-                realTimeData.power,
-                realTimeData.stateOfCharge,
-                markerType
-            )
-
-            CarStatsViewer.tripDataSource.addChargingPoint(chargingPoint)
-            localChargingSession?.let {
-                CarStatsViewer.tripDataSource.updateChargingSession(it)
-                InAppLogger.v("[NEO] Charging point written: ${chargingPoint.power.toFloat()} kW, ${(chargingPoint.state_of_charge * 100).roundToInt()} %")
-
+                CarStatsViewer.tripDataSource.addChargingPoint(chargingPoint)
+                localChargingSession?.let {
+                    val chargingPoints = it.chargingPoints?.toMutableList()?: mutableListOf()
+                    chargingPoints.add(chargingPoint)
+                    localChargingSession?.chargeTime = chargeTimer.getTime()
+                    localChargingSession?.chargingPoints = chargingPoints
+                    _currentChargingSessionDataFlow.value = localChargingSession
+                    CarStatsViewer.tripDataSource.updateChargingSession(it)
+                    InAppLogger.d("[NEO] Charging point written: ${chargingPoint.power.toFloat()} kW, ${(chargingPoint.state_of_charge * 100).roundToInt()} %, ${chargingPoint.charging_point_epoch_time}")
+                }
             }
         }
     }
@@ -529,7 +564,6 @@ class DataProcessor {
 
     private fun startChargingSession(): Job {
         chargeTimer.reset()
-        startChargeTicker()
         return CoroutineScope(Dispatchers.IO).launch {
             val activeChargingSessionIds = CarStatsViewer.tripDataSource.getActiveChargingSessionIds()
             val chargingSessionId = if (activeChargingSessionIds.isNotEmpty()) {
@@ -557,21 +591,24 @@ class DataProcessor {
                 InAppLogger.i("[NEO] Charging session started with ID $id")
                 id
             }
-            chargingTripData = chargingTripData.copy(
-                chargedEnergy = 0.0,
-                chargeTime = 0 ,
-                chargingSessionId = chargingSessionId
-            )
-            updateChargingDataPoint(PlotLineMarkerType.BEGIN_SESSION.int).join()
 
-            localChargingSession = CarStatsViewer.tripDataSource.getChargingSessionById(chargingTripData.chargingSessionId)
+            localChargingSession = CarStatsViewer.tripDataSource.getCompleteChargingSessionById(chargingSessionId)
+            InAppLogger.i("[NEO] Loaded charging session ID ${localChargingSession?.charging_session_id}")
+
+            // chargingTripData = chargingTripData.copy(
+            //     chargedEnergy = localChargingSession?.charged_energy?: 0.0,
+            //     chargeTime = 0 ,
+            //     chargingSessionId = chargingSessionId
+            // )
 
             localChargingSession?.let {
                 chargeTimer.restore(System.currentTimeMillis() - it.start_epoch_time)
+                _currentChargingSessionDataFlow.value = localChargingSession
             }
+            updateChargingDataPoint(PlotLineMarkerType.BEGIN_SESSION.int).join()
             chargeTimer.start()
+            startChargeTicker()
         }
-
     }
 
     private fun stopChargingSession(): Job {
@@ -581,9 +618,9 @@ class DataProcessor {
             updateChargingDataPoint(PlotLineMarkerType.END_SESSION.int).join()
             CarStatsViewer.tripDataSource.endChargingSession(
                 System.currentTimeMillis(),
-                chargingTripData.chargingSessionId
+                localChargingSession?.charging_session_id
             )
-            InAppLogger.i("[NEO] Charging session with ID ${chargingTripData.chargingSessionId} ended")
+            InAppLogger.i("[NEO] Charging session with ID ${localChargingSession?.charging_session_id} ended")
         }
     }
 
@@ -600,8 +637,8 @@ class DataProcessor {
     }
 
     /** Weird stuff for range estimate, not quite working as intended yet. */
+    /*
     fun updateUsedStateOfCharge(usedStateOfChargeDelta: Double) {
-        /*
         CoroutineScope(Dispatchers.IO).launch {
             CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds().forEach { sessionIds ->
 
@@ -627,7 +664,6 @@ class DataProcessor {
                 }
             }
         }
-
-         */
     }
+    */
 }

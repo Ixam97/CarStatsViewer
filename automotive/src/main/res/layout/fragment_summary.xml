@@ -250,7 +250,7 @@
             <TextView
                 android:layout_marginTop="10dp"
                 android:id="@+id/summary_charge_plot_sub_title_curve"
-                style="@style/menu_row_content_text"
+                style="@style/menu_section_title_style"
                 android:text="@string/settings_sub_title_last_charge_plot"/>
 
             <LinearLayout

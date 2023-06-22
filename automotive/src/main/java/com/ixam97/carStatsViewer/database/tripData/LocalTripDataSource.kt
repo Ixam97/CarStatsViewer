@@ -18,6 +18,7 @@ class LocalTripDataSource(
                 }
             }
             tripDao.upsertDrivingPoint(drivingPoint)
+            InAppLogger.v("[DB] Wrote driving point: $drivingPoint")
         }
 
         for (sessionId in activeSessionIds) {
@@ -26,12 +27,14 @@ class LocalTripDataSource(
     }
 
     override suspend fun getLatestDrivingPoint(): DrivingPoint? {
-        return tripDao.getLatestDrivingPoint()
+        val drivingPoint = tripDao.getLatestDrivingPoint()
+        InAppLogger.v("[DB] retrieved latest driving point: $drivingPoint")
+        return drivingPoint
     }
 
     override suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long? {
         endDrivingSession(timestamp, prevSessionId)?.let {
-            InAppLogger.d("[DB] Driving session with ID $prevSessionId has been superseded")
+            InAppLogger.v("[DB] Driving session with ID $prevSessionId has been superseded")
             return startDrivingSession(timestamp, it)
         }
         InAppLogger.w("[DB] Driving session with ID $prevSessionId has not been superseded!")
@@ -114,22 +117,25 @@ class LocalTripDataSource(
         val deletedDrivingPoints = tripDao.clearOldDrivingPoints(earliestEpochTime)
         val deletedChargingSessions = tripDao.clearOldChargingSessions(earliestEpochTime)
         val deletedChargingPoints = tripDao.clearOldChargingPoints(earliestEpochTime)
-        InAppLogger.d("[DB] Deleted session ID: $sessionId ($deletedSessions sessions, $deletedDrivingPointCrossRefs cross refs, $deletedDrivingPoints driving points, $deletedChargingCrossRefs charging cross refs, $deletedChargingSessions charging sessions, $deletedChargingPoints charging points)")
+        InAppLogger.v("[DB] Deleted session ID: $sessionId ($deletedSessions sessions, $deletedDrivingPointCrossRefs cross refs, $deletedDrivingPoints driving points, $deletedChargingCrossRefs charging cross refs, $deletedChargingSessions charging sessions, $deletedChargingPoints charging points)")
     }
 
     override suspend fun addChargingPoint(chargingPoint: ChargingPoint) {
         if ((chargingPoint.point_marker_type?:0) == 1) {
             tripDao.getLatestChargingPoint()?.let {
-                InAppLogger.v("$it")
                 if ((it.point_marker_type?:0) != 2) {
-                    InAppLogger.d("[DB] Updated charging point marker type")
+                    InAppLogger.v("[DB] Updated charging point marker type")
                     val updatedChargingPoint = it.copy(point_marker_type = 2)
-                    InAppLogger.v("$updatedChargingPoint")
                     tripDao.upsertChargingPoint(updatedChargingPoint)
                 }
             }
         }
         tripDao.upsertChargingPoint(chargingPoint)
+        InAppLogger.v("[DB] Wrote charging data point: $chargingPoint")
+    }
+
+    override suspend fun getLatestChargingPoint(): ChargingPoint? {
+        return tripDao.getLatestChargingPoint()
     }
 
     override suspend fun startChargingSession(timestamp: Long, outsideTemp: Float, lat: Float?, lon: Float?): Long {
@@ -160,16 +166,21 @@ class LocalTripDataSource(
             }
         } else sessionId
 
-        val session = tripDao.getChargingSessionById(id)
-        tripDao.upsertChargingSession(session.copy(end_epoch_time = timestamp))
+        val session = tripDao.getChargingSessionById(id).copy(end_epoch_time = timestamp)
+        tripDao.upsertChargingSession(session)
+        InAppLogger.v("[DB] Upserted charging session: $session")
     }
 
     override suspend fun getActiveChargingSessionIds(): List<Long> {
         return tripDao.getActiveChargingSessionIds()
     }
 
-    override suspend fun getChargingSessionById(chargingSessionId: Long): ChargingSession {
-        return tripDao.getChargingSessionById(chargingSessionId)
+    override suspend fun getChargingSessionById(sessionId: Long): ChargingSession {
+        return tripDao.getChargingSessionById(sessionId)
+    }
+
+    override suspend fun getCompleteChargingSessionById(sessionId: Long): ChargingSession {
+        return tripDao.getCompleteChargingSessionById(sessionId)
     }
 
     override suspend fun updateChargingSession(chargingSession: ChargingSession) {
