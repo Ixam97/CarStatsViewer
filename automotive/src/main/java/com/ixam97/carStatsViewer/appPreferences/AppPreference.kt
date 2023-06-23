@@ -1,8 +1,8 @@
 package com.ixam97.carStatsViewer.appPreferences
 
 import android.content.SharedPreferences
-import com.ixam97.carStatsViewer.enums.DistanceUnitEnum
-import com.ixam97.carStatsViewer.plot.enums.PlotDimensionX
+import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
 
 class AppPreference<T>(
     private val key: String,

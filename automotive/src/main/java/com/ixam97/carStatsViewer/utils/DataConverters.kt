@@ -3,11 +3,11 @@ package com.ixam97.carStatsViewer.utils
 import com.ixam97.carStatsViewer.database.tripData.ChargingPoint
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
-import com.ixam97.carStatsViewer.plot.enums.PlotLineMarkerType
-import com.ixam97.carStatsViewer.plot.enums.PlotMarkerType
-import com.ixam97.carStatsViewer.plot.objects.PlotLineItem
-import com.ixam97.carStatsViewer.plot.objects.PlotMarker
-import com.ixam97.carStatsViewer.plot.objects.PlotMarkers
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotLineMarkerType
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotMarkerType
+import com.ixam97.carStatsViewer.ui.plot.objects.PlotLineItem
+import com.ixam97.carStatsViewer.ui.plot.objects.PlotMarker
+import com.ixam97.carStatsViewer.ui.plot.objects.PlotMarkers
 
 object DataConverters {
 
@@ -100,29 +100,33 @@ object DataConverters {
                 var chargeTime = 0L
 
                 if (chargingSessions?.isNotEmpty() == true) {
-                    chargingSessions.forEachIndexed { index, chargingSession ->
+                    chargingSessions.forEachIndexed { chargingSessionIndex, chargingSession ->
                         chargeTime += (chargingSession.end_epoch_time!! - chargingSession.start_epoch_time)
-                        plotMarkers.add(PlotMarker(
+                        plotMarkers.add(
+                            PlotMarker(
                             MarkerType = PlotMarkerType.CHARGE,
                             MarkerVersion = 1,
                             StartTime = chargingSession.start_epoch_time,
                             EndTime = chargingSession.end_epoch_time,
                             StartDistance = distanceSum,
                             EndDistance = distanceSum
-                        ))
+                        )
+                        )
 
-                        if (index == chargingSessions.size - 1) {
+                        if (chargingSessionIndex == chargingSessions.size - 1) {
 
                             val parkTime = chargingSessions[0].start_epoch_time + chargeTime
 
-                            plotMarkers.add(PlotMarker(
+                            plotMarkers.add(
+                                PlotMarker(
                                 MarkerType = PlotMarkerType.PARK,
                                 MarkerVersion = 1,
                                 StartTime = parkTime,
                                 EndTime = drivingPoint.driving_point_epoch_time,
                                 StartDistance = distanceSum,
                                 EndDistance = distanceSum
-                            ))
+                            )
+                            )
                         }
                     }
                 }
@@ -135,14 +139,16 @@ object DataConverters {
                 val markerType = if (chargingSessions?.isNotEmpty() == true) PlotMarkerType.CHARGE
                     else PlotMarkerType.PARK
 
-                plotMarkers.add(PlotMarker(
+                plotMarkers.add(
+                    PlotMarker(
                     MarkerType = markerType,
                     MarkerVersion = 1,
                     StartTime = prevDrivingPoint!!.driving_point_epoch_time,
                     EndTime = drivingPoint.driving_point_epoch_time,
                     StartDistance = distanceSum,
                     EndDistance = distanceSum
-                ))
+                )
+                )
             }
             distanceSum += drivingPoint.distance_delta
             if (drivingPoint.point_marker_type == PlotLineMarkerType.END_SESSION.int) {

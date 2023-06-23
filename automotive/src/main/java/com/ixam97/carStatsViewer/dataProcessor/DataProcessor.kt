@@ -4,12 +4,12 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.Defines
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
-import com.ixam97.carStatsViewer.dataManager.DrivingState
-import com.ixam97.carStatsViewer.dataManager.TimeTracker
+import com.ixam97.carStatsViewer.dataCollector.DrivingState
+import com.ixam97.carStatsViewer.utils.TimeTracker
 import com.ixam97.carStatsViewer.database.tripData.*
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.emulatorPowerSign
-import com.ixam97.carStatsViewer.plot.enums.PlotLineMarkerType
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotLineMarkerType
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.Ticker
 import com.ixam97.carStatsViewer.utils.TimestampSynchronizer
@@ -50,7 +50,7 @@ class DataProcessor {
      * value vars above are copied and reset at the beginning of the corresponding functions. This
      * also ensures no changing data while it is used fot data base writes.
      *
-     * These have been superseded by other means of ensuring correct execution oderder, preventing
+     * These have been superseded by other means of ensuring correct execution order, preventing
      * database blocks and reducing writes.
      */
     // private var drivingPointUpdating: Boolean = false

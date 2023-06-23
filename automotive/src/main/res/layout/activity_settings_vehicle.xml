@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="UseSwitchCompatOrMaterialXml, UseAppTint, UseCompatTextViewDrawableXml"
-    tools:context=".activities.SettingsVehicleActivity">
+    tools:context=".ui.activities.SettingsVehicleActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -57,7 +57,7 @@
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
-            <com.ixam97.carStatsViewer.views.MultiSelectWidget
+            <com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
                 android:id="@+id/settings_vehicle_multiselect_model_year"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
-            <com.ixam97.carStatsViewer.views.MultiSelectWidget
+            <com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
                 android:id="@+id/settings_vehicle_multiselect_drivetrain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

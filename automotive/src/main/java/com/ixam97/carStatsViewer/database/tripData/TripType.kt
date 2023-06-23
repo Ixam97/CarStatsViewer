@@ -1,10 +1,10 @@
 package com.ixam97.carStatsViewer.database.tripData
 
 object TripType {
-    val MANUAL = 1
-    val SINCE_CHARGE = 2
-    val AUTO = 3
-    val MONTH = 4
+    const val MANUAL = 1
+    const val SINCE_CHARGE = 2
+    const val AUTO = 3
+    const val MONTH = 4
 
     val tripTypesNameMap = mapOf(
         MANUAL to "manual",

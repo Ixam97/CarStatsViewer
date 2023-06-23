@@ -1,7 +1,7 @@
 package com.ixam97.carStatsViewer.dataProcessor
 
 import android.car.VehicleIgnitionState
-import com.ixam97.carStatsViewer.dataManager.DrivingState
+import com.ixam97.carStatsViewer.dataCollector.DrivingState
 
 data class RealTimeData(
     val speed: Float = 0f,

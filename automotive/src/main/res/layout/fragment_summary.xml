@@ -163,7 +163,7 @@
                 android:layout_marginTop="10dp"
                 style="@style/menu_section_title_style"/>
 
-            <com.ixam97.carStatsViewer.views.PlotView
+            <com.ixam97.carStatsViewer.ui.views.PlotView
                 android:visibility="visible"
                 android:id="@+id/summary_consumption_plot"
                 android:layout_width="match_parent"
@@ -280,7 +280,7 @@
 
             </LinearLayout>
 
-            <com.ixam97.carStatsViewer.views.PlotView
+            <com.ixam97.carStatsViewer.ui.views.PlotView
                 android:id="@+id/summary_charge_plot_view"
                 android:layout_width="match_parent"
                 android:layout_height="550dp"/>

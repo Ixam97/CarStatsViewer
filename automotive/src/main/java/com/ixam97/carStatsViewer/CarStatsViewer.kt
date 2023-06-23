@@ -2,19 +2,16 @@ package com.ixam97.carStatsViewer
 
 import android.app.*
 import android.content.Context
-import android.provider.ContactsContract.Data
 import android.util.TypedValue
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.dataManager.DataManager
-import com.ixam97.carStatsViewer.dataManager.TripData
 import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
 import com.ixam97.carStatsViewer.database.tripData.*
-import com.ixam97.carStatsViewer.liveData.LiveDataApi
-import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
-import com.ixam97.carStatsViewer.liveData.http.HttpLiveData
+import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
+import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
+import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,8 +45,8 @@ class CarStatsViewer : Application() {
         var foregroundServiceStarted = false
         var restartNotificationDismissed = false
 
-        var tripData: TripData? = null
-        var dataManager: DataManager? = null
+        // var tripData: TripData? = null
+        // var dataManager: DataManager? = null
 
         lateinit var tripDatabase: TripDataDatabase
         lateinit var tripDataSource: LocalTripDataSource

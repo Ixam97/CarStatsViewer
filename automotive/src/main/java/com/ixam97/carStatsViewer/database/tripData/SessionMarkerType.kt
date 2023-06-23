@@ -1,6 +1,6 @@
 package com.ixam97.carStatsViewer.database.tripData
 
 object SessionMarkerType {
-    val PARK = 2
-    val CHARGE = 1
+    const val PARK = 2
+    const val CHARGE = 1
 }
