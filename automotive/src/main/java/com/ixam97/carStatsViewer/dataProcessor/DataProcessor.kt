@@ -133,15 +133,26 @@ class DataProcessor {
      */
     fun processProperty(carProperty: Int) {
 
+        //realTimeData = realTimeData.copy(
+        //    speed = ((carPropertiesData.CurrentSpeed.value as Float?)?: 0f).absoluteValue,
+        //    power = emulatorPowerSign * ((carPropertiesData.CurrentPower.value as Float?)?: 0f),
+        //    batteryLevel = (carPropertiesData.BatteryLevel.value as Float?)?: 0f,
+        //    stateOfCharge = ((carPropertiesData.BatteryLevel.value as Float?)?: 0f) / staticVehicleData.batteryCapacity!!,
+        //    ambientTemperature = (carPropertiesData.CurrentAmbientTemperature.value as Float?)?: 0f,
+        //    selectedGear = (carPropertiesData.CurrentGear.value as Int?)?: 0,
+        //    ignitionState = (carPropertiesData.CurrentIgnitionState.value as Int?)?: 0,
+        //    chargePortConnected = (carPropertiesData.ChargePortConnected.value as Boolean?)?: false
+        //)
+
         realTimeData = realTimeData.copy(
-            speed = ((carPropertiesData.CurrentSpeed.value as Float?)?: 0f).absoluteValue,
-            power = emulatorPowerSign * ((carPropertiesData.CurrentPower.value as Float?)?: 0f),
-            batteryLevel = (carPropertiesData.BatteryLevel.value as Float?)?: 0f,
-            stateOfCharge = ((carPropertiesData.BatteryLevel.value as Float?)?: 0f) / staticVehicleData.batteryCapacity!!,
-            ambientTemperature = (carPropertiesData.CurrentAmbientTemperature.value as Float?)?: 0f,
-            selectedGear = (carPropertiesData.CurrentGear.value as Int?)?: 0,
-            ignitionState = (carPropertiesData.CurrentIgnitionState.value as Int?)?: 0,
-            chargePortConnected = (carPropertiesData.ChargePortConnected.value as Boolean?)?: false
+            speed = if (carPropertiesData.CurrentSpeed.value == null) null else ((carPropertiesData.CurrentSpeed.value as Float?)?: 0f).absoluteValue,
+            power = if (carPropertiesData.CurrentPower.value == null) null else emulatorPowerSign * ((carPropertiesData.CurrentPower.value as Float?)?: 0f),
+            batteryLevel = if (carPropertiesData.BatteryLevel.value == null) null else (carPropertiesData.BatteryLevel.value as Float?)?: 0f,
+            stateOfCharge = if (carPropertiesData.BatteryLevel.value == null) null else ((carPropertiesData.BatteryLevel.value as Float?)?: 0f) / staticVehicleData.batteryCapacity!!,
+            ambientTemperature = if (carPropertiesData.CurrentAmbientTemperature.value == null) null else (carPropertiesData.CurrentAmbientTemperature.value as Float?)?: 0f,
+            selectedGear = if (carPropertiesData.CurrentGear.value == null) null else (carPropertiesData.CurrentGear.value as Int?)?: 0,
+            ignitionState = if (carPropertiesData.CurrentIgnitionState.value == null) null else (carPropertiesData.CurrentIgnitionState.value as Int?)?: 0,
+            chargePortConnected = if (carPropertiesData.ChargePortConnected.value == null) null else (carPropertiesData.ChargePortConnected.value as Boolean?)?: false
         )
 
         when (carProperty) {
@@ -222,15 +233,17 @@ class DataProcessor {
     /** Actions related to changes in the state of charge/battery level */
     private fun stateOfChargeUpdate() {
         staticVehicleData.batteryCapacity?.let {
-            val currentStateOfCharge = realTimeData.stateOfCharge
-            if (previousStateOfCharge < 0) {
-                previousStateOfCharge = currentStateOfCharge
-                return
-            }
-            if (currentStateOfCharge != previousStateOfCharge) {
-                // if (realTimeData.drivingState == DrivingState.DRIVE)
-                //    updateUsedStateOfCharge((previousStateOfCharge - currentStateOfCharge).toDouble())
-                previousStateOfCharge = currentStateOfCharge
+            realTimeData.stateOfCharge?.let {
+                val currentStateOfCharge = it
+                if (previousStateOfCharge < 0) {
+                    previousStateOfCharge = currentStateOfCharge
+                    return
+                }
+                if (currentStateOfCharge != previousStateOfCharge) {
+                    // if (realTimeData.drivingState == DrivingState.DRIVE)
+                    //    updateUsedStateOfCharge((previousStateOfCharge - currentStateOfCharge).toDouble())
+                    previousStateOfCharge = currentStateOfCharge
+                }
             }
         }
     }
@@ -267,7 +280,7 @@ class DataProcessor {
                     // Check for stray charging session(s)
                     checkChargingSessions().join()
                 }
-                previousStateOfCharge = realTimeData.stateOfCharge
+                previousStateOfCharge = realTimeData.stateOfCharge?:0f
             }
         }
     }
@@ -402,7 +415,7 @@ class DataProcessor {
                 energy_delta = mUsedEnergy.toFloat(),
                 distance_delta = mDrivenDistance.toFloat(),
                 point_marker_type = markerType,
-                state_of_charge = realTimeData.stateOfCharge,
+                state_of_charge = realTimeData.stateOfCharge?:0f,
                 lat = realTimeData.lat,
                 lon = realTimeData.lon,
                 alt = realTimeData.alt
@@ -512,8 +525,8 @@ class DataProcessor {
                     System.currentTimeMillis(),
                     localChargingSession?.charging_session_id!!,
                     mUsedEnergy.toFloat(),
-                    realTimeData.power,
-                    realTimeData.stateOfCharge,
+                    realTimeData.power?:0f,
+                    realTimeData.stateOfCharge?:0f,
                     markerType
                 )
 
@@ -584,7 +597,7 @@ class DataProcessor {
                 resetTrip(TripType.SINCE_CHARGE, DrivingState.CHARGE)
                 val id = CarStatsViewer.tripDataSource.startChargingSession(
                     System.currentTimeMillis(),
-                    realTimeData.ambientTemperature,
+                    realTimeData.ambientTemperature?: 0f,
                     realTimeData.lat,
                     realTimeData.lon
                 )

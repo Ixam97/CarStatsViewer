@@ -162,54 +162,59 @@ class MainActivity : FragmentActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 CarStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
 
-                    neoChargePortConnected = it.chargePortConnected
+                    InAppLogger.v("Real time data: $it")
 
-                    val instCons = it.instConsumption
-                    if (instCons != null && it.speed * 3.6 > 3) {
-                        if (appPreferences.consumptionUnit) {
-                            main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(instCons).roundToInt())
-                        } else {
-                            main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(instCons) / 10)
-                        }
-                    } else {
-                        main_consumption_gage.setValue(null as Float?)
-                    }
+                    if (it.isInitialized()) {
 
-                    main_power_gage.setValue(it.power / 1_000_000f)
+                        neoChargePortConnected = it.chargePortConnected!!
 
-                    main_charge_gage.setValue(it.power / -1_000_000f)
-                    main_SoC_gage.setValue((it.stateOfCharge * 100f).roundToInt())
-
-                    main_speed_gage.setValue(appPreferences.distanceUnit.toUnit(it.speed*3.6).toInt())
-                    CarStatsViewer.dataProcessor.staticVehicleData.batteryCapacity?.let { batteryCapacity ->
-                        main_soc_gage.setValue((it.batteryLevel / (batteryCapacity) * 100).roundToInt())
-                    }
-
-                    if (it.speed > .1 && !moving) {
-                        moving = true
-                        val summaryFragment = supportFragmentManager.findFragmentByTag("SummaryFragment")
-                        if (summaryFragment != null) {
-                            supportFragmentManager.commit {
-                                setCustomAnimations(
-                                    R.anim.slide_in_up,
-                                    R.anim.slide_out_down,
-                                    R.anim.stay_still,
-                                    R.anim.slide_out_down
-                                )
-                                remove(summaryFragment)
+                        val instCons = it.instConsumption
+                        if (instCons != null && it.speed!! * 3.6 > 3) {
+                            if (appPreferences.consumptionUnit) {
+                                main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(instCons).roundToInt())
+                            } else {
+                                main_consumption_gage.setValue(appPreferences.distanceUnit.asUnit(instCons) / 10)
                             }
+                        } else {
+                            main_consumption_gage.setValue(null as Float?)
                         }
-                        main_button_summary.isEnabled = false
-                        main_button_history.isEnabled = false
-                        main_button_history.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
-                    } else if (it.speed <= .1 && moving) {
-                        moving = false
-                        main_button_summary.isEnabled = true
-                        main_button_history.isEnabled = true
-                        main_button_history.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
-                    }
 
-                    setUiVisibilities()
+                        main_power_gage.setValue(it.power!! / 1_000_000f)
+
+                        main_charge_gage.setValue(it.power / -1_000_000f)
+                        main_SoC_gage.setValue((it.stateOfCharge!! * 100f).roundToInt())
+
+                        main_speed_gage.setValue(appPreferences.distanceUnit.toUnit(it.speed!!*3.6).toInt())
+                        CarStatsViewer.dataProcessor.staticVehicleData.batteryCapacity?.let { batteryCapacity ->
+                            main_soc_gage.setValue((it.batteryLevel!! / (batteryCapacity) * 100).roundToInt())
+                        }
+
+                        if (it.speed > .1 && !moving) {
+                            moving = true
+                            val summaryFragment = supportFragmentManager.findFragmentByTag("SummaryFragment")
+                            if (summaryFragment != null) {
+                                supportFragmentManager.commit {
+                                    setCustomAnimations(
+                                        R.anim.slide_in_up,
+                                        R.anim.slide_out_down,
+                                        R.anim.stay_still,
+                                        R.anim.slide_out_down
+                                    )
+                                    remove(summaryFragment)
+                                }
+                            }
+                            main_button_summary.isEnabled = false
+                            main_button_history.isEnabled = false
+                            main_button_history.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+                        } else if (it.speed <= .1 && moving) {
+                            moving = false
+                            main_button_summary.isEnabled = true
+                            main_button_history.isEnabled = true
+                            main_button_history.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
+                        }
+
+                        setUiVisibilities()
+                    }
                 }
             }
         }

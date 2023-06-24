@@ -40,7 +40,7 @@ class SettingsActivity : FragmentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 CarStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
-                    setDistractionOptimization(it.speed > 0)
+                    setDistractionOptimization((it.speed?:0f) > 0)
                 }
             }
         }
