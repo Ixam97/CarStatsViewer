@@ -162,7 +162,7 @@ class MainActivity : FragmentActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 CarStatsViewer.dataProcessor.realTimeDataFlow.collectLatest {
 
-                    InAppLogger.v("Real time data: $it")
+                    // InAppLogger.v("Real time data: $it")
 
                     if (it.isInitialized()) {
 
