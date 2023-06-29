@@ -11,8 +11,8 @@ android {
         applicationId "com.ixam97.carStatsViewer_dev"
         minSdkVersion 29
         targetSdkVersion 33
-        versionCode 136
-        versionName "0.25.0.0023"
+        versionCode 138
+        versionName "0.25.0.0025"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -68,7 +68,7 @@ dependencies {
     implementation 'com.mikepenz:aboutlibraries-core:10.6.1'
     implementation 'com.airbnb.android:paris:2.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.github.matthiaszimmermann:EGM96:master-SNAPSHOT'
+    // implementation 'com.github.matthiaszimmermann:EGM96:master-SNAPSHOT'
 
     implementation("androidx.room:room-ktx:2.5.0")
     kapt("androidx.room:room-compiler:2.5.0")

@@ -13,7 +13,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
-import org.matthiaszimmermann.location.egm96.Geoid
+// import org.matthiaszimmermann.location.egm96.Geoid
 
 class DefaultLocationClient(
     private val context: Context,
@@ -24,7 +24,7 @@ class DefaultLocationClient(
     var lastTimeStamp = 0L
 
     init {
-        Geoid.init()
+        // Geoid.init()
 
     }
 
@@ -60,9 +60,9 @@ class DefaultLocationClient(
                     locationResult.locations.lastOrNull()?.let { location ->
                         if (CarStatsViewer.appPreferences.useLocation) {
                             if (location.altitude > 0 || location.altitude < 0 || emulatorMode) {
-                                location.altitude -= Geoid.getOffset(
-                                    org.matthiaszimmermann.location.Location(location.latitude, location.longitude)
-                                )
+                                // location.altitude -= Geoid.getOffset(
+                                //     org.matthiaszimmermann.location.Location(location.latitude, location.longitude)
+                                // )
                                 if (location.time > lastTimeStamp + 5_000) {
                                     InAppLogger.w("LocationClient: Interval exceeded!")
                                 }

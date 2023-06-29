@@ -24,6 +24,8 @@ import kotlin.math.roundToInt
 class DataProcessor {
     val carPropertiesData = CarPropertiesData()
 
+    val chargingPointInterval = 5_000
+
     // private var usedEnergySum = 0.0
     private var previousDrivingState: Int = DrivingState.UNKNOWN
     private var previousStateOfCharge: Float = -1f
@@ -34,6 +36,8 @@ class DataProcessor {
     private var valueUsedEnergy: Double = 0.0
 
     private val timestampSynchronizer = TimestampSynchronizer()
+
+    private var lastChargingPointTime: Long = -1L
 
     /**
      * List of local copies of the current trips. Used for storing sum values and saving them to
@@ -521,16 +525,22 @@ class DataProcessor {
             if (realTimeData.drivingState != DrivingState.CHARGE || localChargingSession?.charging_session_id == null) {
                 InAppLogger.w("[NEO] No charging session loaded yet!")
             } else {
+                val currentTime = System.currentTimeMillis()
                 val chargingPoint = ChargingPoint(
-                    System.currentTimeMillis(),
+                    currentTime,
                     localChargingSession?.charging_session_id!!,
                     mUsedEnergy.toFloat(),
                     realTimeData.power?:0f,
                     realTimeData.stateOfCharge?:0f,
-                    markerType
+                    point_marker_type = if (currentTime > lastChargingPointTime + (chargingPointInterval * 1.1) && markerType == null) {
+                        PlotLineMarkerType.BEGIN_SESSION.int
+                    } else {
+                        markerType
+                    }
                 )
 
                 CarStatsViewer.tripDataSource.addChargingPoint(chargingPoint)
+                lastChargingPointTime = currentTime
                 localChargingSession?.let {
                     val chargingPoints = it.chargingPoints?.toMutableList()?: mutableListOf()
                     chargingPoints.add(chargingPoint)

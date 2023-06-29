@@ -4,14 +4,18 @@ import kotlinx.coroutines.flow.*
 
 object Ticker {
     fun tickerFlow(interval: Long) = flow {
-        val startTime = System.currentTimeMillis()
-        var loops = 1L
+        var startTime = System.currentTimeMillis()
+        // var loops = 1L
 
         while (true) {
             while (true) {
-                if (System.currentTimeMillis() > (startTime + (loops * interval))) break
+                val currentTime = System.currentTimeMillis()
+                if (currentTime >= (startTime + interval)) {
+                    startTime = currentTime
+                    break
+                }
             }
-            loops ++
+            // loops ++
             emit(Unit)
         }
     }
