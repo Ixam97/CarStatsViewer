@@ -169,11 +169,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="550dp"/>
 
-            <Button
-                android:visibility="visible"
-                android:id="@+id/summary_button_secondary_dimension"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button
+                    android:visibility="visible"
+                    android:id="@+id/summary_button_dist_20"
+                    android:layout_width="wrap_content"
+                    android:text="20 km"
+                    android:layout_height="80dp"/>
+                <Button
+                    android:visibility="visible"
+                    android:id="@+id/summary_button_dist_40"
+                    android:layout_width="wrap_content"
+                    android:text="40 km"
+                    android:layout_marginStart="15dp"
+                    android:layout_height="80dp"/>
+                <Button
+                    android:visibility="visible"
+                    android:id="@+id/summary_button_dist_100"
+                    android:layout_width="wrap_content"
+                    android:text="100 km"
+                    android:layout_marginStart="15dp"
+                    android:layout_height="80dp"/>
+                <Button
+                    android:visibility="visible"
+                    android:id="@+id/summary_button_secondary_dimension"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="15dp"
+                    android:layout_height="80dp"/>
+            </LinearLayout>
 
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>

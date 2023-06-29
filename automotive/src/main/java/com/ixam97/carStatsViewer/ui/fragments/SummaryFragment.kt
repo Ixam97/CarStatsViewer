@@ -144,6 +144,19 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             appPreferences.secondaryConsumptionDimension = currentIndex
             setSecondaryConsumptionPlotDimension(currentIndex)
         }
+
+        summary_button_dist_20.setOnClickListener {
+            summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(20_000) + 1
+            summary_consumption_plot.dimensionShift = 0
+        }
+        summary_button_dist_40.setOnClickListener {
+            summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(40_000) + 1
+            summary_consumption_plot.dimensionShift = 0
+        }
+        summary_button_dist_100.setOnClickListener {
+            summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(100_000) + 1
+            summary_consumption_plot.dimensionShift = 0
+        }
     }
 
     private fun setupHeader() {
@@ -324,7 +337,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         summary_charge_plot_view.reset()
         chargePlotLine.reset()
 
-        InAppLogger.d("Charging sessions size: ${chargingSessions?.size}, selected index: $progress")
+        // InAppLogger.d("Charging sessions size: ${chargingSessions?.size}, selected index: $progress")
 
         if (chargingSessions == null || chargingSessions.isEmpty() || progress >= chargingSessions.size || progress < 0) {
             summary_charge_plot_sub_title_curve.text = "%s (0/0)".format(
