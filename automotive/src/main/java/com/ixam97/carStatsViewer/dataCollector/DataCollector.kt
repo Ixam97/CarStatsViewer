@@ -58,16 +58,16 @@ class DataCollector: Service() {
         }
 
         startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        Thread.setDefaultUncaughtExceptionHandler { t, e ->
-            InAppLogger.e("[NEO] Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
-            exitProcess(0)
-        }
+        // Thread.setDefaultUncaughtExceptionHandler { t, e ->
+        //     InAppLogger.e("[NEO] Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
+        //     exitProcess(0)
+        // }
 
         dataProcessor = CarStatsViewer.dataProcessor
 
@@ -148,22 +148,9 @@ class DataCollector: Service() {
             carPropertiesClient.updateProperty(it)
         }
 
-        serviceScope.launch {
-            val serviceIntent = Intent(applicationContext, AutoStartReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(
-                applicationContext,
-                0,
-                serviceIntent,
-                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
-            )
-            while (true) {
-                serviceIntent.action = "com.ixam97.carStatsViewer.RestartAction"
-                serviceIntent.putExtra("reason", "termination")
-                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 5000, pendingIntent)
-                delay(4000)
-            }
-        }
+        if (CarStatsViewer.appPreferences.autostart)
+            CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000)
+
     }
 
     override fun onDestroy() {

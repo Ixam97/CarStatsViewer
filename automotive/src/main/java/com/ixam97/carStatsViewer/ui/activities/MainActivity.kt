@@ -332,7 +332,7 @@ class MainActivity : FragmentActivity() {
             IntentFilter(CarStatsViewer.liveDataApis[0].broadcastAction)
         )
 
-        main_button_performance.isEnabled = false
+        main_button_performance.isEnabled = true
         main_button_performance.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
 
         if (appPreferences.versionString != BuildConfig.VERSION_NAME) {
@@ -579,7 +579,7 @@ class MainActivity : FragmentActivity() {
         }
 
         main_button_performance.setOnClickListener {
-            throw IOException()
+            throw Exception("Intentional crash")
         }
 
         main_button_history.setOnClickListener {

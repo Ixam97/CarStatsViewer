@@ -92,6 +92,7 @@
     <string name="restart_notification_reason_crash">a crash</string>
     <string name="restart_notification_reason_reboot">a reboot</string>
     <string name="restart_notification_reason_update">an update</string>
+    <string name="restart_notification_reason_unknown">%s has restarted for an unknown reason.</string>
     <string name="restart_notification_message">Please restart service for statistics tracking.</string>
     <string name="restart_notification_dismiss">Dismiss</string>
     <string name="restart_notification_app">Start app</string>

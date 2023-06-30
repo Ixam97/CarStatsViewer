@@ -2,12 +2,15 @@ package com.ixam97.carStatsViewer
 
 import android.app.*
 import android.content.Context
+import android.content.Intent
 import android.util.TypedValue
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
+import com.ixam97.carStatsViewer.database.log.LogDao
+import com.ixam97.carStatsViewer.database.log.LogDatabase
 import com.ixam97.carStatsViewer.database.tripData.*
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
@@ -15,8 +18,10 @@ import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
+import kotlin.system.exitProcess
 
 var emulatorMode = false
 var emulatorPowerSign = -1
@@ -44,6 +49,7 @@ class CarStatsViewer : Application() {
 
         var foregroundServiceStarted = false
         var restartNotificationDismissed = false
+        var restartReason: String? = null
 
         // var tripData: TripData? = null
         // var dataManager: DataManager? = null
@@ -51,12 +57,71 @@ class CarStatsViewer : Application() {
         lateinit var tripDatabase: TripDataDatabase
         lateinit var tripDataSource: LocalTripDataSource
         lateinit var dataProcessor: DataProcessor
+
+        lateinit var logDao: LogDao
+
+        val appContextIsInitialized: Boolean get() = this::appContext.isInitialized
+
+        fun setupRestartAlarm(context: Context, reason: String, delay: Long, cancel: Boolean = false) {
+            val serviceIntent = Intent(context, AutoStartReceiver::class.java)
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            serviceIntent.action = "com.ixam97.carStatsViewer.RestartAction"
+            serviceIntent.putExtra("reason", reason)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                0,
+                serviceIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            alarmManager.cancel(pendingIntent)
+            if (cancel) return
+            if (delay < 10_000) {
+                alarmManager.set(
+                    AlarmManager.RTC,
+                    System.currentTimeMillis() + delay,
+                    pendingIntent
+                )
+                InAppLogger.v("[ASR] Setup single shot alarm")
+            } else {
+                alarmManager.setRepeating(
+                    AlarmManager.RTC,
+                    System.currentTimeMillis() + delay,
+                    delay,
+                    pendingIntent
+                )
+                InAppLogger.v("[ASR] Setup repeating alarm")
+            }
+        }
     }
 
 
 
     override fun onCreate() {
         super.onCreate()
+
+        appContext = applicationContext
+        appPreferences = AppPreferences(applicationContext)
+
+        val logDatabase = Room.databaseBuilder(
+            applicationContext,
+            LogDatabase::class.java,
+            "LogDatabase"
+        ).build()
+        logDao = logDatabase.logDao()
+
+        Thread.setDefaultUncaughtExceptionHandler { t, e ->
+
+            try {
+                setupRestartAlarm(applicationContext, "crash", 2_000)
+                InAppLogger.i("setup crash alarm")
+            } catch (e: Exception) {
+                InAppLogger.e(e.stackTraceToString())
+            }
+
+            InAppLogger.e("[NEO] Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
+
+            exitProcess(0)
+        }
 
         val MIGRATION_5_6 = object: Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -97,9 +162,6 @@ class CarStatsViewer : Application() {
         //         .detectLeakedClosableObjects()
         //         .build()
         // )
-
-        appContext = applicationContext
-        appPreferences = AppPreferences(applicationContext)
 
         InAppLogger.i("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
 

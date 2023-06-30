@@ -43,6 +43,7 @@
     <string name="restart_notification_reason_crash">Absturz</string>
     <string name="restart_notification_reason_reboot">Systemneustart</string>
     <string name="restart_notification_reason_update">Update</string>
+    <string name="restart_notification_reason_unknown">%s wurde aus unbekanntem Grund neugestartet.</string>
     <string name="restart_notification_message">Bitte Service für Fahrdatenerfassung starten.</string>
     <string name="restart_notification_dismiss">Abbrechen</string>
     <string name="restart_notification_app">App starten</string>

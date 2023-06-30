@@ -107,6 +107,7 @@ class SettingsActivity : FragmentActivity() {
 
         settings_switch_autostart.setOnClickListener {
             appPreferences.autostart = settings_switch_autostart.isChecked
+            CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000, !appPreferences.autostart)
         }
 
         if (emulatorMode) settings_switch_distance_unit.visibility = View.VISIBLE

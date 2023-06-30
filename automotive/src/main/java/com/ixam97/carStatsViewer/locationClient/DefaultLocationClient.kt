@@ -31,7 +31,7 @@ class DefaultLocationClient(
     @SuppressLint("MissingPermission")
     override fun getLocationUpdates(interval: Long): Flow<Location?> {
         return callbackFlow {
-            InAppLogger.i("Setting up location client")
+            InAppLogger.i("[LOC] Setting up location client")
             if (!context.hasLocationPermission()) {
                 throw LocationClient.LocationException("Missing location permissions")
             }
@@ -48,7 +48,7 @@ class DefaultLocationClient(
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setMaxWaitTime(interval)
 
-            InAppLogger.d("MaxWaitTime: ${request.maxWaitTime}")
+            InAppLogger.d("[LOC] MaxWaitTime: ${request.maxWaitTime}")
 
             if (locationNotAvailable) {
                 throw LocationClient.LocationException("GPS is not enabled!")
@@ -64,12 +64,12 @@ class DefaultLocationClient(
                                 //     org.matthiaszimmermann.location.Location(location.latitude, location.longitude)
                                 // )
                                 if (location.time > lastTimeStamp + 5_000) {
-                                    InAppLogger.w("LocationClient: Interval exceeded!")
+                                    InAppLogger.w("[LOC] LocationClient: Interval exceeded!")
                                 }
                                 lastTimeStamp = location.time
                                 launch { send(location) }
                             } else {
-                                InAppLogger.w("LocationClient has returned altitude of 0m")
+                                InAppLogger.w("[LOC] LocationClient has returned altitude of 0m")
                             }
                         } else {
                             launch { send(null) }
@@ -84,7 +84,7 @@ class DefaultLocationClient(
                 Looper.getMainLooper()
             )
 
-            InAppLogger.i("Location tracking started. isGpsEnabled: $isGpsEnabled, isNetworkEnabled: $isNetworkEnabled")
+            InAppLogger.i("[LOC] Location tracking started. isGpsEnabled: $isGpsEnabled, isNetworkEnabled: $isNetworkEnabled")
 
             awaitClose {
                 client.removeLocationUpdates(locationCallback)

@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer
 
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -15,60 +16,69 @@ import kotlinx.coroutines.launch
 
 class AutoStartReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
+
+
         val reasonMap = mapOf(
             "crash" to context.getString(R.string.restart_notification_reason_crash),
             "reboot" to context.getString(R.string.restart_notification_reason_reboot),
             "update" to context.getString(R.string.restart_notification_reason_update),
             "termination" to "an unexpected termination"
         )
-        var reason: String? = null
+        var reason: String? = CarStatsViewer.restartReason
 
-        InAppLogger.d("AutoStartReceiver, Service started: ${CarStatsViewer.foregroundServiceStarted}, dismissed: ${CarStatsViewer.restartNotificationDismissed}")
+        InAppLogger.v("[ASR] Service started: ${CarStatsViewer.foregroundServiceStarted}, dismissed: ${CarStatsViewer.restartNotificationDismissed}")
 
         if (!CarStatsViewer.appPreferences.autostart) return
+
+        CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000)
+
         if (CarStatsViewer.foregroundServiceStarted) return
         if (CarStatsViewer.restartNotificationDismissed) return
 
         intent?.let {
-            InAppLogger.d("${intent.toString()} ${intent.extras?.keySet().let { key ->
+            InAppLogger.d("[ASR] ${intent.toString()} ${intent.extras?.keySet().let { key ->
                 val stringBuilder = StringBuilder()
                 key?.forEach { 
                     stringBuilder.append("$it ")
                 }
                 stringBuilder.toString()
             }}")
-            if (intent.hasExtra("dismiss"))
-            {
+            if (intent.hasExtra("dismiss")) {
                 if (intent.getBooleanExtra("dismiss", false)) {
                     CarStatsViewer.restartNotificationDismissed = true
                     CarStatsViewer.notificationManager.cancel(CarStatsViewer.RESTART_NOTIFICATION_ID)
-                    InAppLogger.d("AutoStartReceiver: Dismiss intent")
+                    InAppLogger.d("[ARS] Dismiss intent")
                     return
                 }
             }
-            reason = if (intent.hasExtra("reason")) {
-                reasonMap[intent.getStringExtra("reason")]
-            } else {
-                when (intent.action) {
-                    Intent.ACTION_BOOT_COMPLETED -> reasonMap["reboot"]
-                    Intent.ACTION_MY_PACKAGE_REPLACED -> reasonMap["update"]
-                    else -> "unknown event"
+            if (reason == null || reason == "termination") {
+                reason = if (intent.hasExtra("reason")) {
+                    intent.getStringExtra("reason")
+                    //reasonMap[]
+                } else {
+                    when (intent.action) {
+                        Intent.ACTION_BOOT_COMPLETED -> "reboot"
+                        Intent.ACTION_MY_PACKAGE_REPLACED -> "update"
+                        else -> "termination"
+                    }
                 }
+                InAppLogger.i("[ASR] Restart reason: $reason")
+                CarStatsViewer.restartReason = reason
             }
         }
 
-        InAppLogger.i("AutoStartReceiver fired. Reason: $reason")
+        // InAppLogger.i("AutoStartReceiver fired. Reason: $reason")
 
         val notificationText =
-            if (reason != null) {
+            if (reason != null && reason != "termination") {
                 context.getString(R.string.restart_notification_title,
                     context.getString(R.string.app_name_short),
-                    reason)
-            } else "Car Stats Viewer started in Background."
+                    reasonMap[reason])
+            } else context.getString(R.string.restart_notification_reason_unknown, context.getString(R.string.app_name_short))
 
         val actionServicePendingIntent = PendingIntent.getForegroundService(
             context.applicationContext,
-            0,
+            1,
             Intent(context.applicationContext, DataCollector::class.java).apply {
                 putExtra("reason", reason)
             },
@@ -76,7 +86,7 @@ class AutoStartReceiver: BroadcastReceiver() {
         )
         val actionActivityPendingIntent = PendingIntent.getActivity(
             context.applicationContext,
-            0,
+            2,
             Intent(context.applicationContext, PermissionsActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE
         )
@@ -106,7 +116,7 @@ class AutoStartReceiver: BroadcastReceiver() {
                 context.getString(R.string.restart_notification_dismiss),
                 PendingIntent.getBroadcast(
                     context.applicationContext,
-                    0,
+                    3,
                     Intent(context.applicationContext, AutoStartReceiver::class.java).apply {
                         putExtra("dismiss", true)
                     },
@@ -120,12 +130,16 @@ class AutoStartReceiver: BroadcastReceiver() {
 
         CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
         CoroutineScope(Dispatchers.Default).launch {
+            while (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed) {
+                CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
+                delay(5_000)
+            }
             // The heads up notification disappears after 8 seconds and is not visible in the
             // notification center. Update notification without CATEGORY_CALL to keep it visible.
-            delay(8_000)
-            startupNotificationBuilder.setCategory(Notification.CATEGORY_STATUS)
-            if (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed)
-                CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
+            // delay(8_000)
+            // startupNotificationBuilder.setCategory(Notification.CATEGORY_STATUS)
+            // if (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed)
+            //     CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
         }
     }
 }

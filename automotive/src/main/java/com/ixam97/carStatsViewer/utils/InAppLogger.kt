@@ -38,12 +38,12 @@ object InAppLogger {
         else -> "?"
     }
 
-    private val logDatabase = Room.databaseBuilder(
-        CarStatsViewer.appContext,
-        LogDatabase::class.java,
-        "LogDatabase"
-    ).build()
-    private val logDao = logDatabase.logDao()
+    // private val logDatabase = Room.databaseBuilder(
+    //     CarStatsViewer.appContext,
+    //     LogDatabase::class.java,
+    //     "LogDatabase"
+    // ).build()
+    private val logDao = CarStatsViewer.logDao
 
     fun v(message: String) = log(message, Log.VERBOSE)
     fun d(message: String) = log(message, Log.DEBUG)
