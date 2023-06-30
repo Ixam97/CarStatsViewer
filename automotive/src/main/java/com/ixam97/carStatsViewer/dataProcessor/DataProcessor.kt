@@ -5,6 +5,7 @@ import com.ixam97.carStatsViewer.Defines
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
 import com.ixam97.carStatsViewer.dataCollector.DrivingState
+import com.ixam97.carStatsViewer.dataCollector.IgnitionState
 import com.ixam97.carStatsViewer.utils.TimeTracker
 import com.ixam97.carStatsViewer.database.tripData.*
 import com.ixam97.carStatsViewer.emulatorMode
@@ -28,6 +29,7 @@ class DataProcessor {
 
     // private var usedEnergySum = 0.0
     private var previousDrivingState: Int = DrivingState.UNKNOWN
+    private var previousIgnitionState: Int = IgnitionState.UNDEFINED
     private var previousStateOfCharge: Float = -1f
 
     private var pointDrivenDistance: Double = 0.0
@@ -256,8 +258,15 @@ class DataProcessor {
     private fun stateUpdate() {
         val drivingState = realTimeData.drivingState
         val prevState = previousDrivingState
+        val ignitionState = realTimeData.ignitionState?:IgnitionState.UNDEFINED
+        val prevIgnition = previousIgnitionState
 
         previousDrivingState = drivingState
+        previousIgnitionState = ignitionState
+
+        if (ignitionState != prevIgnition) {
+            InAppLogger.i("[NEO] Ignition switched to ${IgnitionState.nameMap[ignitionState]}")
+        }
 
         if (drivingState != prevState) {
             CoroutineScope(Dispatchers.IO).launch {
