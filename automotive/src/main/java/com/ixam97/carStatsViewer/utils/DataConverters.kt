@@ -16,7 +16,12 @@ object DataConverters {
 
         drivingPoints.forEachIndexed() { index, drivingPoint ->
             if (index == 0) plotLine.add(consumptionPlotLineItemFromDrivingPoint(drivingPoint, null))
-            else plotLine.add(consumptionPlotLineItemFromDrivingPoint(drivingPoint, plotLine[index - 1]))
+            else {
+                if ((drivingPoint.point_marker_type == 2 && plotLine[index - 1].Marker == PlotLineMarkerType.END_SESSION))
+                    plotLine.add(consumptionPlotLineItemFromDrivingPoint(drivingPoint.copy(point_marker_type = 0), plotLine[index - 1]))
+                else
+                    plotLine.add(consumptionPlotLineItemFromDrivingPoint(drivingPoint, plotLine[index - 1]))
+            }
         }
 
         return plotLine
