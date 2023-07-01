@@ -17,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
-import com.ixam97.carStatsViewer.dataCollector.DrivingState
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
@@ -464,7 +463,7 @@ class MainActivity : FragmentActivity() {
         if (main_charge_layout.visibility == View.GONE && neoChargePortConnected) {
             main_consumption_layout.visibility = View.GONE
             main_charge_layout.visibility = View.VISIBLE
-        } else if (CarStatsViewer.dataProcessor.realTimeData.drivingState == DrivingState.DRIVE && main_charge_layout.visibility == View.VISIBLE) {
+        } else if (moving && main_charge_layout.visibility == View.VISIBLE) {
             main_charge_layout.visibility = View.GONE
             main_consumption_layout.visibility = View.VISIBLE
         }
