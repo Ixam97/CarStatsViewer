@@ -10,7 +10,7 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.dataCollector.DrivingState
+import com.ixam97.carStatsViewer.dataProcessor.DrivingState
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import org.json.JSONObject
 import java.io.DataOutputStream
@@ -82,7 +82,7 @@ class AbrpLiveData (
 
             if (detailedLog) {
                 var logString =
-                    "ABRP live-data: Status: ${con.responseCode}, Msg: ${con.responseMessage}, Content:"
+                    "[ABRP] Status: ${con.responseCode}, Msg: ${con.responseMessage}, Content:"
                 logString += try {
                     con.inputStream.bufferedReader().use { it.readText() }
 
@@ -90,22 +90,22 @@ class AbrpLiveData (
                     "No response content"
                 }
                 if (abrpDataSet.lat == null) logString += ". No valid location!"
-                InAppLogger.d(logString)
+                InAppLogger.v(logString)
             }
             con.inputStream.close()
 
             con.disconnect()
         } catch (e: java.net.SocketTimeoutException) {
-            InAppLogger.e("ABRP live-data: Network timeout error")
+            InAppLogger.e("[ABRP] Network timeout error")
             return ConnectionStatus.ERROR
         } catch (e: java.lang.Exception) {
-            InAppLogger.e("ABRP live-data: Network connection error")
+            InAppLogger.e("[ABRP] Network connection error")
             return ConnectionStatus.ERROR
         }
         if (responseCode == 200) {
             return ConnectionStatus.CONNECTED
         }
-        InAppLogger.e("ABRP live-data: Connection failed. Response code: $responseCode")
+        InAppLogger.e("[ABRP] Connection failed. Response code: $responseCode")
         if (responseCode == 401) InAppLogger.e("          Auth error")
         return ConnectionStatus.ERROR
     }

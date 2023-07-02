@@ -97,10 +97,16 @@ class DataCollector: Service() {
         )
 
         dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
-            batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY)
+            batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
+            vehicleMake = carPropertiesClient.getStringProperty(CarProperties.INFO_MAKE),
+            modelName = carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL)
         )
 
-        if (carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL) == "Speedy Model") {
+        dataProcessor.staticVehicleData.let {
+            InAppLogger.i("[NEO] Make: ${it.vehicleMake}, model: ${it.modelName}, battery capacity: ${(it.batteryCapacity?:0f)/1000} kWh")
+        }
+
+        if (dataProcessor.staticVehicleData.modelName == "Speedy Model") {
             Toast.makeText(this, "Emulator Mode", Toast.LENGTH_LONG).show()
             emulatorMode = true
         }

@@ -4,7 +4,6 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.Defines
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
-import com.ixam97.carStatsViewer.dataCollector.DrivingState
 import com.ixam97.carStatsViewer.utils.TimeTracker
 import com.ixam97.carStatsViewer.database.tripData.*
 import com.ixam97.carStatsViewer.emulatorMode
@@ -28,6 +27,7 @@ class DataProcessor {
 
     // private var usedEnergySum = 0.0
     private var previousDrivingState: Int = DrivingState.UNKNOWN
+    private var previousIgnitionState: Int = IgnitionState.UNDEFINED
     private var previousStateOfCharge: Float = -1f
 
     private var pointDrivenDistance: Double = 0.0
@@ -38,6 +38,10 @@ class DataProcessor {
     private val timestampSynchronizer = TimestampSynchronizer()
 
     private var lastChargingPointTime: Long = -1L
+
+    private var localSessionsAccess: Boolean = true
+
+    var dataInitialized: Boolean? = null
 
     /**
      * List of local copies of the current trips. Used for storing sum values and saving them to
@@ -159,6 +163,19 @@ class DataProcessor {
             chargePortConnected = if (carPropertiesData.ChargePortConnected.value == null) null else (carPropertiesData.ChargePortConnected.value as Boolean?)?: false
         )
 
+        if (!realTimeData.isInitialized() || !staticVehicleData.isInitialized()) {
+            if (dataInitialized != false) {
+                dataInitialized = false
+                InAppLogger.i("[NEO] Waiting for car properties to be initialized...")
+            }
+            return
+        }
+
+        if (dataInitialized == false) {
+            dataInitialized = true
+            InAppLogger.i("[NEO] Car properties initialization complete.")
+        }
+
         when (carProperty) {
             CarProperties.PERF_VEHICLE_SPEED -> speedUpdate()
             CarProperties.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE -> powerUpdate()
@@ -256,8 +273,15 @@ class DataProcessor {
     private fun stateUpdate() {
         val drivingState = realTimeData.drivingState
         val prevState = previousDrivingState
+        val ignitionState = realTimeData.ignitionState?:IgnitionState.UNDEFINED
+        val prevIgnition = previousIgnitionState
 
         previousDrivingState = drivingState
+        previousIgnitionState = ignitionState
+
+        if (ignitionState != prevIgnition) {
+            InAppLogger.i("[NEO] Ignition switched from ${IgnitionState.nameMap[prevIgnition]} to ${IgnitionState.nameMap[ignitionState]}")
+        }
 
         if (drivingState != prevState) {
             CoroutineScope(Dispatchers.IO).launch {
@@ -373,9 +397,9 @@ class DataProcessor {
             val lastDriveTime = CarStatsViewer.tripDataSource.getLatestDrivingPoint()?.driving_point_epoch_time
             if (lastDriveTime != null) {
                 if (Date().month != Date(lastDriveTime).month)
-                    resetTrip(TripType.MONTH, drivingState)
+                    resetTrip(TripType.MONTH, oldDrivingState)
                 if (lastDriveTime < (System.currentTimeMillis() - Defines.AUTO_RESET_TIME))
-                    resetTrip(TripType.AUTO, drivingState)
+                    resetTrip(TripType.AUTO, oldDrivingState)
             } else {
                 InAppLogger.w("[NEO] No existing driving points for reset reference!")
             }
@@ -426,6 +450,10 @@ class DataProcessor {
             )
 
             CarStatsViewer.tripDataSource.addDrivingPoint(drivingPoint)
+            // val sessionIterator = localSessions.iterator()
+            while (!localSessionsAccess) {
+                InAppLogger.w("WAITING for local session access")
+            }
             localSessions.forEachIndexed { index, session ->
                 val drivingPoints = session.drivingPoints?.toMutableList()
                 drivingPoints?.add(drivingPoint)
@@ -444,6 +472,8 @@ class DataProcessor {
 
     /** Update sums of a trip or charging session */
     private fun updateTripDataValues(drivingState: Int = realTimeData.drivingState) {
+        localSessionsAccess = false
+        InAppLogger.v("Local session modification started")
         val mDrivenDistance = valueDrivenDistance
         valueDrivenDistance = 0.0
         val mUsedEnergy = valueUsedEnergy
@@ -453,6 +483,9 @@ class DataProcessor {
             DrivingState.DRIVE -> newDrivingDeltas(mDrivenDistance, mUsedEnergy)
             DrivingState.CHARGE -> newChargingDeltas(mUsedEnergy)
         }
+
+        localSessionsAccess = true
+        InAppLogger.v("Local session modification ended")
     }
 
     fun updateTripDataValuesByTick() {
@@ -480,8 +513,15 @@ class DataProcessor {
     }
 
     private suspend fun writeTripsToDatabase() {
-        localSessions.forEach { localSession ->
-            CarStatsViewer.tripDataSource.updateDrivingSession(localSession)
+        try {
+            while (!localSessionsAccess) {
+                InAppLogger.w("WAITING for local session access")
+            }
+            localSessions.forEach { localSession ->
+                CarStatsViewer.tripDataSource.updateDrivingSession(localSession)
+            }
+        } catch (e: Exception) {
+            InAppLogger.e("FATAL ERROR! Writing trips was not successful: ${e.stackTraceToString()}")
         }
     }
 

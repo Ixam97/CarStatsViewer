@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.dataCollector
+package com.ixam97.carStatsViewer.dataProcessor
 
 object DrivingState {
     const val UNKNOWN = -1

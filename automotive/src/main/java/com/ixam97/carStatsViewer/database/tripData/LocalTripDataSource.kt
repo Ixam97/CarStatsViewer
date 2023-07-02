@@ -6,19 +6,21 @@ class LocalTripDataSource(
     private val tripDao: TripDao
 ): TripDataSource {
 
+    private val TAG = "[TDB]"
+
     override suspend fun addDrivingPoint(drivingPoint: DrivingPoint) {
         val activeSessionIds = tripDao.getActiveDrivingSessionIds()
         if (!tripDao.drivingPointExists(drivingPoint.driving_point_epoch_time)) {
             if ((drivingPoint.point_marker_type?:0) == 1) {
                 tripDao.getLatestDrivingPoint()?.let {
                     if ((it.point_marker_type?:0) != 2) {
-                        InAppLogger.d("[DB] Updated charging point marker type")
+                        InAppLogger.d("$TAG Updated driving point marker type")
                         tripDao.upsertDrivingPoint(it.copy(point_marker_type = 2))
                     }
                 }
             }
             tripDao.upsertDrivingPoint(drivingPoint)
-            InAppLogger.v("[DB] Wrote driving point: $drivingPoint")
+            InAppLogger.v("$TAG Wrote driving point: $drivingPoint")
         }
 
         for (sessionId in activeSessionIds) {
@@ -28,16 +30,16 @@ class LocalTripDataSource(
 
     override suspend fun getLatestDrivingPoint(): DrivingPoint? {
         val drivingPoint = tripDao.getLatestDrivingPoint()
-        InAppLogger.v("[DB] retrieved latest driving point: $drivingPoint")
+        InAppLogger.v("$TAG retrieved latest driving point: $drivingPoint")
         return drivingPoint
     }
 
     override suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long? {
         endDrivingSession(timestamp, prevSessionId)?.let {
-            InAppLogger.v("[DB] Driving session with ID $prevSessionId has been superseded")
+            InAppLogger.v("$TAG Driving session with ID $prevSessionId has been superseded")
             return startDrivingSession(timestamp, it)
         }
-        InAppLogger.w("[DB] Driving session with ID $prevSessionId has not been superseded!")
+        InAppLogger.w("$TAG Driving session with ID $prevSessionId has not been superseded!")
         return null
     }
 
@@ -78,6 +80,7 @@ class LocalTripDataSource(
     }
 
     override suspend fun updateDrivingSession(drivingSession: DrivingSession) {
+        InAppLogger.v("$TAG Updating driving session with ID ${drivingSession.driving_session_id}")
         tripDao.upsertDrivingSession(drivingSession)
     }
 
@@ -117,21 +120,21 @@ class LocalTripDataSource(
         val deletedDrivingPoints = tripDao.clearOldDrivingPoints(earliestEpochTime)
         val deletedChargingSessions = tripDao.clearOldChargingSessions(earliestEpochTime)
         val deletedChargingPoints = tripDao.clearOldChargingPoints(earliestEpochTime)
-        InAppLogger.v("[DB] Deleted session ID: $sessionId ($deletedSessions sessions, $deletedDrivingPointCrossRefs cross refs, $deletedDrivingPoints driving points, $deletedChargingCrossRefs charging cross refs, $deletedChargingSessions charging sessions, $deletedChargingPoints charging points)")
+        InAppLogger.v("$TAG Deleted session ID: $sessionId ($deletedSessions sessions, $deletedDrivingPointCrossRefs cross refs, $deletedDrivingPoints driving points, $deletedChargingCrossRefs charging cross refs, $deletedChargingSessions charging sessions, $deletedChargingPoints charging points)")
     }
 
     override suspend fun addChargingPoint(chargingPoint: ChargingPoint) {
         if ((chargingPoint.point_marker_type?:0) == 1) {
             tripDao.getLatestChargingPoint()?.let {
                 if ((it.point_marker_type?:0) != 2) {
-                    InAppLogger.v("[DB] Updated charging point marker type")
+                    InAppLogger.v("$TAG Updated charging point marker type")
                     val updatedChargingPoint = it.copy(point_marker_type = 2)
                     tripDao.upsertChargingPoint(updatedChargingPoint)
                 }
             }
         }
         tripDao.upsertChargingPoint(chargingPoint)
-        InAppLogger.v("[DB] Wrote charging data point: $chargingPoint")
+        InAppLogger.v("$TAG Wrote charging data point: $chargingPoint")
     }
 
     override suspend fun getLatestChargingPoint(): ChargingPoint? {
@@ -168,7 +171,7 @@ class LocalTripDataSource(
 
         val session = tripDao.getChargingSessionById(id).copy(end_epoch_time = timestamp)
         tripDao.upsertChargingSession(session)
-        InAppLogger.v("[DB] Upserted charging session: $session")
+        InAppLogger.v("$TAG Upserted charging session: $session")
     }
 
     override suspend fun getActiveChargingSessionIds(): List<Long> {

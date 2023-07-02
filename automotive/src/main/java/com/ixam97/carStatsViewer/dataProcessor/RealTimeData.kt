@@ -1,7 +1,6 @@
 package com.ixam97.carStatsViewer.dataProcessor
 
 import android.car.VehicleIgnitionState
-import com.ixam97.carStatsViewer.dataCollector.DrivingState
 
 data class RealTimeData(
     val speed: Float? = null,
@@ -34,7 +33,7 @@ data class RealTimeData(
     private fun getDriveState(): Int {
         return if (chargePortConnected == true) DrivingState.CHARGE
         else if (ignitionState == VehicleIgnitionState.START) DrivingState.DRIVE
-        else if (ignitionState != VehicleIgnitionState.UNDEFINED) DrivingState.PARKED
+        else if (ignitionState != VehicleIgnitionState.UNDEFINED && ignitionState != null) DrivingState.PARKED
         else DrivingState.UNKNOWN
     }
 
