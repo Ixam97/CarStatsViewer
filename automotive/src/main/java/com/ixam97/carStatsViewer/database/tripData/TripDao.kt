@@ -45,7 +45,10 @@ interface TripDao {
     fun getPastDrivingSessions(): List<DrivingSession>
 
     @Query("SELECT * FROM ChargingSession WHERE charging_session_id = :sessionId")
-    fun getChargingSessionById(sessionId: Long): ChargingSession
+    fun getChargingSessionById(sessionId: Long): ChargingSession?
+
+    @Query("SELECT * FROM ChargingSession ORDER BY end_epoch_time DESC LIMIT 1")
+    fun getLatestChargingSession(): ChargingSession?
 
     @Query("SELECT charging_session_id FROM ChargingSession WHERE end_epoch_time IS null")
     fun getActiveChargingSessionIds(): List<Long>

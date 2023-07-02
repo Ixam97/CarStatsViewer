@@ -42,6 +42,7 @@ interface TripDataSource {
      */
     suspend fun addChargingPoint(chargingPoint: ChargingPoint)
 
+
     suspend fun getLatestChargingPoint(): ChargingPoint?
 
     suspend fun startChargingSession(timestamp: Long, outsideTemp: Float, lat: Float? = null, lon: Float? = null): Long
@@ -50,7 +51,9 @@ interface TripDataSource {
 
     suspend fun getActiveChargingSessionIds(): List<Long>
 
-    suspend fun getChargingSessionById(sessionId: Long): ChargingSession
+    suspend fun getChargingSessionById(sessionId: Long): ChargingSession?
+
+    suspend fun getLatestChargingSession(): ChargingSession?
 
     suspend fun getCompleteChargingSessionById(sessionId: Long): ChargingSession
 

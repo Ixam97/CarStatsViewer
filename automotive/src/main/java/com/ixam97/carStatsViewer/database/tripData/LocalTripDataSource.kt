@@ -124,9 +124,9 @@ class LocalTripDataSource(
     }
 
     override suspend fun addChargingPoint(chargingPoint: ChargingPoint) {
-        if ((chargingPoint.point_marker_type?:0) == 1) {
+        if ((chargingPoint.point_marker_type?:0) == 1 || (chargingPoint.point_marker_type?:0) == 3) {
             tripDao.getLatestChargingPoint()?.let {
-                if ((it.point_marker_type?:0) != 2) {
+                if ((it.point_marker_type?:0) != 2 && (it.point_marker_type?:0) != 3) {
                     InAppLogger.v("$TAG Updated charging point marker type")
                     val updatedChargingPoint = it.copy(point_marker_type = 2)
                     tripDao.upsertChargingPoint(updatedChargingPoint)
@@ -169,7 +169,7 @@ class LocalTripDataSource(
             }
         } else sessionId
 
-        val session = tripDao.getChargingSessionById(id).copy(end_epoch_time = timestamp)
+        val session = tripDao.getChargingSessionById(id)?.copy(end_epoch_time = timestamp) ?: return
         tripDao.upsertChargingSession(session)
         InAppLogger.v("$TAG Upserted charging session: $session")
     }
@@ -178,8 +178,12 @@ class LocalTripDataSource(
         return tripDao.getActiveChargingSessionIds()
     }
 
-    override suspend fun getChargingSessionById(sessionId: Long): ChargingSession {
+    override suspend fun getChargingSessionById(sessionId: Long): ChargingSession? {
         return tripDao.getChargingSessionById(sessionId)
+    }
+
+    override suspend fun getLatestChargingSession(): ChargingSession? {
+        return tripDao.getLatestChargingSession()
     }
 
     override suspend fun getCompleteChargingSessionById(sessionId: Long): ChargingSession {

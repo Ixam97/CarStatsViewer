@@ -223,6 +223,7 @@ class MainActivity : FragmentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 CarStatsViewer.dataProcessor.currentChargingSessionDataFlow.collectLatest { chargingSession ->
+                    // InAppLogger.i("Charging update")
                     chargingSession?.let {
                         neoChargedEnergy = it.charged_energy
                         neoChargeTime = it.chargeTime
@@ -232,7 +233,12 @@ class MainActivity : FragmentActivity() {
 
                         // InAppLogger.d("[NEO] Updating charging plot. Size delta: $sizeDelta")
 
-                        if (sizeDelta in 1..9) {
+                        chargePlotLine.reset()
+                        chargePlotLine.addDataPoints(DataConverters.chargePlotLineFromChargingPoints(chargingPoints))
+                        main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(chargingSession.chargeTime) / 5) + 1) * 5 + 1
+                        main_charge_plot.invalidate()
+
+                        if (sizeDelta in 1..9 && chargingPoints.last().point_marker_type == null) {
                             while (sizeDelta > 0) {
                                 val prevChargingPoint = if (chargePlotLine.getDataPointsSize() > 0) {
                                     chargePlotLine.getDataPoints(PlotDimensionX.TIME).last()
@@ -247,7 +253,7 @@ class MainActivity : FragmentActivity() {
                             }
                             main_charge_plot.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(chargingSession.chargeTime) / 5) + 1) * 5 + 1
                             main_charge_plot.invalidate()
-                        } else if (sizeDelta > 10 || sizeDelta < 0) {
+                        } else /*if (sizeDelta > 10 || sizeDelta < 0)*/ {
                             /** refresh entire plot for large numbers of new data Points */
                             chargePlotLine.reset()
                             chargePlotLine.addDataPoints(DataConverters.chargePlotLineFromChargingPoints(chargingPoints))
@@ -579,7 +585,8 @@ class MainActivity : FragmentActivity() {
         }
 
         main_button_performance.setOnClickListener {
-            throw Exception("Intentional crash")
+            // throw Exception("Intentional crash")
+            InAppLogger.i("Debug")
         }
 
         main_button_history.setOnClickListener {

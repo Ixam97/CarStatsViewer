@@ -94,7 +94,14 @@ object DataConverters {
         var prevDrivingPoint: DrivingPoint? = null
         var distanceSum = 0f
 
+        var startDistance = -1f
+        var startTime = 0L
+        var endDistance = -1f
+        var endTime = 0L
+
         session.drivingPoints?.forEachIndexed { index, drivingPoint ->
+
+            distanceSum += drivingPoint.distance_delta
 
             if (index == 0) {
                 // Add charging marker if there is one before the drive started
@@ -135,27 +142,70 @@ object DataConverters {
                         }
                     }
                 }
+            } else if (drivingPoint.point_marker_type == PlotLineMarkerType.BEGIN_SESSION.int && prevDrivingPoint?.point_marker_type == PlotLineMarkerType.END_SESSION.int) {
+
+                // val chargingSessions = session.chargingSessions?.filter {it.end_epoch_time != null && it.end_epoch_time >= prevDrivingPoint!!.driving_point_epoch_time && it.end_epoch_time <= drivingPoint.driving_point_epoch_time && it.end_epoch_time > 0 }
+
+                val chargingSessionStart = session.chargingSessions?.filter {
+                    it.start_epoch_time >= prevDrivingPoint!!.driving_point_epoch_time && it.start_epoch_time <= drivingPoint.driving_point_epoch_time
+                }
+
+                val chargingSessionEnd = session.chargingSessions?.filter {
+                    it.end_epoch_time != null && it.end_epoch_time >= prevDrivingPoint!!.driving_point_epoch_time && it.end_epoch_time <= drivingPoint.driving_point_epoch_time
+                }
+
+                if (chargingSessionStart?.isNotEmpty() == true) {
+                    //startDistance = distanceSum
+                    startTime = chargingSessionStart.first().start_epoch_time
+                    // InAppLogger.d("Start time: $startTime")
+                }
+
+                if (chargingSessionEnd?.isNotEmpty() == true) {
+                    //endDistance = distanceSum
+                    endTime = chargingSessionEnd.last().end_epoch_time!!
+                    // InAppLogger.d("End time: $endTime")
+                    // InAppLogger.d("Time delta: ${(endTime-startTime) / (1000 * 60)}")
+                    plotMarkers.add(
+                        PlotMarker(
+                            MarkerType = PlotMarkerType.CHARGE,
+                            MarkerVersion = 1,
+                            StartTime = startTime,
+                            EndTime = endTime,
+                            StartDistance = distanceSum,
+                            EndDistance = distanceSum
+                        )
+                    )
+                }
+
+
+                if (startDistance > 0 && endDistance > 0) {
+                    plotMarkers.add(
+                        PlotMarker(
+                            MarkerType = PlotMarkerType.CHARGE,
+                            MarkerVersion = 1,
+                            StartTime = startTime,
+                            EndTime = endTime,
+                            StartDistance = startDistance,
+                            EndDistance = endDistance
+                        )
+                    )
+                    startDistance = -1f
+                    endDistance = -1f
+                } else {
+                    // plotMarkers.add(
+                    //     PlotMarker(
+                    //         MarkerType = PlotMarkerType.PARK,
+                    //         MarkerVersion = 1,
+                    //         StartTime = prevDrivingPoint!!.driving_point_epoch_time,
+                    //         EndTime = drivingPoint.driving_point_epoch_time,
+                    //         StartDistance = distanceSum,
+                    //         EndDistance = distanceSum
+                    //     )
+                    // )
+                }
+
+
             }
-
-            if (drivingPoint.point_marker_type == PlotLineMarkerType.BEGIN_SESSION.int && prevDrivingPoint?.point_marker_type == PlotLineMarkerType.END_SESSION.int) {
-
-                val chargingSessions = session.chargingSessions?.filter { it.start_epoch_time >= prevDrivingPoint!!.driving_point_epoch_time && it.end_epoch_time != null && it.end_epoch_time <= drivingPoint.driving_point_epoch_time && it.end_epoch_time > 0 }
-
-                val markerType = if (chargingSessions?.isNotEmpty() == true) PlotMarkerType.CHARGE
-                    else PlotMarkerType.PARK
-
-                plotMarkers.add(
-                    PlotMarker(
-                    MarkerType = markerType,
-                    MarkerVersion = 1,
-                    StartTime = prevDrivingPoint!!.driving_point_epoch_time,
-                    EndTime = drivingPoint.driving_point_epoch_time,
-                    StartDistance = distanceSum,
-                    EndDistance = distanceSum
-                )
-                )
-            }
-            distanceSum += drivingPoint.distance_delta
             if (drivingPoint.point_marker_type == PlotLineMarkerType.END_SESSION.int) {
                 // Only end session data points are relevant for marker generation
                 prevDrivingPoint = drivingPoint
