@@ -46,7 +46,11 @@ class AutoStartReceiver: BroadcastReceiver() {
             if (intent.hasExtra("dismiss")) {
                 if (intent.getBooleanExtra("dismiss", false)) {
                     CarStatsViewer.restartNotificationDismissed = true
+                    CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000, cancel = true)
                     CarStatsViewer.notificationManager.cancel(CarStatsViewer.RESTART_NOTIFICATION_ID)
+
+
+
                     InAppLogger.d("[ARS] Dismiss intent")
                     return
                 }
@@ -98,7 +102,7 @@ class AutoStartReceiver: BroadcastReceiver() {
             .setContentTitle(notificationText)
             .setContentText(context.getString(R.string.restart_notification_message))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setOngoing(false)
+            .setOngoing(true)
 
         startupNotificationBuilder.apply {
             addAction(Notification.Action.Builder(
