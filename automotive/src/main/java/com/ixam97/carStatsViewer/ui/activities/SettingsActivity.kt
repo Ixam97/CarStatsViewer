@@ -15,6 +15,7 @@ import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.WatchdogState
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -103,6 +104,7 @@ class SettingsActivity : FragmentActivity() {
 
         settings_switch_use_location.setOnClickListener {
             appPreferences.useLocation = settings_switch_use_location.isChecked
+            CarStatsViewer.watchdog.triggerWatchdog()
         }
 
         settings_switch_autostart.setOnClickListener {

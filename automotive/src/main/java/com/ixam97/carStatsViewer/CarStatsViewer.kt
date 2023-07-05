@@ -16,9 +16,9 @@ import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.Watchdog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 import kotlin.system.exitProcess
@@ -57,6 +57,7 @@ class CarStatsViewer : Application() {
         lateinit var tripDatabase: TripDataDatabase
         lateinit var tripDataSource: LocalTripDataSource
         lateinit var dataProcessor: DataProcessor
+        lateinit var watchdog: Watchdog
 
         lateinit var logDao: LogDao
 
@@ -101,6 +102,7 @@ class CarStatsViewer : Application() {
 
         appContext = applicationContext
         appPreferences = AppPreferences(applicationContext)
+        watchdog = Watchdog()
 
         val logDatabase = Room.databaseBuilder(
             applicationContext,

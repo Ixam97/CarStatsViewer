@@ -1,15 +1,13 @@
 package com.ixam97.carStatsViewer.dataCollector
 
-import android.app.AlarmManager
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
-import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.IBinder
 import android.widget.Toast
 import com.google.android.gms.location.LocationServices
-import com.ixam97.carStatsViewer.AutoStartReceiver
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
@@ -20,9 +18,9 @@ import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.locationClient.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationClient.LocationClient
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.WatchdogState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlin.system.exitProcess
 
 class DataCollector: Service() {
 
@@ -34,9 +32,13 @@ class DataCollector: Service() {
 
     private lateinit var foregroundServiceNotification: Notification.Builder
     private lateinit var locationClient: LocationClient
+    private var locationClientJob: Job? = null
 
     private lateinit var carPropertiesClient: CarPropertiesClient
     private lateinit var dataProcessor: DataProcessor
+
+    private var lastLocation: Location? = null
+    private var watchdogLocation: Location? = null
 
     init {
         InAppLogger.i("[NEO] Neo DataCollector is initializing...")
@@ -116,21 +118,7 @@ class DataCollector: Service() {
             LocationServices.getFusedLocationProviderClient(this)
         )
 
-        locationClient
-            .getLocationUpdates(5_000L)
-            .catch { e ->
-                InAppLogger.e("[NEO] LocationClient: ${e.message}")
-            }
-            .onEach { location ->
-                if (location != null) {
-                    InAppLogger.v("[NEO] %.2f, %.2f, %.0fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
-                    dataProcessor.processLocation(location.latitude, location.longitude, location.altitude)
-                } else {
-                    dataProcessor.processLocation(null, null, null)
-                }
-            }
-            .launchIn(serviceScope)
-
+        // startLocationClient(5_000)
 
         CarStatsViewer.liveDataApis[0]
             .requestFlow(
@@ -157,12 +145,70 @@ class DataCollector: Service() {
         if (CarStatsViewer.appPreferences.autostart)
             CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000)
 
+        serviceScope.launch {
+            CarStatsViewer.watchdog.watchdogTriggerFlow.collect {
+                InAppLogger.i("[Watchdog] Watchdog triggered")
+
+                /** Check if location client has crashed or needs to be stopped or started */
+                var locationState = WatchdogState.DISABLED
+                if (CarStatsViewer.appPreferences.useLocation) {
+                    locationState = if (watchdogLocation == lastLocation || locationClientJob == null) {
+                        InAppLogger.w("[Watchdog] Location error!")
+                        startLocationClient(5_000)
+                        WatchdogState.ERROR
+                    } else {
+                        WatchdogState.NOMINAL
+                    }
+                    watchdogLocation = lastLocation
+                } else if (locationClientJob != null) {
+                    stopLocationClient()
+                }
+
+                CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(locationState = locationState))
+            }
+        }
+
+        serviceScope.launch {
+            // Watchdog
+            while (true) {
+                CarStatsViewer.watchdog.triggerWatchdog()
+                delay(10_000)
+            }
+
+        }
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
         carPropertiesClient.disconnect()
+    }
+
+    private fun stopLocationClient() {
+        InAppLogger.i("[NEO] Location client is being canceled")
+        locationClientJob?.cancel()
+        locationClientJob = null
+    }
+
+    private fun startLocationClient(interval: Long) {
+        InAppLogger.i("[NEO] Location client is being started")
+
+        locationClientJob?.cancel()
+        locationClientJob = locationClient.getLocationUpdates(interval)
+            .catch { e ->
+                InAppLogger.e("[NEO] LocationClient: ${e.message}")
+            }
+            .onEach { location ->
+                if (location != null) {
+                    InAppLogger.v("[NEO] %.2f, %.2f, %.0fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
+                    dataProcessor.processLocation(location.latitude, location.longitude, location.altitude)
+                } else {
+                    dataProcessor.processLocation(null, null, null)
+                }
+                lastLocation = location
+            }
+            .launchIn(serviceScope)
     }
 
 }

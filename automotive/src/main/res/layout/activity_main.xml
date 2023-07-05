@@ -32,6 +32,16 @@
 
         <ImageView
             android:visibility="gone"
+            android:id="@+id/main_icon_location_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="15dp"
+            android:layout_marginEnd="15dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_location_on"/>
+
+        <ImageView
+            android:visibility="gone"
             android:id="@+id/main_icon_abrp_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -475,7 +475,6 @@ class DataProcessor {
     /** Update sums of a trip or charging session */
     private fun updateTripDataValues(drivingState: Int = realTimeData.drivingState) {
         localSessionsAccess = false
-        InAppLogger.v("Local session modification started")
         val mDrivenDistance = valueDrivenDistance
         valueDrivenDistance = 0.0
         val mUsedEnergy = valueUsedEnergy
@@ -487,7 +486,6 @@ class DataProcessor {
         }
 
         localSessionsAccess = true
-        InAppLogger.v("Local session modification ended")
     }
 
     fun updateTripDataValuesByTick() {

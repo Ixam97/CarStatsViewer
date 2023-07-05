@@ -19,7 +19,6 @@ import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.dataProcessor.DrivingState
 import com.ixam97.carStatsViewer.database.tripData.TripType
-import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotLinePaint
@@ -29,12 +28,9 @@ import com.ixam97.carStatsViewer.ui.plot.objects.PlotLine
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLineConfiguration
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotRange
 import com.ixam97.carStatsViewer.ui.plot.enums.*
-import com.ixam97.carStatsViewer.utils.DataConverters
-import com.ixam97.carStatsViewer.utils.InAppLogger
-import com.ixam97.carStatsViewer.utils.StringFormatters
-import com.ixam97.carStatsViewer.utils.Ticker
 import com.ixam97.carStatsViewer.ui.views.GageView
 import com.ixam97.carStatsViewer.ui.views.PlotView
+import com.ixam97.carStatsViewer.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -115,6 +111,8 @@ class MainActivity : FragmentActivity() {
         CarStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
 
         setTripTypeIcon(appPreferences.mainViewTrip + 1)
+
+        // updateStatusIcon(CarStatsViewer.watchdog.watchdogStateFlow.value.locationState)
 
         // Temporary
         if (appPreferences.altLayout) {
@@ -261,6 +259,14 @@ class MainActivity : FragmentActivity() {
                             main_charge_plot.invalidate()
                         }
                     }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                CarStatsViewer.watchdog.watchdogStateFlow.collectLatest {
+                    updateLocationStatusIcon(it.locationState)
                 }
             }
         }
@@ -486,6 +492,34 @@ class MainActivity : FragmentActivity() {
                 main_icon_abrp_status.visibility = View.VISIBLE
             }
             else -> main_icon_abrp_status.visibility = View.GONE
+        }
+    }
+
+    private fun updateStatusApiIcon(status: Int) {
+        when(status) {
+            WatchdogState.DISABLED -> main_icon_abrp_status.visibility = View.GONE
+            WatchdogState.NOMINAL -> {
+                main_icon_abrp_status.setColorFilter(Color.parseColor("#2595FF"))
+                main_icon_abrp_status.visibility = View.VISIBLE
+            }
+            WatchdogState.ERROR -> {
+                main_icon_abrp_status.setColorFilter(getColor(R.color.bad_red))
+                main_icon_abrp_status.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun updateLocationStatusIcon(status: Int) {
+        when(status) {
+            WatchdogState.DISABLED -> main_icon_location_status.visibility = View.GONE
+            WatchdogState.NOMINAL -> {
+                main_icon_location_status.setImageDrawable(getDrawable(R.drawable.ic_location_on))
+                main_icon_location_status.visibility = View.GONE
+            }
+            WatchdogState.ERROR -> {
+                main_icon_location_status.setImageDrawable(getDrawable(R.drawable.ic_location_error))
+                main_icon_location_status.visibility = View.VISIBLE
+            }
         }
     }
 
