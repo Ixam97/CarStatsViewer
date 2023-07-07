@@ -11,7 +11,7 @@ import com.ixam97.carStatsViewer.emulatorPowerSign
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotLineMarkerType
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.Ticker
-import com.ixam97.carStatsViewer.utils.TimestampSynchronizer
+// import com.ixam97.carStatsViewer.utils.TimestampSynchronizer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,7 +36,7 @@ class DataProcessor {
     private var valueDrivenDistance: Double = 0.0
     private var valueUsedEnergy: Double = 0.0
 
-    private val timestampSynchronizer = TimestampSynchronizer()
+    // private val timestampSynchronizer = TimestampSynchronizer()
 
     private var lastChargingPointTime: Long = -1L
     private var chargingTickerActive: Boolean = false
@@ -192,21 +192,23 @@ class DataProcessor {
             InAppLogger.w("[NEO] Dropped speed value, flagged as initial")
             return
         }
-        if (timestampSynchronizer.isSynced()){
-            if (timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp) < System.currentTimeMillis() - 500) {
-                // InAppLogger.w("[NEO] Dropped speed value, timestamp too old. Time delta: ${timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp) - System.currentTimeMillis()}")
-                return
-            }
+        //if (timestampSynchronizer.isSynced()){
+        //if (timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp) < System.currentTimeMillis() - 500) {
+        if (carPropertiesData.CurrentSpeed.timestamp < System.nanoTime() - 500_000_000) {
+            InAppLogger.w("[NEO] Dropped speed value, timestamp too old. Time delta: ${(System.nanoTime() - carPropertiesData.CurrentSpeed.timestamp)/1_000_000}")
+            return
+        //}
         }
         if (carPropertiesData.CurrentSpeed.timeDelta > 0 && (realTimeData.drivingState == DrivingState.DRIVE || (realTimeData.drivingState == DrivingState.CHARGE && emulatorMode))) {
-            if (!timestampSynchronizer.isSynced()) timestampSynchronizer.sync(System.currentTimeMillis(), carPropertiesData.CurrentSpeed.timestamp)
+            // if (!timestampSynchronizer.isSynced()) timestampSynchronizer.sync(System.currentTimeMillis(), carPropertiesData.CurrentSpeed.timestamp)
             val distanceDelta = (carPropertiesData.CurrentSpeed.value as Float).absoluteValue * (carPropertiesData.CurrentSpeed.timeDelta / 1_000_000_000f)
             pointDrivenDistance += distanceDelta
             valueDrivenDistance += distanceDelta
 
             if (pointDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL)
-                updateDrivingDataPoint(timestamp = timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp))
-            // Put this else here to make sure only one of these functions is executed
+                //updateDrivingDataPoint(timestamp = timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp))
+                updateDrivingDataPoint()
+                // Put this else here to make sure only one of these functions is executed
             // else if (valueDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL / 2)
             //    updateTripDataValues(DrivingState.DRIVE)
 
@@ -229,12 +231,13 @@ class DataProcessor {
             InAppLogger.w("[NEO] Dropped power value, flagged as initial")
             return
         }
-        if (timestampSynchronizer.isSynced()){
-            if (timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentPower.timestamp) < System.currentTimeMillis() - 500) {
-                InAppLogger.w("[NEO] Dropped power value, timestamp too old")
-                return
-            }
+        // if (timestampSynchronizer.isSynced()){
+            //if (timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentPower.timestamp) < System.currentTimeMillis() - 500) {
+        if (carPropertiesData.CurrentPower.timestamp < System.nanoTime() - 500_000_000) {
+            InAppLogger.w("[NEO] Dropped power value, timestamp too old. Time delta: ${(System.nanoTime() - carPropertiesData.CurrentPower.timestamp)/1_000_000}")
+            return
         }
+        // }
 
         if (carPropertiesData.CurrentPower.timeDelta > 0 && (realTimeData.drivingState == DrivingState.DRIVE || realTimeData.drivingState == DrivingState.CHARGE)) {
             val energyDelta = emulatorPowerSign * (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentPower.timeDelta / 3.6E12)
@@ -565,12 +568,13 @@ class DataProcessor {
 
             if ((realTimeData.drivingState != DrivingState.CHARGE && markerType != PlotLineMarkerType.END_SESSION.int) || localChargingSession?.charging_session_id == null) {
                 InAppLogger.w("[NEO] No charging session loaded yet!")
-            } else if (!timestampSynchronizer.isSynced()) {
-                InAppLogger.w("[NEO] Time stamps not yet synchronized!")
+            // } else if (!timestampSynchronizer.isSynced()) {
+            //     InAppLogger.w("[NEO] Time stamps not yet synchronized!")
             // } else if ((!emulatorMode && timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentPower.timestamp) < System.currentTimeMillis() - 500) || (emulatorMode && timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp) < System.currentTimeMillis() - 500)) {
             //     InAppLogger.w("[NEO] Power value is too old!")
             } else {
-                while ((!emulatorMode && timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentPower.timestamp) < System.currentTimeMillis() - 500) || (emulatorMode && timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp) < System.currentTimeMillis() - 500)) {
+                // while ((!emulatorMode && timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentPower.timestamp) < System.currentTimeMillis() - 500) || (emulatorMode && timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp) < System.currentTimeMillis() - 500)) {
+                while ((!emulatorMode && carPropertiesData.CurrentPower.timestamp < System.nanoTime() - 500_000_000) || (emulatorMode && carPropertiesData.CurrentSpeed.timestamp < System.nanoTime() - 500_000_000)) {
                     InAppLogger.w("[NEO] Power value is too old!")
                     delay(250)
                 }
