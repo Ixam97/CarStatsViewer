@@ -1,16 +1,13 @@
 package com.ixam97.carStatsViewer.liveDataApi
 
 import android.content.Context
-import android.content.Intent
 import android.os.Handler
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 
 abstract class LiveDataApi(
     val broadcastAction: String,
@@ -25,11 +22,13 @@ abstract class LiveDataApi(
      */
     var connectionStatus: ConnectionStatus = ConnectionStatus.UNUSED
     var timeout: Int = 5_000
+    var originalInterval: Int = 5_000
 
     enum class ConnectionStatus(val status: Int) {
         UNUSED(0),
         CONNECTED(1),
-        ERROR(2);
+        ERROR(2),
+        LIMITED(3);
 
         companion object {
             fun fromInt(status: Int) = values().first { it.status == status }
@@ -49,13 +48,13 @@ abstract class LiveDataApi(
         // dataManager: DataManager,
         realTimeData: RealTimeData,
         handler: Handler,
-        interval: Long
+        interval: Int
     ): Runnable? {
-        timeout = interval.toInt()
+        timeout = interval
         return object : Runnable {
             override fun run() {
                 coroutineSendNow(realTimeData)
-                handler.postDelayed(this, interval)
+                handler.postDelayed(this, timeout.toLong())
             }
         }
     }
@@ -64,18 +63,19 @@ abstract class LiveDataApi(
      * sendNow, but wrapped in a coroutine to not block main thread.
      */
     fun coroutineSendNow(realTimeData: RealTimeData) {
-        CoroutineScope(Dispatchers.Default).launch {
+    //    CoroutineScope(Dispatchers.Default).launch {
             sendNow(realTimeData)
-            sendStatusBroadcast(CarStatsViewer.appContext)
-        }
+            updateWatchdog()
+    //    }
     }
 
-    fun requestFlow(serviceScope: CoroutineScope, realTimeData: () -> RealTimeData, interval: Long): Flow<Unit> {
-        timeout = interval.toInt()
+    fun requestFlow(serviceScope: CoroutineScope, realTimeData: () -> RealTimeData, interval: Int): Flow<Unit> {
+        timeout = interval
+        originalInterval = interval
         return flow {
             while (true) {
                 coroutineSendNow(realTimeData())
-                delay(interval)
+                delay(timeout.toLong())
             }
         }
     }
@@ -86,9 +86,11 @@ abstract class LiveDataApi(
      */
     protected abstract fun sendNow(realTimeData: RealTimeData)
 
-    private fun sendStatusBroadcast(context: Context) {
-        val broadcastIntent = Intent(broadcastAction)
-        broadcastIntent.putExtra("status", connectionStatus.status)
-        context.sendBroadcast(broadcastIntent)
+    private fun updateWatchdog() {
+        val currentApiStateMap = CarStatsViewer.watchdog.getCurrentWatchdogState().apiState.toMutableMap()
+        currentApiStateMap[broadcastAction] = connectionStatus.status
+        CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(
+            apiState = currentApiStateMap.toMap()
+        ))
     }
 }

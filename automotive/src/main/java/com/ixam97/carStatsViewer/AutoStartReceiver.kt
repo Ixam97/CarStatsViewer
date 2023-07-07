@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer
 
-import android.app.AlarmManager
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -26,14 +25,16 @@ class AutoStartReceiver: BroadcastReceiver() {
         )
         var reason: String? = CarStatsViewer.restartReason
 
-        InAppLogger.v("[ASR] Service started: ${CarStatsViewer.foregroundServiceStarted}, dismissed: ${CarStatsViewer.restartNotificationDismissed}")
+        InAppLogger.v("[ASR] Conditions: Service started: ${CarStatsViewer.foregroundServiceStarted}, dismissed: ${CarStatsViewer.restartNotificationDismissed}")
 
         if (!CarStatsViewer.appPreferences.autostart) return
 
-        CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000)
+        CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000, extendedLogging = false)
 
         if (CarStatsViewer.foregroundServiceStarted) return
         if (CarStatsViewer.restartNotificationDismissed) return
+
+        InAppLogger.d("[ASR] Auto Star Receiver triggered")
 
         intent?.let {
             InAppLogger.d("[ASR] ${intent.toString()} ${intent.extras?.keySet().let { key ->
@@ -46,7 +47,7 @@ class AutoStartReceiver: BroadcastReceiver() {
             if (intent.hasExtra("dismiss")) {
                 if (intent.getBooleanExtra("dismiss", false)) {
                     CarStatsViewer.restartNotificationDismissed = true
-                    CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000, cancel = true)
+                    CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000, cancel = true, extendedLogging = true)
                     CarStatsViewer.notificationManager.cancel(CarStatsViewer.RESTART_NOTIFICATION_ID)
 
 

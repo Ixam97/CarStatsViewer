@@ -15,7 +15,6 @@ import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import com.ixam97.carStatsViewer.utils.WatchdogState
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -109,7 +108,7 @@ class SettingsActivity : FragmentActivity() {
 
         settings_switch_autostart.setOnClickListener {
             appPreferences.autostart = settings_switch_autostart.isChecked
-            CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000, !appPreferences.autostart)
+            CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000, !appPreferences.autostart, extendedLogging = true)
         }
 
         if (emulatorMode) settings_switch_distance_unit.visibility = View.VISIBLE

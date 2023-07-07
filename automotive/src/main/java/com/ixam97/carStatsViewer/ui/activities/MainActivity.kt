@@ -1,10 +1,8 @@
 package com.ixam97.carStatsViewer.ui.activities
 
 import android.app.AlertDialog
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -20,7 +18,6 @@ import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.dataProcessor.DrivingState
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
-import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotGlobalConfiguration
@@ -88,17 +85,6 @@ class MainActivity : FragmentActivity() {
     private var neoChargedEnergy: Double = 0.0
     private var neoChargeTime: Long = 0
 
-    private val broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.action) {
-                // getString(R.string.ui_update_plot_broadcast) -> updatePlots()
-                // getString(R.string.ui_update_gages_broadcast) -> updateGages()
-                CarStatsViewer.liveDataApis[0].broadcastAction -> updateAbrpStatus(LiveDataApi.ConnectionStatus.fromInt(intent.getIntExtra("status", 0)))
-                CarStatsViewer.liveDataApis[1].broadcastAction -> updateAbrpStatus(LiveDataApi.ConnectionStatus.fromInt(intent.getIntExtra("status", 0)))
-            }
-        }
-    }
-
     /**
      * Overrides
      */
@@ -106,13 +92,9 @@ class MainActivity : FragmentActivity() {
     override fun onResume() {
         super.onResume()
 
-        updateAbrpStatus(CarStatsViewer.liveDataApis[0].connectionStatus)
-
         CarStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
 
         setTripTypeIcon(appPreferences.mainViewTrip + 1)
-
-        // updateStatusIcon(CarStatsViewer.watchdog.watchdogStateFlow.value.locationState)
 
         // Temporary
         if (appPreferences.altLayout) {
@@ -266,7 +248,9 @@ class MainActivity : FragmentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 CarStatsViewer.watchdog.watchdogStateFlow.collectLatest {
+                    InAppLogger.d("[Watchdog] State changed: $it}")
                     updateLocationStatusIcon(it.locationState)
+                    updateConnectionStatusIcon(it.apiState)
                 }
             }
         }
@@ -339,11 +323,6 @@ class MainActivity : FragmentActivity() {
         setupDefaultUi()
         setUiEventListeners()
 
-        registerReceiver(
-            broadcastReceiver,
-            IntentFilter(CarStatsViewer.liveDataApis[0].broadcastAction)
-        )
-
         main_button_performance.isEnabled = true
         main_button_performance.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
 
@@ -370,7 +349,6 @@ class MainActivity : FragmentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(broadcastReceiver)
         InAppLogger.d("Main view destroyed")
     }
 
@@ -481,30 +459,24 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    private fun updateAbrpStatus(status: LiveDataApi.ConnectionStatus) {
-        when (status) {
-            LiveDataApi.ConnectionStatus.CONNECTED -> {
-                main_icon_abrp_status.setColorFilter(Color.parseColor("#2595FF"))
-                main_icon_abrp_status.visibility = View.VISIBLE
-            }
-            LiveDataApi.ConnectionStatus.ERROR -> {
-                main_icon_abrp_status.setColorFilter(getColor(R.color.bad_red))
-                main_icon_abrp_status.visibility = View.VISIBLE
-            }
-            else -> main_icon_abrp_status.visibility = View.GONE
-        }
-    }
+    private fun updateConnectionStatusIcon(apiStatus: Map<String, Int>) {
+        if (apiStatus.containsKey(CarStatsViewer.liveDataApis[0].broadcastAction)) {
+            val status = apiStatus[CarStatsViewer.liveDataApis[0].broadcastAction]
 
-    private fun updateStatusApiIcon(status: Int) {
-        when(status) {
-            WatchdogState.DISABLED -> main_icon_abrp_status.visibility = View.GONE
-            WatchdogState.NOMINAL -> {
-                main_icon_abrp_status.setColorFilter(Color.parseColor("#2595FF"))
-                main_icon_abrp_status.visibility = View.VISIBLE
-            }
-            WatchdogState.ERROR -> {
-                main_icon_abrp_status.setColorFilter(getColor(R.color.bad_red))
-                main_icon_abrp_status.visibility = View.VISIBLE
+            when (status) {
+                WatchdogState.DISABLED -> main_icon_abrp_status.visibility = View.GONE
+                WatchdogState.NOMINAL -> {
+                    main_icon_abrp_status.setColorFilter(getColor(R.color.connected_blue))
+                    main_icon_abrp_status.visibility = View.VISIBLE
+                }
+                WatchdogState.ERROR -> {
+                    main_icon_abrp_status.setColorFilter(getColor(R.color.bad_red))
+                    main_icon_abrp_status.visibility = View.VISIBLE
+                }
+                WatchdogState.LIMITED -> {
+                    main_icon_abrp_status.setColorFilter(getColor(R.color.limited_yellow))
+                    main_icon_abrp_status.visibility = View.VISIBLE
+                }
             }
         }
     }

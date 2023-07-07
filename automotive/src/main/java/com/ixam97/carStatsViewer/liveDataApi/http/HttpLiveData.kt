@@ -22,7 +22,7 @@ import java.util.*
 
 class HttpLiveData (
     detailedLog : Boolean = true
-): LiveDataApi("com.ixam97.carStatsViewer_dev.http_live_data_connection_broadcast", detailedLog) {
+): LiveDataApi("Webhook", detailedLog) {
 
 
     private fun addBasicAuth(connection: HttpURLConnection, username: String, password: String) {

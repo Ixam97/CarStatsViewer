@@ -51,9 +51,6 @@ class CarStatsViewer : Application() {
         var restartNotificationDismissed = false
         var restartReason: String? = null
 
-        // var tripData: TripData? = null
-        // var dataManager: DataManager? = null
-
         lateinit var tripDatabase: TripDataDatabase
         lateinit var tripDataSource: LocalTripDataSource
         lateinit var dataProcessor: DataProcessor
@@ -63,7 +60,7 @@ class CarStatsViewer : Application() {
 
         val appContextIsInitialized: Boolean get() = this::appContext.isInitialized
 
-        fun setupRestartAlarm(context: Context, reason: String, delay: Long, cancel: Boolean = false) {
+        fun setupRestartAlarm(context: Context, reason: String, delay: Long, cancel: Boolean = false, extendedLogging: Boolean = false) {
             val serviceIntent = Intent(context, AutoStartReceiver::class.java)
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             serviceIntent.action = "com.ixam97.carStatsViewer.RestartAction"
@@ -82,7 +79,7 @@ class CarStatsViewer : Application() {
                     System.currentTimeMillis() + delay,
                     pendingIntent
                 )
-                InAppLogger.v("[ASR] Setup single shot alarm")
+                InAppLogger.i("[ASR] Setup single shot alarm")
             } else {
                 alarmManager.setRepeating(
                     AlarmManager.RTC,
@@ -90,7 +87,7 @@ class CarStatsViewer : Application() {
                     delay,
                     pendingIntent
                 )
-                InAppLogger.v("[ASR] Setup repeating alarm")
+                if (extendedLogging) InAppLogger.i("[ASR] Setup repeating alarm")
             }
         }
     }
@@ -114,7 +111,7 @@ class CarStatsViewer : Application() {
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
 
             try {
-                setupRestartAlarm(applicationContext, "crash", 2_000)
+                setupRestartAlarm(applicationContext, "crash", 2_000, extendedLogging = true)
                 InAppLogger.i("setup crash alarm")
             } catch (e: Exception) {
                 InAppLogger.e(e.stackTraceToString())

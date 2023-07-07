@@ -21,9 +21,11 @@ import kotlin.math.roundToInt
 class AbrpLiveData (
     private val apiKey : String,
     detailedLog : Boolean = true
-): LiveDataApi("com.ixam97.carStatsViewer_dev.abrp_connection_broadcast", detailedLog) {
+): LiveDataApi("ABRP Api", detailedLog) {
 
     var lastPackage: String = ""
+
+    var successCounter: Int = 0
 
     private fun send(
         abrpDataSet: AbrpDataSet,
@@ -43,8 +45,8 @@ class AbrpLiveData (
         con.requestMethod = "POST"
         con.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
         con.setRequestProperty("Accept","application/json")
-        con.connectTimeout = timeout
-        con.readTimeout = timeout
+        con.connectTimeout = timeout / 2
+        con.readTimeout = timeout / 2
         con.doOutput = true
         con.doInput = true
 
@@ -92,18 +94,39 @@ class AbrpLiveData (
                 if (abrpDataSet.lat == null) logString += ". No valid location!"
                 InAppLogger.v(logString)
             }
-            con.inputStream.close()
 
+            if (responseCode == 200) {
+                successCounter++
+                if (successCounter >= 5 && timeout > originalInterval) {
+                    timeout -= 5_000
+                    InAppLogger.i("[ABRP] Interval decreased to $timeout ms")
+                    successCounter = 0
+                }
+            }
+
+            con.inputStream.close()
             con.disconnect()
         } catch (e: java.net.SocketTimeoutException) {
             InAppLogger.e("[ABRP] Network timeout error")
+            if (timeout < 30_000) {
+                timeout += 5_000
+                InAppLogger.w("[ABRP] Interval increased to $timeout ms")
+            }
+            successCounter = 0
             return ConnectionStatus.ERROR
         } catch (e: java.lang.Exception) {
             InAppLogger.e("[ABRP] Network connection error")
+            if (timeout < 30_000) {
+                timeout += 5_000
+                InAppLogger.w("[ABRP] Interval increased to $timeout ms")
+            }
+            successCounter = 0
             return ConnectionStatus.ERROR
         }
         if (responseCode == 200) {
-            return ConnectionStatus.CONNECTED
+            return if (timeout == originalInterval)
+                ConnectionStatus.CONNECTED
+            else ConnectionStatus.LIMITED
         }
         InAppLogger.e("[ABRP] Connection failed. Response code: $responseCode")
         if (responseCode == 401) InAppLogger.e("          Auth error")
@@ -142,10 +165,6 @@ class AbrpLiveData (
             connectionStatus = ConnectionStatus.UNUSED
             return
         }
-
-        var lat: Double? = null
-        var lon: Double? = null
-        var alt: Double? = null
 
         if (realTimeData.isInitialized()) {
             connectionStatus = send(AbrpDataSet(
