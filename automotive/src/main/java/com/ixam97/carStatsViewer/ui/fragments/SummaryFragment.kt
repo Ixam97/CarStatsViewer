@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
@@ -37,6 +38,7 @@ import java.util.concurrent.TimeUnit
 class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
     lateinit var session: DrivingSession
+    private var completedChargingSessions = listOf<ChargingSession>()
 
     constructor(session: DrivingSession) :this() {
         this.session = session
@@ -221,8 +223,16 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
         switchToConsumptionLayout()
 
+        session.chargingSessions?.let { chargingSessions ->
+            if (chargingSessions.isNotEmpty()) {
+                completedChargingSessions = chargingSessions.filter { it.end_epoch_time != null }
+            }
+        }
+
+        summary_button_show_charge_container.text = "${getString(R.string.summary_charging_sessions)}: ${completedChargingSessions.size}"
+
         summary_button_show_charge_container.isEnabled =
-            !(session.chargingSessions == null || session.chargingSessions?.isEmpty() == true)
+            completedChargingSessions.isNotEmpty()
 
         if (session.session_type != TripType.MANUAL) {
             summary_button_reset.isEnabled = false
@@ -240,32 +250,28 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             summary_consumption_plot.invalidate()
         }
 
-        session.chargingSessions?.let { chargingSessions ->
-            // Setup charge layout
+        summary_charge_plot_seek_bar.max = (completedChargingSessions.size - 1).coerceAtLeast(0)
+        summary_charge_plot_seek_bar.progress = (completedChargingSessions.size - 1).coerceAtLeast(0)
+        summary_charge_plot_seek_bar.setOnSeekBarChangeListener(seekBarChangeListener)
 
-
-            summary_charge_plot_seek_bar.max = (chargingSessions.size - 1).coerceAtLeast(0)
-            summary_charge_plot_seek_bar.progress = (chargingSessions.size - 1).coerceAtLeast(0)
-            summary_charge_plot_seek_bar.setOnSeekBarChangeListener(seekBarChangeListener)
-
-            summary_charge_plot_button_next.setOnClickListener {
-                val newProgress = summary_charge_plot_seek_bar.progress + 1
-                if (newProgress <= (chargingSessions.size - 1)) {
-                    summary_charge_plot_seek_bar.progress = newProgress
-                }
-                summary_charge_plot_view.dimensionShift = 0L
+        summary_charge_plot_button_next.setOnClickListener {
+            val newProgress = summary_charge_plot_seek_bar.progress + 1
+            if (newProgress <= (completedChargingSessions.size - 1)) {
+                summary_charge_plot_seek_bar.progress = newProgress
             }
-
-            summary_charge_plot_button_prev.setOnClickListener {
-                val newProgress = summary_charge_plot_seek_bar.progress - 1
-                if (newProgress >= 0) {
-                    summary_charge_plot_seek_bar.progress = newProgress
-                }
-                summary_charge_plot_view.dimensionShift = 0L
-            }
-
-            setVisibleChargeCurve(chargingSessions.size - 1)
+            summary_charge_plot_view.dimensionShift = 0L
         }
+
+        summary_charge_plot_button_prev.setOnClickListener {
+            val newProgress = summary_charge_plot_seek_bar.progress - 1
+            if (newProgress >= 0) {
+                summary_charge_plot_seek_bar.progress = newProgress
+            }
+            summary_charge_plot_view.dimensionShift = 0L
+        }
+
+        setVisibleChargeCurve(completedChargingSessions.size - 1)
+
 
         when (session.session_type) {
             TripType.MANUAL -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_hand))
@@ -332,14 +338,14 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
     private fun setVisibleChargeCurve(progress: Int) {
 
-        val chargingSessions = session.chargingSessions
+        // val chargingSessions = session.chargingSessions
 
         summary_charge_plot_view.reset()
         chargePlotLine.reset()
 
         // InAppLogger.d("Charging sessions size: ${chargingSessions?.size}, selected index: $progress")
 
-        if (chargingSessions == null || chargingSessions.isEmpty() || progress >= chargingSessions.size || progress < 0) {
+        if (completedChargingSessions.isEmpty() || progress >= completedChargingSessions.size || progress < 0) {
             summary_charge_plot_sub_title_curve.text = "%s (0/0)".format(
                 getString(R.string.settings_sub_title_last_charge_plot))
 
@@ -357,17 +363,17 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
         summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
             getString(R.string.settings_sub_title_last_charge_plot),
-            chargingSessions.size,
-            chargingSessions.size,
-            StringFormatters.getDateString(Date(chargingSessions.last().start_epoch_time))
+            completedChargingSessions.size,
+            completedChargingSessions.size,
+            StringFormatters.getDateString(Date(completedChargingSessions.last().start_epoch_time))
         )
 
-        if (chargingSessions.size - 1 != 0) {
+        if (completedChargingSessions.size - 1 != 0) {
             summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
                 getString(R.string.settings_sub_title_last_charge_plot),
                 progress + 1,
-                chargingSessions.size,
-                StringFormatters.getDateString(Date(chargingSessions[progress].start_epoch_time)))
+                completedChargingSessions.size,
+                StringFormatters.getDateString(Date(completedChargingSessions[progress].start_epoch_time)))
 
             when (progress) {
                 0 -> {
@@ -376,7 +382,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
                     summary_charge_plot_button_next.isEnabled = true
                     summary_charge_plot_button_next.alpha = 1f
                 }
-                chargingSessions.size - 1 -> {
+                completedChargingSessions.size - 1 -> {
                     summary_charge_plot_button_next.isEnabled = false
                     summary_charge_plot_button_next.alpha = CarStatsViewer.disabledAlpha
                     summary_charge_plot_button_prev.isEnabled = true
@@ -391,13 +397,13 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             }
         }
 
-        summary_charged_energy_value_text.text = StringFormatters.getEnergyString(chargingSessions[progress].charged_energy.toFloat())
-        summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString((chargingSessions[progress].end_epoch_time?:0) - chargingSessions[progress].start_epoch_time)
-        summary_charge_ambient_temp.text = StringFormatters.getTemperatureString(chargingSessions[progress].outside_temp)
+        summary_charged_energy_value_text.text = StringFormatters.getEnergyString(completedChargingSessions[progress].charged_energy.toFloat())
+        summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString((completedChargingSessions[progress].end_epoch_time?:0) - completedChargingSessions[progress].start_epoch_time)
+        summary_charge_ambient_temp.text = StringFormatters.getTemperatureString(completedChargingSessions[progress].outside_temp)
 
-        chargePlotLine.addDataPoints(DataConverters.chargePlotLineFromChargingPoints(chargingSessions[progress].chargingPoints!!))
+        chargePlotLine.addDataPoints(DataConverters.chargePlotLineFromChargingPoints(completedChargingSessions[progress].chargingPoints!!))
 
-        summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes((chargingSessions[progress].end_epoch_time?:0) - chargingSessions[progress].start_epoch_time) / 5) + 1) * 5 + 1
+        summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes((completedChargingSessions[progress].end_epoch_time?:0) - completedChargingSessions[progress].start_epoch_time) / 5) + 1) * 5 + 1
         summary_charge_plot_view.invalidate()
 
 
