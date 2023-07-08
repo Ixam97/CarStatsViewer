@@ -4,14 +4,12 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.EditText
-import android.widget.ImageView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.android.synthetic.main.activity_settings_apis.*
 import kotlinx.coroutines.launch
 
@@ -44,8 +42,8 @@ class SettingsApisActivity: FragmentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 CarStatsViewer.watchdog.watchdogStateFlow.collect {
-                    settings_apis_abrp_row.connectionStatus = it.apiState[CarStatsViewer.liveDataApis[0].broadcastAction]?:0
-                    settings_apis_http_row.connectionStatus = it.apiState[CarStatsViewer.liveDataApis[1].broadcastAction]?:0
+                    settings_apis_abrp_row.connectionStatus = it.apiState[CarStatsViewer.liveDataApis[0].apiIdentifier]?:0
+                    settings_apis_http_row.connectionStatus = it.apiState[CarStatsViewer.liveDataApis[1].apiIdentifier]?:0
                 }
             }
         }

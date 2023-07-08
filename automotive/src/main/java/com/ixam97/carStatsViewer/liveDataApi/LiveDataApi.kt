@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 abstract class LiveDataApi(
-    val broadcastAction: String,
+    val apiIdentifier: String,
     var detailedLog: Boolean
     ){
 
@@ -19,6 +19,7 @@ abstract class LiveDataApi(
      *      0: Unused
      *      1: Connected
      *      2: Error
+     *      3: Limited connection
      */
     var connectionStatus: ConnectionStatus = ConnectionStatus.UNUSED
     var timeout: Int = 5_000
@@ -88,7 +89,7 @@ abstract class LiveDataApi(
 
     private fun updateWatchdog() {
         val currentApiStateMap = CarStatsViewer.watchdog.getCurrentWatchdogState().apiState.toMutableMap()
-        currentApiStateMap[broadcastAction] = connectionStatus.status
+        currentApiStateMap[apiIdentifier] = connectionStatus.status
         CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(
             apiState = currentApiStateMap.toMap()
         ))

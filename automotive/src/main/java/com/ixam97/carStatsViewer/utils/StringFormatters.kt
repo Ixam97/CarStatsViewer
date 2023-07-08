@@ -11,6 +11,16 @@ object StringFormatters {
     private val timeFormat = DateFormat.getTimeFormat(CarStatsViewer.appContext)
     private val appPreferences = CarStatsViewer.appPreferences
 
+    fun getGearString(gear: Int): String {
+        return when(gear) {
+            1 -> "N"
+            2 -> "R"
+            4 -> "P"
+            8 -> "D"
+            else -> "UNKNOWN"
+        }
+    }
+
     /** Divides a Float by 1000 and rounds it up to one decimal point to be on par with board computer */
     private fun kiloRounder(number: Float): Float {
         return (number.toInt() / 100).toFloat() / 10

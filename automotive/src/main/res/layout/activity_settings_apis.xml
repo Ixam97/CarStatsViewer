@@ -69,7 +69,7 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:api_name="@string/settings_apis_http"
+                app:api_name="@string/settings_apis_smtp"
                 app:icon="@drawable/ic_mail"
                 app:use_connection="false"
                 />

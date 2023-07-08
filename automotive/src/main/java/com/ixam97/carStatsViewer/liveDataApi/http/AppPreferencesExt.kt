@@ -20,7 +20,11 @@ val AppPreferences.HTTPLiveDataPassword: AppPreference<String>
 val AppPreferences.HTTPLiveDataEnabled: AppPreference<Boolean>
     get() = AppPreference<Boolean>("preference_http_live_data_enables", false, sharedPref)
 
+val AppPreferences.HTTPLiveDataSendABRPDataset: AppPreference<Boolean>
+    get() = AppPreference<Boolean>("preference_http_live_data_abrp", false, sharedPref)
+
 var AppPreferences.httpLiveDataURL: String get() = HTTPLiveDataURL.value; set(value) {HTTPLiveDataURL.value = value}
 var AppPreferences.httpLiveDataUsername: String get() = HTTPLiveDataUsername.value; set(value) {HTTPLiveDataUsername.value = value}
 var AppPreferences.httpLiveDataPassword: String get() = HTTPLiveDataPassword.value; set(value) {HTTPLiveDataPassword.value = value}
 var AppPreferences.httpLiveDataEnabled: Boolean get() = HTTPLiveDataEnabled.value; set(value) {HTTPLiveDataEnabled.value = value}
+var AppPreferences.httpLiveDataSendABRPDataset: Boolean get() = HTTPLiveDataSendABRPDataset.value; set(value) {HTTPLiveDataSendABRPDataset.value = value}
