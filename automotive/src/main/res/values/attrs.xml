@@ -4,4 +4,9 @@
         <attr name="title" format="string"/>
         <attr name="title_width" format="dimension"/>
     </declare-styleable>
+    <declare-styleable name="ApiRowWidget">
+        <attr name="api_name" format="string"/>
+        <attr name="icon" format="reference"/>
+        <attr name="use_connection" format="boolean"/>
+    </declare-styleable>
 </resources>

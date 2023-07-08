@@ -116,10 +116,6 @@ class AbrpLiveData (
             return ConnectionStatus.ERROR
         } catch (e: java.lang.Exception) {
             InAppLogger.e("[ABRP] Network connection error")
-            if (timeout < 30_000) {
-                timeout += 5_000
-                InAppLogger.w("[ABRP] Interval increased to $timeout ms")
-            }
             successCounter = 0
             return ConnectionStatus.ERROR
         }
