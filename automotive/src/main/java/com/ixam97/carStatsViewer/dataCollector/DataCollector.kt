@@ -189,6 +189,8 @@ class DataCollector: Service() {
         InAppLogger.i("[NEO] Location client is being canceled")
         locationClientJob?.cancel()
         locationClientJob = null
+        dataProcessor.processLocation(null, null, null)
+        lastLocation = null
     }
 
     private fun startLocationClient(interval: Long) {
