@@ -2,9 +2,12 @@
 <resources>
     <string-array name="changes_0_25_0">
         <item>Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips</item>
-        <item>Tripverlauf hinzugefügt, um vergangene Trips anzeigen zu können</item>
+        <item>Ladevorgänge können nun für bis zu 5 Minuten unterbrochen werden, bevor ein neuer Ladevorgang angelegt wird, sogar, wenn das Auto bewegt wurde.</item>
+        <item>Tripverlauf hinzugefügt, um vergangene Trips anzeigen zu können.</item>
+        <item>Schnellwahltasten für 20, 40 und 100 km in der Tripzusammenfassung hinzugefügt.</item>
         <item>Icon hinzugefügt, das den aktuell ausgewählten Trip-Typ symbolisiert. Tippen auf die Trip-Statistiken wechselt zum nächsten Triy-Typ.</item>
         <item>Der manuelle Trip kann nun direkt aus der Hauptansicht heraus zurückgesetzt werden.</item>
+        <item>Der Datensatz für den HTTP-Webhook wurde an die neue Datenstruktur angepasst.</item>
     </string-array>
 
     <string-array name="changes_0_24_1">
