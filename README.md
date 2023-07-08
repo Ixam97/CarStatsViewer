@@ -3,7 +3,7 @@
 ## Features
 
 - View instantaneous power and consumption
-- View details of the current trip
+- View details of the current and past trips
 - Visualizes consumption, speed and state of charge along the trip
 - Visualizes and saves charge curves during a trip
 - Live Data API for ABRP and HTTP Webhook
@@ -11,7 +11,6 @@
 
 ## Planned
 
-- Estimate range based on the current trip's consumption
 - Save and export trip data for further analysis
 - More performance oriented real time drive stats
 
@@ -52,6 +51,7 @@ Please let me now if you do not want to be listed in the supporters list.
  * Christoffer Gennerud
  * Samuel Lodyga
  * Konstantinos Theiakos
+ * Oliver Charlton
 
 </details>
 
