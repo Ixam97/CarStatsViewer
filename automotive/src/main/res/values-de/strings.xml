@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="changes_0_25_0">
+        <item>Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips</item>
+        <item>Tripverlauf hinzugefügt, um vergangene Trips anzeigen zu können</item>
+        <item>Icon hinzugefügt, das den aktuell ausgewählten Trip-Typ symbolisiert. Tippen auf die Trip-Statistiken wechselt zum nächsten Triy-Typ.</item>
+        <item>Der manuelle Trip kann nun direkt aus der Hauptansicht heraus zurückgesetzt werden.</item>
+    </string-array>
 
     <string-array name="changes_0_24_1">
         <item>Höhenunterschied in der Zusammenfassung hinzugefügt (experimentell)</item>
@@ -37,6 +43,7 @@
     <string name="restart_notification_reason_crash">Absturz</string>
     <string name="restart_notification_reason_reboot">Systemneustart</string>
     <string name="restart_notification_reason_update">Update</string>
+    <string name="restart_notification_reason_unknown">%s wurde aus unbekanntem Grund neugestartet.</string>
     <string name="restart_notification_message">Bitte Service für Fahrdatenerfassung starten.</string>
     <string name="restart_notification_dismiss">Abbrechen</string>
     <string name="restart_notification_app">App starten</string>
@@ -92,6 +99,7 @@
     <string name="summary_charge_ambient_temp">Außentemperatur</string>
     <string name="summary_interruption_warning">Aufzeichnung der Ladekurve unterbrochen. Dieser Wert ist vermutlich nicht korrekt.</string>
     <string name="summary_altitude">Höhenunterschied</string>
+    <string name="summary_speed">Durchschnittsgeschwindigkeit</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
@@ -147,6 +155,14 @@
     <string name="AutoTripData">Automatischer Trip</string>
     <string name="CurrentMonthData">Aktueller Monat</string>
 
+    <string-array name="trip_type_names">
+        <item>Unbekannter Triptyp</item>
+        <item>Manueller Trip</item>
+        <item>Seit Ladung</item>
+        <item>Automatischer Trip</item>
+        <item>Monat</item>
+    </string-array>
+
     <!-- Vehicle Setup -->
     <string name="vehicle_title">Fahrzeugeinstellung</string>
     <string name="vehicle_my">Modelljahr</string>
@@ -178,11 +194,13 @@
     <string name="quit_dialog_message">Log wird in die Zwischenablage kopiert.</string>
     <string name="dialog_close">Schließen</string>
     <string name="dialog_reset_title">Tripdaten zurücksetzen?</string>
-    <string name="dialog_reset_message">Der manuelle Trip wird zurückgesetzt. Soll der Trip gespeichert werden?</string>
+    <string name="dialog_reset_message">Der manuelle Trip wird zurückgesetzt. Er wird im Tripverlauf gespeichert.</string>
     <string name="dialog_reset_do_save">Speichern</string>
     <string name="dialog_reset_no_save">Nicht speichern</string>
     <string name="dialog_reset_cancel">Abbrechen</string>
+    <string name="dialog_reset_confirm">Zurücksetzen</string>
     <string name="dialog_confirm">Ja</string>
+    <string name="dialog_apply">Anwenden</string>
     <string name="dialog_dismiss">Nein</string>
     <!-- LogActivity -->
     <string name="log_title">Debug</string>
@@ -191,4 +209,25 @@
     <string name="notification_title">Aktuelle Fahrdaten:</string>
     <string name="foreground_service_info">Fahrdatenerfassung aktiv</string>
     <string name="toast_file_read_error">Fehler beim Einlesen der Trip-Datei</string>
+
+    <!-- Trip history -->
+    <string name="history_title">Tripverlauf</string>
+    <string name="history_selected">Ausgewählt:</string>
+    <string name="history_past_trips">Frühere Trips:</string>
+    <string name="history_current_trips">Aktuelle Trips:</string>
+    <string name="history_dialog_filters_title">Trips filtern</string>
+    <string name="history_dialog_filters_manual">Zeige manuelle Trips</string>
+    <string name="history_dialog_filters_charge">Zeige "Seit Ladung"-Trips</string>
+    <string name="history_dialog_filters_auto">Zeige automatische Trips</string>
+    <string name="history_dialog_filters_month">Zeige monatliche Trips</string>
+    <string name="history_dialog_filters_note">Hinweis: Aktuelle Trips werden unabhängig der eingestellten Filter immer angezeigt.</string>
+    <string name="history_dialog_filters_date">Frühestes Startdatum</string>
+    <string name="history_dialog_delete_title">Trip Löschen?</string>
+    <string name="history_dialog_delete_message">Der Trip wird dauerhaft gelöscht.</string>
+    <string name="history_dialog_delete_confirm">Trip löschen</string>
+
+    <string name="history_dialog_multi_delete_title">Mehrere Trips löschen?</string>
+    <string name="history_dialog_multi_delete_message">Es sind %s Trips zum Löschen ausgewählt. Die trips werden dauerhaft gelöscht.</string>
+    <string name="history_dialog_multi_delete_delete">%s Trips löschen</string>
+    <string name="history_dialog_multi_delete_deselect">Alle abwählen</string>
 </resources>

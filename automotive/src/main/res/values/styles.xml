@@ -89,6 +89,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_marginVertical">10dp</item>
         <item name="android:layout_height">@dimen/divider_height</item>
+        <item name="android:background">@color/disabled_tint</item>
     </style>
     <style name="menu_divider_style_no_margin">
         <item name="android:layout_width">match_parent</item>
@@ -111,7 +112,11 @@
         <item name ="android:background">@color/disable_background</item>
     </style>
     <style name="redTextEdit" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <item name="colorAccent">@color/bad_red</item>
         <item name="android:colorControlHighlight">@color/bad_red</item>
         <item name="android:colorControlActivated">@color/bad_red</item>
+    </style>
+    <style name="spinner_text_size" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <item name="android:textSize">@dimen/std_font_size</item>
     </style>
 </resources>

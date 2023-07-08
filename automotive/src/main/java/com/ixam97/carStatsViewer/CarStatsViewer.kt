@@ -2,18 +2,35 @@ package com.ixam97.carStatsViewer
 
 import android.app.*
 import android.content.Context
+import android.content.Intent
 import android.util.TypedValue
+import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.dataManager.DataManager
-import com.ixam97.carStatsViewer.dataManager.TripData
-import com.ixam97.carStatsViewer.liveData.LiveDataApi
-import com.ixam97.carStatsViewer.liveData.abrpLiveData.AbrpLiveData
-import com.ixam97.carStatsViewer.liveData.http.HttpLiveData
+import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
+import com.ixam97.carStatsViewer.database.log.LogDao
+import com.ixam97.carStatsViewer.database.log.LogDatabase
+import com.ixam97.carStatsViewer.database.tripData.*
+import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
+import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
+import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.Watchdog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
+import kotlin.system.exitProcess
 
 var emulatorMode = false
 var emulatorPowerSign = -1
+
+object Defines {
+    const val PLOT_ENERGY_INTERVAL = 100L
+    const val AUTO_RESET_TIME = 14_400_000L // 4h
+    const val PLOT_DISTANCE_INTERVAL = 100.0
+}
 
 class CarStatsViewer : Application() {
 
@@ -32,30 +49,105 @@ class CarStatsViewer : Application() {
 
         var foregroundServiceStarted = false
         var restartNotificationDismissed = false
+        var restartReason: String? = null
 
-        var tripData: TripData? = null
-        var dataManager: DataManager? = null
+        lateinit var tripDatabase: TripDataDatabase
+        lateinit var tripDataSource: LocalTripDataSource
+        lateinit var dataProcessor: DataProcessor
+        lateinit var watchdog: Watchdog
 
+        lateinit var logDao: LogDao
 
+        val appContextIsInitialized: Boolean get() = this::appContext.isInitialized
 
-        // lateinit var tripDatabase: TripDataDatabase
-        // lateinit var tripDao: TripDao
-
+        fun setupRestartAlarm(context: Context, reason: String, delay: Long, cancel: Boolean = false, extendedLogging: Boolean = false) {
+            val serviceIntent = Intent(context, AutoStartReceiver::class.java)
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            serviceIntent.action = "com.ixam97.carStatsViewer.RestartAction"
+            serviceIntent.putExtra("reason", reason)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                0,
+                serviceIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            alarmManager.cancel(pendingIntent)
+            if (cancel) return
+            if (delay < 10_000) {
+                alarmManager.set(
+                    AlarmManager.RTC,
+                    System.currentTimeMillis() + delay,
+                    pendingIntent
+                )
+                InAppLogger.i("[ASR] Setup single shot alarm")
+            } else {
+                alarmManager.setRepeating(
+                    AlarmManager.RTC,
+                    System.currentTimeMillis() + delay,
+                    delay,
+                    pendingIntent
+                )
+                if (extendedLogging) InAppLogger.i("[ASR] Setup repeating alarm")
+            }
+        }
     }
 
-    // val dataProcessor = DataProcessor()
+
 
     override fun onCreate() {
         super.onCreate()
-/*
+
+        appContext = applicationContext
+        appPreferences = AppPreferences(applicationContext)
+        watchdog = Watchdog()
+
+        val logDatabase = Room.databaseBuilder(
+            applicationContext,
+            LogDatabase::class.java,
+            "LogDatabase"
+        ).build()
+        logDao = logDatabase.logDao()
+
+        Thread.setDefaultUncaughtExceptionHandler { t, e ->
+
+            try {
+                setupRestartAlarm(applicationContext, "crash", 2_000, extendedLogging = true)
+                InAppLogger.i("setup crash alarm")
+            } catch (e: Exception) {
+                InAppLogger.e(e.stackTraceToString())
+            }
+
+            InAppLogger.e("[NEO] Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
+
+            exitProcess(0)
+        }
+
+        val MIGRATION_5_6 = object: Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE DrivingSession ADD COLUMN last_edited_epoch_time INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         tripDatabase = Room.databaseBuilder(
             applicationContext,
             TripDataDatabase::class.java,
             "TripDatabase"
-        ).build()
-        tripDao = tripDatabase.tripDao()
+        )
+            //.fallbackToDestructiveMigration()
+            .addMigrations(MIGRATION_5_6)
+            .build()
 
- */
+        tripDataSource = LocalTripDataSource(tripDatabase.tripDao())
+
+        CoroutineScope(Dispatchers.IO).launch {
+
+            // tripDatabase.clearAllTables()
+
+            val drivingSessionIds = tripDataSource.getActiveDrivingSessionsIdsMap()
+            InAppLogger.d("Trip Database: $drivingSessionIds")
+        }
+
+        dataProcessor = DataProcessor()
 
         val typedValue = TypedValue()
         applicationContext.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
@@ -69,9 +161,6 @@ class CarStatsViewer : Application() {
         //         .detectLeakedClosableObjects()
         //         .build()
         // )
-
-        appContext = applicationContext
-        appPreferences = AppPreferences(applicationContext)
 
         InAppLogger.i("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
 
