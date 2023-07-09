@@ -22,6 +22,12 @@ class SettingsApisActivity: FragmentActivity() {
 
         setContentView(R.layout.activity_settings_apis)
 
+        settings_apis_connection_selector.entries = ArrayList(CarStatsViewer.liveDataApis.map { getString(it.apiNameStringId) })
+        settings_apis_connection_selector.selectedIndex = appPreferences.mainViewConnectionApi
+        settings_apis_connection_selector.setOnIndexChangedListener {
+            appPreferences.mainViewConnectionApi = settings_apis_connection_selector.selectedIndex
+        }
+
         settings_apis_button_back.setOnClickListener {
             finish()
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)

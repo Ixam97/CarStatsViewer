@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import kotlinx.android.synthetic.main.activity_settings_apis.*
 import kotlinx.android.synthetic.main.activity_settings_main_view.*
 
 class SettingsMainViewActivity: Activity() {
@@ -29,6 +30,12 @@ class SettingsMainViewActivity: Activity() {
         settings_multiselect_trip.setOnIndexChangedListener {
             appPreferences.mainViewTrip = settings_multiselect_trip.selectedIndex
             CarStatsViewer.dataProcessor.changeSelectedTrip(settings_multiselect_trip.selectedIndex + 1)
+        }
+
+        settings_multiselect_connection_selector.entries = ArrayList(CarStatsViewer.liveDataApis.map { getString(it.apiNameStringId) })
+        settings_multiselect_connection_selector.selectedIndex = appPreferences.mainViewConnectionApi
+        settings_multiselect_connection_selector.setOnIndexChangedListener {
+            appPreferences.mainViewConnectionApi = settings_multiselect_connection_selector.selectedIndex
         }
 
         settings_consumption_plot_switch_secondary_color.setOnClickListener {

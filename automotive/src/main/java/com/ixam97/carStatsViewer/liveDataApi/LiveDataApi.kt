@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flow
 
 abstract class LiveDataApi(
     val apiIdentifier: String,
+    val apiNameStringId: Int,
     var detailedLog: Boolean
     ){
 

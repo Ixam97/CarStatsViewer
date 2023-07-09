@@ -55,6 +55,8 @@ class AppPreferences(
     private val TripFilterMonth = AppPreference<Boolean>(context.getString(R.string.preference_trip_filter_month_key), true, sharedPref)
     private val TripFilterTime = AppPreference<Long>(context.getString(R.string.preference_trip_filter_time_key), 0L, sharedPref)
 
+    private val MainViewConnectionApi = AppPreference<Int>(context.getString(R.string.preference_main_view_connection_api_key), 0, sharedPref)
+
     var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
     var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
@@ -90,6 +92,8 @@ class AppPreferences(
     var tripFilterAuto: Boolean get() = TripFilterAuto.value; set(value) {TripFilterAuto.value = value}
     var tripFilterMonth: Boolean get() = TripFilterMonth.value; set(value) {TripFilterMonth.value = value}
     var tripFilterTime: Long get() = TripFilterTime.value; set(value) {TripFilterTime.value = value}
+
+    var mainViewConnectionApi: Int get() = MainViewConnectionApi.value; set(value) {MainViewConnectionApi.value = value}
 
 
 

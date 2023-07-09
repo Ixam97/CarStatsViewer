@@ -54,6 +54,7 @@
         <item>Added the trip history to view past trips.</item>
         <item>Added quick select buttons for 20, 40 and 100 km in the trip summary.</item>
         <item>Added an icon representing the selected trip type. Taping on the trip stats cycles between the 4 trip types.</item>
+        <item>Added setting to select which APIs connection status should be displayed in the main view.</item>
         <item>It is now possible to reset the manual trip from the main view.</item>
         <item>Adjusted the HTTP webhook data set to the new data structure.</item>
     </string-array>
@@ -189,6 +190,7 @@
     <string name="settings_apis_http">HTTP Webhook</string>
     <string name="settings_apis_smtp">SMTP Login</string>
     <string name="settings_apis_use">Use API</string>
+    <string name="settings_apis_connection_selector">Connectivity icon in main view:</string>
 
     <!-- ABRP -->
     <string name="abrp_description">Enter an ABRP generic token to transmit over-the-air live data to the ABRP servers. This includes location data if not disabled.</string>

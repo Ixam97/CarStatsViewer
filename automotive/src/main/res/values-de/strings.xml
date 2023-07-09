@@ -6,6 +6,7 @@
         <item>Tripverlauf hinzugefügt, um vergangene Trips anzeigen zu können.</item>
         <item>Schnellwahltasten für 20, 40 und 100 km in der Tripzusammenfassung hinzugefügt.</item>
         <item>Icon hinzugefügt, das den aktuell ausgewählten Trip-Typ symbolisiert. Tippen auf die Trip-Statistiken wechselt zum nächsten Trip-Typ.</item>
+        <item>Einstellung hinzugefügt, welche API den Verbindungsstatus in der Hauptansicht anzeigen soll.</item>
         <item>Der manuelle Trip kann nun direkt aus der Hauptansicht heraus zurückgesetzt werden.</item>
         <item>Der Datensatz für den HTTP-Webhook wurde an die neue Datenstruktur angepasst.</item>
     </string-array>
@@ -134,6 +135,7 @@
     <string name="settings_apis_http">HTTP Webhook</string>
     <string name="settings_apis_smtp">SMTP-Logindaten</string>
     <string name="settings_apis_use">API nutzen</string>
+    <string name="settings_apis_connection_selector">Verbindungssymbol in Hauptansicht:</string>
 
     <!-- ABRP -->
     <string name="abrp_description">ABRP Generic Token eingeben, um Over-the-Air Live-Daten an die ABRP-Server zu senden. Dies beinhaltet Standortdaten, falls nicht deaktiviert.</string>

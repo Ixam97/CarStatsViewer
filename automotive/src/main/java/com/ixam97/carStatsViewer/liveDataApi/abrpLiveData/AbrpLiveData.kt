@@ -21,7 +21,7 @@ import kotlin.math.roundToInt
 class AbrpLiveData (
     private val apiKey : String,
     detailedLog : Boolean = true
-): LiveDataApi("ABRP Api", detailedLog) {
+): LiveDataApi("ABRP", R.string.settings_apis_abrp, detailedLog) {
 
     var lastPackage: String = ""
 

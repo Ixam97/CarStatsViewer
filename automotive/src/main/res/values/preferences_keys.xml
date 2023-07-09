@@ -38,4 +38,5 @@
     <string name="preference_trip_filter_auto_key" translatable="false">preference_trip_filter_auto</string>
     <string name="preference_trip_filter_month_key" translatable="false">preference_trip_filter_month</string>
     <string name="preference_trip_filter_time_key" translatable="false">preference_trip_filter_time</string>
+    <string name="preference_main_view_connection_api_key" translatable="false">preference_main_view_connection_api</string>
 </resources>

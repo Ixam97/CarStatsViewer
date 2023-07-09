@@ -459,10 +459,10 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun updateConnectionStatusIcon(apiStatus: Map<String, Int>) {
-        if (apiStatus.containsKey(CarStatsViewer.liveDataApis[0].apiIdentifier)) {
-            val status = apiStatus[CarStatsViewer.liveDataApis[0].apiIdentifier]
+        val selectedApi = appPreferences.mainViewConnectionApi
+        if (apiStatus.containsKey(CarStatsViewer.liveDataApis[selectedApi].apiIdentifier)) {
 
-            when (status) {
+            when (apiStatus[CarStatsViewer.liveDataApis[selectedApi].apiIdentifier]) {
                 WatchdogState.DISABLED -> main_icon_abrp_status.visibility = View.GONE
                 WatchdogState.NOMINAL -> {
                     main_icon_abrp_status.setColorFilter(getColor(R.color.connected_blue))

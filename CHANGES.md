@@ -6,6 +6,7 @@
 - Ladevorgänge können nun für bis zu 5 Minuten unterbrochen werden, bevor ein neuer Ladevorgang angelegt wird, sogar, wenn das Auto bewegt wurde.
 - Tripverlauf hinzugefügt, um vergangene Trips anzeigen zu können.
 - Icon hinzugefügt, das den aktuell ausgewählten Trip-Typ symbolisiert. Tippen auf die Trip-Statistiken wechselt zum nächsten Triy-Typ.
+- Einstellung hinzugefügt, welche API den Verbindungsstatus in der Hauptansicht anzeigen soll.
 - Der manuelle Trip kann nun direkt aus der Hauptansicht heraus zurückgesetzt werden.
 - Der Datensatz für den HTTP-Webhook wurde an die neue Datenstruktur angepasst.
 

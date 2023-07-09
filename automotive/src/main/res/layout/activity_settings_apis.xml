@@ -46,6 +46,16 @@
             android:layout_marginVertical="10dp"
             android:orientation="vertical">
 
+            <com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
+                android:id="@+id/settings_apis_connection_selector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/settings_apis_connection_selector"/>
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+
             <com.ixam97.carStatsViewer.ui.views.ApiRowWidget
                 android:id="@+id/settings_apis_abrp_row"
                 android:orientation="vertical"
