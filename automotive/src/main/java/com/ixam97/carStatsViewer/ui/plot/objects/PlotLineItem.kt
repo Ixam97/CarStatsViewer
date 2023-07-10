@@ -44,13 +44,13 @@ class PlotLineItem (
         return when (dimensionY) {
             PlotDimensionY.SPEED -> {
                 when {
-                    (DistanceDelta ?: 0f) <= 0f || (TimeDelta ?: 0L) <= 0L -> null
+                    (DistanceDelta ?: 0f) == 0f || (TimeDelta ?: 0L) == 0L -> null
                     else -> (DistanceDelta ?: 0f) / ((TimeDelta ?: 0L) / 1_000_000_000f) * 3.6f
                 }
             }
             PlotDimensionY.CONSUMPTION -> {
                 when {
-                    Value == 0f || (DistanceDelta ?: 0f) <= 0f -> null
+                    Value == 0f || (DistanceDelta ?: 0f) == 0f -> null
                     else -> Value / ((DistanceDelta ?: 0f) / 1000)
                 }
             }
