@@ -44,8 +44,14 @@ class PlotLineItem (
         return when (dimensionY) {
             PlotDimensionY.SPEED -> {
                 when {
-                    (TimeDelta?:0L) <= 0 -> null
-                    else -> (DistanceDelta ?: 0f) / ((TimeDelta ?: 1L) / 1_000_000_000f) * 3.6f
+                    (DistanceDelta ?: 0f) <= 0f || (TimeDelta ?: 0L) <= 0L -> null
+                    else -> (DistanceDelta ?: 0f) / ((TimeDelta ?: 0L) / 1_000_000_000f) * 3.6f
+                }
+            }
+            PlotDimensionY.CONSUMPTION -> {
+                when {
+                    Value == 0f || (DistanceDelta ?: 0f) <= 0f -> null
+                    else -> Value / ((DistanceDelta ?: 0f) / 1000)
                 }
             }
             PlotDimensionY.DISTANCE -> Distance
@@ -77,6 +83,32 @@ class PlotLineItem (
 
         fun cord(index: Long, min: Long, max: Long) : Float {
             return 1f / (max - min) * (index - min)
+        }
+
+        fun byDimensionY(dataPoints: List<PlotLineItem>, dimensionY: PlotDimensionY? = null): Float? {
+            if (dataPoints.isEmpty()) return null
+
+            return when (dimensionY) {
+                PlotDimensionY.SPEED -> {
+                    val distance = dataPoints.map { (it.DistanceDelta ?: 0f) }.sum()
+                    val time = dataPoints.sumOf { (it.TimeDelta ?: 0L) }
+
+                    when {
+                        distance == 0f || time == 0L -> null
+                        else -> distance / (time / 1_000_000_000f) * 3.6f
+                    }
+                }
+                PlotDimensionY.CONSUMPTION -> {
+                    val value = dataPoints.map { it.Value }.sum()
+                    val distance  = dataPoints.map { (it.DistanceDelta ?: 0f) }.sum()
+
+                    when {
+                        value == 0f || distance == 0f -> null
+                        else -> value / (distance / 1000)
+                    }
+                }
+                else -> null
+            }
         }
     }
 }

@@ -36,10 +36,8 @@ object DataConverters {
 
         val markerType = PlotLineMarkerType.getType(drivingPoint.point_marker_type)
 
-        val pointValue = if (drivingPoint.distance_delta <= 0) 0f else drivingPoint.energy_delta / (drivingPoint.distance_delta / 1000)
-
-        return PlotLineItem(
-            Value = pointValue,
+         return PlotLineItem(
+            Value = drivingPoint.energy_delta,
             EpochTime = drivingPoint.driving_point_epoch_time,
             NanoTime = null,
             Distance = if (prevPlotLineItem == null) {

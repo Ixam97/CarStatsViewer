@@ -371,20 +371,14 @@ class MainActivity : FragmentActivity() {
             main_consumption_gage.gageUnit = "Wh/%s".format(distanceUnit.unit())
             main_consumption_gage.minValue = distanceUnit.asUnit(-300f)
             main_consumption_gage.maxValue = distanceUnit.asUnit(600f)
-            consumptionPlotLine.Configuration.Unit = "Wh/%s".format(distanceUnit.unit())
-            consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
-            consumptionPlotLine.Configuration.Divider = distanceUnit.toFactor() * 1f
 
         } else {
             main_consumption_gage.gageUnit = "kWh/100%s".format(distanceUnit.unit())
             main_consumption_gage.minValue = distanceUnit.asUnit(-30f)
             main_consumption_gage.maxValue = distanceUnit.asUnit(60f)
-            consumptionPlotLine.Configuration.Unit = "kWh/100%s".format(distanceUnit.unit())
-            consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
-            consumptionPlotLine.Configuration.Divider = distanceUnit.toFactor() * 10f
         }
 
-        PlotGlobalConfiguration.updateDistanceUnit(distanceUnit)
+        PlotGlobalConfiguration.updateDistanceUnit(distanceUnit, consumptionUnit)
         main_consumption_plot.dimensionRestriction = distanceUnit.asUnit(
             CONSUMPTION_DISTANCE_RESTRICTION
         )
@@ -411,7 +405,7 @@ class MainActivity : FragmentActivity() {
             3 -> getString(R.string.main_secondary_axis, getString(R.string.plot_dimensionY_ALTITUDE))
             else -> getString(R.string.main_secondary_axis, "-")
         }
-        main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[secondaryConsumptionDimension]
+        main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[secondaryConsumptionDimension] ?: PlotDimensionY.CONSUMPTION
         main_consumption_plot.invalidate()
     }
 
@@ -499,6 +493,7 @@ class MainActivity : FragmentActivity() {
         PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
 
         main_consumption_plot.reset()
+        main_consumption_plot.dimensionYPrimary = PlotDimensionY.CONSUMPTION
         main_consumption_plot.addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
 
         main_consumption_plot.dimension = PlotDimensionX.DISTANCE
@@ -508,7 +503,7 @@ class MainActivity : FragmentActivity() {
         main_consumption_plot.dimensionSmoothing = 0.02f
         main_consumption_plot.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
         main_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
-        main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[appPreferences.secondaryConsumptionDimension]
+        main_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[appPreferences.secondaryConsumptionDimension] ?: PlotDimensionY.CONSUMPTION
 
         main_consumption_plot.invalidate()
 

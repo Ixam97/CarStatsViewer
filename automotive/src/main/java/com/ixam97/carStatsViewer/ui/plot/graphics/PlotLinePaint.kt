@@ -8,8 +8,13 @@ class PlotLinePaint(
     private val yAxisAlternative : PlotPaint,
     private var useYAxisAlternative: () -> Boolean
 ) {
+    private val xAxisByY : HashSet<PlotDimensionY> = hashSetOf(
+        PlotDimensionY.CONSUMPTION
+    )
+
     fun bySecondaryDimension(secondaryDimension: PlotDimensionY?) : PlotPaint {
         return when {
+            xAxisByY.contains(secondaryDimension) -> xAxis
             secondaryDimension != null -> when {
                 useYAxisAlternative.invoke() -> yAxisAlternative
                 else -> yAxisNormal

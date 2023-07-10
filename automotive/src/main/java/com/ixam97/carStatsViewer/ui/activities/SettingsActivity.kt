@@ -99,6 +99,7 @@ class SettingsActivity : FragmentActivity() {
 
         settings_switch_consumption_unit.setOnClickListener {
             appPreferences.consumptionUnit = settings_switch_consumption_unit.isChecked
+            PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit, appPreferences.consumptionUnit)
         }
 
         settings_switch_use_location.setOnClickListener {
@@ -117,7 +118,7 @@ class SettingsActivity : FragmentActivity() {
                 true -> DistanceUnitEnum.MILES
                 else -> DistanceUnitEnum.KM
             }
-            PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
+            PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit, appPreferences.consumptionUnit)
         }
 
         settings_switch_alt_layout.setOnClickListener {

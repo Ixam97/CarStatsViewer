@@ -297,6 +297,9 @@ class PlotLine(
                     else -> null
                 }
             }
+            PlotHighlightMethod.AVG_BY_VALUE -> {
+                  PlotLineItem.byDimensionY(dataPoints, secondaryDimension)
+            }
             else -> null
         }
 
@@ -344,7 +347,8 @@ class PlotLine(
             PlotHighlightMethod.AVG_BY_INDEX,
             PlotHighlightMethod.AVG_BY_DISTANCE,
             PlotHighlightMethod.AVG_BY_TIME,
-            PlotHighlightMethod.AVG_BY_STATE_OF_CHARGE -> averageValue(dataPoints, inlineHighlightMethod, secondaryDimension)
+            PlotHighlightMethod.AVG_BY_STATE_OF_CHARGE,
+            PlotHighlightMethod.AVG_BY_VALUE -> averageValue(dataPoints, inlineHighlightMethod, secondaryDimension)
             else -> null
         }
     }
