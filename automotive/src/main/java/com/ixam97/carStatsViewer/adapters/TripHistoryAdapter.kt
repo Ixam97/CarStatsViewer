@@ -14,6 +14,7 @@ import com.ixam97.carStatsViewer.ui.views.TripHistoryRowWidget
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class TripHistoryAdapter(
@@ -112,8 +113,8 @@ class TripHistoryAdapter(
         }
     }
 
-    fun resetTrip(tripType: Int) {
-        CoroutineScope(Dispatchers.Default).launch {
+    fun resetTrip(tripType: Int): Job {
+        return CoroutineScope(Dispatchers.Default).launch {
             CarStatsViewer.dataProcessor.resetTrip(tripType, CarStatsViewer.dataProcessor.realTimeData.drivingState)
             reloadDataBase()
         }

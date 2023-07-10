@@ -7,6 +7,14 @@
     tools:ignore="UseSwitchCompatOrMaterialXml, UseAppTint, UseCompatTextViewDrawableXml"
     tools:context=".ui.activities.SettingsActivity">
 
+
+    <ProgressBar
+        android:id="@+id/trip_history_progress_bar"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:layout_width="200dp"
+        android:layout_height="200dp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

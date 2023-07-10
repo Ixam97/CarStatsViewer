@@ -192,6 +192,7 @@
             <Switch
                 android:id="@+id/settings_switch_distance_unit"
                 style="@style/menu_standard_switch_style"
+                android:layout_marginBottom="20dp"
                 android:text="@string/settings_distance_unit"
                 android:visibility="gone" />
 
@@ -202,6 +203,8 @@
         android:id="@+id/settings_version_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginTop="20dp"
         android:layout_alignParentBottom="true"
         app:layout_constraintBottom_toBottomOf="parent" />
 

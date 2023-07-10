@@ -58,7 +58,11 @@ class HistoryActivity  : FragmentActivity() {
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch { withContext(Dispatchers.IO) {tripsAdapter.reloadDataBase() }}
+        lifecycleScope.launch { withContext(Dispatchers.IO) {
+            runOnUiThread { trip_history_progress_bar.visibility = View.VISIBLE }
+            tripsAdapter.reloadDataBase()
+            runOnUiThread { trip_history_progress_bar.visibility = View.GONE }
+        }}
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,7 +102,7 @@ class HistoryActivity  : FragmentActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             val session = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId)
-            if ((appPreferences.mainViewTrip + 1) != session.session_type) {
+            if ((appPreferences.mainViewTrip + 1) != session.session_type && (session.end_epoch_time?:0) <= 0) {
                 appPreferences.mainViewTrip = session.session_type - 1
                 CarStatsViewer.dataProcessor.changeSelectedTrip(session.session_type)
             }
@@ -177,7 +181,11 @@ class HistoryActivity  : FragmentActivity() {
             .setMessage(getString(R.string.dialog_reset_message))
             .setCancelable(true)
             .setPositiveButton(getString(R.string.dialog_reset_confirm)) { _, _ ->
-                tripsAdapter.resetTrip(tripType)
+                lifecycleScope.launch{ withContext(Dispatchers.IO) {
+                    runOnUiThread { trip_history_progress_bar.visibility = View.VISIBLE }
+                    tripsAdapter.resetTrip(tripType).join()
+                    runOnUiThread { trip_history_progress_bar.visibility = View.GONE }
+                }}
             }
             .setNegativeButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
                 dialog.cancel()
@@ -210,17 +218,22 @@ class HistoryActivity  : FragmentActivity() {
         builder.setTitle(getString(R.string.history_dialog_multi_delete_title))
             .setCancelable(true)
             .setPositiveButton(getString(R.string.history_dialog_multi_delete_delete, selectedIds.size.toString())) {_,_->
-                CoroutineScope(Dispatchers.IO).launch {
+                lifecycleScope.launch { withContext(Dispatchers.IO) {
+                    runOnUiThread { trip_history_progress_bar.visibility = View.VISIBLE }
                     selectedIds.forEach {
                         CarStatsViewer.tripDataSource.deleteDrivingSessionById(it)
                     }
                     selectedIds.clear()
                     tripsAdapter.reloadDataBase()
-                    runOnUiThread { multiSelectMode = false }
-                }
+                    runOnUiThread {
+                        multiSelectMode = false
+                        trip_history_progress_bar.visibility = View.GONE
+                    }
+                }}
             }
             .setNeutralButton(getString(R.string.history_dialog_multi_delete_deselect)) { dialog, _ ->
-                CoroutineScope(Dispatchers.IO).launch {
+                lifecycleScope.launch { withContext(Dispatchers.IO) {
+                    runOnUiThread { trip_history_progress_bar.visibility = View.VISIBLE }
                     selectedIds.forEach {
                         tripsAdapter.selectTrip(it, false)
                     }
@@ -229,8 +242,9 @@ class HistoryActivity  : FragmentActivity() {
                     runOnUiThread {
                         tripsAdapter.notifyDataSetChanged()
                         multiSelectMode = false
+                        trip_history_progress_bar.visibility = View.GONE
                     }
-                }
+                }}
                 dialog.cancel()
             }
             .setNegativeButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
@@ -309,7 +323,11 @@ class HistoryActivity  : FragmentActivity() {
         appPreferences.tripFilterMonth = filterMonth
         appPreferences.tripFilterTime = filterTime
 
-        CoroutineScope(Dispatchers.IO).launch { tripsAdapter.reloadDataBase() }
+        lifecycleScope.launch { withContext(Dispatchers.IO) {
+            runOnUiThread { trip_history_progress_bar.visibility = View.VISIBLE }
+            tripsAdapter.reloadDataBase()
+            runOnUiThread { trip_history_progress_bar.visibility = View.GONE }
+        }}
 
         appPreferences.run {
             if (!tripFilterManual || !tripFilterAuto || !tripFilterCharge || !tripFilterMonth || tripFilterTime > 0) {
