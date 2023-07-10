@@ -1006,28 +1006,46 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
                                 .coerceAtMost(maxY - yMargin)
 
                             val label = label((highlight!! - valueCorrectionY) / configuration.Divider, configuration.LabelFormat, highlightMethod)
-                            paint.HighlightLabel.textSize = 35f
+                            paint.HighlightLabel.textSize = textSize * 1.25f
                             val labelWidth = paint.HighlightLabel.measureText(label)
                             val labelHeight = paint.HighlightLabel.textSize
                             val textBoxMargin = paint.HighlightLabel.textSize / 3.5f
 
+
+
+                            val adjustX = if (labelPosition == PlotLabelPosition.RIGHT) {
+                                if (labelWidth + 2 * textBoxMargin > xMargin + paint.Plot.strokeWidth * 4) {
+                                    maxX - (labelWidth + textBoxMargin + paint.Plot.strokeWidth * 2)
+                                } else {
+                                    maxX - xMargin - textBoxMargin - paint.Plot.strokeWidth * 2
+                                }
+                                //labelCordX + xMargin - (labelWidth + paint.Plot.strokeWidth * 4 - labelUnitXOffset)//  + labelUnitXOffset
+
+                            } else {
+                                if (labelWidth + 2 * textBoxMargin > xMargin + paint.Plot.strokeWidth * 4) {
+                                    labelCordX + textBoxMargin + paint.Plot.strokeWidth * 2
+                                } else {
+                                    xMargin - labelWidth + textBoxMargin + paint.Plot.strokeWidth * 2
+                                }
+                            }
+
                             canvas.drawRect(
-                                labelCordX + paint.Plot.strokeWidth * 4 + labelUnitXOffset - textBoxMargin,
+                                adjustX - textBoxMargin,
                                 highlightCordYLimited - labelHeight + labelShiftY,
-                                labelCordX + paint.Plot.strokeWidth * 4 + labelUnitXOffset + labelWidth + textBoxMargin,
+                                adjustX + labelWidth + textBoxMargin,
                                 highlightCordYLimited + labelShiftY + textBoxMargin,
                                 backgroundPaint
                             )
 
                             canvas.drawRect(
-                                labelCordX + paint.Plot.strokeWidth * 4 + labelUnitXOffset - textBoxMargin,
+                                adjustX - textBoxMargin,
                                 highlightCordYLimited - labelHeight + labelShiftY,
-                                labelCordX + paint.Plot.strokeWidth * 4 + labelUnitXOffset + labelWidth + textBoxMargin,
+                                adjustX + labelWidth + textBoxMargin,
                                 highlightCordYLimited + labelShiftY + textBoxMargin,
                                 paint.Plot
                             )
 
-                            canvas.drawText(label, labelCordX + paint.Plot.strokeWidth * 4 + labelUnitXOffset, highlightCordYLimited + labelShiftY, paint.HighlightLabel)
+                            canvas.drawText(label, adjustX, highlightCordYLimited + labelShiftY, paint.HighlightLabel)
                         }
                     }
                 }
