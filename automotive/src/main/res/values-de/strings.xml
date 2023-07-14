@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="changes_0_25_0">
-        <item>Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips</item>
+        <item>Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips.</item>
         <item>Ladevorgänge können nun für bis zu 5 Minuten unterbrochen werden, bevor ein neuer Ladevorgang angelegt wird, sogar, wenn das Auto bewegt wurde.</item>
         <item>Tripverlauf hinzugefügt, um vergangene Trips anzeigen zu können.</item>
         <item>Schnellwahltasten für 20, 40 und 100 km in der Tripzusammenfassung hinzugefügt.</item>
@@ -9,6 +9,7 @@
         <item>Einstellung hinzugefügt, welche API den Verbindungsstatus in der Hauptansicht anzeigen soll.</item>
         <item>Der manuelle Trip kann nun direkt aus der Hauptansicht heraus zurückgesetzt werden.</item>
         <item>Der Datensatz für den HTTP-Webhook wurde an die neue Datenstruktur angepasst.</item>
+        <item>Allgemeine Bugfixes und Stabilitätsverbesserungen.</item>
     </string-array>
 
     <string-array name="changes_0_24_1">

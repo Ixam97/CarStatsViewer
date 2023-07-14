@@ -45,7 +45,7 @@ class MainActivity : FragmentActivity() {
 
     private val consumptionPlotLine = PlotLine(
         PlotLineConfiguration(
-            PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
+            PlotRange(-200f, 600f, -200f, 600f, 100f, 0f),
             PlotLineLabelFormat.NUMBER,
             PlotHighlightMethod.AVG_BY_DISTANCE,
             "Wh/km"
@@ -56,6 +56,7 @@ class MainActivity : FragmentActivity() {
         PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color), PlotView.textSize),
         PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
     ) { appPreferences.consumptionPlotSecondaryColor }
+
     private val chargePlotLine = PlotLine(
         PlotLineConfiguration(
             PlotRange(0f, 20f, 0f, 160f, 20f),
@@ -302,6 +303,8 @@ class MainActivity : FragmentActivity() {
                 }
             }
         }
+
+        appPreferences.altLayout = false
 
         startForegroundService(Intent(applicationContext, DataCollector::class.java))
 

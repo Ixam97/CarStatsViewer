@@ -79,10 +79,12 @@
                 android:text="@string/settings_notifications" />
 
             <View
+                android:visibility="gone"
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider" />
 
             <Switch
+                android:visibility="gone"
                 android:id="@+id/settings_switch_alt_layout"
                 style="@style/menu_standard_switch_style"
                 android:text="Speed and SoC in main view gages" />

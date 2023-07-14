@@ -60,7 +60,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
     private var consumptionPlotLine = PlotLine(
         PlotLineConfiguration(
-            PlotRange(-300f, 900f, -300f, 900f, 100f, 0f),
+            PlotRange(-200f, 600f, -200f, 600f, 100f, 0f),
             PlotLineLabelFormat.NUMBER,
             PlotHighlightMethod.AVG_BY_DISTANCE,
             "Wh/km"

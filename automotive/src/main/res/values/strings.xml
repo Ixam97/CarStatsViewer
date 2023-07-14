@@ -57,6 +57,7 @@
         <item>Added setting to select which APIs connection status should be displayed in the main view.</item>
         <item>It is now possible to reset the manual trip from the main view.</item>
         <item>Adjusted the HTTP webhook data set to the new data structure.</item>
+        <item>General bugfixes and stability improvements.</item>
     </string-array>
 
     <string-array name="changes_0_24_1">

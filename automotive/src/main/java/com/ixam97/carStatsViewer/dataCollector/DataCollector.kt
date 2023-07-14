@@ -18,6 +18,7 @@ import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.locationClient.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationClient.LocationClient
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.WatchdogState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -85,7 +86,7 @@ class DataCollector: Service() {
 
         foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.FOREGROUND_CHANNEL_ID)
             // .setContentTitle(getString(R.string.app_name))
-            .setContentTitle(getString(R.string.foreground_service_info) + " (Neo)")
+            .setContentTitle(getString(R.string.foreground_service_info))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setOngoing(true)
 
@@ -178,6 +179,28 @@ class DataCollector: Service() {
                 delay(10_000)
             }
 
+        }
+
+        serviceScope.launch {
+            // Notification updater
+            while (true) {
+                if (!CarStatsViewer.appPreferences.notifications) {
+                    foregroundServiceNotification
+                        .setContentTitle(getString(R.string.foreground_service_info))
+                        .setContentText("")
+                } else {
+                    foregroundServiceNotification
+                        .setContentTitle(getString(R.string.notification_title) + " " + resources.getStringArray(R.array.trip_type_names)[CarStatsViewer.appPreferences.mainViewTrip + 1])
+                        .setContentText(String.format(
+                            "Dist.: %s, Cons.: %s, Speed: %s",
+                            StringFormatters.getTraveledDistanceString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f),
+                            StringFormatters.getAvgConsumptionString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.used_energy?.toFloat()?:0f, CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f),
+                            StringFormatters.getAvgSpeedString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f, CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.drive_time?:0)
+                        ))
+                }
+                CarStatsViewer.notificationManager.notify(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
+                delay(2_500)
+            }
         }
 
     }
