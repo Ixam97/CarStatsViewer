@@ -12,12 +12,14 @@ import androidx.core.view.forEach
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
+import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLine
@@ -29,9 +31,7 @@ import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.ui.views.PlotView
 import kotlinx.android.synthetic.main.fragment_summary.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -222,17 +222,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
     private fun applySession(session: DrivingSession) {
 
         switchToConsumptionLayout()
-
-        session.chargingSessions?.let { chargingSessions ->
-            if (chargingSessions.isNotEmpty()) {
-                completedChargingSessions = chargingSessions.filter { it.end_epoch_time != null }
-            }
-        }
-
-        summary_button_show_charge_container.text = "${getString(R.string.summary_charging_sessions)}: ${completedChargingSessions.size}"
-
-        summary_button_show_charge_container.isEnabled =
-            completedChargingSessions.isNotEmpty()
+        summary_button_show_charge_container.isEnabled = false
 
         if (session.session_type != TripType.MANUAL) {
             summary_button_reset.isEnabled = false
@@ -242,35 +232,68 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             summary_button_reset.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
         }
 
-        session.drivingPoints?.let {
-            consumptionPlotLine.reset()
-            consumptionPlotLine.addDataPoints(DataConverters.consumptionPlotLineFromDrivingPoints(it))
-            summary_consumption_plot.setPlotMarkers(DataConverters.plotMarkersFromSession(session))
-            summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((appPreferences.distanceUnit.toUnit(session.driven_distance.toFloat()) / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) + 1
-            summary_consumption_plot.invalidate()
-        }
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                requireActivity().runOnUiThread {
+                    summary_consumption_plot.visibility = View.GONE
+                    summary_progress_bar.visibility = View.VISIBLE
+                }
+                if (session.drivingPoints == null || session.chargingSessions == null) {
+                    val fullSession = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId = session.driving_session_id)
 
-        summary_charge_plot_seek_bar.max = (completedChargingSessions.size - 1).coerceAtLeast(0)
-        summary_charge_plot_seek_bar.progress = (completedChargingSessions.size - 1).coerceAtLeast(0)
-        summary_charge_plot_seek_bar.setOnSeekBarChangeListener(seekBarChangeListener)
+                    session.drivingPoints = fullSession.drivingPoints
+                    session.chargingSessions = fullSession.chargingSessions
 
-        summary_charge_plot_button_next.setOnClickListener {
-            val newProgress = summary_charge_plot_seek_bar.progress + 1
-            if (newProgress <= (completedChargingSessions.size - 1)) {
-                summary_charge_plot_seek_bar.progress = newProgress
+                    if (emulatorMode) delay(1_000)
+                }
+                session.drivingPoints?.let {
+                    val plotPoints = DataConverters.consumptionPlotLineFromDrivingPoints(it)
+                    val plotMarkers = DataConverters.plotMarkersFromSession(session)
+                    delay(500)
+                    requireActivity().runOnUiThread {
+                        consumptionPlotLine.reset()
+                        consumptionPlotLine.addDataPoints(plotPoints)
+                        summary_consumption_plot.setPlotMarkers(plotMarkers)
+                        summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((appPreferences.distanceUnit.toUnit(session.driven_distance.toFloat()) / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) + 1
+                        summary_consumption_plot.invalidate()
+                        summary_consumption_plot.visibility = View.VISIBLE
+                        summary_progress_bar.visibility = View.GONE
+                    }
+                }
+                session.chargingSessions?.let {  chargingSessions ->
+                    if (chargingSessions.isNotEmpty()) {
+                        completedChargingSessions = chargingSessions.filter { it.end_epoch_time != null }
+                    }
+                    requireActivity().runOnUiThread {
+
+                        summary_button_show_charge_container.text = "${getString(R.string.summary_charging_sessions)}: ${completedChargingSessions.size}"
+                        summary_button_show_charge_container.isEnabled = completedChargingSessions.isNotEmpty()
+
+                        summary_charge_plot_seek_bar.max = (completedChargingSessions.size - 1).coerceAtLeast(0)
+                        summary_charge_plot_seek_bar.progress = (completedChargingSessions.size - 1).coerceAtLeast(0)
+                        summary_charge_plot_seek_bar.setOnSeekBarChangeListener(seekBarChangeListener)
+
+                        summary_charge_plot_button_next.setOnClickListener {
+                            val newProgress = summary_charge_plot_seek_bar.progress + 1
+                            if (newProgress <= (completedChargingSessions.size - 1)) {
+                                summary_charge_plot_seek_bar.progress = newProgress
+                            }
+                            summary_charge_plot_view.dimensionShift = 0L
+                        }
+
+                        summary_charge_plot_button_prev.setOnClickListener {
+                            val newProgress = summary_charge_plot_seek_bar.progress - 1
+                            if (newProgress >= 0) {
+                                summary_charge_plot_seek_bar.progress = newProgress
+                            }
+                            summary_charge_plot_view.dimensionShift = 0L
+                        }
+
+                        setVisibleChargeCurve(completedChargingSessions.size - 1)
+                    }
+                }
             }
-            summary_charge_plot_view.dimensionShift = 0L
         }
-
-        summary_charge_plot_button_prev.setOnClickListener {
-            val newProgress = summary_charge_plot_seek_bar.progress - 1
-            if (newProgress >= 0) {
-                summary_charge_plot_seek_bar.progress = newProgress
-            }
-            summary_charge_plot_view.dimensionShift = 0L
-        }
-
-        setVisibleChargeCurve(completedChargingSessions.size - 1)
 
 
         when (session.session_type) {

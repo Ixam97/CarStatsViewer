@@ -101,7 +101,7 @@ class HistoryActivity  : FragmentActivity() {
     private fun openSummary(sessionId: Long) {
 
         CoroutineScope(Dispatchers.IO).launch {
-            val session = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId)
+            val session = CarStatsViewer.tripDataSource.getDrivingSession(sessionId) ?: return@launch
             if ((appPreferences.mainViewTrip + 1) != session.session_type && (session.end_epoch_time?:0) <= 0) {
                 appPreferences.mainViewTrip = session.session_type - 1
                 CarStatsViewer.dataProcessor.changeSelectedTrip(session.session_type)

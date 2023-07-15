@@ -7,6 +7,8 @@ import android.content.Intent
 import android.location.Location
 import android.os.IBinder
 import android.widget.Toast
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.LocationServices
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
@@ -114,6 +116,8 @@ class DataCollector: Service() {
             emulatorMode = true
         }
 
+        InAppLogger.i("[NEO] Google API availability: ${GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS}")
+
         locationClient = DefaultLocationClient(
             CarStatsViewer.appContext,
             LocationServices.getFusedLocationProviderClient(this)
@@ -184,6 +188,7 @@ class DataCollector: Service() {
         serviceScope.launch {
             // Notification updater
             while (true) {
+                delay(2_500)
                 if (!CarStatsViewer.appPreferences.notifications) {
                     foregroundServiceNotification
                         .setContentTitle(getString(R.string.foreground_service_info))
@@ -199,7 +204,6 @@ class DataCollector: Service() {
                         ))
                 }
                 CarStatsViewer.notificationManager.notify(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
-                delay(2_500)
             }
         }
 

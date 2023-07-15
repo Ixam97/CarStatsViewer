@@ -101,7 +101,10 @@ class LocalTripDataSource(
     }
 
     override suspend fun getFullDrivingSession(sessionId: Long): DrivingSession {
-        return tripDao.getCompleteDrivingSessionById(sessionId)
+        InAppLogger.d("[TDB] Loading full session with ID $sessionId ...")
+        val fullSession = tripDao.getCompleteDrivingSessionById(sessionId)
+        InAppLogger.d("[TDB] Done loading!")
+        return fullSession
     }
 
     override suspend fun startMarker(timestamp: Long, type: Int) {

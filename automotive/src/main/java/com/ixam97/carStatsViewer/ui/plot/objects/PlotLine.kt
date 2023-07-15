@@ -21,13 +21,18 @@ class PlotLine(
 
     fun getDataPointsSize() = dataPoints.size
 
-    fun addDataPoint(item: Float, epochTime: Long, nanoTime: Long, distance: Float, stateOfCharge: Float, altitude: Float? = null, timeDelta: Long? = null, distanceDelta: Float? = null, stateOfChargeDelta: Float? = null, altitudeDelta: Float? = null, plotLineMarkerType: PlotLineMarkerType? = null, autoMarkerTimeDeltaThreshold: Long? = null) {
+    fun lastItem() : PlotLineItem? = when {
+        dataPoints.isEmpty() -> null
+        else -> dataPoints[dataPoints.size - 1]
+    }
+
+    fun addDataPoint(item: Float, epochTime: Long, nanoTime: Long, distance: Float, stateOfCharge: Float, altitude: Float? = null, timeDelta: Long? = null, distanceDelta: Float? = null, stateOfChargeDelta: Float? = null, altitudeDelta: Float? = null, plotLineMarkerType: PlotLineMarkerType? = null, autoMarkerTimeDeltaThreshold: Long? = null): PlotLineItem? {
         val prev = when (dataPoints[dataPoints.size - 1]?.Marker ?: PlotLineMarkerType.BEGIN_SESSION) {
             PlotLineMarkerType.BEGIN_SESSION -> dataPoints[dataPoints.size - 1]
             else -> null
         }
 
-        addDataPoint(
+        return addDataPoint(
             PlotLineItem(
             item,
             epochTime,
@@ -43,7 +48,7 @@ class PlotLine(
         ), autoMarkerTimeDeltaThreshold)
     }
 
-    fun addDataPoint(dataPoint: PlotLineItem, autoMarkerTimeDeltaThreshold: Long? = null) {
+    fun addDataPoint(dataPoint: PlotLineItem, autoMarkerTimeDeltaThreshold: Long? = null): PlotLineItem? {
         val prev = dataPoints[dataPoints.size - 1]
 
         if (dataPoint.Marker == PlotLineMarkerType.BEGIN_SESSION && prev?.Marker == null) {
@@ -78,6 +83,13 @@ class PlotLine(
             dataPoint.Value.isFinite() -> {
                 dataPoints[dataPoints.size] = dataPoint
             }
+        }
+        return when {
+            dataPoint.Value.isFinite() -> {
+                dataPoints[dataPoints.size] = dataPoint
+                dataPoint
+            }
+            else -> null
         }
     }
 

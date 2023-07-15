@@ -275,6 +275,37 @@ class MainActivity : FragmentActivity() {
                     neoSelectedTripId = session?.driving_session_id
 
                     /** Add new plot points */
+
+                    session?.drivingPoints?.let { drivingPoints ->
+                        val startIndex = consumptionPlotLine.getDataPointsSize()
+                        when {
+                            startIndex == 0 && drivingPoints.isEmpty() -> {
+                                consumptionPlotLine.reset()
+                            }
+                            startIndex == 0 -> {
+                                consumptionPlotLine.reset()
+                                consumptionPlotLine.addDataPoints(DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints, 10_000f))
+                            }
+                            startIndex != drivingPoints.size -> {
+                                var prevDrivingPoint = consumptionPlotLine.lastItem()
+
+                                for (i in drivingPoints.indices) {
+                                    if (i < startIndex) continue
+
+                                    prevDrivingPoint = consumptionPlotLine.addDataPoint(
+                                        DataConverters.consumptionPlotLineItemFromDrivingPoint(
+                                            drivingPoints[i],
+                                            prevDrivingPoint
+                                        )
+                                    ) ?: prevDrivingPoint
+                                }
+                            }
+                        }
+
+                        main_consumption_plot.invalidate()
+                    }
+
+                    /*
                     session?.drivingPoints?.let { drivingPoints ->
                         var sizeDelta = drivingPoints.size - consumptionPlotLine.getDataPointsSize()
                         // InAppLogger.d("Size delta: $sizeDelta (${drivingPoints.size} vs. ${consumptionPlotLine.getDataPointsSize()}, $nonFiniteCounter non-finite)")
@@ -295,10 +326,12 @@ class MainActivity : FragmentActivity() {
                         } else if (sizeDelta > 10) {
                             /** refresh entire plot for large numbers of new data Points */
                             consumptionPlotLine.reset()
-                            consumptionPlotLine.addDataPoints(DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints))
+                            consumptionPlotLine.addDataPoints(DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints, 10_000f))
                             main_consumption_plot.invalidate()
                         }
                     }
+
+                     */
                     // updateActivity()
                 }
             }
@@ -616,8 +649,8 @@ class MainActivity : FragmentActivity() {
     private fun openSummaryFragment() {
         CoroutineScope(Dispatchers.IO).launch {
             CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[appPreferences.mainViewTrip + 1]?.let {
-                val session = CarStatsViewer.tripDataSource.getFullDrivingSession(it)
-                runOnUiThread {
+                val session = CarStatsViewer.dataProcessor.selectedSessionDataFlow.value // CarStatsViewer.tripDataSource.getFullDrivingSession(it)
+                if (session != null) runOnUiThread {
                     main_fragment_container.visibility = View.VISIBLE
                     supportFragmentManager.commit {
                         setCustomAnimations(

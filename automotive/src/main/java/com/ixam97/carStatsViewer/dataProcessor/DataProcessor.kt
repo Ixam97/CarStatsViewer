@@ -626,7 +626,7 @@ class DataProcessor {
     /** Change the selected trip type to update the trip data flow with */
     fun changeSelectedTrip(tripType: Int) {
         if (localSessions.isNotEmpty())
-            _selectedSessionDataFlow.value = localSessions[localSessions.indexOfFirst { it.session_type == tripType }]
+            _selectedSessionDataFlow.value = localSessions.first{it.session_type == tripType}
     }
 
     suspend fun resetTrip(tripType: Int, drivingState: Int) {

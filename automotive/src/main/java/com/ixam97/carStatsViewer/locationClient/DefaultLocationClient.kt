@@ -87,6 +87,7 @@ class DefaultLocationClient(
             InAppLogger.i("[LOC] Location tracking started. isGpsEnabled: $isGpsEnabled, isNetworkEnabled: $isNetworkEnabled")
 
             awaitClose {
+                InAppLogger.i("[LOC] Canceling location tracking")
                 client.removeLocationUpdates(locationCallback)
             }
         }
