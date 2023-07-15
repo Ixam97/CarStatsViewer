@@ -79,11 +79,6 @@ class PlotLine(
             dataPoint.StateOfChargeDelta = 0f
         }
 
-        when {
-            dataPoint.Value.isFinite() -> {
-                dataPoints[dataPoints.size] = dataPoint
-            }
-        }
         return when {
             dataPoint.Value.isFinite() -> {
                 dataPoints[dataPoints.size] = dataPoint
