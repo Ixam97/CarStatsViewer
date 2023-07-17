@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.util.TypedValue
 import androidx.room.Room
 import androidx.room.migration.Migration
@@ -39,6 +40,8 @@ class CarStatsViewer : Application() {
         const val RESTART_NOTIFICATION_ID = 1
         const val FOREGROUND_CHANNEL_ID = "ForegroundChannel"
         const val FOREGROUND_NOTIFICATION_ID = 2
+
+        var screenshotBitmap: Bitmap? = null
 
         lateinit var appContext: Context
         lateinit var liveDataApis: ArrayList<LiveDataApi>

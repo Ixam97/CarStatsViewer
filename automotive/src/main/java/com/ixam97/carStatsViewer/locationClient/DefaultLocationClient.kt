@@ -4,33 +4,37 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.location.LocationManager
-import android.os.Looper
 import com.google.android.gms.location.*
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.ixam97.carStatsViewer.CarStatsViewer
-import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import org.matthiaszimmermann.location.egm96.Geoid
+import kotlin.math.absoluteValue
 
-class DefaultLocationClient(
-    private val context: Context,
-    private val client: FusedLocationProviderClient
-): LocationClient {
+class DefaultLocationClient(): LocationClient {
 
     var locationNotAvailable = true
-    var lastTimeStamp = 0L
+
+    private var doLocationUpdates: Boolean = false
 
     init {
         Geoid.init()
 
     }
 
+    override fun stopLocationUpdates() {
+        doLocationUpdates = false
+    }
+
     @SuppressLint("MissingPermission")
-    override fun getLocationUpdates(interval: Long): Flow<Location?> {
-        return callbackFlow {
+    override fun getLocationUpdates(interval: Long, context: Context): Flow<Location?> {
+        val client = LocationServices.getFusedLocationProviderClient(context)
+
+        return flow {
             InAppLogger.i("[LOC] Setting up location client")
             if (!context.hasLocationPermission()) {
                 throw LocationClient.LocationException("Missing location permissions")
@@ -42,54 +46,36 @@ class DefaultLocationClient(
 
             locationNotAvailable = !isGpsEnabled && !isNetworkEnabled
 
-            val request = LocationRequest.create()
-                .setInterval(interval)
-                .setFastestInterval(interval / 2)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setMaxWaitTime(interval)
-
-            InAppLogger.d("[LOC] MaxWaitTime: ${request.maxWaitTime}")
-
             if (locationNotAvailable) {
                 throw LocationClient.LocationException("GPS is not enabled!")
             }
 
-            val locationCallback = object: LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    super.onLocationResult(locationResult)
-                    locationResult.locations.lastOrNull()?.let { location ->
-                        if (CarStatsViewer.appPreferences.useLocation) {
-                            if (location.altitude > 0 || location.altitude < 0 || emulatorMode) {
-                                location.altitude -= Geoid.getOffset(
-                                    org.matthiaszimmermann.location.Location(location.latitude, location.longitude)
-                                )
-                                if (location.time > lastTimeStamp + 5_000) {
-                                    InAppLogger.w("[LOC] LocationClient: Interval exceeded!")
-                                }
-                                lastTimeStamp = location.time
-                                launch { send(location) }
-                            } else {
-                                InAppLogger.w("[LOC] LocationClient has returned altitude of 0m")
-                            }
-                        } else {
-                            launch { send(null) }
-                        }
-                    }
+            doLocationUpdates = true
+
+            while (doLocationUpdates) {
+                if (!CarStatsViewer.appPreferences.useLocation) {
+                    doLocationUpdates = false
+                    break
                 }
+                val result = client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).await()
+
+                if (result != null && result.altitude.absoluteValue > 0) {
+                    result.altitude -= Geoid.getOffset(
+                        org.matthiaszimmermann.location.Location(result.latitude, result.longitude)
+                    )
+                }
+
+                if (result != null)
+                    InAppLogger.v("[LOC] lat: %.5f lon: %.5f  alt: %.0fm time: %d".format(result.latitude, result.longitude, result.altitude, result.time))
+                else
+                    InAppLogger.w("[LOC] Location is null!")
+
+                emit(result)
+                delay(interval)
             }
 
-            client.requestLocationUpdates(
-                request,
-                locationCallback,
-                Looper.getMainLooper()
-            )
-
-            InAppLogger.i("[LOC] Location tracking started. isGpsEnabled: $isGpsEnabled, isNetworkEnabled: $isNetworkEnabled")
-
-            awaitClose {
-                InAppLogger.i("[LOC] Canceling location tracking")
-                client.removeLocationUpdates(locationCallback)
-            }
+            emit(null)
+            InAppLogger.i("[LOC] Location tracking stopped")
         }
     }
 }

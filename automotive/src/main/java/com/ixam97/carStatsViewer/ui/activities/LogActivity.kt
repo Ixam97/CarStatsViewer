@@ -123,6 +123,10 @@ class LogActivity : FragmentActivity() {
                             content = InAppLogger.getLogString(appPreferences.logLevel + 2, logLengths[appPreferences.logLength]),
                             fileName ="log_${System.currentTimeMillis()}.txt")
 
+                        CarStatsViewer.screenshotBitmap?.let {
+                            sender.addAttachment(it, "Screenshot")
+                        }
+
                         if (checkbox_send_current_trips.isChecked) {
                             for (activeDrivingSessionsId in CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds()) {
                                 val trip = CarStatsViewer.tripDataSource.getFullDrivingSession(activeDrivingSessionsId)

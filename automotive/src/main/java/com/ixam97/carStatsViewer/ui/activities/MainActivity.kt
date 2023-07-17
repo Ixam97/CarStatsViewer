@@ -8,6 +8,7 @@ import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.drawToBitmap
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -628,6 +629,12 @@ class MainActivity : FragmentActivity() {
         main_button_performance.setOnClickListener {
             // throw Exception("Intentional crash")
             InAppLogger.i("Debug")
+            lifecycleScope.launch {
+                CarStatsViewer.screenshotBitmap = master_layout.drawToBitmap()
+                runOnUiThread {
+                    Toast.makeText(this@MainActivity, "Screenshot taken", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         main_button_history.setOnClickListener {

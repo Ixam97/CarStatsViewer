@@ -9,7 +9,6 @@ import android.os.IBinder
 import android.widget.Toast
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.location.LocationServices
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
@@ -119,11 +118,15 @@ class DataCollector: Service() {
         InAppLogger.i("[NEO] Google API availability: ${GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS}")
 
         locationClient = DefaultLocationClient(
-            CarStatsViewer.appContext,
-            LocationServices.getFusedLocationProviderClient(this)
+            //CarStatsViewer.appContext,
+            //LocationServices.getFusedLocationProviderClient(this)
         )
 
         // startLocationClient(5_000)
+
+        if (CarStatsViewer.appPreferences.useLocation) {
+            startLocationClient(5_000)
+        }
 
         CarStatsViewer.liveDataApis[0]
             .requestFlow(
@@ -179,10 +182,9 @@ class DataCollector: Service() {
         serviceScope.launch {
             // Watchdog
             while (true) {
-                CarStatsViewer.watchdog.triggerWatchdog()
                 delay(10_000)
+                CarStatsViewer.watchdog.triggerWatchdog()
             }
-
         }
 
         serviceScope.launch {
@@ -217,26 +219,29 @@ class DataCollector: Service() {
 
     private fun stopLocationClient() {
         InAppLogger.i("[NEO] Location client is being canceled")
-        locationClientJob?.cancel()
-        locationClientJob = null
+        locationClient.stopLocationUpdates()
         dataProcessor.processLocation(null, null, null)
         lastLocation = null
+        locationClientJob?.cancel()
+        locationClientJob = null
     }
 
     private fun startLocationClient(interval: Long) {
         InAppLogger.i("[NEO] Location client is being started")
 
+        locationClient.stopLocationUpdates()
         locationClientJob?.cancel()
-        locationClientJob = locationClient.getLocationUpdates(interval)
+        locationClientJob = locationClient.getLocationUpdates(interval, this@DataCollector)
             .catch { e ->
                 InAppLogger.e("[LOC] ${e.message}")
             }
             .onEach { location ->
                 if (location != null) {
-                    // InAppLogger.v("[NEO] %.2f, %.2f, %.0fm, time: %d".format(location.latitude, location.longitude, location.altitude, location.time))
                     dataProcessor.processLocation(location.latitude, location.longitude, location.altitude)
+                    CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(locationState = WatchdogState.NOMINAL))
                 } else {
                     dataProcessor.processLocation(null, null, null)
+                    CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(locationState = WatchdogState.ERROR))
                 }
                 lastLocation = location
             }
