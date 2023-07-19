@@ -49,8 +49,6 @@
                 <TextView
                     android:id="@+id/distance_text"
                     style="@style/menu_row_content_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="Lorem Ipsum"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/distance_icon"

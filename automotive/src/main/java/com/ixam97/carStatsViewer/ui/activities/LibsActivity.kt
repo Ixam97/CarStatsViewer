@@ -10,7 +10,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toolbar.LayoutParams
 import com.airbnb.paris.extensions.style
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.utils.applyTypeface
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.util.withContext
 import kotlinx.android.synthetic.main.activity_libs.*
@@ -80,6 +82,10 @@ class LibsActivity: Activity() {
                 dividerLine.setBackgroundColor(Color.TRANSPARENT)
                 libs_container.addView(dividerLine)
             }
+        }
+
+        CarStatsViewer.typefaceMedium?.let {
+            applyTypeface(libs_activity)
         }
     }
 }

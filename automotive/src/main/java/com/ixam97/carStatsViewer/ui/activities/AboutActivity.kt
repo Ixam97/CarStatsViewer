@@ -6,7 +6,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import com.ixam97.carStatsViewer.BuildConfig
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.utils.applyTypeface
 import kotlinx.android.synthetic.main.activity_about.*
 
 class AboutActivity : Activity() {
@@ -14,6 +16,10 @@ class AboutActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
+
+        CarStatsViewer.typefaceMedium?.let {
+            applyTypeface(about_activity)
+        }
 
         about_button_back.setOnClickListener {
             finish()

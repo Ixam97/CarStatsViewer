@@ -12,7 +12,6 @@ import android.widget.TextView
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.WatchdogState
-import org.w3c.dom.Text
 
 class ApiRowWidget @JvmOverloads constructor(
     context: Context,
@@ -70,6 +69,10 @@ class ApiRowWidget @JvmOverloads constructor(
         val api_name_text = findViewById<TextView>(R.id.api_name_text)
         val api_icon = findViewById<ImageView>(R.id.api_icon)
         api_name_text.text = apiName
+        CarStatsViewer.typefaceRegular?.let {
+            api_name_text.typeface = it
+            // api_name_text.letterSpacing = -0.02f
+        }
         api_icon.setImageResource(apiIcon)
 
         statusIcon = findViewById(R.id.api_status)

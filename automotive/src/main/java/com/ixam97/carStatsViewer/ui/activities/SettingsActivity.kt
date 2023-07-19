@@ -15,6 +15,7 @@ import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.applyTypeface
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -46,6 +47,10 @@ class SettingsActivity : FragmentActivity() {
         }
 
         setContentView(R.layout.activity_settings)
+
+        CarStatsViewer.typefaceMedium?.let {
+            applyTypeface(settings_activity)
+        }
 
         setupSettingsMaster()
     }

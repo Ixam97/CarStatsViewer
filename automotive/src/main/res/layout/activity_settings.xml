@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/settings_activity"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
@@ -21,7 +22,14 @@
             android:id="@+id/settings_button_back"
             style="@style/title_back_button_style" />
 
+        <ImageView
+            android:layout_width="@dimen/std_icon_size"
+            android:layout_height="@dimen/std_icon_size"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_settings"/>
+
         <TextView
+            android:id="@+id/settings_title"
             style="@style/title_text_style"
             android:text="@string/settings_title" />
 
@@ -31,6 +39,7 @@
             android:layout_weight="1" />
 
         <ImageButton
+            android:visibility="gone"
             android:id="@+id/settings_button_kill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

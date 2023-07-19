@@ -6,6 +6,7 @@ import android.view.View
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.VehicleDefinitions
+import com.ixam97.carStatsViewer.utils.applyTypeface
 import kotlinx.android.synthetic.main.activity_settings_vehicle.*
 import kotlinx.coroutines.*
 
@@ -17,6 +18,10 @@ class SettingsVehicleActivity : Activity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_settings_vehicle)
+
+        CarStatsViewer.typefaceMedium?.let {
+            applyTypeface(settings_vehicle_activity)
+        }
 
         settings_vehicle_button_back.setOnClickListener {
             finish()

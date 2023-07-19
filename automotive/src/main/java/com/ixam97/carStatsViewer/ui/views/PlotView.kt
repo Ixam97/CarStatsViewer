@@ -13,6 +13,7 @@ import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.ui.plot.enums.*
@@ -186,6 +187,9 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
 
         labelPaint = Paint(borderLinePaint)
         labelPaint.style = Paint.Style.FILL
+        CarStatsViewer.typefaceRegular?.let {
+            labelPaint.typeface = it
+        }
 
         baseLinePaint = Paint(borderLinePaint)
         baseLinePaint.color = Color.LTGRAY

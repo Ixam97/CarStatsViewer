@@ -105,7 +105,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_weight="8">
+                android:layout_weight="@integer/gage_width_weight">
 
                 <com.ixam97.carStatsViewer.ui.views.GageView
                     android:id="@+id/main_power_gage"
@@ -128,7 +128,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_weight="8">
+                android:layout_weight="@integer/gage_width_weight">
 
                 <com.ixam97.carStatsViewer.ui.views.GageView
                     android:id="@+id/main_speed_gage"
@@ -149,7 +149,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:layout_weight="6">
+                android:layout_weight="@integer/stats_width_weight">
 
                 <View
                     android:layout_width="@dimen/divider_height"
@@ -169,7 +169,7 @@
                         android:alpha=".2"
                         android:scaleType="fitEnd"
                         android:src="@drawable/ic_hand"
-                        app:layout_constraintBottom_toBottomOf="@+id/main_gage_remaining_range_text_view"
+                        app:layout_constraintBottom_toBottomOf="@+id/main_gage_avg_speed_text_view"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/main_gage_distance_text_view" />
 
@@ -186,8 +186,9 @@
                     <TextView
                         android:id="@+id/main_gage_distance_text_view"
                         android:drawablePadding="15dp"
+                        android:gravity="center_vertical"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/text_icon_size"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="5dp"
                         android:drawableStart="@drawable/ic_distance"
@@ -200,8 +201,9 @@
                     <TextView
                         android:id="@+id/main_gage_used_power_text_view"
                         android:drawablePadding="15dp"
+                        android:gravity="center_vertical"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/text_icon_size"
                         android:layout_marginVertical="5dp"
                         android:drawableStart="@drawable/ic_power"
                         android:textColor="?android:attr/textColorPrimary"
@@ -212,8 +214,9 @@
                     <TextView
                         android:id="@+id/main_gage_avg_consumption_text_view"
                         android:drawablePadding="15dp"
+                        android:gravity="center_vertical"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/text_icon_size"
                         android:layout_marginVertical="5dp"
                         android:drawableStart="@drawable/ic_avg_consumption"
                         android:textColor="?android:attr/textColorPrimary"
@@ -224,8 +227,9 @@
                     <TextView
                         android:id="@+id/main_gage_time_text_view"
                         android:drawablePadding="15dp"
+                        android:gravity="center_vertical"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/text_icon_size"
                         android:layout_marginVertical="5dp"
                         android:drawableStart="@drawable/ic_time"
                         android:textColor="?android:attr/textColorPrimary"
@@ -234,10 +238,11 @@
                         app:layout_constraintTop_toBottomOf="@+id/main_gage_avg_consumption_text_view" />
 
                     <TextView
-                        android:id="@+id/main_gage_remaining_range_text_view"
+                        android:id="@+id/main_gage_avg_speed_text_view"
                         android:drawablePadding="15dp"
+                        android:gravity="center_vertical"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/text_icon_size"
                         android:layout_marginVertical="5dp"
                         android:drawableStart="@drawable/ic_speed"
                         android:textColor="?android:attr/textColorPrimary"
@@ -251,6 +256,7 @@
         </LinearLayout>
 
         <View
+            android:layout_marginHorizontal="15dp"
             android:layout_width="match_parent"
             android:layout_height="@dimen/divider_height"
             android:layout_weight="0"

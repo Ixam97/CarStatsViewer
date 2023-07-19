@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="title_text_style">
+        <item name="android:tag">bold</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:layout_margin">20dp</item>
+        <item name="android:layout_marginHorizontal">20dp</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">@dimen/title_font_size</item>
         <item name="android:textFontWeight">@integer/title_font_weight</item>
@@ -17,6 +18,7 @@
         <item name="android:src">@drawable/ic_arrow_back</item>
     </style>
     <style name="menu_section_title_style">
+        <item name="android:tag">bold</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">50dp</item>
         <item name="android:textSize">@dimen/section_title_font_size</item>
@@ -59,6 +61,7 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
     <style name="menu_row_content_text">
+        <item name="android:gravity">center_vertical</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">@dimen/reduced_font_size</item>

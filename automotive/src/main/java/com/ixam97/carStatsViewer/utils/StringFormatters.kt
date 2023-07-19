@@ -64,8 +64,8 @@ object StringFormatters {
     fun getAvgConsumptionString(usedEnergy: Float, traveledDistance: Float): String {
         val avgConsumption = appPreferences.distanceUnit.asUnit(usedEnergy / (traveledDistance / 1000))
         val unitString = when {
-            appPreferences.consumptionUnit -> "Ø Wh/%s".format(appPreferences.distanceUnit.unit())
-            else -> "Ø kWh/100%s".format(appPreferences.distanceUnit.unit())
+            appPreferences.consumptionUnit -> "Wh/%s".format(appPreferences.distanceUnit.unit())
+            else -> "kWh/100%s".format(appPreferences.distanceUnit.unit())
         }
 
         if (traveledDistance <= 0) {
@@ -77,7 +77,7 @@ object StringFormatters {
                 (avgConsumption) / 10,
                 unitString)
         }
-        return "${(avgConsumption).toInt()} $unitString"
+        return "Ø ${(avgConsumption).toInt()} $unitString"
     }
 
     fun getElapsedTimeString(elapsedTime: Long, minutes: Boolean = false): String {

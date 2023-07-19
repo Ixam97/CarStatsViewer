@@ -4,6 +4,8 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Typeface
+import android.graphics.fonts.SystemFonts
 import android.util.TypedValue
 import androidx.room.Room
 import androidx.room.migration.Migration
@@ -60,6 +62,10 @@ class CarStatsViewer : Application() {
         lateinit var watchdog: Watchdog
 
         lateinit var logDao: LogDao
+
+        var typefaceRegular: Typeface? = null
+        var typefaceMedium: Typeface? = null
+        var isPolestarTypeface = false
 
         val appContextIsInitialized: Boolean get() = this::appContext.isInitialized
 
@@ -177,6 +183,33 @@ class CarStatsViewer : Application() {
         )
 
         notificationManager = createNotificationManager()
+
+        InAppLogger.i("Available OEM fonts:")
+        SystemFonts.getAvailableFonts().filter{ it.file?.name?.contains("volvo", true) == true }.forEach {
+            InAppLogger.i("    ${it.file?.name}")
+            when {
+                it.file?.name?.contains("light", true) == true -> typefaceRegular = Typeface.Builder(it.file!!).build()
+                it.file?.name?.contains("medium", true) == true -> typefaceMedium = Typeface.Builder(it.file!!).build()
+            }
+        }
+        SystemFonts.getAvailableFonts().filter{ it.file?.name?.contains("polestar", true) == true }.forEach {
+            InAppLogger.i("    ${it.file?.name}")
+            isPolestarTypeface = true
+            when {
+                it.file?.name?.contains("regular", true) == true -> typefaceRegular = Typeface.Builder(it.file!!).build()
+                it.file?.name?.contains("medium", true) == true -> typefaceMedium = Typeface.Builder(it.file!!).build()
+            }
+        }
+
+        SystemFonts.getAvailableFonts().filter { it.file?.name?.contains("honda", true) == true }.forEach {
+            InAppLogger.i("    ${it.file?.name}")
+            when {
+                it.file?.name?.contains("regular", true) == true -> {
+                    typefaceRegular = Typeface.Builder(it.file!!).build()
+                    typefaceMedium = Typeface.Builder(it.file!!).build()
+                }
+            }
+        }
 
     }
 

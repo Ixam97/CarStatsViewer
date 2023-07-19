@@ -9,10 +9,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.utils.StringFormatters
+import com.ixam97.carStatsViewer.utils.applyTypeface
 import java.util.*
 
 class TripHistoryRowWidget(
@@ -69,6 +71,10 @@ class TripHistoryRowWidget(
     private fun init() {
         this.removeAllViews()
         View.inflate(context, R.layout.widget_trip_history_row, this)
+
+        CarStatsViewer.typefaceMedium?.let {
+            applyTypeface(this)
+        }
 
         val rowIcon: ImageView = findViewById(R.id.row_start_icon)
         val rowEndButton: ImageButton = findViewById(R.id.row_end_button)

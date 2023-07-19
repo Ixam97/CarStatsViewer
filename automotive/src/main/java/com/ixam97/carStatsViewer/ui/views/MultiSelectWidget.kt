@@ -115,6 +115,12 @@ class MultiSelectWidget @JvmOverloads constructor(
         centerButton = findViewById(R.id.widget_button_center)
 
         titleView.text = title
+        CarStatsViewer.typefaceRegular?.let {
+            titleView.typeface = it
+            // titleView.letterSpacing = -0.02f
+            selectedView.typeface = it
+            // selectedView.letterSpacing = -0.02f
+        }
         titleView.layoutParams.width = calcDimen(titleWidth)
 
         if (entries.isNotEmpty()) {

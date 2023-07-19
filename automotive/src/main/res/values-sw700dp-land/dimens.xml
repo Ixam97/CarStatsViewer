@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="std_row_height">101dp</dimen>
-    <dimen name="std_icon_size">80dp</dimen>
-    <dimen name="row_icon_width">100dp</dimen>
+    <dimen name="std_icon_size">60dp</dimen>
+    <dimen name="row_icon_width">75dp</dimen>
     <dimen name="text_icon_size">50dp</dimen>
     <dimen name="chevron_icon_size">74dp</dimen>
     <dimen name="std_font_size">31sp</dimen>
     <dimen name="reduced_font_size">27sp</dimen>
     <dimen name="log_font_size">20sp</dimen>
-    <dimen name="title_font_size">47sp</dimen>
+    <dimen name="title_font_size">45sp</dimen>
     <integer name="title_font_weight">500</integer>
     <integer name="std_font_weight">400</integer>
     <dimen name="section_title_font_size">32sp</dimen>
@@ -17,8 +17,6 @@
     <dimen name="plot_y_margin">60dp</dimen>
     <dimen name="gage_value_text_size">100sp</dimen>
     <dimen name="gage_desc_text_size">30sp</dimen>
-    <dimen name="horizontal_divider_margin">0dp</dimen>
+    <dimen name="horizontal_divider_margin">15dp</dimen>
     <dimen name="divider_strength">2dp</dimen>
-    <integer name="gage_width_weight">8</integer>
-    <integer name="stats_width_weight">6</integer>
 </resources>

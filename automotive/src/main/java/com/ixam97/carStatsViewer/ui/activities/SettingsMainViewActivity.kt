@@ -4,7 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import kotlinx.android.synthetic.main.activity_settings_apis.*
+import com.ixam97.carStatsViewer.utils.applyTypeface
 import kotlinx.android.synthetic.main.activity_settings_main_view.*
 
 class SettingsMainViewActivity: Activity() {
@@ -14,6 +14,10 @@ class SettingsMainViewActivity: Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings_main_view)
+
+        CarStatsViewer.typefaceMedium?.let {
+            applyTypeface(settings_main_view_activity)
+        }
 
         settings_consumption_plot_switch_secondary_color.isChecked = appPreferences.chargePlotSecondaryColor
         settings_consumption_plot_switch_visible_gages.isChecked = appPreferences.consumptionPlotVisibleGages

@@ -5,6 +5,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
+import com.ixam97.carStatsViewer.CarStatsViewer
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -45,9 +46,6 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private var gageValueInt : Int? = null
     private var gageValueFloat: Float? = null
 
-    private var gageValueIntArray = arrayListOf<Int>()
-    private var gageValueFloatArray = arrayListOf<Float>()
-
     fun setValue(value: Int?) {
         gageValueInt = value
         gageValueFloat = null
@@ -72,12 +70,20 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private val namePaint = Paint().apply {
         color = Color.GRAY
         textSize = descriptionTextSize
+        CarStatsViewer.typefaceRegular?.let {
+            typeface = it
+            letterSpacing = -0.025f
+        }
         isAntiAlias = true
     }
 
     private val unitPaint = Paint().apply {
         color = getPrimaryColor()
         textSize = descriptionTextSize
+        CarStatsViewer.typefaceRegular?.let {
+            typeface = it
+            letterSpacing = -0.025f
+        }
         isAntiAlias = true
     }
 
@@ -105,6 +111,10 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private val valuePaint = Paint().apply {
         color = Color.WHITE
         textSize = valueTextSize
+        CarStatsViewer.typefaceRegular?.let {
+            typeface = it
+            letterSpacing = -0.025f
+        }
         isAntiAlias = true
     }
 
@@ -117,6 +127,7 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private val unitYPos = valueYPos - (valuePaint.textSize * 0.8f - unitPaint.textSize)
 
     private val viewHeight = valueYPos + dpToPx(3f)
+    private var viewWidth = 0f
 
     private var gageBarRect = RectF()
     private val gageBorder = Path()
@@ -140,6 +151,7 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
         val gageValueWidth = valuePaint.measureText(gageValue())
         val gageNameWidth = namePaint.measureText(gageName)
+        val gageUnitWidth = unitPaint.measureText(gageUnit)
 
         val gageRectYPos =
             borderPaint.strokeWidth.coerceAtLeast(gageZeroLineYPos - (gageZeroLineYPos / maxValue) * gageValue)
@@ -191,6 +203,7 @@ class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val height = viewHeight.toInt()
+        // val width = viewWidth.toInt()
         setMeasuredDimension(widthMeasureSpec, height)
     }
 

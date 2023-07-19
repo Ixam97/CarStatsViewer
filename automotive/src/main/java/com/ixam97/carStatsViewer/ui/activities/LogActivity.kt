@@ -24,6 +24,7 @@ import com.ixam97.carStatsViewer.utils.logLevel
 import com.ixam97.carStatsViewer.utils.logLength
 import com.ixam97.carStatsViewer.adapters.LogAdapter
 import com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
+import com.ixam97.carStatsViewer.utils.applyTypeface
 import kotlinx.android.synthetic.main.activity_log.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -65,6 +66,10 @@ class LogActivity : FragmentActivity() {
         appPreferences = AppPreferences(applicationContext)
 
         setContentView(R.layout.activity_log)
+
+        CarStatsViewer.typefaceMedium?.let {
+            applyTypeface(log_activity)
+        }
 
         log_live_log.isChecked = true
 
