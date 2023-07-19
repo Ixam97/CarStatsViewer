@@ -357,16 +357,7 @@ class MainActivity : FragmentActivity() {
         setContentView(R.layout.activity_main)
 
         CarStatsViewer.typefaceMedium?.let {
-            main_title.typeface = it
-            main_title.letterSpacing = -0.025f
-        }
-
-        CarStatsViewer.typefaceRegular?.let {
-            main_gage_distance_text_view.typeface = it
-            main_gage_used_power_text_view.typeface = it
-            main_gage_avg_consumption_text_view.typeface = it
-            main_gage_time_text_view.typeface = it
-            main_gage_avg_speed_text_view.typeface = it
+            applyTypeface(main_activity)
         }
 
         setupDefaultUi()

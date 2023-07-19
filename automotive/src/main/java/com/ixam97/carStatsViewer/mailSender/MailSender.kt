@@ -81,7 +81,7 @@ class MailSender(private val user: String, private val password: String, private
         val file = File(dir, "$fileName.jpeg")
         val outputStream = BufferedOutputStream(FileOutputStream(file))
 
-        content.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+        content.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
 
         messageBodyPart.attachFile(file)
         _multipart.addBodyPart(messageBodyPart)
