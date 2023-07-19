@@ -81,7 +81,8 @@
     <string name="quit_dialog_message">Log vil blive kopieret til udklipsholder.</string>
     <string name="dialog_close">Luk</string>
     <string name="dialog_reset_title">Vil du nulstille rejsedata?</string>
-    <string name="dialog_reset_message">De aktuelle turdata vil blive nulstillet. Vil du gemme turen?</string>
+    <!--This message has changed. Please make sure you adjust the translation accordingly!-->
+    <string name="dialog_reset_message">Den aktuelle manuelle tur nulstilles. Det vil blive gemt i rejsehistorikken.</string>
     <string name="dialog_reset_do_save">Gem</string>
     <string name="dialog_reset_no_save">Gem ikke</string>
     <string name="dialog_reset_cancel">Annullere</string>
@@ -176,4 +177,47 @@
     </string-array>
     <string name="summary_altitude">Højdeændring</string>
     <string name="about_translators">Oversættere</string>
+    <string-array name="changes_0_25_0">
+        <item>Implementeret en lokal database for mere robust og effektiv lagring af turdata.</item>
+        <item>Opladningssessionen kan nu afbrydes op til 5 minutter før start af en ny session, selvom bilen blev flyttet.</item>
+        <item>Tilføjet rejsehistorik for at se tidligere ture.</item>
+        <item>Tilføjet hurtigvalgsknapper til 20, 40 og 100 km i turoversigten.</item>
+        <item>Tilføjet et ikon, der repræsenterer den valgte rejsetype. Ved at trykke på turstatistikken skifter mellem de 4 turtyper.</item>
+        <item>Tilføjet indstilling til at vælge, hvilke API\'ers forbindelsesstatus der skal vises i hovedvisningen.</item>
+        <item>Det er nu muligt at nulstille den manuelle tur fra hovedvisningen.</item>
+        <item>Justerede HTTP-webhook-datasættet til den nye datastruktur.</item>
+        <item>Generelle fejlrettelser og stabilitetsforbedringer.</item>
+    </string-array>
+    <string name="restart_notification_reason_unknown">%s er genstartet af en ukendt årsag.</string>
+    <string name="summary_speed">Gennemsnitshastighed</string>
+    <string-array name="trip_type_names">
+        <item>Ukendt rejsetype</item>
+        <item>Manuel tur</item>
+        <item>Siden opladning</item>
+        <item>Automatisk tur</item>
+        <item>Måned</item>
+    </string-array>
+    <string name="dialog_reset_confirm">Nulstil</string>
+    <string name="dialog_apply">Anvend</string>
+    <!-- Trip history -->
+    <string name="history_title">Rejsehistorik</string>
+    <string name="history_selected">Valgte:</string>
+    <string name="history_past_trips">Tidligere ture:</string>
+    <string name="history_current_trips">Aktuelle rejser:</string>
+    <string name="history_dialog_filters_title">Turfiltre</string>
+    <string name="history_dialog_filters_manual">Vis manuelle ture</string>
+    <string name="history_dialog_filters_charge">Vis siden ladeture</string>
+    <string name="history_dialog_filters_auto">Vis automatiske ture</string>
+    <string name="history_dialog_filters_month">Vis månedlige rejser</string>
+    <string name="history_dialog_filters_date">Tidligste startdato</string>
+    <string name="history_dialog_filters_note">Bemærk: De aktuelle ture vises altid uanset anvendte filtre.</string>
+    <string name="history_dialog_delete_title">Slet rejsen?</string>
+    <string name="history_dialog_delete_message">Turen vil blive slettet permanent.</string>
+    <string name="history_dialog_delete_confirm">Slet rejsen</string>
+    <string name="history_dialog_multi_delete_title">Vil du slette flere rejser?</string>
+    <string name="history_dialog_multi_delete_message">Du er ved at slette %s rejser. Turene slettes permanent.</string>
+    <string name="history_dialog_multi_delete_delete">Slet %s rejser</string>
+    <string name="history_dialog_multi_delete_deselect">Fravælg alle</string>
+    <string name="settings_distance_unit">Mil som afstandsenhed</string>
+    <string name="settings_apis_connection_selector">Forbindelsesikon i hovedvisning:</string>
 </resources>

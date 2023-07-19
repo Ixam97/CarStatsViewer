@@ -46,7 +46,7 @@
     <string name="settings_title">Instellingen</string>
     <string name="settings_button_back">Terug</string>
     <string name="settings_button_quit">App afsluiten</string>
-    <string name="settings_notifications">Meldingen</string>
+    <string name="settings_notifications">Gedetailleerde melding</string>
     <string name="settings_consumption_unit">Wh/km als eenheid van verbruik</string>
     <string name="settings_debug">Debug-informatie</string>
     <string name="settings_experimental_layout">Toon experimentele layout</string>
@@ -81,6 +81,7 @@
     <string name="quit_dialog_message">Log wordt gekopieerd naar het klembord.</string>
     <string name="dialog_close">Sluit</string>
     <string name="dialog_reset_title">Ritgegevens resetten?</string>
+    <!--This message has changed. Please make sure you adjust the translation accordingly!-->
     <string name="dialog_reset_message">De huidige ritgegevens worden op nul gezet. Wilt u de rit opslaan?</string>
     <string name="dialog_reset_do_save">Opslaan</string>
     <string name="dialog_reset_no_save">Niet opslaan</string>
@@ -133,7 +134,7 @@
     <string name="abrp_description">Voer een generiek ABRP-token in om over-the-air live gegevens te verzenden naar de ABRP-servers. Dit omvat locatiegegevens indien deze niet zijn uitgeschakeld.</string>
     <string name="abrp_generic_token">Generiek token</string>
     <!-- HTTP -->
-    <string name="http_description">Voer HTTP URL en (optioneel) basic auth credentials in om live gegevens naar de opgegeven URL te sturen. Gebruikt POST verzoek met JSON inhoud. Dit omvat locatiegegevens indien niet uitgeschakeld. -</string>
+    <string name="http_description">Voer HTTPS URL en (optioneel) basic auth credentials in om live gegevens naar de opgegeven URL te sturen. Gebruikt POST verzoek met JSON inhoud. Dit omvat locatiegegevens indien niet uitgeschakeld. -</string>
     <string name="http_username">BasicAuth gebruikersnaam</string>
     <string name="http_password">BasicAuth-wachtwoord</string>
     <string name="http_invalid_url">Ongeldige URL!</string>
