@@ -81,6 +81,7 @@
     <string name="quit_dialog_message">Logg kommer att kopieras till urklipp.</string>
     <string name="dialog_close">Stäng</string>
     <string name="dialog_reset_title">Återställ resedata?</string>
+    <!--This message has changed. Please make sure you adjust the translation accordingly!-->
     <string name="dialog_reset_message">Nuvarande resedata kommer återställas till noll. Vill du spara resan?</string>
     <string name="dialog_reset_do_save">Spara</string>
     <string name="dialog_reset_no_save">"Spara inte"</string>
@@ -176,4 +177,47 @@
     </string-array>
     <string name="summary_altitude">Höjdförändring</string>
     <string name="about_translators">Översättare</string>
+    <string-array name="changes_0_25_0">
+        <item>Implementerade en lokal databas för mer robust och effektiv lagring av resedata.</item>
+        <item>Laddningssessionen kan nu avbrytas upp till 5 minuter innan en ny session påbörjas, även om bilen har flyttats.</item>
+        <item>Har lagt till historik för att se tidigare resor.</item>
+        <item>Lade till snabbvalsknappar för 20, 40 och 100 km i reseöversikten.</item>
+        <item>Lade till en ikon som representerar den valda resetypen. Om du klickar på resestatistiken växlas mellan de 4 resetyperna.</item>
+        <item>Lade till inställning för att välja vilka API:ers anslutningsstatus som ska visas i huvudvyn.</item>
+        <item>Det är nu möjligt att återställa den manuella trippen från huvudvyn.</item>
+        <item>Justerade formatet för HTTP-webhook till den nya datastrukturen.</item>
+        <item>Allmänna buggfixar och stabilitetsförbättringar.</item>
+    </string-array>
+    <string name="restart_notification_reason_unknown">%s har startat om av okänd anledning.</string>
+    <string name="summary_speed">Medelhastighet</string>
+    <string-array name="trip_type_names">
+        <item>Okänd resetyp</item>
+        <item>Manuell resa</item>
+        <item>Sedan laddning</item>
+        <item>Automatisk resa</item>
+        <item>Månad</item>
+    </string-array>
+    <string name="dialog_reset_confirm">Återställ statistik</string>
+    <string name="dialog_apply">Tillämpa</string>
+    <!-- Trip history -->
+    <string name="history_title">Resehistorik</string>
+    <string name="history_selected">Utvalda:</string>
+    <string name="history_past_trips">Tidigare resor:</string>
+    <string name="history_current_trips">Aktuella resor:</string>
+    <string name="history_dialog_filters_title">Resefilter</string>
+    <string name="history_dialog_filters_manual">Visa manuella resor</string>
+    <string name="history_dialog_filters_charge">Visa resor sedan laddning</string>
+    <string name="history_dialog_filters_auto">Visa automatiska resor</string>
+    <string name="history_dialog_filters_month">Visa månatliga resor</string>
+    <string name="history_dialog_filters_date">Tidigaste startdatum</string>
+    <string name="history_dialog_filters_note">Notera: De aktuella resorna visas alltid oavsett använda filter.</string>
+    <string name="history_dialog_delete_title">Ta bort resan?</string>
+    <string name="history_dialog_delete_message">Resan kommer att raderas permanent.</string>
+    <string name="history_dialog_delete_confirm">Ta bort resa</string>
+    <string name="history_dialog_multi_delete_title">Radera flera resor?</string>
+    <string name="history_dialog_multi_delete_message">Du håller på att radera %s resor. Resorna kommer att raderas permanent.</string>
+    <string name="history_dialog_multi_delete_delete">Radera %s resor</string>
+    <string name="history_dialog_multi_delete_deselect">Avmarkera alla</string>
+    <string name="settings_distance_unit">Miles som enhet för avstånd</string>
+    <string name="settings_apis_connection_selector">Anslutningsikon i huvudvyn:</string>
 </resources>

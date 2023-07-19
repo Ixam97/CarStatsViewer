@@ -81,6 +81,7 @@
     <string name="quit_dialog_message">O log será copiado para a área de transferência.</string>
     <string name="dialog_close">Fechar</string>
     <string name="dialog_reset_title">Redefinir dados de viagem?</string>
+    <!--This message has changed. Please make sure you adjust the translation accordingly!-->
     <string name="dialog_reset_message">Os dados atuais da viagem serão redefinidos para zero. Quer salvar a viagem?</string>
     <string name="dialog_reset_do_save">Guardar</string>
     <string name="dialog_reset_no_save">Não gravar</string>
@@ -176,7 +177,46 @@
     </string-array>
     <string name="summary_altitude">Mudança de altitude</string>
     <string name="about_translators">Tradutores</string>
-    <string name="main_dialog_reset_title">Redefinir estatísticas?</string>
-    <string name="main_dialog_reset_message">Todos os dados de viagem salvos serão redefinidos para zero.</string>
+    <string-array name="changes_0_25_0">
+        <item>Implementação de uma base de dados local para um armazenamento mais robusto e eficaz dos dados de viagem.</item>
+        <item>A sessão de carregamento agora pode ser interrompida até 5 minutos antes de iniciar uma nova sessão, mesmo que o carro tenha sido movido.</item>
+        <item>Adicionado o histórico de viagens para ver viagens anteriores.</item>
+        <item>Adicionados botões de seleção rápida para 20, 40 e 100 km no resumo da viagem.</item>
+        <item>Foi adicionado um ícone que representa o tipo de viagem selecionado. Tocar nas estatísticas de viagem alterna entre os 4 tipos de viagem.</item>
+        <item>Adicionada definição para selecionar que estado de ligação das APIs deve ser apresentado na vista principal.</item>
+        <item>Agora é possível repor a viagem manual a partir da vista principal.</item>
+        <item>Ajustado o conjunto de dados do webhook HTTP para a nova estrutura de dados.</item>
+    </string-array>
+    <string name="restart_notification_reason_unknown">%s foi reiniciado por um motivo desconhecido.</string>
+    <string name="summary_speed">Velocidade média</string>
+    <string-array name="trip_type_names">
+        <item>Tipo de viagem desconhecido</item>
+        <item>Viagem manual</item>
+        <item>Desde o carregamento</item>
+        <item>Viagem automática</item>
+        <item>Mês</item>
+    </string-array>
+    <string name="dialog_reset_confirm">Repor</string>
+    <string name="dialog_apply">Aplicar</string>
+    <!-- Trip history -->
+    <string name="history_title">Histórico da viagem</string>
+    <string name="history_selected">Selecionado:</string>
+    <string name="history_past_trips">Viagens anteriores:</string>
+    <string name="history_current_trips">Viagens atuais:</string>
+    <string name="history_dialog_filters_title">Filtros de viagem</string>
+    <string name="history_dialog_filters_manual">Mostrar viagens manuais</string>
+    <string name="history_dialog_filters_charge">Mostrar viagens desde o carregamento</string>
+    <string name="history_dialog_filters_auto">Mostrar viagens automáticas</string>
+    <string name="history_dialog_filters_month">Mostrar viagens mensais</string>
+    <string name="history_dialog_filters_date">Data de início mais antiga</string>
+    <string name="history_dialog_filters_note">Nota: As viagens atuais são sempre mostradas, independentemente dos filtros aplicados.</string>
+    <string name="history_dialog_delete_title">Apagar viagem?</string>
+    <string name="history_dialog_delete_message">A viagem será eliminada permanentemente.</string>
+    <string name="history_dialog_delete_confirm">Eliminar viagem</string>
+    <string name="history_dialog_multi_delete_title">Eliminar várias viagens?</string>
+    <string name="history_dialog_multi_delete_message">Está prestes a eliminar %s viagens. As viagens serão eliminadas permanentemente.</string>
+    <string name="history_dialog_multi_delete_delete">Eliminar %s viagens</string>
+    <string name="history_dialog_multi_delete_deselect">Desmarcar tudo</string>
     <string name="settings_distance_unit">Milhas como unidade de distância</string>
+    <string name="settings_apis_connection_selector">Ícone de conetividade na vista principal:</string>
 </resources>

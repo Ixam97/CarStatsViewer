@@ -81,6 +81,7 @@
     <string name="quit_dialog_message">Le journal sera copié dans le presse-papiers.</string>
     <string name="dialog_close">Fermer</string>
     <string name="dialog_reset_title">Réinitialiser ce trajet?</string>
+    <!--This message has changed. Please make sure you adjust the translation accordingly!-->
     <string name="dialog_reset_message">Ce trajet sera remis à zéro. Voulez-vous le sauvegarder?</string>
     <string name="dialog_reset_do_save">Sauvegarder</string>
     <string name="dialog_reset_no_save">Effacer</string>
