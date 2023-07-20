@@ -26,6 +26,10 @@ class AboutActivity : Activity() {
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
+        about_open_changelog.setOnClickListener {
+            CarStatsViewer.getChangelogDialog(this).show()
+        }
+
         about_support_container.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.readme_link))))
         }
@@ -39,7 +43,7 @@ class AboutActivity : Activity() {
         }
 
         about_github_issues_container.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.githug_issues_link))))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_issues_link))))
         }
 
         about_libs.setOnClickListener {

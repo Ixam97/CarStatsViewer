@@ -367,22 +367,8 @@ class MainActivity : FragmentActivity() {
         main_button_performance.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
 
         if (appPreferences.versionString != BuildConfig.VERSION_NAME) {
-            val changelogDialog = AlertDialog.Builder(this).apply {
-                setPositiveButton(getString(R.string.dialog_close)) { dialog, _ ->
-                    dialog.cancel()
-                }
-                setTitle(getString(R.string.main_changelog_dialog_title, BuildConfig.VERSION_NAME.dropLast(5)))
-                val changesArray = resources.getStringArray(R.array.changes_0_25_0)
-                var changelog = ""
-                for ((index, change) in changesArray.withIndex()) {
-                    changelog += "• $change"
-                    if (index < changesArray.size - 1) changelog += "\n\n"
-                }
-                setMessage(changelog)
-                setCancelable(true)
-                create()
-            }
-            changelogDialog.show()
+
+            CarStatsViewer.getChangelogDialog(this).show()
             appPreferences.versionString = BuildConfig.VERSION_NAME
         }
     }

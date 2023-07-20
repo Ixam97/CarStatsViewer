@@ -99,6 +99,24 @@ class CarStatsViewer : Application() {
                 if (extendedLogging) InAppLogger.i("[ASR] Setup repeating alarm")
             }
         }
+
+        fun getChangelogDialog(context: Context): AlertDialog.Builder {
+            return AlertDialog.Builder(context).apply {
+                setPositiveButton(context.getString(R.string.dialog_close)) { dialog, _ ->
+                    dialog.cancel()
+                }
+                setTitle(context.getString(R.string.main_changelog_dialog_title, BuildConfig.VERSION_NAME.dropLast(5)))
+                val changesArray = context.resources.getStringArray(R.array.changes_0_25_0)
+                var changelog = ""
+                for ((index, change) in changesArray.withIndex()) {
+                    changelog += "• $change"
+                    if (index < changesArray.size - 1) changelog += "\n\n"
+                }
+                setMessage(changelog)
+                setCancelable(true)
+                create()
+            }
+        }
     }
 
 
@@ -129,6 +147,44 @@ class CarStatsViewer : Application() {
             InAppLogger.e("[NEO] Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
 
             exitProcess(0)
+        }
+
+        InAppLogger.i("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
+
+        var fontsLoaded = false
+
+        CoroutineScope(Dispatchers.IO).launch {
+            InAppLogger.i("Available OEM fonts:")
+            val systemFonts = SystemFonts.getAvailableFonts()
+            systemFonts.filter{ it.file?.name?.contains("volvo", true) == true }.forEach {
+                InAppLogger.i("    ${it.file?.name}")
+                when {
+                    it.file?.name?.contains("light", true) == true -> typefaceRegular = Typeface.Builder(it.file!!).build()
+                    it.file?.name?.contains("medium", true) == true -> typefaceMedium = Typeface.Builder(it.file!!).build()
+                }
+            }
+            systemFonts.filter{ it.file?.name?.contains("polestar", true) == true }.forEach {
+                InAppLogger.i("    ${it.file?.name}")
+                isPolestarTypeface = true
+                when {
+                    it.file?.name?.contains("regular", true) == true -> typefaceRegular = Typeface.Builder(it.file!!).build()
+                    it.file?.name?.contains("medium", true) == true -> typefaceMedium = Typeface.Builder(it.file!!).build()
+                }
+            }
+            systemFonts.filter { it.file?.name?.contains("honda", true) == true }.forEach {
+                InAppLogger.i("    ${it.file?.name}")
+                when {
+                    it.file?.name?.contains("regular", true) == true -> {
+                        typefaceRegular = Typeface.Builder(it.file!!).build()
+                        typefaceMedium = Typeface.Builder(it.file!!).build()
+                    }
+                }
+            }
+            fontsLoaded = true
+        }
+
+        while (!fontsLoaded) {
+            // Wait for fonts to be loaded before initializing trip database
         }
 
         val MIGRATION_5_6 = object: Migration(5, 6) {
@@ -171,8 +227,6 @@ class CarStatsViewer : Application() {
         //         .build()
         // )
 
-        InAppLogger.i("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
-
         val abrpApiKey = if (resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName) != 0) {
             getString(resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName))
         } else ""
@@ -183,33 +237,6 @@ class CarStatsViewer : Application() {
         )
 
         notificationManager = createNotificationManager()
-
-        InAppLogger.i("Available OEM fonts:")
-        SystemFonts.getAvailableFonts().filter{ it.file?.name?.contains("volvo", true) == true }.forEach {
-            InAppLogger.i("    ${it.file?.name}")
-            when {
-                it.file?.name?.contains("light", true) == true -> typefaceRegular = Typeface.Builder(it.file!!).build()
-                it.file?.name?.contains("medium", true) == true -> typefaceMedium = Typeface.Builder(it.file!!).build()
-            }
-        }
-        SystemFonts.getAvailableFonts().filter{ it.file?.name?.contains("polestar", true) == true }.forEach {
-            InAppLogger.i("    ${it.file?.name}")
-            isPolestarTypeface = true
-            when {
-                it.file?.name?.contains("regular", true) == true -> typefaceRegular = Typeface.Builder(it.file!!).build()
-                it.file?.name?.contains("medium", true) == true -> typefaceMedium = Typeface.Builder(it.file!!).build()
-            }
-        }
-
-        SystemFonts.getAvailableFonts().filter { it.file?.name?.contains("honda", true) == true }.forEach {
-            InAppLogger.i("    ${it.file?.name}")
-            when {
-                it.file?.name?.contains("regular", true) == true -> {
-                    typefaceRegular = Typeface.Builder(it.file!!).build()
-                    typefaceMedium = Typeface.Builder(it.file!!).build()
-                }
-            }
-        }
 
     }
 

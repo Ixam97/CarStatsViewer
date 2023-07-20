@@ -53,12 +53,37 @@
                 android:text="@string/about_section_about"/>
             <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
 
-            <TextView
-                style="@style/menu_row_top_text"
-                android:text="Version"/>
-            <TextView
-                android:id="@+id/about_version_text"
-                style="@style/menu_row_content_text"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/about_version_title"
+                    style="@style/menu_row_top_text"
+                    android:text="Version"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/about_version_text"
+                    style="@style/menu_row_content_text"
+                    android:text="Version Number"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/about_version_title" />
+
+                <TextView
+                    android:id="@+id/about_open_changelog"
+                    style="@style/menu_standard_row_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Changelog"
+                    android:textColor="?android:attr/colorControlActivated"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
 
             <TextView

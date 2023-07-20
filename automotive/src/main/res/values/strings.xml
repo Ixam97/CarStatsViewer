@@ -4,9 +4,9 @@
 
     <!-- About -->
     <string name="readme_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/blob/master/README.md</string>
-    <string name="polestar_fans_link" translatable="false">https://polestar.fans/t/car-stats-viewer-0-22-x/14653</string>
+    <string name="polestar_fans_link" translatable="false">https://polestar.fans/t/carstatsviewer-informationen/15027</string>
     <string name="polestar_forum_link" translatable="false">https://www.polestar-forum.com/threads/car-stats-viewer-a-better-range-assistant.10261/#post-188544</string>
-    <string name="githug_issues_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/issues</string>
+    <string name="github_issues_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/issues</string>
     <string-array name="contributors" translatable="false">
         <item>Dario Bosshard</item>
         <item>FreshDave29</item>

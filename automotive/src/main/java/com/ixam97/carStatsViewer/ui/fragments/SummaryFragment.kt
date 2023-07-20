@@ -215,6 +215,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
 
         summary_charge_plot_view.dimension = PlotDimensionX.TIME
+        summary_charge_plot_view.dimensionRestrictionMin = TimeUnit.MINUTES.toMillis(5)
         // summary_charge_plot_view.dimensionSmoothing = 0.01f
         // summary_charge_plot_view.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
         summary_charge_plot_view.dimensionYSecondary = PlotDimensionY.STATE_OF_CHARGE

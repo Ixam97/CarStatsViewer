@@ -105,10 +105,6 @@ class DataProcessor {
 
     private val chargeTimer = TimeTracker()
 
-    init {
-        loadSessionsToMemory()
-    }
-
     fun loadSessionsToMemory(): Job {
         /**
          * This job is returned by the function to ensure the database read is completed. Otherwise
@@ -617,7 +613,7 @@ class DataProcessor {
                     localChargingSession?.chargingPoints = chargingPoints
                     _currentChargingSessionDataFlow.value = localChargingSession
                     CarStatsViewer.tripDataSource.updateChargingSession(it)
-                    InAppLogger.d("[NEO] Charging point written: ${chargingPoint.power.toFloat()} kW, ${(chargingPoint.state_of_charge * 100).roundToInt()} %, ${chargingPoint.charging_point_epoch_time}")
+                    InAppLogger.d("[NEO] Charging point written: ${chargingPoint.power / 1_000_000f} kW, ${(chargingPoint.state_of_charge * 100).roundToInt()} %, ${chargingPoint.charging_point_epoch_time}")
                 }
             }
         }
