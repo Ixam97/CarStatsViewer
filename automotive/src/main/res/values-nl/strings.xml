@@ -177,4 +177,47 @@
     </string-array>
     <string name="summary_altitude">Hoogteverandering</string>
     <string name="about_translators">Vertalers</string>
+    <string-array name="changes_0_25_0">
+        <item>Een lokale database geïmplementeerd voor een robuustere en performantere opslag van ritgegevens.</item>
+        <item>Een oplaadsessie kan nu tot 5 minuten worden onderbroken voordat een nieuwe sessie begint, zelfs als de auto werd verplaatst.</item>
+        <item>Rittengeschiedenis toegevoegd om eerdere ritten te bekijken.</item>
+        <item>Knoppen toegevoegd voor 20, 40 en 100 km in het ritoverzicht.</item>
+        <item>Een pictogram toegevoegd dat het geselecteerde type rit weergeeft. Als u op het pictogram van de rit tikt, kunt u tussen de 4 soorten ritten schakelen.</item>
+        <item>Instelling toegevoegd om te selecteren welke API-verbindingsstatus moet worden weergegeven in de hoofdweergave.</item>
+        <item>Het is nu mogelijk om de handmatige rit vanuit het hoofdscherm te resetten.</item>
+        <item>De HTTP webhook dataset aangepast aan de nieuwe datastructuur.</item>
+        <item>Algemene bugfixes en stabiliteitsverbeteringen</item>
+    </string-array>
+    <string name="restart_notification_reason_unknown">%s is herstart om een onbekende reden.</string>
+    <string name="summary_speed">Gemiddelde snelheid</string>
+    <string-array name="trip_type_names">
+        <item>Onbekend type rit</item>
+        <item>Handmatige rit</item>
+        <item>Sinds laadbeurt</item>
+        <item>Automatische rit</item>
+        <item>Maand</item>
+    </string-array>
+    <string name="dialog_reset_confirm">Resetten</string>
+    <string name="dialog_apply">Toepassen</string>
+    <!-- Trip history -->
+    <string name="history_title">Rithistoriek</string>
+    <string name="history_selected">Geselecteerd:</string>
+    <string name="history_past_trips">Voorbije ritten</string>
+    <string name="history_current_trips">Huidige ritten:</string>
+    <string name="history_dialog_filters_title">Ritfilters</string>
+    <string name="history_dialog_filters_manual">Toon handmatige ritten</string>
+    <string name="history_dialog_filters_charge">Toon ritten sinds laadbeurt</string>
+    <string name="history_dialog_filters_auto">Toon automatische ritten</string>
+    <string name="history_dialog_filters_month">Toon maandelijkse ritten</string>
+    <string name="history_dialog_filters_date">Vroegste startdatum</string>
+    <string name="history_dialog_filters_note">Opmerking: De huidige ritten worden altijd weergegeven, ongeacht de toegepaste filters.</string>
+    <string name="history_dialog_delete_title">Rit verwijderen?</string>
+    <string name="history_dialog_delete_message">De rit wordt definitief verwijderd.</string>
+    <string name="history_dialog_delete_confirm">Rit verwijderen</string>
+    <string name="history_dialog_multi_delete_title">Meerdere reizen verwijderen?</string>
+    <string name="history_dialog_multi_delete_message">U staat op het punt om %s ritten te verwijderen. Deze ritten worden definitief verwijderd.</string>
+    <string name="history_dialog_multi_delete_delete">Verwijder %s reizen</string>
+    <string name="history_dialog_multi_delete_deselect">Alles deselecteren</string>
+    <string name="settings_distance_unit">Mijlen als afstandseenheid</string>
+    <string name="settings_apis_connection_selector">Verbindingspictogram in hoofdweergave:</string>
 </resources>

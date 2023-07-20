@@ -186,6 +186,7 @@
         <item>Adicionada definição para selecionar que estado de ligação das APIs deve ser apresentado na vista principal.</item>
         <item>Agora é possível repor a viagem manual a partir da vista principal.</item>
         <item>Ajustado o conjunto de dados do webhook HTTP para a nova estrutura de dados.</item>
+        <item>Correções de erros e melhorias de estabilidade.</item>
     </string-array>
     <string name="restart_notification_reason_unknown">%s foi reiniciado por um motivo desconhecido.</string>
     <string name="summary_speed">Velocidade média</string>

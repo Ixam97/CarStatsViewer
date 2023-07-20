@@ -82,7 +82,7 @@
     <string name="dialog_close">Stäng</string>
     <string name="dialog_reset_title">Återställ resedata?</string>
     <!--This message has changed. Please make sure you adjust the translation accordingly!-->
-    <string name="dialog_reset_message">Nuvarande resedata kommer återställas till noll. Vill du spara resan?</string>
+    <string name="dialog_reset_message">Nuvarande resedata kommer återställas och sparas i historiken.</string>
     <string name="dialog_reset_do_save">Spara</string>
     <string name="dialog_reset_no_save">"Spara inte"</string>
     <string name="dialog_reset_cancel">Avbryt</string>
@@ -210,12 +210,12 @@
     <string name="history_dialog_filters_auto">Visa automatiska resor</string>
     <string name="history_dialog_filters_month">Visa månatliga resor</string>
     <string name="history_dialog_filters_date">Tidigaste startdatum</string>
-    <string name="history_dialog_filters_note">Notera: De aktuella resorna visas alltid oavsett använda filter.</string>
+    <string name="history_dialog_filters_note">Observera: De aktuella resorna visas alltid oberoende av filter.</string>
     <string name="history_dialog_delete_title">Ta bort resan?</string>
     <string name="history_dialog_delete_message">Resan kommer att raderas permanent.</string>
     <string name="history_dialog_delete_confirm">Ta bort resa</string>
     <string name="history_dialog_multi_delete_title">Radera flera resor?</string>
-    <string name="history_dialog_multi_delete_message">Du håller på att radera %s resor. Resorna kommer att raderas permanent.</string>
+    <string name="history_dialog_multi_delete_message">Du kommer att radera %s resor. Resorna kommer att raderas permanent.</string>
     <string name="history_dialog_multi_delete_delete">Radera %s resor</string>
     <string name="history_dialog_multi_delete_deselect">Avmarkera alla</string>
     <string name="settings_distance_unit">Miles som enhet för avstånd</string>
