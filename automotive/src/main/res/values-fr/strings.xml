@@ -82,7 +82,7 @@
     <string name="dialog_close">Fermer</string>
     <string name="dialog_reset_title">Réinitialiser ce trajet?</string>
     <!--This message has changed. Please make sure you adjust the translation accordingly!-->
-    <string name="dialog_reset_message">Ce trajet sera remis à zéro. Voulez-vous le sauvegarder?</string>
+    <string name="dialog_reset_message">Ce trajet sera remis à zéro. Il sera archivé dans l\'historique.</string>
     <string name="dialog_reset_do_save">Sauvegarder</string>
     <string name="dialog_reset_no_save">Effacer</string>
     <string name="dialog_reset_cancel">Annuler</string>
@@ -183,4 +183,47 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
     </string-array>
     <string name="summary_altitude">Variation d\'altitude</string>
     <string name="about_translators">Traducteurs</string>
+    <string-array name="changes_0_25_0">
+        <item>Ajout d\'une base de données robuste et performante pour les données de trajets.</item>
+        <item>Un session de recharge peut maintenant être stoppées jusqu\'à 5 minutes avant le départ d\'une nouvelle session, même si la voiture a été déplacée.</item>
+        <item>Ajout d\'un historique pour consulter les anciens trajets.</item>
+        <item>Ajout de boutons pour visualiser les derniers 20, 40 ou 100km dans le sommaire.</item>
+        <item>Ajout d\'une icone représentant le type de trajet choisi. Taper les statistiques pour cycler aux travers de 4 types.</item>
+        <item>Ajout d\'une option pour afficher le statut des APIs désirés dans la vue principale.</item>
+        <item>Il est maintenant possible de réinitialiser le trajet manuel dans la vue principale.</item>
+        <item>Ajustement apporté à la structure de données du lien de rappel HTTP.</item>
+        <item>Corrections de bogues et améliorations.</item>
+    </string-array>
+    <string name="restart_notification_reason_unknown">%s a redémarré pour une raison inconnue.</string>
+    <string name="summary_speed">Vitesse moyenne</string>
+    <string-array name="trip_type_names">
+        <item>Type de trajet inconnu</item>
+        <item>Trajet manuel</item>
+        <item>Depuis la charge</item>
+        <item>Trajet automatique</item>
+        <item>Mois</item>
+    </string-array>
+    <string name="dialog_reset_confirm">Réinitialiser</string>
+    <string name="dialog_apply">Appliquer</string>
+    <!-- Trip history -->
+    <string name="history_title">Historique de trajets</string>
+    <string name="history_selected">Sélectionnés:</string>
+    <string name="history_past_trips">Anciens trajets:</string>
+    <string name="history_current_trips">Trajets courants:</string>
+    <string name="history_dialog_filters_title">Filtres de trajets</string>
+    <string name="history_dialog_filters_manual">Afficher trajets manuels</string>
+    <string name="history_dialog_filters_charge">Afficher trajets depuis la recharge</string>
+    <string name="history_dialog_filters_auto">Afficher les trajets automatiques</string>
+    <string name="history_dialog_filters_month">Afficher trajets mensuels</string>
+    <string name="history_dialog_filters_date">Plus vieille date de départ</string>
+    <string name="history_dialog_filters_note">Note: Les trajets courants sont toujours affichés peu importe les filtres appliqués.</string>
+    <string name="history_dialog_delete_title">Effacer trajet?</string>
+    <string name="history_dialog_delete_message">Ce trajet sera effacé de façon permanente.</string>
+    <string name="history_dialog_delete_confirm">Effacer trajet</string>
+    <string name="history_dialog_multi_delete_title">Effacer plusieurs trajets?</string>
+    <string name="history_dialog_multi_delete_message">Vous êtes sur le point d\'effacer %s trajets de façon permanente.</string>
+    <string name="history_dialog_multi_delete_delete">Effacer %s trajets</string>
+    <string name="history_dialog_multi_delete_deselect">Désélectionner tout</string>
+    <string name="settings_distance_unit">Distances en miles</string>
+    <string name="settings_apis_connection_selector">Icône de connectivité dans la vue principale</string>
 </resources>
