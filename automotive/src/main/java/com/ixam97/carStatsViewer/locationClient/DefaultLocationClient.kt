@@ -7,6 +7,7 @@ import android.location.LocationManager
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -57,12 +58,15 @@ class DefaultLocationClient(): LocationClient {
                     doLocationUpdates = false
                     break
                 }
-                val result = client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).await()
+                var result = client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).await()
 
                 if (result != null && result.altitude.absoluteValue > 0) {
                     result.altitude -= Geoid.getOffset(
                         org.matthiaszimmermann.location.Location(result.latitude, result.longitude)
                     )
+                } else if (!emulatorMode) {
+                    result = null
+                    InAppLogger.e("[LOC] GPS Altitude is 0m!")
                 }
 
                 if (result != null)
