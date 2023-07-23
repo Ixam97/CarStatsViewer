@@ -330,15 +330,15 @@
                 android:background="?android:attr/listDivider"/>
 
             <TextView
-                android:id="@+id/summary_charged_energy_value_text"
-                style="@style/menu_row_top_text"
-                android:text="-/-"/>
-            <TextView
                 android:visibility="gone"
                 style="@style/menu_row_content_text"
                 android:id="@+id/summary_charged_energy_warning_text"
                 android:text="@string/summary_interruption_warning"
                 android:textColor="@color/bad_red"/>
+            <TextView
+                android:id="@+id/summary_charged_energy_value_text"
+                style="@style/menu_row_top_text"
+                android:text="-/-"/>
             <TextView
                 style="@style/menu_row_content_text"
                 android:text="@string/summary_charged_energy"/>

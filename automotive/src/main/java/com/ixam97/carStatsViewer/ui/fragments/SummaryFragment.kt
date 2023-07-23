@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.fragment_summary.*
 import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
@@ -324,15 +325,14 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         var altUp = 0f
         var altDown = 0f
 
-        session.drivingPoints?.let { drivingPoint ->
-            val altList = drivingPoint.map { it.alt }
-
-            altList.forEachIndexed { index, alt ->
+        session.drivingPoints?.let { drivingPoints ->
+            var prevAlt: Float
+            drivingPoints.mapNotNull { it.alt }.forEachIndexed { index, alt ->
+                prevAlt = alt
                 if (index > 0) {
-                    val prevAlt = altList[index - 1]
-                    if (alt != null && prevAlt != null) {
-                        if (alt > prevAlt) altUp += alt - prevAlt
-                        if (alt < prevAlt) altDown += prevAlt - alt
+                    when {
+                        alt > prevAlt -> altUp += alt - prevAlt
+                        alt < prevAlt -> altDown += prevAlt - alt
                     }
                 }
             }
@@ -425,7 +425,21 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             }
         }
 
-        summary_charged_energy_value_text.text = StringFormatters.getEnergyString(completedChargingSessions[progress].charged_energy.toFloat())
+
+
+        if  ((completedChargingSessions[progress].chargingPoints?.filter { it.point_marker_type == 2}?.size?:0) > 1) {
+            summary_charged_energy_warning_text.visibility = View.VISIBLE
+        } else {
+            summary_charged_energy_warning_text.visibility = View.GONE
+        }
+
+
+        summary_charged_energy_value_text.text = String.format(
+            "%s, %d%%  →  %d%%",
+            StringFormatters.getEnergyString(completedChargingSessions[progress].charged_energy.toFloat()),
+            ((completedChargingSessions[progress].chargingPoints?.first()?.state_of_charge?:0f)*100f).roundToInt(),
+            ((completedChargingSessions[progress].chargingPoints?.last()?.state_of_charge?:0f)*100f).roundToInt()
+        )
         summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString((completedChargingSessions[progress].end_epoch_time?:0) - completedChargingSessions[progress].start_epoch_time)
         summary_charge_ambient_temp.text = StringFormatters.getTemperatureString(completedChargingSessions[progress].outside_temp)
 

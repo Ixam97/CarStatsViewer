@@ -53,8 +53,6 @@ class DataCollector: Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        super.onStartCommand(intent, flags, startId)
-
         intent?.let {
             if (it.hasExtra("reason")) {
                 Toast.makeText(applicationContext, getString(R.string.restart_toast_background), Toast.LENGTH_LONG).show()
@@ -62,11 +60,31 @@ class DataCollector: Service() {
         }
 
         startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
+        InAppLogger.i("[NEO] Foreground service started in onStartCommand()")
+        super.onStartCommand(intent, flags, startId)
         return START_NOT_STICKY
     }
 
     override fun onCreate() {
         super.onCreate()
+
+        foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.FOREGROUND_CHANNEL_ID)
+            // .setContentTitle(getString(R.string.app_name))
+            .setContentTitle(getString(R.string.foreground_service_info))
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setOngoing(true)
+
+        foregroundServiceNotification.setContentIntent(
+            PendingIntent.getActivity(
+                applicationContext,
+                0,
+                Intent(applicationContext, MainActivity::class.java),
+                PendingIntent.FLAG_IMMUTABLE
+            )
+        )
+
+        startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
+        InAppLogger.i("[NEO] Foreground service started in onCreate()")
 
         // Thread.setDefaultUncaughtExceptionHandler { t, e ->
         //     InAppLogger.e("[NEO] Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
@@ -83,21 +101,6 @@ class DataCollector: Service() {
             context = applicationContext,
             propertiesProcessor = dataProcessor::processProperty,
             carPropertiesData = dataProcessor.carPropertiesData
-        )
-
-        foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.FOREGROUND_CHANNEL_ID)
-            // .setContentTitle(getString(R.string.app_name))
-            .setContentTitle(getString(R.string.foreground_service_info))
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setOngoing(true)
-
-        foregroundServiceNotification.setContentIntent(
-            PendingIntent.getActivity(
-                applicationContext,
-                0,
-                Intent(applicationContext, MainActivity::class.java),
-                PendingIntent.FLAG_IMMUTABLE
-            )
         )
 
         dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
