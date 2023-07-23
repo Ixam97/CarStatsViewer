@@ -1,6 +1,6 @@
 # Changelog [DE]:
 
-## 0.25.0 ()
+## 0.25.0 (23.07.2023)
 - Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips.
 - Tripverlauf hinzugefügt, um vergangene Trips anzeigen zu können.
 - Ladevorgänge können nun für bis zu 5 Minuten unterbrochen werden, bevor ein neuer Ladevorgang angelegt wird, sogar, wenn das Auto bewegt wurde.
