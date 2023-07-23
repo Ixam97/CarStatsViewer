@@ -449,6 +449,12 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         summary_charge_time_value_text.text = StringFormatters.getElapsedTimeString((completedChargingSessions[progress].end_epoch_time?:0) - completedChargingSessions[progress].start_epoch_time)
         summary_charge_ambient_temp.text = StringFormatters.getTemperatureString(completedChargingSessions[progress].outside_temp)
 
+        /*
+        chargePlotLine.reset()
+        completedChargingSessions[progress].chargingPoints?.let {
+            chargePlotLine.addDataPoints(DataConverters.chargePlotLineFromChargingPoints(it))
+        }
+         */
         chargePlotLine.addDataPoints(DataConverters.chargePlotLineFromChargingPoints(completedChargingSessions[progress].chargingPoints!!))
 
         summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes((completedChargingSessions[progress].end_epoch_time?:0) - completedChargingSessions[progress].start_epoch_time) / 5) + 1) * 5 + 1

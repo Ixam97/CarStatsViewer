@@ -145,7 +145,11 @@ class CarStatsViewer : Application() {
             }
 
             InAppLogger.e("[NEO] Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
-
+            val crashTime = System.nanoTime()
+            while (System.nanoTime() < crashTime + 500_000_000) {
+                // Give the logger some time
+            }
+            InAppLogger.e("exit")
             exitProcess(0)
         }
 
