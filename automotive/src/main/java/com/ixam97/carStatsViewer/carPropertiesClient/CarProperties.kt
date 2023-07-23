@@ -11,6 +11,11 @@ object CarProperties {
     const val EV_BATTERY_LEVEL = VehiclePropertyIds.EV_BATTERY_LEVEL
     const val IGNITION_STATE = VehiclePropertyIds.IGNITION_STATE
     const val ENV_OUTSIDE_TEMPERATURE = VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE
+    const val INFO_EV_BATTERY_CAPACITY = VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY
+
+    const val INFO_MODEL = VehiclePropertyIds.INFO_MODEL
+    const val INFO_MAKE = VehiclePropertyIds.INFO_MAKE
+    const val INFO_MODEL_YEAR = VehiclePropertyIds.INFO_MODEL_YEAR
 
     val usedProperties = listOf(
         VehiclePropertyIds.PERF_VEHICLE_SPEED,
@@ -29,6 +34,6 @@ object CarProperties {
         VehiclePropertyIds.EV_BATTERY_LEVEL -> "Battery level"
         VehiclePropertyIds.IGNITION_STATE -> "Ignition state"
         VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE -> "Outside temperature"
-        else -> "Unused car property"
+        else -> "unused car property $propertyId"
     }
 }

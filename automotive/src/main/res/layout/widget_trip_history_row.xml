@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="android.widget.LinearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="13dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/section_title_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/section_title_text"
+                style="@style/menu_section_title_style" />
+        </LinearLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/row_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/row_container_body"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@+id/row_vertical_divider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/distance_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    android:src="@drawable/ic_distance"
+                    app:layout_constraintBottom_toBottomOf="@+id/distance_text"
+                    app:layout_constraintStart_toStartOf="@+id/row_top_text"
+                    app:layout_constraintTop_toBottomOf="@+id/row_top_text"
+                    app:layout_constraintVertical_bias="1.0" />
+
+                <TextView
+                    android:id="@+id/distance_text"
+                    style="@style/menu_row_content_text"
+                    android:text="Lorem Ipsum"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/distance_icon"
+                    app:layout_constraintTop_toBottomOf="@+id/row_top_text"
+                    app:layout_constraintVertical_bias="1.0" />
+
+                <ImageView
+                    android:id="@+id/row_start_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_charger_2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/row_top_text"
+                    style="@style/menu_row_top_text"
+                    android:layout_marginStart="10dp"
+                    android:text="Lorem Ipsum"
+                    app:layout_constraintStart_toEndOf="@+id/row_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/energy_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/ic_power"
+                    app:layout_constraintBottom_toBottomOf="@+id/energy_text"
+                    app:layout_constraintStart_toEndOf="@+id/distance_text"
+                    app:layout_constraintTop_toTopOf="@+id/energy_text" />
+
+                <TextView
+                    android:id="@+id/energy_text"
+                    style="@style/menu_row_content_text"
+                    android:text="Lorem Ipsum"
+                    app:layout_constraintStart_toEndOf="@+id/energy_icon"
+                    app:layout_constraintTop_toTopOf="@+id/distance_text" />
+
+                <ImageView
+                    android:id="@+id/consumption_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/ic_avg_consumption"
+                    app:layout_constraintBottom_toBottomOf="@+id/consumption_text"
+                    app:layout_constraintStart_toEndOf="@+id/energy_text"
+                    app:layout_constraintTop_toTopOf="@+id/consumption_text" />
+
+                <TextView
+                    android:id="@+id/consumption_text"
+                    style="@style/menu_row_content_text"
+                    android:text="Cons. Text"
+                    app:layout_constraintStart_toEndOf="@+id/consumption_icon"
+                    app:layout_constraintTop_toTopOf="@+id/energy_text" />
+
+                <ImageView
+                    android:id="@+id/time_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/ic_time"
+                    app:layout_constraintBottom_toBottomOf="@+id/time_text"
+                    app:layout_constraintStart_toEndOf="@+id/consumption_text"
+                    app:layout_constraintTop_toTopOf="@+id/time_text" />
+
+                <TextView
+                    android:id="@+id/time_text"
+                    style="@style/menu_row_content_text"
+                    android:text="Time Text"
+                    app:layout_constraintStart_toEndOf="@+id/time_icon"
+                    app:layout_constraintTop_toTopOf="@+id/consumption_text" />
+
+                <ImageView
+                    android:id="@+id/row_chevron"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_chevron_right"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/row_vertical_divider"
+                android:layout_width="@dimen/divider_height"
+                android:layout_height="@dimen/std_icon_size"
+                android:layout_marginEnd="15dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/row_end_button"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/row_end_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_delete"
+                android:background="@android:color/transparent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            style="@style/menu_divider_style"
+            android:background="?android:attr/listDivider"/>
+
+    </LinearLayout>
+
+</merge>

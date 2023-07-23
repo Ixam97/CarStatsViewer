@@ -8,7 +8,7 @@
     <dimen name="std_font_size">30sp</dimen>
     <dimen name="reduced_font_size">24sp</dimen>
     <dimen name="log_font_size">18sp</dimen>
-    <dimen name="title_font_size">37sp</dimen>
+    <dimen name="title_font_size">45sp</dimen>
     <integer name="title_font_weight">550</integer>
     <integer name="std_font_weight">300</integer>
     <dimen name="section_title_font_size">27sp</dimen>
@@ -17,4 +17,8 @@
     <dimen name="plot_y_margin">48dp</dimen>
     <dimen name="gage_value_text_size">80sp</dimen>
     <dimen name="gage_desc_text_size">25sp</dimen>
+    <dimen name="horizontal_divider_margin">36dp</dimen>
+    <dimen name="divider_strength">2dp</dimen>
+    <integer name="gage_width_weight">7</integer>
+    <integer name="stats_width_weight">7</integer>
 </resources>

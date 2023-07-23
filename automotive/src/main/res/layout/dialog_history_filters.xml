@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="25dp"
+    android:orientation="vertical">
+
+    <CheckBox
+        android:id="@+id/history_filter_checkbox_manual"
+        android:layout_marginVertical="10dp"
+        android:paddingStart="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/std_font_size"
+        android:text="@string/history_dialog_filters_manual"/>
+
+    <CheckBox
+        android:id="@+id/history_filter_checkbox_charge"
+        android:layout_marginVertical="10dp"
+        android:paddingStart="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/std_font_size"
+        android:text="@string/history_dialog_filters_charge"/>
+
+    <CheckBox
+        android:id="@+id/history_filter_checkbox_auto"
+        android:layout_marginVertical="10dp"
+        android:paddingStart="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/std_font_size"
+        android:text="@string/history_dialog_filters_auto"/>
+
+    <CheckBox
+        android:id="@+id/history_filter_checkbox_month"
+        android:layout_marginVertical="10dp"
+        android:paddingStart="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/std_font_size"
+        android:text="@string/history_dialog_filters_month"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <CheckBox
+            android:id="@+id/history_filter_checkbox_date"
+            android:layout_marginVertical="10dp"
+            android:paddingStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/history_dialog_filters_date"
+            android:textSize="@dimen/std_font_size"/>
+        <DatePicker
+            android:theme="@style/spinner_text_size"
+            android:id="@+id/history_filter_date_picker"
+            android:calendarViewShown="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:datePickerMode="spinner"/>
+    </LinearLayout>
+
+    <View
+        style="@style/menu_divider_style"
+        android:background="?android:attr/listDivider"/>
+
+    <TextView
+        style="@style/menu_row_content_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/history_dialog_filters_note"/>
+
+</LinearLayout>

@@ -4,9 +4,9 @@
 
     <!-- About -->
     <string name="readme_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/blob/master/README.md</string>
-    <string name="polestar_fans_link" translatable="false">https://polestar.fans/t/car-stats-viewer-0-24-x/15350</string>
+    <string name="polestar_fans_link" translatable="false">https://polestar.fans/t/carstatsviewer-informationen/15027</string>
     <string name="polestar_forum_link" translatable="false">https://www.polestar-forum.com/threads/car-stats-viewer-a-better-range-assistant.10261/#post-188544</string>
-    <string name="githug_issues_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/issues</string>
+    <string name="github_issues_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/issues</string>
     <string-array name="contributors" translatable="false">
         <item>Dario Bosshard</item>
         <item>FreshDave29</item>
@@ -44,6 +44,20 @@
         <item>Jacob Frostholm</item>
         <item>Christoffer Gennerud</item>
         <item>Samuel Lodyga</item>
+        <item>Konstantinos Theiakos</item>
+        <item>Oliver Charlton</item>
+    </string-array>
+
+    <string-array name="changes_0_25_0">
+        <item>Implemented a local database for more robust and performant saving of trip data.</item>
+        <item>Charging session can now be interrupted up to 5 minutes before beginning a new session, even if the car was moved.</item>
+        <item>Added the trip history to view past trips.</item>
+        <item>Added quick select buttons for 20, 40 and 100 km in the trip summary.</item>
+        <item>Added an icon representing the selected trip type. Taping on the trip stats cycles between the 4 trip types.</item>
+        <item>Added setting to select which APIs connection status should be displayed in the main view.</item>
+        <item>It is now possible to reset the manual trip from the main view.</item>
+        <item>Adjusted the HTTP webhook data set to the new data structure.</item>
+        <item>General bugfixes and stability improvements.</item>
     </string-array>
 
     <string-array name="changes_0_24_1">
@@ -84,6 +98,7 @@
     <string name="restart_notification_reason_crash">a crash</string>
     <string name="restart_notification_reason_reboot">a reboot</string>
     <string name="restart_notification_reason_update">an update</string>
+    <string name="restart_notification_reason_unknown">%s has restarted for an unknown reason.</string>
     <string name="restart_notification_message">Please restart service for statistics tracking.</string>
     <string name="restart_notification_dismiss">Dismiss</string>
     <string name="restart_notification_app">Start app</string>
@@ -114,8 +129,6 @@
     <string name="main_button_reset_stats">Reset statistics</string>
     <string name="main_consumption">Consumption over the last 3 km:</string>
     <string name="main_speed">Speed</string>
-    <string name="main_dialog_reset_title">Reset stats?</string>
-    <string name="main_dialog_reset_message">All saved trip data will be reset to zero.</string>
     <string name="main_gage_speed">Speed</string>
     <string name="main_gage_power">Power</string>
     <string name="main_gage_charging_power">Charging power</string>
@@ -145,6 +158,7 @@
     <string name="summary_charge_ambient_temp">Ambient temperature</string>
     <string name="summary_interruption_warning">Recording of charging session has been interrupted. This value is probably incorrect.</string>
     <string name="summary_altitude">Altitude change</string>
+    <string name="summary_speed">Average speed</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
@@ -177,6 +191,7 @@
     <string name="settings_apis_http">HTTP Webhook</string>
     <string name="settings_apis_smtp">SMTP Login</string>
     <string name="settings_apis_use">Use API</string>
+    <string name="settings_apis_connection_selector">Connectivity icon in main view:</string>
 
     <!-- ABRP -->
     <string name="abrp_description">Enter an ABRP generic token to transmit over-the-air live data to the ABRP servers. This includes location data if not disabled.</string>
@@ -200,6 +215,14 @@
     <string name="SinceChargeData">Since last charge</string>
     <string name="AutoTripData">Automatic trip</string>
     <string name="CurrentMonthData">Current month</string>
+
+    <string-array name="trip_type_names">
+        <item>Unknown trip type</item>
+        <item>Manual trip</item>
+        <item>Since charge</item>
+        <item>Automatic trip</item>
+        <item>Month</item>
+    </string-array>
 
     <!-- Vehicle Setup -->
     <string name="vehicle_title">Vehicle setup</string>
@@ -231,12 +254,15 @@
     <string name="quit_dialog_title">Quit App?</string>
     <string name="quit_dialog_message">Log will be copied to clipboard.</string>
     <string name="dialog_close">Close</string>
+
     <string name="dialog_reset_title">Reset trip data?</string>
-    <string name="dialog_reset_message">The current trip data will be reset to zero. Do you want to save the trip?</string>
+    <string name="dialog_reset_message">The current manual trip will be reset. It will be saved in the trip history.</string>
     <string name="dialog_reset_do_save">Save</string>
     <string name="dialog_reset_no_save">"Don't save"</string>
     <string name="dialog_reset_cancel">Cancel</string>
+    <string name="dialog_reset_confirm">Reset</string>
     <string name="dialog_confirm">Yes</string>
+    <string name="dialog_apply">Apply</string>
     <string name="dialog_dismiss">No</string>
 
     <!-- LogActivity -->
@@ -246,4 +272,25 @@
     <string name="notification_title">Current stats:</string>
     <string name="foreground_service_info">Statistics tracking service running</string>
     <string name="toast_file_read_error">Error reading trip file</string>
+
+    <!-- Trip history -->
+    <string name="history_title">Trip history</string>
+    <string name="history_selected">Selected:</string>
+    <string name="history_past_trips">Past trips:</string>
+    <string name="history_current_trips">Current trips:</string>
+    <string name="history_dialog_filters_title">Trip filters</string>
+    <string name="history_dialog_filters_manual">Show manual trips</string>
+    <string name="history_dialog_filters_charge">Show since charge trips</string>
+    <string name="history_dialog_filters_auto">Show automatic trips</string>
+    <string name="history_dialog_filters_month">Show monthly trips</string>
+    <string name="history_dialog_filters_date">Earliest start date</string>
+    <string name="history_dialog_filters_note">Note: The current trips are always shown regardless of applied filters.</string>
+    <string name="history_dialog_delete_title">Delete trip?</string>
+    <string name="history_dialog_delete_message">The trip will be deleted permanently.</string>
+    <string name="history_dialog_delete_confirm">Delete trip</string>
+
+    <string name="history_dialog_multi_delete_title">Delete multiple trips?</string>
+    <string name="history_dialog_multi_delete_message">You are about to delete %s trips. The trips will be deleted permanently.</string>
+    <string name="history_dialog_multi_delete_delete">Delete %s trips</string>
+    <string name="history_dialog_multi_delete_deselect">Deselect all</string>
 </resources>

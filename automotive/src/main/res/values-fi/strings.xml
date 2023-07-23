@@ -81,7 +81,8 @@
     <string name="quit_dialog_message">Lokitiedot kopioidaan leikepöydälle.</string>
     <string name="dialog_close">Sulje</string>
     <string name="dialog_reset_title">Nollataanko osamatkatiedot?</string>
-    <string name="dialog_reset_message">Nykyiset osamatkatiedot nollataan. Haluatko tallentaa osamatkan?</string>
+    <!--This message has changed. Please make sure you adjust the translation accordingly!-->
+    <string name="dialog_reset_message">Nykyinen manuaalinen matka nollataan. Se tallennetaan matkahistoriaan.</string>
     <string name="dialog_reset_do_save">Tallenna</string>
     <string name="dialog_reset_no_save">"Älä tallenna"</string>
     <string name="dialog_reset_cancel">Peruuta</string>
@@ -176,7 +177,47 @@
     </string-array>
     <string name="summary_altitude">Korkeuden muutos</string>
     <string name="about_translators">Kääntäjät</string>
-    <string name="main_dialog_reset_title">Nollataanko tilastot?</string>
-    <string name="main_dialog_reset_message">Kaikki tallennetut matkatiedot nollataan.</string>
+    <string-array name="changes_0_25_0">
+        <item>Toteutettu paikallinen tietokanta matkatietojen vakaampaa ja tehokkaampaa tallentamista varten.</item>
+        <item>Lataussessio voidaan nyt keskeyttää enintään 5 minuutiksi ennen uuden jakson aloittamista, vaikka autoa olisi siirretty.</item>
+        <item>Lisätty matkahistoria aiempien matkojen tarkastelemiseksi.</item>
+        <item>Lisätty 20km, 40km ja 100km pikavalintapainikkeet matkan yhteenvedossa.</item>
+        <item>Lisätty valittua matkatyyppiä kuvaava kuvake. Napauttamalla matkatilastoja vaihdetaan 4 matkatyypin välillä.</item>
+        <item>Lisätty asetus, jolla voit valita, minkä API-yhteyden tila näytetään päänäkymässä.</item>
+        <item>Manuaalisen matkan voi nyt nollata päänäkymästä.</item>
+        <item>HTTP-webhookin tietojoukko sovitettu uuteen tietorakenteeseen.</item>
+        <item>Yleisiä virheenkorjauksia ja vakauden parannuksia</item>
+    </string-array>
+    <string name="restart_notification_reason_unknown">%s on käynnistynyt uudelleen tuntemattomasta syystä.</string>
+    <string name="summary_speed">Keskinopeus</string>
+    <string-array name="trip_type_names">
+        <item>Tuntematon matkatyyppi</item>
+        <item>Manuaalinen matka</item>
+        <item>Latauksen jälkeen</item>
+        <item>Automaattinen matka</item>
+        <item>Kuukausi</item>
+    </string-array>
+    <string name="dialog_reset_confirm">Nollaa</string>
+    <string name="dialog_apply">Aseta</string>
+    <!-- Trip history -->
+    <string name="history_title">Matkahistoria</string>
+    <string name="history_selected">Valittu:</string>
+    <string name="history_past_trips">Aiemmat matkat:</string>
+    <string name="history_current_trips">Nykyiset matkat:</string>
+    <string name="history_dialog_filters_title">Matkasuodattimet</string>
+    <string name="history_dialog_filters_manual">Näytä manuaaliset matkat</string>
+    <string name="history_dialog_filters_charge">Näytä matkat latauksen jälkeen</string>
+    <string name="history_dialog_filters_auto">Näytä automaattiset matkat</string>
+    <string name="history_dialog_filters_month">Näytä kuukausittaiset matkat</string>
+    <string name="history_dialog_filters_date">Aikaisin aloituspäivä</string>
+    <string name="history_dialog_filters_note">Huomautus: Nykyiset matkat näytetään aina riippumatta käytetyistä suodattimista.</string>
+    <string name="history_dialog_delete_title">Poista matka?</string>
+    <string name="history_dialog_delete_message">Matka poistetaan pysyvästi.</string>
+    <string name="history_dialog_delete_confirm">Poista matka</string>
+    <string name="history_dialog_multi_delete_title">Poista useita matkoja?</string>
+    <string name="history_dialog_multi_delete_message">Olet poistamassa %s matkaa. Matkat poistetaan pysyvästi.</string>
+    <string name="history_dialog_multi_delete_delete">Poista %s matkat</string>
+    <string name="history_dialog_multi_delete_deselect">Poista kaikki valinnat</string>
     <string name="settings_distance_unit">Maili etäisyyden yksikkönä</string>
+    <string name="settings_apis_connection_selector">Yhteyskuvake päänäkymässä:</string>
 </resources>

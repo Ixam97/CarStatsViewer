@@ -32,6 +32,9 @@ class CarPropertiesData {
     /** The new value is equal to the last value */
     val SKIP_SAME_VALUE = 4
 
+    var traveledDistance: Double = 0.0
+    var usedEnergy: Double = 0.0
+
     /** Update data manager using a VehiclePropertyValue. Returns VALID when value was changed.
      * @param value The CarPropertyValue received by the CarPropertyManager.
      * @param doLog Info about the updated value is printed to the console.
@@ -55,7 +58,7 @@ class CarPropertiesData {
      */
     fun update(value: Any?, pTimestamp: Long, propertyId: Int, doLog: Boolean = false, valueMustChange: Boolean = false, allowInvalidTimestamps: Boolean = false): Int {
         var timestamp = pTimestamp
-        val failedPropertyString = "Failed to update property ID ${propertyId}:"
+        val failedPropertyString = "Failed to update car property ${CarProperties.getNameById(propertyId)}:"
         if (!CarProperties.usedProperties.contains(propertyId)) {
             InAppLogger.w("$failedPropertyString Invalid property ID")
             return INVALID_PROPERTY_ID

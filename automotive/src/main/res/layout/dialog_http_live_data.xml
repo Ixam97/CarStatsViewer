@@ -36,4 +36,13 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_font_size"
         android:text="@string/settings_apis_use" />
+
+    <Switch
+        android:id="@+id/http_live_data_abrp"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/std_font_size"
+        android:text="Debug ABRP" />
+
 </LinearLayout>

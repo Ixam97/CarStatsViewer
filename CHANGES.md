@@ -1,5 +1,15 @@
 # Changelog [DE]:
 
+## 0.25.0 (23.07.2023)
+- Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips.
+- Tripverlauf hinzugefügt, um vergangene Trips anzeigen zu können.
+- Ladevorgänge können nun für bis zu 5 Minuten unterbrochen werden, bevor ein neuer Ladevorgang angelegt wird, sogar, wenn das Auto bewegt wurde.
+- Icon hinzugefügt, das den aktuell ausgewählten Trip-Typ symbolisiert. Tippen auf die Trip-Statistiken wechselt zum nächsten Trip-Typ.
+- Einstellung hinzugefügt, welche API den Verbindungsstatus in der Hauptansicht anzeigen soll.
+- Der manuelle Trip kann nun direkt aus der Hauptansicht heraus zurückgesetzt werden.
+- Der Datensatz für den HTTP-Webhook wurde an die neue Datenstruktur angepasst.
+- Allgemeine Bugfixes und Stabilitätsverbesserungen.
+
 ## 0.24.1 (18.05.2023)
 - Höhenunterschied in der Zusammenfassung hinzugefügt (experimentell)
 - Falsche Einheitem im Diagramm der Zusammenfassung behoben

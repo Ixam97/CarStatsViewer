@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="title_text_style">
+        <item name="android:tag">bold</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:layout_margin">20dp</item>
+        <item name="android:layout_marginHorizontal">20dp</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">@dimen/title_font_size</item>
         <item name="android:textFontWeight">@integer/title_font_weight</item>
@@ -17,6 +18,7 @@
         <item name="android:src">@drawable/ic_arrow_back</item>
     </style>
     <style name="menu_section_title_style">
+        <item name="android:tag">bold</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">50dp</item>
         <item name="android:textSize">@dimen/section_title_font_size</item>
@@ -59,6 +61,7 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
     <style name="menu_row_content_text">
+        <item name="android:gravity">center_vertical</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">@dimen/reduced_font_size</item>
@@ -89,6 +92,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_marginVertical">10dp</item>
         <item name="android:layout_height">@dimen/divider_height</item>
+        <item name="android:background">@color/disabled_tint</item>
     </style>
     <style name="menu_divider_style_no_margin">
         <item name="android:layout_width">match_parent</item>
@@ -111,7 +115,11 @@
         <item name ="android:background">@color/disable_background</item>
     </style>
     <style name="redTextEdit" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <item name="colorAccent">@color/bad_red</item>
         <item name="android:colorControlHighlight">@color/bad_red</item>
         <item name="android:colorControlActivated">@color/bad_red</item>
+    </style>
+    <style name="spinner_text_size" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <item name="android:textSize">@dimen/std_font_size</item>
     </style>
 </resources>

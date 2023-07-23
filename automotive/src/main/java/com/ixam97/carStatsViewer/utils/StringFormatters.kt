@@ -11,6 +11,16 @@ object StringFormatters {
     private val timeFormat = DateFormat.getTimeFormat(CarStatsViewer.appContext)
     private val appPreferences = CarStatsViewer.appPreferences
 
+    fun getGearString(gear: Int): String {
+        return when(gear) {
+            1 -> "N"
+            2 -> "R"
+            4 -> "P"
+            8 -> "D"
+            else -> "UNKNOWN"
+        }
+    }
+
     /** Divides a Float by 1000 and rounds it up to one decimal point to be on par with board computer */
     private fun kiloRounder(number: Float): Float {
         return (number.toInt() / 100).toFloat() / 10
@@ -38,6 +48,19 @@ object StringFormatters {
         return "%.1f %s".format(Locale.ENGLISH, kiloRounder(appPreferences.distanceUnit.toUnit(traveledDistance)), appPreferences.distanceUnit.unit())
     }
 
+    fun getAvgSpeedString(traveledDistance: Float, timeDriven: Long): String {
+        val speedString = if (timeDriven < 1) "-/-" else "%.0f".format((appPreferences.distanceUnit.toUnit(traveledDistance) / 1000f) / (timeDriven.toFloat() / (1000 * 60 * 60)))
+        return "Ø %s %s".format(Locale.ENGLISH, speedString, appPreferences.distanceUnit.unit() + "/h")
+    }
+
+    fun getRemainingRangeString(remainingRange: Float): String {
+        return "%d %s".format(
+            Locale.ENGLISH,
+            (((kiloRounder(appPreferences.distanceUnit.toUnit(remainingRange)).toInt()/10)*10)),
+            appPreferences.distanceUnit.unit()
+        )
+    }
+
     fun getAvgConsumptionString(usedEnergy: Float, traveledDistance: Float): String {
         val avgConsumption = appPreferences.distanceUnit.asUnit(usedEnergy / (traveledDistance / 1000))
         val unitString = when {
@@ -49,15 +72,19 @@ object StringFormatters {
             return "-/- $unitString"
         }
         if (!appPreferences.consumptionUnit) {
-            return "%.1f %s".format(
+            return "Ø %.1f %s".format(
                 Locale.ENGLISH,
                 (avgConsumption) / 10,
                 unitString)
         }
-        return "${(avgConsumption).toInt()} $unitString"
+        return "Ø ${(avgConsumption).toInt()} $unitString"
     }
 
-    fun getElapsedTimeString(elapsedTime: Long): String {
+    fun getElapsedTimeString(elapsedTime: Long, minutes: Boolean = false): String {
+        if (minutes) return String.format("%02d:%02d",
+            TimeUnit.MILLISECONDS.toHours(elapsedTime),
+            TimeUnit.MILLISECONDS.toMinutes(elapsedTime) % TimeUnit.HOURS.toMinutes(1))
+
         return String.format("%02d:%02d:%02d",
             TimeUnit.MILLISECONDS.toHours(elapsedTime),
             TimeUnit.MILLISECONDS.toMinutes(elapsedTime) % TimeUnit.HOURS.toMinutes(1),

@@ -33,4 +33,10 @@
     <string name="preference_plus_key" translatable="false">preference_plus</string>
     <string name="preference_performance_key" translatable="false">preference_performance</string>
     <string name="preference_bst_key" translatable="false">preference_bst</string>
+    <string name="preference_trip_filter_manual_key" translatable="false">preference_trip_filter_manual</string>
+    <string name="preference_trip_filter_charge_key" translatable="false">preference_trip_filter_charge</string>
+    <string name="preference_trip_filter_auto_key" translatable="false">preference_trip_filter_auto</string>
+    <string name="preference_trip_filter_month_key" translatable="false">preference_trip_filter_month</string>
+    <string name="preference_trip_filter_time_key" translatable="false">preference_trip_filter_time</string>
+    <string name="preference_main_view_connection_api_key" translatable="false">preference_main_view_connection_api</string>
 </resources>
