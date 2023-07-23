@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer_dev.preferences</string>
+    <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer.preferences</string>
     <string name="preference_notifications_key" translatable="false">notifications</string>
     <string name="preference_consumption_unit_key" translatable="false">consumption_unit</string>
     <string name="preference_debug_key" translatable="false">debug</string>
