@@ -25,7 +25,7 @@ class SettingsVehicleActivity : Activity() {
 
         settings_vehicle_button_back.setOnClickListener {
             finish()
-            // overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
         settings_vehicle_multiselect_drivetrain.entries = VehicleDefinitions.Polestar2.driveTrains

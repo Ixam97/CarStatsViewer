@@ -35,7 +35,7 @@ class SettingsApisActivity: FragmentActivity() {
 
         settings_apis_button_back.setOnClickListener {
             finish()
-            // overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
         settings_apis_abrp_row.setOnMainClickListener {

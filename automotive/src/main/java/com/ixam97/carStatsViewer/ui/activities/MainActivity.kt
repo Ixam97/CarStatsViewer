@@ -589,7 +589,7 @@ class MainActivity : FragmentActivity() {
 
         main_button_settings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
-            // overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }
         main_button_secondary_dimension.setOnClickListener {
             var currentIndex = appPreferences.secondaryConsumptionDimension
