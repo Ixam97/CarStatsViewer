@@ -30,7 +30,7 @@ class SettingsActivity : FragmentActivity() {
 
     override fun startActivity(intent: Intent?) {
         super.startActivity(intent)
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        // overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +76,7 @@ class SettingsActivity : FragmentActivity() {
 
         settings_button_back.setOnClickListener() {
             finish()
-            overridePendingTransition(R.anim.stay_still, R.anim.slide_out_right)
+            // overridePendingTransition(R.anim.stay_still, R.anim.slide_out_right)
         }
 
         settings_button_kill.setOnClickListener {
