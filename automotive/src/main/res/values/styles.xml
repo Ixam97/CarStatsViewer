@@ -126,9 +126,11 @@
         <item name="android:textSize">@dimen/std_font_size</item>
     </style>
     <style name="AppTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <!--
         <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
         <item name="android:activityOpenExitAnimation">@anim/stay_still</item>
         <item name="android:activityCloseEnterAnimation">@anim/stay_still</item>
         <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+        -->
     </style>
 </resources>
