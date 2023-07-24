@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preferences_file_key" translatable="false">com.ixam97.carStatsViewer_dev.preferences</string>
+</resources>

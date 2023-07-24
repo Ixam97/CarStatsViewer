@@ -116,6 +116,7 @@
     <string name="settings_consumption_unit">Wh/Distanz als Verbrauchseinheit</string>
     <string name="settings_use_location">Standorterfassung</string>
     <string name="settings_autostart">Automatischer App-Start</string>
+    <string name="settings_distance_unit">Meilen als Distanzeinheit</string>
     <string name="settings_debug">Debug-Informationen</string>
     <string name="settings_main_view">Hauptansicht</string>
     <string name="settings_experimental_layout">Zeige experimentelles Layout</string>
