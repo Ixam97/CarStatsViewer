@@ -383,7 +383,7 @@ class MainActivity : FragmentActivity() {
     private fun setTripTypeIcon(tripType: Int) {
         when (tripType) {
             TripType.MANUAL -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_hand))
-            TripType.SINCE_CHARGE -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_charger_2))
+            TripType.SINCE_CHARGE -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_charger))
             TripType.AUTO -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_day))
             TripType.MONTH -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_month))
             else -> main_trip_type_icon.setImageDrawable(null)

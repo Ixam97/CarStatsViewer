@@ -19,13 +19,9 @@
             android:id="@+id/settings_vehicle_button_back"
             style="@style/title_back_button_style"/>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_car" />
-
         <TextView
             style="@style/title_text_style"
+            android:drawableStart="@drawable/ic_car"
             android:text="@string/vehicle_title" />
 
     </LinearLayout>

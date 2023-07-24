@@ -19,13 +19,9 @@
             android:id="@+id/settings_apis_button_back"
             style="@style/title_back_button_style"/>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_api" />
-
         <TextView
             style="@style/title_text_style"
+            android:drawableStart="@drawable/ic_api"
             android:text="@string/settings_apis_title" />
 
     </LinearLayout>

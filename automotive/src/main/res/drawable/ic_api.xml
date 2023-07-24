@@ -1,9 +1,9 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="@dimen/row_icon_width"
+    android:width="@dimen/std_icon_size"
     android:height="@dimen/std_icon_size"
-    android:viewportWidth="60"
-    android:viewportHeight="48">
+    android:viewportWidth="960"
+    android:viewportHeight="960">
     <path
         android:fillColor="@android:color/white"
-        android:pathData="M24,28.9 L19.1,24 24,19.1 28.9,24ZM19.75,15.35 L16.2,11.8 24,3.95 31.8,11.8 28.25,15.35 24,11.1ZM11.8,31.8 L3.95,24 11.8,16.2 15.35,19.75 11.1,24 15.35,28.25ZM36.2,31.8 L32.65,28.25 36.9,24 32.65,19.75 36.2,16.2 44.05,24ZM24,44.05 L16.2,36.2 19.75,32.65 24,36.9 28.25,32.65 31.8,36.2Z"/>
+        android:pathData="M480,571.15L388.85,480L480,388.08L571.92,480L480,571.15ZM395,323.31L335.08,263.38L480,118.46L624.92,263.38L565,323.31L480,238.31L395,323.31ZM263.38,624.92L118.46,480L263.38,335.08L323.31,395L238.31,480L323.31,565L263.38,624.92ZM696.62,624.92L636.69,565L721.69,480L636.69,395L696.62,335.08L841.54,480L696.62,624.92ZM480,841.54L335.08,696.62L395,636.69L480,721.69L565,636.69L624.92,696.62L480,841.54Z"/>
 </vector>

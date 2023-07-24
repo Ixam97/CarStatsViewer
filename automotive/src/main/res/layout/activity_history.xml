@@ -32,6 +32,7 @@
 
             <TextView
                 style="@style/title_text_style"
+                android:drawableStart="@drawable/ic_history"
                 android:text="@string/history_title" />
 
             <View

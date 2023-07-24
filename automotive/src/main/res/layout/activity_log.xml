@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/log_activity"
     android:orientation="vertical"
@@ -16,11 +17,13 @@
         <ImageButton
             android:id="@+id/log_button_back"
             style="@style/title_back_button_style"
+            android:src="@drawable/ic_close"
             android:tint="@color/bad_red"
-            android:src="@drawable/ic_close"/>
+            tools:ignore="UseAppTint" />
 
         <TextView
             style="@style/title_text_style"
+            android:drawableStart="@drawable/ic_debug"
             android:text="@string/log_title"/>
 
         <View style="@style/filler"/>

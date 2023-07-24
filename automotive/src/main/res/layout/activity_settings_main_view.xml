@@ -15,14 +15,10 @@
         <ImageButton
             android:id="@+id/settings_main_view_back"
             style="@style/title_back_button_style" />
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_diagram" />
 
         <TextView
             style="@style/title_text_style"
-            android:layout_marginStart="0dp"
+            android:drawableStart="@drawable/ic_diagram"
             android:text="@string/settings_main_view"/>
 
         <View
