@@ -91,10 +91,6 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        CarStatsViewer.typefaceRegular?.let {
-            applyTypeface(view)
-        }
-
         setupPlots()
         setSecondaryConsumptionPlotDimension(appPreferences.secondaryConsumptionDimension)
         setupListeners()
@@ -114,6 +110,10 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             // } else {
                 requireActivity().supportFragmentManager.commit { remove(this@SummaryFragment) }
             // }
+        }
+
+        CarStatsViewer.typefaceRegular?.let {
+            applyTypeface(view)
         }
     }
 

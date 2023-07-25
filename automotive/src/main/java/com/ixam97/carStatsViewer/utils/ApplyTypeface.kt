@@ -6,7 +6,8 @@ import android.widget.TextView
 import androidx.core.view.children
 import com.ixam97.carStatsViewer.CarStatsViewer
 
-fun applyTypeface(view: View) {
+fun applyTypeface(view: View?) {
+    if (view == null) return
     try {
         if (view is ViewGroup) {
             view.children.forEach { child ->

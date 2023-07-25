@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.utils.applyTypeface
 import kotlin.math.roundToInt
 
 class MenuRowWidget @JvmOverloads constructor(
@@ -154,6 +155,10 @@ class MenuRowWidget @JvmOverloads constructor(
         } else {
             endTextButton.visibility = View.GONE
             endIcon.visibility = View.GONE
+        }
+
+        CarStatsViewer.typefaceRegular?.let {
+            applyTypeface(mainBody)
         }
     }
 }
