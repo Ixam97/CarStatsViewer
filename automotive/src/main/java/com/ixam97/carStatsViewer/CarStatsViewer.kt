@@ -18,6 +18,7 @@ import com.ixam97.carStatsViewer.database.tripData.*
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
+import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.Watchdog
 import kotlinx.coroutines.CoroutineScope
@@ -189,6 +190,11 @@ class CarStatsViewer : Application() {
 
         while (!fontsLoaded) {
             // Wait for fonts to be loaded before initializing trip database
+        }
+
+        typefaceRegular?.let {
+            PlotPaint.typeface = it
+            PlotPaint.letterSpacing = -0.025f
         }
 
         val MIGRATION_5_6 = object: Migration(5, 6) {
