@@ -17,6 +17,10 @@ class AboutActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
 
+        CarStatsViewer.typefaceMedium?.let {
+            applyTypeface(about_activity)
+        }
+
         about_button_back.setOnClickListener {
             finish()
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
@@ -60,7 +64,6 @@ class AboutActivity : Activity() {
         }
         about_contributors_widget.bottomText = contributors
 
-
         about_translators_widget.setOnRowClickListener {
             val translatorsDialog = AlertDialog.Builder(this).apply {
                 setPositiveButton(getString(R.string.dialog_close)) { dialog, _ ->
@@ -98,10 +101,5 @@ class AboutActivity : Activity() {
             }
             supportersDialog.show()
         }
-
-        CarStatsViewer.typefaceMedium?.let {
-            applyTypeface(about_activity)
-        }
-
     }
 }

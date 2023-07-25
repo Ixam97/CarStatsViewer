@@ -12,7 +12,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.utils.applyTypeface
 import kotlin.math.roundToInt
 
 class MenuRowWidget @JvmOverloads constructor(
@@ -25,7 +24,14 @@ class MenuRowWidget @JvmOverloads constructor(
         fun onClick()
     }
 
-    private var mainBody: ConstraintLayout? = null
+    private var mainBody: ConstraintLayout
+    private var rowLabel: TextView
+    private var rowTopText: TextView
+    private var rowBottomText: TextView
+    private var startIcon: ImageView
+    private var endIcon: ImageView
+    private var endTextButton: TextView
+    private var divider: View
 
     private var onRowClickListener: OnClickListener? = null
 
@@ -57,8 +63,7 @@ class MenuRowWidget @JvmOverloads constructor(
     }
 
     override fun setEnabled(enabled: Boolean) {
-
-        mainBody?.apply {
+        mainBody.apply {
             alpha = when (enabled) {
                 true -> 1.0f
                 false -> CarStatsViewer.disabledAlpha
@@ -69,6 +74,17 @@ class MenuRowWidget @JvmOverloads constructor(
     }
 
     init {
+        inflate(context, R.layout.widget_menu_row, this)
+
+        mainBody = findViewById(R.id.row_main_body)
+        rowLabel = findViewById(R.id.row_std_label)
+        rowTopText = findViewById(R.id.row_top_text)
+        rowBottomText = findViewById(R.id.row_bottom_text)
+        startIcon = findViewById(R.id.row_start_icon)
+        endIcon = findViewById(R.id.row_end_icon)
+        endTextButton = findViewById(R.id.row_end_text_button)
+        divider = findViewById(R.id.row_divider)
+
         val attributes = context.obtainStyledAttributes(attrs, R.styleable.MenuRowWidget)
 
         try {
@@ -81,39 +97,25 @@ class MenuRowWidget @JvmOverloads constructor(
         } finally {
             attributes.recycle()
         }
+
         init()
     }
 
     private fun init() {
-        this.removeAllViews()
-        View.inflate(context, R.layout.widget_menu_row, this)
-
-        mainBody = findViewById<ConstraintLayout>(R.id.row_main_body)
-        val divider: View = findViewById(R.id.row_divider)
-
         try {
             val parent = (this.parent as ViewGroup)
             if (parent.children.last() == this) {
                 divider.setBackgroundColor(Color.TRANSPARENT)
             }
-        } catch(e: Exception) {
-
+        } catch (e: Exception) {
+            // No parent detected
         }
-
-        val rowLabel = findViewById<TextView>(R.id.row_std_label)
-        val rowTopText = findViewById<TextView>(R.id.row_top_text)
-        val rowBottomText = findViewById<TextView>(R.id.row_bottom_text)
-
-        val startIcon = findViewById<ImageView>(R.id.row_start_icon)
-        val endIcon = findViewById<ImageView>(R.id.row_end_icon)
-        val endTextButton = findViewById<TextView>(R.id.row_end_text_button)
 
         if (reducedSize) {
             val iconParams = startIcon.layoutParams
             iconParams.width = resources.getDimension(R.dimen.std_icon_size).roundToInt()
             startIcon.layoutParams = iconParams
-            mainBody!!.minHeight = 0
-
+            mainBody.minHeight = 0
         }
 
         if (bottomText != "") {
@@ -151,14 +153,10 @@ class MenuRowWidget @JvmOverloads constructor(
                     R.drawable.ic_chevron_right
                 }
             )
-            mainBody?.setOnClickListener { if (isEnabled) onRowClickListener?.onClick() }
+            mainBody.setOnClickListener { if (isEnabled) onRowClickListener?.onClick() }
         } else {
             endTextButton.visibility = View.GONE
             endIcon.visibility = View.GONE
-        }
-
-        CarStatsViewer.typefaceRegular?.let {
-            applyTypeface(mainBody)
         }
     }
 }
