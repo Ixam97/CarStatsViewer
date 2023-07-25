@@ -28,20 +28,15 @@
             style="@style/title_text_style"
             android:text="@string/settings_title" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+        <View style="@style/filler"/>
 
-        <ImageButton
-            android:visibility="gone"
-            android:id="@+id/settings_button_kill"
+        <TextView
+            android:textSize="@dimen/version_font_size"
+            android:id="@+id/settings_version_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_kill"
-            android:tint="@color/bad_red" />
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|end"
+            android:layout_marginHorizontal="20dp"/>
 
     </LinearLayout>
 
@@ -56,8 +51,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_above="@+id/settings_version_text"
-        app:layout_constraintBottom_toTopOf="@+id/settings_version_text"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settings_title_divider">
 
@@ -132,86 +126,34 @@
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider" />
 
-            <TextView
-                android:id="@+id/settings_button_main_view"
-                style="@style/menu_button_row_style"
-                android:drawableStart="@drawable/ic_diagram"
-                android:text="@string/settings_main_view" />
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/settings_main_view_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText="@string/settings_main_view"
+                app:startDrawable="@drawable/ic_diagram"/>
 
-            <View
-                style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider" />
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/settings_vehicle_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText="@string/vehicle_title"
+                app:startDrawable="@drawable/ic_car"/>
 
-            <TextView
-                android:id="@+id/settings_button_vehicle"
-                style="@style/menu_button_row_style"
-                android:drawableStart="@drawable/ic_car"
-                android:text="@string/vehicle_title" />
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/settings_apis_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText="@string/settings_apis_title"
+                app:startDrawable="@drawable/ic_api"/>
 
-            <View
-                style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider" />
-            <!--<com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
-                    android:id="@+id/settings_multiselect_trip"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:title="@string/settings_select_trip" />
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-                <TextView
-                    android:id="@+id/settings_consumption_plot"
-                    android:text="@string/settings_consumption_plot"
-                    android:drawableStart="@drawable/ic_diagram"
-                    style="@style/menu_button_row_style"/>
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>
-                <TextView
-                    android:id="@+id/settings_charge_plot"
-                    android:text="@string/settings_charge_plot"
-                    android:drawableStart="@drawable/ic_charger"
-                    style="@style/menu_button_row_style" />
-                <View
-                    style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>-->
-            <TextView
-                android:id="@+id/settings_button_apis"
-                style="@style/menu_button_row_style"
-                android:drawableStart="@drawable/ic_api"
-                android:text="@string/settings_apis_title" />
-
-            <View
-                style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider" />
-
-            <TextView
-                android:id="@+id/settings_button_about"
-                style="@style/menu_button_row_style"
-                android:drawableStart="@drawable/ic_info"
-                android:text="@string/settings_about" />
-
-            <View
-                style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider" />
-
-            <Switch
-                android:id="@+id/settings_switch_distance_unit"
-                style="@style/menu_standard_switch_style"
-                android:layout_marginBottom="20dp"
-                android:text="@string/settings_distance_unit"
-                android:visibility="gone" />
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/settings_about_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText="@string/settings_about"
+                app:startDrawable="@drawable/ic_info"/>
 
         </LinearLayout>
     </ScrollView>
-
-    <TextView
-        android:id="@+id/settings_version_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_alignParentBottom="true"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

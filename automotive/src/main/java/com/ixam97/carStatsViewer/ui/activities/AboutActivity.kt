@@ -17,52 +17,51 @@ class AboutActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
 
-        CarStatsViewer.typefaceMedium?.let {
-            applyTypeface(about_activity)
-        }
-
         about_button_back.setOnClickListener {
             finish()
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
-        about_open_changelog.setOnClickListener {
+        about_version_widget.setOnRowClickListener {
             CarStatsViewer.getChangelogDialog(this).show()
         }
-
-        about_support_container.setOnClickListener {
+        about_support_widget.setOnRowClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.readme_link))))
         }
 
-        about_polestar_forum_container.setOnClickListener {
+        about_support_widget.setOnRowClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.readme_link))))
+        }
+
+        about_forums_widget.setOnRowClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.polestar_forum_link))))
         }
 
-        about_polestar_fans_container.setOnClickListener {
+        about_club_widget.setOnRowClickListener() {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.polestar_fans_link))))
         }
 
-        about_github_issues_container.setOnClickListener {
+        about_github_issues_widget.setOnRowClickListener() {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_issues_link))))
         }
 
-        about_libs.setOnClickListener {
+        about_libs_widget.setOnRowClickListener {
             startActivity(Intent(this, LibsActivity::class.java))
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 
-        about_version_text.text = "%s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
+        about_version_widget.bottomText = "%s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 
         var contributors = ""
         val contributorsArray = resources.getStringArray(R.array.contributors)
         for ((index, contributor) in contributorsArray.withIndex()) {
             contributors += contributor
-            if (index < contributorsArray.size -1) contributors += "\n"
+            if (index < contributorsArray.size -1) contributors += ", "
         }
-        about_contributors_text.text = contributors
+        about_contributors_widget.bottomText = contributors
 
 
-        about_translators.setOnClickListener {
+        about_translators_widget.setOnRowClickListener {
             val translatorsDialog = AlertDialog.Builder(this).apply {
                 setPositiveButton(getString(R.string.dialog_close)) { dialog, _ ->
                     dialog.cancel()
@@ -81,7 +80,7 @@ class AboutActivity : Activity() {
             translatorsDialog.show()
         }
 
-        about_supporters.setOnClickListener {
+        about_supporters_widget.setOnRowClickListener {
             val supportersDialog = AlertDialog.Builder(this).apply {
                 setPositiveButton(getString(R.string.dialog_close)) { dialog, _ ->
                     dialog.cancel()
@@ -98,6 +97,10 @@ class AboutActivity : Activity() {
                 create()
             }
             supportersDialog.show()
+        }
+
+        CarStatsViewer.typefaceMedium?.let {
+            applyTypeface(about_activity)
         }
 
     }

@@ -49,250 +49,86 @@
                 android:text="@string/about_section_about"/>
             <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/about_version_title"
-                    style="@style/menu_row_top_text"
-                    android:text="Version"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/about_version_text"
-                    style="@style/menu_row_content_text"
-                    android:text="Version Number"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/about_version_title" />
-
-                <TextView
-                    android:id="@+id/about_open_changelog"
-                    style="@style/menu_standard_row_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Changelog"
-                    android:textColor="?android:attr/colorControlActivated"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
-
-            <TextView
-                style="@style/menu_row_top_text"
-                android:text="Copyright"/>
-            <TextView
-                style="@style/menu_row_content_text"
-                android:text="©2022-2023 Maximilian Goldschmidt"/>
-            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/about_support_container"
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/about_version_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                app:topText="Version"
+                app:bottomText="Version Number"
+                app:endButtonText="Changelog"/>
 
-                <LinearLayout
-                    android:id="@+id/about_support_container_linearLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="20dp"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/row_end_button"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.397">
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText="Copyright"
+                app:bottomText="©2022-2023 Maximilian Goldschmidt"/>
 
-                    <TextView
-                        style="@style/menu_row_top_text"
-                        android:text="@string/about_support" />
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/about_support_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText="@string/about_support"
+                app:bottomText="@string/about_support_description"
+                app:isExternalLink="true"/>
 
-                    <TextView
-                        style="@style/menu_row_content_text"
-                        android:text="@string/about_support_description" />
-                </LinearLayout>
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/about_contributors_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText="@string/about_contributors"
+                app:bottomText="contributors_list"/>
 
-                <ImageView
-                    android:id="@+id/row_end_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_link"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/about_translators_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText="@string/about_translators"/>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
-
-            <TextView
-                style="@style/menu_row_top_text"
-                android:text="@string/about_contributors"/>
-            <TextView
-                android:id="@+id/about_contributors_text"
-                android:layout_marginStart="30dp"
-                android:textSize="@dimen/reduced_font_size"
-                style="@style/menu_row_content_text"/>
-            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
-
-            <TextView
-                android:id="@+id/about_translators"
-                style="@style/menu_button_row_style"
-                android:text="@string/about_translators"/>
-            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
-
-            <TextView
-                android:id="@+id/about_supporters"
-                style="@style/menu_button_row_style"
-                android:text="@string/about_supporters"/>
-            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/about_supporters_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText="@string/about_supporters"/>
 
             <TextView
                 style="@style/menu_section_title_style"
                 android:text="@string/about_section_feedback"/>
             <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/about_polestar_fans_container"
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/about_club_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                app:topText="Polestar Club"
+                app:bottomText="@string/about_polestar_fans_description"
+                app:isExternalLink="true"/>
 
-                <LinearLayout
-                    android:id="@+id/about_polestar_fans_container_linearLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="20dp"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/about_polestar_fans_container_imageView"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.397">
-
-                    <TextView
-                        style="@style/menu_row_top_text"
-                        android:text="Polestar Club" />
-
-                    <TextView
-                        style="@style/menu_row_content_text"
-                        android:text="@string/about_polestar_fans_description" />
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/about_polestar_fans_container_imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_link"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/about_polestar_forum_container"
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/about_forums_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                app:topText="Polestar Forum"
+                app:bottomText="@string/about_polestar_forum_description"
+                app:isExternalLink="true"/>
 
-                <LinearLayout
-                    android:id="@+id/about_polestar_forum_container_linearLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="20dp"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/about_polestar_forum_container_imageView"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.397">
-
-                    <TextView
-                        style="@style/menu_row_top_text"
-                        android:text="Polestar Forum" />
-
-                    <TextView
-                        style="@style/menu_row_content_text"
-                        android:text="@string/about_polestar_forum_description" />
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/about_polestar_forum_container_imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_link"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/about_github_issues_container"
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/about_github_issues_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:id="@+id/linearLayout"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="20dp"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/imageView"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.397">
-
-                    <TextView
-                        style="@style/menu_row_top_text"
-                        android:text="GitHub Issues" />
-
-                    <TextView
-                        style="@style/menu_row_content_text"
-                        android:text="@string/about_github_issues_description" />
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_link"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
+                app:topText="GitHub Issues"
+                app:bottomText="@string/about_github_issues_description"
+                app:isExternalLink="true"/>
 
             <TextView
                 style="@style/menu_section_title_style"
                 android:text="@string/about_section_misc"/>
             <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
 
-            <TextView
-                android:id="@+id/about_libs"
-                style="@style/menu_button_row_style"
-                android:text="@string/about_third_party_licenses"/>
-            <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
-            <TextView
-                android:visibility="gone"
-                android:id="@+id/privacy_info"
-                style="@style/menu_button_row_style"
-                android:text="Privacy information"/>
-            <View style="@style/menu_divider_style" android:background="@android:color/transparent"/>
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/about_libs_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText="@string/about_third_party_licenses"/>
 
         </LinearLayout>
     </ScrollView>
