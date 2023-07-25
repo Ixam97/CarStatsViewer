@@ -47,7 +47,7 @@
     <string name="settings_button_back">Tilbake</string>
     <string name="settings_button_quit">Avslutt app</string>
     <string name="settings_notifications">Varslinger</string>
-    <string name="settings_consumption_unit">Wh/km som forbruksenhet</string>
+    <string name="settings_consumption_unit">Wh/%s som forbruksenhet</string>
     <string name="settings_debug">Feilsøk informasjon</string>
     <string name="settings_experimental_layout">Vis eksperimentell visning</string>
     <string name="settings_consumption_plot">Forbruksvisning</string>

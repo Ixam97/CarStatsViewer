@@ -113,7 +113,7 @@
     <string name="settings_button_back">Zurück</string>
     <string name="settings_button_quit">App beenden</string>
     <string name="settings_notifications">Detaillierte Benachrichtigung</string>
-    <string name="settings_consumption_unit">Wh/Distanz als Verbrauchseinheit</string>
+    <string name="settings_consumption_unit">Wh/%s als Verbrauchseinheit</string>
     <string name="settings_use_location">Standorterfassung</string>
     <string name="settings_autostart">Automatischer App-Start</string>
     <string name="settings_distance_unit">Meilen als Distanzeinheit</string>

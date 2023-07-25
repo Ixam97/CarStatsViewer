@@ -47,7 +47,7 @@
     <string name="settings_button_back">Retour</string>
     <string name="settings_button_quit">Quitter</string>
     <string name="settings_notifications">Notifications</string>
-    <string name="settings_consumption_unit">Consommation affichée en Wh/km</string>
+    <string name="settings_consumption_unit">Consommation affichée en Wh/%s</string>
     <string name="settings_debug">Infos développeur</string>
     <string name="settings_experimental_layout">Mise en page expérimentale</string>
     <string name="settings_consumption_plot">Écran de consommation</string>

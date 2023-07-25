@@ -15,5 +15,6 @@
         <attr name="endButtonText" format="string"/>
         <attr name="startDrawable" format="reference"/>
         <attr name="isExternalLink" format="boolean"/>
+        <attr name="reduceSize" format="boolean"/>
     </declare-styleable>
 </resources>

@@ -76,6 +76,8 @@ class SettingsActivity : FragmentActivity() {
 
         settings_version_text.text = "Car Stats Viewer %s\n(%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 
+        settings_switch_consumption_unit.text = getString(R.string.settings_consumption_unit, appPreferences.distanceUnit.unit())
+
         settings_button_back.setOnClickListener() {
             finish()
             overridePendingTransition(R.anim.stay_still, R.anim.slide_out_right)

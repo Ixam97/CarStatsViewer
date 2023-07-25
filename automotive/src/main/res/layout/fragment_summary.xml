@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:clickable="true"
     android:id="@+id/activity_summary"
@@ -218,59 +219,65 @@
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
-            <TextView
-                android:id="@+id/summary_distance_value_text"
-                style="@style/menu_row_top_text"/>
-            <TextView
-                style="@style/menu_row_content_text"
-                android:text="@string/summary_traveled_distance"/>
-            <View style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/summary_distance_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText=""
+                app:bottomText="@string/summary_traveled_distance"
+                app:startDrawable="@drawable/ic_distance_large"
+                app:reduceSize="true"
+                />
 
-            <TextView
-                android:id="@+id/summary_used_energy_value_text"
-                style="@style/menu_row_top_text"/>
-            <TextView
-                style="@style/menu_row_content_text"
-                android:text="@string/summary_used_energy"/>
-            <View style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/summary_energy_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText=""
+                app:bottomText="@string/summary_used_energy"
+                app:startDrawable="@drawable/ic_energy_large"
+                app:reduceSize="true"
+                />
 
-            <TextView
-                android:id="@+id/summary_avg_consumption_value_text"
-                style="@style/menu_row_top_text"/>
-            <TextView
-                style="@style/menu_row_content_text"
-                android:text="@string/summary_average_consumption"/>
-            <View style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/summary_consumption_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText=""
+                app:bottomText="@string/summary_average_consumption"
+                app:startDrawable="@drawable/ic_diagram"
+                app:reduceSize="true"
+                />
 
-            <TextView
-                android:id="@+id/summary_avg_speed_value_text"
-                style="@style/menu_row_top_text"/>
-            <TextView
-                style="@style/menu_row_content_text"
-                android:text="@string/summary_speed"/>
-            <View style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/summary_speed_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText=""
+                app:bottomText="@string/summary_speed"
+                app:startDrawable="@drawable/ic_speed_large"
+                app:reduceSize="true"
+                />
 
-            <TextView
-                android:id="@+id/summary_altitude_value_text"
-                style="@style/menu_row_top_text"/>
-            <TextView
-                style="@style/menu_row_content_text"
-                android:text="@string/summary_altitude"/>
-            <View style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/summary_altitude_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText=""
+                app:bottomText="@string/summary_altitude"
+                app:startDrawable="@drawable/ic_altitude"
+                app:reduceSize="true"
+                />
 
-            <TextView
-                android:id="@+id/summary_travel_time_value_text"
-                style="@style/menu_row_top_text"/>
-            <TextView
-                style="@style/menu_row_content_text"
-                android:text="@string/summary_travel_time"/>
-            <View style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/summary_time_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText=""
+                app:bottomText="@string/summary_travel_time"
+                app:startDrawable="@drawable/ic_time_large"
+                app:reduceSize="true"
+                />
 
         </LinearLayout>
     </ScrollView>
@@ -329,37 +336,44 @@
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
+
             <TextView
                 android:visibility="gone"
                 style="@style/menu_row_content_text"
+                android:tag="bold"
                 android:id="@+id/summary_charged_energy_warning_text"
                 android:text="@string/summary_interruption_warning"
                 android:textColor="@color/bad_red"/>
-            <TextView
-                android:id="@+id/summary_charged_energy_value_text"
-                style="@style/menu_row_top_text"
-                android:text="-/-"/>
-            <TextView
-                style="@style/menu_row_content_text"
-                android:text="@string/summary_charged_energy"/>
-            <View style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
 
-            <TextView
-                android:id="@+id/summary_charge_time_value_text"
-                style="@style/menu_row_top_text"
-                android:text="-/-"/>
-            <TextView
-                style="@style/menu_row_content_text"
-                android:text="@string/summary_charge_time"/>
-            <View style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
-            <TextView
-                android:id="@+id/summary_charge_ambient_temp"
-                style="@style/menu_row_top_text"/>
-            <TextView
-                style="@style/menu_row_content_text"
-                android:text="@string/summary_charge_ambient_temp"/>
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/summary_charged_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText=""
+                app:bottomText="@string/summary_charged_energy"
+                app:startDrawable="@drawable/ic_battery"
+                app:reduceSize="true"
+                />
+
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/summary_charge_time_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText=""
+                app:bottomText="@string/summary_charge_time"
+                app:startDrawable="@drawable/ic_time_large"
+                app:reduceSize="true"
+                />
+
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/summary_temperature_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText=""
+                app:bottomText="@string/summary_charge_ambient_temp"
+                app:startDrawable="@drawable/ic_temperature_large"
+                app:reduceSize="true"
+                />
 
         </LinearLayout>
     </ScrollView>

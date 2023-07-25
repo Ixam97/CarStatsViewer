@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import kotlin.math.roundToInt
 
 class MenuRowWidget @JvmOverloads constructor(
     context: Context,
@@ -46,6 +47,8 @@ class MenuRowWidget @JvmOverloads constructor(
         private set
     var isExternalLink: Boolean = false
         private set
+    var reducedSize: Boolean = false
+        private set
 
     fun setOnRowClickListener(listener: OnClickListener) {
         onRowClickListener = listener
@@ -73,6 +76,7 @@ class MenuRowWidget @JvmOverloads constructor(
             endButtonText = attributes.getString(R.styleable.MenuRowWidget_endButtonText) ?: ""
             startDrawableId = attributes.getResourceId(R.styleable.MenuRowWidget_startDrawable, 0)
             isExternalLink = attributes.getBoolean(R.styleable.MenuRowWidget_isExternalLink, false)
+            reducedSize = attributes.getBoolean(R.styleable.MenuRowWidget_reduceSize, false)
         } finally {
             attributes.recycle()
         }
@@ -102,6 +106,14 @@ class MenuRowWidget @JvmOverloads constructor(
         val startIcon = findViewById<ImageView>(R.id.row_start_icon)
         val endIcon = findViewById<ImageView>(R.id.row_end_icon)
         val endTextButton = findViewById<TextView>(R.id.row_end_text_button)
+
+        if (reducedSize) {
+            val iconParams = startIcon.layoutParams
+            iconParams.width = resources.getDimension(R.dimen.std_icon_size).roundToInt()
+            startIcon.layoutParams = iconParams
+            mainBody!!.minHeight = 0
+
+        }
 
         if (bottomText != "") {
             rowLabel.visibility = View.GONE

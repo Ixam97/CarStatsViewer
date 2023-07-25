@@ -47,7 +47,7 @@
     <string name="settings_button_back">Takaisin</string>
     <string name="settings_button_quit">Sulje sovellus</string>
     <string name="settings_notifications">Ilmoitukset</string>
-    <string name="settings_consumption_unit">Wh/km kulutusyksikkönä</string>
+    <string name="settings_consumption_unit">Wh/%s kulutusyksikkönä</string>
     <string name="settings_debug">Virheenkorjaustiedot</string>
     <string name="settings_experimental_layout">Näytä kokeellinen asettelu</string>
     <string name="settings_consumption_plot">Kulutusnäkymä</string>
