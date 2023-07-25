@@ -1,26 +1,16 @@
 package com.ixam97.carStatsViewer.ui.activities
 
-import android.app.AlertDialog
 import android.content.*
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
-import android.view.View
-import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.*
-import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
-import com.ixam97.carStatsViewer.ui.plot.objects.PlotGlobalConfiguration
-import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.applyTypeface
-import kotlinx.android.synthetic.main.activity_main_constraint.view.*
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.system.exitProcess
 
 class SettingsActivity : FragmentActivity() {
 
@@ -34,6 +24,11 @@ class SettingsActivity : FragmentActivity() {
     override fun startActivity(intent: Intent?) {
         super.startActivity(intent)
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        settings_switch_consumption_unit.text = getString(R.string.settings_consumption_unit, appPreferences.distanceUnit.unit())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,8 +70,6 @@ class SettingsActivity : FragmentActivity() {
         settings_switch_alt_layout.isChecked = appPreferences.altLayout
 
         settings_version_text.text = "Car Stats Viewer %s\n(%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
-
-        settings_switch_consumption_unit.text = getString(R.string.settings_consumption_unit, appPreferences.distanceUnit.unit())
 
         settings_button_back.setOnClickListener() {
             finish()
@@ -134,7 +127,7 @@ class SettingsActivity : FragmentActivity() {
             versionClickCounter++
             if (versionClickCounter >= 10 || BuildConfig.FLAVOR == "dev") {
                 versionClickCounter = 0
-                startActivity(Intent(this, LogActivity::class.java))
+                startActivity(Intent(this, DebugActivity::class.java))
                 overridePendingTransition(R.anim.slide_in_up, R.anim.stay_still)
             }
         }

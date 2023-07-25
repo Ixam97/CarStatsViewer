@@ -15,7 +15,7 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/log_button_back"
+            android:id="@+id/debug_button_back"
             style="@style/title_back_button_style"
             android:src="@drawable/ic_close"
             android:tint="@color/bad_red"
@@ -29,7 +29,7 @@
         <View style="@style/filler"/>
 
         <ImageButton
-            android:id="@+id/log_settings"
+            android:id="@+id/debug_settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_settings"

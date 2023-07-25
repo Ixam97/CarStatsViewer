@@ -70,7 +70,7 @@
         <activity android:name=".ui.activities.LibsActivity" android:exported="false" />
         <activity android:name=".ui.activities.AboutActivity" android:exported="false" />
         <activity android:name=".ui.activities.SettingsApisActivity" android:exported="false" />
-        <activity android:name=".ui.activities.LogActivity"
+        <activity android:name=".ui.activities.DebugActivity"
             android:exported="false">
             <meta-data android:name="distractionOptimized" android:value="true"/>
         </activity>

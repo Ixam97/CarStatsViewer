@@ -6,6 +6,7 @@ import android.util.Patterns
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Switch
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
@@ -14,23 +15,20 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.CarStatsViewer
-import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.database.log.LogEntry
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.mailSender.MailSender
-import com.ixam97.carStatsViewer.utils.logLevel
-import com.ixam97.carStatsViewer.utils.logLength
 import com.ixam97.carStatsViewer.adapters.LogAdapter
 import com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
-import com.ixam97.carStatsViewer.utils.applyTypeface
-import kotlinx.android.synthetic.main.activity_log.*
+import com.ixam97.carStatsViewer.utils.*
+import kotlinx.android.synthetic.main.activity_debug.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import java.util.*
 
-class LogActivity : FragmentActivity() {
+class DebugActivity : FragmentActivity() {
 
     private lateinit var appPreferences: AppPreferences
     private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -65,7 +63,7 @@ class LogActivity : FragmentActivity() {
 
         appPreferences = AppPreferences(applicationContext)
 
-        setContentView(R.layout.activity_log)
+        setContentView(R.layout.activity_debug)
 
         CarStatsViewer.typefaceMedium?.let {
             applyTypeface(log_activity)
@@ -83,7 +81,7 @@ class LogActivity : FragmentActivity() {
 
         log_progress_bar.visibility = View.VISIBLE
 
-        log_button_back.setOnClickListener {
+        debug_button_back.setOnClickListener {
             finish()
             overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
         }
@@ -116,7 +114,7 @@ class LogActivity : FragmentActivity() {
                                     getString(resources.getIdentifier("logmail_server", "string", applicationContext.packageName)))
                             } else {
                                 runOnUiThread {
-                                    Toast.makeText(this@LogActivity, "No SMTP login", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(this@DebugActivity, "No SMTP login", Toast.LENGTH_LONG).show()
                                 }
                                 null
                             }
@@ -156,12 +154,12 @@ class LogActivity : FragmentActivity() {
 
                         runOnUiThread {
                             log_progress_bar.visibility = View.GONE
-                            Toast.makeText(this@LogActivity, "Log sent to $mailAdr", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@DebugActivity, "Log sent to $mailAdr", Toast.LENGTH_LONG).show()
                         }
                     } catch (e: java.lang.Exception) {
                         runOnUiThread {
                             log_progress_bar.visibility = View.GONE
-                            Toast.makeText(this@LogActivity, "Sending E-Mail failed. See log.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@DebugActivity, "Sending E-Mail failed. See log.", Toast.LENGTH_LONG).show()
                         }
                         InAppLogger.e(e.stackTraceToString())
                     }
@@ -199,12 +197,15 @@ class LogActivity : FragmentActivity() {
             }
         }
 
-        log_settings.setOnClickListener {
+        debug_settings.setOnClickListener {
             val settingsDialog = AlertDialog.Builder(ContextThemeWrapper(this, R.style.redTextEdit)).apply {
-                val layout = LayoutInflater.from(context).inflate(R.layout.dialog_log_settings, null)
+                val layout = LayoutInflater.from(context).inflate(R.layout.dialog_debug_settings, null)
 
-                val log_level_multiselect = layout.findViewById<MultiSelectWidget>(R.id.log_level_multiselect)
-                val log_length_multiselect = layout.findViewById<MultiSelectWidget>(R.id.log_length_multiselect)
+                val debug_miles_switch = layout.findViewById<Switch>(R.id.debug_miles_switch)
+                val log_level_multiselect = layout.findViewById<MultiSelectWidget>(R.id.debug_level_multiselect)
+                val log_length_multiselect = layout.findViewById<MultiSelectWidget>(R.id.debug_length_multiselect)
+
+                debug_miles_switch.isChecked = appPreferences.distanceUnit == DistanceUnitEnum.MILES
 
                 log_level_multiselect.entries = arrayListOf<String>(
                     "Verbose",
@@ -231,6 +232,14 @@ class LogActivity : FragmentActivity() {
                 }
                 log_length_multiselect.setOnIndexChangedListener {
                     appPreferences.logLength = log_length_multiselect.selectedIndex
+                }
+
+                debug_miles_switch.setOnClickListener {
+                    appPreferences.distanceUnit = if (debug_miles_switch.isChecked) {
+                        DistanceUnitEnum.MILES
+                    } else {
+                        DistanceUnitEnum.KM
+                    }
                 }
 
                 setView(layout)
