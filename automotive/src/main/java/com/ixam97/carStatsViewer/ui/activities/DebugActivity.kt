@@ -251,7 +251,7 @@ class DebugActivity : FragmentActivity() {
                         }
                     }
                 }
-                setTitle("Logging settings")
+                setTitle("Debug settings")
                 setCancelable(true)
                 create()
             }

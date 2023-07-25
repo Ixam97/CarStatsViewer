@@ -363,8 +363,8 @@ class MainActivity : FragmentActivity() {
         setupDefaultUi()
         setUiEventListeners()
 
-        main_button_performance.isEnabled = true
-        main_button_performance.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+        if (BuildConfig.FLAVOR != "dev") main_button_performance.visibility = View.GONE
+        else main_button_performance.setImageResource(R.drawable.ic_camera)
 
         if (appPreferences.versionString != BuildConfig.VERSION_NAME) {
 
