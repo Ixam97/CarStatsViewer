@@ -94,10 +94,11 @@ class MainActivity : FragmentActivity() {
     override fun onResume() {
         super.onResume()
 
-        CarStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
+        // CarStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
 
-        setTripTypeIcon(appPreferences.mainViewTrip + 1)
+        // setTripTypeIcon(appPreferences.mainViewTrip + 1)
 
+        /*
         // Temporary
         if (appPreferences.altLayout) {
             main_gage_layout.visibility = View.GONE
@@ -116,6 +117,7 @@ class MainActivity : FragmentActivity() {
         main_soc_gage.maxValue = 100f
         main_soc_gage.gageName = "State of charge"
         main_soc_gage.gageUnit = "%"
+        */
 
         setGageAndPlotUnits(appPreferences.consumptionUnit, appPreferences.distanceUnit)
 

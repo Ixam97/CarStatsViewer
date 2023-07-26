@@ -98,6 +98,8 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         setSecondaryConsumptionPlotDimension(appPreferences.secondaryConsumptionDimension)
         setupListeners()
 
+        summary_view_selector.buttonList[2].isEnabled = false
+
         // check if a session has been provided, else close fragment
         if (this::session.isInitialized) {
             applySession(session)
@@ -113,12 +115,11 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             createResetDialog()
         }
 
-        summary_button_show_consumption_container.setOnClickListener {
-            switchToConsumptionLayout()
-        }
-
-        summary_button_show_charge_container.setOnClickListener {
-            switchToChargeLayout()
+        summary_view_selector.setOnIndexChangedListener{
+            when (summary_view_selector.selectedIndex) {
+                0 -> switchToConsumptionLayout()
+                1 -> switchToChargeLayout()
+            }
         }
 
         summary_button_back.setOnClickListener {
@@ -215,7 +216,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
     private fun applySession(session: DrivingSession) {
         switchToConsumptionLayout()
-        summary_button_show_charge_container.isEnabled = false
+        summary_view_selector.buttonList[1].isEnabled = false
 
         if (session.session_type != TripType.MANUAL) {
             summary_button_reset.isEnabled = false
@@ -279,8 +280,8 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
                     }
                     requireActivity().runOnUiThread {
 
-                        summary_button_show_charge_container.text = "${getString(R.string.summary_charging_sessions)}: ${completedChargingSessions.size}"
-                        summary_button_show_charge_container.isEnabled = completedChargingSessions.isNotEmpty()
+                        summary_view_selector.buttonList[1].text = "${getString(R.string.summary_charging_sessions)}: ${completedChargingSessions.size}"
+                        summary_view_selector.buttonList[1].isEnabled = completedChargingSessions.isNotEmpty()
 
                         summary_charge_plot_seek_bar.max = (completedChargingSessions.size - 1).coerceAtLeast(0)
                         summary_charge_plot_seek_bar.progress = (completedChargingSessions.size - 1).coerceAtLeast(0)
@@ -335,7 +336,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         summary_time_widget.topText = StringFormatters.getElapsedTimeString(session.drive_time)
         summary_speed_widget.topText = StringFormatters.getAvgSpeedString(session.driven_distance.toFloat(), session.drive_time)
 
-        summary_button_show_consumption_container.isSelected = true
+        summary_view_selector.selectedIndex = 0
     }
 
     private fun setSecondaryConsumptionPlotDimension(secondaryConsumptionDimension: Int) {
@@ -437,16 +438,12 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         summary_consumption_container.visibility = View.VISIBLE
         summary_charge_container.visibility = View.GONE
         summary_consumption_container.scrollTo(0,0)
-        summary_button_show_charge_container.isSelected = false
-        summary_button_show_consumption_container.isSelected = true
     }
 
     private fun switchToChargeLayout() {
         summary_consumption_container.visibility = View.GONE
         summary_charge_container.visibility = View.VISIBLE
         summary_charge_container.scrollTo(0,0)
-        summary_button_show_consumption_container.isSelected = false
-        summary_button_show_charge_container.isSelected = true
     }
 
     private fun createResetDialog() {

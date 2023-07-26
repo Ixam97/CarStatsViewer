@@ -125,27 +125,16 @@
         android:visibility="gone"
         android:text="@string/summary_parked_warning"/>
 
-    <LinearLayout
-        android:id="@+id/summary_content_container"
+    <com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
+        android:id="@+id/summary_view_selector"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="2"
+        android:layout_height="80dp"
         android:layout_margin="20dp"
-        android:orientation="horizontal">
-        <Button
-            android:id="@+id/summary_button_show_consumption_container"
-            android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:layout_weight="1"
-            android:text="@string/summary_trip_history"/>
-        <Button
-            android:enabled="true"
-            android:id="@+id/summary_button_show_charge_container"
-            android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:layout_weight="1"
-            android:text="@string/summary_charging_sessions"/>
-    </LinearLayout>
+        app:numButtons="3"
+        app:textButton1="@string/summary_trip_history"
+        app:textButton2="@string/summary_charging_sessions"
+        app:textButton3="Karte"/>
+
     <View style="@style/menu_divider_style_no_margin"
         android:background="?android:attr/listDivider"/>
 
