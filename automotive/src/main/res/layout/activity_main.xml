@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_location_on"/>
 
@@ -47,20 +47,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="15dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_connected"/>
 
         <View style="@style/filler"/>
 
         <ImageButton
-            android:id="@+id/main_button_performance"
+            android:id="@+id/main_button_screenshot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="15dp"
             android:layout_marginEnd="15dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_performance"/>
+            android:src="@drawable/ic_camera"/>
 
         <ImageButton
             android:id="@+id/main_button_history"
@@ -100,32 +100,49 @@
             android:orientation="horizontal"
             android:weightSum="14">
 
-            <LinearLayout
-                android:visibility="gone"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:visibility="visible"
                 android:id="@+id/main_gage_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_weight="@integer/gage_width_weight">
 
-                <com.ixam97.carStatsViewer.ui.views.GageView
-                    android:id="@+id/main_power_gage"
+                <ImageButton
+                    android:id="@+id/main_button_perf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:src="@drawable/ic_performance"
+                    android:background="@android:color/transparent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <com.ixam97.carStatsViewer.ui.views.GageView
+                    android:id="@+id/main_power_gage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:layout_marginHorizontal="20dp"/>
+                    android:layout_marginHorizontal="20dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/main_button_perf"/>
 
                 <com.ixam97.carStatsViewer.ui.views.GageView
                     android:id="@+id/main_consumption_gage"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp"/>
+                    android:layout_margin="20dp"
+                    app:layout_constraintTop_toBottomOf="@+id/main_power_gage"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/main_alternate_gage_layout"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -156,7 +173,8 @@
                     android:layout_width="@dimen/divider_height"
                     android:layout_height="match_parent"
                     android:background="?android:attr/listDivider"
-                    android:layout_margin="15dp"/>
+                    android:layout_marginVertical="15dp"
+                    android:layout_marginEnd="15dp"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/main_trip_data_container"

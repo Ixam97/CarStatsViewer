@@ -363,8 +363,10 @@ class MainActivity : FragmentActivity() {
         setupDefaultUi()
         setUiEventListeners()
 
-        if (BuildConfig.FLAVOR != "dev") main_button_performance.visibility = View.GONE
-        else main_button_performance.setImageResource(R.drawable.ic_camera)
+        if (BuildConfig.FLAVOR != "dev") main_button_screenshot.visibility = View.GONE
+
+        main_button_perf.isEnabled = false
+        main_button_perf.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
 
         if (appPreferences.versionString != BuildConfig.VERSION_NAME) {
 
@@ -616,7 +618,7 @@ class MainActivity : FragmentActivity() {
             // DataManager.chargeTime = 0L
         }
 
-        main_button_performance.setOnClickListener {
+        main_button_screenshot.setOnClickListener {
             // throw Exception("Intentional crash")
             InAppLogger.i("Debug")
             lifecycleScope.launch {
