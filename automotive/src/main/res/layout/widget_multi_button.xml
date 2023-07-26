@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/button_1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="Button 1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/button_2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </Button>
+
+        <Button
+            android:id="@+id/button_2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="Button 2"
+            app:layout_constraintEnd_toStartOf="@+id/button_3"
+            app:layout_constraintStart_toEndOf="@+id/button_1"
+            app:layout_constraintTop_toTopOf="@+id/button_1">
+
+        </Button>
+
+        <Button
+            android:visibility="visible"
+            android:id="@+id/button_3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="Button 3"
+            app:layout_constraintEnd_toStartOf="@id/button_4"
+            app:layout_constraintStart_toEndOf="@+id/button_2"
+            app:layout_constraintTop_toTopOf="@+id/button_1">
+
+        </Button>
+
+        <Button
+            android:visibility="visible"
+            android:id="@+id/button_4"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="Button 4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/button_3"
+            app:layout_constraintTop_toTopOf="@+id/button_1">
+
+        </Button>
+
+        <View
+            android:id="@+id/divider_1"
+            android:layout_height="0dp"
+            android:layout_width="2dp"
+            android:layout_marginVertical="20dp"
+            android:layout_marginStart="0dp"
+            android:background="#757575"
+            app:layout_constraintTop_toTopOf="@id/button_1"
+            app:layout_constraintBottom_toBottomOf="@id/button_1"
+            app:layout_constraintStart_toEndOf="@id/button_1"
+            />
+
+        <View
+            android:id="@+id/divider_2"
+            android:layout_height="0dp"
+            android:layout_width="2dp"
+            android:layout_marginVertical="20dp"
+            android:layout_marginStart="0dp"
+            android:background="#757575"
+            app:layout_constraintTop_toTopOf="@id/button_2"
+            app:layout_constraintBottom_toBottomOf="@id/button_2"
+            app:layout_constraintStart_toEndOf="@id/button_2"
+            />
+
+        <View
+            android:id="@+id/divider_3"
+            android:layout_height="0dp"
+            android:layout_width="2dp"
+            android:layout_marginVertical="20dp"
+            android:layout_marginStart="0dp"
+            android:background="#757575"
+            app:layout_constraintTop_toTopOf="@id/button_3"
+            app:layout_constraintBottom_toBottomOf="@id/button_3"
+            app:layout_constraintStart_toEndOf="@id/button_3"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</merge>
