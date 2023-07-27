@@ -1,5 +1,10 @@
 # Changelog [DE]:
 
+## 0.25.1 (27.07.2023)
+- Anpassungen an der UI, insbesondere in der Tripzusammenfassung
+- Die Weitergabe des Standortes kann nun für jede API einzeln festgelegt werden
+- Kleinere Bugfixes
+
 ## 0.25.0 (23.07.2023)
 - Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips.
 - Tripverlauf hinzugefügt, um vergangene Trips anzeigen zu können.

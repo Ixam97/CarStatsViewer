@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string-array name="changes_0_25_1">
+        <item>Anpassungen an der UI, insbesondere in der Tripzusammenfassung</item>
+        <item>Die Weitergabe des Standortes kann nun für jede API einzeln festgelegt werden</item>
+        <item>Kleinere Bugfixes</item>
+    </string-array>
+
     <string-array name="changes_0_25_0">
         <item>Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips.</item>
         <item>Ladevorgänge können nun für bis zu 5 Minuten unterbrochen werden, bevor ein neuer Ladevorgang angelegt wird, sogar, wenn das Auto bewegt wurde.</item>

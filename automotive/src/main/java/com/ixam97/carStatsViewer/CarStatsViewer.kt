@@ -107,7 +107,7 @@ class CarStatsViewer : Application() {
                     dialog.cancel()
                 }
                 setTitle(context.getString(R.string.main_changelog_dialog_title, BuildConfig.VERSION_NAME.dropLast(5)))
-                val changesArray = context.resources.getStringArray(R.array.changes_0_25_0)
+                val changesArray = context.resources.getStringArray(R.array.changes_0_25_1)
                 var changelog = ""
                 for ((index, change) in changesArray.withIndex()) {
                     changelog += "• $change"

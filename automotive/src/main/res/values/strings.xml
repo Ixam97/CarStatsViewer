@@ -48,6 +48,12 @@
         <item>Oliver Charlton</item>
     </string-array>
 
+    <string-array name="changes_0_25_1">
+        <item>UI adjustments, especially in the trip summary.</item>
+        <item>The sharing of the current location can now be configured for each API individually</item>
+        <item>Minor bugfixes</item>
+    </string-array>
+
     <string-array name="changes_0_25_0">
         <item>Implemented a local database for more robust and performant saving of trip data.</item>
         <item>Charging session can now be interrupted up to 5 minutes before beginning a new session, even if the car was moved.</item>
