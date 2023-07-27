@@ -7,6 +7,8 @@ import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.graphics.fonts.SystemFonts
 import android.util.TypedValue
+import android.view.LayoutInflater
+import android.widget.TextView
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -21,6 +23,7 @@ import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.Watchdog
+import com.ixam97.carStatsViewer.utils.applyTypeface
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -106,14 +109,40 @@ class CarStatsViewer : Application() {
                 setPositiveButton(context.getString(R.string.dialog_close)) { dialog, _ ->
                     dialog.cancel()
                 }
-                setTitle(context.getString(R.string.main_changelog_dialog_title, BuildConfig.VERSION_NAME.dropLast(5)))
+                // setTitle(context.getString(R.string.main_changelog_dialog_title, BuildConfig.VERSION_NAME.dropLast(5)))
+
+                val layout = LayoutInflater.from(context).inflate(R.layout.dialog_changelog, null)
+
+                val changelog1Title = layout.findViewById<TextView>(R.id.changes_0_25_1_title)
+                val changelog1TextView = layout.findViewById<TextView>(R.id.changes_0_25_1)
+                val changelog2Title = layout.findViewById<TextView>(R.id.changes_0_25_0_title)
+                val changelog2TextView = layout.findViewById<TextView>(R.id.changes_0_25_0)
+
+                changelog1Title.text = context.getString(R.string.main_changelog_dialog_title, "0.25.1")
+                changelog2Title.text = context.getString(R.string.main_changelog_dialog_title, "0.25.0")
+
                 val changesArray = context.resources.getStringArray(R.array.changes_0_25_1)
-                var changelog = ""
-                for ((index, change) in changesArray.withIndex()) {
-                    changelog += "• $change"
-                    if (index < changesArray.size - 1) changelog += "\n\n"
+                var changelog1 = ""
+                changesArray.forEachIndexed { index, change ->
+                    changelog1 += "• $change"
+                    if (index < changesArray.size - 1) changelog1 += "\n\n"
                 }
-                setMessage(changelog)
+
+                val changesArrayOld = context.resources.getStringArray(R.array.changes_0_25_0)
+                var changelog2 = ""
+                changesArrayOld.forEachIndexed { index, change ->
+                    changelog2 += "• $change"
+                    if (index < changesArrayOld.size - 1) changelog2 += "\n\n"
+                }
+                //setMessage(changelog)
+
+                changelog1TextView.text = changelog1
+                changelog2TextView.text = changelog2
+
+                applyTypeface(layout)
+
+                setView(layout)
+
                 setCancelable(true)
                 create()
             }
