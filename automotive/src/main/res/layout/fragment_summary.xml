@@ -130,7 +130,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_margin="20dp"
-        app:numButtons="3"
+        app:numButtons="2"
         app:textButton1="@string/summary_trip_history"
         app:textButton2="@string/summary_charging_sessions"
         app:textButton3="Karte"/>

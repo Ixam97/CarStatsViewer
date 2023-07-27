@@ -64,9 +64,11 @@ class AbrpLiveData (
                 put("is_parked", abrpDataSet.isParked)
                 put("speed", abrpDataSet.speed * 3.6f)
                 put("ext_temp", abrpDataSet.temp)
-                abrpDataSet.lat?.let { put("lat", it) }
-                abrpDataSet.lon?.let { put("lon", it) }
-                abrpDataSet.alt?.let { put("elevation", it) }
+                if (AppPreferences(context).abrpUseLocation) {
+                    abrpDataSet.lat?.let { put("lat", it) }
+                    abrpDataSet.lon?.let { put("lon", it) }
+                    abrpDataSet.alt?.let { put("elevation", it) }
+                }
                 put("is_dcfc", abrpDataSet.power < -11_000_000)
             }
             put("tlm", tlm)
@@ -134,11 +136,17 @@ class AbrpLiveData (
             val layout = LayoutInflater.from(context).inflate(R.layout.dialog_abrp_token, null)
             val abrp_token = layout.findViewById<EditText>(R.id.abrp_token)
             val abrp_use_api = layout.findViewById<Switch>(R.id.abrp_use_api)
+            val abrp_use_location = layout.findViewById<Switch>(R.id.abrp_use_location)
 
             abrp_use_api.isChecked = AppPreferences(context).abrpUseApi
+            abrp_use_location.isChecked = AppPreferences(context).abrpUseLocation
 
             abrp_use_api.setOnClickListener {
                 AppPreferences(context).abrpUseApi = abrp_use_api.isChecked
+            }
+
+            abrp_use_location.setOnClickListener {
+                AppPreferences(context).abrpUseLocation = abrp_use_location.isChecked
             }
 
             abrp_token.setText(AppPreferences(context).abrpGenericToken)
