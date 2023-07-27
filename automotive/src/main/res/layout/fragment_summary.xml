@@ -151,8 +151,9 @@
 
             <TextView
                 android:id="@+id/summary_trip_date_text"
-                android:layout_marginTop="10dp"
-                style="@style/menu_section_title_style"/>
+                style="@style/menu_standard_row_label"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"/>
 
             <com.ixam97.carStatsViewer.ui.views.PlotView
                 android:visibility="gone"
@@ -284,9 +285,10 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_marginTop="10dp"
                 android:id="@+id/summary_charge_plot_sub_title_curve"
-                style="@style/menu_section_title_style"
+                style="@style/menu_standard_row_label"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
                 android:text="@string/settings_sub_title_last_charge_plot"/>
 
             <LinearLayout

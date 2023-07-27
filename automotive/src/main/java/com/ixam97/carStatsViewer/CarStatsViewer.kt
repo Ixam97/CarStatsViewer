@@ -185,6 +185,8 @@ class CarStatsViewer : Application() {
 
         InAppLogger.i("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
 
+        InAppLogger.d("Screen width: ${resources.configuration.screenWidthDp}dp")
+
         var fontsLoaded = false
 
         CoroutineScope(Dispatchers.IO).launch {

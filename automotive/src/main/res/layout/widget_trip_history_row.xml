@@ -36,6 +36,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <TextView
+                    android:id="@+id/row_top_text"
+                    style="@style/menu_row_top_text"
+                    android:layout_marginStart="10dp"
+                    android:text="Lorem Ipsum"
+                    app:layout_constraintStart_toEndOf="@+id/row_start_icon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <ImageView
                     android:id="@+id/distance_icon"
                     android:layout_width="40dp"
@@ -43,17 +51,14 @@
                     android:src="@drawable/ic_distance"
                     app:layout_constraintBottom_toBottomOf="@+id/distance_text"
                     app:layout_constraintStart_toStartOf="@+id/row_top_text"
-                    app:layout_constraintTop_toBottomOf="@+id/row_top_text"
-                    app:layout_constraintVertical_bias="1.0" />
+                    app:layout_constraintTop_toTopOf="@+id/distance_text"/>
 
                 <TextView
                     android:id="@+id/distance_text"
                     style="@style/menu_row_content_text"
                     android:text="Lorem Ipsum"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/distance_icon"
-                    app:layout_constraintTop_toBottomOf="@+id/row_top_text"
-                    app:layout_constraintVertical_bias="1.0" />
+                    app:layout_constraintTop_toBottomOf="@+id/row_top_text" />
 
                 <ImageView
                     android:id="@+id/row_start_icon"
@@ -62,14 +67,6 @@
                     android:src="@drawable/ic_charger"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/row_top_text"
-                    style="@style/menu_row_top_text"
-                    android:layout_marginStart="10dp"
-                    android:text="Lorem Ipsum"
-                    app:layout_constraintStart_toEndOf="@+id/row_start_icon"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
@@ -87,7 +84,7 @@
                     style="@style/menu_row_content_text"
                     android:text="Lorem Ipsum"
                     app:layout_constraintStart_toEndOf="@+id/energy_icon"
-                    app:layout_constraintTop_toTopOf="@+id/distance_text" />
+                    app:layout_constraintTop_toBottomOf="@+id/row_top_text" />
 
                 <ImageView
                     android:id="@+id/consumption_icon"
@@ -104,7 +101,7 @@
                     style="@style/menu_row_content_text"
                     android:text="Cons. Text"
                     app:layout_constraintStart_toEndOf="@+id/consumption_icon"
-                    app:layout_constraintTop_toTopOf="@+id/energy_text" />
+                    app:layout_constraintTop_toBottomOf="@+id/row_top_text" />
 
                 <ImageView
                     android:id="@+id/time_icon"
@@ -121,7 +118,7 @@
                     style="@style/menu_row_content_text"
                     android:text="Time Text"
                     app:layout_constraintStart_toEndOf="@+id/time_icon"
-                    app:layout_constraintTop_toTopOf="@+id/consumption_text" />
+                    app:layout_constraintTop_toBottomOf="@+id/row_top_text" />
 
                 <ImageView
                     android:id="@+id/row_chevron"

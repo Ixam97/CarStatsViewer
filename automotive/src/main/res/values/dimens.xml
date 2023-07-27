@@ -13,7 +13,7 @@
     <integer name="title_font_weight">550</integer>
     <integer name="std_font_weight">300</integer>
     <dimen name="section_title_font_size">27sp</dimen>
-    <dimen name="divider_height">1dp</dimen>
+    <dimen name="divider_height">2dp</dimen>
     <dimen name="plot_x_margin">60dp</dimen>
     <dimen name="plot_y_margin">48dp</dimen>
     <dimen name="gage_value_text_size">80sp</dimen>
