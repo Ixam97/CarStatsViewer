@@ -19,7 +19,7 @@ class SettingsMainViewActivity: Activity() {
             applyTypeface(settings_main_view_activity)
         }
 
-        settings_consumption_plot_switch_secondary_color.isChecked = appPreferences.chargePlotSecondaryColor
+        settings_consumption_plot_switch_secondary_color.isChecked = appPreferences.consumptionPlotSecondaryColor
         settings_consumption_plot_switch_visible_gages.isChecked = appPreferences.consumptionPlotVisibleGages
         settings_charge_plot_switch_secondary_color.isChecked = appPreferences.chargePlotSecondaryColor
         settings_charge_plot_switch_visible_gages.isChecked = appPreferences.chargePlotVisibleGages
