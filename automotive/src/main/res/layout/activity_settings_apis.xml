@@ -59,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:api_name="@string/settings_apis_abrp"
-                app:icon="@mipmap/abrp_icon_png"
+                app:icon="@mipmap/ic_abrp"
                 />
 
             <com.ixam97.carStatsViewer.ui.views.ApiRowWidget
