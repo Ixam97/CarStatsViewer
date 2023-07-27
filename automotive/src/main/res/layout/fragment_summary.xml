@@ -22,7 +22,7 @@
         <ImageView
             android:id="@+id/summary_type_icon"
             android:layout_marginStart="10dp"
-            android:layout_marginVertical="15dp"
+            android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_hand"/>
@@ -125,248 +125,251 @@
         android:visibility="gone"
         android:text="@string/summary_parked_warning"/>
 
-    <com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
-        android:id="@+id/summary_view_selector"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_margin="20dp"
-        app:numButtons="2"
-        app:textButton1="@string/summary_trip_history"
-        app:textButton2="@string/summary_charging_sessions"
-        app:textButton3="Karte"/>
-
     <View style="@style/menu_divider_style_no_margin"
+        android:visibility="gone"
         android:background="?android:attr/listDivider"/>
 
     <ScrollView
-        android:id="@+id/summary_consumption_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/summary_trip_date_text"
-                style="@style/menu_standard_row_label"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="10dp"/>
-
-            <com.ixam97.carStatsViewer.ui.views.PlotView
-                android:visibility="gone"
-                android:id="@+id/summary_consumption_plot"
+            <com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
+                android:id="@+id/summary_view_selector"
                 android:layout_width="match_parent"
-                android:layout_height="550dp"/>
-
-            <RelativeLayout
-                android:id="@+id/summary_progress_bar"
-                android:visibility="visible"
-                android:layout_width="match_parent"
-                android:layout_height="550dp">
-                <ProgressBar
-                    android:visibility="visible"
-                    android:layout_centerInParent="true"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"/>
-            </RelativeLayout>
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                app:numButtons="2"
+                app:textButton1="@string/summary_trip_history"
+                app:textButton2="@string/summary_charging_sessions"
+                app:textButton3="Karte"/>
 
             <LinearLayout
+                android:id="@+id/summary_consumption_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <Button
+                android:layout_marginHorizontal="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/summary_trip_date_text"
+                    style="@style/menu_row_top_text"
+                    android:layout_height="wrap_content"/>
+
+                <com.ixam97.carStatsViewer.ui.views.PlotView
+                    android:visibility="gone"
+                    android:id="@+id/summary_consumption_plot"
+                    android:layout_width="match_parent"
+                    android:layout_height="550dp"/>
+
+                <RelativeLayout
+                    android:id="@+id/summary_progress_bar"
                     android:visibility="visible"
-                    android:id="@+id/summary_button_dist_20"
-                    android:layout_width="wrap_content"
-                    android:text="20 km"
-                    android:layout_height="80dp"/>
-                <Button
-                    android:visibility="visible"
-                    android:id="@+id/summary_button_dist_40"
-                    android:layout_width="wrap_content"
-                    android:text="40 km"
-                    android:layout_marginStart="15dp"
-                    android:layout_height="80dp"/>
-                <Button
-                    android:visibility="visible"
-                    android:id="@+id/summary_button_dist_100"
-                    android:layout_width="wrap_content"
-                    android:text="100 km"
-                    android:layout_marginStart="15dp"
-                    android:layout_height="80dp"/>
-                <Button
-                    android:visibility="visible"
-                    android:id="@+id/summary_button_secondary_dimension"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="15dp"
-                    android:layout_height="80dp"/>
-            </LinearLayout>
+                    android:layout_width="match_parent"
+                    android:layout_height="550dp">
+                    <ProgressBar
+                        android:visibility="visible"
+                        android:layout_centerInParent="true"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"/>
+                </RelativeLayout>
 
-            <View style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:visibility="visible"
+                        android:id="@+id/summary_button_dist_20"
+                        android:layout_width="wrap_content"
+                        android:text="20 km"
+                        android:layout_height="80dp"/>
+                    <Button
+                        android:visibility="visible"
+                        android:id="@+id/summary_button_dist_40"
+                        android:layout_width="wrap_content"
+                        android:text="40 km"
+                        android:layout_marginStart="15dp"
+                        android:layout_height="80dp"/>
+                    <Button
+                        android:visibility="visible"
+                        android:id="@+id/summary_button_dist_100"
+                        android:layout_width="wrap_content"
+                        android:text="100 km"
+                        android:layout_marginStart="15dp"
+                        android:layout_height="80dp"/>
+                    <Button
+                        android:visibility="visible"
+                        android:id="@+id/summary_button_secondary_dimension"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="15dp"
+                        android:layout_height="80dp"/>
+                </LinearLayout>
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
-                android:id="@+id/summary_distance_widget"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:topText=""
-                app:bottomText="@string/summary_traveled_distance"
-                app:startDrawable="@drawable/ic_distance_large"
-                app:reduceSize="true"
-                />
+                <View style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
-                android:id="@+id/summary_energy_widget"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:topText=""
-                app:bottomText="@string/summary_used_energy"
-                app:startDrawable="@drawable/ic_energy_large"
-                app:reduceSize="true"
-                />
+                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                    android:id="@+id/summary_distance_widget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:topText=""
+                    app:bottomText="@string/summary_traveled_distance"
+                    app:startDrawable="@drawable/ic_distance_large"
+                    app:reduceSize="true"
+                    />
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
-                android:id="@+id/summary_consumption_widget"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:topText=""
-                app:bottomText="@string/summary_average_consumption"
-                app:startDrawable="@drawable/ic_diagram"
-                app:reduceSize="true"
-                />
+                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                    android:id="@+id/summary_energy_widget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:topText=""
+                    app:bottomText="@string/summary_used_energy"
+                    app:startDrawable="@drawable/ic_energy_large"
+                    app:reduceSize="true"
+                    />
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
-                android:id="@+id/summary_speed_widget"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:topText=""
-                app:bottomText="@string/summary_speed"
-                app:startDrawable="@drawable/ic_speed_large"
-                app:reduceSize="true"
-                />
+                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                    android:id="@+id/summary_consumption_widget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:topText=""
+                    app:bottomText="@string/summary_average_consumption"
+                    app:startDrawable="@drawable/ic_diagram"
+                    app:reduceSize="true"
+                    />
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
-                android:id="@+id/summary_altitude_widget"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:topText=""
-                app:bottomText="@string/summary_altitude"
-                app:startDrawable="@drawable/ic_altitude"
-                app:reduceSize="true"
-                />
+                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                    android:id="@+id/summary_speed_widget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:topText=""
+                    app:bottomText="@string/summary_speed"
+                    app:startDrawable="@drawable/ic_speed_large"
+                    app:reduceSize="true"
+                    />
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
-                android:id="@+id/summary_time_widget"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:topText=""
-                app:bottomText="@string/summary_travel_time"
-                app:startDrawable="@drawable/ic_time_large"
-                app:reduceSize="true"
-                />
+                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                    android:id="@+id/summary_altitude_widget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:topText=""
+                    app:bottomText="@string/summary_altitude"
+                    app:startDrawable="@drawable/ic_altitude"
+                    app:reduceSize="true"
+                    />
 
-        </LinearLayout>
-    </ScrollView>
-
-    <ScrollView
-        android:id="@+id/summary_charge_container"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/summary_charge_plot_sub_title_curve"
-                style="@style/menu_standard_row_label"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="10dp"
-                android:text="@string/settings_sub_title_last_charge_plot"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/summary_charge_plot_button_prev"
-                    android:src="@drawable/ic_chevron_left"
-                    android:background="@android:color/transparent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
-
-                <SeekBar
-                    android:id="@+id/summary_charge_plot_seek_bar"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-
-                <ImageButton
-                    android:id="@+id/summary_charge_plot_button_next"
-                    android:src="@drawable/ic_chevron_right"
-                    android:background="@android:color/transparent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                    android:id="@+id/summary_time_widget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:topText=""
+                    app:bottomText="@string/summary_travel_time"
+                    app:startDrawable="@drawable/ic_time_large"
+                    app:reduceSize="true"
+                    />
 
             </LinearLayout>
 
-            <com.ixam97.carStatsViewer.ui.views.PlotView
-                android:id="@+id/summary_charge_plot_view"
-                android:layout_width="match_parent"
-                android:layout_height="550dp"/>
-
-            <View
-                style="@style/menu_divider_style"
-                android:background="?android:attr/listDivider"/>
-
-
-            <TextView
+            <LinearLayout
+                android:id="@+id/summary_charge_container"
                 android:visibility="gone"
-                style="@style/menu_row_content_text"
-                android:tag="bold"
-                android:id="@+id/summary_charged_energy_warning_text"
-                android:text="@string/summary_interruption_warning"
-                android:textColor="@color/bad_red"/>
-
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
-                android:id="@+id/summary_charged_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:topText=""
-                app:bottomText="@string/summary_charged_energy"
-                app:startDrawable="@drawable/ic_battery"
-                app:reduceSize="true"
-                />
+                android:layout_marginHorizontal="20dp"
+                android:orientation="vertical">
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
-                android:id="@+id/summary_charge_time_widget"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:topText=""
-                app:bottomText="@string/summary_charge_time"
-                app:startDrawable="@drawable/ic_time_large"
-                app:reduceSize="true"
-                />
+                <TextView
+                    android:id="@+id/summary_charge_plot_sub_title_curve"
+                    style="@style/menu_row_top_text"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_sub_title_last_charge_plot"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
-                android:id="@+id/summary_temperature_widget"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:topText=""
-                app:bottomText="@string/summary_charge_ambient_temp"
-                app:startDrawable="@drawable/ic_temperature_large"
-                app:reduceSize="true"
-                />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal">
 
+                    <ImageButton
+                        android:id="@+id/summary_charge_plot_button_prev"
+                        android:src="@drawable/ic_chevron_left"
+                        android:background="@android:color/transparent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" />
+
+                    <SeekBar
+                        android:id="@+id/summary_charge_plot_seek_bar"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
+
+                    <ImageButton
+                        android:id="@+id/summary_charge_plot_button_next"
+                        android:src="@drawable/ic_chevron_right"
+                        android:background="@android:color/transparent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent" />
+
+                </LinearLayout>
+
+                <com.ixam97.carStatsViewer.ui.views.PlotView
+                    android:id="@+id/summary_charge_plot_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="550dp"/>
+
+                <View
+                    style="@style/menu_divider_style"
+                    android:background="?android:attr/listDivider"/>
+
+
+                <TextView
+                    android:visibility="gone"
+                    style="@style/menu_row_content_text"
+                    android:tag="bold"
+                    android:id="@+id/summary_charged_energy_warning_text"
+                    android:text="@string/summary_interruption_warning"
+                    android:textColor="@color/bad_red"/>
+
+                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                    android:id="@+id/summary_charged_widget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:topText=""
+                    app:bottomText="@string/summary_charged_energy"
+                    app:startDrawable="@drawable/ic_battery"
+                    app:reduceSize="true"
+                    />
+
+                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                    android:id="@+id/summary_charge_time_widget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:topText=""
+                    app:bottomText="@string/summary_charge_time"
+                    app:startDrawable="@drawable/ic_time_large"
+                    app:reduceSize="true"
+                    />
+
+                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                    android:id="@+id/summary_temperature_widget"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:topText=""
+                    app:bottomText="@string/summary_charge_ambient_temp"
+                    app:startDrawable="@drawable/ic_temperature_large"
+                    app:reduceSize="true"
+                    />
+
+            </LinearLayout>
         </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>

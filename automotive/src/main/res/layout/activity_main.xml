@@ -23,6 +23,8 @@
             android:id="@+id/main_title_icon"
             android:layout_width="@dimen/std_icon_size"
             android:layout_height="@dimen/std_icon_size"
+            android:padding="10dp"
+            android:layout_gravity="center_vertical"
             android:layout_margin="15dp"
             android:src="@mipmap/ic_launcher"/>
 
@@ -57,7 +59,7 @@
             android:id="@+id/main_button_screenshot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="15dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginEnd="15dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_camera"/>
@@ -66,7 +68,7 @@
             android:id="@+id/main_button_history"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="15dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginEnd="15dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_history"/>
@@ -75,7 +77,7 @@
             android:id="@+id/main_button_settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="15dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginEnd="15dp"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_settings"/>
