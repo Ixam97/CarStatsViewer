@@ -2,10 +2,10 @@
 <resources>
 
     <string-array name="changes_0_25_1">
-        <item>Anpassungen an der UI, insbesondere in der Tripzusammenfassung</item>
+        <item>Anpassungen an der UI, insbesondere in der Tripzusammenfassung.</item>
         <item>Fahrzeugkonfiguration für MY24 hinzugefügt.</item>
-        <item>Die Weitergabe des Standortes kann nun für jede API einzeln festgelegt werden</item>
-        <item>Kleinere Bugfixes</item>
+        <item>Die Weitergabe des Standortes kann nun für jede API einzeln festgelegt werden.</item>
+        <item>Kleinere Bugfixes.</item>
     </string-array>
 
     <string-array name="changes_0_25_0">
