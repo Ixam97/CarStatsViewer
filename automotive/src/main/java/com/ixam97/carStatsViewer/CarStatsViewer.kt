@@ -21,6 +21,7 @@ import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
+import com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.Watchdog
 import com.ixam97.carStatsViewer.utils.applyTypeface
@@ -222,6 +223,8 @@ class CarStatsViewer : Application() {
         while (!fontsLoaded) {
             // Wait for fonts to be loaded before initializing trip database
         }
+
+        MultiButtonWidget.isPolestar = isPolestarTypeface
 
         typefaceRegular?.let {
             PlotPaint.typeface = it

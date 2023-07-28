@@ -2,6 +2,7 @@ package com.ixam97.carStatsViewer.ui.activities
 
 import android.content.*
 import android.os.Bundle
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -49,6 +50,8 @@ class SettingsActivity : FragmentActivity() {
         CarStatsViewer.typefaceMedium?.let {
             applyTypeface(settings_activity)
         }
+
+        if (!CarStatsViewer.isPolestarTypeface) settings_vehicle_widget.isVisible = false
 
         setupSettingsMaster()
     }

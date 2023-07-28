@@ -223,6 +223,11 @@
     <string name="AutoTripData">Automatic trip</string>
     <string name="CurrentMonthData">Current month</string>
 
+    <string name="CurrentTripData_short">Manual</string>
+    <string name="SinceChargeData_short">Since charge</string>
+    <string name="AutoTripData_short">Automatic</string>
+    <string name="CurrentMonthData_short">Month</string>
+
     <string-array name="trip_type_names">
         <item>Unknown trip type</item>
         <item>Manual trip</item>

@@ -49,6 +49,21 @@
                 android:layout_height="wrap_content"
                 app:title="@string/settings_select_trip" />
 
+            <!--<TextView
+                style="@style/menu_row_top_text"
+                android:text="@string/settings_select_trip"/>
+            <com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
+                android:id="@+id/settings_multi_button_trip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                app:numButtons="4"
+                app:textButton1="@string/CurrentTripData_short"
+                app:textButton2="@string/SinceChargeData_short"
+                app:textButton3="@string/AutoTripData_short"
+                app:textButton4="@string/CurrentMonthData_short"
+                />-->
+
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>

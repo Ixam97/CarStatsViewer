@@ -170,6 +170,11 @@
     <string name="AutoTripData">Automatischer Trip</string>
     <string name="CurrentMonthData">Aktueller Monat</string>
 
+    <string name="CurrentTripData_short">Manuell</string>
+    <string name="SinceChargeData_short">Seit Ladung</string>
+    <string name="AutoTripData_short">Automatisch</string>
+    <string name="CurrentMonthData_short">Monat</string>
+
     <string-array name="trip_type_names">
         <item>Unbekannter Triptyp</item>
         <item>Manueller Trip</item>
