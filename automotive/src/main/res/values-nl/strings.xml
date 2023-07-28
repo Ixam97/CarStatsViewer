@@ -47,7 +47,7 @@
     <string name="settings_button_back">Terug</string>
     <string name="settings_button_quit">App afsluiten</string>
     <string name="settings_notifications">Gedetailleerde melding</string>
-    <string name="settings_consumption_unit">Wh/km als eenheid van verbruik</string>
+    <string name="settings_consumption_unit">Wh/%s als eenheid van verbruik</string>
     <string name="settings_debug">Debug-informatie</string>
     <string name="settings_experimental_layout">Toon experimentele layout</string>
     <string name="settings_consumption_plot">Verbruikscurve</string>

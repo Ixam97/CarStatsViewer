@@ -47,7 +47,7 @@
     <string name="settings_button_back">Voltar</string>
     <string name="settings_button_quit">Sair da aplicação</string>
     <string name="settings_notifications">Notificação detalhada</string>
-    <string name="settings_consumption_unit">Wh/distância como unidade de consumo</string>
+    <string name="settings_consumption_unit">Wh/%s como unidade de consumo</string>
     <string name="settings_debug">Informações de depuração</string>
     <string name="settings_experimental_layout">Mostrar layout experimental</string>
     <string name="settings_consumption_plot">Vista de consumo</string>

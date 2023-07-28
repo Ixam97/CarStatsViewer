@@ -13,7 +13,6 @@ import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
-import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.ui.plot.enums.*
@@ -178,10 +177,6 @@ class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
         context.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
 
         val basePaint = PlotPaint.basePaint(textSize)
-
-        CarStatsViewer.typefaceRegular?.let {
-            basePaint.typeface = it
-        }
 
         labelLinePaint = Paint(basePaint)
         labelLinePaint.color = getColor(context, R.color.grid_line_color)

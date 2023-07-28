@@ -9,4 +9,20 @@
         <attr name="icon" format="reference"/>
         <attr name="use_connection" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="MenuRowWidget">
+        <attr name="topText" format="string"/>
+        <attr name="bottomText" format="string"/>
+        <attr name="endButtonText" format="string"/>
+        <attr name="startDrawable" format="reference"/>
+        <attr name="isExternalLink" format="boolean"/>
+        <attr name="reduceSize" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="MultiButtonWidget">
+        <attr name="numButtons" format="integer"/>
+        <attr name="defaultIndex" format="integer"/>
+        <attr name="textButton1" format="string"/>
+        <attr name="textButton2" format="string"/>
+        <attr name="textButton3" format="string"/>
+        <attr name="textButton4" format="string"/>
+    </declare-styleable>
 </resources>

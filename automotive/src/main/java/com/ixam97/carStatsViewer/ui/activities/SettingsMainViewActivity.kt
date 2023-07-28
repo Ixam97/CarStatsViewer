@@ -19,7 +19,7 @@ class SettingsMainViewActivity: Activity() {
             applyTypeface(settings_main_view_activity)
         }
 
-        settings_consumption_plot_switch_secondary_color.isChecked = appPreferences.chargePlotSecondaryColor
+        settings_consumption_plot_switch_secondary_color.isChecked = appPreferences.consumptionPlotSecondaryColor
         settings_consumption_plot_switch_visible_gages.isChecked = appPreferences.consumptionPlotVisibleGages
         settings_charge_plot_switch_secondary_color.isChecked = appPreferences.chargePlotSecondaryColor
         settings_charge_plot_switch_visible_gages.isChecked = appPreferences.chargePlotVisibleGages
@@ -35,6 +35,11 @@ class SettingsMainViewActivity: Activity() {
             appPreferences.mainViewTrip = settings_multiselect_trip.selectedIndex
             CarStatsViewer.dataProcessor.changeSelectedTrip(settings_multiselect_trip.selectedIndex + 1)
         }
+        // settings_multi_button_trip.selectedIndex = appPreferences.mainViewTrip
+        // settings_multi_button_trip.setOnIndexChangedListener {
+        //     appPreferences.mainViewTrip = settings_multi_button_trip.selectedIndex
+        //     CarStatsViewer.dataProcessor.changeSelectedTrip(settings_multi_button_trip.selectedIndex + 1)
+        // }
 
         settings_multiselect_connection_selector.entries = ArrayList(CarStatsViewer.liveDataApis.map { getString(it.apiNameStringId) })
         settings_multiselect_connection_selector.selectedIndex = appPreferences.mainViewConnectionApi

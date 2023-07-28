@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/log_activity"
     android:orientation="vertical"
@@ -14,21 +15,24 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/log_button_back"
+            android:id="@+id/debug_button_back"
             style="@style/title_back_button_style"
+            android:src="@drawable/ic_close"
             android:tint="@color/bad_red"
-            android:src="@drawable/ic_close"/>
+            tools:ignore="UseAppTint" />
 
         <TextView
             style="@style/title_text_style"
+            android:drawableStart="@drawable/ic_debug"
             android:text="@string/log_title"/>
 
         <View style="@style/filler"/>
 
         <ImageButton
-            android:id="@+id/log_settings"
+            android:id="@+id/debug_settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_settings"
             android:background="@android:color/transparent"
             android:layout_marginVertical="15dp"
@@ -38,6 +42,7 @@
             android:id="@+id/log_reset_log"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_delete"
             android:background="@android:color/transparent"
             android:layout_marginVertical="15dp"
@@ -48,6 +53,7 @@
             android:src="@drawable/ic_reset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:background="@android:color/transparent"
             android:layout_marginVertical="15dp"
             android:layout_marginEnd="15dp"/>

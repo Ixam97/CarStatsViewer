@@ -32,6 +32,7 @@
 
             <TextView
                 style="@style/title_text_style"
+                android:drawableStart="@drawable/ic_history"
                 android:text="@string/history_title" />
 
             <View
@@ -43,7 +44,8 @@
                 android:layout_margin="15dp"
                 android:id="@+id/history_button_filters"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_filter"
                 android:background="@android:color/transparent"/>
 

@@ -1,9 +1,10 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="@dimen/chevron_icon_size"
     android:height="@dimen/chevron_icon_size"
-    android:viewportWidth="48"
-    android:viewportHeight="48">
+    android:viewportWidth="960"
+    android:viewportHeight="960">
     <path
         android:fillColor="@android:color/white"
-        android:pathData="M18.8,35.05 L17.25,33.5 26.8,23.95 17.25,14.35 18.8,12.75 29.9,23.95Z"/>
+        android:pathData="M543.85,479.77L353.54,288.69L375.77,266.46L588.31,479.77L375.77,692.31L353.54,670.08L543.85,479.77Z"/>
 </vector>
+

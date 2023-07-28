@@ -46,12 +46,12 @@
     <string name="settings_title">Innstillinger</string>
     <string name="settings_button_back">Tilbake</string>
     <string name="settings_button_quit">Avslutt app</string>
-    <string name="settings_notifications">Varslinger</string>
-    <string name="settings_consumption_unit">Wh/km som forbruksenhet</string>
+    <string name="settings_notifications">Detaljerte notifikasjoner</string>
+    <string name="settings_consumption_unit">Wh/%s som forbruksenhet</string>
     <string name="settings_debug">Feilsøk informasjon</string>
     <string name="settings_experimental_layout">Vis eksperimentell visning</string>
-    <string name="settings_consumption_plot">Forbruksvisning</string>
-    <string name="settings_charge_plot">Ladevisning</string>
+    <string name="settings_consumption_plot">Forbruksvisning:</string>
+    <string name="settings_charge_plot">Ladevisning:</string>
     <string name="settings_about">Om Car Stats Viewer</string>
     <string name="settings_plot_secondary_color">Grå som sekundær farge</string>
     <string name="settings_plot_state_of_charge_dimension">Eksperimentellakse for ladetilstand</string>
@@ -92,7 +92,7 @@
     <string name="log_title">Feilsøk</string>
     <!-- Notifications -->
     <string name="notification_title">Nåværende statistikker:</string>
-    <string name="foreground_service_info">Service for datainnsamling kjører</string>
+    <string name="foreground_service_info">Statistikker for sporingservice kjører</string>
     <string name="toast_file_read_error">Feil ved lesing av turfil</string>
     <string name="settings_select_trip">Tur i hovedvisning:</string>
     <string name="CurrentTripData">Manuell tur</string>
@@ -134,14 +134,14 @@
     <string name="abrp_description">Legg inn ABRP generisk token for å sende over-the-air live data til ABRP-servere. Dette inkluderer lokasjonsdata om det ikke er slått av.</string>
     <string name="abrp_generic_token">Generisk token</string>
     <!-- HTTP -->
-    <string name="http_description">Legg inn HTTP URL og (valgfri) BasicAuth legitimasjon for å sende live data til den spesifisert URL. Bruker POST forespørsel med JSON innhold. Dette inneholder lokasjonsdata om det ikke er slått av.</string>
+    <string name="http_description">Legg inn HTTPS URL og (valgfri) BasicAuth legitimasjon for å sende live data til den spesifisert URL. Bruker POST forespørsel med JSON innhold. Dette inneholder lokasjonsdata om det ikke er slått av.</string>
     <string name="http_username">BasicAuth brukernavn</string>
     <string name="http_password">BasicAuth passord</string>
     <string name="http_invalid_url">Ugyldig URL!</string>
     <!-- SMTP -->
     <string name="smtp_description">Legg inn dine SMTP legitimasjon fra din Epostleverandør. Den er brukt for å sende lagrede statistikker og feilllogger til måladressen gitt av brukeren.</string>
     <string name="smtp_address">Epostadresse</string>
-    <string name="smtp_password">SMTP passord</string>
+    <string name="smtp_password">Epostpassord</string>
     <string name="smtp_server">SMTP server-hostname</string>
     <string name="smtp_port">SMPT server-port</string>
     <string name="smtp_use_STARTTLS">Bruk STARTTLS</string>

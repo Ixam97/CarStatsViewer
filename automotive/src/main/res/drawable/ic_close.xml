@@ -7,5 +7,6 @@
     android:tint="?android:attr/colorControlActivated">
     <path
         android:fillColor="@android:color/white"
-        android:pathData="M250.92,741.08L218.92,709.08L448,480L218.92,250.92L250.92,218.92L480,448L709.08,218.92L741.08,250.92L512,480L741.08,709.08L709.08,741.08L480,512L250.92,741.08Z"/>
+        android:pathData="M252,734L227,708L455,480L227,251L252,225L481,454L708,225L733,251L506,480L733,708L708,734L481,505L252,734Z"/>
 </vector>
+

@@ -15,14 +15,10 @@
         <ImageButton
             android:id="@+id/settings_main_view_back"
             style="@style/title_back_button_style" />
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_diagram" />
 
         <TextView
             style="@style/title_text_style"
-            android:layout_marginStart="0dp"
+            android:drawableStart="@drawable/ic_diagram"
             android:text="@string/settings_main_view"/>
 
         <View
@@ -52,6 +48,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:title="@string/settings_select_trip" />
+
+            <!--<TextView
+                style="@style/menu_row_top_text"
+                android:text="@string/settings_select_trip"/>
+            <com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
+                android:id="@+id/settings_multi_button_trip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                app:numButtons="4"
+                app:textButton1="@string/CurrentTripData_short"
+                app:textButton2="@string/SinceChargeData_short"
+                app:textButton3="@string/AutoTripData_short"
+                app:textButton4="@string/CurrentMonthData_short"
+                />-->
 
             <View
                 style="@style/menu_divider_style"

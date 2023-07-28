@@ -22,6 +22,7 @@ class PermissionsActivity: Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_permissions)
         if (checkPermissions()){
             finish()
             startActivity(Intent(applicationContext, MainActivity::class.java))

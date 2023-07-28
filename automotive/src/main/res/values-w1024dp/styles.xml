@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="title_text_style">
+        <item name="android:tag">bold</item>
+        <item name="android:drawablePadding">20dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">138dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textSize">@dimen/title_font_size</item>
+        <item name="android:textFontWeight">@integer/title_font_weight</item>
+    </style>
+    <style name="title_back_button_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">138dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginHorizontal">15dp</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:src">@drawable/ic_arrow_back</item>
+    </style>
+    <style name="menu_section_title_style">
+        <!--<item name="android:tag">bold</item>-->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:textSize">@dimen/section_title_font_size</item>
+        <!--<item name="android:textFontWeight">@integer/title_font_weight</item>-->
+        <item name="android:textColor">@color/inactive_text_color</item>
+        <!--<item name="android:textColor">?android:attr/colorControlActivated</item>-->
+    </style>
+    <style name="menu_row_top_text">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/std_font_size</item>
+        <item name="android:textFontWeight">@integer/std_font_weight</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    <style name="menu_row_content_text">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/reduced_font_size</item>
+        <item name="android:textFontWeight">@integer/std_font_weight</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:textColor">@color/secondary_text_color</item>
+    </style>
+    <style name="menu_standard_row_label">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/std_row_height</item>
+        <item name="android:textSize">@dimen/std_font_size</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textFontWeight">@integer/std_font_weight</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+    <style name="dialog_divider_bar">
+        <item name="android:layout_height">5dp</item>
+        <item name="android:layout_width">55dp</item>
+        <item name="android:layout_marginTop">15dp</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:background">?android:attr/textColorPrimary</item>
+    </style>
+</resources>

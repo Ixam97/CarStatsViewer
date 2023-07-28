@@ -118,7 +118,7 @@ class TripHistoryRowWidget(
             }
 
             when (it.session_type) {
-                TripType.SINCE_CHARGE -> rowIcon.setImageResource(R.drawable.ic_charger_2)
+                TripType.SINCE_CHARGE -> rowIcon.setImageResource(R.drawable.ic_charger)
                 TripType.MONTH -> rowIcon.setImageResource(R.drawable.ic_month)
                 TripType.AUTO -> rowIcon.setImageResource(R.drawable.ic_day)
                 TripType.MANUAL -> rowIcon.setImageResource(R.drawable.ic_hand)

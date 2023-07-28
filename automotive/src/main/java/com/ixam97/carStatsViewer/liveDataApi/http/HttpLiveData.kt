@@ -73,6 +73,7 @@ class HttpLiveData (
         val username = layout.findViewById<EditText>(R.id.http_live_data_username)
         val password = layout.findViewById<EditText>(R.id.http_live_data_password)
         val httpLiveDataEnabled = layout.findViewById<Switch>(R.id.http_live_data_enabled)
+        val httpLiveDataLocation = layout.findViewById<Switch>(R.id.http_live_data_location)
         val abrpDebug = layout.findViewById<Switch>(R.id.http_live_data_abrp)
 
         val httpLiveDataSettingsDialog = AlertDialog.Builder(context).apply {
@@ -93,9 +94,13 @@ class HttpLiveData (
         val dialog = httpLiveDataSettingsDialog.show()
 
         httpLiveDataEnabled.isChecked = AppPreferences(context).httpLiveDataEnabled
+        httpLiveDataLocation.isChecked = AppPreferences(context).httpLiveDataLocation
         abrpDebug.isChecked = AppPreferences(context).httpLiveDataSendABRPDataset
         httpLiveDataEnabled.setOnClickListener {
             AppPreferences(context).httpLiveDataEnabled = httpLiveDataEnabled.isChecked
+        }
+        httpLiveDataLocation.setOnClickListener {
+            AppPreferences(context).httpLiveDataLocation = httpLiveDataLocation.isChecked
         }
         abrpDebug.setOnClickListener {
             AppPreferences(context).httpLiveDataSendABRPDataset = abrpDebug.isChecked
@@ -132,6 +137,7 @@ class HttpLiveData (
         if (!realTimeData.isInitialized()) return
 
         connectionStatus = try {
+            val useLocation = AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation
             send(
                 HttpDataSet(
                     timestamp = System.currentTimeMillis(),
@@ -143,9 +149,9 @@ class HttpLiveData (
                     batteryLevel = realTimeData.batteryLevel!!,
                     stateOfCharge = realTimeData.stateOfCharge!!,
                     ambientTemperature = realTimeData.ambientTemperature!!,
-                    lat = realTimeData.lat,
-                    lon = realTimeData.lon,
-                    alt = realTimeData.alt,
+                    lat = if (useLocation) realTimeData.lat else null,
+                    lon = if (useLocation) realTimeData.lon else null,
+                    alt = if (useLocation) realTimeData.alt else null,
 
                     // ABRP debug
                     abrpPackage = if (CarStatsViewer.appPreferences.httpLiveDataSendABRPDataset) (CarStatsViewer.liveDataApis[0] as AbrpLiveData).lastPackage else null,

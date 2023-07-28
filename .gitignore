@@ -37,3 +37,7 @@ proguard-project.txt
 .idea
 
 /automotive/release/
+/automotive/dev/
+credentials.xml
+/automotive/stable/
+/automotive/debug/

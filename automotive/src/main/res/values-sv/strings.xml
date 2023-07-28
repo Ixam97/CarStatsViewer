@@ -47,7 +47,7 @@
     <string name="settings_button_back">Tillbaka</string>
     <string name="settings_button_quit">Avsluta appen</string>
     <string name="settings_notifications">Aviseringar</string>
-    <string name="settings_consumption_unit">Wh/km som förbrukningsenhet</string>
+    <string name="settings_consumption_unit">Wh/%s som förbrukningsenhet</string>
     <string name="settings_debug">Felsökningsinformation</string>
     <string name="settings_experimental_layout">Visa experimentell layout</string>
     <string name="settings_consumption_plot">Förbrukningsvy</string>

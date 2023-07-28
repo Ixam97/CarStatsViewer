@@ -60,7 +60,7 @@ class MainActivity : FragmentActivity() {
 
     private val chargePlotLine = PlotLine(
         PlotLineConfiguration(
-            PlotRange(0f, 20f, 0f, 160f, 20f),
+            PlotRange(0f, 20f, 0f, 240f, 20f),
             PlotLineLabelFormat.FLOAT,
             PlotHighlightMethod.AVG_BY_TIME,
             "kW"
@@ -94,10 +94,11 @@ class MainActivity : FragmentActivity() {
     override fun onResume() {
         super.onResume()
 
-        CarStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
+        // CarStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
 
-        setTripTypeIcon(appPreferences.mainViewTrip + 1)
+        // setTripTypeIcon(appPreferences.mainViewTrip + 1)
 
+        /*
         // Temporary
         if (appPreferences.altLayout) {
             main_gage_layout.visibility = View.GONE
@@ -116,6 +117,7 @@ class MainActivity : FragmentActivity() {
         main_soc_gage.maxValue = 100f
         main_soc_gage.gageName = "State of charge"
         main_soc_gage.gageUnit = "%"
+        */
 
         setGageAndPlotUnits(appPreferences.consumptionUnit, appPreferences.distanceUnit)
 
@@ -363,8 +365,10 @@ class MainActivity : FragmentActivity() {
         setupDefaultUi()
         setUiEventListeners()
 
-        main_button_performance.isEnabled = true
-        main_button_performance.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+        if (BuildConfig.FLAVOR != "dev") main_button_screenshot.visibility = View.GONE
+
+        main_button_perf.isEnabled = false
+        main_button_perf.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
 
         if (appPreferences.versionString != BuildConfig.VERSION_NAME) {
 
@@ -383,7 +387,7 @@ class MainActivity : FragmentActivity() {
     private fun setTripTypeIcon(tripType: Int) {
         when (tripType) {
             TripType.MANUAL -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_hand))
-            TripType.SINCE_CHARGE -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_charger_2))
+            TripType.SINCE_CHARGE -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_charger))
             TripType.AUTO -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_day))
             TripType.MONTH -> main_trip_type_icon.setImageDrawable(getDrawable(R.drawable.ic_month))
             else -> main_trip_type_icon.setImageDrawable(null)
@@ -419,15 +423,36 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun setGageLimits() {
-        if (appPreferences.bstEdition) {
-            main_power_gage.maxValue = 350f
-            main_power_gage.minValue = -175f
-        } else if (appPreferences.driveTrain == 2) {
-            main_power_gage.maxValue = 300f
-            main_power_gage.minValue = -150f
-        } else {
-            main_power_gage.maxValue = 170f
-            main_power_gage.minValue = -100f
+        main_power_gage.minValue = -100f
+
+        main_power_gage.maxValue = when (appPreferences.performanceUpgrade) {
+            true -> 350f
+            false -> {
+                when (appPreferences.driveTrain) {
+                    0 -> {
+                        if (appPreferences.modelYear <= 2) 150f
+                        else 200f
+                    }
+                    1 -> {
+                        if (appPreferences.modelYear <= 2) 170f
+                        else 220f
+                    }
+                    2 -> {
+                        if (appPreferences.modelYear <= 2) 300f
+                        else 310f
+                    }
+                    else -> 300f
+                }
+            }
+        }
+
+        main_charge_gage.maxValue = when (appPreferences.driveTrain) {
+            0 -> 135f
+            1, 2 -> {
+                if (appPreferences.modelYear <= 2) 155f
+                else 205f
+            }
+            else -> 155f
         }
     }
 
@@ -616,7 +641,7 @@ class MainActivity : FragmentActivity() {
             // DataManager.chargeTime = 0L
         }
 
-        main_button_performance.setOnClickListener {
+        main_button_screenshot.setOnClickListener {
             // throw Exception("Intentional crash")
             InAppLogger.i("Debug")
             lifecycleScope.launch {

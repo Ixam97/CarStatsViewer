@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="25dp"
+        android:paddingBottom="50dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/changes_0_25_1_title"
+            android:text="0.25.0:"
+            style="@style/title_text_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"/>
+        <View style="@style/dialog_divider_bar" />
+        <TextView
+            style="@style/menu_row_top_text"
+            android:id="@+id/changes_0_25_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"/>
+        <View style="@style/menu_divider_style"/>
+        <TextView
+            android:id="@+id/changes_0_25_0_title"
+            android:text="0.25.0:"
+            style="@style/title_text_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"/>
+        <View style="@style/dialog_divider_bar" />
+        <TextView
+            style="@style/menu_row_top_text"
+            android:id="@+id/changes_0_25_0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</ScrollView>

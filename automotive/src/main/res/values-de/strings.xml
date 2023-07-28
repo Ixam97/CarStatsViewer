@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string-array name="changes_0_25_1">
+        <item>Anpassungen an der UI, insbesondere in der Tripzusammenfassung</item>
+        <item>Fahrzeugkonfiguration für MY24 hinzugefügt.</item>
+        <item>Die Weitergabe des Standortes kann nun für jede API einzeln festgelegt werden</item>
+        <item>Kleinere Bugfixes</item>
+    </string-array>
+
     <string-array name="changes_0_25_0">
         <item>Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips.</item>
         <item>Ladevorgänge können nun für bis zu 5 Minuten unterbrochen werden, bevor ein neuer Ladevorgang angelegt wird, sogar, wenn das Auto bewegt wurde.</item>
@@ -113,9 +121,10 @@
     <string name="settings_button_back">Zurück</string>
     <string name="settings_button_quit">App beenden</string>
     <string name="settings_notifications">Detaillierte Benachrichtigung</string>
-    <string name="settings_consumption_unit">Wh/Distanz als Verbrauchseinheit</string>
+    <string name="settings_consumption_unit">Wh/%s als Verbrauchseinheit</string>
     <string name="settings_use_location">Standorterfassung</string>
     <string name="settings_autostart">Automatischer App-Start</string>
+    <string name="settings_distance_unit">Meilen als Distanzeinheit</string>
     <string name="settings_debug">Debug-Informationen</string>
     <string name="settings_main_view">Hauptansicht</string>
     <string name="settings_experimental_layout">Zeige experimentelles Layout</string>
@@ -160,6 +169,11 @@
     <string name="SinceChargeData">Seit letzter Ladung</string>
     <string name="AutoTripData">Automatischer Trip</string>
     <string name="CurrentMonthData">Aktueller Monat</string>
+
+    <string name="CurrentTripData_short">Manuell</string>
+    <string name="SinceChargeData_short">Seit Ladung</string>
+    <string name="AutoTripData_short">Automatisch</string>
+    <string name="CurrentMonthData_short">Monat</string>
 
     <string-array name="trip_type_names">
         <item>Unbekannter Triptyp</item>

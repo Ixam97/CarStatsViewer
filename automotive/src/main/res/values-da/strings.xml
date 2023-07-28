@@ -47,7 +47,7 @@
     <string name="settings_button_back">Tilbage</string>
     <string name="settings_button_quit">Afslut app</string>
     <string name="settings_notifications">Notifikationer</string>
-    <string name="settings_consumption_unit">Wh/km som forbrugsenhed</string>
+    <string name="settings_consumption_unit">Wh/%s som forbrugsenhed</string>
     <string name="settings_debug">Debug information</string>
     <string name="settings_experimental_layout">Vis eksperimentelt layout</string>
     <string name="settings_consumption_plot">Forbrugsoversigt</string>

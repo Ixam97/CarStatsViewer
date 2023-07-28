@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="title_back_button_style">
+        <item name="android:layout_width">@dimen/std_icon_size</item>
+        <item name="android:layout_height">@dimen/std_icon_size</item>
+        <item name="android:layout_margin">15dp</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:src">@drawable/ic_chevron_back</item>
+    </style>
+    <style name="menu_section_title_style">
+        <item name="android:tag">bold</item>-->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:layout_marginBottom">-7dp</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:textSize">34sp</item>
+        <!--<item name="android:textFontWeight">@integer/title_font_weight</item>-->
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <!--<item name="android:textColor">?android:attr/colorControlActivated</item>-->
+    </style>
+    <style name="menu_row_top_text">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_marginTop">-5dp</item>
+        <item name="android:layout_marginBottom">-5dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">@dimen/std_font_size</item>
+        <item name="android:textFontWeight">@integer/std_font_weight</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    <style name="menu_row_content_text">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginTop">-5dp</item>
+        <item name="android:layout_marginBottom">-5dp</item>
+        <item name="android:textSize">@dimen/reduced_font_size</item>
+        <item name="android:textFontWeight">@integer/std_font_weight</item>
+        <item name="android:textColor">@color/secondary_text_color</item>
+    </style>
+</resources>

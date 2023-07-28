@@ -7,6 +7,7 @@
     <dimen name="chevron_icon_size">74dp</dimen>
     <dimen name="std_font_size">31sp</dimen>
     <dimen name="reduced_font_size">27sp</dimen>
+    <dimen name="version_font_size">23sp</dimen>
     <dimen name="log_font_size">20sp</dimen>
     <dimen name="title_font_size">47sp</dimen>
     <integer name="title_font_weight">500</integer>

@@ -5,6 +5,7 @@
     <color name="button_background_inactive">#121212</color>
     <color name="button_background_active">#D96C00</color>
     <color name="secondary_text_color">#B3B3B3</color>
+    <color name="inactive_text_color">#757575</color>
     <color name="disabled_tint">#54FFFFFF</color>
     <color name="disable_background">#1F1F1F</color>
     <color name="slideup_activity_background">#090909</color>

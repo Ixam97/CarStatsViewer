@@ -7,14 +7,25 @@
     android:padding="25dp"
     android:orientation="vertical">
 
+    <Switch
+        android:id="@+id/debug_miles_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/std_font_size"
+        android:text="Miles as distance unit"/>
+
+    <View
+        style="@style/menu_divider_style"
+        android:background="?android:attr/listDivider" />
+
     <com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
-        android:id="@+id/log_level_multiselect"
+        android:id="@+id/debug_level_multiselect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="Logging level"/>
 
     <com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
-        android:id="@+id/log_length_multiselect"
+        android:id="@+id/debug_length_multiselect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="Max log length"/>
