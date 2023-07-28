@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--
     <string name="ui_update_plot_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.ui_update_plot_broadcast</string>
     <string name="ui_update_gages_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.ui_update_gages_broadcast</string>
     <string name="gear_update_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.gear_update_broadcast</string>
@@ -7,4 +8,5 @@
     <string name="save_trip_data_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.save_trip_data_broadcast</string>
     <string name="VHAL_emulator_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.VHAL_emulator_broadcast</string>
     <string name="distraction_optimization_broadcast" translatable="false">com.ixam97.carStatsViewer_dev.distraction_optimization_broadcast</string>
+-->
 </resources>
