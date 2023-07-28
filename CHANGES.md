@@ -1,9 +1,10 @@
 # Changelog [DE]:
 
 ## 0.25.1 (27.07.2023)
-- Anpassungen an der UI, insbesondere in der Tripzusammenfassung
-- Die Weitergabe des Standortes kann nun für jede API einzeln festgelegt werden
-- Kleinere Bugfixes
+- Anpassungen an der UI, insbesondere in der Tripzusammenfassung.
+- Die Weitergabe des Standortes kann nun für jede API einzeln festgelegt werden.
+- Fahrzeugkonfiguration für MY24 hinzugefügt.
+- Kleinere Bugfixes.
 
 ## 0.25.0 (23.07.2023)
 - Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips.

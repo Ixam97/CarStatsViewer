@@ -60,7 +60,7 @@ class MainActivity : FragmentActivity() {
 
     private val chargePlotLine = PlotLine(
         PlotLineConfiguration(
-            PlotRange(0f, 20f, 0f, 160f, 20f),
+            PlotRange(0f, 20f, 0f, 240f, 20f),
             PlotLineLabelFormat.FLOAT,
             PlotHighlightMethod.AVG_BY_TIME,
             "kW"
@@ -423,15 +423,36 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun setGageLimits() {
-        if (appPreferences.bstEdition) {
-            main_power_gage.maxValue = 350f
-            main_power_gage.minValue = -175f
-        } else if (appPreferences.driveTrain == 2) {
-            main_power_gage.maxValue = 300f
-            main_power_gage.minValue = -150f
-        } else {
-            main_power_gage.maxValue = 170f
-            main_power_gage.minValue = -100f
+        main_power_gage.minValue = -100f
+
+        main_power_gage.maxValue = when (appPreferences.performanceUpgrade) {
+            true -> 350f
+            false -> {
+                when (appPreferences.driveTrain) {
+                    0 -> {
+                        if (appPreferences.modelYear <= 2) 150f
+                        else 200f
+                    }
+                    1 -> {
+                        if (appPreferences.modelYear <= 2) 170f
+                        else 220f
+                    }
+                    2 -> {
+                        if (appPreferences.modelYear <= 2) 300f
+                        else 310f
+                    }
+                    else -> 300f
+                }
+            }
+        }
+
+        main_charge_gage.maxValue = when (appPreferences.driveTrain) {
+            0 -> 135f
+            1, 2 -> {
+                if (appPreferences.modelYear <= 2) 155f
+                else 205f
+            }
+            else -> 155f
         }
     }
 

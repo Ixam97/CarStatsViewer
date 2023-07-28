@@ -96,6 +96,18 @@ class SettingsVehicleActivity : Activity() {
                     }
                 }
             }
+            3 -> {
+                settings_vehicle_switch_bst.isChecked = false
+                settings_vehicle_switch_bst.isEnabled = false
+                settings_vehicle_switch_plus.isEnabled = true
+                settings_vehicle_multiselect_drivetrain.isEnabled = true
+                if (settings_vehicle_multiselect_drivetrain.selectedIndex != 2) {
+                    settings_vehicle_switch_performance.isEnabled = false
+                    settings_vehicle_switch_performance.isChecked = false
+                } else {
+                    settings_vehicle_switch_performance.isEnabled = true
+                }
+            }
         }
 
         settings_vehicle_string.text = VehicleDefinitions.Polestar2.getVehicleString(

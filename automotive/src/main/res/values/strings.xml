@@ -50,6 +50,7 @@
 
     <string-array name="changes_0_25_1">
         <item>UI adjustments, especially in the trip summary.</item>
+        <item>Added vehicle configuration for MY24.</item>
         <item>The sharing of the current location can now be configured for each API individually</item>
         <item>Minor bugfixes</item>
     </string-array>

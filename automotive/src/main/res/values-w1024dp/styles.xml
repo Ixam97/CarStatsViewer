@@ -4,7 +4,7 @@
         <item name="android:tag">bold</item>
         <item name="android:drawablePadding">20dp</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">137dp</item>
+        <item name="android:layout_height">138dp</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
@@ -13,7 +13,7 @@
     </style>
     <style name="title_back_button_style">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">137dp</item>
+        <item name="android:layout_height">138dp</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_marginHorizontal">15dp</item>
         <item name="android:background">@android:color/transparent</item>
@@ -54,5 +54,12 @@
         <item name="android:textFontWeight">@integer/std_font_weight</item>
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
         <item name="android:gravity">center_vertical</item>
+    </style>
+    <style name="dialog_divider_bar">
+        <item name="android:layout_height">5dp</item>
+        <item name="android:layout_width">55dp</item>
+        <item name="android:layout_marginTop">15dp</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:background">?android:attr/textColorPrimary</item>
     </style>
 </resources>

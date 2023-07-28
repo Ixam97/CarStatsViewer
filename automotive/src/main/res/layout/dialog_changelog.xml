@@ -5,8 +5,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginHorizontal="30dp"
+        android:layout_marginHorizontal="25dp"
         android:paddingBottom="50dp"
         android:orientation="vertical">
         <TextView
@@ -16,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"/>
+        <View style="@style/dialog_divider_bar" />
         <TextView
             style="@style/menu_row_top_text"
             android:id="@+id/changes_0_25_1"
@@ -30,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"/>
+        <View style="@style/dialog_divider_bar" />
         <TextView
             style="@style/menu_row_top_text"
             android:id="@+id/changes_0_25_0"

@@ -117,6 +117,11 @@
     <style name="spinner_text_size" parent="AppTheme">
         <item name="android:textSize">@dimen/std_font_size</item>
     </style>
+    <style name="dialog_divider_bar">
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:visibility">gone</item>
+    </style>
     <style name="AppTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar">
         <!--
         <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>

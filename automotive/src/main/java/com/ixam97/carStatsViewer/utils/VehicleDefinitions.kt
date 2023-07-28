@@ -11,13 +11,15 @@ object VehicleDefinitions {
         val modelYears = arrayListOf<String>(
             "2021",
             "2022",
-            "2023"
+            "2023",
+            "2024"
         )
 
         val modelYearsCode = arrayListOf<String>(
             "20",
             "22",
-            "23"
+            "23",
+            "24"
         )
 
         val driveTrains = arrayListOf<String>(
@@ -27,6 +29,10 @@ object VehicleDefinitions {
         )
 
         val driveTrainsCode = mapOf<String, ArrayList<String>>(
+            "24" to arrayListOf<String>(
+                "69:single:sr",
+                "82:single:lr",
+                "82:dual:lr"),
             "23" to arrayListOf<String>(
                 "67:single:sr",
                 "78:single:lr",

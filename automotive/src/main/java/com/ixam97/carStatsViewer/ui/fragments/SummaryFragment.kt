@@ -309,16 +309,23 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             }
         }
 
-        when (session.session_type) {
-            TripType.MANUAL -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_hand))
-            TripType.SINCE_CHARGE -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_charger))
-            TripType.AUTO -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_day))
-            TripType.MONTH -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_month))
-        }
+
 
         if ((session.end_epoch_time?:0) > 0 ) {
+            when (session.session_type) {
+                TripType.MANUAL -> summary_title.setCompoundDrawables(applicationContext.getDrawable(R.drawable.ic_hand),null,null, null)
+                TripType.SINCE_CHARGE -> summary_title.setCompoundDrawables(applicationContext.getDrawable(R.drawable.ic_charger),null,null, null)
+                TripType.AUTO -> summary_title.setCompoundDrawables(applicationContext.getDrawable(R.drawable.ic_day),null,null, null)
+                TripType.MONTH -> summary_title.setCompoundDrawables(applicationContext.getDrawable(R.drawable.ic_month),null,null, null)
+            }
             summary_title.text = "${StringFormatters.getDateString(Date(session.start_epoch_time))}, ${resources.getStringArray(R.array.trip_type_names)[session.session_type]}"
         } else {
+            when (session.session_type) {
+                TripType.MANUAL -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_hand))
+                TripType.SINCE_CHARGE -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_charger))
+                TripType.AUTO -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_day))
+                TripType.MONTH -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_month))
+            }
             summary_title.visibility = View.GONE
             summary_trip_selector.visibility = View.VISIBLE
             summary_selector_title.text = resources.getStringArray(R.array.trip_type_names)[session.session_type]
