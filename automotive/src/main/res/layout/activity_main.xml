@@ -303,6 +303,8 @@
                 android:layout_width="0dp"
                 android:layout_height="80dp"
                 android:layout_marginEnd="7.5dp"
+                android:drawableStart="@drawable/ic_chevron_up"
+                android:drawablePadding="10dp"
                 android:text="@string/main_button_trip_summary"/>
             <Button
                 android:id="@+id/main_button_secondary_dimension"
