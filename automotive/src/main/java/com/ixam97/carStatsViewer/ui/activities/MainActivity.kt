@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.drawToBitmap
@@ -18,6 +19,7 @@ import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.dataProcessor.DrivingState
 import com.ixam97.carStatsViewer.database.tripData.TripType
+import com.ixam97.carStatsViewer.databinding.ActivityMainBinding
 import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
@@ -53,9 +55,9 @@ class MainActivity : FragmentActivity() {
         ),
     )
     private val consumptionPlotLinePaint  = PlotLinePaint(
-        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.primary_plot_color), PlotView.textSize),
-        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color), PlotView.textSize),
-        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.primary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
+        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
+        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color_alt), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size))
     ) { appPreferences.consumptionPlotSecondaryColor }
 
     private val chargePlotLine = PlotLine(
@@ -67,9 +69,9 @@ class MainActivity : FragmentActivity() {
         )
     )
     private val chargePlotLinePaint = PlotLinePaint(
-        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.charge_plot_color), PlotView.textSize),
-        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color), PlotView.textSize),
-        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color_alt), PlotView.textSize)
+        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.charge_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
+        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
+        PlotPaint.byColor(CarStatsViewer.appContext.getColor(R.color.secondary_plot_color_alt), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size))
     ) { appPreferences.chargePlotSecondaryColor }
 
     private lateinit var context: Context
@@ -128,8 +130,13 @@ class MainActivity : FragmentActivity() {
         setGageVisibilities(appPreferences.consumptionPlotVisibleGages, appPreferences.consumptionPlotVisibleGages)
     }
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
+        val view = binding.root
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -206,7 +213,7 @@ class MainActivity : FragmentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 CarStatsViewer.dataProcessor.currentChargingSessionDataFlow.collectLatest { chargingSession ->
-                    // InAppLogger.i("Charging update")
+                    // InAppLogger.i("########## Charging update ##########")
                     chargingSession?.let {
                         neoChargedEnergy = it.charged_energy
                         neoChargeTime = it.chargeTime
@@ -261,7 +268,7 @@ class MainActivity : FragmentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 CarStatsViewer.dataProcessor.selectedSessionDataFlow.collectLatest { session ->
-
+                    // InAppLogger.i("########## Session state changed ##########")
                     neoDistance = session?.driven_distance?:0.0
                     neoEnergy = session?.used_energy?:0.0
                     neoTime = session?.drive_time?:0
@@ -281,61 +288,44 @@ class MainActivity : FragmentActivity() {
 
                     session?.drivingPoints?.let { drivingPoints ->
                         val startIndex = consumptionPlotLine.getDataPointsSize()
+                        var prevDrivingPoint = consumptionPlotLine.lastItem()
+                        var lastItemIndex = drivingPoints.withIndex().find { it.value.driving_point_epoch_time == prevDrivingPoint?.EpochTime }?.index
+
                         when {
                             startIndex == 0 && drivingPoints.isEmpty() -> {
                                 consumptionPlotLine.reset()
                             }
-                            startIndex == 0 -> {
+                            startIndex == 0
+                            || (prevDrivingPoint?.Distance?:0f) > 20_000
+                            || lastItemIndex == null
+                            || drivingPoints.size - lastItemIndex > 100 -> {
+                                InAppLogger.d("Refreshing entire consumption plot.")
                                 consumptionPlotLine.reset()
-                                consumptionPlotLine.addDataPoints(DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints, 10_000f))
+                                lifecycleScope.launch {
+                                    val dataPoints = DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints, 10_000f)
+                                    runOnUiThread {
+                                        consumptionPlotLine.addDataPoints(dataPoints)
+                                    }
+                                }
                             }
-                            startIndex != drivingPoints.size -> {
-                                var prevDrivingPoint = consumptionPlotLine.lastItem()
+                            startIndex > 0 -> {
+                                // if (lastItemIndex == null) lastItemIndex = drivingPoints.size
+                                // InAppLogger.v("Last plot item index: $lastItemIndex, drivingPoints size: ${drivingPoints.size}")
 
-                                for (i in drivingPoints.indices) {
-                                    if (i < startIndex) continue
-
+                                while (lastItemIndex < drivingPoints.size - 1) {
+                                    InAppLogger.i("Data point added to plot")
                                     prevDrivingPoint = consumptionPlotLine.addDataPoint(
                                         DataConverters.consumptionPlotLineItemFromDrivingPoint(
-                                            drivingPoints[i],
+                                            drivingPoints[lastItemIndex + 1],
                                             prevDrivingPoint
                                         )
                                     ) ?: prevDrivingPoint
+                                    lastItemIndex++
                                 }
                             }
                         }
-
                         main_consumption_plot.invalidate()
                     }
-
-                    /*
-                    session?.drivingPoints?.let { drivingPoints ->
-                        var sizeDelta = drivingPoints.size - consumptionPlotLine.getDataPointsSize()
-                        // InAppLogger.d("Size delta: $sizeDelta (${drivingPoints.size} vs. ${consumptionPlotLine.getDataPointsSize()}, $nonFiniteCounter non-finite)")
-                        if (sizeDelta in 1..9) {
-                            while (sizeDelta > 0) {
-                                val prevDrivingPoint = if (consumptionPlotLine.getDataPointsSize() > 0) {
-                                    consumptionPlotLine.getDataPoints(PlotDimensionX.DISTANCE).last()
-                                } else null
-                                consumptionPlotLine.addDataPoint(
-                                    DataConverters.consumptionPlotLineItemFromDrivingPoint(
-                                        drivingPoints[drivingPoints.size - sizeDelta],
-                                        prevDrivingPoint
-                                    )
-                                )
-                                sizeDelta --
-                            }
-                            main_consumption_plot.invalidate()
-                        } else if (sizeDelta > 10) {
-                            /** refresh entire plot for large numbers of new data Points */
-                            consumptionPlotLine.reset()
-                            consumptionPlotLine.addDataPoints(DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints, 10_000f))
-                            main_consumption_plot.invalidate()
-                        }
-                    }
-
-                     */
-                    // updateActivity()
                 }
             }
         }
@@ -350,11 +340,12 @@ class MainActivity : FragmentActivity() {
         InAppLogger.d("Main view created")
 
 
-        PlotView.textSize = resources.getDimension(R.dimen.reduced_font_size)
-        PlotView.xMargin = resources.getDimension(R.dimen.plot_x_margin).toInt()
-        PlotView.yMargin = resources.getDimension(R.dimen.plot_y_margin).toInt()
-        GageView.valueTextSize = resources.getDimension(R.dimen.gage_value_text_size)
-        GageView.descriptionTextSize = resources.getDimension(R.dimen.gage_desc_text_size)
+        // PlotView.textSize = resources.getDimension(R.dimen.reduced_font_size)
+        // InAppLogger.i("Plot text size: ${PlotView.textSize}")
+        // PlotView.xMargin = resources.getDimension(R.dimen.plot_x_margin).toInt()
+        // PlotView.yMargin = resources.getDimension(R.dimen.plot_y_margin).toInt()
+        // GageView.valueTextSize = resources.getDimension(R.dimen.gage_value_text_size)
+        // GageView.descriptionTextSize = resources.getDimension(R.dimen.gage_desc_text_size)
 
         setContentView(R.layout.activity_main)
 

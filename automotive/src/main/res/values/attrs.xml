@@ -25,4 +25,13 @@
         <attr name="textButton3" format="string"/>
         <attr name="textButton4" format="string"/>
     </declare-styleable>
+    <declare-styleable name="GageView">
+        <attr name="descriptionTextSize" format="dimension"/>
+        <attr name="valueTextSize" format="dimension"/>
+    </declare-styleable>
+    <declare-styleable name="PlotView">
+        <attr name="baseTextSize" format="dimension"/>
+        <attr name="xMargin" format="dimension"/>
+        <attr name="yMargin" format="dimension"/>
+    </declare-styleable>
 </resources>

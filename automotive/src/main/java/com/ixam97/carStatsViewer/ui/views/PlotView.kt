@@ -24,11 +24,29 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
-class PlotView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
-    companion object {
-        var textSize = 26f
-        var xMargin = 0
-        var yMargin = 0
+class PlotView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : View(context, attrs) {
+    // companion object {
+    //     var textSize = 26f
+    //     var xMargin = 0
+    //     var yMargin = 0
+    // }
+
+    var textSize: Float
+    var xMargin: Int
+    var yMargin: Int
+
+    init {
+        val attributes = context.obtainStyledAttributes(attrs, R.styleable.PlotView)
+        try {
+            textSize = attributes.getDimension(R.styleable.PlotView_baseTextSize, 26f)
+            xMargin = attributes.getDimension(R.styleable.PlotView_xMargin, 0f).toInt()
+            yMargin = attributes.getDimension(R.styleable.PlotView_yMargin, 0f).toInt()
+        } finally {
+            attributes.recycle()
+        }
     }
 
     /*var xMargin: Int = 100
