@@ -8,6 +8,10 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
 import com.ixam97.carStatsViewer.utils.Exclude
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 
 class AppPreferences(
     val context: Context
@@ -60,7 +64,7 @@ class AppPreferences(
     var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
     var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
-    var notifications: Boolean get() = Notification.value; set(value) {Notification.value = value}
+    var notifications: Boolean get() = Notification.value; set(value) { Notification.value = value }
     var consumptionUnit: Boolean get() = ConsumptionUnit.value; set(value) {ConsumptionUnit.value = value}
     var plotSpeed: Boolean get() = PlotSpeed.value; set(value) {PlotSpeed.value = value}
     var consumptionPlotSingleMotor: Boolean get() = ConsumptionPlotSingleMotor.value; set(value) {ConsumptionPlotSingleMotor.value = value}
@@ -95,7 +99,13 @@ class AppPreferences(
 
     var mainViewConnectionApi: Int get() = MainViewConnectionApi.value; set(value) {MainViewConnectionApi.value = value}
 
-
+    fun preferencesChangedFlow(): Flow<Unit> = callbackFlow {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            trySend(Unit)
+        }
+        sharedPref.registerOnSharedPreferenceChangeListener(listener)
+        awaitClose { sharedPref.unregisterOnSharedPreferenceChangeListener(listener) }
+    }
 
     // Preferences not saved permanently:
     val exclusionStrategy = AppPreferences.exclusionStrategy
