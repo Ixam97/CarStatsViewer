@@ -449,6 +449,15 @@ class PlotView @JvmOverloads constructor(
         drawYLines(canvas)
     }
 
+    private var dataPointMap : HashMap<PlotLine, List<PlotLineItem>> = HashMap()
+    private fun dataPoints(plotLine: PlotLine?) : List<PlotLineItem>? {
+        if (plotLine == null) return null
+        if (!dataPointMap.containsKey(plotLine)) {
+            dataPointMap[plotLine] = plotLine.getDataPoints(dimension, dimensionRestriction, dimensionShift)
+        }
+        return dataPointMap[plotLine]
+    }
+
     private fun alignZero() {
         if (plotLines.none { it.first.alignZero }) return
 
@@ -460,8 +469,8 @@ class PlotView @JvmOverloads constructor(
             if (index == 0) {
                 if (line.isEmpty() || !line.Visible) return
 
-                val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift)
-                if (dataPoints.isEmpty()) return
+                val dataPoints = dataPoints(plotLine)
+                if (dataPoints?.isEmpty() != false) continue
 
                 val minValue = line.minValue(dataPoints)!!
                 val maxValue = line.maxValue(dataPoints)!!
@@ -598,8 +607,8 @@ class PlotView @JvmOverloads constructor(
 
                     if (drawBackground && configuration.Range.backgroundZero == null) continue
 
-                    val dataPoints = plotLine.getDataPoints(dimension, dimensionRestriction, dimensionShift)
-                    if (dataPoints.isEmpty()) continue
+                    val dataPoints = dataPoints(plotLine)
+                    if (dataPoints?.isEmpty() != false) continue
 
                     val minDimension = plotLine.minDimension(dimension, dimensionRestriction, dimensionShift) ?: continue
                     val maxDimension = plotLine.maxDimension(dimension, dimensionRestriction, dimensionShift) ?: continue
@@ -640,8 +649,8 @@ class PlotView @JvmOverloads constructor(
     }
 
     private fun toPlotPointCollection(configuration: PlotLineConfiguration, line: PlotLine, dimensionY: PlotDimensionY?, minValue: Float, maxValue: Float, minDimension: Any, maxDimension: Any, maxX: Float, maxY: Float, smoothing: Float?, smoothingPercentage: Float?): ArrayList<ArrayList<PointF>> {
-        val dataPointsUnrestricted = line.getDataPoints(dimension)
-        val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPointsUnrestricted, dimension, smoothing, minDimension, maxDimension)
+        val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift, true)
+        val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPoints, dimension, smoothing, minDimension, maxDimension)
 
         val plotPointCollection = ArrayList<ArrayList<PointF>>()
         for (collection in plotLineItemPointCollection) {
@@ -942,7 +951,9 @@ class PlotView @JvmOverloads constructor(
 
                     if (dimensionY != null && index++ > 0) continue
 
-                    val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift)
+                    val dataPoints = dataPoints(plotLine)
+                    if (dataPoints?.isEmpty() != false) continue
+
                     val configuration = when {
                         dimensionY != null -> PlotGlobalConfiguration.DimensionYConfiguration[dimensionY]
                         else -> line.Configuration

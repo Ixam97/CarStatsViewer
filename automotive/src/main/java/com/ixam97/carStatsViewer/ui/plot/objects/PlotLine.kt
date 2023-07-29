@@ -108,12 +108,12 @@ class PlotLine(
         dataPoints.clear()
     }
 
-    fun getDataPoints(dimension: PlotDimensionX, dimensionRestriction: Long? = null, dimensionShift: Long? = null): List<PlotLineItem> {
+    fun getDataPoints(dimension: PlotDimensionX, dimensionRestriction: Long? = null, dimensionShift: Long? = null, surplus: Boolean = false): List<PlotLineItem> {
         return when {
             dataPoints.isEmpty() || dimensionRestriction == null -> dataPoints.map { it.value }
             else ->  {
-                val min = minDimension(dimension, dimensionRestriction, dimensionShift)
-                val max = maxDimension(dimension, dimensionRestriction, dimensionShift)
+                val min = minDimension(dimension, dimensionRestriction, dimensionShift, surplus)
+                val max = maxDimension(dimension, dimensionRestriction, dimensionShift, surplus)
 
                 getDataPoints (dimension, min, max)
             }
@@ -132,17 +132,17 @@ class PlotLine(
         }
     }
 
-    internal fun minDimension(dimension: PlotDimensionX, dimensionRestriction: Long? = null, dimensionShift: Long? = null): Any? {
+    internal fun minDimension(dimension: PlotDimensionX, dimensionRestriction: Long? = null, dimensionShift: Long? = null, surplus: Boolean = false): Any? {
         return when {
             dataPoints.isEmpty() -> null
             else -> when (dimension) {
                 PlotDimensionX.INDEX -> when(dimensionRestriction) {
                     null -> dataPoints.minOf { it.key }
-                    else -> maxDimension(dimension, dimensionRestriction, dimensionShift) as Int - dimensionRestriction
+                    else -> maxDimension(dimension, dimensionRestriction, dimensionShift) as Int - (if (surplus) 2 * dimensionRestriction else dimensionRestriction)
                 }
                 PlotDimensionX.DISTANCE -> when(dimensionRestriction) {
                     null -> dataPoints.minOf { it.value.Distance }
-                    else -> maxDimension(dimension, dimensionRestriction, dimensionShift) as Float - dimensionRestriction
+                    else -> maxDimension(dimension, dimensionRestriction, dimensionShift) as Float - (if (surplus) 2 * dimensionRestriction else dimensionRestriction)
                 }
                 PlotDimensionX.TIME -> when(dimensionRestriction) {
                     null -> dataPoints.minOf { it.value.EpochTime }
@@ -153,7 +153,7 @@ class PlotLine(
         }
     }
 
-    internal fun maxDimension(dimension: PlotDimensionX, dimensionRestriction: Long? = null, dimensionShift: Long? = null): Any? {
+    internal fun maxDimension(dimension: PlotDimensionX, dimensionRestriction: Long? = null, dimensionShift: Long? = null, surplus: Boolean = false): Any? {
         return when {
             dataPoints.isEmpty() -> null
             else -> when (dimension) {
@@ -167,7 +167,7 @@ class PlotLine(
                 }
                 PlotDimensionX.TIME -> when(dimensionRestriction) {
                     null -> dataPoints.maxOf { it.value.EpochTime }
-                    else -> minDimension(dimension, dimensionRestriction, dimensionShift) as Long + dimensionRestriction
+                    else -> minDimension(dimension, dimensionRestriction, dimensionShift) as Long + (if (surplus) 2 * dimensionRestriction else dimensionRestriction)
                 }
                 PlotDimensionX.STATE_OF_CHARGE -> 100f
             }
