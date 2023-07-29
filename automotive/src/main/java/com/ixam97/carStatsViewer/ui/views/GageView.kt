@@ -6,14 +6,27 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.R
 import java.util.*
 import kotlin.math.roundToInt
 
 
-class GageView(context: Context, attrs: AttributeSet) : View(context, attrs) {
-    companion object {
-        var descriptionTextSize = 30f
-        var valueTextSize = 100f
+class GageView @JvmOverloads constructor(
+               context: Context,
+               attrs: AttributeSet? = null
+) : View(context, attrs) {
+
+    var descriptionTextSize: Float
+    var valueTextSize: Float
+
+    init {
+        val attributes = context.obtainStyledAttributes(attrs, R.styleable.GageView)
+        try {
+            descriptionTextSize = attributes.getDimension(R.styleable.GageView_descriptionTextSize, 30f)
+            valueTextSize = attributes.getDimension(R.styleable.GageView_valueTextSize, 100f)
+        } finally {
+            attributes.recycle()
+        }
     }
 
     var gageName : String = "gageName"

@@ -166,7 +166,10 @@
                     android:visibility="gone"
                     android:id="@+id/summary_consumption_plot"
                     android:layout_width="match_parent"
-                    android:layout_height="550dp"/>
+                    android:layout_height="550dp"
+                    app:baseTextSize="@dimen/reduced_font_size"
+                    app:xMargin="@dimen/plot_x_margin"
+                    app:yMargin="@dimen/plot_y_margin"/>
 
                 <RelativeLayout
                     android:id="@+id/summary_progress_bar"
@@ -322,7 +325,10 @@
                 <com.ixam97.carStatsViewer.ui.views.PlotView
                     android:id="@+id/summary_charge_plot_view"
                     android:layout_width="match_parent"
-                    android:layout_height="550dp"/>
+                    android:layout_height="550dp"
+                    app:baseTextSize="@dimen/reduced_font_size"
+                    app:xMargin="@dimen/plot_x_margin"
+                    app:yMargin="@dimen/plot_y_margin"/>
 
                 <View
                     style="@style/menu_divider_style"
