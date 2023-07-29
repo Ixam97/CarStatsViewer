@@ -206,7 +206,7 @@ class MainActivity : FragmentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 CarStatsViewer.dataProcessor.currentChargingSessionDataFlow.collectLatest { chargingSession ->
-                    // InAppLogger.i("Charging update")
+                    // InAppLogger.i("########## Charging update ##########")
                     chargingSession?.let {
                         neoChargedEnergy = it.charged_energy
                         neoChargeTime = it.chargeTime
@@ -261,7 +261,7 @@ class MainActivity : FragmentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 CarStatsViewer.dataProcessor.selectedSessionDataFlow.collectLatest { session ->
-
+                    // InAppLogger.i("########## Session state changed ##########")
                     neoDistance = session?.driven_distance?:0.0
                     neoEnergy = session?.used_energy?:0.0
                     neoTime = session?.drive_time?:0
@@ -281,61 +281,44 @@ class MainActivity : FragmentActivity() {
 
                     session?.drivingPoints?.let { drivingPoints ->
                         val startIndex = consumptionPlotLine.getDataPointsSize()
+                        var prevDrivingPoint = consumptionPlotLine.lastItem()
+                        var lastItemIndex = drivingPoints.withIndex().find { it.value.driving_point_epoch_time == prevDrivingPoint?.EpochTime }?.index
+
                         when {
                             startIndex == 0 && drivingPoints.isEmpty() -> {
                                 consumptionPlotLine.reset()
                             }
-                            startIndex == 0 -> {
+                            startIndex == 0
+                            || (prevDrivingPoint?.Distance?:0f) > 20_000
+                            || lastItemIndex == null
+                            || drivingPoints.size - lastItemIndex > 100 -> {
+                                InAppLogger.d("Refreshing entire consumption plot.")
                                 consumptionPlotLine.reset()
-                                consumptionPlotLine.addDataPoints(DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints, 10_000f))
+                                lifecycleScope.launch {
+                                    val dataPoints = DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints, 10_000f)
+                                    runOnUiThread {
+                                        consumptionPlotLine.addDataPoints(dataPoints)
+                                    }
+                                }
                             }
-                            startIndex != drivingPoints.size -> {
-                                var prevDrivingPoint = consumptionPlotLine.lastItem()
+                            startIndex > 0 -> {
+                                // if (lastItemIndex == null) lastItemIndex = drivingPoints.size
+                                // InAppLogger.v("Last plot item index: $lastItemIndex, drivingPoints size: ${drivingPoints.size}")
 
-                                for (i in drivingPoints.indices) {
-                                    if (i < startIndex) continue
-
+                                while (lastItemIndex < drivingPoints.size - 1) {
+                                    InAppLogger.i("Data point added to plot")
                                     prevDrivingPoint = consumptionPlotLine.addDataPoint(
                                         DataConverters.consumptionPlotLineItemFromDrivingPoint(
-                                            drivingPoints[i],
+                                            drivingPoints[lastItemIndex + 1],
                                             prevDrivingPoint
                                         )
                                     ) ?: prevDrivingPoint
+                                    lastItemIndex++
                                 }
                             }
                         }
-
                         main_consumption_plot.invalidate()
                     }
-
-                    /*
-                    session?.drivingPoints?.let { drivingPoints ->
-                        var sizeDelta = drivingPoints.size - consumptionPlotLine.getDataPointsSize()
-                        // InAppLogger.d("Size delta: $sizeDelta (${drivingPoints.size} vs. ${consumptionPlotLine.getDataPointsSize()}, $nonFiniteCounter non-finite)")
-                        if (sizeDelta in 1..9) {
-                            while (sizeDelta > 0) {
-                                val prevDrivingPoint = if (consumptionPlotLine.getDataPointsSize() > 0) {
-                                    consumptionPlotLine.getDataPoints(PlotDimensionX.DISTANCE).last()
-                                } else null
-                                consumptionPlotLine.addDataPoint(
-                                    DataConverters.consumptionPlotLineItemFromDrivingPoint(
-                                        drivingPoints[drivingPoints.size - sizeDelta],
-                                        prevDrivingPoint
-                                    )
-                                )
-                                sizeDelta --
-                            }
-                            main_consumption_plot.invalidate()
-                        } else if (sizeDelta > 10) {
-                            /** refresh entire plot for large numbers of new data Points */
-                            consumptionPlotLine.reset()
-                            consumptionPlotLine.addDataPoints(DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints, 10_000f))
-                            main_consumption_plot.invalidate()
-                        }
-                    }
-
-                     */
-                    // updateActivity()
                 }
             }
         }
