@@ -434,7 +434,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
         chargePlotLine.reset()
         completedChargingSessions[progress].chargingPoints?.let {
-            chargePlotLine.addDataPoints(DataConverters.chargePlotLineFromChargingPoints(it))
+            if (it.isNotEmpty()) chargePlotLine.addDataPoints(DataConverters.chargePlotLineFromChargingPoints(it))
         }
 
         summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes((completedChargingSessions[progress].end_epoch_time?:0) - completedChargingSessions[progress].start_epoch_time) / 5) + 1) * 5 + 1
