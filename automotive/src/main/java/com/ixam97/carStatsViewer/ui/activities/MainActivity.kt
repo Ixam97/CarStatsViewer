@@ -32,9 +32,8 @@ import com.ixam97.carStatsViewer.ui.plot.objects.PlotLine
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLineConfiguration
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotRange
 import com.ixam97.carStatsViewer.ui.plot.enums.*
-import com.ixam97.carStatsViewer.ui.views.GageView
-import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.*
+import com.ixam97.carStatsViewer.viewModels.MainPreferencesState
 import com.ixam97.carStatsViewer.viewModels.MainRealTimeDataState
 import com.ixam97.carStatsViewer.viewModels.MainTripDataState
 import com.ixam97.carStatsViewer.viewModels.MainViewModel
@@ -127,7 +126,7 @@ class MainActivity : FragmentActivity() {
         binding.mainSocGage.gageUnit = "%"
         */
 
-        setGageAndPlotUnits(appPreferences.consumptionUnit, appPreferences.distanceUnit)
+        // setGageAndPlotUnits(appPreferences.consumptionUnit, appPreferences.distanceUnit)
 
         setGageLimits()
 
@@ -155,7 +154,7 @@ class MainActivity : FragmentActivity() {
 
         val viewModel: MainViewModel by viewModels()
 
-        val mainTripDataObserver = Observer<MainTripDataState>{ mainTripDataState ->
+        val tripDataObserver = Observer<MainTripDataState>{ mainTripDataState ->
             binding.mainGageDistanceTextView.text = mainTripDataState.distanceString
             binding.mainGageUsedPowerTextView.text = mainTripDataState.usedEnergyString
             binding.mainGageAvgConsumptionTextView.text = mainTripDataState.avgConsumptionString
@@ -164,22 +163,57 @@ class MainActivity : FragmentActivity() {
         }
 
         val realTimeDataObserver = Observer<MainRealTimeDataState>{ mainRealTimeDataState ->
-            binding.mainPowerGage.setValue(mainRealTimeDataState.currentPower)
-            binding.mainConsumptionGage.setValue(mainRealTimeDataState.currentConsumption)
+            when(mainRealTimeDataState.currentPowerFormatted) {
+                is Float -> binding.mainPowerGage.setValue(mainRealTimeDataState.currentPowerFormatted)
+                is Int -> binding.mainPowerGage.setValue(mainRealTimeDataState.currentPowerFormatted)
+                else -> binding.mainPowerGage.setValue(null as Int?)
+            }
+            when (mainRealTimeDataState.currentConsumptionFormatted) {
+                is Float -> binding.mainConsumptionGage.setValue(mainRealTimeDataState.currentConsumptionFormatted)
+                is Int -> binding.mainConsumptionGage.setValue(mainRealTimeDataState.currentConsumptionFormatted)
+                else -> binding.mainConsumptionGage.setValue(null as Int?)
+            }
         }
 
-        viewModel.mainTripDataStateLiveData.observe(this, mainTripDataObserver)
+        val preferencesObserver = Observer<MainPreferencesState>{ mainPreferencesState ->
+            binding.mainPowerGage.gageUnit = mainPreferencesState.powerUnit
+            binding.mainConsumptionGage.gageUnit = mainPreferencesState.consumptionUnit
+            consumptionPlotLine.Configuration.Unit = mainPreferencesState.consumptionUnit
+
+            if (appPreferences.consumptionUnit) {
+                consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
+                consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 1f
+
+            } else {
+                consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.FLOAT
+                consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 10f
+            }
+
+            binding.mainConsumptionPlot.dimensionRestriction = appPreferences.distanceUnit.asUnit(CONSUMPTION_DISTANCE_RESTRICTION)
+            binding.mainConsumptionPlot.invalidate()
+        }
+
+        viewModel.mainTripDataStateLiveData.observe(this, tripDataObserver)
         viewModel.mainRealTimeDataStateLiveData.observe(this, realTimeDataObserver)
+        viewModel.mainPreferencesStateLiveData.observe(this, preferencesObserver)
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiEvent.collect { event ->
                     when (event) {
-                        is UiEvent.startActivity -> {
+                        is UiEvent.StartActivity -> {
                             openActivity(event.intent)
                         }
-                        is UiEvent.popBackstack -> {
+                        is UiEvent.PopBackstack -> {
 
+                        }
+                        is UiEvent.TakeScreenshot -> {
+                            lifecycleScope.launch {
+                                CarStatsViewer.screenshotBitmap = binding.root.drawToBitmap()
+                                runOnUiThread {
+                                    Toast.makeText(this@MainActivity, "Screenshot taken", Toast.LENGTH_SHORT).show()
+                                }
+                            }
                         }
                     }
                 }
@@ -194,19 +228,6 @@ class MainActivity : FragmentActivity() {
 
                     if (it.isInitialized()) {
                         neoChargePortConnected = it.chargePortConnected!!
-
-                        val instCons = it.instConsumption
-                        // if (instCons != null && it.speed!! * 3.6 > 3) {
-                        //     if (appPreferences.consumptionUnit) {
-                        //         binding.mainConsumptionGage.setValue(appPreferences.distanceUnit.asUnit(instCons).roundToInt())
-                        //     } else {
-                        //         binding.mainConsumptionGage.setValue(appPreferences.distanceUnit.asUnit(instCons) / 10)
-                        //     }
-                        // } else {
-                        //     binding.mainConsumptionGage.setValue(null as Float?)
-                        // }
-
-                        // binding.mainPowerGage.setValue(it.power!! / 1_000_000f)
 
                         binding.mainChargeGage.setValue(it.power!! / -1_000_000f)
                         binding.mainSocGage.setValue((it.stateOfCharge!! * 100f).roundToInt())
@@ -304,18 +325,12 @@ class MainActivity : FragmentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 CarStatsViewer.dataProcessor.selectedSessionDataFlow.collectLatest { session ->
-                    // InAppLogger.i("########## Session state changed ##########")
-                    // neoDistance = session?.driven_distance?:0.0
-                    // neoEnergy = session?.used_energy?:0.0
-                    // neoTime = session?.drive_time?:0
-                    // neoUsedStateOfCharge = session?.used_soc?:0.0
-                    // neoUsedStateOfChargeEnergy = session?.used_soc_energy?:0.0
 
                     if (session?.drivingPoints == null || session.drivingPoints?.size == 0 || neoSelectedTripId != session.driving_session_id) {
                         consumptionPlotLine.reset()
                         binding.mainConsumptionPlot.invalidate()
                         setTripTypeIcon(session?.session_type?:0)
-                        updateActivity()
+                        setUiVisibilities()
                     }
 
                     neoSelectedTripId = session?.driving_session_id
@@ -390,9 +405,8 @@ class MainActivity : FragmentActivity() {
         }
 
         binding.mainButtonSettings.setOnClickListener { viewModel.onEvent(MainEvent.OnOpenSettings) }
-        binding.mainButtonHistory.setOnClickListener {
-            viewModel.onEvent(MainEvent.OnOpenHistory)
-        }
+        binding.mainButtonHistory.setOnClickListener { viewModel.onEvent(MainEvent.OnOpenHistory) }
+        binding.mainButtonScreenshot.setOnClickListener { viewModel.onEvent(MainEvent.OnTakeScreenshot) }
 
         setupDefaultUi()
         setUiEventListeners()
@@ -428,7 +442,7 @@ class MainActivity : FragmentActivity() {
             View.VISIBLE
         } else View.GONE
     }
-
+/*
     private fun setGageAndPlotUnits(consumptionUnit: Boolean, distanceUnit: DistanceUnitEnum) {
         if (consumptionUnit) {
             binding.mainConsumptionGage.gageUnit = "Wh/%s".format(distanceUnit.unit())
@@ -453,6 +467,8 @@ class MainActivity : FragmentActivity() {
         )
         binding.mainConsumptionPlot.invalidate()
     }
+
+ */
 
     private fun setGageLimits() {
         binding.mainPowerGage.minValue = -100f
@@ -505,30 +521,6 @@ class MainActivity : FragmentActivity() {
         binding.mainSocGage.barVisibility = chargePlotVisibleGages
         binding.mainChargeGage.barVisibility = chargePlotVisibleGages
     }
-
-    private fun updateActivity() {
-
-        setUiVisibilities()
-
-        // binding.mainGageAvgConsumptionTextView.text = StringFormatters.getAvgConsumptionString(neoEnergy.toFloat(), neoDistance.toFloat())
-        // binding.mainGageDistanceTextView.text = StringFormatters.getTraveledDistanceString(neoDistance.toFloat())
-        // binding.mainGageUsedPowerTextView.text = StringFormatters.getEnergyString(neoEnergy.toFloat())
-        // binding.mainGageAvgSpeedTextView.text = StringFormatters.getAvgSpeedString(neoDistance.toFloat(), neoTime)
-        // binding.mainGageTimeTextView.text = StringFormatters.getElapsedTimeString(neoTime)
-        // binding.mainGageChargedEnergyTextView.text = StringFormatters.getEnergyString(neoChargedEnergy.toFloat())
-        // binding.mainGageChargeTimeTextView.text = StringFormatters.getElapsedTimeString(neoChargeTime)
-        // main_gage_ambient_temperature_text_view.text = "  %s".format( StringFormatters.getTemperatureString(selectedDataManager.ambientTemperature))
-
-        // val usedEnergyPerSoC = neoUsedStateOfChargeEnergy / neoUsedStateOfCharge / 100
-        // val currentStateOfCharge = CarStatsViewer.dataProcessor.realTimeData.stateOfCharge * 100
-        // val remainingEnergy = usedEnergyPerSoC * currentStateOfCharge
-        // val avgConsumption = neoEnergy / neoDistance * 1000
-        // val remainingRange = (remainingEnergy / avgConsumption) * 1000
-
-        // main_gage_remaining_range_text_view.text = "  %s (%.0f %% used)".format(StringFormatters.getRemainingRangeString(remainingRange.toFloat()), neoUsedStateOfCharge * 100)
-
-    }
-
 
     private fun setUiVisibilities() {
         if (binding.mainButtonDismissChargePlot.isEnabled == neoChargePortConnected)
@@ -606,14 +598,14 @@ class MainActivity : FragmentActivity() {
         binding.mainChargePlot.invalidate()
 
         binding.mainPowerGage.gageName = getString(R.string.main_gage_power)
-        binding.mainPowerGage.gageUnit = "kW"
+        // binding.mainPowerGage.gageUnit = "kW"
         binding.mainPowerGage.primaryColor = getColor(R.color.polestar_orange)
         binding.mainPowerGage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
         binding.mainPowerGage.minValue = if (appPreferences.consumptionPlotSingleMotor) -100f else -150f
         binding.mainPowerGage.setValue(0f)
 
         binding.mainConsumptionGage.gageName = getString(R.string.main_gage_consumption)
-        binding.mainConsumptionGage.gageUnit = "kWh/100km"
+        // binding.mainConsumptionGage.gageUnit = "kWh/100km"
         binding.mainConsumptionGage.primaryColor = getColor(R.color.polestar_orange)
         binding.mainConsumptionGage.minValue = -30f
         binding.mainConsumptionGage.maxValue = 60f
@@ -671,17 +663,6 @@ class MainActivity : FragmentActivity() {
             binding.mainConsumptionPlot.invalidate()
             // DataManager.chargedEnergy = 0f
             // DataManager.chargeTime = 0L
-        }
-
-        binding.mainButtonScreenshot.setOnClickListener {
-            // throw Exception("Intentional crash")
-            InAppLogger.i("Debug")
-            lifecycleScope.launch {
-                CarStatsViewer.screenshotBitmap = binding.root.drawToBitmap()
-                runOnUiThread {
-                    Toast.makeText(this@MainActivity, "Screenshot taken", Toast.LENGTH_SHORT).show()
-                }
-            }
         }
 
         // binding.mainButtonHistory.setOnClickListener {
