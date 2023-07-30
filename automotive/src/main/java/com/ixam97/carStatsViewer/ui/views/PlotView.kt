@@ -441,6 +441,7 @@ class PlotView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        dataPointMap.clear()
         alignZero()
         drawBackground(canvas)
         drawXLines(canvas)
