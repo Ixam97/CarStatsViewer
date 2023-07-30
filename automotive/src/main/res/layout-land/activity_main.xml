@@ -348,7 +348,7 @@
                         android:layout_marginHorizontal="20dp"/>
 
                     <com.ixam97.carStatsViewer.ui.views.GageView
-                        android:id="@+id/main_SoC_gage"
+                        android:id="@+id/main_state_of_charge_gage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"/>

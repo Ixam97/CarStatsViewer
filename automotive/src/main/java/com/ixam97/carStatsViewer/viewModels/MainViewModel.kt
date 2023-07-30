@@ -1,17 +1,18 @@
 package com.ixam97.carStatsViewer.viewModels
 
 import android.content.Intent
+import androidx.core.content.ContextCompat.startForegroundService
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
-import com.ixam97.carStatsViewer.events.MainEvent
-import com.ixam97.carStatsViewer.events.MainEvent.*
-import com.ixam97.carStatsViewer.events.UiEvent
+import com.ixam97.carStatsViewer.viewModels.MainEvent.*
 import com.ixam97.carStatsViewer.ui.activities.HistoryActivity
 import com.ixam97.carStatsViewer.ui.activities.SettingsActivity
+import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.Ticker
@@ -23,30 +24,17 @@ import kotlinx.coroutines.withContext
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
-data class MainTripDataState(
-    val distanceString: String = "",
-    val usedEnergyString: String = "",
-    val avgConsumptionString: String = "",
-    val tripTimeString: String = "",
-    val avgSpeedString: String = ""
-)
-
-/** The real time values are formatted to numbers according to the unit settings */
-data class MainRealTimeDataState(
-    val currentPowerFormatted: Any = 0f,
-    val currentConsumptionFormatted: Any? = null,
-    val currentStateOfChargeFormatted: Int = 0
-)
-
-data class MainPreferencesState(
-    val distanceUnit: String = "",
-    val powerUnit: String = "",
-    val consumptionUnit: String = ""
-)
-
 class MainViewModel: ViewModel() {
 
+    companion object {
+        const val CONSUMPTION_LAYOUT = 0
+        const val CHARGE_LAYOUT = 1
+    }
+
     private val applicationContext = CarStatsViewer.appContext
+
+    var currentLayoutMode: Int = CONSUMPTION_LAYOUT
+    var drivingOptimization: Boolean = false
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -54,12 +42,17 @@ class MainViewModel: ViewModel() {
     val mainTripDataStateLiveData: MutableLiveData<MainTripDataState> by lazy { MutableLiveData<MainTripDataState>() }
     val mainRealTimeDataStateLiveData: MutableLiveData<MainRealTimeDataState> by lazy { MutableLiveData<MainRealTimeDataState>() }
     val mainPreferencesStateLiveData: MutableLiveData<MainPreferencesState> by lazy { MutableLiveData<MainPreferencesState>() }
+    val mainButtonEnabledStateLiveData: MutableLiveData<MainButtonEnabledState> by lazy { MutableLiveData<MainButtonEnabledState>() }
 
     private var mainTripDataState = MainTripDataState()
     private var mainRealTimeDataState = MainRealTimeDataState()
     private var mainPreferencesState = MainPreferencesState()
+    private var mainButtonEnabledState = MainButtonEnabledState()
 
     init {
+
+        startForegroundService(applicationContext, Intent(applicationContext, DataCollector::class.java))
+
         /** Get Updates from the data processor representing the currently selected trip type */
         viewModelScope.launch {
             CarStatsViewer.dataProcessor.selectedSessionDataFlow.collectLatest { drivingSession ->
@@ -103,10 +96,16 @@ class MainViewModel: ViewModel() {
                 sendUiEvent(UiEvent.StartActivity(intent = Intent(applicationContext, HistoryActivity::class.java).apply { putExtra("animation", "right") }))
             }
             is OnTakeScreenshot -> {
-                sendUiEvent((UiEvent.TakeScreenshot))
+                sendUiEvent(UiEvent.TakeScreenshot)
             }
             is OnOpenSummary -> {
-
+                CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.let { session ->
+                    sendUiEvent(UiEvent.OpenFragment(SummaryFragment(session), "SummaryFragment"))
+                }
+            }
+            is OnCloseChargeLayout -> {
+                currentLayoutMode = CONSUMPTION_LAYOUT
+                applyRealTimeData(CarStatsViewer.dataProcessor.realTimeDataFlow.value)
             }
             is OnSetCurrentTrip -> {
 
@@ -124,14 +123,20 @@ class MainViewModel: ViewModel() {
             usedEnergyString = StringFormatters.getEnergyString(drivingSession.used_energy.toFloat()),
             avgConsumptionString = StringFormatters.getAvgConsumptionString(drivingSession.used_energy.toFloat(), drivingSession.driven_distance.toFloat()),
             tripTimeString = StringFormatters.getElapsedTimeString(drivingSession.drive_time),
-            avgSpeedString = StringFormatters.getAvgSpeedString(drivingSession.driven_distance.toFloat(), drivingSession.drive_time)
+            avgSpeedString = StringFormatters.getAvgSpeedString(drivingSession.driven_distance.toFloat(), drivingSession.drive_time),
+            tripType = drivingSession.session_type
         )
-        mainTripDataStateLiveData.postValue(mainTripDataState)
+        mainTripDataStateLiveData.value = mainTripDataState
     }
 
     /** The real time values are formatted to numbers according to the unit settings */
     private fun applyRealTimeData(realTimeData: RealTimeData?) {
         realTimeData?: return
+
+        drivingOptimization = (realTimeData.speed?:0f) > 0
+        if (realTimeData.chargePortConnected == true) currentLayoutMode = CHARGE_LAYOUT
+        else if (drivingOptimization) currentLayoutMode = CONSUMPTION_LAYOUT
+
         val formattedPower = (realTimeData.power?:0f) / 1_000_000f
         val formattedConsumption: Any? = when {
             realTimeData.instConsumption == null -> null
@@ -143,9 +148,19 @@ class MainViewModel: ViewModel() {
         mainRealTimeDataState = mainRealTimeDataState.copy(
             currentPowerFormatted = if (formattedPower.absoluteValue >= 100f) formattedPower.toInt() else formattedPower,
             currentConsumptionFormatted = formattedConsumption,
-            currentStateOfChargeFormatted = ((realTimeData.stateOfCharge?:0f) * 100f).roundToInt()
+            currentStateOfChargeFormatted = ((realTimeData.stateOfCharge?:0f) * 100f).roundToInt(),
+            layoutMode = currentLayoutMode
         )
-        mainRealTimeDataStateLiveData.postValue(mainRealTimeDataState)
+        mainRealTimeDataStateLiveData.value = mainRealTimeDataState
+
+        mainButtonEnabledState = mainButtonEnabledState.copy(
+            closeChargeLayoutButtonEnabled = realTimeData.chargePortConnected == false,
+            historyButtonEnabled = !drivingOptimization,
+            summaryButtonEnabled = !drivingOptimization
+        )
+        mainButtonEnabledStateLiveData.value = mainButtonEnabledState
+
+        sendUiEvent(UiEvent.ApplyDrivingOptimization(drivingOptimization))
     }
 
     private fun applyChangedPreferences() {
@@ -159,7 +174,9 @@ class MainViewModel: ViewModel() {
                 // kWh/100distance
                 "kWh/100$newDistanceUnit"
             },
-            powerUnit = "kW" // might ad Horsepower later...
+            powerUnit = "kW", // might ad Horsepower later...
+            visibleChargingGages = CarStatsViewer.appPreferences.chargePlotVisibleGages,
+            visibleConsumptionGages = CarStatsViewer.appPreferences.consumptionPlotVisibleGages
         )
         PlotGlobalConfiguration.updateDistanceUnit(CarStatsViewer.appPreferences.distanceUnit)
         mainPreferencesStateLiveData.postValue(mainPreferencesState)
