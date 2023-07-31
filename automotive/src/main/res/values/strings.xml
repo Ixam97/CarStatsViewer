@@ -48,6 +48,9 @@
         <item>Oliver Charlton</item>
     </string-array>
 
+    <string-array name="changes_0_25_2">
+        <item>Optimizations in plot rendering and loading performance.</item>
+    </string-array>
     <string-array name="changes_0_25_1">
         <item>UI adjustments, especially in the trip summary.</item>
         <item>Added vehicle configuration for MY24.</item>

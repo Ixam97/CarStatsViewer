@@ -5,6 +5,7 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -440,6 +441,7 @@ class PlotView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
+        Log.d("PLOT", "onDraw")
         super.onDraw(canvas)
         dataPointMap.clear()
         alignZero()
@@ -470,7 +472,7 @@ class PlotView @JvmOverloads constructor(
             if (index == 0) {
                 if (line.isEmpty() || !line.Visible) return
 
-                val dataPoints = dataPoints(plotLine)
+                val dataPoints = dataPoints(line)
                 if (dataPoints?.isEmpty() != false) continue
 
                 val minValue = line.minValue(dataPoints)!!
@@ -952,7 +954,7 @@ class PlotView @JvmOverloads constructor(
 
                     if (dimensionY != null && index++ > 0) continue
 
-                    val dataPoints = dataPoints(plotLine)
+                    val dataPoints = dataPoints(line)
                     if (dataPoints?.isEmpty() != false) continue
 
                     val configuration = when {
