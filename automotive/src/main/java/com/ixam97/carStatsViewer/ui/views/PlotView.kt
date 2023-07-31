@@ -823,6 +823,8 @@ class PlotView @JvmOverloads constructor(
 
         restrictCanvas(canvas, maxX, maxY, yArea = false)
 
+        var prevMarkerEndX: Float? = null
+
         for (markerGroup in markers.groupBy { it.group(dimension, dimensionSmoothing) }) {
             if (markerGroup.key == null) continue
 
@@ -839,8 +841,12 @@ class PlotView @JvmOverloads constructor(
 
             markerXLimit = drawMarkerLabel(canvas, markerTimes, startX, markerXLimit)
 
-            drawMarkerLine(canvas, markerType, startX, -1)
-            drawMarkerLine(canvas, markerType, endX, 1)
+            if (prevMarkerEndX == null || startX - prevMarkerEndX > 25 || markerType == PlotMarkerType.CHARGE) {
+                prevMarkerEndX = endX
+
+                drawMarkerLine(canvas, markerType, startX, -1)
+                drawMarkerLine(canvas, markerType, endX, 1)
+            }
 
             for (markerDimensionGroup in markerGroup.value.groupBy { it.group(dimension) }) {
                 val markerDimensionType = markerDimensionGroup.value.minOfOrNull { it.MarkerType } ?: continue
