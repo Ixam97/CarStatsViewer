@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.ui.plot.objects
 
+import android.util.Log
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionY
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotHighlightMethod
@@ -11,6 +12,10 @@ class PlotLine(
     val Configuration: PlotLineConfiguration,
     var Visible: Boolean = true
 ) {
+    companion object {
+        var plotLineItemLimit = 500
+    }
+
     private val dataPoints: ConcurrentHashMap<Int, PlotLineItem> = ConcurrentHashMap()
 
     var baseLineAt: ArrayList<Float> = ArrayList()
@@ -120,12 +125,60 @@ class PlotLine(
         }
     }
 
+    private fun combineDataPoints(dataPointLeft: PlotLineItem, dataPointRight: PlotLineItem): PlotLineItem {
+        val newDistanceDelta = (dataPointLeft.DistanceDelta?:0.0f) + (dataPointRight.DistanceDelta?:0.0f)
+
+        // This needs to be changed once we switch to energy instead of consumption as value!!!
+        val newValue = when {
+            (dataPointLeft.DistanceDelta?:0.0f) == 0.0f || (dataPointRight.DistanceDelta?:0.0f) == 0.0f -> 0.0f
+            else -> {
+                ((dataPointLeft.Value * dataPointLeft.DistanceDelta!!) + (dataPointRight.Value * dataPointRight.DistanceDelta!!)) / newDistanceDelta
+            }
+        }
+        return dataPointRight.copy(
+            TimeDelta = (dataPointLeft.TimeDelta?:0) + (dataPointRight.TimeDelta?:0),
+            DistanceDelta = newDistanceDelta,
+            StateOfChargeDelta = (dataPointRight.StateOfCharge - dataPointLeft.StateOfCharge),
+            AltitudeDelta = (dataPointLeft.AltitudeDelta?:0.0f) + (dataPointRight.AltitudeDelta?:0.0f),
+            Value = newValue,
+            Marker = null
+        )
+    }
+
+    private fun createLodDataPoints(dataPoints: List<PlotLineItem>, plotDimensionX: PlotDimensionX): List<PlotLineItem> {
+        if (dataPoints.isEmpty()) return dataPoints
+        // Log.v("PLOT", "Create LoD data points ...")
+        // Log.v("PLOT", "Data points size: ${dataPoints.size}, distance: $distance")
+
+        return when (plotDimensionX) {
+            PlotDimensionX.DISTANCE -> {
+                val lodDataPoints: ArrayList<PlotLineItem> = arrayListOf()
+                if (dataPoints.size > plotLineItemLimit) {
+                    var index = 0
+                    while (index < dataPoints.size - 1) {
+                        lodDataPoints.add(combineDataPoints(dataPoints[index], dataPoints[index + 1]))
+                        index += 2
+                    }
+                    createLodDataPoints(lodDataPoints, plotDimensionX)
+                } else {
+                    dataPoints
+                }
+            }
+            else -> {
+                dataPoints
+            }
+        }
+    }
+
     private fun getDataPoints(dimension: PlotDimensionX, min: Any?, max: Any?): List<PlotLineItem> {
         return when {
             dataPoints.isEmpty() || min == null || max == null -> dataPoints.map { it.value }
             else ->  when (dimension) {
                 PlotDimensionX.INDEX -> dataPoints.filter { it.key in min as Int..max as Int }.map { it.value }
-                PlotDimensionX.DISTANCE -> dataPoints.filter { it.value.Distance in min as Float..max as Float }.map { it.value }
+                PlotDimensionX.DISTANCE -> {
+                    val filteredDataPoints = dataPoints.filter { it.value.Distance in min as Float..max as Float }.map { it.value }
+                    createLodDataPoints(filteredDataPoints, PlotDimensionX.DISTANCE)
+                }
                 PlotDimensionX.TIME -> dataPoints.filter { it.value.EpochTime in min as Long..max as Long }.map { it.value }
                 PlotDimensionX.STATE_OF_CHARGE -> dataPoints.filter { it.value.StateOfCharge in min as Float..max as Float }.map { it.value }
             }

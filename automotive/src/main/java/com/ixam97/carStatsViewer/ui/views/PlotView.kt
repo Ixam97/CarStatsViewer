@@ -39,17 +39,6 @@ class PlotView @JvmOverloads constructor(
     var xMargin: Int
     var yMargin: Int
 
-    init {
-        val attributes = context.obtainStyledAttributes(attrs, R.styleable.PlotView)
-        try {
-            textSize = attributes.getDimension(R.styleable.PlotView_baseTextSize, 26f)
-            xMargin = attributes.getDimension(R.styleable.PlotView_xMargin, 0f).toInt()
-            yMargin = attributes.getDimension(R.styleable.PlotView_yMargin, 0f).toInt()
-        } finally {
-            attributes.recycle()
-        }
-    }
-
     /*var xMargin: Int = 100
         set(value) {
             val diff = value != field
@@ -186,6 +175,14 @@ class PlotView @JvmOverloads constructor(
     private val appPreferences : AppPreferences
 
     init {
+        val attributes = context.obtainStyledAttributes(attrs, R.styleable.PlotView)
+        try {
+            textSize = attributes.getDimension(R.styleable.PlotView_baseTextSize, 26f)
+            xMargin = attributes.getDimension(R.styleable.PlotView_xMargin, 0f).toInt()
+            yMargin = attributes.getDimension(R.styleable.PlotView_yMargin, 0f).toInt()
+        } finally {
+            attributes.recycle()
+        }
         setupPaint()
         appPreferences = AppPreferences(context)
     }
@@ -441,7 +438,7 @@ class PlotView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        Log.d("PLOT", "onDraw")
+        Log.d("PLOT", "onDraw, dimensionRestriction: $dimensionRestriction, dimensionShift:$dimensionShift")
         super.onDraw(canvas)
         dataPointMap.clear()
         alignZero()
@@ -455,7 +452,9 @@ class PlotView @JvmOverloads constructor(
     private var dataPointMap : HashMap<PlotLine, List<PlotLineItem>> = HashMap()
     private fun dataPoints(plotLine: PlotLine?) : List<PlotLineItem>? {
         if (plotLine == null) return null
+        Log.d("PLOT", "dataPointMap.containsKey = ${dataPointMap.containsKey(plotLine)}")
         if (!dataPointMap.containsKey(plotLine)) {
+            Log.i("PLOT", "Getting data points")
             dataPointMap[plotLine] = plotLine.getDataPoints(dimension, dimensionRestriction, dimensionShift)
         }
         return dataPointMap[plotLine]
@@ -652,7 +651,8 @@ class PlotView @JvmOverloads constructor(
     }
 
     private fun toPlotPointCollection(configuration: PlotLineConfiguration, line: PlotLine, dimensionY: PlotDimensionY?, minValue: Float, maxValue: Float, minDimension: Any, maxDimension: Any, maxX: Float, maxY: Float, smoothing: Float?, smoothingPercentage: Float?): ArrayList<ArrayList<PointF>> {
-        val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift, true)
+        // val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift, true)
+        val dataPoints = dataPoints(line)!!
         val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPoints, dimension, smoothing, minDimension, maxDimension)
 
         val plotPointCollection = ArrayList<ArrayList<PointF>>()
