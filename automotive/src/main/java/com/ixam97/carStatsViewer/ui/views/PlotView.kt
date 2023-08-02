@@ -366,7 +366,7 @@ class PlotView @JvmOverloads constructor(
             Log.d("PLOT", "dimension restriction: $dimensionRestriction")
 
             dimensionShift = shift
-                .coerceAtMost(touchDimensionMax - targetDimensionRestriction)
+                .coerceAtMost(touchDimensionMax - dimensionRestriction!!)
                 .coerceAtLeast(0L)
 
             return true
