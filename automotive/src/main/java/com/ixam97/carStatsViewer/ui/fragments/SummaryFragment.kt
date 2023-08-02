@@ -219,8 +219,8 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         summary_consumption_plot.dimension = PlotDimensionX.DISTANCE
         summary_consumption_plot.dimensionRestrictionMin = appPreferences.distanceUnit.asUnit(
             MainActivity.DISTANCE_TRIP_DIVIDER)
-        // summary_consumption_plot.dimensionSmoothing = 0.02f
-        // summary_consumption_plot.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
+        summary_consumption_plot.dimensionSmoothing = 0.02f
+        summary_consumption_plot.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
         summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
 
@@ -229,8 +229,8 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
         summary_charge_plot_view.dimension = PlotDimensionX.TIME
         summary_charge_plot_view.dimensionRestrictionMin = TimeUnit.MINUTES.toMillis(5)
-        // summary_charge_plot_view.dimensionSmoothing = 0.01f
-        // summary_charge_plot_view.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
+        summary_charge_plot_view.dimensionSmoothing = 0.01f
+        summary_charge_plot_view.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
         summary_charge_plot_view.dimensionYSecondary = PlotDimensionY.STATE_OF_CHARGE
 
         summary_charge_plot_view.addPlotLine(chargePlotLine, chargePlotLinePaint)
