@@ -16,6 +16,7 @@ object CarProperties {
     const val INFO_MODEL = VehiclePropertyIds.INFO_MODEL
     const val INFO_MAKE = VehiclePropertyIds.INFO_MAKE
     const val INFO_MODEL_YEAR = VehiclePropertyIds.INFO_MODEL_YEAR
+    const val DISTANCE_DISPLAY_UNITS = VehiclePropertyIds.DISTANCE_DISPLAY_UNITS
 
     val usedProperties = listOf(
         VehiclePropertyIds.PERF_VEHICLE_SPEED,

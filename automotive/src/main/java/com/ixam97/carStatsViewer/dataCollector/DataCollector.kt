@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.dataCollector
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
+import android.car.VehicleUnit
 import android.content.Intent
 import android.location.Location
 import android.os.IBinder
@@ -18,6 +19,7 @@ import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.locationClient.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationClient.LocationClient
+import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.WatchdogState
@@ -106,7 +108,11 @@ class DataCollector: Service() {
         dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
             batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
             vehicleMake = carPropertiesClient.getStringProperty(CarProperties.INFO_MAKE),
-            modelName = carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL)
+            modelName = carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL),
+            distanceUnit = when (carPropertiesClient.getIntProperty(CarProperties.DISTANCE_DISPLAY_UNITS)) {
+                VehicleUnit.MILE -> DistanceUnitEnum.MILES
+                else -> DistanceUnitEnum.KM
+            }
         )
 
         dataProcessor.staticVehicleData.let {
@@ -117,6 +123,8 @@ class DataCollector: Service() {
             Toast.makeText(this, "Emulator Mode", Toast.LENGTH_LONG).show()
             emulatorMode = true
         }
+
+        CarStatsViewer.appPreferences.distanceUnit = if (!emulatorMode) dataProcessor.staticVehicleData.distanceUnit else DistanceUnitEnum.KM
 
         InAppLogger.i("[NEO] Google API availability: ${GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS}")
 

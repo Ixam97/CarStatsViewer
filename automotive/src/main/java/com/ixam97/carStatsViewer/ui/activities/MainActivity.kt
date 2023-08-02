@@ -1,5 +1,7 @@
 package com.ixam97.carStatsViewer.ui.activities
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -10,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.drawToBitmap
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -493,11 +496,13 @@ class MainActivity : FragmentActivity() {
         if (main_button_dismiss_charge_plot.isEnabled == neoChargePortConnected)
             main_button_dismiss_charge_plot.isEnabled = !neoChargePortConnected
         if (main_charge_layout.visibility == View.GONE && neoChargePortConnected) {
-            main_consumption_layout.visibility = View.GONE
-            main_charge_layout.visibility = View.VISIBLE
+            // main_consumption_layout.visibility = View.GONE
+            // main_charge_layout.visibility = View.VISIBLE
+            crossfade(main_consumption_layout, main_charge_layout)
         } else if (CarStatsViewer.dataProcessor.realTimeData.drivingState == DrivingState.DRIVE && main_charge_layout.visibility == View.VISIBLE) {
-            main_charge_layout.visibility = View.GONE
-            main_consumption_layout.visibility = View.VISIBLE
+            // main_charge_layout.visibility = View.GONE
+            // main_consumption_layout.visibility = View.VISIBLE
+            crossfade(main_charge_layout, main_consumption_layout)
         }
     }
 
@@ -625,8 +630,9 @@ class MainActivity : FragmentActivity() {
         }
 
         main_button_dismiss_charge_plot.setOnClickListener {
-            main_charge_layout.visibility = View.GONE
-            main_consumption_layout.visibility = View.VISIBLE
+            // main_charge_layout.visibility = View.GONE
+            // main_consumption_layout.visibility = View.VISIBLE
+            crossfade(main_charge_layout, main_consumption_layout)
             main_consumption_plot.invalidate()
             // DataManager.chargedEnergy = 0f
             // DataManager.chargeTime = 0L
@@ -697,5 +703,25 @@ class MainActivity : FragmentActivity() {
             }
         val alert = builder.create()
         alert.show()
+    }
+
+    private fun crossfade(fromView: View, toView: View) {
+        toView.apply {
+            alpha = 0f
+            isVisible = true
+            animate()
+                .alpha(1f)
+                .setDuration(200L)
+                .setListener(null)
+        }
+
+        fromView.animate()
+            .alpha(0f)
+            .setDuration(200L)
+            .setListener(object: AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    fromView.isVisible = false
+                }
+            })
     }
 }
