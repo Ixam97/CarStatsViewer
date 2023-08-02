@@ -7,13 +7,14 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.MainActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/master_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/main_action_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/black"
@@ -88,6 +89,7 @@
         android:visibility="visible"
         android:id="@+id/main_consumption_layout"
         android:orientation="vertical"
+        android:layout_below="@id/main_action_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -333,6 +335,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/main_action_bar"
         android:visibility="gone">
 
         <View
@@ -495,7 +498,7 @@
         </LinearLayout>
 
     </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
     <FrameLayout
         android:id="@+id/main_fragment_container"
         android:layout_width="match_parent"
