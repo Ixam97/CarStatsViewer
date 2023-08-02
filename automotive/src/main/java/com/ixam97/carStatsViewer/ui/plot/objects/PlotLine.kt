@@ -13,7 +13,7 @@ class PlotLine(
     var Visible: Boolean = true
 ) {
     companion object {
-        var plotLineItemLimit = 500
+        var plotLineItemLimit = 300
     }
 
     private val dataPoints: ConcurrentHashMap<Int, PlotLineItem> = ConcurrentHashMap()

@@ -344,15 +344,26 @@ class PlotView @JvmOverloads constructor(
             val spanX: Float = scaleGestureDetector.currentSpanX
             val restrictionMin = dimensionRestrictionMin ?: return true
 
+            val center = (dimensionShift?: 0L) + (dimensionRestriction?: 0L) / 2L
+
+            val scalingFraction = when (dimensionRestriction) {
+                in 0L..24_999L -> 100L
+                in 25_000..99_999L -> 1_000L
+                else -> 5_000L
+            }
+
             if (lastRestriction == null || (lastSpanX/spanX).isInfinite()) return true
 
             val targetDimensionRestriction = ((lastRestriction!!.toFloat() * (lastSpanX / spanX)).toLong())
                 .coerceAtMost(touchDimensionMax)
                 .coerceAtLeast(restrictionMin)
 
-            dimensionRestriction = targetDimensionRestriction
+            dimensionRestriction = (((targetDimensionRestriction / scalingFraction) * scalingFraction) / 100L) * 100L
 
-            val shift = dimensionShift ?: return true
+            val shift = center - (dimensionRestriction?: center) / 2L // dimensionShift ?: return true
+
+            Log.d("PLOT", "Shift: $shift")
+            Log.d("PLOT", "dimension restriction: $dimensionRestriction")
 
             dimensionShift = shift
                 .coerceAtMost(touchDimensionMax - targetDimensionRestriction)
@@ -363,12 +374,18 @@ class PlotView @JvmOverloads constructor(
     }
 
     private val mScrollGestureListener = object : GestureDetector.SimpleOnGestureListener() {
+        private val shiftingFraction = 50L
+
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             touchDimensionShiftDistance += distanceX * touchDistanceMultiplier
 
-            dimensionShift = (touchDimensionShift + touchDimensionShiftDistance * touchDimensionShiftByPixel).toLong()
+            val targetDimensionShift = (((touchDimensionShift + touchDimensionShiftDistance * touchDimensionShiftByPixel) / ((dimensionRestriction?:shiftingFraction) / shiftingFraction)).toLong() * ((dimensionRestriction?:shiftingFraction) / shiftingFraction))
                 .coerceAtMost(touchDimensionMax - (dimensionRestriction ?: 0L))
                 .coerceAtLeast(0L)
+
+            dimensionShift = (targetDimensionShift / 100L) * 100L
+
+            Log.d("PLOT", "Shift: $dimensionShift")
 
             return true
         }
