@@ -390,7 +390,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         summary_charge_plot_view.reset()
         chargePlotLine.reset()
 
-        if (completedChargingSessions.isEmpty() || progress >= completedChargingSessions.size || progress < 0) {
+        if (completedChargingSessions.isEmpty() || progress >= completedChargingSessions.size || progress < 0 || completedChargingSessions[progress].chargingPoints?.isEmpty() == true) {
             summary_charge_plot_sub_title_curve.text = "%s (0/0)".format(
                 getString(R.string.settings_sub_title_last_charge_plot))
 
