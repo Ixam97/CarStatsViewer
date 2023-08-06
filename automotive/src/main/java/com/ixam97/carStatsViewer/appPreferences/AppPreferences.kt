@@ -48,7 +48,7 @@ class AppPreferences(
     private val BstEdition = AppPreference<Boolean>(context.getString(R.string.preference_bst_key), false, sharedPref)
 
     private val AltLayout = AppPreference<Boolean>("preference_alt_layout", false, sharedPref)
-
+    private val ShowScreenshotButton = AppPreference<Boolean>("preference_show_screenshot_button", false, sharedPref)
     private val TripFilterManual = AppPreference<Boolean>(context.getString(R.string.preference_trip_filter_manual_key), true, sharedPref)
     private val TripFilterCharge = AppPreference<Boolean>(context.getString(R.string.preference_trip_filter_charge_key), true, sharedPref)
     private val TripFilterAuto = AppPreference<Boolean>(context.getString(R.string.preference_trip_filter_auto_key), true, sharedPref)
@@ -84,7 +84,7 @@ class AppPreferences(
     var plusPack: Boolean get() = PlusPack.value; set(value) {PlusPack.value = value}
     var performanceUpgrade: Boolean get() = PerformanceUpgrade.value; set(value) {PerformanceUpgrade.value = value}
     var bstEdition: Boolean get() = BstEdition.value; set(value) {BstEdition.value = value}
-
+    var showScreenshotButton: Boolean get() = ShowScreenshotButton.value; set(value) {ShowScreenshotButton.value = value}
     var altLayout: Boolean get() = AltLayout.value; set(value) {AltLayout.value = value}
 
     var tripFilterManual: Boolean get() = TripFilterManual.value; set(value) {TripFilterManual.value = value}

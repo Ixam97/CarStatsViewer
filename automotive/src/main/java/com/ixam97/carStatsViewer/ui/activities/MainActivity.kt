@@ -359,8 +359,6 @@ class MainActivity : FragmentActivity() {
         setupDefaultUi()
         setUiEventListeners()
 
-        if (BuildConfig.FLAVOR != "dev") main_button_screenshot.visibility = View.GONE
-
         main_button_perf.isEnabled = false
         main_button_perf.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
 
@@ -636,17 +634,6 @@ class MainActivity : FragmentActivity() {
             main_consumption_plot.invalidate()
             // DataManager.chargedEnergy = 0f
             // DataManager.chargeTime = 0L
-        }
-
-        main_button_screenshot.setOnClickListener {
-            // throw Exception("Intentional crash")
-            InAppLogger.i("Debug")
-            lifecycleScope.launch {
-                CarStatsViewer.screenshotBitmap = master_layout.drawToBitmap()
-                runOnUiThread {
-                    Toast.makeText(this@MainActivity, "Screenshot taken", Toast.LENGTH_SHORT).show()
-                }
-            }
         }
 
         main_button_history.setOnClickListener {
