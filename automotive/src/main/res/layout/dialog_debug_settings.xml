@@ -7,16 +7,30 @@
     android:padding="25dp"
     android:orientation="vertical">
 
-    <Switch
+    <CheckBox
         android:id="@+id/debug_miles_switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginVertical="10dp"
+        android:paddingStart="20dp"
         android:textSize="@dimen/std_font_size"
         android:text="Miles as distance unit"/>
+
+    <CheckBox
+        android:id="@+id/debug_screenshot_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="10dp"
+        android:paddingStart="20dp"
+        android:textSize="@dimen/std_font_size"
+        android:text="Show screenshot button"/>
 
     <View
         style="@style/menu_divider_style"
         android:background="?android:attr/listDivider" />
+
+    <TextView style="@style/menu_section_title_style"
+        android:text="Log display settings: "/>
 
     <com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
         android:id="@+id/debug_level_multiselect"

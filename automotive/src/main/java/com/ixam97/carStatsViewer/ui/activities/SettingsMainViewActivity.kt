@@ -2,12 +2,13 @@ package com.ixam97.carStatsViewer.ui.activities
 
 import android.app.Activity
 import android.os.Bundle
+import androidx.fragment.app.FragmentActivity
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.applyTypeface
 import kotlinx.android.synthetic.main.activity_settings_main_view.*
 
-class SettingsMainViewActivity: Activity() {
+class SettingsMainViewActivity: FragmentActivity() {
 
     private val appPreferences = CarStatsViewer.appPreferences
 

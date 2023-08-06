@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.graphics.fonts.SystemFonts
+import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.widget.TextView
@@ -23,6 +24,7 @@ import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.ScreenshotButton
 import com.ixam97.carStatsViewer.utils.Watchdog
 import com.ixam97.carStatsViewer.utils.applyTypeface
 import kotlinx.coroutines.CoroutineScope
@@ -48,7 +50,7 @@ class CarStatsViewer : Application() {
         const val FOREGROUND_CHANNEL_ID = "ForegroundChannel"
         const val FOREGROUND_NOTIFICATION_ID = 2
 
-        var screenshotBitmap: Bitmap? = null
+        var screenshotBitmap = arrayListOf<Bitmap>()
 
         lateinit var appContext: Context
         lateinit var liveDataApis: ArrayList<LiveDataApi>
@@ -281,6 +283,18 @@ class CarStatsViewer : Application() {
         )
 
         notificationManager = createNotificationManager()
+
+        registerActivityLifecycleCallbacks(object: ActivityLifecycleCallbacks{
+            override fun onActivityStarted(activity: Activity) = Unit
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
+            override fun onActivityResumed(activity: Activity) {
+                ScreenshotButton.init(activity)
+            }
+            override fun onActivityPaused(activity: Activity) = Unit
+            override fun onActivityStopped(activity: Activity) = Unit
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
+            override fun onActivityDestroyed(activity: Activity) = Unit
+        })
 
     }
 
