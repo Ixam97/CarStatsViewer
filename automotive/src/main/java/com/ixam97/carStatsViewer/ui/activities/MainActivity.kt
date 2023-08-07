@@ -10,6 +10,7 @@ import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.view.drawToBitmap
 import androidx.core.view.isVisible
@@ -33,6 +34,7 @@ import com.ixam97.carStatsViewer.ui.plot.objects.PlotRange
 import com.ixam97.carStatsViewer.ui.plot.enums.*
 import com.ixam97.carStatsViewer.ui.views.GageView
 import com.ixam97.carStatsViewer.ui.views.PlotView
+import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*

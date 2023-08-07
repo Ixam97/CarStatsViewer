@@ -18,6 +18,7 @@ import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.adapters.TripHistoryAdapter
+import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.ui.views.TripHistoryRowWidget
 import com.ixam97.carStatsViewer.utils.applyTypeface
 import kotlinx.android.synthetic.main.activity_history.*
@@ -224,6 +225,7 @@ class HistoryActivity  : FragmentActivity() {
             .setCancelable(true)
             .setPositiveButton(getString(R.string.history_dialog_multi_delete_delete, selectedIds.size.toString())) {_,_->
                 lifecycleScope.launch { withContext(Dispatchers.IO) {
+                    val numSelected = selectedIds.size
                     runOnUiThread { trip_history_progress_bar.visibility = View.VISIBLE }
                     selectedIds.forEach {
                         CarStatsViewer.tripDataSource.deleteDrivingSessionById(it)
@@ -233,6 +235,11 @@ class HistoryActivity  : FragmentActivity() {
                     runOnUiThread {
                         multiSelectMode = false
                         trip_history_progress_bar.visibility = View.GONE
+                        SnackbarWidget.Builder(this@HistoryActivity, "$numSelected trips have been deleted.")
+                            .setDuration(3000)
+                            .setButton("OK")
+                            .setStartDrawable(R.drawable.ic_delete)
+                            .show()
                     }
                 }}
             }

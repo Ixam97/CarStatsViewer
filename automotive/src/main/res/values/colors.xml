@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="polestar_orange">#FFD96C00</color>
+    <color name="volvo_blue">#2F6093</color>
     <color name="button_text_inactive">#A0A0A0</color>
     <color name="button_background_inactive">#121212</color>
     <color name="button_background_active">#D96C00</color>

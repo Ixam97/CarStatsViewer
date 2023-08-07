@@ -19,6 +19,7 @@ import com.airbnb.paris.utils.setPaddingHorizontal
 import com.airbnb.paris.utils.setPaddingVertical
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -72,7 +73,11 @@ object ScreenshotButton {
                 CarStatsViewer.screenshotBitmap.add(outputBitmap)
                 activity.runOnUiThread {
                     button.isVisible = true
-                    Toast.makeText(activity, "Screenshot taken (${CarStatsViewer.screenshotBitmap.size} in total)", Toast.LENGTH_SHORT).show()
+                    SnackbarWidget.Builder(activity, "Screenshot taken (${CarStatsViewer.screenshotBitmap.size} in total).")
+                        .setButton("OK")
+                        .setStartDrawable(R.drawable.ic_camera)
+                        .setDuration(2000)
+                        .show()
                 }
             }
         }
