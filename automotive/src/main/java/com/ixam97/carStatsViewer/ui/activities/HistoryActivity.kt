@@ -206,6 +206,11 @@ class HistoryActivity  : FragmentActivity() {
             .setCancelable(true)
             .setPositiveButton(getString(R.string.history_dialog_delete_confirm)) {_,_->
                 tripsAdapter.deleteTrip(session, position)
+                SnackbarWidget.Builder(this@HistoryActivity, "Trip has been deleted.")
+                    .setDuration(3000)
+                    .setButton("OK")
+                    .setStartDrawable(R.drawable.ic_delete)
+                    .show()
             }
             .setNegativeButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
                 dialog.cancel()
