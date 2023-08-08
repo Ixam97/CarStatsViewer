@@ -141,14 +141,18 @@ class PlotLine(
             StateOfChargeDelta = (dataPointRight.StateOfCharge - dataPointLeft.StateOfCharge),
             AltitudeDelta = (dataPointLeft.AltitudeDelta?:0.0f) + (dataPointRight.AltitudeDelta?:0.0f),
             Value = newValue,
-            Marker = null
+            Marker = when {
+                (dataPointLeft.Marker == PlotLineMarkerType.BEGIN_SESSION || dataPointRight.Marker == PlotLineMarkerType.BEGIN_SESSION) -> PlotLineMarkerType.BEGIN_SESSION
+                (dataPointLeft.Marker == PlotLineMarkerType.END_SESSION || dataPointRight.Marker == PlotLineMarkerType.END_SESSION) -> PlotLineMarkerType.END_SESSION
+                else -> null
+            }
         )
     }
 
     private fun createLodDataPoints(dataPoints: List<PlotLineItem>, plotDimensionX: PlotDimensionX): List<PlotLineItem> {
         if (dataPoints.isEmpty()) return dataPoints
-        // Log.v("PLOT", "Create LoD data points ...")
-        // Log.v("PLOT", "Data points size: ${dataPoints.size}, distance: $distance")
+        Log.i("PLOT", "Create LoD data points ...")
+        Log.i("PLOT", "Data points size: ${dataPoints.size}")
 
         return when (plotDimensionX) {
             PlotDimensionX.DISTANCE -> {
@@ -157,6 +161,11 @@ class PlotLine(
                     var index = 0
                     while (index < dataPoints.size - 1) {
                         lodDataPoints.add(combineDataPoints(dataPoints[index], dataPoints[index + 1]))
+                        if (lodDataPoints.size >= 2) {
+                            if (lodDataPoints.last().Marker == PlotLineMarkerType.BEGIN_SESSION) {
+                                lodDataPoints[lodDataPoints.size - 2].Marker = PlotLineMarkerType.END_SESSION
+                            }
+                        }
                         index += 2
                     }
                     createLodDataPoints(lodDataPoints, plotDimensionX)
