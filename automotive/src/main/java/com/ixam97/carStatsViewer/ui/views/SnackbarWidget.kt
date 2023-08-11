@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
 import android.view.animation.AnimationUtils
@@ -37,7 +38,8 @@ class SnackbarWidget private constructor(
         val drawableId: Int? = null,
         val startHidden: Boolean = false,
         val duration: Long = 0,
-        val listener: SnackbarInterface? = null
+        val listener: SnackbarInterface? = null,
+        val isError: Boolean = false
     )
 
     fun interface SnackbarInterface {
@@ -51,6 +53,13 @@ class SnackbarWidget private constructor(
             snackbarParameters = snackbarParameters.copy(
                 buttonText = buttonText,
                 listener = listener
+            )
+            return this
+        }
+
+        fun setIsError(isError: Boolean): Builder {
+            snackbarParameters = snackbarParameters.copy(
+                isError = isError
             )
             return this
         }
@@ -121,13 +130,19 @@ class SnackbarWidget private constructor(
             confirmButton.isVisible = true
         }
 
-        snackbarParameters.drawableId?.let {
-            startIcon.setImageResource(snackbarParameters.drawableId)
-        }
-
         confirmButton.setOnClickListener {
             snackbarParameters.listener?.onClick()
             removeSelf()
+        }
+
+        if (snackbarParameters.isError) {
+            (progressBar.parent as ViewGroup).setBackgroundColor(context.getColor(R.color.bad_red_dark))
+            progressBar.setBackgroundColor(context.getColor(R.color.bad_red))
+            startIcon.setImageResource(R.drawable.ic_error)
+        }
+
+        snackbarParameters.drawableId?.let {
+            startIcon.setImageResource(snackbarParameters.drawableId)
         }
 
         val anim = AnimationUtils.loadAnimation(context, R.anim.snackbar_up)

@@ -73,7 +73,7 @@ object ScreenshotButton {
                 CarStatsViewer.screenshotBitmap.add(outputBitmap)
                 activity.runOnUiThread {
                     button.isVisible = true
-                    SnackbarWidget.Builder(activity, "Screenshot taken (${CarStatsViewer.screenshotBitmap.size} in total).")
+                    SnackbarWidget.Builder(activity, activity.getString(R.string.screenshot_taken, CarStatsViewer.screenshotBitmap.size.toString()))
                         .setButton("OK")
                         .setStartDrawable(R.drawable.ic_camera)
                         .setDuration(2000)
