@@ -233,6 +233,10 @@
     <string name="AutoTripData_short">Automatic</string>
     <string name="CurrentMonthData_short">Month</string>
 
+    <string name="snackbar_ok">OK</string>
+
+    <string name="screenshot_taken">Screenshot taken (total of %s).</string>
+
     <string-array name="trip_type_names">
         <item>Unknown trip type</item>
         <item>Manual trip</item>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="polestar_orange">#FFD96C00</color>
+    <color name="volvo_blue">#2F6093</color>
     <color name="button_text_inactive">#A0A0A0</color>
     <color name="button_background_inactive">#121212</color>
     <color name="button_background_active">#D96C00</color>
@@ -16,6 +17,7 @@
     <color name="charge_marker">#2693ff</color>
     <color name="park_marker">@color/disabled_tint</color>
     <color name="bad_red">#771515</color>
+    <color name="bad_red_dark">#1C0D0E</color>
     <color name="transparent_bad_red">#54771515</color>
     <color name="connected_blue">#2595FF</color>
     <color name="limited_yellow">#FFBF00</color>
