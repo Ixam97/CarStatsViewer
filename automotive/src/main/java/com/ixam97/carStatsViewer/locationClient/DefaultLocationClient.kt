@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.location.LocationManager
-import com.google.android.gms.location.*
+// import com.google.android.gms.location.*
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.emulatorMode
@@ -33,7 +33,7 @@ class DefaultLocationClient(): LocationClient {
 
     @SuppressLint("MissingPermission")
     override fun getLocationUpdates(interval: Long, context: Context): Flow<Location?> {
-        val client = LocationServices.getFusedLocationProviderClient(context)
+        // val client = LocationServices.getFusedLocationProviderClient(context)
 
         return flow {
             InAppLogger.i("[LOC] Setting up location client")
@@ -58,7 +58,9 @@ class DefaultLocationClient(): LocationClient {
                     doLocationUpdates = false
                     break
                 }
-                var result = client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).await()
+                // var result = client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).await()
+
+                var result = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
 
                 if (result != null && result.altitude.absoluteValue > 0) {
                     result.altitude -= Geoid.getOffset(
