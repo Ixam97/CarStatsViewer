@@ -13,15 +13,19 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataProcessor.IgnitionState
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
+import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.DataOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class HttpLiveData (
@@ -29,6 +33,8 @@ class HttpLiveData (
 ): LiveDataApi("Webhook", R.string.settings_apis_http, detailedLog) {
 
     var successCounter: Int = 0
+    val drivingPointBacklog: ArrayList<DrivingPoint> = arrayListOf()
+    val mutex = Mutex()
 
     private fun addBasicAuth(connection: HttpURLConnection, username: String, password: String) {
         if (username == ""  && password == "") {
@@ -128,18 +134,22 @@ class HttpLiveData (
         })
     }
 
-    override fun sendNow(realTimeData: RealTimeData) {
-        if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataEnabled) {
-            connectionStatus = ConnectionStatus.UNUSED
-            return
-        }
+    suspend fun sendWithDrivingPoint(realTimeData: RealTimeData, drivingPoint: DrivingPoint? = null) {
+        // Wrap with mutex lock to prevent concurrent reads of the backlog.
+        mutex.withLock {
+            if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataEnabled) {
+                connectionStatus = ConnectionStatus.UNUSED
+                return
+            }
 
-        if (!realTimeData.isInitialized()) return
+            if (drivingPoint != null) drivingPointBacklog.add(drivingPoint)
 
-        connectionStatus = try {
-            val useLocation = AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation
-            send(
-                HttpDataSet(
+            if (!realTimeData.isInitialized()) return
+
+            connectionStatus = try {
+                val useLocation = AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation
+                val gson = Gson()
+                val dataSet = HttpDataSet(
                     timestamp = System.currentTimeMillis(),
                     speed = realTimeData.speed!!,
                     power = realTimeData.power!!,
@@ -156,29 +166,43 @@ class HttpLiveData (
                     // ABRP debug
                     abrpPackage = if (CarStatsViewer.appPreferences.httpLiveDataSendABRPDataset) (CarStatsViewer.liveDataApis[0] as AbrpLiveData).lastPackage else null,
 
+                    drivingPoints = if (drivingPointBacklog.size == 0) null else drivingPointBacklog,
+
                     appVersion = BuildConfig.VERSION_NAME,
-                    apiVersion = 2
+                    apiVersion = "2.1"
                 )
-            )
-        } catch (e: java.lang.Exception) {
-            InAppLogger.e("[HTTP] Dataset error")
-            ConnectionStatus.ERROR
+
+                val liveDataJson = gson.toJson(dataSet)
+
+                val sendResult = send(liveDataJson)
+
+                // drivingPointBacklog.clear()
+                if (sendResult == ConnectionStatus.CONNECTED || sendResult == ConnectionStatus.LIMITED) {
+                    drivingPointBacklog.clear()
+                }
+
+                sendResult
+
+            } catch (e: java.lang.Exception) {
+                InAppLogger.e("[HTTP] Dataset error")
+                ConnectionStatus.ERROR
+            }
         }
     }
+    override suspend fun sendNow(realTimeData: RealTimeData) {
+        sendWithDrivingPoint(realTimeData)
+    }
 
-    private fun send(dataSet: HttpDataSet, context: Context = CarStatsViewer.appContext): ConnectionStatus {
+    private fun send(dataSet: String, context: Context = CarStatsViewer.appContext): ConnectionStatus {
         val username = AppPreferences(context).httpLiveDataUsername
         val password = AppPreferences(context).httpLiveDataPassword
         val responseCode: Int
-
-        val gson = Gson()
-        val liveDataJson = gson.toJson(dataSet)
 
         try {
             val url = URL(AppPreferences(context).httpLiveDataURL) // + "?json=$jsonObject")
             val connection = getConnection(url, username, password)
             DataOutputStream(connection.outputStream).apply {
-                writeBytes(liveDataJson)
+                writeBytes(dataSet)
                 flush()
                 close()
             }
@@ -187,16 +211,23 @@ class HttpLiveData (
             if (detailedLog) {
                 var logString = "[HTTP] Status: ${connection.responseCode}, Msg: ${connection.responseMessage}, Content:"
                 logString += try {
-                    connection.inputStream.bufferedReader().use {it.readText()}
-
+                    if (connection.responseCode in 100..399) {
+                        connection.inputStream.bufferedReader().use {it.readText()}
+                    } else {
+                        connection.errorStream.bufferedReader().use {it.readText()}
+                    }
                 } catch (e: java.lang.Exception) {
                     "No response content"
                 }
-                if (dataSet.lat == null) logString += ". No valid location!"
+                // if (dataSet.lat == null) logString += ". No valid location!"
                 InAppLogger.d(logString)
             }
 
-            connection.inputStream.close()
+            if (connection.responseCode in 100..399) {
+                connection.inputStream.close()
+            } else {
+                connection.errorStream.close()
+            }
             connection.disconnect()
         } catch (e: java.net.SocketTimeoutException) {
             InAppLogger.e("[HTTP] Network timeout error")

@@ -164,7 +164,7 @@ class AbrpLiveData (
         tokenDialog.show()
     }
 
-    override fun sendNow(realTimeData: RealTimeData) {
+    override suspend fun sendNow(realTimeData: RealTimeData) {
         if (!AppPreferences(CarStatsViewer.appContext).abrpUseApi) {
             connectionStatus = ConnectionStatus.UNUSED
             return

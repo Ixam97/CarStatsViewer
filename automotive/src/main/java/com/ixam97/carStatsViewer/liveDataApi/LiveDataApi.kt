@@ -46,6 +46,7 @@ abstract class LiveDataApi(
      * creates a runnable to be executed in intervals. Returns null if API does not send data in
      * timed intervals.
      */
+    /*
     open fun createLiveDataTask(
         // dataManager: DataManager,
         realTimeData: RealTimeData,
@@ -60,11 +61,12 @@ abstract class LiveDataApi(
             }
         }
     }
+    */
 
     /**
      * sendNow, but wrapped in a coroutine to not block main thread.
      */
-    fun coroutineSendNow(realTimeData: RealTimeData) {
+    suspend fun coroutineSendNow(realTimeData: RealTimeData) {
     //    CoroutineScope(Dispatchers.Default).launch {
             sendNow(realTimeData)
             updateWatchdog()
@@ -86,7 +88,7 @@ abstract class LiveDataApi(
      * Code to be executed in coroutineSendNow. This function should not be called outside a
      * coroutine to not block main thread.
      */
-    protected abstract fun sendNow(realTimeData: RealTimeData)
+    protected abstract suspend fun sendNow(realTimeData: RealTimeData)
 
     private fun updateWatchdog() {
         val currentApiStateMap = CarStatsViewer.watchdog.getCurrentWatchdogState().apiState.toMutableMap()
