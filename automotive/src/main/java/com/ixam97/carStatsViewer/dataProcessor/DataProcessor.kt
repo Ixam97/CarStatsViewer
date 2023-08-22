@@ -470,7 +470,7 @@ class DataProcessor {
             InAppLogger.d("[NEO] Driving point written: ${mDrivenDistance.toFloat()} m, ${mUsedEnergy.toFloat()} Wh")
 
             CoroutineScope(Dispatchers.IO).launch {
-                (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(realTimeData, drivingPoint)
+                (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(realTimeData, listOf(drivingPoint))
             }
         }
     }
@@ -736,6 +736,9 @@ class DataProcessor {
                 localChargingSession?.chargingPoints = chargingPoints
             }
             _currentChargingSessionDataFlow.value = localChargingSession
+            CoroutineScope(Dispatchers.IO).launch {
+                (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(realTimeData, chargingSessions = if (localChargingSession == null) null else listOf(localChargingSession!!))
+            }
             InAppLogger.i("[NEO] Charging session with ID ${localChargingSession?.charging_session_id} ended")
         }
     }

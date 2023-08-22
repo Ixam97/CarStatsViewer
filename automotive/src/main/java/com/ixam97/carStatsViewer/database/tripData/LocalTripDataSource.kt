@@ -197,4 +197,12 @@ class LocalTripDataSource(
         tripDao.upsertChargingSession(chargingSession)
     }
 
+    override suspend fun getAllDrivingPoints(): List<DrivingPoint> {
+        return tripDao.getAllDrivingPoints()
+    }
+
+    override suspend fun getAllChargingSessions(): List<ChargingSession> {
+        return tripDao.getAllChargingSessions()
+    }
+
 }
