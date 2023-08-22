@@ -318,7 +318,6 @@ class MainActivity : FragmentActivity() {
                                 // InAppLogger.v("Last plot item index: $lastItemIndex, drivingPoints size: ${drivingPoints.size}")
 
                                 while (lastItemIndex < drivingPoints.size - 1) {
-                                    InAppLogger.i("Data point added to plot")
                                     prevDrivingPoint = consumptionPlotLine.addDataPoint(
                                         DataConverters.consumptionPlotLineItemFromDrivingPoint(
                                             drivingPoints[lastItemIndex + 1],
