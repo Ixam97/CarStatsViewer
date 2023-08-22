@@ -10,12 +10,15 @@ import com.google.gson.Gson
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.appPreferences.AppPreference
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataProcessor.IgnitionState
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
+import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
+import com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import kotlinx.coroutines.sync.Mutex
@@ -32,9 +35,10 @@ class HttpLiveData (
     detailedLog : Boolean = true
 ): LiveDataApi("Webhook", R.string.settings_apis_http, detailedLog) {
 
-    var successCounter: Int = 0
-    val drivingPointBacklog: ArrayList<DrivingPoint> = arrayListOf()
-    val mutex = Mutex()
+    private var successCounter: Int = 0
+    private val drivingPointBacklog: ArrayList<DrivingPoint> = arrayListOf()
+    private val chargingSessionBacklog: ArrayList<ChargingSession> = arrayListOf()
+    private val mutex = Mutex()
 
     private fun addBasicAuth(connection: HttpURLConnection, username: String, password: String) {
         if (username == ""  && password == "") {
@@ -81,6 +85,7 @@ class HttpLiveData (
         val httpLiveDataEnabled = layout.findViewById<Switch>(R.id.http_live_data_enabled)
         val httpLiveDataLocation = layout.findViewById<Switch>(R.id.http_live_data_location)
         val abrpDebug = layout.findViewById<Switch>(R.id.http_live_data_abrp)
+        val apiTypeMultiButton = layout.findViewById<MultiButtonWidget>(R.id.http_life_data_type)
 
         val httpLiveDataSettingsDialog = AlertDialog.Builder(context).apply {
             setView(layout)
@@ -102,6 +107,9 @@ class HttpLiveData (
         httpLiveDataEnabled.isChecked = AppPreferences(context).httpLiveDataEnabled
         httpLiveDataLocation.isChecked = AppPreferences(context).httpLiveDataLocation
         abrpDebug.isChecked = AppPreferences(context).httpLiveDataSendABRPDataset
+        apiTypeMultiButton.selectedIndex = AppPreferences(context).httpApiTelemetryType
+
+
         httpLiveDataEnabled.setOnClickListener {
             AppPreferences(context).httpLiveDataEnabled = httpLiveDataEnabled.isChecked
         }
@@ -110,6 +118,9 @@ class HttpLiveData (
         }
         abrpDebug.setOnClickListener {
             AppPreferences(context).httpLiveDataSendABRPDataset = abrpDebug.isChecked
+        }
+        apiTypeMultiButton.setOnIndexChangedListener {
+            AppPreferences(context).httpApiTelemetryType = apiTypeMultiButton.selectedIndex
         }
 
         url.setText(AppPreferences(context).httpLiveDataURL)
@@ -134,17 +145,42 @@ class HttpLiveData (
         })
     }
 
-    suspend fun sendWithDrivingPoint(realTimeData: RealTimeData, drivingPoint: DrivingPoint? = null) {
+    suspend fun sendWithDrivingPoint(realTimeData: RealTimeData, drivingPoints: List<DrivingPoint>? = null, chargingSessions: List<ChargingSession>? = null): LiveDataApi.ConnectionStatus? {
         // Wrap with mutex lock to prevent concurrent reads of the backlog.
         mutex.withLock {
             if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataEnabled) {
                 connectionStatus = ConnectionStatus.UNUSED
-                return
+                return null
             }
 
-            if (drivingPoint != null) drivingPointBacklog.add(drivingPoint)
 
-            if (!realTimeData.isInitialized()) return
+            if (CarStatsViewer.appPreferences.httpApiTelemetryType > 0) {
+                // Don't send driving points if disabled in settings
+                if (drivingPoints != null) {
+                    if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation) {
+                        drivingPoints?.forEach {drivingPoint ->
+                            drivingPointBacklog.add(drivingPoint.copy(lat = null, lon = null, alt = null))
+                        }
+                    } else {
+                        drivingPointBacklog.addAll(drivingPoints)
+                    }
+                }
+                if (chargingSessions != null) {
+                    if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation) {
+                        chargingSessions?.forEach { chargingSession ->
+                            chargingSessionBacklog.add(chargingSession.copy(lat = null, lon = null))
+                        }
+                    }
+                    else {
+                        chargingSessionBacklog.addAll(chargingSessions)
+                    }
+                }
+            } else {
+                drivingPointBacklog.clear()
+                chargingSessionBacklog.clear()
+            }
+
+            if (!realTimeData.isInitialized()) return null
 
             connectionStatus = try {
                 val useLocation = AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation
@@ -167,6 +203,7 @@ class HttpLiveData (
                     abrpPackage = if (CarStatsViewer.appPreferences.httpLiveDataSendABRPDataset) (CarStatsViewer.liveDataApis[0] as AbrpLiveData).lastPackage else null,
 
                     drivingPoints = if (drivingPointBacklog.size == 0) null else drivingPointBacklog,
+                    chargingSessions = if (chargingSessionBacklog.size == 0) null else chargingSessionBacklog,
 
                     appVersion = BuildConfig.VERSION_NAME,
                     apiVersion = "2.1"
@@ -179,6 +216,7 @@ class HttpLiveData (
                 // drivingPointBacklog.clear()
                 if (sendResult == ConnectionStatus.CONNECTED || sendResult == ConnectionStatus.LIMITED) {
                     drivingPointBacklog.clear()
+                    chargingSessionBacklog.clear()
                 }
 
                 sendResult
@@ -187,10 +225,15 @@ class HttpLiveData (
                 InAppLogger.e("[HTTP] Dataset error")
                 ConnectionStatus.ERROR
             }
+
+            return connectionStatus
         }
     }
     override suspend fun sendNow(realTimeData: RealTimeData) {
-        sendWithDrivingPoint(realTimeData)
+        when (CarStatsViewer.appPreferences.httpApiTelemetryType) {
+            0, 2 -> sendWithDrivingPoint(realTimeData)
+            else -> return
+        }
     }
 
     private fun send(dataSet: String, context: Context = CarStatsViewer.appContext): ConnectionStatus {

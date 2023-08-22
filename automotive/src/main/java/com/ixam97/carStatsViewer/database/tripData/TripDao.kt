@@ -115,72 +115,13 @@ interface TripDao {
     @Query("DELETE FROM ChargingSession WHERE charging_session_id = :sessionId")
     fun deleteChargingSessionById(sessionId: Long): Int
 
-    /*
-    @Insert
-    fun addDrivingPoint(drivingPoint: DrivingPoint): Long
+    // API Upload feature
 
-    @Ignore
-    fun addDrivingPoint(drivingPoint: DrivingPoint, activeSessions: List<Long>): Long {
-        for (sessionId in activeSessions) {
-            addDrivingSessionPointCrossRef(
-                DrivingSessionPointCrossRef(
-                    driving_session_id = sessionId,
-                    driving_point_epoch_time = drivingPoint.driving_point_epoch_time
-                )
-            )
-        }
-        return addDrivingPoint(drivingPoint)
-    }
+    @Query("SELECT * FROM DrivingPoint")
+    fun getAllDrivingPoints(): List<DrivingPoint>
 
-    @Upsert
-    fun addDrivingSession(drivingSession: DrivingSession): Long
-
-    @Insert
-    fun addDrivingSessionPointCrossRef(drivingSessionPointCrossRef: DrivingSessionPointCrossRef)
-
-    @Insert
-    fun addChargingPoint(chargingPoint: ChargingPoint): Long
-
-    @Insert
-    fun addChargingSession(chargingSession: ChargingSession): Long
-
-    @Ignore
-    fun addChargingSession(chargingSession: ChargingSession, activeSessions: List<Long>): Long {
-        val chargingSessionId = addChargingSession(chargingSession)
-        for (sessionId in activeSessions) {
-            addDrivingChargingCrossRef(DrivingChargingCrossRef(
-                driving_session_id = sessionId,
-                charging_session_id = chargingSessionId
-            ))
-        }
-        return chargingSessionId
-    }
-
-    @Insert
-    fun addDrivingChargingCrossRef(drivingChargingCrossRef: DrivingChargingCrossRef)
-
-    @Update
-    fun updateDrivingSession(drivingSession: DrivingSession)
-
-
-
-    @Query("SELECT * FROM DrivingSession")
-    fun getAllDrivingSessions(): List<DrivingSession>
-
-    @Query("SELECT * FROM DrivingChargingCrossRef")
-    fun getDrivingChargingCrossRef(): List<DrivingChargingCrossRef>
-
-    @Query("UPDATE ChargingSession SET end_epoch_time = :timestamp WHERE charging_session_id = :activeChargingSessionId")
-    fun endChargingSession(activeChargingSessionId: Long, timestamp: Long)
-
-    @Query("UPDATE ChargingSession SET charged_energy = :chargedEnergy, charged_soc = :chargedSoC WHERE charging_session_id = :activeChargingSessionId")
-    fun updateChargingSession(activeChargingSessionId: Long, chargedEnergy: Double, chargedSoC: Float)
-
-    @Transaction
-    @Query("SELECT * FROM ChargingSession WHERE charging_session_id = (:sessionIds)")
-    fun getChargingSessionsWithPointsByIds(sessionIds: List<Long>): List<ChargingSessionWithPoints>
-
-     */
+    @Query("SELECT * FROM ChargingSession")
+    fun getAllChargingSessions(): List<ChargingSession>
 
 }
 

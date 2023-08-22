@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.liveDataApi.http
 
+import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
 
 data class HttpDataSet(
@@ -21,5 +22,6 @@ data class HttpDataSet(
     // ABRP debug
     val abrpPackage: String? = null,
 
-    val drivingPoints: List<DrivingPoint>? = null
+    val drivingPoints: List<DrivingPoint>? = null,
+    val chargingSessions: List<ChargingSession>? = null
 )

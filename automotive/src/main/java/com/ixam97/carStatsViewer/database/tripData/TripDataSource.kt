@@ -1,5 +1,7 @@
 package com.ixam97.carStatsViewer.database.tripData
 
+import androidx.room.Query
+
 interface TripDataSource {
 
     /*
@@ -58,4 +60,8 @@ interface TripDataSource {
     suspend fun getCompleteChargingSessionById(sessionId: Long): ChargingSession
 
     suspend fun updateChargingSession(chargingSession: ChargingSession)
+
+    suspend fun getAllDrivingPoints(): List<DrivingPoint>
+
+    suspend fun getAllChargingSessions(): List<ChargingSession>
 }
