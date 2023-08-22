@@ -10,7 +10,6 @@ import com.google.gson.Gson
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.appPreferences.AppPreference
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataProcessor.IgnitionState
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
@@ -39,6 +38,7 @@ class HttpLiveData (
     private val drivingPointBacklog: ArrayList<DrivingPoint> = arrayListOf()
     private val chargingSessionBacklog: ArrayList<ChargingSession> = arrayListOf()
     private val mutex = Mutex()
+    private var firstDatapoint = true
 
     private fun addBasicAuth(connection: HttpURLConnection, username: String, password: String) {
         if (username == ""  && password == "") {
@@ -85,7 +85,7 @@ class HttpLiveData (
         val httpLiveDataEnabled = layout.findViewById<Switch>(R.id.http_live_data_enabled)
         val httpLiveDataLocation = layout.findViewById<Switch>(R.id.http_live_data_location)
         val abrpDebug = layout.findViewById<Switch>(R.id.http_live_data_abrp)
-        val apiTypeMultiButton = layout.findViewById<MultiButtonWidget>(R.id.http_life_data_type)
+        val apiTypeMultiButton = layout.findViewById<MultiButtonWidget>(R.id.http_live_data_type)
 
         val httpLiveDataSettingsDialog = AlertDialog.Builder(context).apply {
             setView(layout)
@@ -230,6 +230,13 @@ class HttpLiveData (
         }
     }
     override suspend fun sendNow(realTimeData: RealTimeData) {
+        if (firstDatapoint || connectionStatus == ConnectionStatus.ERROR) {
+            sendWithDrivingPoint(realTimeData)
+            if (connectionStatus == ConnectionStatus.CONNECTED || connectionStatus == ConnectionStatus.LIMITED) {
+                firstDatapoint = false
+            }
+            return
+        }
         when (CarStatsViewer.appPreferences.httpApiTelemetryType) {
             0, 2 -> sendWithDrivingPoint(realTimeData)
             else -> return
