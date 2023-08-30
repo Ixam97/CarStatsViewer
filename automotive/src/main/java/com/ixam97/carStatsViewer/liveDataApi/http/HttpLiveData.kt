@@ -56,6 +56,7 @@ class HttpLiveData (
         con.requestMethod = "POST"
         con.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
         con.setRequestProperty("Accept","application/json")
+        con.setRequestProperty("User-Agent", "CarStatsViewer %s".format(BuildConfig.VERSION_NAME))
         con.connectTimeout = timeout
         con.readTimeout = timeout
         con.doOutput = true
