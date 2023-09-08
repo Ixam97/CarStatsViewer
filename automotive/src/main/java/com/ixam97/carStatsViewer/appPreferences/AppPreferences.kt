@@ -58,6 +58,8 @@ class AppPreferences(
     private val MainViewConnectionApi = AppPreference<Int>(context.getString(R.string.preference_main_view_connection_api_key), 0, sharedPref)
     private val HttpApiTelemetryType = AppPreference<Int>("preference_telemetry_type", 2, sharedPref)
 
+    private val PhoneNotification = AppPreference<Boolean>("preference_phone_notification", false, sharedPref)
+
     var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
     var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
@@ -97,6 +99,7 @@ class AppPreferences(
     var mainViewConnectionApi: Int get() = MainViewConnectionApi.value; set(value) {MainViewConnectionApi.value = value}
     var httpApiTelemetryType: Int get() = HttpApiTelemetryType.value; set(value) {HttpApiTelemetryType.value = value}
 
+    var phoneNotification: Boolean get() = PhoneNotification.value; set(value) {PhoneNotification.value = value}
 
     // Preferences not saved permanently:
     val exclusionStrategy = AppPreferences.exclusionStrategy

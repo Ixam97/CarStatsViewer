@@ -70,6 +70,7 @@ class SettingsActivity : FragmentActivity() {
         settings_switch_consumption_unit.isChecked = appPreferences.consumptionUnit
         settings_switch_use_location.isChecked = appPreferences.useLocation
         settings_switch_autostart.isChecked = appPreferences.autostart
+        settings_switch_phone_reminder.isChecked = appPreferences.phoneNotification
         settings_switch_alt_layout.isChecked = appPreferences.altLayout
 
         settings_version_text.text = "Car Stats Viewer %s\n(%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
@@ -95,6 +96,10 @@ class SettingsActivity : FragmentActivity() {
         settings_switch_autostart.setOnClickListener {
             appPreferences.autostart = settings_switch_autostart.isChecked
             CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000, !appPreferences.autostart, extendedLogging = true)
+        }
+
+        settings_switch_phone_reminder.setOnClickListener {
+            appPreferences.phoneNotification = settings_switch_phone_reminder.isChecked
         }
 
         // if (emulatorMode) settings_switch_distance_unit.visibility = View.VISIBLE
