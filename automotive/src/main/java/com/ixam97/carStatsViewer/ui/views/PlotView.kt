@@ -5,6 +5,7 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -37,17 +38,6 @@ class PlotView @JvmOverloads constructor(
     var textSize: Float
     var xMargin: Int
     var yMargin: Int
-
-    init {
-        val attributes = context.obtainStyledAttributes(attrs, R.styleable.PlotView)
-        try {
-            textSize = attributes.getDimension(R.styleable.PlotView_baseTextSize, 26f)
-            xMargin = attributes.getDimension(R.styleable.PlotView_xMargin, 0f).toInt()
-            yMargin = attributes.getDimension(R.styleable.PlotView_yMargin, 0f).toInt()
-        } finally {
-            attributes.recycle()
-        }
-    }
 
     /*var xMargin: Int = 100
         set(value) {
@@ -185,6 +175,14 @@ class PlotView @JvmOverloads constructor(
     private val appPreferences : AppPreferences
 
     init {
+        val attributes = context.obtainStyledAttributes(attrs, R.styleable.PlotView)
+        try {
+            textSize = attributes.getDimension(R.styleable.PlotView_baseTextSize, 26f)
+            xMargin = attributes.getDimension(R.styleable.PlotView_xMargin, 0f).toInt()
+            yMargin = attributes.getDimension(R.styleable.PlotView_yMargin, 0f).toInt()
+        } finally {
+            attributes.recycle()
+        }
         setupPaint()
         appPreferences = AppPreferences(context)
     }
@@ -346,18 +344,29 @@ class PlotView @JvmOverloads constructor(
             val spanX: Float = scaleGestureDetector.currentSpanX
             val restrictionMin = dimensionRestrictionMin ?: return true
 
+            val center = (dimensionShift?: 0L) + (dimensionRestriction?: 0L) / 2L
+
+            val scalingFraction = when (dimensionRestriction) {
+                in 0L..24_999L -> 100L
+                in 25_000..99_999L -> 1_000L
+                else -> 5_000L
+            }
+
             if (lastRestriction == null || (lastSpanX/spanX).isInfinite()) return true
 
             val targetDimensionRestriction = ((lastRestriction!!.toFloat() * (lastSpanX / spanX)).toLong())
                 .coerceAtMost(touchDimensionMax)
                 .coerceAtLeast(restrictionMin)
 
-            dimensionRestriction = targetDimensionRestriction
+            dimensionRestriction = (((targetDimensionRestriction / scalingFraction) * scalingFraction) / 100L) * 100L
 
-            val shift = dimensionShift ?: return true
+            val shift = center - (dimensionRestriction?: center) / 2L // dimensionShift ?: return true
+
+            Log.d("PLOT", "Shift: $shift")
+            Log.d("PLOT", "dimension restriction: $dimensionRestriction")
 
             dimensionShift = shift
-                .coerceAtMost(touchDimensionMax - targetDimensionRestriction)
+                .coerceAtMost(touchDimensionMax - dimensionRestriction!!)
                 .coerceAtLeast(0L)
 
             return true
@@ -365,12 +374,18 @@ class PlotView @JvmOverloads constructor(
     }
 
     private val mScrollGestureListener = object : GestureDetector.SimpleOnGestureListener() {
+        private val shiftingFraction = 50L
+
         override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             touchDimensionShiftDistance += distanceX * touchDistanceMultiplier
 
-            dimensionShift = (touchDimensionShift + touchDimensionShiftDistance * touchDimensionShiftByPixel).toLong()
+            val targetDimensionShift = (((touchDimensionShift + touchDimensionShiftDistance * touchDimensionShiftByPixel) / ((dimensionRestriction?:shiftingFraction) / shiftingFraction)).toLong() * ((dimensionRestriction?:shiftingFraction) / shiftingFraction))
                 .coerceAtMost(touchDimensionMax - (dimensionRestriction ?: 0L))
                 .coerceAtLeast(0L)
+
+            dimensionShift = (targetDimensionShift / 100L) * 100L
+
+            Log.d("PLOT", "Shift: $dimensionShift")
 
             return true
         }
@@ -440,13 +455,26 @@ class PlotView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
+        Log.d("PLOT", "onDraw, dimensionRestriction: $dimensionRestriction, dimensionShift:$dimensionShift")
         super.onDraw(canvas)
+        dataPointMap.clear()
         alignZero()
         drawBackground(canvas)
         drawXLines(canvas)
         drawYBaseLines(canvas)
         drawPlot(canvas)
         drawYLines(canvas)
+    }
+
+    private var dataPointMap : HashMap<PlotLine, List<PlotLineItem>> = HashMap()
+    private fun dataPoints(plotLine: PlotLine?) : List<PlotLineItem>? {
+        if (plotLine == null) return null
+        Log.d("PLOT", "dataPointMap.containsKey = ${dataPointMap.containsKey(plotLine)}")
+        if (!dataPointMap.containsKey(plotLine)) {
+            Log.i("PLOT", "Getting data points")
+            dataPointMap[plotLine] = plotLine.getDataPoints(dimension, dimensionRestriction, dimensionShift)
+        }
+        return dataPointMap[plotLine]
     }
 
     private fun alignZero() {
@@ -460,8 +488,8 @@ class PlotView @JvmOverloads constructor(
             if (index == 0) {
                 if (line.isEmpty() || !line.Visible) return
 
-                val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift)
-                if (dataPoints.isEmpty()) return
+                val dataPoints = dataPoints(line)
+                if (dataPoints?.isEmpty() != false) continue
 
                 val minValue = line.minValue(dataPoints)!!
                 val maxValue = line.maxValue(dataPoints)!!
@@ -598,8 +626,8 @@ class PlotView @JvmOverloads constructor(
 
                     if (drawBackground && configuration.Range.backgroundZero == null) continue
 
-                    val dataPoints = plotLine.getDataPoints(dimension, dimensionRestriction, dimensionShift)
-                    if (dataPoints.isEmpty()) continue
+                    val dataPoints = dataPoints(plotLine)
+                    if (dataPoints?.isEmpty() != false) continue
 
                     val minDimension = plotLine.minDimension(dimension, dimensionRestriction, dimensionShift) ?: continue
                     val maxDimension = plotLine.maxDimension(dimension, dimensionRestriction, dimensionShift) ?: continue
@@ -640,8 +668,9 @@ class PlotView @JvmOverloads constructor(
     }
 
     private fun toPlotPointCollection(configuration: PlotLineConfiguration, line: PlotLine, dimensionY: PlotDimensionY?, minValue: Float, maxValue: Float, minDimension: Any, maxDimension: Any, maxX: Float, maxY: Float, smoothing: Float?, smoothingPercentage: Float?): ArrayList<ArrayList<PointF>> {
-        val dataPointsUnrestricted = line.getDataPoints(dimension)
-        val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPointsUnrestricted, dimension, smoothing, minDimension, maxDimension)
+        // val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift, true)
+        val dataPoints = dataPoints(line)!!
+        val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPoints, dimension, smoothing, minDimension, maxDimension)
 
         val plotPointCollection = ArrayList<ArrayList<PointF>>()
         for (collection in plotLineItemPointCollection) {
@@ -811,6 +840,8 @@ class PlotView @JvmOverloads constructor(
 
         restrictCanvas(canvas, maxX, maxY, yArea = false)
 
+        var prevMarkerEndX: Float? = null
+
         for (markerGroup in markers.groupBy { it.group(dimension, dimensionSmoothing) }) {
             if (markerGroup.key == null) continue
 
@@ -827,8 +858,12 @@ class PlotView @JvmOverloads constructor(
 
             markerXLimit = drawMarkerLabel(canvas, markerTimes, startX, markerXLimit)
 
-            drawMarkerLine(canvas, markerType, startX, -1)
-            drawMarkerLine(canvas, markerType, endX, 1)
+            if (prevMarkerEndX == null || startX - prevMarkerEndX > 25 || markerType == PlotMarkerType.CHARGE) {
+                prevMarkerEndX = endX
+
+                drawMarkerLine(canvas, markerType, startX, -1)
+                drawMarkerLine(canvas, markerType, endX, 1)
+            }
 
             for (markerDimensionGroup in markerGroup.value.groupBy { it.group(dimension) }) {
                 val markerDimensionType = markerDimensionGroup.value.minOfOrNull { it.MarkerType } ?: continue
@@ -942,7 +977,9 @@ class PlotView @JvmOverloads constructor(
 
                     if (dimensionY != null && index++ > 0) continue
 
-                    val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift)
+                    val dataPoints = dataPoints(line)
+                    if (dataPoints?.isEmpty() != false) continue
+
                     val configuration = when {
                         dimensionY != null -> PlotGlobalConfiguration.DimensionYConfiguration[dimensionY]
                         else -> line.Configuration

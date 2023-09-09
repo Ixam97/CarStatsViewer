@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.SeekBar
 import androidx.core.graphics.drawable.toDrawable
@@ -100,6 +101,27 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         setupListeners()
 
         summary_view_selector.buttonList[2].isEnabled = false
+
+        // Don't allow the scroll view to scroll when interacting with plots
+        fun disallowIntercept(v: View, event: MotionEvent) {
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    v.parent.requestDisallowInterceptTouchEvent(true)
+                }
+                MotionEvent.ACTION_UP -> {
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+        }
+
+        summary_consumption_plot.setOnTouchListener { v, event ->
+            disallowIntercept(v, event)
+            false
+        }
+        summary_charge_plot_view.setOnTouchListener { v, event ->
+            disallowIntercept(v, event)
+            false
+        }
 
         // check if a session has been provided, else close fragment
         if (this::session.isInitialized) {
@@ -207,8 +229,8 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
         summary_charge_plot_view.dimension = PlotDimensionX.TIME
         summary_charge_plot_view.dimensionRestrictionMin = TimeUnit.MINUTES.toMillis(5)
-        // summary_charge_plot_view.dimensionSmoothing = 0.01f
-        // summary_charge_plot_view.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
+        summary_charge_plot_view.dimensionSmoothing = 0.01f
+        summary_charge_plot_view.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
         summary_charge_plot_view.dimensionYSecondary = PlotDimensionY.STATE_OF_CHARGE
 
         summary_charge_plot_view.addPlotLine(chargePlotLine, chargePlotLinePaint)
@@ -368,7 +390,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         summary_charge_plot_view.reset()
         chargePlotLine.reset()
 
-        if (completedChargingSessions.isEmpty() || progress >= completedChargingSessions.size || progress < 0) {
+        if (completedChargingSessions.isEmpty() || progress >= completedChargingSessions.size || progress < 0 || completedChargingSessions[progress].chargingPoints?.isEmpty() == true) {
             summary_charge_plot_sub_title_curve.text = "%s (0/0)".format(
                 getString(R.string.settings_sub_title_last_charge_plot))
 

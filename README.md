@@ -120,6 +120,7 @@ Please also be aware that I will not just include everything. It has to fit into
 ## Contributors
 
 - Dario Bosshard (Consumption and charge curve diagrams)
+- Klaus Rheinwald (Testing and consulting)
 - FreshDave29
 - rdu
 - Jannick Fahlbusch
