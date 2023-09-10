@@ -121,7 +121,7 @@
             <Switch
                 android:id="@+id/settings_switch_phone_reminder"
                 style="@style/menu_standard_switch_style"
-                android:text="Phone reminder" />
+                android:text="@string/settings_phone_reminder" />
 
             <View
                 style="@style/menu_divider_style"

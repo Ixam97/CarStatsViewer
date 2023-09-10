@@ -140,6 +140,7 @@
     <string name="settings_sub_title_current_cons_plot">Aktuelle Verbrauchskurve:</string>
     <string name="settings_sub_title_last_charge_plot">Letzte Ladekurven:</string>
     <string name="settings_select_trip">Trip in Hauptansicht:</string>
+    <string name="settings_phone_reminder">Handy-Erinnerung</string>
     <string name="settings_apis_title">API-Einstellungen</string>
     <string name="settings_apis_abrp">ABRP Live-Daten</string>
     <string name="settings_apis_http">HTTP Webhook</string>
@@ -229,6 +230,8 @@
     <string name="notification_title">Aktuelle Fahrdaten:</string>
     <string name="foreground_service_info">Fahrdatenerfassung aktiv</string>
     <string name="toast_file_read_error">Fehler beim Einlesen der Trip-Datei</string>
+    <string name="notification_phone">Hast du dein Handy dabei?</string>
+    <string name="notification_valuables">Lasse keine Wertgegenstände sichtbar im Auto zurück.</string>
 
     <!-- Trip history -->
     <string name="history_title">Tripverlauf</string>

@@ -293,17 +293,13 @@ class DataProcessor {
             InAppLogger.i("[NEO] Ignition switched from ${IgnitionState.nameMap[prevIgnition]} to ${IgnitionState.nameMap[ignitionState]}")
             if (prevIgnition == IgnitionState.START && ignitionState <= IgnitionState.ON && CarStatsViewer.appPreferences.phoneNotification) {
 
-                val bitmap = CarStatsViewer.appContext.getDrawable(R.drawable.ic_phone)!!.toBitmap(80, 80)
-                // val bitmap = BitmapFactory.decodeResource(CarStatsViewer.appContext.resources, R.drawable.splashscreen)
-
                 val phoneNotification = Notification.Builder(
                     CarStatsViewer.appContext,
                     CarStatsViewer.RESTART_CHANNEL_ID
                 )
-                    .setContentTitle("Don't forget your mobile phone!")
-                    .setContentText("Make sure to not leave any valuable items in the car.")
+                    .setContentTitle(CarStatsViewer.appContext.getString(R.string.notification_phone))
+                    .setContentText(CarStatsViewer.appContext.getString(R.string.notification_valuables))
                     .setSmallIcon(R.drawable.ic_notification_phone)
-                    .setLargeIcon(bitmap)
                     .setOngoing(false)
                     .setCategory(Notification.CATEGORY_CALL)
                     .build()

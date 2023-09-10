@@ -198,6 +198,7 @@
     <string name="settings_sub_title_current_cons_plot">Current consumption plot:</string>
     <string name="settings_sub_title_last_charge_plot">Last charging curves:</string>
     <string name="settings_select_trip">Trip in main view:</string>
+    <string name="settings_phone_reminder">Phone reminder</string>
     <string name="settings_apis_title">API settings</string>
     <string name="settings_apis_abrp">ABRP Live Data</string>
     <string name="settings_apis_http">HTTP Webhook</string>
@@ -293,6 +294,8 @@
     <string name="notification_title">Current stats:</string>
     <string name="foreground_service_info">Statistics tracking service running</string>
     <string name="toast_file_read_error">Error reading trip file</string>
+    <string name="notification_phone">Did you take your mobile phone?</string>
+    <string name="notification_valuables">Don\'t leave any valuable items visible in the car.</string>
 
     <!-- Trip history -->
     <string name="history_title">Trip history</string>
