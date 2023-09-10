@@ -3,6 +3,9 @@ package com.ixam97.carStatsViewer.dataProcessor
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import androidx.core.graphics.drawable.toBitmap
 import com.ixam97.carStatsViewer.AutoStartReceiver
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.Defines
@@ -290,12 +293,17 @@ class DataProcessor {
             InAppLogger.i("[NEO] Ignition switched from ${IgnitionState.nameMap[prevIgnition]} to ${IgnitionState.nameMap[ignitionState]}")
             if (prevIgnition == IgnitionState.START && ignitionState <= IgnitionState.ON && CarStatsViewer.appPreferences.phoneNotification) {
 
+                val bitmap = CarStatsViewer.appContext.getDrawable(R.drawable.ic_phone)!!.toBitmap(80, 80)
+                // val bitmap = BitmapFactory.decodeResource(CarStatsViewer.appContext.resources, R.drawable.splashscreen)
+
                 val phoneNotification = Notification.Builder(
                     CarStatsViewer.appContext,
                     CarStatsViewer.RESTART_CHANNEL_ID
                 )
                     .setContentTitle("Don't forget your mobile phone!")
-                    .setSmallIcon(R.drawable.ic_phone)
+                    .setContentText("Make sure to not leave any valuable items in the car.")
+                    .setSmallIcon(R.drawable.ic_notification_phone)
+                    .setLargeIcon(bitmap)
                     .setOngoing(false)
                     .setCategory(Notification.CATEGORY_CALL)
                     .build()

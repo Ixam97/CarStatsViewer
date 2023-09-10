@@ -73,7 +73,7 @@ class DataCollector: Service() {
         foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.FOREGROUND_CHANNEL_ID)
             // .setContentTitle(getString(R.string.app_name))
             .setContentTitle(getString(R.string.foreground_service_info))
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_notification_diagram)
             .setOngoing(true)
 
         foregroundServiceNotification.setContentIntent(
