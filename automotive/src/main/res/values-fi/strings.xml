@@ -220,4 +220,16 @@
     <string name="history_dialog_multi_delete_deselect">Poista kaikki valinnat</string>
     <string name="settings_distance_unit">Maili etäisyyden yksikkönä</string>
     <string name="settings_apis_connection_selector">Yhteyskuvake päänäkymässä:</string>
+    <string-array name="changes_0_25_1">
+        <item>Käyttöliittymän parannuksia, erityisesti matkan yhteenvedossa.</item>
+        <item>Lisätty ajoneuvon kokoonpano MY24:lle.</item>
+        <item>Nykyisen sijainnin jakaminen voidaan nyt määrittää jokaiselle API:lle erikseen.</item>
+        <item>Pieniä virhekorjauksia.</item>
+    </string-array>
+    <string name="CurrentTripData_short">Manuaalinen</string>
+    <string name="SinceChargeData_short">Viimeisen latauksen jälkeen</string>
+    <string name="AutoTripData_short">Automaattinen</string>
+    <string name="CurrentMonthData_short">Kuukausi</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Kuvakaappaus otettu (yhteensä %s ).</string>
 </resources>
