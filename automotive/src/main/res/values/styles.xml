@@ -122,7 +122,21 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:visibility">gone</item>
     </style>
-    <style name="AppTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+    <style name="AppTheme" parent="@android:style/Theme">
         <item name="android:colorControlActivated">@color/polestar_orange</item>
+    </style>
+    <style name="testStyle" parent="AppTheme">
+        <item name="android:textColor">@color/primary_10</item>
+        <item name="android:buttonStyle">@style/testButton</item>
+    </style>
+    <style name="testButton" parent="@android:style/Widget.Button">
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:textColor">@color/button</item>
+        <item name="android:background">@drawable/button</item>
+        <item name="android:textSize">@dimen/std_font_size</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:minHeight">70dp</item>
     </style>
 </resources>

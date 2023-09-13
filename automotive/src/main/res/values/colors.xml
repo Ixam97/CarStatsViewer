@@ -22,4 +22,18 @@
     <color name="connected_blue">#2595FF</color>
     <color name="limited_yellow">#FFBF00</color>
     <color name="grid_line_color">#272727</color>
+
+    <color name="primary_90">#111315</color>
+    <color name="primary_80">#212427</color>
+    <color name="primary_70">#2E3338</color>
+    <color name="primary_60">#3C4349</color>
+    <color name="primary_50">#545B62</color>
+    <color name="primary_40">#6A7076</color>
+    <color name="primary_30">#7E8287</color>
+    <color name="primary_20">#94979A</color>
+    <color name="primary_10">#A8A9AA</color>
+
+    <color name="accent_40">#6684DA</color>
+    <color name="accent_50">#3C61C8</color>
+    <color name="accent_60">#1F459F</color>
 </resources>
