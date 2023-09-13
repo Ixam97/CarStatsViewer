@@ -114,7 +114,7 @@
     <string name="main_changelog_dialog_title">Changes in version %s:</string>
     <string name="settings_apis_title">API-innstillinger</string>
     <!-- Restart Dialog -->
-    <string name="restart_notification_title" formatted="false">%s har restartet etter %s,</string>
+    <string name="restart_notification_title" formatted="false">%s har restartet etter %s.</string>
     <string name="restart_notification_reason_crash">en krasj</string>
     <string name="restart_notification_reason_reboot">en reboot</string>
     <string name="restart_notification_reason_update">en oppdatering</string>
@@ -220,4 +220,16 @@
     <string name="history_dialog_multi_delete_deselect">Velg vekk alle</string>
     <string name="settings_distance_unit">Mile som distanseenhet</string>
     <string name="settings_apis_connection_selector">Tilkoblingsikon i hovedvisning:</string>
+    <string-array name="changes_0_25_1">
+        <item>UI-justeringer, spesielt i turoppsummering.</item>
+        <item>Lagt til kjøretøy for konfigurering av MY24.</item>
+        <item>Deling av nåværende plassering kan nå bli konfigurert for hvert API individuelt.</item>
+        <item>Mindre bugfikser</item>
+    </string-array>
+    <string name="CurrentTripData_short">Manuell</string>
+    <string name="SinceChargeData_short">Siden lading</string>
+    <string name="AutoTripData_short">Automatisk</string>
+    <string name="CurrentMonthData_short">Måned</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Screenshot tatt (totalt av %s).</string>
 </resources>

@@ -220,4 +220,14 @@
     <string name="history_dialog_multi_delete_deselect">Alles deselecteren</string>
     <string name="settings_distance_unit">Mijlen als afstandseenheid</string>
     <string name="settings_apis_connection_selector">Verbindingspictogram in hoofdweergave:</string>
+    <string-array name="changes_0_25_1">
+        <item>UI-aanpassingen, vooral in het reisoverzicht.</item>
+        <item>Voertuigconfiguratie toegevoegd voor MY24.</item>
+        <item>Het delen van de huidige locatie kan nu voor elke API afzonderlijk worden geconfigureerd.</item>
+        <item>Kleine bugfixes.</item>
+    </string-array>
+    <string name="CurrentTripData_short">Handmatig</string>
+    <string name="SinceChargeData_short">Sinds laadbeurt</string>
+    <string name="AutoTripData_short">Automatisch</string>
+    <string name="CurrentMonthData_short">Maand</string>
 </resources>
