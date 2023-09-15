@@ -7,13 +7,11 @@
     android:orientation="vertical"
     android:clickable="true"
     android:id="@+id/activity_summary"
-    android:theme="@style/testStyle"
-    android:background="#000">
+    android:background="@color/slideup_activity_background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_action_bar"
         android:orientation="horizontal">
 
         <ImageButton
@@ -21,10 +19,10 @@
             style="@style/title_back_button_style"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:tint="@color/accent_50"
             android:src="@drawable/ic_close"/>
 
         <ImageView
+            android:visibility="gone"
             android:id="@+id/summary_type_icon"
             android:layout_marginStart="10dp"
             android:layout_gravity="center_vertical"
@@ -115,11 +113,7 @@
 
     </LinearLayout>
 
-    <View
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="?android:attr/colorControlActivated"/>
+    <View style="@style/action_bar_line"/>
 
     <TextView
         android:id="@+id/summary_parked_warning"
@@ -137,7 +131,6 @@
         android:background="?android:attr/listDivider"/>
 
     <ScrollView
-        android:background="@drawable/bg_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -149,7 +142,7 @@
             <com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
                 android:id="@+id/summary_view_selector"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="80dp"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
@@ -202,28 +195,28 @@
                         android:id="@+id/summary_button_dist_20"
                         android:layout_width="wrap_content"
                         android:text="20 km"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="80dp"/>
                     <Button
                         android:visibility="visible"
                         android:id="@+id/summary_button_dist_40"
                         android:layout_width="wrap_content"
                         android:text="40 km"
                         android:layout_marginStart="15dp"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="80dp"/>
                     <Button
                         android:visibility="visible"
                         android:id="@+id/summary_button_dist_100"
                         android:layout_width="wrap_content"
                         android:text="100 km"
                         android:layout_marginStart="15dp"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="80dp"/>
                     <Button
                         android:visibility="visible"
                         android:id="@+id/summary_button_secondary_dimension"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_marginStart="15dp"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="80dp"/>
                 </LinearLayout>
 
                 <View style="@style/menu_divider_style"

@@ -355,9 +355,11 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             summary_trip_selector.visibility = View.VISIBLE
             summary_selector_title.text = resources.getStringArray(R.array.trip_type_names)[session.session_type]
             summary_selected_trip_bar.forEach { bar ->
-                bar.background = applicationContext.getColor(R.color.primary_90).toDrawable()
+                bar.background = applicationContext.getColor(R.color.disable_background).toDrawable()
+                // bar.background = applicationContext.getColor(R.color.club_night_variant).toDrawable()
             }
-            summary_selected_trip_bar[appPreferences.mainViewTrip].background = applicationContext.getColor(R.color.accent_50).toDrawable()
+            // summary_selected_trip_bar[appPreferences.mainViewTrip].background = applicationContext.getDrawable(R.drawable.bg_button_selected)
+            summary_selected_trip_bar[appPreferences.mainViewTrip].background = primaryColor.toColor().toDrawable()
         }
 
         summary_trip_date_text.text = getString(R.string.summary_trip_start_date).format(StringFormatters.getDateString(Date(session.start_epoch_time)))

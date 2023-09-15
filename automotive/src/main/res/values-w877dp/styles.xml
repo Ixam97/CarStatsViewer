@@ -38,7 +38,4 @@
         <item name="android:textFontWeight">@integer/std_font_weight</item>
         <item name="android:textColor">@color/secondary_text_color</item>
     </style>
-    <style name="AppTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar">
-        <item name="android:colorAccent">@color/volvo_blue</item>
-    </style>
 </resources>

@@ -36,4 +36,11 @@
     <color name="accent_40">#6684DA</color>
     <color name="accent_50">#3C61C8</color>
     <color name="accent_60">#1F459F</color>
+
+    <color name="club_blue">#447ea6</color>
+    <color name="club_violet">#77347b</color>
+    <color name="club_night">#0a0f14</color>
+    <color name="club_night_variant">#111922</color>
+    <color name="club_dk_blue">#161d39</color>
+    <color name="club_hint">#f7ea48</color>
 </resources>

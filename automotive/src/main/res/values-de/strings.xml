@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string-array name="changes_0_25_2">
+        <item>Erweiterung der Webhook-API.</item>
+        <item>Option für eine Handy-Erinnerung beim verlassen des Fahrzeugs hinzugefügt.</item>
+        <item>Optimierungen bei der Lade- und Rendergeschwindigkeit der Statistikdiagramme.</item>
+        <item>Fehler behoben, bei dem zum Teil falsche Ladevorgänge angezeigt wurden.</item>
+        <item>Fehler behoben, der verhinderte, dass Meilen als Distanzeinheit verwendet werden.</item>
+    </string-array>
+
     <string-array name="changes_0_25_1">
         <item>Anpassungen an der UI, insbesondere in der Tripzusammenfassung.</item>
         <item>Fahrzeugkonfiguration für MY24 hinzugefügt.</item>

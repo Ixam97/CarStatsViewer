@@ -36,6 +36,9 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textFontWeight">@integer/std_font_weight</item>
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <!--<item name="android:thumb">@drawable/club_thumb_gradient</item>
+        <item name="android:thumbTint">@color/switch_tint</item>
+        <item name="android:trackTint">@color/club_night_variant</item>-->
     </style>
     <style name="menu_standard_row_label">
         <item name="android:layout_width">wrap_content</item>
@@ -122,16 +125,24 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:visibility">gone</item>
     </style>
-    <style name="AppTheme" parent="@android:style/Theme">
-        <item name="android:colorControlActivated">@color/polestar_orange</item>
+    <style name="action_bar_line">
+        <!--<item name="android:background">@drawable/club_gradient</item>
+        <item name="android:layout_height">4dp</item>-->
+        <item name="android:background">?android:attr/colorControlActivated</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:layout_width">match_parent</item>
     </style>
-    <style name="testStyle" parent="AppTheme">
-        <item name="android:textColor">@color/primary_10</item>
+    <style name="AppTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <!--<item name="android:colorControlActivated">@color/club_blue</item>
+        <item name="android:buttonStyle">@style/testButton</item>-->
+    </style>
+    <style name="ColorTestTheme" parent="AppTheme">
+        <item name="android:colorControlActivated">@color/club_blue</item>
         <item name="android:buttonStyle">@style/testButton</item>
     </style>
     <style name="testButton" parent="@android:style/Widget.Button">
-        <item name="android:gravity">center_vertical|center_horizontal</item>
-        <item name="android:textColor">@color/button</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:textColor">@color/button_text</item>
         <item name="android:background">@drawable/button</item>
         <item name="android:textSize">@dimen/std_font_size</item>
         <item name="android:focusable">true</item>

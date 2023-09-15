@@ -84,10 +84,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/polestar_orange"/>
+        <View style="@style/action_bar_line" />
 
         <LinearLayout
             android:layout_width="match_parent"
