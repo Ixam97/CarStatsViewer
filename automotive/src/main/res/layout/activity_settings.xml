@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?activity_background"
     tools:ignore="UseSwitchCompatOrMaterialXml, UseAppTint, UseCompatTextViewDrawableXml"
     tools:context=".ui.activities.SettingsActivity">
 
@@ -41,7 +42,7 @@
     </LinearLayout>
 
     <View
-        style="@style/action_bar_line"
+        style="?action_bar_line"
         android:id="@+id/settings_title_divider"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
         app:layout_constraintLeft_toLeftOf="parent"/>
@@ -71,7 +72,7 @@
 
             <Switch
                 android:id="@+id/settings_switch_notifications"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_notifications" />
 
             <View
@@ -82,7 +83,7 @@
             <Switch
                 android:visibility="gone"
                 android:id="@+id/settings_switch_alt_layout"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="Speed and SoC in main view gages" />
 
             <View
@@ -91,7 +92,7 @@
 
             <Switch
                 android:id="@+id/settings_switch_consumption_unit"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_consumption_unit" />
 
             <View
@@ -100,7 +101,7 @@
 
             <Switch
                 android:id="@+id/settings_switch_use_location"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_use_location" />
 
             <View
@@ -109,7 +110,7 @@
 
             <Switch
                 android:id="@+id/settings_switch_autostart"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_autostart" />
 
             <View
@@ -118,7 +119,7 @@
 
             <Switch
                 android:id="@+id/settings_switch_phone_reminder"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_phone_reminder" />
 
             <View

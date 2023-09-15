@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+        <!--<item name="android:colorControlActivated">@color/club_blue</item>
+        <item name="android:buttonStyle">@style/testButton</item>-->
+        <item name="action_bar_line"> @style/AppTheme.action_bar_line</item>
+        <item name="menu_standard_switch_style">@style/AppTheme.menu_standard_switch_style</item>
+        <item name="activity_background">@android:color/transparent</item>
+    </style>
+    <style name="ColorTestTheme" parent="AppTheme">
+        <item name="android:colorControlActivated">@color/club_blue</item>
+        <item name="android:buttonStyle">@style/testButton</item>
+        <item name="action_bar_line"> @style/ColorTestTheme.action_bar_line</item>
+        <item name="menu_standard_switch_style">@style/ColorTestTheme.menu_standard_switch_style</item>
+        <item name="activity_background">@android:color/black</item>
+    </style>
+</resources>

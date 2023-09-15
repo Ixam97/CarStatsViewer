@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="UseSwitchCompatOrMaterialXml, UseAppTint, UseCompatTextViewDrawableXml"
+    android:theme="@style/ColorTestTheme"
     tools:context=".ui.activities.SettingsVehicleActivity">
 
     <LinearLayout
@@ -76,7 +77,7 @@
 
             <Switch
                 android:id="@+id/settings_vehicle_switch_plus"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/vehicle_plus"/>
 
             <View style="@style/menu_divider_style"
@@ -84,7 +85,7 @@
 
             <Switch
                 android:id="@+id/settings_vehicle_switch_performance"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/vehicle_performance"/>
 
             <View style="@style/menu_divider_style"
@@ -92,7 +93,7 @@
 
             <Switch
                 android:id="@+id/settings_vehicle_switch_bst"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/vehicle_bst"/>
 
             <View style="@style/menu_divider_style"

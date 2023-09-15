@@ -52,6 +52,8 @@ class CarStatsViewer : Application() {
 
         var screenshotBitmap = arrayListOf<Bitmap>()
 
+        var theme = false
+
         lateinit var appContext: Context
         lateinit var liveDataApis: ArrayList<LiveDataApi>
         lateinit var appPreferences: AppPreferences

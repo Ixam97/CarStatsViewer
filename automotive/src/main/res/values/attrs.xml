@@ -34,4 +34,8 @@
         <attr name="xMargin" format="dimension"/>
         <attr name="yMargin" format="dimension"/>
     </declare-styleable>
+
+    <attr name="action_bar_line" format="reference" />
+    <attr name="menu_standard_switch_style" format="reference" />
+    <attr name="activity_background" format="color" />
 </resources>
