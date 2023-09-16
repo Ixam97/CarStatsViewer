@@ -59,7 +59,7 @@ class AppPreferences(
     private val HttpApiTelemetryType = AppPreference<Int>("preference_telemetry_type", 2, sharedPref)
 
     private val PhoneNotification = AppPreference<Boolean>("preference_phone_notification", false, sharedPref)
-
+    private val ColorTheme = AppPreference<Int>("preference_color_theme", 0, sharedPref)
     var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
     var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
@@ -100,6 +100,7 @@ class AppPreferences(
     var httpApiTelemetryType: Int get() = HttpApiTelemetryType.value; set(value) {HttpApiTelemetryType.value = value}
 
     var phoneNotification: Boolean get() = PhoneNotification.value; set(value) {PhoneNotification.value = value}
+    var colorTheme: Int get() = ColorTheme.value; set(value) {ColorTheme.value = value}
 
     // Preferences not saved permanently:
     val exclusionStrategy = AppPreferences.exclusionStrategy

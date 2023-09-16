@@ -21,7 +21,6 @@ class SettingsApisActivity: FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (CarStatsViewer.theme) setTheme(R.style.ColorTestTheme)
         setContentViewAndTheme(this, R.layout.activity_settings_apis)
 
         CarStatsViewer.typefaceMedium?.let {

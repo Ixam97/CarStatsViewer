@@ -48,6 +48,8 @@ class MainActivity : FragmentActivity() {
         const val CONSUMPTION_DISTANCE_RESTRICTION = 10_000L
     }
 
+    private var appliedTheme = 0
+
     /** values and variables */
     private val appPreferences = CarStatsViewer.appPreferences
 
@@ -100,6 +102,11 @@ class MainActivity : FragmentActivity() {
 
     override fun onResume() {
         super.onResume()
+
+        if (appliedTheme != appPreferences.colorTheme) {
+            finish()
+            startActivity(intent)
+        }
 
         // CarStatsViewer.dataProcessor.changeSelectedTrip(appPreferences.mainViewTrip + 1)
 
@@ -351,12 +358,7 @@ class MainActivity : FragmentActivity() {
         // GageView.descriptionTextSize = resources.getDimension(R.dimen.gage_desc_text_size)
 
         setContentViewAndTheme(this, R.layout.activity_main)
-
-        main_title.setOnClickListener {
-            CarStatsViewer.theme = !CarStatsViewer.theme
-            finish()
-            startActivity(intent)
-        }
+        appliedTheme = appPreferences.colorTheme
 
         CarStatsViewer.typefaceMedium?.let {
             applyTypeface(main_activity)
@@ -575,14 +577,14 @@ class MainActivity : FragmentActivity() {
 
         main_power_gage.gageName = getString(R.string.main_gage_power)
         main_power_gage.gageUnit = "kW"
-        main_power_gage.primaryColor = getColor(R.color.polestar_orange)
+        main_power_gage.primaryColor = getColorFromAttribute(this, android.R.attr.colorControlActivated)
         main_power_gage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
         main_power_gage.minValue = if (appPreferences.consumptionPlotSingleMotor) -100f else -150f
         main_power_gage.setValue(0f)
 
         main_consumption_gage.gageName = getString(R.string.main_gage_consumption)
         main_consumption_gage.gageUnit = "kWh/100km"
-        main_consumption_gage.primaryColor = getColor(R.color.polestar_orange)
+        main_consumption_gage.primaryColor = getColorFromAttribute(this, android.R.attr.colorControlActivated)
         main_consumption_gage.minValue = -30f
         main_consumption_gage.maxValue = 60f
         main_consumption_gage.setValue(0f)

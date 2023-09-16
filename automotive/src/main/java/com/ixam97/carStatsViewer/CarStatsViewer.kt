@@ -52,7 +52,6 @@ class CarStatsViewer : Application() {
 
         var screenshotBitmap = arrayListOf<Bitmap>()
 
-        var theme = false
         var fontsLoaded = false
 
         lateinit var appContext: Context

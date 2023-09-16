@@ -35,6 +35,7 @@ import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.applyTypeface
+import com.ixam97.carStatsViewer.utils.getColorFromAttribute
 import kotlinx.android.synthetic.main.fragment_summary.*
 import kotlinx.coroutines.*
 import java.util.*
@@ -93,7 +94,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
     }
 
     override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
-        return if (CarStatsViewer.theme) {
+        return if (CarStatsViewer.appPreferences.colorTheme > 0) {
             val inflater = super.onGetLayoutInflater(savedInstanceState)
             val contextThemeWrapper: Context = ContextThemeWrapper(requireContext(), R.style.ColorTestTheme)
             inflater.cloneInContext(contextThemeWrapper)
@@ -368,11 +369,11 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             summary_trip_selector.visibility = View.VISIBLE
             summary_selector_title.text = resources.getStringArray(R.array.trip_type_names)[session.session_type]
             summary_selected_trip_bar.forEach { bar ->
-                bar.background = applicationContext.getColor(R.color.disable_background).toDrawable()
+                bar.background = getColorFromAttribute(requireContext(), R.attr.widget_background).toDrawable()
                 // bar.background = applicationContext.getColor(R.color.club_night_variant).toDrawable()
             }
             // summary_selected_trip_bar[appPreferences.mainViewTrip].background = applicationContext.getDrawable(R.drawable.bg_button_selected)
-            summary_selected_trip_bar[appPreferences.mainViewTrip].background = primaryColor.toColor().toDrawable()
+            summary_selected_trip_bar[appPreferences.mainViewTrip].background = getColorFromAttribute(requireContext(), android.R.attr.colorControlActivated).toDrawable()
         }
 
         summary_trip_date_text.text = getString(R.string.summary_trip_start_date).format(StringFormatters.getDateString(Date(session.start_epoch_time)))

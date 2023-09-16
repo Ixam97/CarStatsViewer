@@ -162,6 +162,15 @@
                 app:topText="@string/settings_about"
                 app:startDrawable="@drawable/ic_info"/>
 
+            <Switch
+                android:id="@+id/settings_switch_theme"
+                style="@style/ColorTestTheme.menu_standard_switch_style"
+                android:text="Experimental colors" />
+            <View
+                style="@style/menu_divider_style"
+                android:layout_height="0dp"
+                android:background="?android:attr/listDivider" />
+
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

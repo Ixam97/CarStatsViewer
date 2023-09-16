@@ -5,6 +5,6 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 
 fun setContentViewAndTheme(context: Activity, resId: Int) {
-    if (CarStatsViewer.theme) context.setTheme(R.style.ColorTestTheme)
+    if (CarStatsViewer.appPreferences.colorTheme > 0) context.setTheme(R.style.ColorTestTheme)
     context.setContentView(resId)
 }

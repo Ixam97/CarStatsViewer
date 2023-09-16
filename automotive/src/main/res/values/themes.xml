@@ -8,14 +8,17 @@
         <item name="activity_background">@android:color/transparent</item>
         <item name="activity_background_variant">@color/slideup_activity_background</item>
         <item name="dialog_background">@android:color/transparent</item>
+        <item name="widget_background">@color/disable_background</item>
     </style>
     <style name="ColorTestTheme" parent="AppTheme">
         <item name="android:colorControlActivated">@color/club_blue</item>
+        <item name="colorAccent">@color/club_blue</item>
         <item name="android:buttonStyle">@style/testButton</item>
         <item name="action_bar_line"> @style/ColorTestTheme.action_bar_line</item>
         <item name="menu_standard_switch_style">@style/ColorTestTheme.menu_standard_switch_style</item>
         <item name="activity_background">@android:color/black</item>
         <item name="activity_background_variant">@color/club_night_darker</item>
         <item name="dialog_background">@color/club_night_darker</item>
+        <item name="widget_background">@color/club_night_variant</item>
     </style>
 </resources>
