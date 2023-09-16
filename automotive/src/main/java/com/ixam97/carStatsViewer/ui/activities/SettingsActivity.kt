@@ -10,6 +10,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.applyTypeface
+import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -47,19 +48,13 @@ class SettingsActivity : FragmentActivity() {
         }
         InAppLogger.d("onCreate, Theme: ${CarStatsViewer.theme}")
         if (CarStatsViewer.theme) setTheme(R.style.ColorTestTheme)
-        setContentView(R.layout.activity_settings)
+        setContentViewAndTheme(this, R.layout.activity_settings)
 
         CarStatsViewer.typefaceMedium?.let {
             applyTypeface(settings_activity)
         }
 
         if (!CarStatsViewer.isPolestarTypeface) settings_vehicle_widget.isVisible = false
-
-        settings_title.setOnClickListener {
-            CarStatsViewer.theme = !CarStatsViewer.theme
-            finish()
-            startActivity(intent)
-        }
 
         setupSettingsMaster()
     }

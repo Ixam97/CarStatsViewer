@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="UseSwitchCompatOrMaterialXml, UseAppTint, UseCompatTextViewDrawableXml"
-    android:theme="@style/ColorTestTheme"
+    android:background="?activity_background"
     tools:context=".ui.activities.SettingsVehicleActivity">
 
     <LinearLayout
@@ -27,10 +27,7 @@
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="?android:attr/colorControlActivated"/>
+    <View style="?action_bar_line"/>
 
     <ScrollView
         android:id="@+id/settings_vehicle_scrollview"

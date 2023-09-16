@@ -10,26 +10,33 @@
             <path android:pathData="M0,0L0,100L100,100L100,0z">
                 <aapt:attr name="android:fillColor">
                     <gradient
-                        android:endX="99"
-                        android:endY="50"
-                        android:startX="1"
-                        android:startY="50"
+                        android:endX="120"
+                        android:endY="0"
+                        android:startX="-20"
+                        android:startY="100"
                         android:type="linear">
                         <item
-                            android:color="@color/club_violet_dark"
+                            android:color="#77347b"
                             android:offset="0" />
                         <item
-                            android:color="@color/club_violet"
-                            android:offset="0.33" />
-                        <item
-                            android:color="@color/club_blue"
-                            android:offset="0.66" />
-                        <item
-                            android:color="@color/club_blue_deep"
+                            android:color="#447ea6"
                             android:offset="1" />
                     </gradient>
                 </aapt:attr>
             </path>
         </vector>
+    </item>
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="rectangle" >
+            <!--<solid android:color="@color/accent_50"/>-->
+            <solid android:color="@color/button_foreground" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <size
+                android:width="144dp"/>
+        </shape>
     </item>
 </layer-list>

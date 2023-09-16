@@ -11,7 +11,7 @@
         android:layout_gravity="bottom"
         android:layout_marginHorizontal="50dp"
         android:layout_marginBottom="20px"
-        android:background="?android:attr/colorSecondary">
+        android:background="@color/club_hint">
 
         <ImageView
             android:id="@+id/start_icon"
@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:src="@drawable/ic_info"
+            android:tint="@android:color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -30,6 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:layout_marginStart="123dp"
+            android:textColor="#000"
             android:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/confirm_button"
@@ -40,7 +42,7 @@
             android:id="@+id/confirm_button"
             style="@style/menu_row_top_text"
             android:tag="bold"
-            android:textColor="@color/club_hint"
+            android:textColor="#000"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="20dp"
@@ -54,7 +56,7 @@
             android:id="@+id/progress_bar"
             android:layout_width="1dp"
             android:layout_height="8dp"
-            android:background="@color/club_hint"
+            android:background="#000"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 

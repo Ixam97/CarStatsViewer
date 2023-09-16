@@ -5,6 +5,7 @@
     android:id="@+id/history_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?activity_background"
     tools:ignore="UseSwitchCompatOrMaterialXml, UseAppTint, UseCompatTextViewDrawableXml"
     tools:context=".ui.activities.SettingsActivity">
 
@@ -81,10 +82,7 @@
             </LinearLayout>
 
         </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="?android:attr/colorControlActivated"/>
+        <View style="?action_bar_line"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/history_trips_recycler_view"

@@ -18,7 +18,7 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textFontWeight">@integer/std_font_weight</item>
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-        <item name="android:thumb">@drawable/club_thumb_gradient</item>
+        <item name="android:thumb">@drawable/club_thumb</item>
         <item name="android:trackTint">@color/club_night_variant</item>
     </style>
     <style name="title_back_button_style">

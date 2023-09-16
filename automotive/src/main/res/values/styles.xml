@@ -143,7 +143,7 @@
     <style name="testButton" parent="@android:style/Widget.Button">
         <item name="android:gravity">center_vertical|left</item>
         <item name="android:textColor">@color/button_text</item>
-        <item name="android:background">@drawable/button</item>
+        <item name="android:background">@drawable/club_button</item>
         <item name="android:textSize">@dimen/std_font_size</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>

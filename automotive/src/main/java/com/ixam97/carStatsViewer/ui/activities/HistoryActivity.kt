@@ -25,6 +25,7 @@ import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.ui.views.TripHistoryRowWidget
 import com.ixam97.carStatsViewer.utils.applyTypeface
+import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.coroutines.*
 import java.util.*
@@ -76,7 +77,7 @@ class HistoryActivity  : FragmentActivity() {
 
         context = applicationContext
 
-        setContentView(R.layout.activity_history)
+        setContentViewAndTheme(this, R.layout.activity_history)
 
         history_trips_recycler_view.adapter = tripsAdapter
         history_trips_recycler_view.layoutManager = LinearLayoutManager(this@HistoryActivity)

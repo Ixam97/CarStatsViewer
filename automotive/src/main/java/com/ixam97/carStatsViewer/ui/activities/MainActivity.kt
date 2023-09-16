@@ -214,7 +214,6 @@ class MainActivity : FragmentActivity() {
             }
         }
 
-
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 CarStatsViewer.dataProcessor.currentChargingSessionDataFlow.collectLatest { chargingSession ->
@@ -351,7 +350,13 @@ class MainActivity : FragmentActivity() {
         // GageView.valueTextSize = resources.getDimension(R.dimen.gage_value_text_size)
         // GageView.descriptionTextSize = resources.getDimension(R.dimen.gage_desc_text_size)
 
-        setContentView(R.layout.activity_main)
+        setContentViewAndTheme(this, R.layout.activity_main)
+
+        main_title.setOnClickListener {
+            CarStatsViewer.theme = !CarStatsViewer.theme
+            finish()
+            startActivity(intent)
+        }
 
         CarStatsViewer.typefaceMedium?.let {
             applyTypeface(main_activity)

@@ -38,4 +38,6 @@
     <attr name="action_bar_line" format="reference" />
     <attr name="menu_standard_switch_style" format="reference" />
     <attr name="activity_background" format="color" />
+    <attr name="activity_background_variant" format="color" />
+    <attr name="dialog_background" format="color" />
 </resources>

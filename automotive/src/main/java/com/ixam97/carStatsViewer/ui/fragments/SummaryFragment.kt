@@ -1,9 +1,12 @@
 package com.ixam97.carStatsViewer.ui.fragments
 
 import android.app.AlertDialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.SeekBar
@@ -87,6 +90,16 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         }
         override fun onStartTrackingTouch(seekBar: SeekBar?) {}
         override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+    }
+
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        return if (CarStatsViewer.theme) {
+            val inflater = super.onGetLayoutInflater(savedInstanceState)
+            val contextThemeWrapper: Context = ContextThemeWrapper(requireContext(), R.style.ColorTestTheme)
+            inflater.cloneInContext(contextThemeWrapper)
+        } else {
+            super.onGetLayoutInflater(savedInstanceState)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
