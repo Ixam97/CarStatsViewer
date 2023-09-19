@@ -19,7 +19,6 @@
 
         <TextView
             style="@style/title_text_style"
-            android:drawableStart="@drawable/ic_diagram"
             android:text="@string/settings_main_view"/>
 
         <View

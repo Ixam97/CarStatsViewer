@@ -24,7 +24,7 @@
         android:id="@+id/splashscreen"
         android:layout_width="658dp"
         android:layout_height="236dp"
-        android:src="@drawable/splashscreen"
+        android:src="@mipmap/ic_launcher"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

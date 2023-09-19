@@ -22,7 +22,6 @@
 
         <TextView
             style="@style/title_text_style"
-            android:drawableStart="@drawable/ic_api"
             android:text="@string/settings_apis_title" />
 
     </LinearLayout>

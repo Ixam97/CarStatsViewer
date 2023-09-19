@@ -22,7 +22,6 @@
 
         <TextView
             style="@style/title_text_style"
-            android:drawableStart="@drawable/ic_car"
             android:text="@string/vehicle_title" />
 
     </LinearLayout>

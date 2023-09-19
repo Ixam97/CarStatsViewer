@@ -23,7 +23,6 @@
         <TextView
             android:id="@+id/about_title"
             style="@style/title_text_style"
-            android:drawableStart="@drawable/ic_info"
             android:text="@string/about_title"/>
 
     </LinearLayout>

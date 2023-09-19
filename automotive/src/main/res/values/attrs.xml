@@ -43,4 +43,9 @@
     <attr name="activity_background_variant" format="color" />
     <attr name="dialog_background" format="color" />
     <attr name="widget_background" format="color" />
+
+    <!-- Colors to be used in plots -->
+    <attr name="primary_plot_color" format="color" />
+    <attr name="secondary_plot_color" format="color" />
+    <attr name="tertiary_plot_color" format="color" />
 </resources>

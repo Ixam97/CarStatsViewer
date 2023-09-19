@@ -9,6 +9,9 @@
         <item name="activity_background_variant">@color/slideup_activity_background</item>
         <item name="dialog_background">@android:color/transparent</item>
         <item name="widget_background">@color/disable_background</item>
+        <item name="primary_plot_color">@color/primary_plot_color</item>
+        <item name="secondary_plot_color">@color/secondary_plot_color</item>
+        <item name="tertiary_plot_color">@color/secondary_plot_color_alt</item>
     </style>
     <style name="ColorTestTheme" parent="AppTheme">
         <item name="android:colorControlActivated">@color/club_blue</item>

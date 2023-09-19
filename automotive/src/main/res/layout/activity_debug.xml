@@ -23,7 +23,6 @@
 
         <TextView
             style="@style/title_text_style"
-            android:drawableStart="@drawable/ic_debug"
             android:text="@string/log_title"/>
 
         <View style="@style/filler"/>

@@ -21,7 +21,6 @@
         style="@style/title_text_style"
         android:text="Title text"
         android:drawablePadding="20dp"
-        android:drawableStart="@drawable/ic_settings"
         android:gravity="center_vertical"
         app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintStart_toEndOf="@+id/title_button_start"

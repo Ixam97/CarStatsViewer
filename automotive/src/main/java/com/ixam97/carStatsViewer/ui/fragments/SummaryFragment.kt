@@ -73,11 +73,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         ),
     )
 
-    private val consumptionPlotLinePaint = PlotLinePaint(
-    PlotPaint.byColor(applicationContext.getColor(R.color.primary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
-    PlotPaint.byColor(applicationContext.getColor(R.color.secondary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
-    PlotPaint.byColor(applicationContext.getColor(R.color.secondary_plot_color_alt), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size))
-    ) { appPreferences.consumptionPlotSecondaryColor }
+    private lateinit var consumptionPlotLinePaint: PlotLinePaint
 
     private val chargePlotLinePaint = PlotLinePaint(
     PlotPaint.byColor(applicationContext.getColor(R.color.charge_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
@@ -107,8 +103,14 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         super.onViewCreated(view, savedInstanceState)
 
         CarStatsViewer.typefaceRegular?.let {
-            // applyTypeface(view)
+            applyTypeface(view)
         }
+
+        consumptionPlotLinePaint = PlotLinePaint(
+            PlotPaint.byColor(getColorFromAttribute(requireContext(), R.attr.primary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
+            PlotPaint.byColor(getColorFromAttribute(requireContext(), R.attr.secondary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
+            PlotPaint.byColor(getColorFromAttribute(requireContext(), R.attr.tertiary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size))
+        ) { appPreferences.consumptionPlotSecondaryColor }
 
         setupPlots()
         setSecondaryConsumptionPlotDimension(appPreferences.secondaryConsumptionDimension)

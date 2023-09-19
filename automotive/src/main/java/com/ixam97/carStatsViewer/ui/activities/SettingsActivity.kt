@@ -80,7 +80,7 @@ class SettingsActivity : FragmentActivity() {
             else -> false
         }
 
-        settings_version_text.text = "Car Stats Viewer %s\n(%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
+        settings_version_text.text = "Car Stats Viewer %s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 
         settings_button_back.setOnClickListener() {
             finish()
