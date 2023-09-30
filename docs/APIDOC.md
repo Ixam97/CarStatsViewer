@@ -26,6 +26,8 @@ For example:
 
 API version 2.1 extends version 2.0 (see below) by some more optional values. These aim to be more complete than just plain real time values. The data is identical to the data saved to the local database of Car Stats Viewer. To receive these new values they have to be enabled in the Car Stats Viewer API settings:
 
+<img src="webhook_settings_1.png" width="50%" height="50%">
+
 Telemetry type:
 * Real time: Same behaviour as in version 2.0.
 * Drive points: Requests are only sent when drive points are written to the local data base (generally every 100m).
