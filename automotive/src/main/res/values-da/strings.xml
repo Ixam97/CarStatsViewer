@@ -220,4 +220,27 @@
     <string name="history_dialog_multi_delete_deselect">Fravælg alle</string>
     <string name="settings_distance_unit">Mil som afstandsenhed</string>
     <string name="settings_apis_connection_selector">Forbindelsesikon i hovedvisning:</string>
+    <string-array name="changes_0_25_1">
+        <item>Tilpasninger i brugerinterface - særligt i rejseopsummering</item>
+        <item>Tilføjede køretøjskonfiguration for MY24</item>
+        <item>Delingen af den aktuelle placering kan nu konfigureres for hver API individuelt.</item>
+        <item>Mindre fejlrettelser</item>
+    </string-array>
+    <string name="CurrentTripData_short">Manuel</string>
+    <string name="SinceChargeData_short">Siden opladning</string>
+    <string name="AutoTripData_short">Automatisk</string>
+    <string name="CurrentMonthData_short">Måned
+</string>
+    <string name="snackbar_ok">OKay</string>
+    <string name="screenshot_taken">Skærmbilledekopi taget (totalt %s).</string>
+    <string-array name="changes_0_25_2">
+        <item>Udvidede Webhook API-funktioner.</item>
+        <item>Tilføjede en mulighed for at påmindelse om at huske telefonen når bilen forlades</item>
+        <item>Optimeringer i plotgengivelse og indlæsningsydelse.</item>
+        <item>Rettet en udfordring der indimmellem viser forkerte ladesessioner i rejseopsummering</item>
+        <item>Rettede en udfordring, der gør at appen ikke bruger miles som distanceenhed</item>
+    </string-array>
+    <string name="settings_phone_reminder">Husk telefonen</string>
+    <string name="notification_phone">Tog du din mobiltelefon?</string>
+    <string name="notification_valuables">Efterlad ikke værdifulde ting i bilen</string>
 </resources>
