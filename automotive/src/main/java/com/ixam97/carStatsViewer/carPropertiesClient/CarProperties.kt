@@ -1,6 +1,7 @@
 package com.ixam97.carStatsViewer.carPropertiesClient
 
 import android.car.VehiclePropertyIds
+import android.car.hardware.property.CarPropertyManager
 
 object CarProperties {
 
@@ -26,6 +27,16 @@ object CarProperties {
         VehiclePropertyIds.EV_BATTERY_LEVEL,
         VehiclePropertyIds.IGNITION_STATE,
         VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE,
+    )
+
+    val sensorRateMap = mapOf(
+        VehiclePropertyIds.PERF_VEHICLE_SPEED to 0f,
+        VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE to CarPropertyManager.SENSOR_RATE_FAST,
+        VehiclePropertyIds.GEAR_SELECTION to 0f,
+        VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED to 0f,
+        VehiclePropertyIds.EV_BATTERY_LEVEL to 0f,
+        VehiclePropertyIds.IGNITION_STATE to 0f,
+        VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE to 0f,
     )
     fun getNameById(propertyId: Int) = when (propertyId) {
         VehiclePropertyIds.PERF_VEHICLE_SPEED -> "Speed"
