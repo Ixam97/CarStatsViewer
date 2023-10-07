@@ -22,7 +22,7 @@ For example:
 
 ## API versions
 
-### 2.1
+### 2.1 (App version 0.25.2 and above)
 
 API version 2.1 extends version 2.0 (see below) by some more optional values. These aim to be more complete than just plain real time values. The data is identical to the data saved to the local database of Car Stats Viewer. To receive these new values they have to be enabled in the Car Stats Viewer API settings:
 
@@ -104,7 +104,7 @@ This key represents a charging session. It contains all necessary data to constr
 
 Both of these new keys are optional. Depending on the app settings they are not contained in every request and the endpoint should not expect them to always exist. Also these keys are arrays and may contain more than just one set of data.
 
-### 2.0
+### 2.0 (App version 0.25.0 and above)
 
 The API version 2.0 sends the following data:
 
