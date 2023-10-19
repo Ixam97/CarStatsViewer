@@ -21,8 +21,11 @@
 
 Currently the app is not available in the public Play Store. This is due to strict requirements by Google what kind of apps are allowed to be installed on cars. As of now the App is only available via internal test tracks which are limited to 100 users each. Currently there are no free internal test slots in any of the existing forks.
 
-Once the app has reached a more finished state I will try to reach out to Polestar directly to potentially make it available through them. Just like ABRP or the Vivaldi browser which also do not comply with Google's restrictions.
+There are currently ongoing talks with Polestar to bring the app to a broader audience. But this will take some time and Polestar will most likely require some changes to make the app comply with there safety and usability standards.
 
+## Using the webhook API
+
+The app comes with the possibility to send data to a REST API endpoint. Details on this can be found in the [API documentation](/docs/APIDOC.md).
 
 ## Support the development of the app
 

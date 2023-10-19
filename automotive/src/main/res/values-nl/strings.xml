@@ -230,4 +230,16 @@
     <string name="SinceChargeData_short">Sinds laadbeurt</string>
     <string name="AutoTripData_short">Automatisch</string>
     <string name="CurrentMonthData_short">Maand</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Screenshot gemaakt (totaal van %s ).</string>
+    <string-array name="changes_0_25_2">
+        <item>Optimalisaties in het renderen en laden van plots.</item>
+        <item>Er is een probleem opgelost waarbij soms verkeerde oplaadsessies werden weergegeven in het ritoverzicht.</item>
+        <item>Probleem verholpen waardoor de app mijlen niet als afstandseenheid gebruikte.</item>
+        <item>Er is een probleem opgelost waarbij soms verkeerde oplaadsessies werden weergegeven in het ritoverzicht.</item>
+        <item>Probleem verholpen waardoor de app mijlen niet als afstandseenheid gebruikte.</item>
+    </string-array>
+    <string name="settings_phone_reminder">Telefoonherinnering</string>
+    <string name="notification_phone">Heb je je mobiele telefoon meegenomen?</string>
+    <string name="notification_valuables">Laat geen waardevolle spullen zichtbaar achter in de auto.</string>
 </resources>

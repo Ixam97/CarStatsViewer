@@ -226,4 +226,8 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
     <string name="history_dialog_multi_delete_deselect">Désélectionner tout</string>
     <string name="settings_distance_unit">Distances en miles</string>
     <string name="settings_apis_connection_selector">Icône de connectivité dans la vue principale</string>
+    <string name="CurrentTripData_short">Manuel</string>
+    <string name="SinceChargeData_short">Depuis la charge</string>
+    <string name="AutoTripData_short">Automatique</string>
+    <string name="CurrentMonthData_short">Mois</string>
 </resources>

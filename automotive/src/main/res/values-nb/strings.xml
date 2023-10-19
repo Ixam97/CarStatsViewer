@@ -231,5 +231,15 @@
     <string name="AutoTripData_short">Automatisk</string>
     <string name="CurrentMonthData_short">Måned</string>
     <string name="snackbar_ok">OK</string>
-    <string name="screenshot_taken">Screenshot tatt (totalt av %s).</string>
+    <string name="screenshot_taken">Screenshot tatt (av totalt %s).</string>
+    <string-array name="changes_0_25_2">
+        <item>Utvidede Webhook API-funksjoner.</item>
+        <item>Lagt til valg for telefonpåminnelse når du forlater bilen.</item>
+        <item>Optimering av plotgjengivelse og lasteytelse.</item>
+        <item>Fikset et problem hvor feil ladesesjon noen ganger blir vist i tur-oppsummering.</item>
+        <item>Fikset problem som førte til at appen ikke bruker mile som distanseenhet.</item>
+    </string-array>
+    <string name="settings_phone_reminder">Telefonpåminnelse</string>
+    <string name="notification_phone">Tok du med mobiltelefonen?</string>
+    <string name="notification_valuables">Ikke legg igjen synlige verdisaker i bilen.</string>
 </resources>

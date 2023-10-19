@@ -232,4 +232,14 @@
     <string name="CurrentMonthData_short">Kuukausi</string>
     <string name="snackbar_ok">OK</string>
     <string name="screenshot_taken">Kuvakaappaus otettu (yhteensä %s ).</string>
+    <string-array name="changes_0_25_2">
+        <item>Webhook API -ominaisuuksien laajennuksia.</item>
+        <item>Lisätty mahdollisuus puhelinmuistutukseen autosta lähdettäessä.</item>
+        <item>Kuvaajien renderöinnin sekä ohjelman käynnistyksen optimointeja.</item>
+        <item>Korjattu ongelma, jossa joskus väärät latausistunnot näkyivät matkan yhteenvedossa.</item>
+        <item>Korjattu ongelma, jonka vuoksi sovellus ei käyttänyt maileja etäisyysyksikkönä.</item>
+    </string-array>
+    <string name="settings_phone_reminder">Puhelinmuistutus</string>
+    <string name="notification_phone">Otitko matkapuhelimesi mukaan?</string>
+    <string name="notification_valuables">Älä jätä arvoesineitä näkyville autoon.</string>
 </resources>

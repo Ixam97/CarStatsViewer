@@ -220,4 +220,26 @@
     <string name="history_dialog_multi_delete_deselect">Avmarkera alla</string>
     <string name="settings_distance_unit">Miles som enhet för avstånd</string>
     <string name="settings_apis_connection_selector">Anslutningsikon i huvudvyn:</string>
+    <string-array name="changes_0_25_1">
+        <item>Justeringar av användargränssnittet, särskilt i resesammanfattningen.</item>
+        <item>Lagt till fordonskonfiguration för MY24.</item>
+        <item>Delningen av den aktuella platsen kan nu konfigureras individuellt för varje API.</item>
+        <item>Mindre buggfixar.</item>
+    </string-array>
+    <string name="CurrentTripData_short">Manuell</string>
+    <string name="SinceChargeData_short">Sedan laddning</string>
+    <string name="AutoTripData_short">Automatisk</string>
+    <string name="CurrentMonthData_short">Månad</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Skärmdump tagen (totalt %s ).</string>
+    <string-array name="changes_0_25_2">
+        <item>Utökade funktioner för Webhook API.</item>
+        <item>Lagt till ett alternativ för en telefonpåminnelse när man lämnar bilen.</item>
+        <item>Optimering av plotrendering och laddningsprestanda.</item>
+        <item>Åtgärdade ett problem där felaktiga laddningssessioner ibland visades i resesammanfattningen.</item>
+        <item>Åtgärdat ett problem som gjorde att appen inte använde miles som avståndsenhet.</item>
+    </string-array>
+    <string name="settings_phone_reminder">Telefonpåminnelse</string>
+    <string name="notification_phone">Tog du med dig din mobiltelefon?</string>
+    <string name="notification_valuables">Lämna inga värdeföremål synliga i bilen.</string>
 </resources>
