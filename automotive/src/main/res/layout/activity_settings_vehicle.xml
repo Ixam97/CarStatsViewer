@@ -54,7 +54,7 @@
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
+            <com.coderax.carStatsViewer.ui.views.MultiSelectWidget
                 android:id="@+id/settings_vehicle_multiselect_model_year"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
+            <com.coderax.carStatsViewer.ui.views.MultiSelectWidget
                 android:id="@+id/settings_vehicle_multiselect_drivetrain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -49,7 +49,7 @@
                 android:text="@string/about_section_about"/>
             <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+            <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                 android:id="@+id/about_version_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -57,13 +57,13 @@
                 app:bottomText="Version Number"
                 app:endButtonText="Changelog"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+            <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:topText="Copyright"
                 app:bottomText="©2022-2023 Maximilian Goldschmidt"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+            <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                 android:id="@+id/about_support_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,20 +71,20 @@
                 app:bottomText="@string/about_support_description"
                 app:isExternalLink="true"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+            <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                 android:id="@+id/about_contributors_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:topText="@string/about_contributors"
                 app:bottomText="contributors_list"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+            <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                 android:id="@+id/about_translators_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:topText="@string/about_translators"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+            <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                 android:id="@+id/about_supporters_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                 android:text="@string/about_section_feedback"/>
             <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+            <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                 android:id="@+id/about_club_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
                 app:bottomText="@string/about_polestar_fans_description"
                 app:isExternalLink="true"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+            <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                 android:id="@+id/about_forums_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -111,7 +111,7 @@
                 app:bottomText="@string/about_polestar_forum_description"
                 app:isExternalLink="true"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+            <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                 android:id="@+id/about_github_issues_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -124,7 +124,7 @@
                 android:text="@string/about_section_misc"/>
             <View style="@style/menu_divider_style" android:background="?android:attr/listDivider"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+            <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                 android:id="@+id/about_libs_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

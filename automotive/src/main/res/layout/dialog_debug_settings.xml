@@ -32,13 +32,13 @@
     <TextView style="@style/menu_section_title_style"
         android:text="Log display settings: "/>
 
-    <com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
+    <com.coderax.carStatsViewer.ui.views.MultiSelectWidget
         android:id="@+id/debug_level_multiselect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:title="Logging level"/>
 
-    <com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
+    <com.coderax.carStatsViewer.ui.views.MultiSelectWidget
         android:id="@+id/debug_length_multiselect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

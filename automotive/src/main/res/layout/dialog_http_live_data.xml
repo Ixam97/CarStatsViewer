@@ -87,7 +87,7 @@
                 android:layout_marginTop="15dp"
                 android:text="Telemetry type:"/>
 
-            <com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
+            <com.coderax.carStatsViewer.ui.views.MultiButtonWidget
                 android:id="@+id/http_live_data_type"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"

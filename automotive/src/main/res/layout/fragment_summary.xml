@@ -139,7 +139,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
+            <com.coderax.carStatsViewer.ui.views.MultiButtonWidget
                 android:id="@+id/summary_view_selector"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
@@ -164,7 +164,7 @@
                     style="@style/menu_row_top_text"
                     android:layout_height="wrap_content"/>
 
-                <com.ixam97.carStatsViewer.ui.views.PlotView
+                <com.coderax.carStatsViewer.ui.views.PlotView
                     android:visibility="gone"
                     android:id="@+id/summary_consumption_plot"
                     android:layout_width="match_parent"
@@ -222,7 +222,7 @@
                 <View style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>
 
-                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                     android:id="@+id/summary_distance_widget"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -232,7 +232,7 @@
                     app:reduceSize="true"
                     />
 
-                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                     android:id="@+id/summary_energy_widget"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -242,7 +242,7 @@
                     app:reduceSize="true"
                     />
 
-                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                     android:id="@+id/summary_consumption_widget"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -252,7 +252,7 @@
                     app:reduceSize="true"
                     />
 
-                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                     android:id="@+id/summary_speed_widget"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -262,7 +262,7 @@
                     app:reduceSize="true"
                     />
 
-                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                     android:id="@+id/summary_altitude_widget"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -272,7 +272,7 @@
                     app:reduceSize="true"
                     />
 
-                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                     android:id="@+id/summary_time_widget"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -325,7 +325,7 @@
 
                 </LinearLayout>
 
-                <com.ixam97.carStatsViewer.ui.views.PlotView
+                <com.coderax.carStatsViewer.ui.views.PlotView
                     android:id="@+id/summary_charge_plot_view"
                     android:layout_width="match_parent"
                     android:layout_height="550dp"
@@ -346,7 +346,7 @@
                     android:text="@string/summary_interruption_warning"
                     android:textColor="@color/bad_red"/>
 
-                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                     android:id="@+id/summary_charged_widget"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -356,7 +356,7 @@
                     app:reduceSize="true"
                     />
 
-                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                     android:id="@+id/summary_charge_time_widget"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -366,7 +366,7 @@
                     app:reduceSize="true"
                     />
 
-                <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                <com.coderax.carStatsViewer.ui.views.MenuRowWidget
                     android:id="@+id/summary_temperature_widget"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

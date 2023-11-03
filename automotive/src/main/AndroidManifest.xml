@@ -42,7 +42,7 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
             <intent-filter>
-                <action android:name="com.ixam97.carStatsViewer.RestartAction" />
+                <action android:name="com.coderax.carStatsViewer.RestartAction" />
             </intent-filter>
         </receiver>
 
