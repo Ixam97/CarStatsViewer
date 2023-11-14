@@ -296,8 +296,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <com.ixam97.carStatsViewer.ui.views.PlotView
                 android:layout_width="match_parent"
@@ -321,78 +322,92 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/main_side_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
+                    android:id="@+id/main_distance_selector"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    app:numButtons="3"
+                    app:defaultIndex="0"
+                    app:textButton1="20 km"
+                    app:textButton2="40 km"
+                    app:textButton3="100 km"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="15dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/main_image_button_speed"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
                 <ImageButton
                     android:id="@+id/main_image_button_summary"
                     android:background="@android:color/transparent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="15dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="15dp"
                     android:layout_marginRight="15dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     android:src="@drawable/ic_arrow_diagonal"/>
                 <ImageButton
                     android:id="@+id/main_image_button_speed"
-                    android:layout_width="@dimen/std_icon_size"
-                    android:layout_height="@dimen/std_icon_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
                     android:src="@drawable/ic_speed_large"
                     android:background="?widget_background"
                     android:padding="10dp"
-                    android:layout_marginRight="15dp"
-                    android:layout_marginBottom="15dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="@id/main_distance_selector"
+                    app:layout_constraintRight_toLeftOf="@id/main_image_button_alt"/>
                 <ImageButton
                     android:id="@+id/main_image_button_alt"
-                    android:layout_width="@dimen/std_icon_size"
-                    android:layout_height="@dimen/std_icon_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
                     android:src="@drawable/ic_altitude"
                     android:background="?widget_background"
                     android:padding="10dp"
-                    android:layout_marginRight="15dp"
-                    app:layout_constraintBottom_toTopOf="@id/main_image_button_speed"
-                    app:layout_constraintRight_toRightOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="@id/main_image_button_speed"
+                    app:layout_constraintRight_toLeftOf="@id/main_image_button_soc"/>
                 <ImageButton
                     android:id="@+id/main_image_button_soc"
-                    android:layout_width="@dimen/std_icon_size"
-                    android:layout_height="@dimen/std_icon_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="80dp"
                     android:src="@drawable/ic_battery"
                     android:background="?widget_background"
                     android:padding="10dp"
                     android:layout_marginRight="15dp"
-                    app:layout_constraintBottom_toTopOf="@id/main_image_button_alt"
-                    app:layout_constraintRight_toRightOf="parent"/>
+                    app:layout_constraintRight_toLeftOf="@id/main_image_button_summary"
+                    app:layout_constraintBottom_toBottomOf="@id/main_image_button_alt"/>
                 <View
                     android:id="@+id/main_secondary_dimension_indicator"
-                    android:layout_width="5dp"
-                    android:layout_height="0dp"
+                    android:layout_width="0dp"
+                    android:layout_height="5dp"
                     android:layout_marginRight="0dp"
                     android:background="@color/secondary_plot_color"
-                    app:layout_constraintTop_toTopOf="@id/main_image_button_speed"
                     app:layout_constraintBottom_toBottomOf="@id/main_image_button_speed"
+                    app:layout_constraintRight_toRightOf="@id/main_image_button_speed"
                     app:layout_constraintLeft_toLeftOf="@id/main_image_button_speed"/>
                 <View
                     android:id="@+id/main_divider_1"
-                    android:layout_width="0dp"
-                    android:layout_height="2dp"
+                    android:layout_width="2dp"
+                    android:layout_height="0dp"
                     android:background="#757575"
                     app:layout_constraintTop_toTopOf="@id/main_image_button_alt"
-                    app:layout_constraintLeft_toLeftOf="@id/main_image_button_alt"
+                    app:layout_constraintBottom_toBottomOf="@id/main_image_button_alt"
                     app:layout_constraintRight_toRightOf="@id/main_image_button_alt"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="-1dp"/>
+                    android:layout_marginVertical="20dp"
+                    android:layout_marginLeft="-1dp"/>
                 <View
                     android:id="@+id/main_divider_2"
-                    android:layout_width="0dp"
-                    android:layout_height="2dp"
+                    android:layout_width="2dp"
+                    android:layout_height="0dp"
                     android:background="#757575"
                     app:layout_constraintTop_toTopOf="@id/main_image_button_speed"
-                    app:layout_constraintLeft_toLeftOf="@id/main_image_button_speed"
+                    app:layout_constraintBottom_toBottomOf="@id/main_image_button_speed"
                     app:layout_constraintRight_toRightOf="@id/main_image_button_speed"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="-1dp"/>
+                    android:layout_marginVertical="20dp"
+                    android:layout_marginLeft="-1dp"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>

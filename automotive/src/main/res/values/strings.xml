@@ -49,6 +49,12 @@
         <item>Oliver Charlton</item>
     </string-array>
 
+    <string-array name="changes_0_26_0">
+        <item>Added experimental color scheme.</item>
+        <item>Simplified secondary axis selector.</item>
+        <item>Separated database upload into chunks to prevent false negatives and display progress.</item>
+    </string-array>
+
     <string-array name="changes_0_25_2">
         <item>Expanded Webhook API capabilities.</item>
         <item>Added an option for a phone reminder when leaving the car.</item>

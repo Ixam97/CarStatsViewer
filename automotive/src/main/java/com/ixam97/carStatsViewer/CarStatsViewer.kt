@@ -118,6 +118,8 @@ class CarStatsViewer : Application() {
 
                 val layout = LayoutInflater.from(context).inflate(R.layout.dialog_changelog, null)
 
+                val changelog4Title = layout.findViewById<TextView>(R.id.changes_0_26_0_title)
+                val changelog4TextView = layout.findViewById<TextView>(R.id.changes_0_26_0)
                 val changelog3Title = layout.findViewById<TextView>(R.id.changes_0_25_2_title)
                 val changelog3TextView = layout.findViewById<TextView>(R.id.changes_0_25_2)
                 val changelog2Title = layout.findViewById<TextView>(R.id.changes_0_25_1_title)
@@ -125,9 +127,17 @@ class CarStatsViewer : Application() {
                 val changelog1Title = layout.findViewById<TextView>(R.id.changes_0_25_0_title)
                 val changelog1TextView = layout.findViewById<TextView>(R.id.changes_0_25_0)
 
+                changelog4Title.text = context.getString(R.string.main_changelog_dialog_title, "0.26.0")
                 changelog3Title.text = context.getString(R.string.main_changelog_dialog_title, "0.25.2")
                 changelog2Title.text = context.getString(R.string.main_changelog_dialog_title, "0.25.1")
                 changelog1Title.text = context.getString(R.string.main_changelog_dialog_title, "0.25.0")
+
+                val changesArray4 = context.resources.getStringArray(R.array.changes_0_26_0)
+                var changelog4 = ""
+                changesArray4.forEachIndexed { index, change ->
+                    changelog4 += "• $change"
+                    if (index < changesArray4.size - 1) changelog4 += "\n\n"
+                }
 
                 val changesArray3 = context.resources.getStringArray(R.array.changes_0_25_2)
                 var changelog3 = ""
@@ -150,6 +160,7 @@ class CarStatsViewer : Application() {
                     if (index < changesArray1.size - 1) changelog1 += "\n\n"
                 }
 
+                changelog4TextView.text = changelog4
                 changelog3TextView.text = changelog3
                 changelog2TextView.text = changelog2
                 changelog1TextView.text = changelog1
@@ -201,7 +212,7 @@ class CarStatsViewer : Application() {
         InAppLogger.i("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
 
         InAppLogger.d("Screen width: ${resources.configuration.screenWidthDp}dp")
-
+/*
         CoroutineScope(Dispatchers.IO).launch {
             InAppLogger.i("Available OEM fonts:")
 
@@ -241,6 +252,10 @@ class CarStatsViewer : Application() {
 
             fontsLoaded = true
         }
+
+ */
+        fontsLoaded = true
+        MultiButtonWidget.isPolestar = true
 
         // while (!fontsLoaded) {
         //     // Wait for fonts to be loaded before initializing trip database

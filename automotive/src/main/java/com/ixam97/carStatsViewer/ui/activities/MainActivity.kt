@@ -491,26 +491,26 @@ class MainActivity : FragmentActivity() {
         when (secondaryConsumptionDimension) {
             1 -> {
                 main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.main_speed))
-                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.TOP, R.id.main_image_button_speed, ConstraintSet.TOP)
-                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.BOTTOM, R.id.main_image_button_speed, ConstraintSet.BOTTOM)
+                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.LEFT, R.id.main_image_button_speed, ConstraintSet.LEFT)
+                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.RIGHT, R.id.main_image_button_speed, ConstraintSet.RIGHT)
                 main_secondary_dimension_indicator.isVisible = true
             }
             2 -> {
                 main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
-                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.TOP, R.id.main_image_button_soc, ConstraintSet.TOP)
-                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.BOTTOM, R.id.main_image_button_soc, ConstraintSet.BOTTOM)
+                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.LEFT, R.id.main_image_button_soc, ConstraintSet.LEFT)
+                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.RIGHT, R.id.main_image_button_soc, ConstraintSet.RIGHT)
                 main_secondary_dimension_indicator.isVisible = true
             }
             3 -> {
                 main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.plot_dimensionY_ALTITUDE))
-                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.TOP, R.id.main_image_button_alt, ConstraintSet.TOP)
-                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.BOTTOM, R.id.main_image_button_alt, ConstraintSet.BOTTOM)
+                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.LEFT, R.id.main_image_button_alt, ConstraintSet.LEFT)
+                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.RIGHT, R.id.main_image_button_alt, ConstraintSet.RIGHT)
                 main_secondary_dimension_indicator.isVisible = true
             }
             else -> {
                 main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
-                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.TOP, R.id.main_image_button_speed, ConstraintSet.BOTTOM)
-                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.BOTTOM, R.id.main_image_button_speed, ConstraintSet.BOTTOM)
+                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.LEFT, R.id.main_image_button_speed, ConstraintSet.RIGHT)
+                constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.RIGHT, R.id.main_image_button_speed, ConstraintSet.RIGHT)
                 main_secondary_dimension_indicator.visibility = View.GONE
             }
         }

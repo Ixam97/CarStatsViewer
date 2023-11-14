@@ -1,5 +1,10 @@
 # Changelog [DE]:
 
+## 0.26.0
+- Experimentelles Farbschema hinzugefügt.
+- Vereinfachte Auswahl der Sekundärachse.
+- Der Datenbankupload wurde in Abschnitte unterteilt, um falsche Fehlermedungen zu vermeiden und den Fortschritt anzeigen zu können.
+
 ## 0.25.2 ()
 - Erweiterung der Webhook-API.
 - Option für eine Handy-Erinnerung beim verlassen des Fahrzeugs hinzugefügt.

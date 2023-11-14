@@ -29,6 +29,9 @@ import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import kotlinx.android.synthetic.main.activity_history.*
 import kotlinx.coroutines.*
 import java.util.*
+import kotlin.math.ceil
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 class HistoryActivity  : FragmentActivity() {
 
@@ -384,8 +387,9 @@ class HistoryActivity  : FragmentActivity() {
     }
 
     private fun uploadDatabase() {
+        val chunkSize = 250
         CoroutineScope(Dispatchers.IO).launch {
-            val waitSnack = SnackbarWidget.Builder(this@HistoryActivity, "Upload in progress...")
+            val waitSnack = SnackbarWidget.Builder(this@HistoryActivity, "Upload in progress, 0%")
                 .build()
             runOnUiThread {
                 this@HistoryActivity.window.findViewById<FrameLayout>(android.R.id.content).addView(waitSnack)
@@ -395,11 +399,56 @@ class HistoryActivity  : FragmentActivity() {
             val chargingSessions = CarStatsViewer.tripDataSource.getAllChargingSessions()
             InAppLogger.i("[HIST] Done loading ${chargingSessions.size} charging sessions")
 
+            val drivingPointsChunks = ceil(drivingPoints.size.toFloat() / chunkSize).roundToInt()
+            InAppLogger.i("Divided ${drivingPoints.size} driving points into to $drivingPointsChunks chunks")
+            val chargingSessionsSize = chargingSessions.size
+            val totalParts = drivingPointsChunks + chargingSessionsSize
+
+            var result: LiveDataApi.ConnectionStatus? = null
+
+            for (i in 0 until drivingPointsChunks) {
+                result = (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(
+                    CarStatsViewer.dataProcessor.realTimeData,
+                    drivingPoints.slice(chunkSize * i..min(chunkSize * (i+1), drivingPoints.size - 1))
+                )
+                val percentage = (((i + 1).toFloat() / totalParts) * 100).roundToInt()
+                if (result == LiveDataApi.ConnectionStatus.CONNECTED) {
+                    InAppLogger.v("Chunk $i transferred, $percentage%")
+                    runOnUiThread {
+                        waitSnack.updateMessage("Upload in progress, $percentage%")
+                        waitSnack.setProgressBarPercent(percentage)
+                    }
+                } else {
+                    InAppLogger.e("Chunk $i failed..")
+                    break
+                }
+            }
+
+            for (i in 0 until chargingSessionsSize) {
+                result = (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(
+                    CarStatsViewer.dataProcessor.realTimeData,
+                    chargingSessions = chargingSessions.slice(setOf(i))
+                )
+                val percentage = (((i + 1 + drivingPointsChunks).toFloat() / totalParts) * 100).roundToInt()
+                if (result == LiveDataApi.ConnectionStatus.CONNECTED) {
+                    InAppLogger.v("Charging session $i transferred, $percentage%")
+                    runOnUiThread {
+                        waitSnack.updateMessage("Upload in progress, $percentage%")
+                        waitSnack.setProgressBarPercent(percentage)
+                    }
+                } else {
+                    InAppLogger.e("Charging session $i failed..")
+                    break
+                }
+            }
+/*
             val result = (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(
                 CarStatsViewer.dataProcessor.realTimeData,
                 drivingPoints,
                 chargingSessions
             )
+
+ */
 
             runOnUiThread {
                 this@HistoryActivity.window.findViewById<FrameLayout>(android.R.id.content).removeView(waitSnack)

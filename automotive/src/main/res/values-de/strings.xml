@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string-array name="changes_0_26_0">
+        <item>Experimentelles Farbschema hinzugefügt.</item>
+        <item>Vereinfachte Auswahl der Sekundärachse.</item>
+        <item>Der Datenbankupload wurde in Abschnitte unterteilt, um falsche Fehlermedungen zu vermeiden und den Fortschritt anzeigen zu können.</item>
+    </string-array>
+
     <string-array name="changes_0_25_2">
         <item>Erweiterung der Webhook-API.</item>
         <item>Option für eine Handy-Erinnerung beim verlassen des Fahrzeugs hinzugefügt.</item>
