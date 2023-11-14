@@ -33,6 +33,7 @@ class AutoStartReceiver: BroadcastReceiver() {
 
         if (CarStatsViewer.foregroundServiceStarted) return
         if (CarStatsViewer.restartNotificationDismissed) return
+        if (CarStatsViewer.restartNotificationShown) return
 
         InAppLogger.d("[ASR] Auto Star Receiver triggered")
 
@@ -134,17 +135,18 @@ class AutoStartReceiver: BroadcastReceiver() {
         startupNotificationBuilder.setCategory(Notification.CATEGORY_CALL)
 
         CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
-        CoroutineScope(Dispatchers.Default).launch {
-            while (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed) {
-                CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
-                delay(5_000)
-            }
+        CarStatsViewer.restartNotificationShown = true
+        // CoroutineScope(Dispatchers.Default).launch {
+        //     while (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed) {
+        //         CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
+        //         delay(5_000)
+        //     }
             // The heads up notification disappears after 8 seconds and is not visible in the
             // notification center. Update notification without CATEGORY_CALL to keep it visible.
             // delay(8_000)
             // startupNotificationBuilder.setCategory(Notification.CATEGORY_STATUS)
             // if (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed)
             //     CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
-        }
+        // }
     }
 }

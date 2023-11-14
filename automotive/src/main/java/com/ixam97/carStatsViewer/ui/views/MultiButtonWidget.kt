@@ -42,6 +42,16 @@ class MultiButtonWidget @JvmOverloads constructor(
             updateView()
         }
 
+    var buttonNames: List<String>
+        set(value) {
+            buttonList.forEachIndexed {index, button ->
+                button.text = value[index]
+            }
+        }
+        get() {
+            return buttonList.map { it.text.toString() }
+        }
+
     init {
         inflate(context, R.layout.widget_multi_button, this)
 

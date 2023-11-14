@@ -63,6 +63,7 @@ class CarStatsViewer : Application() {
 
         var foregroundServiceStarted = false
         var restartNotificationDismissed = false
+        var restartNotificationShown = false
         var restartReason: String? = null
 
         lateinit var tripDatabase: TripDataDatabase

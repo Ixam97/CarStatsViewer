@@ -328,7 +328,7 @@
                 <com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
                     android:id="@+id/main_distance_selector"
                     android:layout_width="0dp"
-                    android:layout_height="80dp"
+                    android:layout_height="@dimen/main_toolbar_height"
                     app:numButtons="3"
                     app:defaultIndex="0"
                     app:textButton1="20 km"
@@ -343,9 +343,9 @@
 
                 <ImageButton
                     android:id="@+id/main_image_button_summary"
-                    android:background="@android:color/transparent"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:background="?widget_background"
+                    android:layout_width="120dp"
+                    android:layout_height="@dimen/main_toolbar_height"
                     android:layout_marginBottom="15dp"
                     android:layout_marginRight="15dp"
                     app:layout_constraintTop_toTopOf="parent"
@@ -354,7 +354,7 @@
                 <ImageButton
                     android:id="@+id/main_image_button_speed"
                     android:layout_width="wrap_content"
-                    android:layout_height="80dp"
+                    android:layout_height="@dimen/main_toolbar_height"
                     android:src="@drawable/ic_speed_large"
                     android:background="?widget_background"
                     android:padding="10dp"
@@ -363,7 +363,7 @@
                 <ImageButton
                     android:id="@+id/main_image_button_alt"
                     android:layout_width="wrap_content"
-                    android:layout_height="80dp"
+                    android:layout_height="@dimen/main_toolbar_height"
                     android:src="@drawable/ic_altitude"
                     android:background="?widget_background"
                     android:padding="10dp"
@@ -372,7 +372,7 @@
                 <ImageButton
                     android:id="@+id/main_image_button_soc"
                     android:layout_width="wrap_content"
-                    android:layout_height="80dp"
+                    android:layout_height="@dimen/main_toolbar_height"
                     android:src="@drawable/ic_battery"
                     android:background="?widget_background"
                     android:padding="10dp"

@@ -442,10 +442,21 @@ class MainActivity : FragmentActivity() {
             consumptionPlotLine.Configuration.Divider = distanceUnit.toFactor() * 10f
         }
 
+        main_distance_selector.run {
+            val unitString = appPreferences.distanceUnit.unit()
+            buttonNames = listOf(
+                "20 $unitString",
+                "40 $unitString",
+                "100 $unitString",
+                "",
+            )
+        }
+
         PlotGlobalConfiguration.updateDistanceUnit(distanceUnit)
-        main_consumption_plot.dimensionRestriction = distanceUnit.asUnit(
-            CONSUMPTION_DISTANCE_RESTRICTION
-        )
+        // main_consumption_plot.dimensionRestriction = distanceUnit.asUnit(
+        //     CONSUMPTION_DISTANCE_RESTRICTION
+        // )
+        setPrimaryConsumptionPlotDimension(appPreferences.mainPrimaryDimensionRestriction)
         main_consumption_plot.invalidate()
     }
 
@@ -483,6 +494,14 @@ class MainActivity : FragmentActivity() {
         }
     }
 
+    fun setPrimaryConsumptionPlotDimension(index: Int) {
+        val newDistance = when (index) {
+            1 -> 40_000L
+            2 -> 100_000L
+            else -> 20_000L
+        }
+        main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(newDistance)
+    }
     fun setSecondaryConsumptionPlotDimension(secondaryConsumptionDimension: Int) {
 
         val constraintSet = ConstraintSet()
@@ -608,9 +627,16 @@ class MainActivity : FragmentActivity() {
         main_consumption_plot.addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
 
         main_consumption_plot.dimension = PlotDimensionX.DISTANCE
-        main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(
-            CONSUMPTION_DISTANCE_RESTRICTION
-        )
+        // main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(
+        //     CONSUMPTION_DISTANCE_RESTRICTION
+        // )
+        setPrimaryConsumptionPlotDimension(appPreferences.mainPrimaryDimensionRestriction)
+
+        main_distance_selector.run {
+            selectedIndex = appPreferences.mainPrimaryDimensionRestriction
+                .coerceAtMost(2)
+                .coerceAtLeast(0)
+        }
         main_consumption_plot.dimensionSmoothing = 0.02f
         main_consumption_plot.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
         main_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
@@ -698,6 +724,11 @@ class MainActivity : FragmentActivity() {
             currentIndex = if (currentIndex == 3) 0 else 3
             setSecondaryConsumptionPlotDimension(currentIndex)
             appPreferences.secondaryConsumptionDimension = currentIndex
+        }
+
+        main_distance_selector.setOnIndexChangedListener {
+            appPreferences.mainPrimaryDimensionRestriction = main_distance_selector.selectedIndex
+            setPrimaryConsumptionPlotDimension(appPreferences.mainPrimaryDimensionRestriction)
         }
 
         main_button_summary.setOnClickListener {
