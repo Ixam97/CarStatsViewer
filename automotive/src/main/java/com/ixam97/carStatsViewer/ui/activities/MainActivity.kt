@@ -24,6 +24,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.*
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.dataProcessor.DrivingState
+import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.databinding.ActivityMainBinding
 import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
@@ -311,22 +312,24 @@ class MainActivity : FragmentActivity() {
                         var prevDrivingPoint = consumptionPlotLine.lastItem()
                         var lastItemIndex = drivingPoints.withIndex().find { it.value.driving_point_epoch_time == prevDrivingPoint?.EpochTime }?.index
 
+                        // InAppLogger.d("startIndex = $startIndex, lastItemIndex = $lastItemIndex, drivingPoints.size = ${drivingPoints.size}, prevDrivingPoint?.Distance = ${prevDrivingPoint?.Distance}")
+
+                        val selectedDistance = appPreferences.distanceUnit.asUnit(when (appPreferences.mainPrimaryDimensionRestriction) {
+                            1 -> 40_000L
+                            2 -> 100_000L
+                            else -> 20_000L
+                        })
+
                         when {
                             startIndex == 0 && drivingPoints.isEmpty() -> {
                                 consumptionPlotLine.reset()
                             }
                             startIndex == 0
-                            || (prevDrivingPoint?.Distance?:0f) > 20_000
+                            || (prevDrivingPoint?.Distance?:0f) > (selectedDistance * 2)
                             || lastItemIndex == null
                             || drivingPoints.size - lastItemIndex > 100 -> {
-                                InAppLogger.d("Refreshing entire consumption plot.")
-                                consumptionPlotLine.reset()
-                                lifecycleScope.launch {
-                                    val dataPoints = DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints, 10_000f)
-                                    runOnUiThread {
-                                        consumptionPlotLine.addDataPoints(dataPoints)
-                                    }
-                                }
+                                InAppLogger.v("Rebuilding consumption plot")
+                                refreshConsumptionPlot(drivingPoints)
                             }
                             startIndex > 0 -> {
                                 // if (lastItemIndex == null) lastItemIndex = drivingPoints.size
@@ -495,12 +498,14 @@ class MainActivity : FragmentActivity() {
     }
 
     fun setPrimaryConsumptionPlotDimension(index: Int) {
+        InAppLogger.v("Changing primary plot restriction.")
         val newDistance = when (index) {
             1 -> 40_000L
             2 -> 100_000L
             else -> 20_000L
         }
         main_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(newDistance)
+        refreshConsumptionPlot()
     }
     fun setSecondaryConsumptionPlotDimension(secondaryConsumptionDimension: Int) {
 
@@ -806,6 +811,27 @@ class MainActivity : FragmentActivity() {
             }
         val alert = builder.create()
         alert.show()
+    }
+
+    private fun refreshConsumptionPlot(drivingPoints: List<DrivingPoint> = emptyList()) {
+        InAppLogger.d("Refreshing entire consumption plot.")
+        var localDrivingPoints = drivingPoints
+        if (drivingPoints.isEmpty()) {
+            localDrivingPoints = CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.drivingPoints?: emptyList()
+        }
+        consumptionPlotLine.reset()
+        if (localDrivingPoints.isEmpty()) return
+        lifecycleScope.launch {
+            val newDistance = when (appPreferences.mainPrimaryDimensionRestriction) {
+                1 -> 40_000L
+                2 -> 100_000L
+                else -> 20_000L
+            }
+            val dataPoints = DataConverters.consumptionPlotLineFromDrivingPoints(localDrivingPoints, appPreferences.distanceUnit.asUnit(newDistance.toFloat()))
+            runOnUiThread {
+                consumptionPlotLine.addDataPoints(dataPoints)
+            }
+        }
     }
 
     private fun crossfade(fromView: View, toView: View) {
