@@ -369,17 +369,18 @@ class HistoryActivity  : FragmentActivity() {
 
     private fun openUploadDialog() {
         var uploadDialog = AlertDialog.Builder(this@HistoryActivity).apply {
-            setTitle("Upload database to API")
-            setMessage("You are about to upload the entire local database to the API endpoint"+
-                    " specified in the HTTP webhook settings!\n\nMake sure you have reset the"+
-                    " data on the server before this to prevent data duplication. If supported by" +
-                    " the API endpoint this will happen automatically \n\n" +
-                    " This action may take a long time to finish depending on the database size." +
-                    " Please remain on this page until a notification is shown!")
-            setNegativeButton("Cancel") { _,_ ->
+            setTitle(R.string.history_dialog_upload_title)
+            // setMessage("You are about to upload the entire local database to the API endpoint"+
+            //         " specified in the HTTP webhook settings!\n\nMake sure you have reset the"+
+            //         " data on the server before this to prevent data duplication. If supported by" +
+            //         " the API endpoint this will happen automatically \n\n" +
+            //         " This action may take a long time to finish depending on the database size." +
+            //         " Please remain on this page until a notification is shown!")
+            setMessage(R.string.history_dialog_upload_message)
+            setNegativeButton(R.string.dialog_reset_cancel) { _,_ ->
 
             }
-            setPositiveButton("Upload") { _, _ ->
+            setPositiveButton(R.string.history_dialog_upload_upload_button) { _, _ ->
                 uploadDatabase()
             }
         }

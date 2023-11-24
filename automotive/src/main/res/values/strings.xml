@@ -9,25 +9,11 @@
     <string name="github_issues_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/issues</string>
     <string-array name="contributors" translatable="false">
         <item>Dario Bosshard</item>
+        <item>Jakob Schlyter</item>
         <item>FreshDave29</item>
         <item>rdu</item>
         <item>Jannick Fahlbusch</item>
         <item>Klaus Rheinwald</item>
-    </string-array>
-    <string-array name="translators" translatable="false">
-        <item>DoubleYouEl</item>
-        <item>Robin Hellström</item>
-        <item>Jakob Schlyter</item>
-        <item>Oddvarr</item>
-        <item>Emil Blixt Hansen</item>
-        <item>Ian Mascarenhas</item>
-        <item>Dominik Brüning</item>
-        <item>Juha Mönkkönen</item>
-        <item>Ossi Lahtinen</item>
-        <item>J-P</item>
-        <item>Laurent Vitalis</item>
-        <item>Jere Kataja</item>
-        <item>Pedro Leite</item>
     </string-array>
     <string-array name="supporters" translatable="false">
         <item>Ahti Hinnov</item>
@@ -47,8 +33,33 @@
         <item>Samuel Lodyga</item>
         <item>Konstantinos Theiakos</item>
         <item>Oliver Charlton</item>
+        <item>Dennis Berggren</item>
+        <item>Erik Jan Rouwenhorst</item>
     </string-array>
-
+    <string-array name="translators" translatable="false">
+        <item>Emacee</item>
+        <item>Morten Kjærgaard</item>
+        <item>Ian Mascarenhas</item>
+        <item>Jakob Schlyter</item>
+        <item>Oddvar Rasmussen</item>
+        <item>DoubleYou</item>
+        <item>078emil</item>
+        <item>Juha Mönkkönen</item>
+        <item>Ossi Lahtinen</item>
+        <item>J-P</item>
+        <item>Laurent Vitalis</item>
+        <item>Jere Kataja</item>
+        <item>Pedro Leite</item>
+        <item>Michele Campeotto</item>
+        <item>GD</item>
+        <item>Robin Hellström</item>
+        <item>Silver Beard</item>
+        <item>Eric van Engelen</item>
+        <item>Ivan F. Martinez</item>
+        <item>Luiz Pacifico Centa</item>
+        <item>Ricardo Blauth</item>
+        <item>Marcelo Fornereto</item>
+    </string-array>
     <string-array name="changes_0_26_0">
         <item>Added experimental color scheme.</item>
         <item>Simplified secondary axis selector.</item>
@@ -198,6 +209,7 @@
     <string name="settings_consumption_plot">Consumption view:</string>
     <string name="settings_charge_plot">Charge view:</string>
     <string name="settings_about">About Car Stats Viewer</string>
+    <string name="settings_experimental_colors">Experimental color scheme</string>
     <string name="settings_plot_secondary_color">Gray as secondary plot color</string>
     <string name="settings_plot_state_of_charge_dimension">Experimental State Of Charge Axis</string>
     <string name="settings_consumption_plot_single_motor">Single motor model</string>
@@ -326,4 +338,8 @@
     <string name="history_dialog_multi_delete_message">You are about to delete %s trips. The trips will be deleted permanently.</string>
     <string name="history_dialog_multi_delete_delete">Delete %s trips</string>
     <string name="history_dialog_multi_delete_deselect">Deselect all</string>
+
+    <string name="history_dialog_upload_title">Upload Database to API</string>
+    <string name="history_dialog_upload_message">You are about to upload the entire local database to the endpoint specified in the Webhook API!\n\nMake sure there is no duplicate data on the server to prevent implausible values.\n\nThis Action may take some time depending on the amount of data. Please remain on this page until a success notification is shown!</string>
+    <string name="history_dialog_upload_upload_button">Upload</string>
 </resources>

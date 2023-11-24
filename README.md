@@ -83,25 +83,35 @@ Currently the following languages are already available:
  - :norway: Norwegian
  - :denmark: Danish
  - :fr: French
- - :portugal: Portuguese
- - :finland: Finnish
+- :portugal: Portuguese (Portugal)
+- :finland: Finnish
+- :brazil: Portuguese (Brazil)
 
 <details>
 <summary><h3>Translators</h3></summary>
 
- * DoubleYouEl
- * Robin Hellström
- * Jakob Schlyter
- * Oddvarr
- * Emil Blixt Hansen
+ * Emacee
+ * Morten Kjærgaard
  * Ian Mascarenhas
- * Dominik Brüning
+ * Jakob Schlyter
+ * Oddvar Rasmussen
+ * DoubleYou
+ * 078emil
  * Juha Mönkkönen
  * Ossi Lahtinen
  * J-P
  * Laurent Vitalis
  * Jere Kataja
  * Pedro Leite
+ * Michele Campeotto
+ * GD
+ * Robin Hellström
+ * Silver Beard
+ * Eric van Engelen
+ * Ivan F. Martinez
+ * Luiz Pacifico Centa
+ * Ricardo Blauth
+ * Marcelo Fornereto
 
 </details>
 
@@ -124,6 +134,7 @@ Please also be aware that I will not just include everything. It has to fit into
 
 - Dario Bosshard (Consumption and charge curve diagrams)
 - Klaus Rheinwald (Testing and consulting)
+- Jakob Schlyter (Lokalise setup and maintenance)
 - FreshDave29
 - rdu
 - Jannick Fahlbusch

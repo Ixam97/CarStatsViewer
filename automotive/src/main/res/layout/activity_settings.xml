@@ -153,7 +153,7 @@
             <Switch
                 android:id="@+id/settings_switch_theme"
                 style="@style/ColorTestTheme.menu_standard_switch_style"
-                android:text="Experimental colors" />
+                android:text="@string/settings_experimental_colors" />
             <View
                 style="@style/menu_divider_style"
                 android:layout_height="0dp"
