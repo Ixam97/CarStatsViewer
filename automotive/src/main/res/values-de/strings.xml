@@ -4,7 +4,7 @@
     <string-array name="changes_0_26_0">
         <item>Experimentelles Farbschema hinzugefügt.</item>
         <item>Vereinfachte Auswahl der Sekundärachse.</item>
-        <item>Der Datenbankupload wurde in Abschnitte unterteilt, um falsche Fehlermedungen zu vermeiden und den Fortschritt anzeigen zu können.</item>
+        <item>Der Datenbankupload wurde in Abschnitte unterteilt, um falsche Fehlermeldungen zu vermeiden und den Fortschritt anzeigen zu können.</item>
     </string-array>
 
     <string-array name="changes_0_25_2">
