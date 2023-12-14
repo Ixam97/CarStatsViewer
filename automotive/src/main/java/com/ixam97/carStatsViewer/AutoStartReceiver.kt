@@ -45,18 +45,17 @@ class AutoStartReceiver: BroadcastReceiver() {
                 }
                 stringBuilder.toString()
             }}")
+            /*
             if (intent.hasExtra("dismiss")) {
                 if (intent.getBooleanExtra("dismiss", false)) {
                     CarStatsViewer.restartNotificationDismissed = true
                     CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000, cancel = true, extendedLogging = true)
                     CarStatsViewer.notificationManager.cancel(CarStatsViewer.RESTART_NOTIFICATION_ID)
-
-
-
                     InAppLogger.d("[ARS] Dismiss intent")
                     return
                 }
             }
+            */
             if (reason == null || reason == "termination") {
                 reason = if (intent.hasExtra("reason")) {
                     intent.getStringExtra("reason")
@@ -103,8 +102,8 @@ class AutoStartReceiver: BroadcastReceiver() {
         )
             .setContentTitle(notificationText)
             .setContentText(context.getString(R.string.restart_notification_message))
-            .setSmallIcon(R.drawable.ic_notification_diagram)
-            .setOngoing(true)
+            .setSmallIcon(R.mipmap.ic_launcher_alt2_foreground)
+            .setOngoing(false)
 
         startupNotificationBuilder.apply {
             addAction(Notification.Action.Builder(
@@ -117,6 +116,7 @@ class AutoStartReceiver: BroadcastReceiver() {
                 context.getString(R.string.restart_notification_app),
                     actionActivityPendingIntent
             ).build())
+            /*
             addAction(Notification.Action.Builder(
                     null,
                 context.getString(R.string.restart_notification_dismiss),
@@ -129,6 +129,7 @@ class AutoStartReceiver: BroadcastReceiver() {
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
             ).build())
+             */
         }
 
         // Notification needs to be of CATEGORY_CALL to be displayed as a heads up notification in AAOS.
