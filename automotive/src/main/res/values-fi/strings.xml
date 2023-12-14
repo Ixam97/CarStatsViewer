@@ -242,4 +242,17 @@
     <string name="settings_phone_reminder">Puhelinmuistutus</string>
     <string name="notification_phone">Otitko matkapuhelimesi mukaan?</string>
     <string name="notification_valuables">Älä jätä arvoesineitä näkyville autoon.</string>
+    <string-array name="changes_0_26_0">
+        <item>Lisätty kokeellinen värimaailma.</item>
+        <item>Toissijaisen akselin valitsimen yksinkertaistaminen.</item>
+        <item>Tietokannan lähettäminen jaettu osiin väärien negatiivisten estämiseksi ja edistymisen näyttämiseksi.</item>
+    </string-array>
+    <string name="settings_experimental_colors">Kokeellinen värimaailma</string>
+    <string name="history_dialog_upload_title">Lähetä tietokanta API:lle</string>
+    <string name="history_dialog_upload_message">Olet lähettämässä koko paikallisen tietokannan palvelimelle joka on määritetty Webhook API:ssa!
+
+Varmista ettei palvelimella ole päällekkäistä tietoa estääksesi epäuskottavat ja virheelliset arvot.
+
+Tämä toiminto kestää jonkin aikaa riippuen siirrettävästä tiedon määrästä. Pysythän tällä sivulla, kunnesa näet onnistumisilmoitus!</string>
+    <string name="history_dialog_upload_upload_button">Lähetä palvelimelle</string>
 </resources>
