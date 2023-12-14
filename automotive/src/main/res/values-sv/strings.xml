@@ -242,4 +242,9 @@
     <string name="settings_phone_reminder">Telefonpåminnelse</string>
     <string name="notification_phone">Tog du med dig din mobiltelefon?</string>
     <string name="notification_valuables">Lämna inga värdeföremål synliga i bilen.</string>
+    <string-array name="changes_0_26_0">
+        <item>Experimentellt färgschema har lagts till.</item>
+        <item>Förenklad väljare för sekundär axel.</item>
+        <item>Separerad databasuppladdning i bitar för att förhindra falska negativa resultat och visa framsteg.</item>
+    </string-array>
 </resources>

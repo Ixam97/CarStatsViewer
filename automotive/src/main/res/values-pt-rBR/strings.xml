@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <!-- PermissionsActivity -->
+    <string name="permissions_dialog_title">Permissões necessárias para uso</string>
+    <string name="permissions_dialog_text">Este aplicativo requer permissões para ser usado. Sem as permissões necessárias, o aplicativo não pode ler os dados do carro.</string>
+    <string name="permissions_dialog_quit">Sair do Car Stats Viewer</string>
+    <string name="permissions_dialog_grant">Conceder permissões</string>
+    <!-- MainActivity -->
+    <string name="main_port_connected">Porta de carregamento conectada:</string>
+    <string name="main_current_power">Consumo de energia atual:</string>
+    <string name="main_used_energy">Energia utilizada:</string>
+    <string name="main_current_speed">Velocidade atual:</string>
+    <string name="main_traveled_distance">Distância percorrida:</string>
+    <string name="main_inst_consumption">Consumo instantâneo:</string>
+    <string name="main_average_consumption">Consumo médio:</string>
+    <string name="main_button_reset_stats">Reiniciar estatísticas</string>
+    <string name="main_consumption">Consumo nos últimos 3 km:</string>
+    <string name="main_speed">Velocidade</string>
+    <string name="main_gage_speed">Velocidade</string>
+    <string name="main_gage_power">Potência</string>
+    <string name="main_gage_charging_power">Potência de carregamento</string>
+    <string name="main_gage_SoC">Estado da carga</string>
+    <string name="main_gage_consumption">Consumo inst.</string>
+    <string name="main_dismiss_charge_plot">Fechar gráfico de carga</string>
+    <string name="main_button_reset_charge_plot">Reiniciar o gráfico de carga</string>
+    <string name="main_button_trip_summary">Resumo da viagem</string>
+    <string name="main_button_hide_speed">Ocultar velocidade</string>
+    <string name="main_button_show_speed">Mostrar velocidade</string>
+    <string name="main_secondary_axis">Eixo 2: %s</string>
+    <!-- SummaryActivity -->
+    <string name="summary_title">Resumo da viagem</string>
+    <string name="summary_button_reset_trip">Reiniciar viagem</string>
+    <string name="summary_parked_warning">Visualização disponível apenas quando parado.</string>
+    <string name="summary_trip_history">Histórico de viagem</string>
+    <string name="summary_charging_sessions">Sessões de carregamento</string>
+    <string name="summary_trip_start_date">Viagem iniciou em: %s</string>
+    <string name="summary_used_energy">Energia utilizada</string>
+    <string name="summary_traveled_distance">Distância percorrida</string>
+    <string name="summary_average_consumption">Consumo médio</string>
+    <string name="summary_travel_time">Tempo de viagem</string>
+    <string name="summary_charged_energy">Energia carregada</string>
+    <string name="summary_charge_time">Tempo de carregamento</string>
+    <string name="summary_charge_ambient_temp">Temperatura ambiente</string>
+    <string name="summary_interruption_warning">A gravação da sessão de carregamento foi interrompida. Esse valor provavelmente está incorreto.</string>
+    <!-- SettingsActivity -->
+    <string name="settings_title">Configurações</string>
+    <string name="settings_button_back">Voltar</string>
+    <string name="settings_button_quit">Sair do aplicativo</string>
+    <string name="settings_notifications">Notificação detalhada</string>
+    <string name="settings_consumption_unit">Wh/ %s como unidade de consumo</string>
+    <string name="settings_debug">Informações de depuração</string>
+    <string name="settings_experimental_layout">Mostrar layout experimental</string>
+    <string name="settings_consumption_plot">Visão de consumo:</string>
+    <string name="settings_charge_plot">Visão de carregamento:</string>
+    <string name="settings_about">Sobre o Car Stats Viewer</string>
+    <string name="settings_plot_secondary_color">Cinza como cor secundária do gráfico</string>
+    <string name="settings_plot_state_of_charge_dimension">Eixo de estado de carga (experimental)</string>
+    <string name="settings_consumption_plot_single_motor">Modelo de motor único</string>
+    <string name="settings_visible_gages">Mostrar medidores de energia</string>
+    <string name="settings_consumption_plot_speed">Mostrar gráfico de velocidade</string>
+    <string name="settings_sub_title_settings">Configurações:</string>
+    <string name="settings_sub_title_current_cons_plot">Gráfico de consumo atual:</string>
+    <string name="settings_sub_title_last_charge_plot">Últimas curvas de carga:</string>
+    <!-- AboutActivity -->
+    <string name="about_title">Sobre o Car Stats Viewer</string>
+    <string name="about_section_about">Sobre o Car Stats Viewer:</string>
+    <string name="about_support">Apoie o desenvolvimento</string>
+    <string name="about_support_description">Veja o repositório do GitHub para saber mais sobre como apoiar o desenvolvimento do aplicativo.</string>
+    <string name="about_contributors">Colaboradores</string>
+    <string name="about_section_feedback">Opinião:</string>
+    <string name="about_section_misc">Diversos:</string>
+    <string name="about_github_issues_description">Este é o melhor lugar para enviar informações de bugs e solicitações de recursos. Por favor, leia as edições existentes antes de abrir uma nova.</string>
+    <string name="about_polestar_forum_description">Discussão sobre o Car Stats Viewer nos fóruns internacionais.</string>
+    <string name="about_polestar_fans_description">Discussão sobre o Car Stats Viewer nos fóruns alemães.</string>
+    <string name="about_third_party_licenses">Licenças</string>
+    <string name="about_supporters">Apoiadores</string>
+    <string name="about_thank_you">Obrigado!</string>
+    <string name="about_supporters_message">Muito obrigado a todos que apoiaram o desenvolvimento do Car Stats Viewer!</string>
+    <!-- Quit Dialog -->
+    <string name="quit_dialog_title">Sair do aplicativo?</string>
+    <string name="quit_dialog_message">O log será copiado para a área de transferência.</string>
+    <string name="dialog_close">Fechar</string>
+    <string name="dialog_reset_title">Reiniciar dados de viagem?</string>
+    <!--This message has changed. Please make sure you adjust the translation accordingly!-->
+    <string name="dialog_reset_message">A viagem manual atual será reiniciada. Ela será salva no histórico de viagens.</string>
+    <string name="dialog_reset_do_save">Salvar</string>
+    <string name="dialog_reset_no_save">"Não salvar"</string>
+    <string name="dialog_reset_cancel">Cancelar</string>
+    <string name="dialog_confirm">Sim</string>
+    <string name="dialog_dismiss">Não</string>
+    <!-- LogActivity -->
+    <string name="log_title">Depuração</string>
+    <!-- Notifications -->
+    <string name="notification_title">Estatísticas atuais:</string>
+    <string name="foreground_service_info">Serviço de coleta de dados ativo</string>
+    <string name="toast_file_read_error">Erro ao ler o arquivo de viagem</string>
+    <string name="settings_select_trip">Viagem na visualização principal:</string>
+    <string name="CurrentTripData">Viagem manual</string>
+    <string name="SinceChargeData">Desde a última carga</string>
+    <string name="AutoTripData">Viagem automática</string>
+    <string name="CurrentMonthData">Mês atual</string>
+    <string-array name="changes_0_23">
+        <item>Estrutura de dados reformulada para aumentar a estabilidade e a escalabilidade</item>
+        <item>Adicionada tradução para dinamarquês</item>
+        <item>Adição de \"About Car Stats Viewer\" (incluindo revisão do ReadMe com informações sobre suporte e contribuição)</item>
+        <item>Adicionados vários rastreadores de viagem simultâneos (viagem manual, desde a última cobrança, automática, mês atual)</item>
+        <item>Várias melhorias visuais para as visualizações do gráfico</item>
+        <item>Valores específicos nos gráficos podem ser destacados com toque duplo</item>
+        <item>As informações de depuração podem ser enviadas via SMTP (experimental!)</item>
+        <item>Comportamento estabilizado da curva de carregamento quando o aplicativo é pausado durante o carregamento</item>
+        <item>Ajustes nas configurações de otimização de distração do motorista</item>
+        <item>Várias correções de bugs e melhorias de estabilidade</item>
+    </string-array>
+    <string name="main_changelog_dialog_title">Mudanças na versão %s :</string>
+    <string name="settings_apis_title">Configurações da API</string>
+    <!-- Restart Dialog -->
+    <string name="restart_notification_title" formatted="false">%s foi reiniciado após %s .</string>
+    <string name="restart_notification_reason_crash">um erro</string>
+    <string name="restart_notification_reason_reboot">uma reinicialização</string>
+    <string name="restart_notification_reason_update">uma atualização</string>
+    <string name="restart_notification_message">Reinicie o serviço para acompanhamento de estatísticas.</string>
+    <string name="restart_notification_dismiss">Dispensar</string>
+    <string name="restart_notification_app">Iniciar aplicativo</string>
+    <string name="restart_notification_service">Iniciar serviço</string>
+    <string name="restart_toast_background">Serviço de rastreamento de estatísticas iniciado em segundo plano</string>
+    <string name="settings_title_generic">Configurações genéricas:</string>
+    <string name="settings_title_misc">Configurações diversas:</string>
+    <string name="settings_main_view">Visualização principal</string>
+    <string name="settings_apis_abrp">Telemetria ABRP</string>
+    <string name="settings_apis_http">Webhook HTTP</string>
+    <string name="settings_apis_smtp">Login SMTP</string>
+    <string name="settings_apis_use">Usar API</string>
+    <!-- ABRP -->
+    <string name="abrp_description">Digite um token genérico ABRP para transmitir dados em tempo real para os servidores ABRP. Isso inclui dados de localização, se não estiverem desativados.</string>
+    <string name="abrp_generic_token">Token genérico</string>
+    <!-- HTTP -->
+    <string name="http_description">Insira a URL HTTPS e as credenciais de autenticação básicas (opcionais) para transmitir dados em tempo real para a URL especificada. Usa a solicitação POST com conteúdo JSON. Isso inclui dados de localização, se não estiver desabilitado.</string>
+    <string name="http_username">Nome de usuário BasicAuth</string>
+    <string name="http_password">Senha BasicAuth</string>
+    <string name="http_invalid_url">URL inválido!</string>
+    <!-- SMTP -->
+    <string name="smtp_description">Insira suas credenciais SMTP fornecidas pelo seu provedor de e-mail. Isso é usado para enviar estatísticas salvas e logs de depuração para um endereço de destino especificado pelo usuário.</string>
+    <string name="smtp_address">Endereço de e-mail</string>
+    <string name="smtp_password">Senha do e-mail</string>
+    <string name="smtp_server">URL do servidor SMTP</string>
+    <string name="smtp_port">Porta do servidor SMTP</string>
+    <string name="smtp_use_STARTTLS">Usar STARTTLS</string>
+    <!-- Vehicle Setup -->
+    <string name="vehicle_title">Configuração do veículo</string>
+    <string name="vehicle_my">Ano do modelo</string>
+    <string name="vehicle_drivetrain">Motorização</string>
+    <string name="vehicle_plus">Pacote Plus</string>
+    <string name="vehicle_performance">Atualização Performance</string>
+    <string name="vehicle_bst">Edição BST</string>
+    <string name="vehicle_launch">Edição de Lançamento</string>
+    <string-array name="changes_0_24">
+        <item>Adicionadas várias APIs de dados em tempo real:
+- Dados em tempo real ABRP OTA
+- Webhook HTTP com BasicAuth</item>
+        <item>Adicionado rastreamento de localização e histórico de elevação</item>
+        <item>Adicionada notificação de reinício após uma reinicialização, atualização ou falha do aplicativo</item>
+        <item>Adicionada a configuração do veículo</item>
+        <item>Menu de configurações reestruturado</item>
+        <item>Corrigidas unidades na visualização principal que não atualizavam</item>
+        <item>Correções gerais de bugs e melhorias de estabilidade</item>
+    </string-array>
+    <string name="settings_use_location">Rastreamento de localização</string>
+    <string name="settings_autostart">Início automático do aplicativo</string>
+    <string name="plot_dimensionY_SPEED">Velocidade</string>
+    <string name="plot_dimensionY_ALTITUDE">Altitude</string>
+    <string-array name="changes_0_24_1">
+        <item>Variação de altitude adicionada no resumo da viagem (experimental)</item>
+        <item>Correção de unidades incorretas no diagrama de resumo</item>
+        <item>Corrigidas datas erradas das sessões de carregamento no resumo</item>
+        <item>Melhoria das condições de notificação de reinicialização</item>
+        <item>Variação de altitude adicionada no resumo da viagem (experimental)</item>
+    </string-array>
+    <string name="summary_altitude">Mudança de altitude</string>
+    <string name="about_translators">Tradutores</string>
+    <string-array name="changes_0_25_0">
+        <item>Implementado banco de dados local para salvar dados de viagem de forma mais robusta e eficiente.</item>
+        <item>A sessão de carregamento agora pode ser interrompida até 5 minutos antes de iniciar uma nova sessão, mesmo que o carro tenha sido movido.</item>
+        <item>Adicionado o histórico de viagens para visualizar viagens anteriores.</item>
+        <item>Foram adicionados botões de seleção rápida para 20, 40 e 100 km no resumo da viagem.</item>
+        <item>Adicionado um ícone representando o tipo de viagem selecionado. Tocar nas estatísticas para alternar entre os 4 tipos de viagem.</item>
+        <item>Configuração adicionada para selecionar qual status de conexão de APIs deve ser exibido na visualização principal.</item>
+        <item>Agora é possível redefinir a viagem manual na visualização principal.</item>
+        <item>Ajustado o conjunto de dados de webhook HTTP para a nova estrutura de dados.</item>
+        <item>Correções gerais de bugs e melhorias de estabilidade.</item>
+    </string-array>
+    <string name="restart_notification_reason_unknown">%s foi reiniciado por um motivo desconhecido.</string>
+    <string name="summary_speed">Velocidade média</string>
+    <string-array name="trip_type_names">
+        <item>Tipo de viagem desconhecido</item>
+        <item>Viagem manual</item>
+        <item>Desde a carga</item>
+        <item>Viagem automática</item>
+        <item>Mês</item>
+    </string-array>
+    <string name="dialog_reset_confirm">Redefinir</string>
+    <string name="dialog_apply">Aplicar</string>
+    <!-- Trip history -->
+    <string name="history_title">Histórico de viagem</string>
+    <string name="history_selected">Selecionado:</string>
+    <string name="history_past_trips">Viagens anteriores:</string>
+    <string name="history_current_trips">Viagens atuais:</string>
+    <string name="history_dialog_filters_title">Filtros de viagem</string>
+    <string name="history_dialog_filters_manual">Mostrar viagens manuais</string>
+    <string name="history_dialog_filters_charge">Mostrar viagens desde a carga</string>
+    <string name="history_dialog_filters_auto">Mostrar viagens automáticas</string>
+    <string name="history_dialog_filters_month">Mostrar viagens mensais</string>
+    <string name="history_dialog_filters_date">Data de início mais antiga</string>
+    <string name="history_dialog_filters_note">Nota: As viagens atuais são sempre mostradas independentemente dos filtros aplicados.</string>
+    <string name="history_dialog_delete_title">Excluir viagem?</string>
+    <string name="history_dialog_delete_message">A viagem será excluída permanentemente.</string>
+    <string name="history_dialog_delete_confirm">Excluir viagem</string>
+    <string name="history_dialog_multi_delete_title">Excluir várias viagens?</string>
+    <string name="history_dialog_multi_delete_message">Você está prestes a excluir %s viagens. As viagens serão excluídas permanentemente.</string>
+    <string name="history_dialog_multi_delete_delete">Excluir %s viagens</string>
+    <string name="history_dialog_multi_delete_deselect">Desmarcar todos</string>
+    <string name="settings_distance_unit">Milhas como unidade de distância</string>
+    <string name="settings_apis_connection_selector">Ícone de conectividade na visualização principal:</string>
+    <string-array name="changes_0_25_1">
+        <item>Ajustes na interface do usuário, especialmente no resumo da viagem.</item>
+        <item>Adicionada configuração de veículo para MY24.</item>
+        <item>O compartilhamento do local atual agora pode ser configurado individualmente para cada API.</item>
+        <item>Pequenas correções de bugs.</item>
+    </string-array>
+    <string name="CurrentTripData_short">Manual</string>
+    <string name="SinceChargeData_short">Desde a carga</string>
+    <string name="AutoTripData_short">Automático</string>
+    <string name="CurrentMonthData_short">Mês</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Captura de tela feita (total de %s).</string>
+    <string-array name="changes_0_25_2">
+        <item>Recursos ampliados da API Webhook.</item>
+        <item>Adicionada uma opção para um lembrete de telefone ao sair do carro.</item>
+        <item>Otimizações no desempenho de renderização e carregamento de gráficos.</item>
+        <item>Foi corrigido um problema em que, às vezes, sessões de carregamento erradas eram mostradas no resumo da viagem.</item>
+        <item>Corrigido um problema que fazia com que o aplicativo não utilizasse milhas como unidade de distância.</item>
+    </string-array>
+    <string name="settings_phone_reminder">Lembrete de telefone</string>
+    <string name="notification_phone">Você pegou seu celular?</string>
+    <string name="notification_valuables">Não deixe nenhum objeto de valor visível no carro.</string>
+    <string-array name="changes_0_26_0">
+        <item>Adicionado esquema de cores experimental.</item>
+        <item>Seletor de eixo secundário simplificado.</item>
+        <item>Upload de banco de dados em partes para evitar falsos negativos e exibir o progresso.</item>
+    </string-array>
+    <string name="settings_experimental_colors">Esquema de cores experimental</string>
+    <string name="history_dialog_upload_title">Fazer upload do banco de dados para a API</string>
+    <string name="history_dialog_upload_message">Você está prestes a fazer upload de todo o banco de dados local para o endpoint especificado para API Webhook! 
+
+ Certifique-se de que não tenha dados duplicados no servidor para evitar valores implausíveis. 
+
+ Esta ação pode levar algum tempo dependendo da quantidade de dados. Por favor, permaneça nesta página até que uma notificação de sucesso seja exibida!</string>
+    <string name="history_dialog_upload_upload_button">Upload</string>
+</resources>
