@@ -200,6 +200,7 @@ class DataCollector: Service() {
 
         serviceScope.launch {
             // Notification updater
+            var simpleNotification = false
             while (true) {
                 delay(2_500)
                 if (!CarStatsViewer.appPreferences.notifications) {
@@ -215,8 +216,16 @@ class DataCollector: Service() {
                             StringFormatters.getAvgConsumptionString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.used_energy?.toFloat()?:0f, CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f),
                             StringFormatters.getAvgSpeedString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f, CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.drive_time?:0)
                         ))
+                    simpleNotification = false
                 }
-                CarStatsViewer.notificationManager.notify(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
+                if (!simpleNotification) {
+                    simpleNotification = !CarStatsViewer.appPreferences.notifications
+                    CarStatsViewer.notificationManager.notify(
+                        CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10,
+                        foregroundServiceNotification.build()
+                    )
+                    InAppLogger.v("Updating notification")
+                }
             }
         }
 

@@ -102,7 +102,7 @@ class AutoStartReceiver: BroadcastReceiver() {
         )
             .setContentTitle(notificationText)
             .setContentText(context.getString(R.string.restart_notification_message))
-            .setSmallIcon(R.mipmap.ic_launcher_alt2_foreground)
+            .setSmallIcon(R.mipmap.ic_launcher_notification)
             .setOngoing(false)
 
         startupNotificationBuilder.apply {
