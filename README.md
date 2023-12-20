@@ -55,6 +55,8 @@ Please let me now if you do not want to be listed in the supporters list.
  * Samuel Lodyga
  * Konstantinos Theiakos
  * Oliver Charlton
+ * Dennis Berggren
+ * Erik Jan Rouwenhorst
 
 </details>
 
