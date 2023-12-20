@@ -114,6 +114,15 @@
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider" />
 
+            <Switch
+                android:id="@+id/settings_switch_theme"
+                style="@style/ColorTestTheme.menu_standard_switch_style"
+                android:text="@string/settings_experimental_colors" />
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+
             <TextView
                 style="@style/menu_section_title_style"
                 android:text="@string/settings_title_misc" />
@@ -149,15 +158,6 @@
                 android:layout_height="wrap_content"
                 app:topText="@string/settings_about"
                 app:startDrawable="@drawable/ic_info"/>
-
-            <Switch
-                android:id="@+id/settings_switch_theme"
-                style="@style/ColorTestTheme.menu_standard_switch_style"
-                android:text="@string/settings_experimental_colors" />
-            <View
-                style="@style/menu_divider_style"
-                android:layout_height="0dp"
-                android:background="?android:attr/listDivider" />
 
         </LinearLayout>
     </ScrollView>
