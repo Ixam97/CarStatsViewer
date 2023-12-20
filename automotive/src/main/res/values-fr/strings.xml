@@ -226,8 +226,39 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
     <string name="history_dialog_multi_delete_deselect">Désélectionner tout</string>
     <string name="settings_distance_unit">Distances en miles</string>
     <string name="settings_apis_connection_selector">Icône de connectivité dans la vue principale</string>
+    <string-array name="changes_0_25_1">
+        <item>Ajustements à l\'interface, principalement dans le sommaire.</item>
+        <item>Ajout du modèle 2024 dans configuration de véhicule.</item>
+        <item>Le partage de l\'emplacement peut maintenant être configuré individuellement pour chaque API.</item>
+        <item>Corrections de bogues mineurs.</item>
+    </string-array>
     <string name="CurrentTripData_short">Manuel</string>
     <string name="SinceChargeData_short">Depuis la charge</string>
     <string name="AutoTripData_short">Automatique</string>
     <string name="CurrentMonthData_short">Mois</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Capture d\'écran prise (total de %s)</string>
+    <string-array name="changes_0_25_2">
+        <item>Extension des capacités de l\'API Webhook.</item>
+        <item>Ajout d\'une option de rappel sur téléphone lorsque le véhicule est quitté.</item>
+        <item>Améliorations du rendu du graphique et de la performance.</item>
+        <item>Correction d\'une situation où des sessions de charge incorrectes étaient affichées dans le sommaire. </item>
+        <item>Correction d\'une situation où l\'application n\'affichait pas les distance en miles.</item>
+    </string-array>
+    <string name="settings_phone_reminder">Rappel de téléphone</string>
+    <string name="notification_phone">Avez-vous récupéré votre téléphone mobile ?</string>
+    <string name="notification_valuables">Ne pas laisser d\'objets de valeur visible dans la voiture.</string>
+    <string-array name="changes_0_26_0">
+        <item>Ajout d\'une palette de couleurs expérimentale.</item>
+        <item>Simplification du sélecteur d\'axe secondaire.</item>
+        <item>Base de données maintenant séparée en morceaux pour prévenir des faux négatifs.</item>
+    </string-array>
+    <string name="settings_experimental_colors">Palette de couleurs expérimentale</string>
+    <string name="history_dialog_upload_title">Téléversement de la base de données vers l\'API</string>
+    <string name="history_dialog_upload_message">Vous êtes sur le point de téléverser la base de données entière au destinataire spécifié dans l\'API Webhook.
+
+Assurez-vous que le serveur soit exempt de données existantes pour éviter les doublons.
+
+Cette opération peut prendre du temps, dépendament du volume de données. Veuillez rester sur cette page jusqu\'à la confirmation de succès.</string>
+    <string name="history_dialog_upload_upload_button">Téléversement</string>
 </resources>
