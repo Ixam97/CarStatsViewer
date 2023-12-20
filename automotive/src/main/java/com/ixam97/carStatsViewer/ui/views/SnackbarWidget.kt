@@ -23,6 +23,7 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.applyTypeface
 import kotlinx.android.synthetic.main.widget_snackbar.view.*
+import kotlin.math.roundToInt
 
 
 class SnackbarWidget private constructor(
@@ -33,7 +34,7 @@ class SnackbarWidget private constructor(
 ): LinearLayout(context, attrs, defStyleAttr) {
 
     private data class SnackbarParameters(
-        val message: String,
+        var message: String,
         val buttonText: String? = null,
         val drawableId: Int? = null,
         val startHidden: Boolean = false,
@@ -98,6 +99,21 @@ class SnackbarWidget private constructor(
     private val startIcon: ImageView
     private val progressBar: View
 
+    fun updateMessage(message: String) {
+        snackbarParameters.message = message
+        messageText.text = snackbarParameters.message
+    }
+
+    fun setProgressBarPercent(percent: Int) {
+        val maxWidth = this@SnackbarWidget.measuredWidth
+        val onePercent = maxWidth.toFloat() / 100
+        val newWidth = onePercent * percent
+
+        val layoutParams = progress_bar.layoutParams
+        layoutParams.width = newWidth.roundToInt()
+        progressBar.layoutParams = layoutParams
+    }
+
     private fun removeSelf() {
         val anim = AnimationUtils.loadAnimation(context, R.anim.snackbar_down)
         anim.setAnimationListener(object: AnimationListener{
@@ -137,8 +153,10 @@ class SnackbarWidget private constructor(
 
         if (snackbarParameters.isError) {
             (progressBar.parent as ViewGroup).setBackgroundColor(context.getColor(R.color.bad_red_dark))
+            messageText.setTextColor(context.getColor(android.R.color.white))
             progressBar.setBackgroundColor(context.getColor(R.color.bad_red))
             startIcon.setImageResource(R.drawable.ic_error)
+            startIcon.setColorFilter(context.getColor(android.R.color.white))
         }
 
         snackbarParameters.drawableId?.let {
@@ -146,28 +164,32 @@ class SnackbarWidget private constructor(
         }
 
         val anim = AnimationUtils.loadAnimation(context, R.anim.snackbar_up)
-        anim.setAnimationListener(object: AnimationListener{
-            override fun onAnimationStart(animation: Animation?) {}
-            override fun onAnimationEnd(animation: Animation?) {
-                if (snackbarParameters.duration > 0) {
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        removeSelf()
-                    }, snackbarParameters.duration)
-                }
-                val widthAnimator = ValueAnimator.ofInt(1, this@SnackbarWidget.measuredWidth)
-                widthAnimator.duration = snackbarParameters.duration
-                widthAnimator.interpolator = LinearInterpolator()
-                widthAnimator.addUpdateListener { barAnimation ->
-                    val layoutParams = progress_bar.layoutParams
-                    layoutParams.width = barAnimation.animatedValue as Int
-                    progressBar.layoutParams = layoutParams
-                }
-                widthAnimator.start()
-            }
-            override fun onAnimationRepeat(animation: Animation?) {}
 
-        })
-        this.startAnimation(anim)
+        if (snackbarParameters.duration > 0) {
+            anim.setAnimationListener(object : AnimationListener {
+                override fun onAnimationStart(animation: Animation?) {}
+                override fun onAnimationEnd(animation: Animation?) {
+                    if (snackbarParameters.duration > 0) {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            removeSelf()
+                        }, snackbarParameters.duration)
+                    }
+                    val widthAnimator = ValueAnimator.ofInt(1, this@SnackbarWidget.measuredWidth)
+                    widthAnimator.duration = snackbarParameters.duration
+                    widthAnimator.interpolator = LinearInterpolator()
+                    widthAnimator.addUpdateListener { barAnimation ->
+                        val layoutParams = progress_bar.layoutParams
+                        layoutParams.width = barAnimation.animatedValue as Int
+                        progressBar.layoutParams = layoutParams
+                    }
+                    widthAnimator.start()
+                }
+
+                override fun onAnimationRepeat(animation: Animation?) {}
+
+            })
+            this.startAnimation(anim)
+        }
 
         applyTypeface(this)
     }

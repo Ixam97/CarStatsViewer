@@ -242,4 +242,17 @@
     <string name="settings_phone_reminder">Telefonpåminnelse</string>
     <string name="notification_phone">Tok du med mobiltelefonen?</string>
     <string name="notification_valuables">Ikke legg igjen synlige verdisaker i bilen.</string>
+    <string-array name="changes_0_26_0">
+        <item>Lagt til experimentelt fargeskjema.</item>
+        <item>Enklere sekundært aksevalg.</item>
+        <item>Delt opp database i biter for å forhindre falske negativer og display fremdrift.</item>
+    </string-array>
+    <string name="settings_experimental_colors">Eksperimentelt fargeskjema.</string>
+    <string name="history_dialog_upload_title">Last opp database til API</string>
+    <string name="history_dialog_upload_message">Du er i ferd med å laste opp hele den lokale databasen til endepunktet som er spesifisert i Webhook API! 
+
+Pass på at det ikke er noen duplisertee data på serveren for å forhindre usannsynlige verdier. 
+
+ Denne handlingen kan ta litt tid avhengig av datamengden. Vennligst forbli på denne siden til et suksessvarsel vises!</string>
+    <string name="history_dialog_upload_upload_button">Opplasting</string>
 </resources>

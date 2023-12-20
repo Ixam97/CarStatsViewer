@@ -4,22 +4,22 @@
         <item name="android:tag">bold</item>
         <item name="android:drawablePadding">20dp</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">138dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">@dimen/title_font_size</item>
         <item name="android:textFontWeight">@integer/title_font_weight</item>
     </style>
-    <style name="menu_standard_switch_style">
+    <style name="ColorTestTheme.menu_standard_switch_style">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/std_row_height</item>
         <item name="android:textSize">@dimen/std_font_size</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textFontWeight">@integer/std_font_weight</item>
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-        <!--<item name="android:thumb">@drawable/club_thumb_gradient</item>
-        <item name="android:trackTint">@color/club_night_variant</item>-->
+        <item name="android:thumb">@drawable/club_thumb</item>
+        <item name="android:trackTint">@color/club_night_variant</item>
     </style>
     <style name="title_back_button_style">
         <item name="android:layout_width">wrap_content</item>

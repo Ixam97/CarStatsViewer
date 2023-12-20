@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string-array name="changes_0_26_0">
+        <item>Experimentelles Farbschema hinzugefügt.</item>
+        <item>Vereinfachte Auswahl der Sekundärachse.</item>
+        <item>Der Datenbankupload wurde in Abschnitte unterteilt, um falsche Fehlermeldungen zu vermeiden und den Fortschritt anzeigen zu können.</item>
+    </string-array>
+
     <string-array name="changes_0_25_2">
         <item>Erweiterung der Webhook-API.</item>
         <item>Option für eine Handy-Erinnerung beim verlassen des Fahrzeugs hinzugefügt.</item>
@@ -139,6 +145,7 @@
     <string name="settings_consumption_plot">Verbrauchsansicht:</string>
     <string name="settings_charge_plot">Ladeansicht:</string>
     <string name="settings_about">Über Car Stats Viewer</string>
+    <string name="settings_experimental_colors">Experimentelles Farbschema</string>
     <string name="settings_consumption_plot_single_motor">Single Motor Modell</string>
     <string name="settings_plot_secondary_color">Grau als sekundäre Diagrammfarbe</string>
     <string name="settings_plot_state_of_charge_dimension">Experimentelle Ladezustand Achse</string>
@@ -261,4 +268,8 @@
     <string name="history_dialog_multi_delete_message">Es sind %s Trips zum Löschen ausgewählt. Die Trips werden dauerhaft gelöscht.</string>
     <string name="history_dialog_multi_delete_delete">%s Trips löschen</string>
     <string name="history_dialog_multi_delete_deselect">Alle abwählen</string>
+
+    <string name="history_dialog_upload_title">Datenbank über API hochladen</string>
+    <string name="history_dialog_upload_message">Du bist im Begriff die gesamte lokale Datenbank an den in der Webhook API definierten Endpoint hochzuladen!\n\nStelle sicher, dass auf dem Server keine Datenduplikate entstehen, um unplausible Werte zu vermeiden.\n\nDiese Aktion kann abhängig von der Datenmenge einige Zeit in Anspruch nehmen. Bitte bleibe auf dieser Seite, bis eine Benachrichtigung über den Erfolg des Uploads erscheint!</string>
+    <string name="history_dialog_upload_upload_button">Hochladen</string>
 </resources>

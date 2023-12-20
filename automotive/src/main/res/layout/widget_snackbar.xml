@@ -11,7 +11,7 @@
         android:layout_gravity="bottom"
         android:layout_marginHorizontal="50dp"
         android:layout_marginBottom="20px"
-        android:background="?android:attr/colorSecondary">
+        android:background="@color/club_night_variant">
 
         <ImageView
             android:id="@+id/start_icon"
@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:src="@drawable/ic_info"
+            android:tint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -30,6 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:layout_marginStart="123dp"
+            android:textColor="#fff"
             android:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/confirm_button"

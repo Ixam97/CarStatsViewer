@@ -33,6 +33,7 @@ class AutoStartReceiver: BroadcastReceiver() {
 
         if (CarStatsViewer.foregroundServiceStarted) return
         if (CarStatsViewer.restartNotificationDismissed) return
+        if (CarStatsViewer.restartNotificationShown) return
 
         InAppLogger.d("[ASR] Auto Star Receiver triggered")
 
@@ -44,18 +45,17 @@ class AutoStartReceiver: BroadcastReceiver() {
                 }
                 stringBuilder.toString()
             }}")
+            /*
             if (intent.hasExtra("dismiss")) {
                 if (intent.getBooleanExtra("dismiss", false)) {
                     CarStatsViewer.restartNotificationDismissed = true
                     CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000, cancel = true, extendedLogging = true)
                     CarStatsViewer.notificationManager.cancel(CarStatsViewer.RESTART_NOTIFICATION_ID)
-
-
-
                     InAppLogger.d("[ARS] Dismiss intent")
                     return
                 }
             }
+            */
             if (reason == null || reason == "termination") {
                 reason = if (intent.hasExtra("reason")) {
                     intent.getStringExtra("reason")
@@ -102,8 +102,8 @@ class AutoStartReceiver: BroadcastReceiver() {
         )
             .setContentTitle(notificationText)
             .setContentText(context.getString(R.string.restart_notification_message))
-            .setSmallIcon(R.drawable.ic_notification_diagram)
-            .setOngoing(true)
+            .setSmallIcon(R.mipmap.ic_launcher_notification)
+            .setOngoing(false)
 
         startupNotificationBuilder.apply {
             addAction(Notification.Action.Builder(
@@ -116,6 +116,7 @@ class AutoStartReceiver: BroadcastReceiver() {
                 context.getString(R.string.restart_notification_app),
                     actionActivityPendingIntent
             ).build())
+            /*
             addAction(Notification.Action.Builder(
                     null,
                 context.getString(R.string.restart_notification_dismiss),
@@ -128,23 +129,25 @@ class AutoStartReceiver: BroadcastReceiver() {
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
             ).build())
+             */
         }
 
         // Notification needs to be of CATEGORY_CALL to be displayed as a heads up notification in AAOS.
         startupNotificationBuilder.setCategory(Notification.CATEGORY_CALL)
 
         CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
+        CarStatsViewer.restartNotificationShown = true
         CoroutineScope(Dispatchers.Default).launch {
-            while (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed) {
-                CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
-                delay(5_000)
-            }
+        //     while (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed) {
+        //         CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
+        //         delay(5_000)
+        //     }
             // The heads up notification disappears after 8 seconds and is not visible in the
             // notification center. Update notification without CATEGORY_CALL to keep it visible.
-            // delay(8_000)
-            // startupNotificationBuilder.setCategory(Notification.CATEGORY_STATUS)
-            // if (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed)
-            //     CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
+            delay(8_000)
+            startupNotificationBuilder.setCategory(Notification.CATEGORY_STATUS)
+            if (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed)
+                CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
         }
     }
 }

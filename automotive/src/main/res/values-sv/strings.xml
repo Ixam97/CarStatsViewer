@@ -242,4 +242,17 @@
     <string name="settings_phone_reminder">Telefonpåminnelse</string>
     <string name="notification_phone">Tog du med dig din mobiltelefon?</string>
     <string name="notification_valuables">Lämna inga värdeföremål synliga i bilen.</string>
+    <string-array name="changes_0_26_0">
+        <item>Experimentellt färgschema har lagts till.</item>
+        <item>Förenklad väljare för sekundär axel.</item>
+        <item>Separerad databasuppladdning i bitar för att förhindra falska negativa resultat och visa framsteg.</item>
+    </string-array>
+    <string name="settings_experimental_colors">Experimentellt färgschema</string>
+    <string name="history_dialog_upload_title">Ladda upp databas till API</string>
+    <string name="history_dialog_upload_message">Du håller på att ladda upp hela den lokala databasen till den ändpunkt som anges i Webhook API!
+
+Se till att det inte finns några dubbla data på servern för att förhindra osannolika värden.
+
+Denna åtgärd kan ta lite tid beroende på mängden data. Vänligen stanna kvar på denna sida tills ett meddelande om framgång visas!</string>
+    <string name="history_dialog_upload_upload_button">Ladda upp</string>
 </resources>

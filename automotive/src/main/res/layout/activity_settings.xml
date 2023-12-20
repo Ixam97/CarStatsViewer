@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?activity_background"
     tools:ignore="UseSwitchCompatOrMaterialXml, UseAppTint, UseCompatTextViewDrawableXml"
     tools:context=".ui.activities.SettingsActivity">
 
@@ -24,24 +25,12 @@
 
         <TextView
             android:id="@+id/settings_title"
-            android:drawableStart="@drawable/ic_settings"
             style="@style/title_text_style"
             android:text="@string/settings_title" />
-
-        <View style="@style/filler"/>
-
-        <TextView
-            android:textSize="@dimen/version_font_size"
-            android:id="@+id/settings_version_text"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|end"
-            android:layout_marginHorizontal="20dp"/>
-
     </LinearLayout>
 
     <View
-        style="@style/action_bar_line"
+        style="?action_bar_line"
         android:id="@+id/settings_title_divider"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
         app:layout_constraintLeft_toLeftOf="parent"/>
@@ -49,7 +38,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/settings_version_text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/settings_title_divider">
 
@@ -71,7 +60,7 @@
 
             <Switch
                 android:id="@+id/settings_switch_notifications"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_notifications" />
 
             <View
@@ -82,7 +71,7 @@
             <Switch
                 android:visibility="gone"
                 android:id="@+id/settings_switch_alt_layout"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="Speed and SoC in main view gages" />
 
             <View
@@ -91,7 +80,7 @@
 
             <Switch
                 android:id="@+id/settings_switch_consumption_unit"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_consumption_unit" />
 
             <View
@@ -100,7 +89,7 @@
 
             <Switch
                 android:id="@+id/settings_switch_use_location"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_use_location" />
 
             <View
@@ -109,7 +98,7 @@
 
             <Switch
                 android:id="@+id/settings_switch_autostart"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_autostart" />
 
             <View
@@ -118,8 +107,17 @@
 
             <Switch
                 android:id="@+id/settings_switch_phone_reminder"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_phone_reminder" />
+
+            <View
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+
+            <Switch
+                android:id="@+id/settings_switch_theme"
+                style="@style/ColorTestTheme.menu_standard_switch_style"
+                android:text="@string/settings_experimental_colors" />
 
             <View
                 style="@style/menu_divider_style"
@@ -163,4 +161,13 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <TextView
+        android:id="@+id/settings_version_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:gravity="center_vertical|start"
+        android:textSize="@dimen/version_font_size"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

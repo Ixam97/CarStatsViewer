@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/settings_main_view_activity"
     android:orientation="vertical"
+    android:background="?activity_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -18,7 +19,6 @@
 
         <TextView
             style="@style/title_text_style"
-            android:drawableStart="@drawable/ic_diagram"
             android:text="@string/settings_main_view"/>
 
         <View
@@ -27,10 +27,7 @@
             android:layout_weight="1" />
 
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="?android:attr/colorControlActivated"/>
+    <View style="?action_bar_line"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -88,7 +85,7 @@
 
             <Switch
                 android:id="@+id/settings_consumption_plot_switch_secondary_color"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_plot_secondary_color"/>
 
             <View
@@ -102,7 +99,7 @@
 
             <Switch
                 android:id="@+id/settings_consumption_plot_switch_visible_gages"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_visible_gages"/>
 
             <View
@@ -119,7 +116,7 @@
 
             <Switch
                 android:id="@+id/settings_charge_plot_switch_secondary_color"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_plot_secondary_color"/>
             <View
                 style="@style/menu_divider_style"
@@ -127,7 +124,7 @@
 
             <Switch
                 android:id="@+id/settings_charge_plot_switch_visible_gages"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_visible_gages"/>
             <View
                 style="@style/menu_divider_style"
@@ -136,7 +133,7 @@
             <Switch
                 android:visibility="gone"
                 android:id="@+id/settings_charge_plot_switch_state_of_charge_dimension"
-                style="@style/menu_standard_switch_style"
+                style="?menu_standard_switch_style"
                 android:text="@string/settings_plot_state_of_charge_dimension"/>
             <View
                 android:visibility="gone"

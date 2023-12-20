@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:clickable="true"
     android:id="@+id/activity_summary"
-    android:background="@color/slideup_activity_background">
+    android:background="?activity_background_variant">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -113,7 +113,7 @@
 
     </LinearLayout>
 
-    <View style="@style/action_bar_line"/>
+    <View style="?action_bar_line"/>
 
     <TextView
         android:id="@+id/summary_parked_warning"

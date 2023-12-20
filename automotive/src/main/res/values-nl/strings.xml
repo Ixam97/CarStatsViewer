@@ -242,4 +242,17 @@
     <string name="settings_phone_reminder">Telefoonherinnering</string>
     <string name="notification_phone">Heb je je mobiele telefoon meegenomen?</string>
     <string name="notification_valuables">Laat geen waardevolle spullen zichtbaar achter in de auto.</string>
+    <string-array name="changes_0_26_0">
+        <item>Experimenteel kleurenschema toegevoegd.</item>
+        <item>Vereenvoudigde selector voor secundaire assen.</item>
+        <item>Database-uploads in stukken verdeeld om valse negatieven te voorkomen en voortgang weer te geven.</item>
+    </string-array>
+    <string name="settings_experimental_colors">Experimenteel kleurenschema</string>
+    <string name="history_dialog_upload_title">Database uploaden naar API</string>
+    <string name="history_dialog_upload_message">Je staat op het punt om de hele lokale database te uploaden naar het eindpunt dat is opgegeven in de Webhook API!
+
+Zorg ervoor dat er geen dubbele gegevens op de server staan om onwaarschijnlijke waarden te voorkomen.
+
+Deze actie kan enige tijd duren, afhankelijk van de hoeveelheid gegevens. Blijf op deze pagina totdat een succesmelding wordt weergegeven!</string>
+    <string name="history_dialog_upload_upload_button">Uploaden</string>
 </resources>

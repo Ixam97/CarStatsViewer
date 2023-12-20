@@ -64,7 +64,7 @@ class DebugActivity : FragmentActivity() {
 
         appPreferences = AppPreferences(applicationContext)
 
-        setContentView(R.layout.activity_debug)
+        setContentViewAndTheme(this, R.layout.activity_debug)
 
         CarStatsViewer.typefaceMedium?.let {
             applyTypeface(log_activity)

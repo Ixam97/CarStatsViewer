@@ -16,16 +16,16 @@
                         android:startY="50"
                         android:type="linear">
                         <item
-                            android:color="#2a1037"
+                            android:color="@color/club_violet_dark"
                             android:offset="0" />
                         <item
-                            android:color="#77347b"
+                            android:color="@color/club_violet"
                             android:offset="0.33" />
                         <item
-                            android:color="#447ea6"
+                            android:color="@color/club_blue"
                             android:offset="0.66" />
                         <item
-                            android:color="#0c4b5d"
+                            android:color="@color/club_blue_deep"
                             android:offset="1" />
                     </gradient>
                 </aapt:attr>

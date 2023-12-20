@@ -229,18 +229,30 @@
     <string name="CurrentTripData_short">Manuel</string>
     <string name="SinceChargeData_short">Siden opladning</string>
     <string name="AutoTripData_short">Automatisk</string>
-    <string name="CurrentMonthData_short">Måned
-</string>
-    <string name="snackbar_ok">OKay</string>
-    <string name="screenshot_taken">Skærmbilledekopi taget (totalt %s).</string>
+    <string name="CurrentMonthData_short">Måned</string>
+    <string name="snackbar_ok">Okay</string>
+    <string name="screenshot_taken">Skærmbillede taget (totalt %s).</string>
     <string-array name="changes_0_25_2">
         <item>Udvidede Webhook API-funktioner.</item>
         <item>Tilføjede en mulighed for at påmindelse om at huske telefonen når bilen forlades</item>
         <item>Optimeringer i plotgengivelse og indlæsningsydelse.</item>
-        <item>Rettet en udfordring der indimmellem viser forkerte ladesessioner i rejseopsummering</item>
-        <item>Rettede en udfordring, der gør at appen ikke bruger miles som distanceenhed</item>
+        <item>Rettet en udfordring der indimellem viser forkerte ladesessioner i rejseopsummering</item>
+        <item>Rettede en fejl, der gør at appen ikke bruger miles som distanceenhed</item>
     </string-array>
-    <string name="settings_phone_reminder">Husk telefonen</string>
+    <string name="settings_phone_reminder">Telefon påmindelse</string>
     <string name="notification_phone">Tog du din mobiltelefon?</string>
     <string name="notification_valuables">Efterlad ikke værdifulde ting i bilen</string>
+    <string-array name="changes_0_26_0">
+        <item>Tilføjet eksperimentel farvepalette</item>
+        <item>Simpel anden akse valg</item>
+        <item>Adskilt databaseupload i bidder for at forhindre falske negativer og vise fremskridt.</item>
+    </string-array>
+    <string name="settings_experimental_colors">Eksperimentelle farvepalette</string>
+    <string name="history_dialog_upload_title">Opload database til API</string>
+    <string name="history_dialog_upload_message">Du skal til at oploade hele databasen til destinationen angivet i webhook API!
+
+Kontroller at der ikke er dublikerede i data på serveren for at undgå usandsynlige værdier.
+
+Denne handling kan tage en del tid afhængig af datamængden. Bliv på denne side indtil vises en successmeddelelse!</string>
+    <string name="history_dialog_upload_upload_button">Opload</string>
 </resources>

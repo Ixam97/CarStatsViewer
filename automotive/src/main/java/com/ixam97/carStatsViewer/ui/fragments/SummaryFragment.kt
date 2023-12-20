@@ -1,9 +1,12 @@
 package com.ixam97.carStatsViewer.ui.fragments
 
 import android.app.AlertDialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.widget.SeekBar
@@ -32,6 +35,7 @@ import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.applyTypeface
+import com.ixam97.carStatsViewer.utils.getColorFromAttribute
 import kotlinx.android.synthetic.main.fragment_summary.*
 import kotlinx.coroutines.*
 import java.util.*
@@ -69,11 +73,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         ),
     )
 
-    private val consumptionPlotLinePaint = PlotLinePaint(
-    PlotPaint.byColor(applicationContext.getColor(R.color.primary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
-    PlotPaint.byColor(applicationContext.getColor(R.color.secondary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
-    PlotPaint.byColor(applicationContext.getColor(R.color.secondary_plot_color_alt), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size))
-    ) { appPreferences.consumptionPlotSecondaryColor }
+    private lateinit var consumptionPlotLinePaint: PlotLinePaint
 
     private val chargePlotLinePaint = PlotLinePaint(
     PlotPaint.byColor(applicationContext.getColor(R.color.charge_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
@@ -89,12 +89,28 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         override fun onStopTrackingTouch(seekBar: SeekBar?) {}
     }
 
+    override fun onGetLayoutInflater(savedInstanceState: Bundle?): LayoutInflater {
+        return if (CarStatsViewer.appPreferences.colorTheme > 0) {
+            val inflater = super.onGetLayoutInflater(savedInstanceState)
+            val contextThemeWrapper: Context = ContextThemeWrapper(requireContext(), R.style.ColorTestTheme)
+            inflater.cloneInContext(contextThemeWrapper)
+        } else {
+            super.onGetLayoutInflater(savedInstanceState)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         CarStatsViewer.typefaceRegular?.let {
-            // applyTypeface(view)
+            applyTypeface(view)
         }
+
+        consumptionPlotLinePaint = PlotLinePaint(
+            PlotPaint.byColor(getColorFromAttribute(requireContext(), R.attr.primary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
+            PlotPaint.byColor(getColorFromAttribute(requireContext(), R.attr.secondary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
+            PlotPaint.byColor(getColorFromAttribute(requireContext(), R.attr.tertiary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size))
+        ) { appPreferences.consumptionPlotSecondaryColor }
 
         setupPlots()
         setSecondaryConsumptionPlotDimension(appPreferences.secondaryConsumptionDimension)
@@ -355,11 +371,11 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             summary_trip_selector.visibility = View.VISIBLE
             summary_selector_title.text = resources.getStringArray(R.array.trip_type_names)[session.session_type]
             summary_selected_trip_bar.forEach { bar ->
-                bar.background = applicationContext.getColor(R.color.disable_background).toDrawable()
+                bar.background = getColorFromAttribute(requireContext(), R.attr.widget_background).toDrawable()
                 // bar.background = applicationContext.getColor(R.color.club_night_variant).toDrawable()
             }
             // summary_selected_trip_bar[appPreferences.mainViewTrip].background = applicationContext.getDrawable(R.drawable.bg_button_selected)
-            summary_selected_trip_bar[appPreferences.mainViewTrip].background = primaryColor.toColor().toDrawable()
+            summary_selected_trip_bar[appPreferences.mainViewTrip].background = getColorFromAttribute(requireContext(), android.R.attr.colorControlActivated).toDrawable()
         }
 
         summary_trip_date_text.text = getString(R.string.summary_trip_start_date).format(StringFormatters.getDateString(Date(session.start_epoch_time)))

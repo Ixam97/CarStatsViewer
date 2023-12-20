@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.applyTypeface
+import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import kotlinx.android.synthetic.main.activity_settings_main_view.*
 
 class SettingsMainViewActivity: FragmentActivity() {
@@ -14,7 +15,7 @@ class SettingsMainViewActivity: FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings_main_view)
+        setContentViewAndTheme(this, R.layout.activity_settings_main_view)
 
         CarStatsViewer.typefaceMedium?.let {
             applyTypeface(settings_main_view_activity)

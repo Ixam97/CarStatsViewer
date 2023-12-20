@@ -73,7 +73,7 @@ class DataCollector: Service() {
         foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.FOREGROUND_CHANNEL_ID)
             // .setContentTitle(getString(R.string.app_name))
             .setContentTitle(getString(R.string.foreground_service_info))
-            .setSmallIcon(R.drawable.ic_notification_diagram)
+            .setSmallIcon(R.mipmap.ic_launcher_notification)
             .setOngoing(true)
 
         foregroundServiceNotification.setContentIntent(
@@ -200,23 +200,34 @@ class DataCollector: Service() {
 
         serviceScope.launch {
             // Notification updater
+            var simpleNotification = false
             while (true) {
                 delay(2_500)
                 if (!CarStatsViewer.appPreferences.notifications) {
                     foregroundServiceNotification
+                        // .setSmallIcon(R.mipmap.ic_launcher_notification)
                         .setContentTitle(getString(R.string.foreground_service_info))
                         .setContentText("")
                 } else {
                     foregroundServiceNotification
                         .setContentTitle(getString(R.string.notification_title) + " " + resources.getStringArray(R.array.trip_type_names)[CarStatsViewer.appPreferences.mainViewTrip + 1])
+                        // .setSmallIcon(R.drawable.ic_notification_diagram)
                         .setContentText(String.format(
                             "Dist.: %s, Cons.: %s, Speed: %s",
                             StringFormatters.getTraveledDistanceString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f),
                             StringFormatters.getAvgConsumptionString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.used_energy?.toFloat()?:0f, CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f),
                             StringFormatters.getAvgSpeedString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f, CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.drive_time?:0)
                         ))
+                    simpleNotification = false
                 }
-                CarStatsViewer.notificationManager.notify(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
+                if (!simpleNotification) {
+                    simpleNotification = !CarStatsViewer.appPreferences.notifications
+                    CarStatsViewer.notificationManager.notify(
+                        CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10,
+                        foregroundServiceNotification.build()
+                    )
+                    InAppLogger.v("Updating notification")
+                }
             }
         }
 

@@ -8,20 +8,14 @@
 - Visualizes and saves charge curves during a trip
 - Live Data API for ABRP and HTTP Webhook
 
-
-## Planned
-
-- Save and export trip data for further analysis
-- More performance oriented real time drive stats
-
 ## [Changes](/CHANGES.md)
 
 
 ## Installing the app on a car
 
-Currently the app is not available in the public Play Store. This is due to strict requirements by Google what kind of apps are allowed to be installed on cars. As of now the App is only available via internal test tracks which are limited to 100 users each. Currently there are no free internal test slots in any of the existing forks.
+Currently the app is not available in the public Play Store. This is due to strict requirements by Google what kind of apps are allowed to be installed on cars. As of now the App is only available via internal test tracks which are limited to 100 users each. Here you can find a listing of all available Test Tracks: [Polestar Club](https://polestar.fans/t/carstatsviewer-informationen/15027)
 
-There are currently ongoing talks with Polestar to bring the app to a broader audience. But this will take some time and Polestar will most likely require some changes to make the app comply with there safety and usability standards.
+There are currently ongoing talks with Polestar to bring the app to a broader audience. But this will take some time and Polestar will most likely require some changes to make the app comply with their safety and usability standards.
 
 ## Using the webhook API
 
@@ -55,6 +49,8 @@ Please let me now if you do not want to be listed in the supporters list.
  * Samuel Lodyga
  * Konstantinos Theiakos
  * Oliver Charlton
+ * Dennis Berggren
+ * Erik Jan Rouwenhorst
 
 </details>
 
@@ -83,25 +79,35 @@ Currently the following languages are already available:
  - :norway: Norwegian
  - :denmark: Danish
  - :fr: French
- - :portugal: Portuguese
- - :finland: Finnish
+- :portugal: Portuguese (Portugal)
+- :finland: Finnish
+- :brazil: Portuguese (Brazil)
 
 <details>
 <summary><h3>Translators</h3></summary>
 
- * DoubleYouEl
- * Robin Hellström
- * Jakob Schlyter
- * Oddvarr
- * Emil Blixt Hansen
+ * Emacee
+ * Morten Kjærgaard
  * Ian Mascarenhas
- * Dominik Brüning
+ * Jakob Schlyter
+ * Oddvar Rasmussen
+ * DoubleYou
+ * 078emil
  * Juha Mönkkönen
  * Ossi Lahtinen
  * J-P
  * Laurent Vitalis
  * Jere Kataja
  * Pedro Leite
+ * Michele Campeotto
+ * GD
+ * Robin Hellström
+ * Silver Beard
+ * Eric van Engelen
+ * Ivan F. Martinez
+ * Luiz Pacifico Centa
+ * Ricardo Blauth
+ * Marcelo Fornereto
 
 </details>
 
@@ -124,6 +130,7 @@ Please also be aware that I will not just include everything. It has to fit into
 
 - Dario Bosshard (Consumption and charge curve diagrams)
 - Klaus Rheinwald (Testing and consulting)
+- Jakob Schlyter (Lokalise setup and maintenance)
 - FreshDave29
 - rdu
 - Jannick Fahlbusch

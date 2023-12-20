@@ -6,8 +6,15 @@ import android.car.Car
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import com.ixam97.carStatsViewer.BuildConfig
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
+import kotlinx.android.synthetic.main.activity_permissions.permissions_version
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
 class PermissionsActivity: Activity() {
@@ -22,10 +29,20 @@ class PermissionsActivity: Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_permissions)
-        if (checkPermissions()){
-            finish()
-            startActivity(Intent(applicationContext, MainActivity::class.java))
+        setContentViewAndTheme(this, R.layout.activity_permissions)
+
+        permissions_version.text = "Version ${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
+
+        CoroutineScope(Dispatchers.Default).launch {
+            while (!CarStatsViewer.fontsLoaded) {
+                // Wait for Fonts to be loaded
+            }
+            runOnUiThread {
+                    if (checkPermissions()){
+                    finish()
+                    startActivity(Intent(applicationContext, MainActivity::class.java))
+                }
+            }
         }
     }
 

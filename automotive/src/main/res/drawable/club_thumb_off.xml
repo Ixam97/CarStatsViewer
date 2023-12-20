@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <vector xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:aapt="http://schemas.android.com/aapt"
+            android:width="100dp"
+            android:height="100dp"
+            android:viewportHeight="100"
+            android:viewportWidth="100">
+            <path android:pathData="M0,0L0,100L100,100L100,0z">
+                <aapt:attr name="android:fillColor">
+                    <gradient
+                        android:endX="120"
+                        android:endY="0"
+                        android:startX="-20"
+                        android:startY="100"
+                        android:type="linear">
+                        <item
+                            android:color="#2a1037"
+                            android:offset="0" />
+                        <item
+                            android:color="#0c4b5d"
+                            android:offset="1" />
+                    </gradient>
+                </aapt:attr>
+            </path>
+        </vector>
+    </item>
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="rectangle" >
+            <!--<solid android:color="@color/accent_50"/>-->
+            <solid android:color="@color/button_foreground" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <size
+                android:width="144dp"/>
+        </shape>
+    </item>
+</layer-list>

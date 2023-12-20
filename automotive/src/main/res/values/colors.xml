@@ -37,10 +37,18 @@
     <color name="accent_50">#3C61C8</color>
     <color name="accent_60">#1F459F</color>
 
+    <!-- Polestar Club color pallet -->
+    <color name="club_blue_light">#60bcd5</color>
     <color name="club_blue">#447ea6</color>
+    <color name="club_blue_deep">#0c4b5d</color>
+    <color name="club_blue_dark">#161d39</color>
+    <color name="club_violet_light">#8480bd</color>
     <color name="club_violet">#77347b</color>
-    <color name="club_night">#0a0f14</color>
+    <color name="club_violet_dark">#2a1037</color>
+    <color name="club_light">#efefef</color>
+    <color name="club_medium">#707a83</color>
     <color name="club_night_variant">#111922</color>
-    <color name="club_dk_blue">#161d39</color>
+    <color name="club_night">#0a0f14</color>
+    <color name="club_night_darker">#05080C</color>
     <color name="club_hint">#f7ea48</color>
 </resources>

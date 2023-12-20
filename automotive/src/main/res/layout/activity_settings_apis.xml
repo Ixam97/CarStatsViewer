@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?activity_background"
     tools:ignore="UseSwitchCompatOrMaterialXml, UseAppTint, UseCompatTextViewDrawableXml"
     tools:context=".ui.activities.SettingsApisActivity">
 
@@ -21,15 +22,11 @@
 
         <TextView
             style="@style/title_text_style"
-            android:drawableStart="@drawable/ic_api"
             android:text="@string/settings_apis_title" />
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="?android:attr/colorControlActivated"/>
+    <View style="?action_bar_line"/>
 
     <ScrollView
         android:layout_above="@+id/settings_version_text"

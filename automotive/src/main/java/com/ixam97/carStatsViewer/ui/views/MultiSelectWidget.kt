@@ -27,8 +27,8 @@ class MultiSelectWidget @JvmOverloads constructor(
 
     var mListener: OnIndexChangedListener? = null
 
-    private val primaryColor = CarStatsViewer.primaryColor
-    private val secondaryColor: Int = context.getColor(R.color.disable_background)
+    private val primaryColor: Int
+    private val secondaryColor: Int
 
     private val title: String
     private val titleWidth: Float
@@ -84,10 +84,19 @@ class MultiSelectWidget @JvmOverloads constructor(
     }
 
     init {
+        val typedValue = TypedValue()
+        context.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
+        val primaryColorDefault = typedValue.data
+
+        context.theme.resolveAttribute(R.attr.widget_background, typedValue, true)
+        val secondaryColorDefault = typedValue.data
+
         val attributes = context.obtainStyledAttributes(attrs, R.styleable.MultiSelectWidget)
         try {
             title = attributes.getString(R.styleable.MultiSelectWidget_title)?:""
             titleWidth = attributes.getDimension(R.styleable.MultiSelectWidget_title_width, -2f)
+            primaryColor = attributes.getColor(R.styleable.MultiSelectWidget_primary_color, primaryColorDefault)
+            secondaryColor = attributes.getColor(R.styleable.MultiSelectWidget_secondary_color, secondaryColorDefault)
         } finally {
             attributes.recycle()
         }

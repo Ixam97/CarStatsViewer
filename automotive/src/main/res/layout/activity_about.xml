@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?activity_background"
     tools:context=".ui.activities.AboutActivity">
 
 
@@ -22,15 +23,11 @@
         <TextView
             android:id="@+id/about_title"
             style="@style/title_text_style"
-            android:drawableStart="@drawable/ic_info"
             android:text="@string/about_title"/>
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="?android:attr/colorControlActivated" />
+    <View style="?action_bar_line"/>
 
     <ScrollView
         android:layout_width="match_parent"

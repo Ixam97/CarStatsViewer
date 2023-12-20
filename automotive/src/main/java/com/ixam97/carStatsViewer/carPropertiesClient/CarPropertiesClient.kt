@@ -45,7 +45,7 @@ class CarPropertiesClient(
             carPropertyManager.registerCallback(
                 carPropertyListener,
                 propertyId,
-                CarPropertyManager.SENSOR_RATE_ONCHANGE
+                (CarProperties.sensorRateMap[propertyId])?:0f
             )
         }
     }
