@@ -73,7 +73,7 @@ class DataCollector: Service() {
         foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.FOREGROUND_CHANNEL_ID)
             // .setContentTitle(getString(R.string.app_name))
             .setContentTitle(getString(R.string.foreground_service_info))
-            .setSmallIcon(R.drawable.ic_notification_diagram)
+            .setSmallIcon(R.mipmap.ic_launcher_notification)
             .setOngoing(true)
 
         foregroundServiceNotification.setContentIntent(
@@ -205,11 +205,13 @@ class DataCollector: Service() {
                 delay(2_500)
                 if (!CarStatsViewer.appPreferences.notifications) {
                     foregroundServiceNotification
+                        // .setSmallIcon(R.mipmap.ic_launcher_notification)
                         .setContentTitle(getString(R.string.foreground_service_info))
                         .setContentText("")
                 } else {
                     foregroundServiceNotification
                         .setContentTitle(getString(R.string.notification_title) + " " + resources.getStringArray(R.array.trip_type_names)[CarStatsViewer.appPreferences.mainViewTrip + 1])
+                        // .setSmallIcon(R.drawable.ic_notification_diagram)
                         .setContentText(String.format(
                             "Dist.: %s, Cons.: %s, Speed: %s",
                             StringFormatters.getTraveledDistanceString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f),
