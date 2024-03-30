@@ -376,7 +376,7 @@ class PlotView @JvmOverloads constructor(
     private val mScrollGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         private val shiftingFraction = 50L
 
-        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+        override fun onScroll(e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             touchDimensionShiftDistance += distanceX * touchDistanceMultiplier
 
             val targetDimensionShift = (((touchDimensionShift + touchDimensionShiftDistance * touchDimensionShiftByPixel) / ((dimensionRestriction?:shiftingFraction) / shiftingFraction)).toLong() * ((dimensionRestriction?:shiftingFraction) / shiftingFraction))

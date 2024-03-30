@@ -5,11 +5,11 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     defaultConfig {
         minSdkVersion 29
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 205
         versionName "0.27.0.0001"
 
@@ -36,7 +36,7 @@ android {
 
         play {
             dimension "aaos"
-            applicationIdSuffix "play"
+            // applicationIdSuffix "play"
         }
     }
 
@@ -99,8 +99,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.github.matthiaszimmermann:EGM96:master-SNAPSHOT'
 
-    implementation "androidx.car.app:app:1.3.0-rc01"
-    implementation "androidx.car.app:app-automotive:1.3.0-rc01"
+    implementation "androidx.car.app:app:1.4.0-rc02"
+    implementation "androidx.car.app:app-automotive:1.4.0-rc02"
 
     implementation("androidx.room:room-ktx:2.5.0")
     kapt("androidx.room:room-compiler:2.5.0")

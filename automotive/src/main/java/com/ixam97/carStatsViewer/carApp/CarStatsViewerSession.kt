@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.aaos
+package com.ixam97.carStatsViewer.carApp
 
 import android.content.Intent
 import android.content.pm.PackageManager
