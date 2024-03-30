@@ -79,7 +79,7 @@
             android:resource="@xml/automotive_app_desc"/>
         <meta-data
             android:name="androidx.car.app.minCarApiLevel"
-            android:value="6"/>
+            android:value="1"/>
         <service android:name=".dataCollector.DataCollector"
             android:foregroundServiceType="location"
             android:enabled="true"

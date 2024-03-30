@@ -82,6 +82,7 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
         apiStateString = apiState.toString()
         speed = realTimeData.speed
         power = realTimeData.power
+        InAppLogger.d("[Car App] Data Update")
         invalidate()
     }
     override fun onGetTemplate(): Template {
@@ -155,27 +156,27 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
             addRow(Row.Builder().apply {
                 setTitle(StringFormatters.getTraveledDistanceString(it.driven_distance.toFloat()))
                 setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_distance_large)).build())
-                // addText(carContext.getString(R.string.summary_traveled_distance))
+                addText(carContext.getString(R.string.summary_traveled_distance))
             }.build())
             addRow(Row.Builder().apply {
                 setTitle(StringFormatters.getEnergyString(it.used_energy.toFloat()))
                 setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_energy_large)).build())
-                // addText(carContext.getString(R.string.summary_used_energy))
+                addText(carContext.getString(R.string.summary_used_energy))
             }.build())
             addRow(Row.Builder().apply {
                 setTitle(StringFormatters.getAvgConsumptionString(it.used_energy.toFloat(), it.driven_distance.toFloat()))
                 setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_diagram)).build())
-                // addText(carContext.getString(R.string.summary_average_consumption))
+                addText(carContext.getString(R.string.summary_average_consumption))
             }.build())
             addRow(Row.Builder().apply {
                 setTitle(StringFormatters.getAvgSpeedString(it.driven_distance.toFloat(), it.drive_time))
                 setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_speed_large)).build())
-                // addText(carContext.getString(R.string.summary_speed))
+                addText(carContext.getString(R.string.summary_speed))
             }.build())
             addRow(Row.Builder().apply {
                 setTitle(StringFormatters.getElapsedTimeString(it.drive_time, true))
                 setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_time_large)).build())
-                // addText(carContext.getString(R.string.summary_travel_time))
+                addText(carContext.getString(R.string.summary_travel_time))
             }.build())
 
             if (it.session_type == 1) {
@@ -194,8 +195,9 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
                             CarToast.makeText(carContext, "Manual Trip has ben reset.", CarToast.LENGTH_LONG).show()
                         } else {
                             CoroutineScope(Dispatchers.IO).launch {
-                                delay(5_000)
+                                delay(4_000)
                                 resetFlag = false
+                                invalidate()
                             }
                             resetFlag = true
                             CarToast.makeText(carContext, "Press again to reset.", CarToast.LENGTH_LONG).show()
@@ -220,7 +222,7 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
                     CarStatsViewer.dataProcessor.changeSelectedTrip(newTripType)
                     CarStatsViewer.appPreferences.mainViewTrip = newTripType - 1
                     session = null
-                    invalidate()
+                    // invalidate()
                 }
                 // setFlags(Action.FLAG_PRIMARY)
             }.build())

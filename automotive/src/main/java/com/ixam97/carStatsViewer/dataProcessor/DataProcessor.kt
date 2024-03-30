@@ -94,7 +94,7 @@ class DataProcessor {
         private set(value) {
             field = value
             _realTimeDataFlow.value = value
-            aaosExec?.execute(aaosRunnable)
+            // aaosExec?.execute(aaosRunnable)
         }
 
     // private var chargingTripData = ChargingTripData()
@@ -107,7 +107,7 @@ class DataProcessor {
         private set(value) {
             field = value
             _selectedSessionDataFlow.value = value
-            aaosExec?.execute(aaosRunnable)
+            // aaosExec?.execute(aaosRunnable)
         }
 
     private val _realTimeDataFlow = MutableStateFlow(realTimeData)
@@ -542,6 +542,7 @@ class DataProcessor {
         }
 
         localSessionsAccess = true
+        aaosExec?.execute(aaosRunnable)
     }
 
     fun updateTripDataValuesByTick() {
@@ -689,8 +690,10 @@ class DataProcessor {
 
     /** Change the selected trip type to update the trip data flow with */
     fun changeSelectedTrip(tripType: Int) {
-        if (localSessionsState.value.isNotEmpty())
-            selectedSessionData = localSessionsState.value.first{it.session_type == tripType}
+        if (localSessionsState.value.isNotEmpty()) {
+            selectedSessionData = localSessionsState.value.first { it.session_type == tripType }
+            updateTripDataValues()
+        }
     }
 
     suspend fun resetTrip(tripType: Int, drivingState: Int) {

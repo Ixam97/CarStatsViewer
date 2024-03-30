@@ -198,6 +198,13 @@ class DataCollector: Service() {
             }
         }
 
+        // serviceScope.launch {
+        //     while (true) {
+        //         CarStatsViewer.dataProcessor.updateTripDataValuesByTick()
+        //         delay(2_000)
+        //     }
+        // }
+
         serviceScope.launch {
             // Notification updater
             var simpleNotification = false
