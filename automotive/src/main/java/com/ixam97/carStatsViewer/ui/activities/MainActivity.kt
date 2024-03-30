@@ -393,6 +393,16 @@ class MainActivity : FragmentActivity() {
             CarStatsViewer.getChangelogDialog(this).show()
             appPreferences.versionString = BuildConfig.VERSION_NAME
         }
+
+        if (BuildConfig.FLAVOR_aaos == "play") {
+            main_title.visibility = View.GONE
+            main_title_icon.visibility = View.GONE
+            main_title_dashboard.visibility = View.VISIBLE
+            main_button_back.visibility = View.VISIBLE
+            main_button_back.setOnClickListener {
+                finish()
+            }
+        }
     }
 
     override fun onDestroy() {

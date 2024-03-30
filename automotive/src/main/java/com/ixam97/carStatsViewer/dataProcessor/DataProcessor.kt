@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import java.util.*
+import java.util.concurrent.Executor
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -58,6 +59,9 @@ class DataProcessor {
     private var localSessionsAccess: Boolean = true
 
     var dataInitialized: Boolean? = null
+
+    private var aaosExec : Executor? = null
+    private var aaosRunnable : java.lang.Runnable? = null
 
     /**
      * List of local copies of the current trips. Used for storing sum values and saving them to
@@ -90,6 +94,7 @@ class DataProcessor {
         private set(value) {
             field = value
             _realTimeDataFlow.value = value
+            aaosExec?.execute(aaosRunnable)
         }
 
     // private var chargingTripData = ChargingTripData()
@@ -802,6 +807,11 @@ class DataProcessor {
                     updateChargingDataPoint()
             }
         }
+    }
+
+    fun setAaosCallback(exec: Executor, runnable: java.lang.Runnable) {
+        aaosExec = exec
+        aaosRunnable = runnable
     }
 
     /** Weird stuff for range estimate, not quite working as intended yet. */
