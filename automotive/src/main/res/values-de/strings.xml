@@ -272,4 +272,10 @@
     <string name="history_dialog_upload_title">Datenbank über API hochladen</string>
     <string name="history_dialog_upload_message">Du bist im Begriff die gesamte lokale Datenbank an den in der Webhook API definierten Endpoint hochzuladen!\n\nStelle sicher, dass auf dem Server keine Datenduplikate entstehen, um unplausible Werte zu vermeiden.\n\nDiese Aktion kann abhängig von der Datenmenge einige Zeit in Anspruch nehmen. Bitte bleibe auf dieser Seite, bis eine Benachrichtigung über den Erfolg des Uploads erscheint!</string>
     <string name="history_dialog_upload_upload_button">Hochladen</string>
+
+    <!-- Car App -->
+    <string name="car_app_trip_data">Tripdaten</string>
+    <string name="car_app_dashboard">Dashboard</string>
+    <string name="car_app_toast_reset_confirmation">Manuellert Trip wurde zurückgesetzt</string>
+    <string name="car_app_toast_reset_hint">Erneut tippen, um manuellen Trip zurückzusetzen.</string>
 </resources>

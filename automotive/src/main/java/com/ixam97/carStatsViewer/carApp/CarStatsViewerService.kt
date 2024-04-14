@@ -13,10 +13,10 @@ class CarStatsViewerService : CarAppService() {
     }
 
     override fun createHostValidator(): HostValidator {
-        return if (getApplicationInfo().flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) {
+        return if (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) {
             HostValidator.ALLOW_ALL_HOSTS_VALIDATOR
         } else {
-            HostValidator.Builder(getApplicationContext())
+            HostValidator.Builder(applicationContext)
                 .addAllowedHosts(androidx.car.app.R.array.hosts_allowlist_sample)
                 .build()
         }

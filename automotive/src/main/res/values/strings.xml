@@ -346,4 +346,6 @@
     <!-- Car App -->
     <string name="car_app_trip_data">Trip Data</string>
     <string name="car_app_dashboard">Dashboard</string>
+    <string name="car_app_toast_reset_confirmation">Manual Trip has been reset.</string>
+    <string name="car_app_toast_reset_hint">Press again to reset manual Trip.</string>
 </resources>
