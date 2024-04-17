@@ -211,12 +211,14 @@ class MainActivity : FragmentActivity() {
                                     remove(summaryFragment)
                                 }
                             }
+                            // main_button_summary.isEnabled = false
                             main_image_button_summary.isEnabled = false
                             main_button_history.isEnabled = false
                             main_button_history.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
                             main_image_button_summary.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
                         } else if (it.speed <= .1 && moving) {
                             moving = false
+                            // main_button_summary.isEnabled = true
                             main_image_button_summary.isEnabled = true
                             main_button_history.isEnabled = true
                             main_button_history.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
@@ -356,8 +358,7 @@ class MainActivity : FragmentActivity() {
 
         context = applicationContext
         val displayMetrics = context.resources.displayMetrics
-        InAppLogger.d("Display size: ${displayMetrics.widthPixels/displayMetrics.density}dp x${displayMetrics.heightPixels/displayMetrics.density}dp")
-        InAppLogger.d("Display size: ${displayMetrics.widthPixels}px x${displayMetrics.heightPixels}px")
+        InAppLogger.d("Display size: ${displayMetrics.widthPixels/displayMetrics.density}x${displayMetrics.heightPixels/displayMetrics.density}")
         InAppLogger.d("Main view created")
 
 
@@ -391,16 +392,6 @@ class MainActivity : FragmentActivity() {
 
             CarStatsViewer.getChangelogDialog(this).show()
             appPreferences.versionString = BuildConfig.VERSION_NAME
-        }
-
-        if (BuildConfig.FLAVOR_aaos == "play") {
-            main_title.visibility = View.GONE
-            main_title_icon.visibility = View.GONE
-            main_title_dashboard.visibility = View.VISIBLE
-            main_button_back.visibility = View.VISIBLE
-            main_button_back.setOnClickListener {
-                finish()
-            }
         }
     }
 
@@ -710,13 +701,16 @@ class MainActivity : FragmentActivity() {
             startActivity(Intent(this, SettingsActivity::class.java))
             overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }
-        // main_button_secondary_dimension.setOnClickListener {
-        //     var currentIndex = appPreferences.secondaryConsumptionDimension
-        //     currentIndex++
-        //     if (currentIndex > 3) currentIndex = 0
-        //     appPreferences.secondaryConsumptionDimension = currentIndex
-        //     setSecondaryConsumptionPlotDimension(currentIndex)
-        // }
+        /*
+        main_button_secondary_dimension.setOnClickListener {
+            var currentIndex = appPreferences.secondaryConsumptionDimension
+            currentIndex++
+            if (currentIndex > 3) currentIndex = 0
+            appPreferences.secondaryConsumptionDimension = currentIndex
+
+            setSecondaryConsumptionPlotDimension(currentIndex)
+        }
+        */
 
         main_image_button_speed.setOnClickListener {
             var currentIndex = appPreferences.secondaryConsumptionDimension
@@ -743,6 +737,12 @@ class MainActivity : FragmentActivity() {
             appPreferences.mainPrimaryDimensionRestriction = main_distance_selector.selectedIndex
             setPrimaryConsumptionPlotDimension(appPreferences.mainPrimaryDimensionRestriction)
         }
+
+        /*
+        main_button_summary.setOnClickListener {
+            openSummaryFragment()
+        }
+        */
 
         main_image_button_summary.setOnClickListener {
             openSummaryFragment()

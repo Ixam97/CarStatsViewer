@@ -9,6 +9,21 @@
         android:paddingBottom="50dp"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/changes_0_26_1_title"
+            android:text="0.25.0:"
+            style="@style/title_text_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"/>
+        <View style="@style/dialog_divider_bar" />
+        <TextView
+            style="@style/menu_row_top_text"
+            android:id="@+id/changes_0_26_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"/>
+        <View style="@style/menu_divider_style"/>
+        <TextView
             android:id="@+id/changes_0_26_0_title"
             android:text="0.25.0:"
             style="@style/title_text_style"
