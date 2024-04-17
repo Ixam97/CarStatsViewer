@@ -5,15 +5,17 @@
     android:id="@+id/main_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?activity_background"
     tools:context=".ui.activities.MainActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/master_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/main_action_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/black"
@@ -23,8 +25,9 @@
                 android:id="@+id/main_title_icon"
                 android:layout_width="@dimen/std_icon_size"
                 android:layout_height="@dimen/std_icon_size"
-                android:layout_margin="15dp"
+                android:padding="10dp"
                 android:layout_gravity="center_vertical"
+                android:layout_margin="15dp"
                 android:src="@mipmap/ic_launcher"/>
 
             <TextView
@@ -32,89 +35,87 @@
                 style="@style/title_text_style"
                 android:text="@string/app_name"/>
 
-            <ImageView
+            <ImageButton
                 android:visibility="gone"
+                android:id="@+id/main_button_back"
+                style="@style/title_back_button_style" />
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/main_title_dashboard"
+                style="@style/title_text_style"
+                android:text="Dashboard"/>
+
+            <ImageView
                 android:id="@+id/main_icon_location_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginVertical="15dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginStart="15dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_location_on"/>
 
             <ImageView
-                android:visibility="gone"
                 android:id="@+id/main_icon_abrp_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginVertical="15dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginStart="15dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_connected"/>
 
             <View style="@style/filler"/>
 
             <ImageButton
-                android:id="@+id/main_button_screenshot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="15dp"
-                android:layout_marginEnd="15dp"
-                android:background="@android:color/transparent"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_performance"/>
-
-            <ImageButton
                 android:id="@+id/main_button_history"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="15dp"
+                android:layout_gravity="center_vertical"
                 android:layout_marginEnd="15dp"
                 android:background="@android:color/transparent"
-                android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_history"/>
 
             <ImageButton
                 android:id="@+id/main_button_settings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="15dp"
+                android:layout_gravity="center_vertical"
                 android:layout_marginEnd="15dp"
                 android:background="@android:color/transparent"
-                android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_settings"/>
 
         </LinearLayout>
 
+        <View
+            android:id="@+id/main_action_bar_line"
+            style="?action_bar_line"
+            android:layout_below="@id/main_action_bar" />
         <LinearLayout
             android:visibility="visible"
             android:id="@+id/main_consumption_layout"
             android:orientation="horizontal"
+            android:layout_below="@id/main_action_bar_line"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <View
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_marginHorizontal="@dimen/horizontal_divider_margin"
-                android:layout_height="@dimen/divider_strength"
-                android:background="@color/polestar_orange"/>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="500dp"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:weightSum="14">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:visibility="visible"
                     android:id="@+id/main_gage_layout"
-                    android:layout_width="550dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_main_tile"
-                    android:layout_marginStart="15dp">
+                    android:orientation="vertical">
 
                     <ImageButton
+                        android:visibility="gone"
                         android:id="@+id/main_button_perf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -126,19 +127,23 @@
 
                     <com.ixam97.carStatsViewer.ui.views.GageView
                         android:id="@+id/main_power_gage"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginHorizontal="20dp"
+                        app:descriptionTextSize="@dimen/gage_desc_text_size"
+                        app:valueTextSize="@dimen/gage_value_text_size"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/main_button_perf"/>
 
                     <com.ixam97.carStatsViewer.ui.views.GageView
                         android:id="@+id/main_consumption_gage"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="15dp"
+                        android:layout_margin="20dp"
+                        app:descriptionTextSize="@dimen/gage_desc_text_size"
+                        app:valueTextSize="@dimen/gage_value_text_size"
                         app:layout_constraintTop_toBottomOf="@+id/main_power_gage"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -147,41 +152,47 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
-                    android:layout_margin="10dp"
                     android:id="@+id/main_alternate_gage_layout"
                     android:visibility="gone"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@drawable/bg_main_tile"
-                    android:layout_weight="8">
+                    android:layout_weight="@integer/gage_width_weight">
 
                     <com.ixam97.carStatsViewer.ui.views.GageView
                         android:id="@+id/main_speed_gage"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        app:descriptionTextSize="@dimen/gage_desc_text_size"
+                        app:valueTextSize="@dimen/gage_value_text_size"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginHorizontal="20dp"/>
 
                     <com.ixam97.carStatsViewer.ui.views.GageView
                         android:id="@+id/main_soc_gage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"/>
+                        app:descriptionTextSize="@dimen/gage_desc_text_size"
+                        app:valueTextSize="@dimen/gage_value_text_size"
+                        android:layout_margin="20dp"/>
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_marginStart="15dp"
-                    android:layout_marginVertical="15dp"
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:background="@drawable/bg_main_tile">
+                    android:layout_height="@dimen/divider_height"
+                    android:background="?android:attr/listDivider"
+                    android:layout_marginHorizontal="15dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:orientation="horizontal">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/main_trip_data_container"
                         android:layout_width="match_parent"
-                        android:layout_margin="15dp"
                         android:layout_height="match_parent">
 
                         <ImageView
@@ -193,7 +204,7 @@
                             android:src="@drawable/ic_hand"
                             app:layout_constraintBottom_toBottomOf="@+id/main_gage_avg_speed_text_view"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/main_gage_distance_text_view" />
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <ImageButton
                             android:id="@+id/main_button_reset"
@@ -201,28 +212,42 @@
                             android:layout_height="wrap_content"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
+                            android:layout_margin="15dp"
                             android:background="@android:color/transparent"
                             android:src="@drawable/ic_reset"/>
 
                         <TextView
-                            android:id="@+id/main_gage_distance_text_view"
-                            android:gravity="center_vertical"
+                            android:id="@+id/main_gage_trip_name"
+                            android:text="Trip Name"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:drawableStart="@drawable/ic_distance"
+                            android:layout_height="@dimen/text_icon_size"
+                            android:textSize="@dimen/std_font_size"
+                            android:layout_marginTop="10dp"
+                            android:textColor="?android:attr/colorControlActivated"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"/>
+
+                        <TextView
+                            android:id="@+id/main_gage_distance_text_view"
                             android:drawablePadding="15dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/text_icon_size"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginVertical="5dp"
+                            android:drawableStart="@drawable/ic_distance"
                             android:textColor="?android:attr/textColorPrimary"
                             android:textSize="@dimen/std_font_size"
+                            android:textAlignment="center"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                            app:layout_constraintTop_toBottomOf="@+id/main_gage_trip_name" />
 
 
                         <TextView
                             android:id="@+id/main_gage_used_power_text_view"
-                            android:gravity="center_vertical"
                             android:drawablePadding="15dp"
+                            android:textAlignment="center"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/text_icon_size"
                             android:layout_marginVertical="5dp"
                             android:drawableStart="@drawable/ic_power"
                             android:textColor="?android:attr/textColorPrimary"
@@ -232,10 +257,10 @@
 
                         <TextView
                             android:id="@+id/main_gage_avg_consumption_text_view"
-                            android:gravity="center_vertical"
                             android:drawablePadding="15dp"
+                            android:textAlignment="center"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/text_icon_size"
                             android:layout_marginVertical="5dp"
                             android:drawableStart="@drawable/ic_avg_consumption"
                             android:textColor="?android:attr/textColorPrimary"
@@ -245,10 +270,10 @@
 
                         <TextView
                             android:id="@+id/main_gage_time_text_view"
-                            android:gravity="center_vertical"
                             android:drawablePadding="15dp"
+                            android:textAlignment="center"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/text_icon_size"
                             android:layout_marginVertical="5dp"
                             android:drawableStart="@drawable/ic_time"
                             android:textColor="?android:attr/textColorPrimary"
@@ -258,10 +283,10 @@
 
                         <TextView
                             android:id="@+id/main_gage_avg_speed_text_view"
-                            android:gravity="center_vertical"
                             android:drawablePadding="15dp"
+                            android:textAlignment="center"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/text_icon_size"
                             android:layout_marginVertical="5dp"
                             android:drawableStart="@drawable/ic_speed"
                             android:textColor="?android:attr/textColorPrimary"
@@ -274,44 +299,129 @@
 
             </LinearLayout>
 
+            <View
+                android:layout_marginVertical="15dp"
+                android:layout_width="@dimen/divider_height"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:background="?android:attr/listDivider"/>
+
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="15dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/bg_main_tile"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <com.ixam97.carStatsViewer.ui.views.PlotView
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="fill_parent"
                     android:layout_weight="1"
-                    android:layout_marginHorizontal="15dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="10dp"
+                    app:baseTextSize="@dimen/reduced_font_size"
+                    app:xMargin="@dimen/plot_x_margin"
+                    app:yMargin="@dimen/plot_y_margin"
                     android:id="@+id/main_consumption_plot"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:weightSum="2"
-                    android:layout_marginBottom="15dp"
-                    android:layout_marginHorizontal="15dp"
-                    android:orientation="horizontal">
-                    <Button
-                        android:id="@+id/main_button_summary"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="80dp"
-                        android:layout_marginEnd="7.5dp"
-                        android:text="@string/main_button_trip_summary"/>
-                    <Button
-                        android:id="@+id/main_button_secondary_dimension"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="80dp"
-                        android:layout_marginStart="7.5dp"/>
 
-                </LinearLayout>
+                <View
+                    android:visibility="gone"
+                    android:layout_width="@dimen/divider_height"
+                    android:layout_height="match_parent"
+                    android:background="?android:attr/listDivider"
+                    android:layout_marginVertical="15dp"
+                    android:layout_marginHorizontal="15dp"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/main_side_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
+                        android:id="@+id/main_distance_selector"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/main_toolbar_height"
+                        app:numButtons="3"
+                        app:defaultIndex="0"
+                        app:textButton1="20 km"
+                        app:textButton2="40 km"
+                        app:textButton3="100 km"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginBottom="15dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toLeftOf="@id/main_image_button_speed"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <ImageButton
+                        android:id="@+id/main_image_button_summary"
+                        android:background="?widget_background"
+                        android:layout_width="120dp"
+                        android:layout_height="@dimen/main_toolbar_height"
+                        android:layout_marginBottom="15dp"
+                        android:layout_marginRight="15dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:src="@drawable/ic_arrow_diagonal"/>
+                    <ImageButton
+                        android:id="@+id/main_image_button_speed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/main_toolbar_height"
+                        android:src="@drawable/ic_speed_large"
+                        android:background="?widget_background"
+                        android:padding="10dp"
+                        app:layout_constraintBottom_toBottomOf="@id/main_distance_selector"
+                        app:layout_constraintRight_toLeftOf="@id/main_image_button_alt"/>
+                    <ImageButton
+                        android:id="@+id/main_image_button_alt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/main_toolbar_height"
+                        android:src="@drawable/ic_altitude"
+                        android:background="?widget_background"
+                        android:padding="10dp"
+                        app:layout_constraintBottom_toBottomOf="@id/main_image_button_speed"
+                        app:layout_constraintRight_toLeftOf="@id/main_image_button_soc"/>
+                    <ImageButton
+                        android:id="@+id/main_image_button_soc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/main_toolbar_height"
+                        android:src="@drawable/ic_battery"
+                        android:background="?widget_background"
+                        android:padding="10dp"
+                        android:layout_marginRight="15dp"
+                        app:layout_constraintRight_toLeftOf="@id/main_image_button_summary"
+                        app:layout_constraintBottom_toBottomOf="@id/main_image_button_alt"/>
+                    <View
+                        android:id="@+id/main_secondary_dimension_indicator"
+                        android:layout_width="0dp"
+                        android:layout_height="5dp"
+                        android:layout_marginRight="0dp"
+                        android:background="@color/secondary_plot_color"
+                        app:layout_constraintBottom_toBottomOf="@id/main_image_button_speed"
+                        app:layout_constraintRight_toRightOf="@id/main_image_button_speed"
+                        app:layout_constraintLeft_toLeftOf="@id/main_image_button_speed"/>
+                    <View
+                        android:id="@+id/main_divider_1"
+                        android:layout_width="2dp"
+                        android:layout_height="0dp"
+                        android:background="#757575"
+                        app:layout_constraintTop_toTopOf="@id/main_image_button_alt"
+                        app:layout_constraintBottom_toBottomOf="@id/main_image_button_alt"
+                        app:layout_constraintRight_toRightOf="@id/main_image_button_alt"
+                        android:layout_marginVertical="20dp"
+                        android:layout_marginLeft="-1dp"/>
+                    <View
+                        android:id="@+id/main_divider_2"
+                        android:layout_width="2dp"
+                        android:layout_height="0dp"
+                        android:background="#757575"
+                        app:layout_constraintTop_toTopOf="@id/main_image_button_speed"
+                        app:layout_constraintBottom_toBottomOf="@id/main_image_button_speed"
+                        app:layout_constraintRight_toRightOf="@id/main_image_button_speed"
+                        android:layout_marginVertical="20dp"
+                        android:layout_marginLeft="-1dp"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </LinearLayout>
 
         </LinearLayout>
@@ -321,6 +431,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/main_action_bar"
             android:visibility="gone">
 
             <View
@@ -344,6 +455,8 @@
                         android:id="@+id/main_charge_gage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        app:descriptionTextSize="@dimen/gage_desc_text_size"
+                        app:valueTextSize="@dimen/gage_value_text_size"
                         android:layout_marginTop="20dp"
                         android:layout_marginHorizontal="20dp"/>
 
@@ -351,6 +464,8 @@
                         android:id="@+id/main_SoC_gage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        app:descriptionTextSize="@dimen/gage_desc_text_size"
+                        app:valueTextSize="@dimen/gage_value_text_size"
                         android:layout_margin="20dp"/>
 
                 </LinearLayout>
@@ -450,6 +565,9 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:layout_marginHorizontal="20dp"
+                app:baseTextSize="@dimen/reduced_font_size"
+                app:xMargin="@dimen/plot_x_margin"
+                app:yMargin="@dimen/plot_y_margin"
                 android:id="@+id/main_charge_plot"/>
 
             <LinearLayout
@@ -476,7 +594,7 @@
             </LinearLayout>
 
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
     <FrameLayout
         android:id="@+id/main_fragment_container"
         android:layout_width="match_parent"
