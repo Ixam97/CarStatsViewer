@@ -88,7 +88,7 @@ class CarStatsViewer : Application() {
                 context,
                 0,
                 serviceIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
             )
             alarmManager.cancel(pendingIntent)
             if (cancel) return
@@ -119,6 +119,8 @@ class CarStatsViewer : Application() {
 
                 val layout = LayoutInflater.from(context).inflate(R.layout.dialog_changelog, null)
 
+                val changelog5Title = layout.findViewById<TextView>(R.id.changes_0_26_1_title)
+                val changelog5TextView = layout.findViewById<TextView>(R.id.changes_0_26_1)
                 val changelog4Title = layout.findViewById<TextView>(R.id.changes_0_26_0_title)
                 val changelog4TextView = layout.findViewById<TextView>(R.id.changes_0_26_0)
                 val changelog3Title = layout.findViewById<TextView>(R.id.changes_0_25_2_title)
@@ -128,10 +130,18 @@ class CarStatsViewer : Application() {
                 val changelog1Title = layout.findViewById<TextView>(R.id.changes_0_25_0_title)
                 val changelog1TextView = layout.findViewById<TextView>(R.id.changes_0_25_0)
 
+                changelog5Title.text = context.getString(R.string.main_changelog_dialog_title, "0.26.1")
                 changelog4Title.text = context.getString(R.string.main_changelog_dialog_title, "0.26.0")
                 changelog3Title.text = context.getString(R.string.main_changelog_dialog_title, "0.25.2")
                 changelog2Title.text = context.getString(R.string.main_changelog_dialog_title, "0.25.1")
                 changelog1Title.text = context.getString(R.string.main_changelog_dialog_title, "0.25.0")
+
+                val changesArray5 = context.resources.getStringArray(R.array.changes_0_26_1)
+                var changelog5 = ""
+                changesArray5.forEachIndexed { index, change ->
+                    changelog5 += "• $change"
+                    if (index < changesArray5.size - 1) changelog5 += "\n\n"
+                }
 
                 val changesArray4 = context.resources.getStringArray(R.array.changes_0_26_0)
                 var changelog4 = ""
@@ -161,6 +171,7 @@ class CarStatsViewer : Application() {
                     if (index < changesArray1.size - 1) changelog1 += "\n\n"
                 }
 
+                changelog5TextView.text = changelog5
                 changelog4TextView.text = changelog4
                 changelog3TextView.text = changelog3
                 changelog2TextView.text = changelog2

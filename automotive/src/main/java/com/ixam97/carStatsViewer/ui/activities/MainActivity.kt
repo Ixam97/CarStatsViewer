@@ -211,14 +211,14 @@ class MainActivity : FragmentActivity() {
                                     remove(summaryFragment)
                                 }
                             }
-                            main_button_summary.isEnabled = false
+                            // main_button_summary.isEnabled = false
                             main_image_button_summary.isEnabled = false
                             main_button_history.isEnabled = false
                             main_button_history.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
                             main_image_button_summary.setColorFilter(getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
                         } else if (it.speed <= .1 && moving) {
                             moving = false
-                            main_button_summary.isEnabled = true
+                            // main_button_summary.isEnabled = true
                             main_image_button_summary.isEnabled = true
                             main_button_history.isEnabled = true
                             main_button_history.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
@@ -514,25 +514,25 @@ class MainActivity : FragmentActivity() {
 
         when (secondaryConsumptionDimension) {
             1 -> {
-                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.main_speed))
+                // main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.main_speed))
                 constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.LEFT, R.id.main_image_button_speed, ConstraintSet.LEFT)
                 constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.RIGHT, R.id.main_image_button_speed, ConstraintSet.RIGHT)
                 main_secondary_dimension_indicator.isVisible = true
             }
             2 -> {
-                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
+                // main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.main_SoC))
                 constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.LEFT, R.id.main_image_button_soc, ConstraintSet.LEFT)
                 constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.RIGHT, R.id.main_image_button_soc, ConstraintSet.RIGHT)
                 main_secondary_dimension_indicator.isVisible = true
             }
             3 -> {
-                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.plot_dimensionY_ALTITUDE))
+                // main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, getString(R.string.plot_dimensionY_ALTITUDE))
                 constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.LEFT, R.id.main_image_button_alt, ConstraintSet.LEFT)
                 constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.RIGHT, R.id.main_image_button_alt, ConstraintSet.RIGHT)
                 main_secondary_dimension_indicator.isVisible = true
             }
             else -> {
-                main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
+                // main_button_secondary_dimension.text = getString(R.string.main_secondary_axis, "-")
                 constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.LEFT, R.id.main_image_button_speed, ConstraintSet.RIGHT)
                 constraintSet.connect(R.id.main_secondary_dimension_indicator, ConstraintSet.RIGHT, R.id.main_image_button_speed, ConstraintSet.RIGHT)
                 main_secondary_dimension_indicator.visibility = View.GONE
@@ -701,6 +701,7 @@ class MainActivity : FragmentActivity() {
             startActivity(Intent(this, SettingsActivity::class.java))
             overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }
+        /*
         main_button_secondary_dimension.setOnClickListener {
             var currentIndex = appPreferences.secondaryConsumptionDimension
             currentIndex++
@@ -709,6 +710,7 @@ class MainActivity : FragmentActivity() {
 
             setSecondaryConsumptionPlotDimension(currentIndex)
         }
+        */
 
         main_image_button_speed.setOnClickListener {
             var currentIndex = appPreferences.secondaryConsumptionDimension
@@ -736,9 +738,11 @@ class MainActivity : FragmentActivity() {
             setPrimaryConsumptionPlotDimension(appPreferences.mainPrimaryDimensionRestriction)
         }
 
+        /*
         main_button_summary.setOnClickListener {
             openSummaryFragment()
         }
+        */
 
         main_image_button_summary.setOnClickListener {
             openSummaryFragment()

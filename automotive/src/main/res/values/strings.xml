@@ -60,6 +60,9 @@
         <item>Ricardo Blauth</item>
         <item>Marcelo Fornereto</item>
     </string-array>
+    <string-array name="changes_0_26_1">
+        <item>Fix for Android 12 (P3.0)</item>
+    </string-array>
     <string-array name="changes_0_26_0">
         <item>Added experimental color scheme.</item>
         <item>Simplified secondary axis selector.</item>
