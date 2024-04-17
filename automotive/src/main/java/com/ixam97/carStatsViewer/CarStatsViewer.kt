@@ -88,7 +88,7 @@ class CarStatsViewer : Application() {
                 context,
                 0,
                 serviceIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
             )
             alarmManager.cancel(pendingIntent)
             if (cancel) return

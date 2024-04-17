@@ -14,6 +14,8 @@ import androidx.car.app.model.TabTemplate.TabCallback
 import androidx.car.app.model.Template
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
@@ -30,6 +32,10 @@ import kotlinx.coroutines.launch
 @ExperimentalCarApi
 class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
 
+    private val CID_TRIP_DATA = "cid_trip_data"
+    private val CID_MENU = "cid_menu"
+    private val CID_STATUS = "cid_status"
+
     internal var dataUpdate = false
     internal var apiState: Map<String, Int> = mapOf()
     internal var session : DrivingSession? = null
@@ -41,7 +47,7 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
 
     internal var resetFlag = false
 
-    internal var selectedTabContentID = "trip_data"
+    internal var selectedTabContentID = CID_TRIP_DATA
 
     private val settingsActivityIntent = Intent(carContext, SettingsActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -53,7 +59,16 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
 
+    private var lifecycle = getLifecycle()
+
+
     init {
+        lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onResume(owner: LifecycleOwner) {
+                super.onResume(owner)
+                invalidate()
+            }
+        })
         setupListeners()
     }
 
@@ -69,6 +84,7 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
             invalidate()
         }
     }
+
     override fun onGetTemplate(): Template {
 
         // updateLiveData()
@@ -84,23 +100,29 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
 
     private fun createTabTemplate() = TabTemplate.Builder(object : TabCallback {
         override fun onTabSelected(tabContentId: String) {
-            when (tabContentId) {
-                "settings" -> carContext.startActivity(settingsActivityIntent)
-                "dashboard" -> carContext.startActivity(mainActivityIntent)
-                "trip_history" -> carContext.startActivity(historyActivityIntent)
-            }
-            selectedTabContentID = "trip_data"
+            // when (tabContentId) {
+            //     "settings" -> carContext.startActivity(settingsActivityIntent)
+            //     "dashboard" -> carContext.startActivity(mainActivityIntent)
+            //     "trip_history" -> carContext.startActivity(historyActivityIntent)
+            // }
+
+            selectedTabContentID = tabContentId
             invalidate()
         }
     }).apply {
         setHeaderAction(Action.APP_ICON)
-        addTab(createTab(R.string.car_app_trip_data, "trip_data", R.drawable.ic_list))
-        addTab(createTab(R.string.history_title, "trip_history", R.drawable.ic_history))
-        addTab(createTab(R.string.car_app_dashboard, "dashboard", R.drawable.ic_diagram))
-        addTab(createTab(R.string.settings_title, "settings", R.drawable.ic_settings))
+        addTab(createTab(R.string.car_app_trip_data, CID_TRIP_DATA, R.drawable.ic_car_app_list))
+        addTab(createTab(R.string.car_app_status, CID_STATUS, R.drawable.ic_car_app_status))
+        addTab(createTab(R.string.car_app_menu, CID_MENU, R.drawable.ic_car_app_menu))
         setTabContents(TabContents.Builder(
-            // createTripDataList()
-            createTripDataPane()
+            // TripDataList()
+            // createTripDataPane()
+            when (selectedTabContentID) {
+                CID_TRIP_DATA -> TripDataList()
+                CID_STATUS -> CarStatsList()
+                CID_MENU -> MenuList()
+                else -> throw Exception("Unsupported Content ID!")
+            }
         ).build())
         setActiveTabContentId(selectedTabContentID)
     }.build()

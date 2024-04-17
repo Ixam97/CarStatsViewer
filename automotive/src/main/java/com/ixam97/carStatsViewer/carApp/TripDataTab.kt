@@ -24,7 +24,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCarApi::class)
-internal fun CarStatsViewerScreen.createTripDataPane() = PaneTemplate.Builder(Pane.Builder().apply {
+internal fun CarStatsViewerScreen.TripDataPane() = PaneTemplate.Builder(Pane.Builder().apply {
     session?.let {
         val tripType = when (it.session_type) {
             1 -> carContext.getString(R.string.CurrentTripData)
@@ -151,7 +151,7 @@ internal fun CarStatsViewerScreen.createTripDataPane() = PaneTemplate.Builder(Pa
 }.build()
 
 @OptIn(ExperimentalCarApi::class)
-internal fun CarStatsViewerScreen.createTripDataList() = ListTemplate.Builder().apply {
+internal fun CarStatsViewerScreen.TripDataList() = ListTemplate.Builder().apply {
 
     if (session == null) {
         setLoading(true)
@@ -198,7 +198,7 @@ internal fun CarStatsViewerScreen.createTripDataList() = ListTemplate.Builder().
                     InAppLogger.e("Row failed: ${e.stackTraceToString()}")
                 }
 
-
+/*
                 var statusString = ""
                 var index = 0
                 var apiIconColor = colorDisconnected
@@ -209,6 +209,7 @@ internal fun CarStatsViewerScreen.createTripDataList() = ListTemplate.Builder().
                         apiIconColor = when (status) {
                             0 -> colorDisconnected
                             1 -> colorConnected
+                            2 -> colorLimited
                             2 -> colorLimited
                             else -> colorError
                         }
@@ -223,41 +224,29 @@ internal fun CarStatsViewerScreen.createTripDataList() = ListTemplate.Builder().
                     R.drawable.ic_connected,
                     apiIconColor
                 ))
+
+ */
             }
         }.build(), tripType))
 
-        if (session?.session_type == 1) {
-            addAction(Action.Builder().apply {
-                setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_reset)).build())
-                setOnClickListener {
-                    if (resetFlag) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            CarStatsViewer.dataProcessor.resetTrip(
-                                TripType.MANUAL,
-                                CarStatsViewer.dataProcessor.realTimeData.drivingState
-                            )
-                        }
-                        resetFlag = false
-                        CarToast.makeText(carContext, carContext.getString(R.string.car_app_toast_reset_confirmation), CarToast.LENGTH_LONG).show()
-                        invalidate()
-                    } else {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            delay(4_000)
-                            resetFlag = false
-                            invalidate()
-                        }
-                        resetFlag = true
-                        CarToast.makeText(carContext, carContext.getString(R.string.car_app_toast_reset_hint), CarToast.LENGTH_LONG).show()
-                    }
-                    invalidate()
-                }
-                if (resetFlag) {
-                    setBackgroundColor(CarColor.createCustom(carContext.getColor(R.color.polestar_orange), carContext.getColor(R.color.polestar_orange)))
-                } else {
-                    setBackgroundColor(CarColor.createCustom(carContext.getColor(R.color.default_button_color), carContext.getColor(R.color.default_button_color)))
-                }
-            }.build())
-        }
+        // if (session?.session_type == 1) {
+        //     addAction(Action.Builder().apply {
+        //         setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_reset)).build())
+        //         setOnClickListener {
+        //             screenManager.push(ConfirmResetScreen(carContext))
+        //         }
+        //         setBackgroundColor(CarColor.createCustom(carContext.getColor(R.color.default_button_color), carContext.getColor(R.color.default_button_color)))
+        //     }.build())
+        // }
+
+        addAction(Action.Builder().apply {
+            val backgroundColor = carContext.getColor(R.color.default_button_color)
+            setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_tune)).build())
+            setBackgroundColor(CarColor.createCustom(backgroundColor, backgroundColor))
+            setOnClickListener {
+                screenManager.push(TripDataSettingsScreen(carContext))
+            }
+        }.build())
     }
 
 }.build()
