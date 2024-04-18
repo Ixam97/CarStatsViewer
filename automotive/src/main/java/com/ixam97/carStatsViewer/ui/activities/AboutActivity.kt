@@ -25,7 +25,8 @@ class AboutActivity : FragmentActivity() {
 
         about_button_back.setOnClickListener {
             finish()
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            if (BuildConfig.FLAVOR_aaos != "play")
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
         about_version_widget.setOnRowClickListener {
@@ -53,7 +54,8 @@ class AboutActivity : FragmentActivity() {
 
         about_libs_widget.setOnRowClickListener {
             startActivity(Intent(this, LibsActivity::class.java))
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+            if (BuildConfig.FLAVOR_aaos != "play")
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 
         about_version_widget.bottomText = "%s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)

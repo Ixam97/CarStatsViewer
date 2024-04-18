@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentActivity
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.VehicleDefinitions
@@ -27,7 +28,9 @@ class SettingsVehicleActivity : FragmentActivity() {
 
         settings_vehicle_button_back.setOnClickListener {
             finish()
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            if (BuildConfig.FLAVOR_aaos != "play") {
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            }
         }
 
         settings_vehicle_multiselect_drivetrain.entries = VehicleDefinitions.Polestar2.driveTrains

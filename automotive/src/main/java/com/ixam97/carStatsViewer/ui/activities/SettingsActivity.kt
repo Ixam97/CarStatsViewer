@@ -27,7 +27,8 @@ class SettingsActivity : FragmentActivity() {
 
     override fun startActivity(intent: Intent?) {
         super.startActivity(intent)
-        if (intent?.hasExtra("noTransition") == false)
+        // if (intent?.hasExtra("noTransition") == false)
+        if (BuildConfig.FLAVOR_aaos != "play")
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
@@ -84,7 +85,8 @@ class SettingsActivity : FragmentActivity() {
 
         settings_button_back.setOnClickListener() {
             finish()
-            overridePendingTransition(R.anim.stay_still, R.anim.slide_out_right)
+            if (BuildConfig.FLAVOR_aaos != "play")
+                overridePendingTransition(R.anim.stay_still, R.anim.slide_out_right)
         }
 
         settings_switch_notifications.setOnClickListener {
@@ -143,7 +145,8 @@ class SettingsActivity : FragmentActivity() {
             if (versionClickCounter >= 10 || BuildConfig.FLAVOR == "dev") {
                 versionClickCounter = 0
                 startActivity(Intent(this, DebugActivity::class.java))
-                overridePendingTransition(R.anim.slide_in_up, R.anim.stay_still)
+                if (BuildConfig.FLAVOR_aaos != "play")
+                    overridePendingTransition(R.anim.slide_in_up, R.anim.stay_still)
             }
         }
 

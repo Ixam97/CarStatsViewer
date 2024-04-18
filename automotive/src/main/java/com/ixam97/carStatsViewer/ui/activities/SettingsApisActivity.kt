@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.applyTypeface
@@ -35,7 +36,8 @@ class SettingsApisActivity: FragmentActivity() {
 
         settings_apis_button_back.setOnClickListener {
             finish()
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            if (BuildConfig.FLAVOR_aaos != "play")
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
         settings_apis_abrp_row.setOnMainClickListener {
