@@ -142,7 +142,7 @@ class SettingsActivity : FragmentActivity() {
 
         settings_version_text.setOnClickListener {
             versionClickCounter++
-            if (versionClickCounter >= 10 || BuildConfig.FLAVOR == "dev") {
+            if (versionClickCounter >= 10 || BuildConfig.FLAVOR_version == "dev") {
                 versionClickCounter = 0
                 startActivity(Intent(this, DebugActivity::class.java))
                 if (BuildConfig.FLAVOR_aaos != "play")
