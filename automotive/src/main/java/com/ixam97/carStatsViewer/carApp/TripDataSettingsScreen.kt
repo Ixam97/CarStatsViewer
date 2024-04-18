@@ -56,6 +56,7 @@ class TripDataSettingsScreen(carContext: CarContext) : Screen(carContext) {
     private fun changeSelectedTrip(index: Int) {
         CarStatsViewer.dataProcessor.changeSelectedTrip(index + 1)
         CarStatsViewer.appPreferences.mainViewTrip = index
+        invalidate()
         screenManager.popToRoot()
     }
     private fun tripTypeRow(tripType: Int) = Row.Builder().apply {

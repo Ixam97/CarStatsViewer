@@ -1,6 +1,8 @@
 package com.ixam97.carStatsViewer.carApp
 
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.annotations.ExperimentalCarApi
@@ -66,7 +68,9 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
         lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onResume(owner: LifecycleOwner) {
                 super.onResume(owner)
-                invalidate()
+                Handler(Looper.getMainLooper()).post {
+                    invalidate()
+                }
             }
         })
         setupListeners()
@@ -80,8 +84,10 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
     private fun externalInvalidate() {
         CoroutineScope(Dispatchers.IO).launch {
             dataUpdate = true
-            delay(100)
-            invalidate()
+            delay(250)
+            Handler(Looper.getMainLooper()).post {
+                invalidate()
+            }
         }
     }
 

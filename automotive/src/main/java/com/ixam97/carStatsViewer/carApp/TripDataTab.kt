@@ -1,5 +1,7 @@
 package com.ixam97.carStatsViewer.carApp
 
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.OptIn
 import androidx.car.app.CarToast
 import androidx.car.app.annotations.ExperimentalCarApi
@@ -262,7 +264,11 @@ internal fun CarStatsViewerScreen.TripDataList() = ListTemplate.Builder().apply 
             setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_tune)).build())
             setBackgroundColor(CarColor.createCustom(backgroundColor, backgroundColor))
             setOnClickListener {
-                screenManager.push(TripDataSettingsScreen(carContext))
+                screenManager.pushForResult(TripDataSettingsScreen(carContext)) {
+                    Handler(Looper.getMainLooper()).post {
+                        invalidate()
+                    }
+                }
             }
         }.build())
 
@@ -272,7 +278,11 @@ internal fun CarStatsViewerScreen.TripDataList() = ListTemplate.Builder().apply 
                 setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_reset)).build())
                 setBackgroundColor(CarColor.createCustom(backgroundColor, backgroundColor))
                 setOnClickListener {
-                    screenManager.push(ConfirmResetScreen(carContext))
+                    screenManager.pushForResult(ConfirmResetScreen(carContext)) {
+                        Handler(Looper.getMainLooper()).post {
+                            invalidate()
+                        }
+                    }
                 }
             }.build())
         }

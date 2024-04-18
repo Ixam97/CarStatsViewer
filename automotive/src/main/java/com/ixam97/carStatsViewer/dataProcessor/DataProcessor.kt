@@ -719,6 +719,7 @@ class DataProcessor {
         timerMap[tripType]?.reset()
         loadSessionsToMemory().join()
         if (drivingState == DrivingState.DRIVE) timerMap[tripType]?.start()
+        aaosExec?.execute(aaosRunnable)
     }
 
     private fun startChargingSession(): Job {
