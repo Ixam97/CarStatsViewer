@@ -70,8 +70,8 @@
 
             <ImageButton
                 android:id="@+id/main_button_history"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/std_icon_size"
+                android:layout_height="@dimen/std_icon_size"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="15dp"
                 android:background="@android:color/transparent"
@@ -79,8 +79,8 @@
 
             <ImageButton
                 android:id="@+id/main_button_settings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/std_icon_size"
+                android:layout_height="@dimen/std_icon_size"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="15dp"
                 android:background="@android:color/transparent"
@@ -117,8 +117,8 @@
                     <ImageButton
                         android:visibility="gone"
                         android:id="@+id/main_button_perf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/std_icon_size"
+                        android:layout_height="@dimen/std_icon_size"
                         android:layout_margin="15dp"
                         android:src="@drawable/ic_performance"
                         android:background="@android:color/transparent"
@@ -208,8 +208,8 @@
 
                         <ImageButton
                             android:id="@+id/main_button_reset"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="@dimen/std_icon_size"
+                            android:layout_height="@dimen/std_icon_size"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             android:layout_margin="15dp"
@@ -360,6 +360,7 @@
                         android:layout_height="@dimen/main_toolbar_height"
                         android:layout_marginBottom="15dp"
                         android:layout_marginRight="15dp"
+                        android:scaleType="fitCenter"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         android:src="@drawable/ic_arrow_diagonal"/>
@@ -370,6 +371,7 @@
                         android:src="@drawable/ic_speed_large"
                         android:background="?widget_background"
                         android:padding="10dp"
+                        android:scaleType="fitCenter"
                         app:layout_constraintBottom_toBottomOf="@id/main_distance_selector"
                         app:layout_constraintRight_toLeftOf="@id/main_image_button_alt"/>
                     <ImageButton
@@ -379,6 +381,7 @@
                         android:src="@drawable/ic_altitude"
                         android:background="?widget_background"
                         android:padding="10dp"
+                        android:scaleType="fitCenter"
                         app:layout_constraintBottom_toBottomOf="@id/main_image_button_speed"
                         app:layout_constraintRight_toLeftOf="@id/main_image_button_soc"/>
                     <ImageButton
@@ -388,6 +391,7 @@
                         android:src="@drawable/ic_battery"
                         android:background="?widget_background"
                         android:padding="10dp"
+                        android:scaleType="fitCenter"
                         android:layout_marginRight="15dp"
                         app:layout_constraintRight_toLeftOf="@id/main_image_button_summary"
                         app:layout_constraintBottom_toBottomOf="@id/main_image_button_alt"/>

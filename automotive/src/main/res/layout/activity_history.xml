@@ -42,8 +42,8 @@
 
             <ImageButton
                 android:id="@+id/history_button_upload"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/std_icon_size"
+                android:layout_height="@dimen/std_icon_size"
                 android:src="@drawable/ic_upload"
                 android:background="@android:color/transparent"
                 android:layout_gravity="center_vertical"
@@ -52,8 +52,8 @@
             <ImageButton
                 android:layout_margin="15dp"
                 android:id="@+id/history_button_filters"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/std_icon_size"
+                android:layout_height="@dimen/std_icon_size"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_filter"
                 android:background="@android:color/transparent"/>
@@ -74,8 +74,8 @@
                 <ImageButton
                     android:layout_margin="15dp"
                     android:id="@+id/history_multi_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/std_icon_size"
+                    android:layout_height="@dimen/std_icon_size"
                     android:src="@drawable/ic_delete"
                     android:background="@android:color/transparent"/>
             </LinearLayout>

@@ -56,32 +56,29 @@
                 android:inputType="textPassword"
                 android:textSize="@dimen/std_font_size" />
 
-            <Switch
-                style="?menu_standard_switch_style"
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
                 android:id="@+id/http_live_data_enabled"
                 android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/std_font_size"
-                android:text="@string/settings_apis_use" />
+                app:text="@string/settings_apis_use" />
 
-            <Switch
-                style="?menu_standard_switch_style"
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
                 android:id="@+id/http_live_data_location"
                 android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/std_font_size"
-                android:text="@string/settings_use_location" />
+                app:text="@string/settings_use_location" />
 
-            <Switch
-                style="?menu_standard_switch_style"
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
                 android:id="@+id/http_live_data_abrp"
                 android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/std_font_size"
-                android:text="Debug ABRP" />
+                app:text="Debug ABRP" />
 
             <TextView
                 style="@style/menu_row_top_text"

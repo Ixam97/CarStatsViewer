@@ -71,26 +71,26 @@
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
-            <Switch
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
                 android:id="@+id/settings_vehicle_switch_plus"
                 style="?menu_standard_switch_style"
-                android:text="@string/vehicle_plus"/>
+                app:text="@string/vehicle_plus"/>
 
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
-            <Switch
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
                 android:id="@+id/settings_vehicle_switch_performance"
                 style="?menu_standard_switch_style"
-                android:text="@string/vehicle_performance"/>
+                app:text="@string/vehicle_performance"/>
 
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
 
-            <Switch
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
                 android:id="@+id/settings_vehicle_switch_bst"
                 style="?menu_standard_switch_style"
-                android:text="@string/vehicle_bst"/>
+                app:text="@string/vehicle_bst"/>
 
             <View style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider"/>
