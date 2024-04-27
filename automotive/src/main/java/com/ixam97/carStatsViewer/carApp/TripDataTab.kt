@@ -218,46 +218,8 @@ internal fun CarStatsViewerScreen.TripDataList() = ListTemplate.Builder().apply 
                     R.drawable.ic_connected,
                     apiIconColor
                 ))
-/*
-                var statusString = ""
-                var index = 0
-                var apiIconColor = colorDisconnected
-
-                apiState.forEach { apiName, status ->
-                    statusString += "$apiName: $status    "
-                    if (index == CarStatsViewer.appPreferences.mainViewConnectionApi) {
-                        apiIconColor = when (status) {
-                            0 -> colorDisconnected
-                            1 -> colorConnected
-                            2 -> colorLimited
-                            2 -> colorLimited
-                            else -> colorError
-                        }
-                    }
-
-                    index++
-                }
-
-                addItem(createDataRow(
-                    statusString,
-                    "Api Status",
-                    R.drawable.ic_connected,
-                    apiIconColor
-                ))
-
- */
             }
         }.build(), tripType))
-
-        // if (session?.session_type == 1) {
-        //     addAction(Action.Builder().apply {
-        //         setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_reset)).build())
-        //         setOnClickListener {
-        //             screenManager.push(ConfirmResetScreen(carContext))
-        //         }
-        //         setBackgroundColor(CarColor.createCustom(carContext.getColor(R.color.default_button_color), carContext.getColor(R.color.default_button_color)))
-        //     }.build())
-        // }
 
         addAction(Action.Builder().apply {
             val backgroundColor = carContext.getColor(R.color.default_button_color)
@@ -272,6 +234,7 @@ internal fun CarStatsViewerScreen.TripDataList() = ListTemplate.Builder().apply 
             }
         }.build())
 
+        // Adding second FAB, only working in Emulator right now!
         if (session?.session_type == 1) {
             addAction(Action.Builder().apply {
                 val backgroundColor = carContext.getColor(R.color.default_button_color)

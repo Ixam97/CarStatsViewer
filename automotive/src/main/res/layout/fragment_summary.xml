@@ -17,7 +17,7 @@
         <ImageButton
             android:id="@+id/summary_button_back"
             style="@style/title_back_button_style"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/std_icon_size"
             android:layout_margin="15dp"
             android:src="@drawable/ic_close"/>
 
@@ -105,8 +105,8 @@
             <ImageButton
                 android:layout_margin="15dp"
                 android:id="@+id/summary_button_reset"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/std_icon_size"
+                android:layout_height="@dimen/std_icon_size"
                 android:src="@drawable/ic_reset"
                 android:background="@android:color/transparent"/>
         </LinearLayout>

@@ -64,6 +64,7 @@
                     android:id="@+id/row_start_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="0dp"
                     android:src="@drawable/ic_charger"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -143,9 +144,12 @@
 
             <ImageButton
                 android:id="@+id/row_end_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:scaleType="fitCenter"
+                android:layout_width="@dimen/std_icon_size"
+                android:layout_height="@dimen/std_icon_size"
                 android:layout_gravity="center"
+                android:padding="0dp"
+                android:layout_margin="0dp"
                 android:src="@drawable/ic_delete"
                 android:background="@android:color/transparent"
                 app:layout_constraintBottom_toBottomOf="parent"

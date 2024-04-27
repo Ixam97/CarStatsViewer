@@ -69,7 +69,7 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
             override fun onResume(owner: LifecycleOwner) {
                 super.onResume(owner)
                 Handler(Looper.getMainLooper()).post {
-                    invalidate()
+                    // invalidate()
                 }
             }
         })
@@ -86,7 +86,7 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
             dataUpdate = true
             delay(250)
             Handler(Looper.getMainLooper()).post {
-                invalidate()
+                // invalidate()
             }
         }
     }

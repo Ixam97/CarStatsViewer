@@ -73,8 +73,8 @@
 
         <ImageButton
             android:id="@+id/row_end_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/std_icon_size"
+            android:layout_height="@dimen/std_icon_size"
             android:background="@android:color/transparent"
             android:src="@drawable/ic_help"
             app:layout_constraintBottom_toBottomOf="parent"
