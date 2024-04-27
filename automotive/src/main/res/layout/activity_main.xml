@@ -75,7 +75,7 @@
             android:layout_height="@dimen/std_icon_size"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="15dp"
-            android:background="@android:color/holo_green_light"
+            android:background="@android:color/transparent"
             android:src="@drawable/ic_history"/>
 
         <ImageButton
