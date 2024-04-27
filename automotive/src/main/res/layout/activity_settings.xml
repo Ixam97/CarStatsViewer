@@ -188,5 +188,6 @@
         android:layout_marginHorizontal="20dp"
         android:gravity="center_vertical|start"
         android:textSize="@dimen/version_font_size"
+        android:textColor="@color/inactive_text_color"
         app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
