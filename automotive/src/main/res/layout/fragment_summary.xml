@@ -226,6 +226,16 @@
                             android:text="100 km"
                             android:layout_height="@dimen/main_toolbar_height"
                             app:layout_constraintStart_toEndOf="@id/summary_button_dist_40"
+                            app:layout_constraintEnd_toEndOf="@id/summary_button_dist_all"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintHorizontal_chainStyle="spread"/>
+                        <Button
+                            android:visibility="visible"
+                            android:id="@+id/summary_button_dist_all"
+                            android:layout_width="0dp"
+                            android:text="Trip"
+                            android:layout_height="@dimen/main_toolbar_height"
+                            app:layout_constraintStart_toEndOf="@id/summary_button_dist_100"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintHorizontal_chainStyle="spread"/>
@@ -245,6 +255,15 @@
                             android:layout_marginVertical="20dp"
                             android:layout_marginLeft="-1dp"
                             app:layout_constraintStart_toEndOf="@id/summary_button_dist_40"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="0dp"
+                            android:background="#757575"
+                            android:layout_marginVertical="20dp"
+                            android:layout_marginLeft="-1dp"
+                            app:layout_constraintStart_toEndOf="@id/summary_button_dist_100"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/std_font_size"
-        app:text="@string/settings_apis_use" />
+        app:text="@string/settings_apis_use"/>
 
     <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
         android:id="@+id/abrp_use_location"

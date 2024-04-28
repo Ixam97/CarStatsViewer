@@ -134,7 +134,7 @@
                 <Switch
                     android:id="@+id/settings_switch_theme"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/std_row_height"
                     style="@style/ColorTestTheme.menu_standard_switch_style"/>
             </LinearLayout>
 

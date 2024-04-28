@@ -159,6 +159,8 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         } else {
             getColorFromAttribute(requireContext(), R.attr.secondary_plot_color).toDrawable()
         }
+
+        // summary_button_dist_all.text = "${appPreferences.distanceUnit.toUnit(((session.driven_distance.toLong() / 5_000) + 1) * 5)} ${appPreferences.distanceUnit.unit()}"
     }
 
     private fun setupListeners() {
@@ -197,6 +199,10 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         }
         summary_button_dist_100.setOnClickListener {
             summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(100_000) + 1
+            summary_consumption_plot.dimensionShift = 0
+        }
+        summary_button_dist_all.setOnClickListener {
+            summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((session.driven_distance.toLong() / 5_000) + 1) * 5_000) + 1
             summary_consumption_plot.dimensionShift = 0
         }
 

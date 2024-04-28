@@ -81,6 +81,7 @@ class HttpLiveData (
     }
 
     override fun showSettingsDialog(context: Context) {
+        super.showSettingsDialog(context)
         val layout = LayoutInflater.from(context).inflate(R.layout.dialog_http_live_data, null)
         val url = layout.findViewById<EditText>(R.id.http_live_data_url)
         val username = layout.findViewById<EditText>(R.id.http_live_data_username)
@@ -89,9 +90,17 @@ class HttpLiveData (
         val httpLiveDataLocation = layout.findViewById<FixedSwitchWidget>(R.id.http_live_data_location)
         val abrpDebug = layout.findViewById<FixedSwitchWidget>(R.id.http_live_data_abrp)
         val apiTypeMultiButton = layout.findViewById<MultiButtonWidget>(R.id.http_live_data_type)
-        val confirmButton = layout.findViewById<Button>(R.id.http_live_data_confirm)
+        // val confirmButton = layout.findViewById<Button>(R.id.http_live_data_confirm)
 
         val httpLiveDataSettingsDialog = AlertDialog.Builder(context).apply {
+            setTitle(R.string.settings_apis_title)
+            // setMessage(R.string.http_description)
+            setPositiveButton("OK") {dialog, _ ->
+                AppPreferences(context).httpLiveDataURL = url.text.toString()
+                AppPreferences(context).httpLiveDataUsername = username.text.toString()
+                AppPreferences(context).httpLiveDataPassword = password.text.toString()
+                dialog.cancel()
+            }
             setView(layout)
 
             /*
@@ -115,6 +124,7 @@ class HttpLiveData (
         abrpDebug.isChecked = AppPreferences(context).httpLiveDataSendABRPDataset
         apiTypeMultiButton.selectedIndex = AppPreferences(context).httpApiTelemetryType
 
+        /*
         confirmButton.isSelected = true
 
         confirmButton.setOnClickListener {
@@ -123,6 +133,7 @@ class HttpLiveData (
             AppPreferences(context).httpLiveDataPassword = password.text.toString()
             dialog.cancel()
         }
+         */
 
         httpLiveDataEnabled.setSwitchClickListener {
             AppPreferences(context).httpLiveDataEnabled = httpLiveDataEnabled.isChecked
