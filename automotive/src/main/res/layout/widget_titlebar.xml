@@ -8,8 +8,8 @@
     <ImageButton
         android:id="@+id/title_button_start"
         android:layout_margin="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/std_icon_size"
+        android:layout_height="@dimen/std_icon_size"
         android:src="@drawable/ic_arrow_back"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toTopOf="@id/divider"
@@ -47,8 +47,8 @@
     <ImageButton
         android:id="@+id/title_end_button_1"
         android:layout_margin="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/std_icon_size"
+        android:layout_height="@dimen/std_icon_size"
         android:src="@drawable/ic_settings"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toTopOf="@id/divider"
@@ -58,8 +58,8 @@
     <ImageButton
         android:id="@+id/title_end_button_2"
         android:layout_margin="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/std_icon_size"
+        android:layout_height="@dimen/std_icon_size"
         android:src="@drawable/ic_settings"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toTopOf="@id/divider"

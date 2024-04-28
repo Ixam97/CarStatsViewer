@@ -1,37 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="?dialog_background"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/changes_0_25_2_title"
-        android:text="@string/settings_apis_http"
-        style="@style/title_text_style"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginHorizontal="25dp"/>
-    <View style="@style/dialog_divider_bar"
-        android:layout_marginHorizontal="25dp"/>
-    <TextView
-        style="@style/menu_row_top_text"
-        android:text="@string/http_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:layout_marginHorizontal="25dp"/>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_margin="25dp"
-        android:layout_height="500dp">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="25dp"
+            android:paddingVertical="20dp"
             android:orientation="vertical">
+            <TextView
+                style="@style/menu_row_top_text"
+                android:text="@string/http_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"/>
             <EditText
                 android:id="@+id/http_live_data_url"
                 android:layout_width="match_parent"
@@ -56,32 +39,29 @@
                 android:inputType="textPassword"
                 android:textSize="@dimen/std_font_size" />
 
-            <Switch
-                style="?menu_standard_switch_style"
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
                 android:id="@+id/http_live_data_enabled"
                 android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/std_font_size"
-                android:text="@string/settings_apis_use" />
+                app:text="@string/settings_apis_use"/>
 
-            <Switch
-                style="?menu_standard_switch_style"
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
                 android:id="@+id/http_live_data_location"
                 android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/std_font_size"
-                android:text="@string/settings_use_location" />
+                app:text="@string/settings_use_location"/>
 
-            <Switch
-                style="?menu_standard_switch_style"
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
                 android:id="@+id/http_live_data_abrp"
                 android:layout_marginTop="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/std_font_size"
-                android:text="Debug ABRP" />
+                app:text="Debug ABRP" />
 
             <TextView
                 style="@style/menu_row_top_text"
@@ -98,10 +78,11 @@
                 app:textButton3="Both"
                 app:numButtons="3"/>
         </LinearLayout>
-    </ScrollView>
+    <!--
     <Button
         android:id="@+id/http_live_data_confirm"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:text="OK"/>
-</LinearLayout>
+        -->
+</ScrollView>

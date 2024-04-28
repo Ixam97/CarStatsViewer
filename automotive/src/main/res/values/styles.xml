@@ -13,8 +13,9 @@
         <item name="android:textFontWeight">@integer/title_font_weight</item>
     </style>
     <style name="title_back_button_style">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:layout_width">@dimen/std_icon_size</item>
+        <item name="android:layout_height">@dimen/std_icon_size</item>
         <item name="android:layout_margin">15dp</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:background">@android:color/transparent</item>
@@ -122,9 +123,10 @@
         <item name="android:textSize">@dimen/std_font_size</item>
     </style>
     <style name="dialog_divider_bar">
-        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_height">20dp</item>
         <item name="android:layout_width">0dp</item>
-        <item name="android:visibility">gone</item>
+        <item name="android:visibility">visible</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
     <style name="AppTheme.action_bar_line">
         <!--<item name="android:background">@drawable/club_gradient</item>

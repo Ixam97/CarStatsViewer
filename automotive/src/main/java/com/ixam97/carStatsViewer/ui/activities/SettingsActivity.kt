@@ -87,25 +87,25 @@ class SettingsActivity : FragmentActivity() {
             overridePendingTransition(R.anim.stay_still, R.anim.slide_out_right)
         }
 
-        settings_switch_notifications.setOnClickListener {
+        settings_switch_notifications.setSwitchClickListener {
             appPreferences.notifications = settings_switch_notifications.isChecked
         }
 
-        settings_switch_consumption_unit.setOnClickListener {
+        settings_switch_consumption_unit.setSwitchClickListener {
             appPreferences.consumptionUnit = settings_switch_consumption_unit.isChecked
         }
 
-        settings_switch_use_location.setOnClickListener {
+        settings_switch_use_location.setSwitchClickListener {
             appPreferences.useLocation = settings_switch_use_location.isChecked
             CarStatsViewer.watchdog.triggerWatchdog()
         }
 
-        settings_switch_autostart.setOnClickListener {
+        settings_switch_autostart.setSwitchClickListener {
             appPreferences.autostart = settings_switch_autostart.isChecked
             CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000, !appPreferences.autostart, extendedLogging = true)
         }
 
-        settings_switch_phone_reminder.setOnClickListener {
+        settings_switch_phone_reminder.setSwitchClickListener {
             appPreferences.phoneNotification = settings_switch_phone_reminder.isChecked
         }
 
@@ -118,7 +118,7 @@ class SettingsActivity : FragmentActivity() {
         //     PlotGlobalConfiguration.updateDistanceUnit(appPreferences.distanceUnit)
         // }
 
-        settings_switch_alt_layout.setOnClickListener {
+        settings_switch_alt_layout.setSwitchClickListener {
             appPreferences.altLayout = settings_switch_alt_layout.isChecked
         }
 
@@ -145,6 +145,12 @@ class SettingsActivity : FragmentActivity() {
                 startActivity(Intent(this, DebugActivity::class.java))
                 overridePendingTransition(R.anim.slide_in_up, R.anim.stay_still)
             }
+        }
+
+        settings_switch_theme_container.setOnClickListener {
+            settings_switch_theme.isChecked = !settings_switch_theme.isChecked
+            appPreferences.colorTheme = if (settings_switch_theme.isChecked) 1 else 0
+            finish()
         }
 
         settings_switch_theme.setOnClickListener {

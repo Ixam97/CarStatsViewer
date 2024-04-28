@@ -58,66 +58,85 @@
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider" />
 
-            <Switch
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
                 android:id="@+id/settings_switch_notifications"
-                style="?menu_standard_switch_style"
-                android:text="@string/settings_notifications" />
+                app:text="@string/settings_notifications"/>
 
             <View
                 android:visibility="gone"
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider" />
 
-            <Switch
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
                 android:visibility="gone"
                 android:id="@+id/settings_switch_alt_layout"
-                style="?menu_standard_switch_style"
-                android:text="Speed and SoC in main view gages" />
+                app:text="Speed and SoC in main view gages" />
 
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider" />
 
-            <Switch
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
                 android:id="@+id/settings_switch_consumption_unit"
-                style="?menu_standard_switch_style"
-                android:text="@string/settings_consumption_unit" />
+                app:text="@string/settings_consumption_unit" />
 
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider" />
 
-            <Switch
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
                 android:id="@+id/settings_switch_use_location"
-                style="?menu_standard_switch_style"
-                android:text="@string/settings_use_location" />
+                app:text="@string/settings_use_location" />
 
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider" />
 
-            <Switch
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
                 android:id="@+id/settings_switch_autostart"
-                style="?menu_standard_switch_style"
-                android:text="@string/settings_autostart" />
+                app:text="@string/settings_autostart" />
 
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider" />
 
-            <Switch
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
                 android:id="@+id/settings_switch_phone_reminder"
-                style="?menu_standard_switch_style"
-                android:text="@string/settings_phone_reminder" />
+                app:text="@string/settings_phone_reminder" />
 
             <View
                 style="@style/menu_divider_style"
                 android:background="?android:attr/listDivider" />
 
-            <Switch
-                android:id="@+id/settings_switch_theme"
-                style="@style/ColorTestTheme.menu_standard_switch_style"
-                android:text="@string/settings_experimental_colors" />
+            <LinearLayout
+                android:id="@+id/settings_switch_theme_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/settings_experimental_colors"
+                    style="@style/menu_standard_row_label"/>
+                <Switch
+                    android:id="@+id/settings_switch_theme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/std_row_height"
+                    style="@style/ColorTestTheme.menu_standard_switch_style"/>
+            </LinearLayout>
 
             <View
                 style="@style/menu_divider_style"
@@ -169,5 +188,6 @@
         android:layout_marginHorizontal="20dp"
         android:gravity="center_vertical|start"
         android:textSize="@dimen/version_font_size"
+        android:textColor="@color/inactive_text_color"
         app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

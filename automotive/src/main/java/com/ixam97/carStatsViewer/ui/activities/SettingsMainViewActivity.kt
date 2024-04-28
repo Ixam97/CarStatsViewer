@@ -49,16 +49,16 @@ class SettingsMainViewActivity: FragmentActivity() {
             appPreferences.mainViewConnectionApi = settings_multiselect_connection_selector.selectedIndex
         }
 
-        settings_consumption_plot_switch_secondary_color.setOnClickListener {
+        settings_consumption_plot_switch_secondary_color.setSwitchClickListener {
             appPreferences.consumptionPlotSecondaryColor = settings_consumption_plot_switch_secondary_color.isChecked
         }
-        settings_consumption_plot_switch_visible_gages.setOnClickListener {
+        settings_consumption_plot_switch_visible_gages.setSwitchClickListener {
             appPreferences.consumptionPlotVisibleGages = settings_consumption_plot_switch_visible_gages.isChecked
         }
-        settings_charge_plot_switch_secondary_color.setOnClickListener {
+        settings_charge_plot_switch_secondary_color.setSwitchClickListener {
             appPreferences.chargePlotSecondaryColor = settings_charge_plot_switch_secondary_color.isChecked
         }
-        settings_charge_plot_switch_visible_gages.setOnClickListener {
+        settings_charge_plot_switch_visible_gages.setSwitchClickListener {
             appPreferences.chargePlotVisibleGages = settings_charge_plot_switch_visible_gages.isChecked
         }
     }

@@ -70,8 +70,8 @@
 
             <ImageButton
                 android:id="@+id/main_button_history"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/std_icon_size"
+                android:layout_height="@dimen/std_icon_size"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="15dp"
                 android:background="@android:color/transparent"
@@ -79,8 +79,8 @@
 
             <ImageButton
                 android:id="@+id/main_button_settings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/std_icon_size"
+                android:layout_height="@dimen/std_icon_size"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="15dp"
                 android:background="@android:color/transparent"
@@ -117,8 +117,8 @@
                     <ImageButton
                         android:visibility="gone"
                         android:id="@+id/main_button_perf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/std_icon_size"
+                        android:layout_height="@dimen/std_icon_size"
                         android:layout_margin="15dp"
                         android:src="@drawable/ic_performance"
                         android:background="@android:color/transparent"
@@ -208,8 +208,8 @@
 
                         <ImageButton
                             android:id="@+id/main_button_reset"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="@dimen/std_icon_size"
+                            android:layout_height="@dimen/std_icon_size"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             android:layout_margin="15dp"
@@ -350,8 +350,77 @@
                         android:layout_marginRight="15dp"
                         android:layout_marginBottom="15dp"
                         app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toLeftOf="@id/main_image_button_speed"
+                        app:layout_constraintRight_toLeftOf="@id/main_secondary_selector_container"
                         app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/main_secondary_selector_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/main_toolbar_height"
+                        app:layout_constraintRight_toLeftOf="@+id/main_image_button_summary"
+                        app:layout_constraintBottom_toBottomOf="@+id/main_image_button_summary">
+
+                        <ImageButton
+                            android:id="@+id/main_image_button_speed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/main_toolbar_height"
+                            android:src="@drawable/ic_speed_large"
+                            android:background="?widget_background"
+                            android:padding="10dp"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintRight_toLeftOf="@id/main_image_button_alt"/>
+                        <ImageButton
+                            android:id="@+id/main_image_button_alt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/main_toolbar_height"
+                            android:src="@drawable/ic_altitude"
+                            android:background="?widget_background"
+                            android:padding="10dp"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintBottom_toBottomOf="@id/main_image_button_speed"
+                            app:layout_constraintRight_toLeftOf="@id/main_image_button_soc"/>
+                        <ImageButton
+                            android:id="@+id/main_image_button_soc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/main_toolbar_height"
+                            android:src="@drawable/ic_battery"
+                            android:background="?widget_background"
+                            android:padding="10dp"
+                            android:layout_marginRight="15dp"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintBottom_toBottomOf="@id/main_image_button_alt"/>
+                        <View
+                            android:id="@+id/main_secondary_dimension_indicator"
+                            android:layout_width="0dp"
+                            android:layout_height="5dp"
+                            android:layout_marginRight="0dp"
+                            android:background="@color/secondary_plot_color"
+                            app:layout_constraintBottom_toBottomOf="@id/main_image_button_speed"
+                            app:layout_constraintRight_toRightOf="@id/main_image_button_speed"
+                            app:layout_constraintLeft_toLeftOf="@id/main_image_button_speed"/>
+                        <View
+                            android:id="@+id/main_divider_1"
+                            android:layout_width="2dp"
+                            android:layout_height="0dp"
+                            android:background="#757575"
+                            app:layout_constraintTop_toTopOf="@id/main_image_button_alt"
+                            app:layout_constraintBottom_toBottomOf="@id/main_image_button_alt"
+                            app:layout_constraintRight_toRightOf="@id/main_image_button_alt"
+                            android:layout_marginVertical="20dp"
+                            android:layout_marginLeft="-1dp"/>
+                        <View
+                            android:id="@+id/main_divider_2"
+                            android:layout_width="2dp"
+                            android:layout_height="0dp"
+                            android:background="#757575"
+                            app:layout_constraintTop_toTopOf="@id/main_image_button_speed"
+                            app:layout_constraintBottom_toBottomOf="@id/main_image_button_speed"
+                            app:layout_constraintRight_toRightOf="@id/main_image_button_speed"
+                            android:layout_marginVertical="20dp"
+                            android:layout_marginLeft="-1dp"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <ImageButton
                         android:id="@+id/main_image_button_summary"
@@ -360,66 +429,10 @@
                         android:layout_height="@dimen/main_toolbar_height"
                         android:layout_marginBottom="15dp"
                         android:layout_marginRight="15dp"
+                        android:scaleType="fitCenter"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         android:src="@drawable/ic_arrow_diagonal"/>
-                    <ImageButton
-                        android:id="@+id/main_image_button_speed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/main_toolbar_height"
-                        android:src="@drawable/ic_speed_large"
-                        android:background="?widget_background"
-                        android:padding="10dp"
-                        app:layout_constraintBottom_toBottomOf="@id/main_distance_selector"
-                        app:layout_constraintRight_toLeftOf="@id/main_image_button_alt"/>
-                    <ImageButton
-                        android:id="@+id/main_image_button_alt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/main_toolbar_height"
-                        android:src="@drawable/ic_altitude"
-                        android:background="?widget_background"
-                        android:padding="10dp"
-                        app:layout_constraintBottom_toBottomOf="@id/main_image_button_speed"
-                        app:layout_constraintRight_toLeftOf="@id/main_image_button_soc"/>
-                    <ImageButton
-                        android:id="@+id/main_image_button_soc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/main_toolbar_height"
-                        android:src="@drawable/ic_battery"
-                        android:background="?widget_background"
-                        android:padding="10dp"
-                        android:layout_marginRight="15dp"
-                        app:layout_constraintRight_toLeftOf="@id/main_image_button_summary"
-                        app:layout_constraintBottom_toBottomOf="@id/main_image_button_alt"/>
-                    <View
-                        android:id="@+id/main_secondary_dimension_indicator"
-                        android:layout_width="0dp"
-                        android:layout_height="5dp"
-                        android:layout_marginRight="0dp"
-                        android:background="@color/secondary_plot_color"
-                        app:layout_constraintBottom_toBottomOf="@id/main_image_button_speed"
-                        app:layout_constraintRight_toRightOf="@id/main_image_button_speed"
-                        app:layout_constraintLeft_toLeftOf="@id/main_image_button_speed"/>
-                    <View
-                        android:id="@+id/main_divider_1"
-                        android:layout_width="2dp"
-                        android:layout_height="0dp"
-                        android:background="#757575"
-                        app:layout_constraintTop_toTopOf="@id/main_image_button_alt"
-                        app:layout_constraintBottom_toBottomOf="@id/main_image_button_alt"
-                        app:layout_constraintRight_toRightOf="@id/main_image_button_alt"
-                        android:layout_marginVertical="20dp"
-                        android:layout_marginLeft="-1dp"/>
-                    <View
-                        android:id="@+id/main_divider_2"
-                        android:layout_width="2dp"
-                        android:layout_height="0dp"
-                        android:background="#757575"
-                        app:layout_constraintTop_toTopOf="@id/main_image_button_speed"
-                        app:layout_constraintBottom_toBottomOf="@id/main_image_button_speed"
-                        app:layout_constraintRight_toRightOf="@id/main_image_button_speed"
-                        android:layout_marginVertical="20dp"
-                        android:layout_marginLeft="-1dp"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>

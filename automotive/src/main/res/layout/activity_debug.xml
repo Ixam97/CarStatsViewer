@@ -29,8 +29,8 @@
 
         <ImageButton
             android:id="@+id/debug_settings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/std_icon_size"
+            android:layout_height="@dimen/std_icon_size"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_settings"
             android:background="@android:color/transparent"
@@ -39,8 +39,8 @@
 
         <ImageButton
             android:id="@+id/log_reset_log"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/std_icon_size"
+            android:layout_height="@dimen/std_icon_size"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_delete"
             android:background="@android:color/transparent"
@@ -50,8 +50,8 @@
         <ImageButton
             android:id="@+id/log_button_reload"
             android:src="@drawable/ic_reset"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/std_icon_size"
+            android:layout_height="@dimen/std_icon_size"
             android:layout_gravity="center_vertical"
             android:background="@android:color/transparent"
             android:layout_marginVertical="15dp"
@@ -136,8 +136,9 @@
                         android:imeOptions="actionDone"
                         android:layout_weight="1"
                         android:layout_width="0dp"
-                        android:layout_height="60dp"
-                        android:layout_marginStart="25dp"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="25dp"
+                        android:padding="10dp"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -159,8 +160,9 @@
                         android:imeOptions="actionDone"
                         android:layout_weight="1"
                         android:layout_width="0dp"
-                        android:layout_height="60dp"
-                        android:layout_marginHorizontal="25dp"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="25dp"
+                        android:padding="10dp"/>
                     <ImageButton
                         android:id="@+id/log_button_send"
                         android:src="@drawable/ic_send"

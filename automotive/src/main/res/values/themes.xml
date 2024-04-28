@@ -3,6 +3,7 @@
     <style name="AppTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar">
         <!--<item name="android:colorControlActivated">@color/club_blue</item>
         <item name="android:buttonStyle">@style/testButton</item>-->
+        <item name="android:colorControlActivated">@color/polestar_orange</item>
         <item name="action_bar_line"> @style/AppTheme.action_bar_line</item>
         <item name="menu_standard_switch_style">@style/AppTheme.menu_standard_switch_style</item>
         <item name="activity_background">@android:color/transparent</item>

@@ -17,7 +17,7 @@
         <ImageButton
             android:id="@+id/summary_button_back"
             style="@style/title_back_button_style"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/std_icon_size"
             android:layout_margin="15dp"
             android:src="@drawable/ic_close"/>
 
@@ -105,8 +105,8 @@
             <ImageButton
                 android:layout_margin="15dp"
                 android:id="@+id/summary_button_reset"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/std_icon_size"
+                android:layout_height="@dimen/std_icon_size"
                 android:src="@drawable/ic_reset"
                 android:background="@android:color/transparent"/>
         </LinearLayout>
@@ -186,38 +186,158 @@
                         android:layout_height="200dp"/>
                 </RelativeLayout>
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <Button
-                        android:visibility="visible"
-                        android:id="@+id/summary_button_dist_20"
-                        android:layout_width="wrap_content"
-                        android:text="20 km"
-                        android:layout_height="80dp"/>
-                    <Button
-                        android:visibility="visible"
-                        android:id="@+id/summary_button_dist_40"
-                        android:layout_width="wrap_content"
-                        android:text="40 km"
-                        android:layout_marginStart="15dp"
-                        android:layout_height="80dp"/>
-                    <Button
-                        android:visibility="visible"
-                        android:id="@+id/summary_button_dist_100"
-                        android:layout_width="wrap_content"
-                        android:text="100 km"
-                        android:layout_marginStart="15dp"
-                        android:layout_height="80dp"/>
-                    <Button
-                        android:visibility="visible"
-                        android:id="@+id/summary_button_secondary_dimension"
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="15dp"
-                        android:layout_height="80dp"/>
-                </LinearLayout>
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="15dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/summary_secondary_selector_container">
+
+                        <Button
+                            android:visibility="visible"
+                            android:id="@+id/summary_button_dist_20"
+                            android:layout_width="0dp"
+                            android:text="20 km"
+                            android:layout_height="@dimen/main_toolbar_height"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/summary_button_dist_40"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintHorizontal_chainStyle="spread"/>
+                        <Button
+                            android:visibility="visible"
+                            android:id="@+id/summary_button_dist_40"
+                            android:layout_width="0dp"
+                            android:text="40 km"
+                            android:layout_height="@dimen/main_toolbar_height"
+                            app:layout_constraintStart_toEndOf="@id/summary_button_dist_20"
+                            app:layout_constraintEnd_toStartOf="@id/summary_button_dist_100"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintHorizontal_chainStyle="spread"/>
+                        <Button
+                            android:visibility="visible"
+                            android:id="@+id/summary_button_dist_100"
+                            android:layout_width="0dp"
+                            android:text="100 km"
+                            android:layout_height="@dimen/main_toolbar_height"
+                            app:layout_constraintStart_toEndOf="@id/summary_button_dist_40"
+                            app:layout_constraintEnd_toEndOf="@id/summary_button_dist_all"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintHorizontal_chainStyle="spread"/>
+                        <Button
+                            android:visibility="visible"
+                            android:id="@+id/summary_button_dist_all"
+                            android:layout_width="0dp"
+                            android:text="Trip"
+                            android:layout_height="@dimen/main_toolbar_height"
+                            app:layout_constraintStart_toEndOf="@id/summary_button_dist_100"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintHorizontal_chainStyle="spread"/>
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="0dp"
+                            android:background="#757575"
+                            android:layout_marginVertical="20dp"
+                            android:layout_marginLeft="-1dp"
+                            app:layout_constraintStart_toEndOf="@id/summary_button_dist_20"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="0dp"
+                            android:background="#757575"
+                            android:layout_marginVertical="20dp"
+                            android:layout_marginLeft="-1dp"
+                            app:layout_constraintStart_toEndOf="@id/summary_button_dist_40"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="0dp"
+                            android:background="#757575"
+                            android:layout_marginVertical="20dp"
+                            android:layout_marginLeft="-1dp"
+                            app:layout_constraintStart_toEndOf="@id/summary_button_dist_100"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/summary_secondary_selector_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/main_toolbar_height"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                        <ImageButton
+                            android:id="@+id/summary_image_button_speed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/main_toolbar_height"
+                            android:src="@drawable/ic_speed_large"
+                            android:background="?widget_background"
+                            android:padding="10dp"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintRight_toLeftOf="@id/summary_image_button_alt"/>
+                        <ImageButton
+                            android:id="@+id/summary_image_button_alt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/main_toolbar_height"
+                            android:src="@drawable/ic_altitude"
+                            android:background="?widget_background"
+                            android:padding="10dp"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintBottom_toBottomOf="@id/summary_image_button_speed"
+                            app:layout_constraintRight_toLeftOf="@id/summary_image_button_soc"/>
+                        <ImageButton
+                            android:id="@+id/summary_image_button_soc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/main_toolbar_height"
+                            android:src="@drawable/ic_battery"
+                            android:background="?widget_background"
+                            android:padding="10dp"
+                            android:layout_marginRight="15dp"
+                            android:scaleType="fitCenter"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintBottom_toBottomOf="@id/summary_image_button_alt"/>
+                        <View
+                            android:id="@+id/summary_secondary_dimension_indicator"
+                            android:layout_width="0dp"
+                            android:layout_height="5dp"
+                            android:layout_marginRight="0dp"
+                            android:background="@color/secondary_plot_color"
+                            app:layout_constraintBottom_toBottomOf="@id/summary_image_button_speed"
+                            app:layout_constraintRight_toRightOf="@id/summary_image_button_speed"
+                            app:layout_constraintLeft_toLeftOf="@id/summary_image_button_speed"/>
+                        <View
+                            android:id="@+id/summary_divider_1"
+                            android:layout_width="2dp"
+                            android:layout_height="0dp"
+                            android:background="#757575"
+                            app:layout_constraintTop_toTopOf="@id/summary_image_button_alt"
+                            app:layout_constraintBottom_toBottomOf="@id/summary_image_button_alt"
+                            app:layout_constraintRight_toRightOf="@id/summary_image_button_alt"
+                            android:layout_marginVertical="20dp"
+                            android:layout_marginLeft="-1dp"/>
+                        <View
+                            android:id="@+id/summary_divider_2"
+                            android:layout_width="2dp"
+                            android:layout_height="0dp"
+                            android:background="#757575"
+                            app:layout_constraintTop_toTopOf="@id/summary_image_button_speed"
+                            app:layout_constraintBottom_toBottomOf="@id/summary_image_button_speed"
+                            app:layout_constraintRight_toRightOf="@id/summary_image_button_speed"
+                            android:layout_marginVertical="20dp"
+                            android:layout_marginLeft="-1dp"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <View style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>
