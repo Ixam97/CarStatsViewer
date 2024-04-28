@@ -1,11 +1,19 @@
 # Changelog [DE]:
 
+## 0.26.2
+- Verbesserung der Diagramm-Steuerelemente in der Tripzusammenfassung
+- Defektes Layout nach Polestar OTA P3.0.3 behoben
+- Einige Layoutprobleme im Volvo Infotainment wurden behoben
+        
+## 0.26.1
+- Fix für Android 12
+
 ## 0.26.0
 - Experimentelles Farbschema hinzugefügt.
 - Vereinfachte Auswahl der Sekundärachse.
 - Der Datenbankupload wurde in Abschnitte unterteilt, um falsche Fehlermedungen zu vermeiden und den Fortschritt anzeigen zu können.
 
-## 0.25.2 ()
+## 0.25.2
 - Erweiterung der Webhook-API.
 - Option für eine Handy-Erinnerung beim verlassen des Fahrzeugs hinzugefügt.
 - Optimierungen bei der Lade- und Rendergeschwindigkeit der Statistikdiagramme.
