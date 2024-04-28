@@ -134,7 +134,7 @@
                 <Switch
                     android:id="@+id/settings_switch_theme"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/std_row_height"
                     style="@style/ColorTestTheme.menu_standard_switch_style"/>
             </LinearLayout>
 
@@ -188,5 +188,6 @@
         android:layout_marginHorizontal="20dp"
         android:gravity="center_vertical|start"
         android:textSize="@dimen/version_font_size"
+        android:textColor="@color/inactive_text_color"
         app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

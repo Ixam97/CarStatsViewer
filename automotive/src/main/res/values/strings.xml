@@ -60,6 +60,12 @@
         <item>Ricardo Blauth</item>
         <item>Marcelo Fornereto</item>
     </string-array>
+
+    <string-array name="changes_0_26_2">
+        <item>Tweaked summary plot controls</item>
+        <item>Fixed broken layout after Polestar OTA P3.0.3</item>
+        <item>Fixed some layout issues on Volvo Infotainment</item>
+    </string-array>
     <string-array name="changes_0_26_1">
         <item>Fix for Android 12 (P3.0)</item>
     </string-array>

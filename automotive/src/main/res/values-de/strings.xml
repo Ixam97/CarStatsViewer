@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="changes_0_26_2">
+        <item>Verbesserung der Diagramm-Steuerelemente in der Tripzusammenfassung</item>
+        <item>Defektes Layout nach Polestar OTA P3.0.3 behoben</item>
+        <item>Einige Layoutprobleme im Volvo Infotainment wurden behoben</item>
+    </string-array>
+
+    <string-array name="changes_0_26_1">
+        <item>Fix für Android 12 (P3.0)</item>
+    </string-array>
 
     <string-array name="changes_0_26_0">
         <item>Experimentelles Farbschema hinzugefügt.</item>

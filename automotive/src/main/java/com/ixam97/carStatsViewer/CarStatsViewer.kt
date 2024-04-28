@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Typeface
-import android.graphics.fonts.SystemFonts
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -21,7 +20,6 @@ import com.ixam97.carStatsViewer.database.tripData.*
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
-import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.ScreenshotButton
@@ -115,70 +113,62 @@ class CarStatsViewer : Application() {
                 setPositiveButton(context.getString(R.string.dialog_close)) { dialog, _ ->
                     dialog.cancel()
                 }
-                // setTitle(context.getString(R.string.main_changelog_dialog_title, BuildConfig.VERSION_NAME.dropLast(5)))
-
                 val layout = LayoutInflater.from(context).inflate(R.layout.dialog_changelog, null)
 
-                val changelog5Title = layout.findViewById<TextView>(R.id.changes_0_26_1_title)
-                val changelog5TextView = layout.findViewById<TextView>(R.id.changes_0_26_1)
-                val changelog4Title = layout.findViewById<TextView>(R.id.changes_0_26_0_title)
-                val changelog4TextView = layout.findViewById<TextView>(R.id.changes_0_26_0)
-                val changelog3Title = layout.findViewById<TextView>(R.id.changes_0_25_2_title)
-                val changelog3TextView = layout.findViewById<TextView>(R.id.changes_0_25_2)
-                val changelog2Title = layout.findViewById<TextView>(R.id.changes_0_25_1_title)
-                val changelog2TextView = layout.findViewById<TextView>(R.id.changes_0_25_1)
-                val changelog1Title = layout.findViewById<TextView>(R.id.changes_0_25_0_title)
-                val changelog1TextView = layout.findViewById<TextView>(R.id.changes_0_25_0)
-
-                changelog5Title.text = context.getString(R.string.main_changelog_dialog_title, "0.26.1")
-                changelog4Title.text = context.getString(R.string.main_changelog_dialog_title, "0.26.0")
-                changelog3Title.text = context.getString(R.string.main_changelog_dialog_title, "0.25.2")
-                changelog2Title.text = context.getString(R.string.main_changelog_dialog_title, "0.25.1")
-                changelog1Title.text = context.getString(R.string.main_changelog_dialog_title, "0.25.0")
-
-                val changesArray5 = context.resources.getStringArray(R.array.changes_0_26_1)
-                var changelog5 = ""
-                changesArray5.forEachIndexed { index, change ->
-                    changelog5 += "• $change"
-                    if (index < changesArray5.size - 1) changelog5 += "\n\n"
+                fun applyChangelogVersion(
+                    versionString: String,
+                    changesArrayResId: Int,
+                    titleViewResId: Int,
+                    textViewResId: Int,
+                ) {
+                    val changesArray = context.resources.getStringArray(changesArrayResId)
+                    var changelog = ""
+                    changesArray.forEachIndexed { index, change ->
+                        changelog += "• $change"
+                        if (index < changesArray.size - 1) changelog += "\n\n"
+                    }
+                    layout.findViewById<TextView>(titleViewResId).text = context.getString(R.string.main_changelog_dialog_title, versionString)
+                    layout.findViewById<TextView>(textViewResId).text = changelog
                 }
 
-                val changesArray4 = context.resources.getStringArray(R.array.changes_0_26_0)
-                var changelog4 = ""
-                changesArray4.forEachIndexed { index, change ->
-                    changelog4 += "• $change"
-                    if (index < changesArray4.size - 1) changelog4 += "\n\n"
-                }
-
-                val changesArray3 = context.resources.getStringArray(R.array.changes_0_25_2)
-                var changelog3 = ""
-                changesArray3.forEachIndexed { index, change ->
-                    changelog3 += "• $change"
-                    if (index < changesArray3.size - 1) changelog3 += "\n\n"
-                }
-
-                val changesArray2 = context.resources.getStringArray(R.array.changes_0_25_1)
-                var changelog2 = ""
-                changesArray2.forEachIndexed { index, change ->
-                    changelog2 += "• $change"
-                    if (index < changesArray2.size - 1) changelog2 += "\n\n"
-                }
-
-                val changesArray1 = context.resources.getStringArray(R.array.changes_0_25_0)
-                var changelog1 = ""
-                changesArray1.forEachIndexed { index, change ->
-                    changelog1 += "• $change"
-                    if (index < changesArray1.size - 1) changelog1 += "\n\n"
-                }
-
-                changelog5TextView.text = changelog5
-                changelog4TextView.text = changelog4
-                changelog3TextView.text = changelog3
-                changelog2TextView.text = changelog2
-                changelog1TextView.text = changelog1
+                applyChangelogVersion(
+                    versionString = "0.26.2",
+                    titleViewResId = R.id.changes_0_26_2_title,
+                    textViewResId = R.id.changes_0_26_2,
+                    changesArrayResId = R.array.changes_0_26_2
+                )
+                applyChangelogVersion(
+                    versionString = "0.26.1",
+                    titleViewResId = R.id.changes_0_26_1_title,
+                    textViewResId = R.id.changes_0_26_1,
+                    changesArrayResId = R.array.changes_0_26_1
+                )
+                applyChangelogVersion(
+                    versionString = "0.26.0",
+                    titleViewResId = R.id.changes_0_26_0_title,
+                    textViewResId = R.id.changes_0_26_0,
+                    changesArrayResId = R.array.changes_0_26_0
+                )
+                applyChangelogVersion(
+                    versionString = "0.25.2",
+                    titleViewResId = R.id.changes_0_25_2_title,
+                    textViewResId = R.id.changes_0_25_2,
+                    changesArrayResId = R.array.changes_0_25_2
+                )
+                applyChangelogVersion(
+                    versionString = "0.25.1",
+                    titleViewResId = R.id.changes_0_25_1_title,
+                    textViewResId = R.id.changes_0_25_1,
+                    changesArrayResId = R.array.changes_0_25_1
+                )
+                applyChangelogVersion(
+                    versionString = "0.25.0",
+                    titleViewResId = R.id.changes_0_25_0_title,
+                    textViewResId = R.id.changes_0_25_0,
+                    changesArrayResId = R.array.changes_0_25_0
+                )
 
                 applyTypeface(layout)
-
                 setView(layout)
 
                 setCancelable(true)

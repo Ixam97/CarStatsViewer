@@ -123,9 +123,10 @@
         <item name="android:textSize">@dimen/std_font_size</item>
     </style>
     <style name="dialog_divider_bar">
-        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_height">20dp</item>
         <item name="android:layout_width">0dp</item>
-        <item name="android:visibility">gone</item>
+        <item name="android:visibility">visible</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
     <style name="AppTheme.action_bar_line">
         <!--<item name="android:background">@drawable/club_gradient</item>
