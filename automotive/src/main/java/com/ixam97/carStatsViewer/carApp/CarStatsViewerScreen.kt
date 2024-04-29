@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.carApp
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import androidx.car.app.AppManager
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.annotations.ExperimentalCarApi
@@ -18,29 +19,42 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carApp.renderer.CarDataSurfaceCallback
+import com.ixam97.carStatsViewer.carApp.renderer.DefaultRenderer
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.ui.activities.HistoryActivity
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
 import com.ixam97.carStatsViewer.ui.activities.SettingsActivity
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.throttle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
 @ExperimentalCarApi
-class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
+class CarStatsViewerScreen(
+    carContext: CarContext,
+    session: CarStatsViewerSession
+) : Screen(carContext), DefaultLifecycleObserver {
 
     private val CID_TRIP_DATA = "cid_trip_data"
     private val CID_MENU = "cid_menu"
+    private val CID_CANVAS = "cid_nav_test"
     private val CID_STATUS = "cid_status"
 
     internal var dataUpdate = false
     internal var apiState: Map<String, Int> = mapOf()
     internal var session : DrivingSession? = null
+
+    internal val carDataSurfaceCallback = CarDataSurfaceCallback(carContext)
+
+    internal val appPreferences = CarStatsViewer.appPreferences
 
     internal val colorDisconnected = CarColor.createCustom(carContext.getColor(R.color.inactive_text_color), carContext.getColor(R.color.disabled_tint))
     internal val colorConnected = CarColor.createCustom(carContext.getColor(R.color.connected_blue), carContext.getColor(R.color.connected_blue))
@@ -65,14 +79,17 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
 
 
     init {
-        lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onResume(owner: LifecycleOwner) {
-                super.onResume(owner)
-                Handler(Looper.getMainLooper()).post {
-                    // invalidate()
-                }
+        lifecycle.addObserver(this)
+        lifecycleScope.launch {
+            CarStatsViewer.dataProcessor.realTimeDataFlow.throttle(100).collect {
+                carDataSurfaceCallback.renderFrame()
             }
-        })
+        }
+        lifecycleScope.launch {
+            CarStatsViewer.dataProcessor.selectedSessionDataFlow.throttle(1000).collect {
+                carDataSurfaceCallback.updateSession()
+            }
+        }
         setupListeners()
     }
 
@@ -91,8 +108,23 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
         }
     }
 
-    override fun onGetTemplate(): Template {
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+        carContext.getCarService(AppManager::class.java)
+            .setSurfaceCallback(carDataSurfaceCallback)
+    }
 
+    override fun onPause(owner: LifecycleOwner) {
+        super.onPause(owner)
+        carDataSurfaceCallback.pause()
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+        carDataSurfaceCallback.resume()
+    }
+
+    override fun onGetTemplate(): Template {
         // updateLiveData()
         if (dataUpdate) {
             InAppLogger.i("[AAOS] Data Update")
@@ -119,14 +151,28 @@ class CarStatsViewerScreen(carContext: CarContext) : Screen(carContext) {
         setHeaderAction(Action.APP_ICON)
         addTab(createTab(R.string.car_app_trip_data, CID_TRIP_DATA, R.drawable.ic_car_app_list))
         addTab(createTab(R.string.car_app_status, CID_STATUS, R.drawable.ic_car_app_status))
+        addTab(createTab(R.string.car_app_canvas, CID_CANVAS, R.drawable.ic_car_app_canvas))
         addTab(createTab(R.string.car_app_menu, CID_MENU, R.drawable.ic_car_app_menu))
         setTabContents(TabContents.Builder(
             // TripDataList()
             // createTripDataPane()
             when (selectedTabContentID) {
-                CID_TRIP_DATA -> TripDataList()
-                CID_STATUS -> CarStatsList()
-                CID_MENU -> MenuList()
+                CID_TRIP_DATA -> {
+                    carDataSurfaceCallback.pause()
+                    TripDataList()
+                }
+                CID_STATUS -> {
+                    carDataSurfaceCallback.pause()
+                    CarStatsList()
+                }
+                CID_CANVAS -> {
+                    carDataSurfaceCallback.resume()
+                    NavigationTest()
+                }
+                CID_MENU -> {
+                    carDataSurfaceCallback.pause()
+                    MenuList()
+                }
                 else -> throw Exception("Unsupported Content ID!")
             }
         ).build())
