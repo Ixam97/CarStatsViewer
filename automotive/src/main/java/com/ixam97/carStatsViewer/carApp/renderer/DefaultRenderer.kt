@@ -4,9 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import android.util.Log
 import androidx.car.app.CarContext
-import androidx.lifecycle.lifecycleScope
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
@@ -24,11 +22,6 @@ import com.ixam97.carStatsViewer.ui.views.GageView
 import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.DataConverters
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import com.ixam97.carStatsViewer.utils.getColorFromAttribute
-import kotlinx.android.synthetic.main.activity_main.main_consumption_gage
-import kotlinx.android.synthetic.main.activity_main.main_consumption_plot
-import kotlinx.coroutines.launch
-import java.lang.Exception
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -398,7 +391,7 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
 
     fun refreshConsumptionPlot(drivingPoints: List<DrivingPoint> = emptyList()) {
         val appPreferences = CarStatsViewer.appPreferences
-        InAppLogger.d("Refreshing entire consumption plot.")
+        InAppLogger.d("[$TAG] Refreshing entire consumption plot.")
         var localDrivingPoints = drivingPoints
         if (drivingPoints.isEmpty()) {
             localDrivingPoints = CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.drivingPoints?: emptyList()

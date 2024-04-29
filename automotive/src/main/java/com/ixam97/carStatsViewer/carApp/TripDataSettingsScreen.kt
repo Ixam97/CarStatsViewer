@@ -11,8 +11,11 @@ import androidx.car.app.model.Row
 import androidx.car.app.model.SectionedItemList
 import androidx.car.app.model.Template
 import androidx.core.graphics.drawable.IconCompat
+import androidx.lifecycle.lifecycleScope
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class TripDataSettingsScreen(carContext: CarContext) : Screen(carContext) {
 
@@ -26,10 +29,14 @@ class TripDataSettingsScreen(carContext: CarContext) : Screen(carContext) {
         if (CarStatsViewer.appPreferences.mainViewTrip == 0) {
             setActionStrip(ActionStrip.Builder().apply {
                 addAction(Action.Builder().apply {
-                    // setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_reset)).build())
                     setTitle(carContext.getString(R.string.dialog_reset_confirm))
                     setOnClickListener {
-                        screenManager.push(ConfirmResetScreen(carContext))
+                        screenManager.pushForResult(ConfirmResetScreen(carContext)) {
+                            if (it == true) {
+                                setResult(true)
+                                screenManager.pop()
+                            }
+                        }
                     }
                 }.build())
             }.build())
@@ -42,22 +49,16 @@ class TripDataSettingsScreen(carContext: CarContext) : Screen(carContext) {
             addItem(tripTypeRow(3))
             setOnSelectedListener{ changeSelectedTrip(it) }
         }.build(), carContext.getString(R.string.settings_select_trip)))
-        // addSectionedList(SectionedItemList.create(ItemList.Builder().apply {
-        //     addItem(Row.Builder().apply {
-        //         setTitle(carContext.getString(R.string.summary_button_reset_trip))
-        //         setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_reset)).build())
-        //         setOnClickListener {
-        //             screenManager.push(ConfirmResetScreen(carContext))
-        //         }
-        //     }.build())
-        // }.build(), carContext.getString(R.string.CurrentTripData)))
     }.build()
 
     private fun changeSelectedTrip(index: Int) {
-        CarStatsViewer.dataProcessor.changeSelectedTrip(index + 1)
-        CarStatsViewer.appPreferences.mainViewTrip = index
-        invalidate()
-        screenManager.pop()
+        lifecycleScope.launch {
+            delay(100)
+            setResult(index)
+            screenManager.pop()
+        }
+
+        // invalidate()
     }
     private fun tripTypeRow(tripType: Int) = Row.Builder().apply {
         when (tripType) {

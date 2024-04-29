@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 29
         targetSdkVersion 34
-        versionCode 219
-        versionName "0.27.0.0012"
+        versionCode 222
+        versionName "0.27.0.0015"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -99,8 +99,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.github.matthiaszimmermann:EGM96:master-SNAPSHOT'
 
-    implementation "androidx.car.app:app:1.4.0-rc02"
-    implementation "androidx.car.app:app-automotive:1.4.0-rc02"
+    implementation "androidx.car.app:app:1.7.0-alpha02"
+    implementation "androidx.car.app:app-automotive:1.7.0-alpha02"
 
     implementation("androidx.room:room-ktx:2.5.0")
     kapt("androidx.room:room-compiler:2.5.0")

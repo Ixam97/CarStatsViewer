@@ -485,9 +485,9 @@ class PlotView @JvmOverloads constructor(
     private var dataPointMap : HashMap<PlotLine, List<PlotLineItem>> = HashMap()
     private fun dataPoints(plotLine: PlotLine?) : List<PlotLineItem>? {
         if (plotLine == null) return null
-        Log.d("PLOT", "dataPointMap.containsKey = ${dataPointMap.containsKey(plotLine)}")
+        // Log.d("PLOT", "dataPointMap.containsKey = ${dataPointMap.containsKey(plotLine)}")
         if (!dataPointMap.containsKey(plotLine)) {
-            Log.i("PLOT", "Getting data points")
+            // Log.i("PLOT", "Getting data points")
             dataPointMap[plotLine] = plotLine.getDataPoints(dimension, dimensionRestriction, dimensionShift)
         }
         return dataPointMap[plotLine]

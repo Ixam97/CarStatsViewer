@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.ui.plot.objects
 
-import android.util.Log
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionY
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotHighlightMethod
@@ -151,8 +150,8 @@ class PlotLine(
 
     private fun createLodDataPoints(dataPoints: List<PlotLineItem>, plotDimensionX: PlotDimensionX): List<PlotLineItem> {
         if (dataPoints.isEmpty()) return dataPoints
-        Log.i("PLOT", "Create LoD data points ...")
-        Log.i("PLOT", "Data points size: ${dataPoints.size}")
+        // Log.i("PLOT", "Create LoD data points ...")
+        // Log.i("PLOT", "Data points size: ${dataPoints.size}")
 
         return when (plotDimensionX) {
             PlotDimensionX.DISTANCE -> {

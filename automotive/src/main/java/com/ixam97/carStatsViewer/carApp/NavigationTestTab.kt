@@ -35,7 +35,8 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
                 setOnClickListener {
                     val currentDistance = appPreferences.mainPrimaryDimensionRestriction
                     appPreferences.mainPrimaryDimensionRestriction = if (currentDistance >= 2) 0 else currentDistance + 1
-                    invalidate()
+                    //invalidate()
+                    invalidateTabView()
                     carDataSurfaceCallback.invalidatePlot()
                     // carDataSurfaceCallback.renderFrame()
                 }
@@ -53,7 +54,8 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             setOnClickListener {
                 appPreferences.secondaryConsumptionDimension = if (selectedDimension == 1) 0 else 1
                 carDataSurfaceCallback.renderFrame()
-                invalidate()
+                //invalidate()
+                invalidateTabView()
             }
         }.build())
         addAction(Action.Builder().apply {
@@ -66,7 +68,8 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             setOnClickListener {
                 appPreferences.secondaryConsumptionDimension = if (selectedDimension == 3) 0 else 3
                 carDataSurfaceCallback.renderFrame()
-                invalidate()
+                //invalidate()
+                invalidateTabView()
             }
         }.build())
         addAction(Action.Builder().apply {
@@ -79,7 +82,8 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             setOnClickListener {
                 appPreferences.secondaryConsumptionDimension = if (selectedDimension == 2) 0 else 2
                 carDataSurfaceCallback.renderFrame()
-                invalidate()
+                //invalidate()
+                invalidateTabView()
             }
         }.build())
     }.build())

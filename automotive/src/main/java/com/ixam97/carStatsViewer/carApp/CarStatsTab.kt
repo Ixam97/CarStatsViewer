@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.carApp
 
-import android.car.Car
 import androidx.annotation.OptIn
 import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.model.CarIcon
@@ -9,7 +8,6 @@ import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
 import androidx.car.app.model.SectionedItemList
 import androidx.core.graphics.drawable.IconCompat
-import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 
 @OptIn(ExperimentalCarApi::class)
@@ -42,6 +40,13 @@ internal fun CarStatsViewerScreen.CarStatsList() = ListTemplate.Builder().apply 
                         else -> "Error"
                     })
                     setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_connected)).setTint(apiIconColor).build())
+                }.build())
+            }
+
+            if (apiState.isEmpty()) {
+                addItem(Row.Builder().apply {
+                    setTitle("No API available!")
+                    setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_connected)).setTint(colorDisconnected).build())
                 }.build())
             }
         }.build(),

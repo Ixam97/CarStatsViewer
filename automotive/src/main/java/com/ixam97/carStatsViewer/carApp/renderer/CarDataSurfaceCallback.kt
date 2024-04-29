@@ -3,17 +3,13 @@ package com.ixam97.carStatsViewer.carApp.renderer
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import android.util.Log
 import android.view.Surface
 import androidx.car.app.CarContext
 import androidx.car.app.SurfaceCallback
 import androidx.car.app.SurfaceContainer
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
-import com.ixam97.carStatsViewer.utils.DataConverters
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import kotlinx.android.synthetic.main.activity_main.main_consumption_plot
 
 class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
 
@@ -91,7 +87,7 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
     }
 
     fun updateSession() {
-
+        if (!rendererEnabled) return
         if (defaultRenderer !is DefaultRenderer) return
 
         defaultRenderer.updateSession()
@@ -99,6 +95,7 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
     }
 
     fun invalidatePlot() {
+        if (!rendererEnabled) return
         defaultRenderer.refreshConsumptionPlot()
         renderFrame()
     }
