@@ -45,16 +45,17 @@ class CarStatsViewerScreen(
 
     private val CID_TRIP_DATA = "cid_trip_data"
     private val CID_MENU = "cid_menu"
-    private val CID_CANVAS = "cid_nav_test"
+    private val CID_CANVAS = "cid_canvas"
     private val CID_STATUS = "cid_status"
 
     internal var dataUpdate = false
     internal var apiState: Map<String, Int> = mapOf()
-    internal var session : DrivingSession? = null
 
     internal val carDataSurfaceCallback = CarDataSurfaceCallback(carContext)
 
     internal val appPreferences = CarStatsViewer.appPreferences
+
+    internal var drivingSession: DrivingSession? = null
 
     internal val colorDisconnected = CarColor.createCustom(carContext.getColor(R.color.inactive_text_color), carContext.getColor(R.color.disabled_tint))
     internal val colorConnected = CarColor.createCustom(carContext.getColor(R.color.connected_blue), carContext.getColor(R.color.connected_blue))
@@ -63,7 +64,14 @@ class CarStatsViewerScreen(
 
     internal var resetFlag = false
 
-    internal var selectedTabContentID = CID_TRIP_DATA
+    internal var selectedTabContentID = CID_CANVAS
+        set(value) {
+            if (field != value) {
+                carDataSurfaceCallback.invalidatePlot()
+            }
+            field = value
+
+        }
 
     private val settingsActivityIntent = Intent(carContext, SettingsActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -88,6 +96,10 @@ class CarStatsViewerScreen(
         lifecycleScope.launch {
             CarStatsViewer.dataProcessor.selectedSessionDataFlow.throttle(1000).collect {
                 carDataSurfaceCallback.updateSession()
+                drivingSession = it
+                if (selectedTabContentID != CID_CANVAS) {
+                    invalidate()
+                }
             }
         }
         setupListeners()
@@ -116,12 +128,12 @@ class CarStatsViewerScreen(
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
-        carDataSurfaceCallback.pause()
+        // carDataSurfaceCallback.pause()
     }
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        carDataSurfaceCallback.resume()
+        // carDataSurfaceCallback.resume()
     }
 
     override fun onGetTemplate(): Template {
@@ -129,7 +141,6 @@ class CarStatsViewerScreen(
         if (dataUpdate) {
             InAppLogger.i("[AAOS] Data Update")
             this.apiState = CarStatsViewer.watchdog.getCurrentWatchdogState().apiState
-            session = CarStatsViewer.dataProcessor.selectedSessionData
             dataUpdate = false
         }
 
@@ -148,10 +159,17 @@ class CarStatsViewerScreen(
             invalidate()
         }
     }).apply {
+        val tripType = when (appPreferences.mainViewTrip + 1) {
+            1 -> R.string.CurrentTripData
+            2 -> R.string.SinceChargeData
+            3 -> R.string.AutoTripData
+            4 -> R.string.CurrentMonthData
+            else -> R.string.car_app_unknown
+        }
         setHeaderAction(Action.APP_ICON)
-        addTab(createTab(R.string.car_app_trip_data, CID_TRIP_DATA, R.drawable.ic_car_app_list))
+        addTab(createTab(R.string.car_app_dashboard, CID_CANVAS, R.drawable.ic_car_app_dashboard))
+        addTab(createTab(tripType, CID_TRIP_DATA, R.drawable.ic_car_app_list))
         addTab(createTab(R.string.car_app_status, CID_STATUS, R.drawable.ic_car_app_status))
-        addTab(createTab(R.string.car_app_canvas, CID_CANVAS, R.drawable.ic_car_app_canvas))
         addTab(createTab(R.string.car_app_menu, CID_MENU, R.drawable.ic_car_app_menu))
         setTabContents(TabContents.Builder(
             // TripDataList()
@@ -159,7 +177,7 @@ class CarStatsViewerScreen(
             when (selectedTabContentID) {
                 CID_TRIP_DATA -> {
                     carDataSurfaceCallback.pause()
-                    TripDataList()
+                    TripDataList(drivingSession)
                 }
                 CID_STATUS -> {
                     carDataSurfaceCallback.pause()

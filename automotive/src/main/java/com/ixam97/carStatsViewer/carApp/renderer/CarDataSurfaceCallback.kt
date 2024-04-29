@@ -29,21 +29,21 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
 
 
     override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
-        Log.d(TAG, "Surface available")
+        InAppLogger.d("[$TAG] Surface available")
         super.onSurfaceAvailable(surfaceContainer)
         surface = surfaceContainer.surface
         renderFrame()
     }
 
     override fun onVisibleAreaChanged(visibleArea: Rect) {
-        Log.i(TAG, "Visible area changed " + surface + ". stableArea: "
+        InAppLogger.i("[$TAG] Visible area changed " + surface + ". stableArea: "
                 + stableArea + " visibleArea:" + visibleArea)
         this.visibleArea = visibleArea
         renderFrame()
     }
 
     override fun onStableAreaChanged(stableArea: Rect) {
-        Log.i(TAG, "Stable area changed " + surface + ". stableArea: "
+        InAppLogger.i("[$TAG] Stable area changed " + surface + ". stableArea: "
                 + stableArea + " visibleArea:" + visibleArea)
         super.onStableAreaChanged(stableArea)
         this.stableArea = stableArea
@@ -51,22 +51,36 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
     }
 
     fun pause() {
+        renderFrame(clearFrame = true)
         rendererEnabled = false
     }
 
     fun resume() {
         rendererEnabled = true
+        invalidatePlot()
     }
 
-    fun renderFrame() {
+    fun renderFrame(clearFrame: Boolean = false) {
         if (!rendererEnabled) return
 
-        Log.d(TAG, "Rendering Frame")
+        InAppLogger.d("[$TAG] Rendering Frame")
         defaultRenderer.setData(CarStatsViewer.dataProcessor.realTimeData)
 
         surface?.apply {
             if(!isValid) return
-            val canvas: Canvas = lockCanvas(null)
+            val canvas: Canvas = try {
+                lockCanvas(null)
+            } catch (e: Exception) {
+                InAppLogger.w("[$TAG] Failed to get canvas:\n${e.printStackTrace()}")
+                return
+            }
+
+            if (clearFrame) {
+                canvas.drawColor(Color.BLACK)
+                unlockCanvasAndPost(canvas)
+                return
+            }
+
             canvas.drawColor(carContext.getColor(R.color.slideup_activity_background))
             // canvas.drawColor(if (carContext.isDarkMode) Color.BLACK else Color.WHITE)
 
@@ -81,6 +95,11 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
         if (defaultRenderer !is DefaultRenderer) return
 
         defaultRenderer.updateSession()
+        renderFrame()
+    }
+
+    fun invalidatePlot() {
+        defaultRenderer.refreshConsumptionPlot()
         renderFrame()
     }
 }

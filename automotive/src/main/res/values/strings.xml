@@ -360,4 +360,5 @@
     <string name="car_app_toast_reset_confirmation">Manual Trip has been reset.</string>
     <string name="car_app_toast_reset_hint">Press again to reset manual Trip.</string>
     <string name="car_app_canvas">Canvas Test</string>
+    <string name="car_app_unknown">Unknown</string>
 </resources>

@@ -36,7 +36,8 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
                     val currentDistance = appPreferences.mainPrimaryDimensionRestriction
                     appPreferences.mainPrimaryDimensionRestriction = if (currentDistance >= 2) 0 else currentDistance + 1
                     invalidate()
-                    carDataSurfaceCallback.renderFrame()
+                    carDataSurfaceCallback.invalidatePlot()
+                    // carDataSurfaceCallback.renderFrame()
                 }
             }.build())
         }.build()
