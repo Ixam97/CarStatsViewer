@@ -8,6 +8,7 @@ import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
 import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.core.graphics.drawable.IconCompat
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 
 @OptIn(ExperimentalCarApi::class)
@@ -31,7 +32,10 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
 
                 setTitle(buttonLabel)
                 // setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_arrow_diagonal)).build())
-                setFlags(Action.FLAG_IS_PERSISTENT)
+                when (CarStatsViewer.dataProcessor.staticVehicleData.modelName) {
+                    "PS2", "Speedy Model" -> {}
+                    else -> setFlags(Action.FLAG_IS_PERSISTENT)
+                }
                 setOnClickListener {
                     val currentDistance = appPreferences.mainPrimaryDimensionRestriction
                     appPreferences.mainPrimaryDimensionRestriction = if (currentDistance >= 2) 0 else currentDistance + 1

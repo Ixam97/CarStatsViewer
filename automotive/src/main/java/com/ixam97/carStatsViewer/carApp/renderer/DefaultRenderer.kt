@@ -196,7 +196,7 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
          * the button row. However, on Landscape devices the buttons may be located at the left,
          * making this area unsafe to draw in.
          */
-        val topCorrection = -90
+        val topCorrection = -120
 
         val isLandscape = (canvas.width > canvas.height)
 
@@ -205,15 +205,24 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
         InAppLogger.d("[$TAG] Density: $density")
         canvas.scale(density, density)
 
-        var correctedArea = if (visibleArea != null) {
-            Rect(
-                (visibleArea.left / density).toInt(),
-                (visibleArea.top / density).toInt() + if (!isLandscape) topCorrection else 0,
-                (visibleArea.right / density).toInt(),
-                (visibleArea.bottom / density).toInt())
-        } else null
+        var correctedArea = when (CarStatsViewer.dataProcessor.staticVehicleData.modelName) {
+            "PS2" -> Rect(0, 340, 999, 1183)
+            "Speedy Model" -> Rect(0, 340, 999, 1183)
+            else -> {
+                if (visibleArea != null)
+                    Rect(
+                        visibleArea.left,
+                        visibleArea.top + if (!isLandscape) topCorrection else 0,
+                        visibleArea.right,
+                        visibleArea.bottom
+                    )
+                else null
+            }
+        }?.applyDensity(density)
 
-        if (visibleArea != null) {
+        drawBoundingBox(canvas, correctedArea, correctedArea)
+
+        if (correctedArea != null) {
 
             val consumptionUnit = CarStatsViewer.appPreferences.consumptionUnit
             val distanceUnit = CarStatsViewer.appPreferences.distanceUnit
@@ -274,33 +283,22 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
             }
 
             correctedArea = moveDrawingArea(canvas, stableArea = correctedArea)
-            correctedArea = moveDrawingArea(canvas, dx = 15f, dy = 0f, stableArea = correctedArea)
+            correctedArea = moveDrawingArea(canvas, dx = 15f, dy = 15f, stableArea = correctedArea)
 
             var powerRect = powerGage.drawGage(canvas)
-            // drawBoundingBox(canvas, powerRect, powerRect)
-
             var consRect = consGage.drawGage(canvas, xOffset = if (horizontalOverflowFlag || isLandscape) 0 else 320, yOffset = if (horizontalOverflowFlag || isLandscape) powerRect.bottom + 15 else 0)
-            // drawBoundingBox(canvas, consRect, consRect)
 
-            // drawBoundingBox(canvas, correctedArea, correctedArea)
-
-            when (CarStatsViewer.dataProcessor.staticVehicleData.modelName) {
-                "Polestar 2" -> horizontalOverflowFlag = false
-                "EX40", "EC40" -> horizontalOverflowFlag = true
-                else -> {
-                    if ((consRect.right) > (correctedArea?.right?:0) && !horizontalOverflowFlag) {
-                        InAppLogger.w("[$TAG] Overflow detected: ${consRect.right}, ${(correctedArea?.right?:0)}. Setting flag for rearrangement")
-                        horizontalOverflowFlag = true
-                        canvas.drawColor(carContext.getColor(R.color.slideup_activity_background))
-                        powerRect = powerGage.drawGage(canvas)
-                        consRect = consGage.drawGage(canvas, xOffset = if (horizontalOverflowFlag || isLandscape) 0 else 320, yOffset = if (horizontalOverflowFlag || isLandscape) powerRect.bottom + 15 else 0)
-                    } else if ((consRect.right + powerRect.right) < (correctedArea?.right?:0) && horizontalOverflowFlag) {
-                        horizontalOverflowFlag = false
-                        canvas.drawColor(carContext.getColor(R.color.slideup_activity_background))
-                        powerRect = powerGage.drawGage(canvas)
-                        consRect = consGage.drawGage(canvas, xOffset = if (horizontalOverflowFlag || isLandscape) 0 else 320, yOffset = if (horizontalOverflowFlag || isLandscape) powerRect.bottom + 15 else 0)
-                    }
-                }
+            if ((consRect.right) > (correctedArea?.right?:0) && !horizontalOverflowFlag) {
+                InAppLogger.w("[$TAG] Overflow detected: ${consRect.right}, ${(correctedArea?.right?:0)}. Setting flag for rearrangement")
+                horizontalOverflowFlag = true
+                canvas.drawColor(carContext.getColor(R.color.slideup_activity_background))
+                powerRect = powerGage.drawGage(canvas)
+                consRect = consGage.drawGage(canvas, xOffset = if (horizontalOverflowFlag || isLandscape) 0 else 320, yOffset = if (horizontalOverflowFlag || isLandscape) powerRect.bottom + 15 else 0)
+            } else if ((consRect.right + powerRect.right) < (correctedArea?.right?:0) && horizontalOverflowFlag) {
+                horizontalOverflowFlag = false
+                canvas.drawColor(carContext.getColor(R.color.slideup_activity_background))
+                powerRect = powerGage.drawGage(canvas)
+                consRect = consGage.drawGage(canvas, xOffset = if (horizontalOverflowFlag || isLandscape) 0 else 320, yOffset = if (horizontalOverflowFlag || isLandscape) powerRect.bottom + 15 else 0)
             }
 
             val plotRect = Rect(
@@ -405,5 +403,14 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
         }
         val dataPoints = DataConverters.consumptionPlotLineFromDrivingPoints(localDrivingPoints, appPreferences.distanceUnit.asUnit(newDistance.toFloat()))
         consumptionPlotLine.addDataPoints(dataPoints)
+    }
+
+    fun Rect.applyDensity(density: Float): Rect {
+        return Rect(
+            (this.left / density).toInt(),
+            (this.top / density).toInt(),
+            (this.right / density).toInt(),
+            (this.bottom / density).toInt()
+        )
     }
 }
