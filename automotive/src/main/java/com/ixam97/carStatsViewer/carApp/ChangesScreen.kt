@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.carApp
 
+import android.os.Build
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.Action
@@ -61,6 +62,7 @@ class ChangesScreen(carContext: CarContext): Screen(carContext) {
         )
         return Row.Builder().apply {
             setTitle(message)
+            addText("${CarStatsViewer.appPreferences.versionString} ➔ ${BuildConfig.VERSION_NAME}")
         }.build()
     }
 }

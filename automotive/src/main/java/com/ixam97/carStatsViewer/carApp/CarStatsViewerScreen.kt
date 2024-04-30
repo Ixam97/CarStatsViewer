@@ -43,7 +43,7 @@ class CarStatsViewerScreen(
 
     internal var apiState: Map<String, Int> = mapOf()
 
-    internal val carDataSurfaceCallback = CarDataSurfaceCallback(carContext)
+    // internal val carDataSurfaceCallback = CarDataSurfaceCallback(carContext)
 
     internal val appPreferences = CarStatsViewer.appPreferences
 
@@ -60,7 +60,7 @@ class CarStatsViewerScreen(
     internal var selectedTabContentID = CID_TRIP_DATA
         set(value) {
             if (field != value) {
-                carDataSurfaceCallback.invalidatePlot()
+                // carDataSurfaceCallback.invalidatePlot()
             }
             field = value
 
@@ -73,12 +73,12 @@ class CarStatsViewerScreen(
         lifecycle.addObserver(this)
         lifecycleScope.launch {
             CarStatsViewer.dataProcessor.realTimeDataFlow.throttle(100).collect {
-                carDataSurfaceCallback.requestRenderFrame()
+                // carDataSurfaceCallback.requestRenderFrame()
             }
         }
         lifecycleScope.launch {
             CarStatsViewer.dataProcessor.selectedSessionDataFlow.collect {
-                carDataSurfaceCallback.updateSession()
+                // carDataSurfaceCallback.updateSession()
                 drivingSession = it
                 if (selectedTabContentID != CID_CANVAS) {
                     invalidateTabView()
@@ -98,8 +98,8 @@ class CarStatsViewerScreen(
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
-        carContext.getCarService(AppManager::class.java)
-            .setSurfaceCallback(carDataSurfaceCallback)
+        // carContext.getCarService(AppManager::class.java)
+        //     .setSurfaceCallback(carDataSurfaceCallback)
     }
 
     override fun onPause(owner: LifecycleOwner) {
@@ -139,19 +139,19 @@ class CarStatsViewerScreen(
         setTabContents(TabContents.Builder(
             when (selectedTabContentID) {
                 CID_TRIP_DATA -> {
-                    carDataSurfaceCallback.pause()
+                    // carDataSurfaceCallback.pause()
                     TripDataList(drivingSession)
                 }
                 CID_STATUS -> {
-                    carDataSurfaceCallback.pause()
+                    // carDataSurfaceCallback.pause()
                     CarStatsList()
                 }
                 CID_CANVAS -> {
-                    carDataSurfaceCallback.resume()
+                    // carDataSurfaceCallback.resume()
                     NavigationTest()
                 }
                 CID_MENU -> {
-                    carDataSurfaceCallback.pause()
+                    // carDataSurfaceCallback.pause()
                     MenuList()
                 }
                 else -> throw Exception("Unsupported Content ID!")
