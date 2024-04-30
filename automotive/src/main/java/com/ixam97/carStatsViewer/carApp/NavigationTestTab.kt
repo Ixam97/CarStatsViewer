@@ -17,10 +17,24 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
     val selectedDimension = appPreferences.secondaryConsumptionDimension
     val secondaryPlotColor = appPreferences.chargePlotSecondaryColor
     val selectedColor = CarColor.createCustom(carContext.getColor(R.color.secondary_plot_color), carContext.getColor(R.color.secondary_plot_color))
-
+    val debugColor = CarColor.createCustom(carContext.getColor(R.color.polestar_orange), carContext.getColor(R.color.polestar_orange))
 
     setActionStrip(
         ActionStrip.Builder().apply {
+            /** Debug button for Emulator **/
+            if (CarStatsViewer.dataProcessor.staticVehicleData.modelName == "Speedy Model") {
+                addAction(Action.Builder().apply {
+                    setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).apply {
+                        if (carDataSurfaceCallback.getDebugFlag()) {
+                            setTint(CarColor.YELLOW)
+                        }
+                    }.build())
+                    setOnClickListener {
+                        carDataSurfaceCallback.toggleDebugFlag()
+                        invalidateTabView()
+                    }
+                }.build())
+            }
             addAction(Action.Builder().apply {
 
                 val unitString = appPreferences.distanceUnit.unit()
@@ -32,10 +46,11 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
 
                 setTitle(buttonLabel)
                 // setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_arrow_diagonal)).build())
-                when (CarStatsViewer.dataProcessor.staticVehicleData.modelName) {
-                    "PS2", "Speedy Model" -> {}
-                    else -> setFlags(Action.FLAG_IS_PERSISTENT)
+                val unknownVehicle = when (CarStatsViewer.dataProcessor.staticVehicleData.modelName) {
+                    "PS2", "Speedy Model" -> false
+                    else -> true
                 }
+                if (carDataSurfaceCallback.getDebugFlag() || unknownVehicle) setFlags(Action.FLAG_IS_PERSISTENT)
                 setOnClickListener {
                     val currentDistance = appPreferences.mainPrimaryDimensionRestriction
                     appPreferences.mainPrimaryDimensionRestriction = if (currentDistance >= 2) 0 else currentDistance + 1

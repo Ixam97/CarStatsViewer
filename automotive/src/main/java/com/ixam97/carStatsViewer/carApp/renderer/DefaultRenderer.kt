@@ -27,6 +27,12 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 class DefaultRenderer(val carContext: CarContext): Renderer {
+
+    companion object {
+        val polestarPS2Rect = Rect(0, 340, 999, 1183)
+        val volvoEX40Rect = Rect(0, 84, 670, 884)
+    }
+
     private val TAG = "DefaultRenderer"
 
     private val HORIZONTAL_TEXT_MARGIN = 10
@@ -56,6 +62,7 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
     private var consumptionPlotLinePaint: PlotLinePaint
 
     private var horizontalOverflowFlag = false
+    var debugFlag = false
 
     init {
         mLeftInsetPaint.color = Color.RED
@@ -205,22 +212,34 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
         InAppLogger.d("[$TAG] Density: $density")
         canvas.scale(density, density)
 
-        var correctedArea = when (CarStatsViewer.dataProcessor.staticVehicleData.modelName) {
-            "PS2" -> Rect(0, 340, 999, 1183)
-            "Speedy Model" -> Rect(0, 340, 999, 1183)
-            else -> {
-                if (visibleArea != null)
-                    Rect(
-                        visibleArea.left,
-                        visibleArea.top + if (!isLandscape) topCorrection else 0,
-                        visibleArea.right,
-                        visibleArea.bottom
-                    )
-                else null
-            }
-        }?.applyDensity(density)
-
-        drawBoundingBox(canvas, correctedArea, correctedArea)
+        var correctedArea = if (visibleArea != null) {
+            if (debugFlag) { visibleArea
+                /*
+                Rect(
+                    visibleArea.left,
+                    visibleArea.top,// + if (!isLandscape) topCorrection else 0,
+                    visibleArea.right,
+                    visibleArea.bottom
+                )
+                */
+            } else {
+                when (CarStatsViewer.dataProcessor.staticVehicleData.modelName) {
+                    "PS2" -> polestarPS2Rect
+                    "EX40", "XC40", "C40" -> volvoEX40Rect
+                    "Speedy Model" -> polestarPS2Rect // volvoEX40Rect
+                    else -> { visibleArea
+                        /*
+                        Rect(
+                            visibleArea.left,
+                            visibleArea.top,// + if (!isLandscape) topCorrection else 0,
+                            visibleArea.right,
+                            visibleArea.bottom
+                        )
+                         */
+                    }
+                }
+            }.applyDensity(density)
+        } else null
 
         if (correctedArea != null) {
 

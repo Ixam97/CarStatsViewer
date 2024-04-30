@@ -99,4 +99,10 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
         defaultRenderer.refreshConsumptionPlot()
         renderFrame()
     }
+
+    fun toggleDebugFlag() {
+        defaultRenderer.debugFlag = !defaultRenderer.debugFlag
+    }
+
+    fun getDebugFlag() = defaultRenderer.debugFlag
 }
