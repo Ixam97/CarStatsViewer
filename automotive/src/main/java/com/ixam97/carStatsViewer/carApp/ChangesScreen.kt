@@ -11,6 +11,7 @@ import androidx.car.app.model.Row
 import androidx.car.app.model.Template
 import androidx.core.graphics.drawable.IconCompat
 import com.ixam97.carStatsViewer.BuildConfig
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.ChangeLogCreator
 
@@ -27,6 +28,7 @@ class ChangesScreen(carContext: CarContext): Screen(carContext) {
                 setTitle("OK")
                 setFlags(Action.FLAG_PRIMARY)
                 setOnClickListener {
+                    CarStatsViewer.appPreferences.versionString = BuildConfig.VERSION_NAME
                     screenManager.pop()
                 }
             }.build())
