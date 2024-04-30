@@ -1,15 +1,20 @@
 package com.ixam97.carStatsViewer.carApp.renderer
 
+import android.app.Presentation
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import android.hardware.display.DisplayManager
+import android.hardware.display.VirtualDisplay
+import android.util.Log
 import android.view.Surface
 import androidx.car.app.CarContext
 import androidx.car.app.SurfaceCallback
 import androidx.car.app.SurfaceContainer
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.InAppLogger
 
 class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
@@ -20,7 +25,12 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
     private var stableArea: Rect? = null
     private var surface: Surface? = null
 
+    private lateinit var virtualDisplay: VirtualDisplay
+    private lateinit var presentation: Presentation
+
     private var rendererEnabled = false
+
+    var rendererEnabledDebug = false
 
     private val defaultRenderer = DefaultRenderer(carContext)
 
@@ -29,28 +39,56 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
 
     override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
         InAppLogger.d("[$TAG] Surface available")
-        super.onSurfaceAvailable(surfaceContainer)
-        surface = surfaceContainer.surface
-        renderFrame()
+        synchronized(this){
+            surface = surfaceContainer.surface
+            renderFrame()
+        }
+        /*
+        virtualDisplay = carContext
+            .getSystemService(DisplayManager::class.java)
+            .createVirtualDisplay(
+                "Dashboard_Display",
+                surfaceContainer.width,
+                surfaceContainer.height,
+                surfaceContainer.dpi,
+                surfaceContainer.surface,
+                DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY
+            )
+
+        presentation = Presentation(carContext, virtualDisplay.display)
+
+        presentation.setContentView(PlotView(carContext))
+        presentation.show()
+        */
     }
 
     override fun onVisibleAreaChanged(visibleArea: Rect) {
-        InAppLogger.i("[$TAG] Visible area changed " + surface + ". stableArea: "
-                + stableArea + " visibleArea:" + visibleArea)
-        this.visibleArea = visibleArea
-        renderFrame()
+        synchronized(this) {
+            InAppLogger.i(
+                "[$TAG] Visible area changed " + surface + ". stableArea: "
+                        + stableArea + " visibleArea:" + visibleArea
+            )
+            this.visibleArea = visibleArea
+            renderFrame()
+        }
     }
 
     override fun onStableAreaChanged(stableArea: Rect) {
-        InAppLogger.i("[$TAG] Stable area changed " + surface + ". stableArea: "
-                + stableArea + " visibleArea:" + visibleArea)
-        super.onStableAreaChanged(stableArea)
-        this.stableArea = stableArea
-        renderFrame()
+        synchronized(this) {
+            InAppLogger.i(
+                "[$TAG] Stable area changed " + surface + ". stableArea: "
+                        + stableArea + " visibleArea:" + visibleArea
+            )
+            super.onStableAreaChanged(stableArea)
+            this.stableArea = stableArea
+            renderFrame()
+        }
     }
 
     fun pause() {
-        renderFrame(clearFrame = true)
+        synchronized(this) {
+            renderFrame(clearFrame = true)
+        }
         rendererEnabled = false
     }
 
@@ -60,6 +98,7 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
     }
 
     fun renderFrame(clearFrame: Boolean = false) {
+        if (!rendererEnabledDebug) return
         val thread = Thread.currentThread().name
         if (thread != "main") {
             InAppLogger.w("[$TAG] Rendering not in main thread. Aborting")
@@ -152,17 +191,21 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
     }
 
     fun updateSession() {
-        if (!rendererEnabled) return
-        if (defaultRenderer !is DefaultRenderer) return
+        synchronized(this) {
+            if (!rendererEnabled) return
+            if (defaultRenderer !is DefaultRenderer) return
 
-        defaultRenderer.updateSession()
-        renderFrame()
+            defaultRenderer.updateSession()
+            renderFrame()
+        }
     }
 
     fun invalidatePlot() {
-        if (!rendererEnabled) return
-        defaultRenderer.refreshConsumptionPlot()
-        renderFrame()
+        synchronized(this) {
+            if (!rendererEnabled) return
+            defaultRenderer.refreshConsumptionPlot()
+            renderFrame()
+        }
     }
 
     fun toggleDebugFlag() {

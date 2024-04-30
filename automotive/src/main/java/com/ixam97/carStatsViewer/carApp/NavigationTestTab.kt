@@ -36,6 +36,17 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
                 }.build())
             }
             addAction(Action.Builder().apply {
+                setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_canvas)).apply {
+                    if (carDataSurfaceCallback.rendererEnabledDebug) {
+                        setTint(CarColor.YELLOW)
+                    }
+                }.build())
+                setOnClickListener {
+                    carDataSurfaceCallback.rendererEnabledDebug = !carDataSurfaceCallback.rendererEnabledDebug
+                    invalidateTabView()
+                }
+            }.build())
+            addAction(Action.Builder().apply {
 
                 val unitString = appPreferences.distanceUnit.unit()
                 val buttonLabel = when (appPreferences.mainPrimaryDimensionRestriction) {
