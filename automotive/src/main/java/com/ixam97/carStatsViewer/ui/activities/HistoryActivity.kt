@@ -21,6 +21,7 @@ import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.adapters.TripHistoryAdapter
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
+import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
@@ -409,7 +410,7 @@ class HistoryActivity  : FragmentActivity() {
             val chargingSessionsSize = chargingSessions.size
             val totalParts = drivingPointsChunks + chargingSessionsSize
 
-            var result: LiveDataApi.ConnectionStatus? = null
+            var result: ConnectionStatus? = null
 
             for (i in 0 until drivingPointsChunks) {
                 result = (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(
@@ -417,7 +418,7 @@ class HistoryActivity  : FragmentActivity() {
                     drivingPoints.slice(chunkSize * i..min(chunkSize * (i+1), drivingPoints.size - 1))
                 )
                 val percentage = (((i + 1).toFloat() / totalParts) * 100).roundToInt()
-                if (result == LiveDataApi.ConnectionStatus.CONNECTED) {
+                if (result == ConnectionStatus.CONNECTED) {
                     InAppLogger.v("Chunk $i transferred, $percentage%")
                     runOnUiThread {
                         waitSnack.updateMessage("Upload in progress, $percentage%")
@@ -435,7 +436,7 @@ class HistoryActivity  : FragmentActivity() {
                     chargingSessions = chargingSessions.slice(setOf(i))
                 )
                 val percentage = (((i + 1 + drivingPointsChunks).toFloat() / totalParts) * 100).roundToInt()
-                if (result == LiveDataApi.ConnectionStatus.CONNECTED) {
+                if (result == ConnectionStatus.CONNECTED) {
                     InAppLogger.v("Charging session $i transferred, $percentage%")
                     runOnUiThread {
                         waitSnack.updateMessage("Upload in progress, $percentage%")
@@ -458,7 +459,7 @@ class HistoryActivity  : FragmentActivity() {
             runOnUiThread {
                 this@HistoryActivity.window.findViewById<FrameLayout>(android.R.id.content).removeView(waitSnack)
                 when (result) {
-                    LiveDataApi.ConnectionStatus.CONNECTED, LiveDataApi.ConnectionStatus.LIMITED -> {
+                    ConnectionStatus.CONNECTED, ConnectionStatus.LIMITED -> {
                         SnackbarWidget.Builder(this@HistoryActivity, "Database uploaded successfully.")
                             .setIsError(false)
                             .setDuration(3000)

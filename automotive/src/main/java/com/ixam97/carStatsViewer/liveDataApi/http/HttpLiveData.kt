@@ -3,9 +3,7 @@ package com.ixam97.carStatsViewer.liveDataApi.http
 import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
-import android.widget.Button
 import android.widget.EditText
-import android.widget.Switch
 import android.widget.TextView
 import com.google.gson.Gson
 import com.ixam97.carStatsViewer.BuildConfig
@@ -16,6 +14,7 @@ import com.ixam97.carStatsViewer.dataProcessor.IgnitionState
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
+import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
@@ -170,7 +169,7 @@ class HttpLiveData (
         })
     }
 
-    suspend fun sendWithDrivingPoint(realTimeData: RealTimeData, drivingPoints: List<DrivingPoint>? = null, chargingSessions: List<ChargingSession>? = null): LiveDataApi.ConnectionStatus? {
+    suspend fun sendWithDrivingPoint(realTimeData: RealTimeData, drivingPoints: List<DrivingPoint>? = null, chargingSessions: List<ChargingSession>? = null): ConnectionStatus? {
         // Wrap with mutex lock to prevent concurrent reads of the backlog.
         mutex.withLock {
             if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataEnabled) {
