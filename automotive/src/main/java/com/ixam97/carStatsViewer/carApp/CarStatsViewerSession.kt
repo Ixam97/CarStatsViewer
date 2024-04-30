@@ -8,7 +8,8 @@ import androidx.car.app.ScreenManager
 import androidx.car.app.Session
 import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.lifecycle.DefaultLifecycleObserver
-import com.ixam97.carStatsViewer.carApp.renderer.Renderer
+import com.ixam97.carStatsViewer.BuildConfig
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.ui.activities.PermissionsActivity
 
@@ -23,6 +24,10 @@ class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
 
         val mLifecycle = lifecycle
         mLifecycle.addObserver(this)
+
+        if (CarStatsViewer.appPreferences.versionString != BuildConfig.VERSION_NAME) {
+            screens.add(ChangesScreen(carContext))
+        }
 
         var neededPermissions = permissions.filter { carContext.checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }
         if (neededPermissions.isNotEmpty()) {
