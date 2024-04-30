@@ -60,9 +60,6 @@ class DataProcessor {
 
     var dataInitialized: Boolean? = null
 
-    private var aaosExec : Executor? = null
-    private var aaosRunnable : java.lang.Runnable? = null
-
     /**
      * List of local copies of the current trips. Used for storing sum values and saving them to
      * disk less frequently. This should prevent hiccups when adding sums of distance and energy.
@@ -542,7 +539,6 @@ class DataProcessor {
         }
 
         localSessionsAccess = true
-        aaosExec?.execute(aaosRunnable)
     }
 
     fun updateTripDataValuesByTick() {
@@ -817,11 +813,6 @@ class DataProcessor {
                     updateChargingDataPoint()
             }
         }
-    }
-
-    fun setAaosCallback(exec: Executor, runnable: java.lang.Runnable) {
-        aaosExec = exec
-        aaosRunnable = runnable
     }
 
     /** Weird stuff for range estimate, not quite working as intended yet. */
