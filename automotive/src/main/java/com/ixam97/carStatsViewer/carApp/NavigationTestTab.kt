@@ -25,24 +25,24 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             if (CarStatsViewer.dataProcessor.staticVehicleData.modelName == "Speedy Model") {
                 addAction(Action.Builder().apply {
                     setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).apply {
-                        // if (carDataSurfaceCallback.getDebugFlag()) {
-                        //     setTint(CarColor.YELLOW)
-                        // }
+                        if (carDataSurfaceCallback.getDebugFlag()) {
+                            setTint(CarColor.YELLOW)
+                        }
                     }.build())
                     setOnClickListener {
-                        // carDataSurfaceCallback.toggleDebugFlag()
+                        carDataSurfaceCallback.toggleDebugFlag()
                         invalidateTabView()
                     }
                 }.build())
             }
             addAction(Action.Builder().apply {
                 setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_canvas)).apply {
-                    // if (carDataSurfaceCallback.rendererEnabledDebug) {
-                    //     setTint(CarColor.YELLOW)
-                    // }
+                    if (carDataSurfaceCallback.rendererEnabledDebug) {
+                        setTint(CarColor.YELLOW)
+                    }
                 }.build())
                 setOnClickListener {
-                    // carDataSurfaceCallback.rendererEnabledDebug = !carDataSurfaceCallback.rendererEnabledDebug
+                    carDataSurfaceCallback.rendererEnabledDebug = !carDataSurfaceCallback.rendererEnabledDebug
                     invalidateTabView()
                 }
             }.build())
@@ -61,13 +61,13 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
                     "PS2", "Speedy Model" -> false
                     else -> true
                 }
-                // if (carDataSurfaceCallback.getDebugFlag() || unknownVehicle) setFlags(Action.FLAG_IS_PERSISTENT)
+                if (carDataSurfaceCallback.getDebugFlag() || unknownVehicle) setFlags(Action.FLAG_IS_PERSISTENT)
                 setOnClickListener {
                     val currentDistance = appPreferences.mainPrimaryDimensionRestriction
                     appPreferences.mainPrimaryDimensionRestriction = if (currentDistance >= 2) 0 else currentDistance + 1
                     //invalidate()
                     invalidateTabView()
-                    // carDataSurfaceCallback.invalidatePlot()
+                    carDataSurfaceCallback.invalidatePlot()
                     // carDataSurfaceCallback.renderFrame()
                 }
             }.build())
@@ -83,7 +83,7 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             setFlags(Action.FLAG_IS_PERSISTENT)
             setOnClickListener {
                 appPreferences.secondaryConsumptionDimension = if (selectedDimension == 1) 0 else 1
-                // carDataSurfaceCallback.requestRenderFrame()
+                carDataSurfaceCallback.requestRenderFrame()
                 //invalidate()
                 invalidateTabView()
             }
@@ -97,7 +97,7 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             setFlags(Action.FLAG_IS_PERSISTENT)
             setOnClickListener {
                 appPreferences.secondaryConsumptionDimension = if (selectedDimension == 3) 0 else 3
-                // carDataSurfaceCallback.requestRenderFrame()
+                carDataSurfaceCallback.requestRenderFrame()
                 //invalidate()
                 invalidateTabView()
             }
@@ -111,7 +111,7 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             setFlags(Action.FLAG_IS_PERSISTENT)
             setOnClickListener {
                 appPreferences.secondaryConsumptionDimension = if (selectedDimension == 2) 0 else 2
-                // carDataSurfaceCallback.requestRenderFrame()
+                carDataSurfaceCallback.requestRenderFrame()
                 //invalidate()
                 invalidateTabView()
             }

@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
+import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
 import android.util.Log
 import android.view.Surface
@@ -13,6 +14,7 @@ import androidx.car.app.SurfaceCallback
 import androidx.car.app.SurfaceContainer
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.InAppLogger
 
 class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
