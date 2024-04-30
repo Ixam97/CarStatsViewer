@@ -71,6 +71,50 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
         // InAppLogger.v("[$TAG] Rendering Frame")
         defaultRenderer.setData(CarStatsViewer.dataProcessor.realTimeData)
 
+        surface?.let { surface ->
+
+            if (!surface.isValid) return
+            //var offScreenBitmap: Bitmap? = null
+            if (canvasSize.width() > 0 && canvasSize.height() > 0) {
+                visibleArea?.let { visibleArea ->
+                    val offScreenBitmap = Bitmap.createBitmap(
+                        canvasSize.width(),
+                        canvasSize.height(),
+                        Bitmap.Config.ARGB_8888
+                    )
+                    val offScreenCanvas = Canvas(offScreenBitmap)
+
+                    if (clearFrame) {
+                        offScreenCanvas.drawColor(Color.BLACK)
+                    } else {
+                        offScreenCanvas.drawColor(carContext.getColor(R.color.slideup_activity_background))
+                        defaultRenderer.renderFrame(offScreenCanvas, visibleArea, visibleArea)
+                    }
+
+                    try {
+                        surface.lockCanvas(null)?.apply {
+                            InAppLogger.d("[$TAG] Applying Bitmap to canvas.")
+                            canvasSize = Rect(0, 0, width, height)
+                            drawBitmap(offScreenBitmap, 0f, 0f, null)
+                            surface.unlockCanvasAndPost(this)
+                        } ?: InAppLogger.e("[$TAG] Could not lock canvas!")
+                    } catch (e: Exception) {
+                        InAppLogger.e("[$TAG] Could not draw canvas!")
+                    }
+
+                }
+            } else {
+                try {
+                    surface.lockCanvas(null)?.apply {
+                        canvasSize = Rect(0, 0, width, height)
+                        surface.unlockCanvasAndPost(this)
+                    }?:InAppLogger.e("[$TAG] Could not lock canvas!")
+                } catch (e: Exception) {
+                    InAppLogger.e("[$TAG] Could not draw canvas!")
+                }
+            }
+        }
+/*
         surface?.let {
 
             var offScreenBitmap: Bitmap? = null
@@ -104,6 +148,7 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
                 it.unlockCanvasAndPost(canvas)
             }
         }
+ */
     }
 
     fun updateSession() {
