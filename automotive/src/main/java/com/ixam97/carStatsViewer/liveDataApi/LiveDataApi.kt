@@ -10,33 +10,31 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
+sealed class ConnectionStatus(val status: Int) {
+    object UNUSED: ConnectionStatus(0)
+    object CONNECTED: ConnectionStatus(1)
+    object ERROR: ConnectionStatus(2)
+    object LIMITED: ConnectionStatus(3)
+
+    companion object {
+        fun fromInt(status: Int) = when (status) {
+            0 -> UNUSED
+            1 -> CONNECTED
+            3-> LIMITED
+            else -> ERROR
+        }
+    }
+}
+
 abstract class LiveDataApi(
     val apiIdentifier: String,
     val apiNameStringId: Int,
     var detailedLog: Boolean
     ){
 
-    /**
-     * Indicates the current connection status of the API
-     *      0: Unused
-     *      1: Connected
-     *      2: Error
-     *      3: Limited connection
-     */
     var connectionStatus: ConnectionStatus = ConnectionStatus.UNUSED
     var timeout: Int = 5_000
     var originalInterval: Int = 5_000
-
-    enum class ConnectionStatus(val status: Int) {
-        UNUSED(0),
-        CONNECTED(1),
-        ERROR(2),
-        LIMITED(3);
-
-        companion object {
-            fun fromInt(status: Int) = values().first { it.status == status }
-        }
-    }
 
     /**
      * Dialog to setup API.
