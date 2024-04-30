@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.annotation.OptIn
 import androidx.car.app.Screen
+import androidx.car.app.ScreenManager
 import androidx.car.app.Session
 import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -14,27 +15,38 @@ import com.ixam97.carStatsViewer.ui.activities.PermissionsActivity
 @OptIn(ExperimentalCarApi::class)
 class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
 
-    private val permissions = PermissionsActivity.PERMISSIONS.toList()
+    val permissions = PermissionsActivity.PERMISSIONS.toList()
 
     override fun onCreateScreen(intent: Intent): Screen {
+
+        val screens = mutableListOf<Screen>(CarStatsViewerScreen(carContext, this))
 
         val mLifecycle = lifecycle
         mLifecycle.addObserver(this)
 
         var neededPermissions = permissions.filter { carContext.checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }
         if (neededPermissions.isNotEmpty()) {
-            carContext.requestPermissions(permissions) {granted,_ ->
-                if (granted.containsAll(permissions)) {
-                    startService()
-                }
-            }
+            screens.add(PermissionScreen(carContext, this))
+            // carContext.requestPermissions(permissions) {granted,_ ->
+            //     if (granted.containsAll(permissions)) {
+            //         startService()
+            //     }
+            // }
         } else {
             startService()
         }
-        return CarStatsViewerScreen(carContext, this)
+
+        if (screens.size > 1) {
+            val screenManager = carContext.getCarService(ScreenManager::class.java)
+            for (i in 0 until screens.size - 1) {
+                screenManager.push(screens[i])
+            }
+        }
+
+        return screens.last()// CarStatsViewerScreen(carContext, this)
     }
 
-    private fun startService() {
+    fun startService() {
         carContext.startForegroundService(Intent(carContext, DataCollector::class.java))
     }
 }
