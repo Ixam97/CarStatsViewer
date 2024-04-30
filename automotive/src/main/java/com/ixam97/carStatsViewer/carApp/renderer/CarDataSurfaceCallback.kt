@@ -64,26 +64,23 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
 
         surface?.apply {
             if(!isValid) return
-            val canvas: Canvas = try {
-                lockCanvas(null)
+            var canvas: Canvas? = null
+            try {
+                canvas = lockCanvas(null)
+                if (canvas != null) {
+                    if (clearFrame) {
+                        canvas.drawColor(Color.BLACK)
+                    } else {
+                        canvas.drawColor(carContext.getColor(R.color.slideup_activity_background))
+                        defaultRenderer.renderFrame(canvas, visibleArea, stableArea)
+                    }
+                }
             } catch (e: Exception) {
-                InAppLogger.w("[$TAG] Failed to get canvas:\n${e.printStackTrace()}")
-                return
-            }
-
-            if (clearFrame) {
-                canvas.drawColor(Color.BLACK)
+                InAppLogger.w("[$TAG] Failed to draw canvas:\n${e.printStackTrace()}")
+            } finally {
                 unlockCanvasAndPost(canvas)
-                return
             }
-
-            canvas.drawColor(carContext.getColor(R.color.slideup_activity_background))
-            // canvas.drawColor(if (carContext.isDarkMode) Color.BLACK else Color.WHITE)
-
-            defaultRenderer.renderFrame(canvas, visibleArea, stableArea)
-            unlockCanvasAndPost(canvas)
         }
-
     }
 
     fun updateSession() {
