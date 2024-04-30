@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
 android {
-    compileSdkVersion 34
+    compileSdk 34
 
     defaultConfig {
         minSdkVersion 29
@@ -15,9 +15,8 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    // flavorDimensions "version"
-    // flavorDimensions "aaos"
-    flavorDimensions("version", "aaos")
+
+    flavorDimensions = ["version", "aaos"]
 
     productFlavors {
         stable {
