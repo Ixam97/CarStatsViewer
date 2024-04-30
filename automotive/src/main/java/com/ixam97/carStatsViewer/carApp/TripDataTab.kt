@@ -13,6 +13,8 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
+import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
+import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,28 +56,35 @@ internal fun CarStatsViewerScreen.TripDataList(session: DrivingSession?) = ListT
                 ))
 
                 var statusString = ""
-                var index = 0
                 var apiIconColor = colorDisconnected
 
-                apiState.forEach { (apiName, status) ->
-                    statusString += "$apiName: $status    "
-                    if (index == CarStatsViewer.appPreferences.mainViewConnectionApi) {
+                CarStatsViewer.liveDataApis.forEachIndexed { apiIndex, liveDataApi ->
+                    if (liveDataApi.connectionStatus.status == 0) return@forEachIndexed
+                    val name = liveDataApi.apiIdentifier
+                    val status = liveDataApi.connectionStatus
+                    val statusName = when (status) {
+                        ConnectionStatus.UNUSED -> "Disabled"
+                        ConnectionStatus.CONNECTED -> "Connected"
+                        ConnectionStatus.LIMITED -> "Limited"
+                        else -> "Error"
+                    }
+                    if (statusString.isNotEmpty()) statusString += "\n"
+                    statusString += "$name: $statusName"
+                    if (apiIndex == CarStatsViewer.appPreferences.mainViewConnectionApi) {
                         apiIconColor = when (status) {
-                            0 -> colorDisconnected
-                            1 -> colorConnected
-                            2 -> colorLimited
+                            ConnectionStatus.UNUSED -> colorDisconnected
+                            ConnectionStatus.CONNECTED -> colorConnected
+                            ConnectionStatus.LIMITED -> colorLimited
                             else -> colorError
                         }
                     }
-
-                    index++
                 }
 
                 if (statusString.isEmpty() || statusString == "") statusString = "No API available"
 
                 addItem(createDataRow(
                     statusString,
-                    "Api Status",
+                    null,
                     R.drawable.ic_connected,
                     apiIconColor
                 ))
@@ -129,8 +138,8 @@ internal fun CarStatsViewerScreen.TripDataList(session: DrivingSession?) = ListT
 }.build()
 
 @OptIn(ExperimentalCarApi::class) private
-fun CarStatsViewerScreen.createDataRow(value: String, name: String, iconResId: Int, iconColor: CarColor = CarColor.DEFAULT) = Row.Builder().apply {
+fun CarStatsViewerScreen.createDataRow(value: String, name: String? = null, iconResId: Int, iconColor: CarColor = CarColor.DEFAULT) = Row.Builder().apply {
     setTitle(value)
     setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, iconResId)).setTint(iconColor).build())
-    addText(name)
+    name?.let{addText(it)}
 }.build()

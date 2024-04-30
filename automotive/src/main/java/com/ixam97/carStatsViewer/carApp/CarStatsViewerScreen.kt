@@ -104,12 +104,12 @@ class CarStatsViewerScreen(
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
-        carDataSurfaceCallback.pause()
+        // carDataSurfaceCallback.pause()
     }
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        carDataSurfaceCallback.resume()
+        // carDataSurfaceCallback.resume()
     }
 
     override fun onGetTemplate(): Template {
