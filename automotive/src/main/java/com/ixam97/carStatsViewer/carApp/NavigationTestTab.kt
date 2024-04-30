@@ -83,7 +83,7 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             setFlags(Action.FLAG_IS_PERSISTENT)
             setOnClickListener {
                 appPreferences.secondaryConsumptionDimension = if (selectedDimension == 1) 0 else 1
-                carDataSurfaceCallback.renderFrame()
+                carDataSurfaceCallback.requestRenderFrame()
                 //invalidate()
                 invalidateTabView()
             }
@@ -97,7 +97,7 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             setFlags(Action.FLAG_IS_PERSISTENT)
             setOnClickListener {
                 appPreferences.secondaryConsumptionDimension = if (selectedDimension == 3) 0 else 3
-                carDataSurfaceCallback.renderFrame()
+                carDataSurfaceCallback.requestRenderFrame()
                 //invalidate()
                 invalidateTabView()
             }
@@ -111,7 +111,7 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             setFlags(Action.FLAG_IS_PERSISTENT)
             setOnClickListener {
                 appPreferences.secondaryConsumptionDimension = if (selectedDimension == 2) 0 else 2
-                carDataSurfaceCallback.renderFrame()
+                carDataSurfaceCallback.requestRenderFrame()
                 //invalidate()
                 invalidateTabView()
             }

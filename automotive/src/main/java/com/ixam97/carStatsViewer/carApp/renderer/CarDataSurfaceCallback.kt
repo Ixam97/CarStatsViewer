@@ -97,7 +97,13 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
         invalidatePlot()
     }
 
-    fun renderFrame(clearFrame: Boolean = false) {
+    fun requestRenderFrame() {
+        synchronized(this) {
+            renderFrame()
+        }
+    }
+
+    private fun renderFrame(clearFrame: Boolean = false) {
         if (!rendererEnabledDebug) return
         val thread = Thread.currentThread().name
         if (thread != "main") {

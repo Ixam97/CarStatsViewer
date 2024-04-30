@@ -73,7 +73,7 @@ class CarStatsViewerScreen(
         lifecycle.addObserver(this)
         lifecycleScope.launch {
             CarStatsViewer.dataProcessor.realTimeDataFlow.throttle(100).collect {
-                carDataSurfaceCallback.renderFrame()
+                carDataSurfaceCallback.requestRenderFrame()
             }
         }
         lifecycleScope.launch {
