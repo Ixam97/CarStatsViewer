@@ -207,9 +207,9 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
 
         val isLandscape = (canvas.width > canvas.height)
 
-        InAppLogger.d("[$TAG] Rendering Frame")
+        // InAppLogger.d("[$TAG] Rendering Frame")
         val density = CarStatsViewer.appContext.resources.displayMetrics.density
-        InAppLogger.d("[$TAG] Density: $density")
+        // InAppLogger.d("[$TAG] Density: $density")
         canvas.scale(density, density)
 
         var correctedArea = if (visibleArea != null) {
@@ -329,7 +329,7 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
 
             correctedArea = moveDrawingArea(canvas, drawBox = false, stableArea = plotRect)
 
-            InAppLogger.d("[$TAG] Canvas dimensions: ${canvas.width} x ${canvas.height}")
+            // InAppLogger.d("[$TAG] Canvas dimensions: ${canvas.width} x ${canvas.height}")
             val diagramBounds: Rect? = if (correctedArea != null) {
                 Rect(correctedArea.left,correctedArea.top, correctedArea.right, correctedArea.bottom - 15)
             } else null

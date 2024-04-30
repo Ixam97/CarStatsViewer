@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.carApp.renderer
 
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
@@ -22,6 +23,8 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
     private var rendererEnabled = false
 
     private val defaultRenderer = DefaultRenderer(carContext)
+
+    private var canvasSize = Rect(0,0,0,0)
 
 
     override fun onSurfaceAvailable(surfaceContainer: SurfaceContainer) {
@@ -57,28 +60,48 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
     }
 
     fun renderFrame(clearFrame: Boolean = false) {
+        val thread = Thread.currentThread().name
+        if (thread != "main") {
+            InAppLogger.w("[$TAG] Rendering not in main thread. Aborting")
+            return
+        }
+        // InAppLogger.d("[$TAG] Thread: ${Thread.currentThread().name}")
         if (!rendererEnabled) return
 
-        InAppLogger.d("[$TAG] Rendering Frame")
+        // InAppLogger.v("[$TAG] Rendering Frame")
         defaultRenderer.setData(CarStatsViewer.dataProcessor.realTimeData)
 
-        surface?.apply {
-            if(!isValid) return
+        surface?.let {
+
+            var offScreenBitmap: Bitmap? = null
+            if (canvasSize.width() > 0 && canvasSize.height() > 0) {
+                if (!it.isValid) return
+                visibleArea?.let {
+                    offScreenBitmap = Bitmap.createBitmap(
+                        canvasSize.width(),
+                        canvasSize.height(),
+                        Bitmap.Config.ARGB_8888
+                    )
+                }
+                if (offScreenBitmap == null) return
+                var offScreenCanvas = Canvas(offScreenBitmap!!)
+
+                if (clearFrame) {
+                    offScreenCanvas.drawColor(Color.BLACK)
+                } else {
+                    offScreenCanvas.drawColor(carContext.getColor(R.color.slideup_activity_background))
+                    defaultRenderer.renderFrame(offScreenCanvas, visibleArea, visibleArea)
+                }
+            }
             var canvas: Canvas? = null
             try {
-                canvas = lockCanvas(null)
-                if (canvas != null) {
-                    if (clearFrame) {
-                        canvas.drawColor(Color.BLACK)
-                    } else {
-                        canvas.drawColor(carContext.getColor(R.color.slideup_activity_background))
-                        defaultRenderer.renderFrame(canvas, visibleArea, stableArea)
-                    }
-                }
+                canvas = it.lockCanvas(null)
+                canvasSize = Rect(0, 0, canvas?.width?:0, canvas?.height?:0)
+                offScreenBitmap?.let { bitmap -> canvas?.drawBitmap(bitmap, 0f, 0f, null)}
             } catch (e: Exception) {
                 InAppLogger.w("[$TAG] Failed to draw canvas:\n${e.printStackTrace()}")
             } finally {
-                unlockCanvasAndPost(canvas)
+                it.unlockCanvasAndPost(canvas)
             }
         }
     }
