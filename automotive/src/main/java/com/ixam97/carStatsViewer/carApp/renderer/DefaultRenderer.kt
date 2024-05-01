@@ -23,7 +23,6 @@ import com.ixam97.carStatsViewer.ui.views.GageView
 import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.DataConverters
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import kotlinx.android.synthetic.main.activity_main.main_consumption_plot
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.roundToInt

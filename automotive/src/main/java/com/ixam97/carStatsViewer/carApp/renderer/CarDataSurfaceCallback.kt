@@ -16,6 +16,12 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.withContext
 
 class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
 
@@ -27,6 +33,9 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
 
     private lateinit var virtualDisplay: VirtualDisplay
     private lateinit var presentation: Presentation
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private val rendererContext = newSingleThreadContext("rendererContext")
 
     private var rendererEnabled = false
 
@@ -104,60 +113,58 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
     }
 
     private fun renderFrame(clearFrame: Boolean = false) {
-        val thread = Thread.currentThread().name
-        if (thread != "main") {
-            InAppLogger.w("[$TAG] Rendering not in main thread. Aborting")
-            return
-        }
-        // InAppLogger.d("[$TAG] Thread: ${Thread.currentThread().name}")
+
         if (!rendererEnabled) return
-
-        // InAppLogger.v("[$TAG] Rendering Frame")
-        defaultRenderer.setData(CarStatsViewer.dataProcessor.realTimeData)
-
         surface?.let { surface ->
-
             if (!surface.isValid) return
-            //var offScreenBitmap: Bitmap? = null
-            if (canvasSize.width() > 0 && canvasSize.height() > 0) {
-                visibleArea?.let { visibleArea ->
-                    val offScreenBitmap = Bitmap.createBitmap(
-                        canvasSize.width(),
-                        canvasSize.height(),
-                        Bitmap.Config.ARGB_8888
-                    )
-                    val offScreenCanvas = Canvas(offScreenBitmap)
 
-                    if (clearFrame) {
-                        offScreenCanvas.drawColor(Color.BLACK)
-                    } else {
-                        offScreenCanvas.drawColor(carContext.getColor(R.color.slideup_activity_background))
-                        defaultRenderer.renderFrame(offScreenCanvas, visibleArea, visibleArea)
+            CoroutineScope(rendererContext).launch {
+
+                defaultRenderer.setData(CarStatsViewer.dataProcessor.realTimeData)
+                val thread = Thread.currentThread().name
+                InAppLogger.d("[$TAG] Thread: $thread")
+                //var offScreenBitmap: Bitmap? = null
+                if (canvasSize.width() > 0 && canvasSize.height() > 0) {
+                    visibleArea?.let { visibleArea ->
+                        val offScreenBitmap = Bitmap.createBitmap(
+                            canvasSize.width(),
+                            canvasSize.height(),
+                            Bitmap.Config.ARGB_8888
+                        )
+                        val offScreenCanvas = Canvas(offScreenBitmap)
+
+                        if (clearFrame) {
+                            offScreenCanvas.drawColor(Color.BLACK)
+                        } else {
+                            offScreenCanvas.drawColor(carContext.getColor(R.color.slideup_activity_background))
+                            defaultRenderer.renderFrame(offScreenCanvas, visibleArea, visibleArea)
+                        }
+                        withContext(Dispatchers.Main) {
+                            try {
+                                surface.lockCanvas(null)?.apply {
+                                    InAppLogger.d("[$TAG] Applying Bitmap to canvas.")
+                                    canvasSize = Rect(0, 0, width, height)
+                                    drawBitmap(offScreenBitmap, 0f, 0f, null)
+                                    surface.unlockCanvasAndPost(this)
+                                } ?: InAppLogger.e("[$TAG] Could not lock canvas!")
+                            } catch (e: Exception) {
+                                InAppLogger.e("[$TAG] Could not draw canvas!")
+                            }
+                        }
                     }
-
-                    try {
-                        surface.lockCanvas(null)?.apply {
-                            InAppLogger.d("[$TAG] Applying Bitmap to canvas.")
-                            canvasSize = Rect(0, 0, width, height)
-                            drawBitmap(offScreenBitmap, 0f, 0f, null)
-                            surface.unlockCanvasAndPost(this)
-                        } ?: InAppLogger.e("[$TAG] Could not lock canvas!")
-                    } catch (e: Exception) {
-                        InAppLogger.e("[$TAG] Could not draw canvas!")
+                } else {
+                    withContext(Dispatchers.Main) {
+                        try {
+                            surface.lockCanvas(null)?.apply {
+                                canvasSize = Rect(0, 0, width, height)
+                                surface.unlockCanvasAndPost(this)
+                            }?:InAppLogger.e("[$TAG] Could not lock canvas!")
+                        } catch (e: Exception) {
+                            InAppLogger.e("[$TAG] Could not draw canvas!")
+                        }
                     }
-
-                }
-            } else {
-                try {
-                    surface.lockCanvas(null)?.apply {
-                        canvasSize = Rect(0, 0, width, height)
-                        surface.unlockCanvasAndPost(this)
-                    }?:InAppLogger.e("[$TAG] Could not lock canvas!")
-                } catch (e: Exception) {
-                    InAppLogger.e("[$TAG] Could not draw canvas!")
                 }
             }
-        }
 /*
         surface?.let {
 
@@ -193,6 +200,7 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
             }
         }
  */
+        }
     }
 
     fun updateSession() {
