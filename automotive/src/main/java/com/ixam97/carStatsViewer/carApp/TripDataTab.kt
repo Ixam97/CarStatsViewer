@@ -113,8 +113,8 @@ internal fun CarStatsViewerScreen.TripDataList(session: DrivingSession?) = ListT
             }
         }.build())
 
-        // Adding second FAB, only working in Emulator right now!
-        if (session.session_type == 1) {
+        // Adding second FAB, only working on API Level 7!
+        if (session.session_type == 1 && carContext.carAppApiLevel >= 7) {
             addAction(Action.Builder().apply {
                 val backgroundColor = carContext.getColor(R.color.default_button_color)
                 setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_reset)).build())

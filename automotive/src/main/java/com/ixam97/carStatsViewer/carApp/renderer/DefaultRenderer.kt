@@ -9,6 +9,7 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionSmoothingType
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionY
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotHighlightMethod
@@ -22,6 +23,7 @@ import com.ixam97.carStatsViewer.ui.views.GageView
 import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.DataConverters
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import kotlinx.android.synthetic.main.activity_main.main_consumption_plot
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -31,6 +33,11 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
     companion object {
         val polestarPS2Rect = Rect(0, 340, 999, 1183)
         val volvoEX40Rect = Rect(0, 84, 670, 884)
+
+        val layoutList = mapOf(
+            "PS2" to polestarPS2Rect,
+            "EX40" to volvoEX40Rect
+        )
     }
 
     private val TAG = "DefaultRenderer"
@@ -66,6 +73,7 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
 
     var useFixedSizes: Boolean = false
     var drawBoundingBoxes: Boolean = false
+    var overrideLayout: String? = null
 
     init {
         mLeftInsetPaint.color = Color.RED
@@ -226,7 +234,8 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
                 )
                 */
             } else {
-                when (CarStatsViewer.dataProcessor.staticVehicleData.modelName) {
+                val layoutModel = overrideLayout?:CarStatsViewer.dataProcessor.staticVehicleData.modelName
+                when (layoutModel) {
                     "PS2" -> polestarPS2Rect
                     "EX40", "XC40", "C40" -> volvoEX40Rect
                     "Speedy Model" -> polestarPS2Rect // volvoEX40Rect
@@ -283,6 +292,8 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
                     2 -> 100_000L
                     else -> 20_000L
                 }
+                dimensionSmoothing = 0.01f
+                dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
                 dimensionRestriction = CarStatsViewer.appPreferences.distanceUnit.asUnit(newDistance)
                 dimensionYSecondary = PlotDimensionY.IndexMap[CarStatsViewer.appPreferences.secondaryConsumptionDimension]
             }
