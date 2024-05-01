@@ -8,7 +8,9 @@ import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.Row
 import androidx.core.graphics.drawable.IconCompat
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.ui.activities.DebugActivity
 import com.ixam97.carStatsViewer.ui.activities.HistoryActivity
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
 import com.ixam97.carStatsViewer.ui.activities.SettingsActivity
@@ -23,6 +25,10 @@ internal fun CarStatsViewerScreen.MenuList() = ListTemplate.Builder().apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
     val historyActivityIntent = Intent(carContext, HistoryActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+
+    val debugActivityIntent = Intent(carContext, DebugActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
 
@@ -51,5 +57,24 @@ internal fun CarStatsViewerScreen.MenuList() = ListTemplate.Builder().apply {
                 carContext.startActivity(settingsActivityIntent)
             }
         }.build())
+        if (BuildConfig.FLAVOR_version == "dev") {
+            addItem(Row.Builder().apply{
+                setTitle("Debug")
+                setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).build())
+                setBrowsable(true)
+                setOnClickListener {
+                    carContext.startActivity(debugActivityIntent)
+                }
+            }.build())
+            addItem(Row.Builder().apply{
+                setTitle("Open dashboard in map view")
+                setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_canvas)).build())
+                setBrowsable(true)
+                setOnClickListener {
+                    session.carDataSurfaceCallback.resume()
+                    screenManager.push(RealTimeDataScreen(carContext, session))
+                }
+            }.build())
+        }
     }.build())
 }.build()

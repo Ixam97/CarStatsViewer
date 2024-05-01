@@ -1,6 +1,8 @@
 package com.ixam97.carStatsViewer.carApp
 
 import androidx.annotation.OptIn
+import androidx.car.app.CarContext
+import androidx.car.app.ScreenManager
 import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.model.Action
 import androidx.car.app.model.ActionStrip
@@ -10,14 +12,27 @@ import androidx.car.app.navigation.model.NavigationTemplate
 import androidx.core.graphics.drawable.IconCompat
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carApp.renderer.CarDataSurfaceCallback
 
 @OptIn(ExperimentalCarApi::class)
-internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder().apply {
+fun RealTimeDateTemplate(
+    carContext: CarContext,
+    session: CarStatsViewerSession,
+    backButton: Boolean = true,
+    invalidateCallback: () -> Unit,
+) = NavigationTemplate.Builder().apply {
+
+    val appPreferences = CarStatsViewer.appPreferences
 
     val selectedDimension = appPreferences.secondaryConsumptionDimension
     val secondaryPlotColor = appPreferences.chargePlotSecondaryColor
     val selectedColor = CarColor.createCustom(carContext.getColor(R.color.secondary_plot_color), carContext.getColor(R.color.secondary_plot_color))
     val debugColor = CarColor.createCustom(carContext.getColor(R.color.polestar_orange), carContext.getColor(R.color.polestar_orange))
+
+    fun localInvalidate() {
+        session.carDataSurfaceCallback.requestRenderFrame()
+        invalidateCallback()
+    }
 
     setActionStrip(
         ActionStrip.Builder().apply {
@@ -25,27 +40,16 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             if (CarStatsViewer.dataProcessor.staticVehicleData.modelName == "Speedy Model") {
                 addAction(Action.Builder().apply {
                     setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).apply {
-                        if (carDataSurfaceCallback.getDebugFlag()) {
+                        if (session.carDataSurfaceCallback.getDebugFlag()) {
                             setTint(CarColor.YELLOW)
                         }
                     }.build())
                     setOnClickListener {
-                        carDataSurfaceCallback.toggleDebugFlag()
-                        invalidateTabView()
+                        session.carDataSurfaceCallback.toggleDebugFlag()
+                        localInvalidate()
                     }
                 }.build())
             }
-            addAction(Action.Builder().apply {
-                setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_canvas)).apply {
-                    if (carDataSurfaceCallback.rendererEnabledDebug) {
-                        setTint(CarColor.YELLOW)
-                    }
-                }.build())
-                setOnClickListener {
-                    carDataSurfaceCallback.rendererEnabledDebug = !carDataSurfaceCallback.rendererEnabledDebug
-                    invalidateTabView()
-                }
-            }.build())
             addAction(Action.Builder().apply {
 
                 val unitString = appPreferences.distanceUnit.unit()
@@ -56,21 +60,27 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
                 }
 
                 setTitle(buttonLabel)
-                // setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_arrow_diagonal)).build())
                 val unknownVehicle = when (CarStatsViewer.dataProcessor.staticVehicleData.modelName) {
                     "PS2", "Speedy Model" -> false
                     else -> true
                 }
-                if (carDataSurfaceCallback.getDebugFlag() || unknownVehicle) setFlags(Action.FLAG_IS_PERSISTENT)
+                if (session.carDataSurfaceCallback.getDebugFlag() || unknownVehicle) setFlags(Action.FLAG_IS_PERSISTENT)
                 setOnClickListener {
                     val currentDistance = appPreferences.mainPrimaryDimensionRestriction
                     appPreferences.mainPrimaryDimensionRestriction = if (currentDistance >= 2) 0 else currentDistance + 1
-                    //invalidate()
-                    invalidateTabView()
-                    carDataSurfaceCallback.invalidatePlot()
-                    // carDataSurfaceCallback.renderFrame()
+                    localInvalidate()
+                    session.carDataSurfaceCallback.invalidatePlot()
                 }
             }.build())
+            if (backButton) addAction(Action.Builder()
+                .setFlags(Action.FLAG_IS_PERSISTENT)
+                .setIcon(CarIcon.BACK)
+                .setOnClickListener {
+                    session.carDataSurfaceCallback.pause()
+                    carContext.getCarService(ScreenManager::class.java).pop()
+                }
+                .build())
+
         }.build()
     )
     setMapActionStrip(ActionStrip.Builder().apply {
@@ -83,9 +93,8 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             setFlags(Action.FLAG_IS_PERSISTENT)
             setOnClickListener {
                 appPreferences.secondaryConsumptionDimension = if (selectedDimension == 1) 0 else 1
-                carDataSurfaceCallback.requestRenderFrame()
-                //invalidate()
-                invalidateTabView()
+
+                localInvalidate()
             }
         }.build())
         addAction(Action.Builder().apply {
@@ -97,9 +106,7 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             setFlags(Action.FLAG_IS_PERSISTENT)
             setOnClickListener {
                 appPreferences.secondaryConsumptionDimension = if (selectedDimension == 3) 0 else 3
-                carDataSurfaceCallback.requestRenderFrame()
-                //invalidate()
-                invalidateTabView()
+                localInvalidate()
             }
         }.build())
         addAction(Action.Builder().apply {
@@ -111,9 +118,7 @@ internal fun CarStatsViewerScreen.NavigationTest() = NavigationTemplate.Builder(
             setFlags(Action.FLAG_IS_PERSISTENT)
             setOnClickListener {
                 appPreferences.secondaryConsumptionDimension = if (selectedDimension == 2) 0 else 2
-                carDataSurfaceCallback.requestRenderFrame()
-                //invalidate()
-                invalidateTabView()
+                localInvalidate()
             }
         }.build())
     }.build())

@@ -7,6 +7,7 @@ import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.model.Action
 import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
+import androidx.car.app.model.MessageTemplate
 import androidx.car.app.model.Tab
 import androidx.car.app.model.TabContents
 import androidx.car.app.model.TabTemplate
@@ -29,7 +30,7 @@ import kotlinx.coroutines.launch
 @ExperimentalCarApi
 class CarStatsViewerScreen(
     carContext: CarContext,
-    session: CarStatsViewerSession
+    val session: CarStatsViewerSession
 ) : Screen(carContext), DefaultLifecycleObserver {
 
     internal val TAG = "CarStatsViewerScreen"
@@ -42,8 +43,6 @@ class CarStatsViewerScreen(
     private val INVALIDATE_INTERVAL_MS = 500L
 
     internal var apiState: Map<String, Int> = mapOf()
-
-    internal val carDataSurfaceCallback = CarDataSurfaceCallback(carContext)
 
     internal val appPreferences = CarStatsViewer.appPreferences
 
@@ -60,7 +59,7 @@ class CarStatsViewerScreen(
     internal var selectedTabContentID = CID_TRIP_DATA
         set(value) {
             if (field != value) {
-                carDataSurfaceCallback.invalidatePlot()
+                session.carDataSurfaceCallback.invalidatePlot()
             }
             field = value
 
@@ -73,12 +72,12 @@ class CarStatsViewerScreen(
         lifecycle.addObserver(this)
         lifecycleScope.launch {
             CarStatsViewer.dataProcessor.realTimeDataFlow.throttle(100).collect {
-                carDataSurfaceCallback.requestRenderFrame()
+                session.carDataSurfaceCallback.requestRenderFrame()
             }
         }
         lifecycleScope.launch {
             CarStatsViewer.dataProcessor.selectedSessionDataFlow.collect {
-                carDataSurfaceCallback.updateSession()
+                session.carDataSurfaceCallback.updateSession()
                 drivingSession = it
                 if (selectedTabContentID != CID_CANVAS) {
                     invalidateTabView()
@@ -99,17 +98,17 @@ class CarStatsViewerScreen(
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         carContext.getCarService(AppManager::class.java)
-            .setSurfaceCallback(carDataSurfaceCallback)
+            .setSurfaceCallback(session.carDataSurfaceCallback)
     }
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
-        // carDataSurfaceCallback.pause()
+        // session.carDataSurfaceCallback.pause()
     }
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        // carDataSurfaceCallback.resume()
+        // session.carDataSurfaceCallback.resume()
     }
 
     override fun onGetTemplate(): Template {
@@ -118,7 +117,6 @@ class CarStatsViewerScreen(
 
     private fun createTabTemplate() = TabTemplate.Builder(object : TabCallback {
         override fun onTabSelected(tabContentId: String) {
-
             selectedTabContentID = tabContentId
             invalidateTabView()
             InAppLogger.v("[$TAG] Tab change requested invalidate.")
@@ -139,19 +137,28 @@ class CarStatsViewerScreen(
         setTabContents(TabContents.Builder(
             when (selectedTabContentID) {
                 CID_TRIP_DATA -> {
-                    carDataSurfaceCallback.pause()
+                    session.carDataSurfaceCallback.pause()
                     TripDataList(drivingSession)
                 }
                 CID_STATUS -> {
-                    carDataSurfaceCallback.pause()
+                    session.carDataSurfaceCallback.pause()
                     CarStatsList()
                 }
                 CID_CANVAS -> {
-                    carDataSurfaceCallback.resume()
-                    NavigationTest()
+                    session.carDataSurfaceCallback.resume()
+                    if (carContext.carAppApiLevel >= 7)
+                        RealTimeDateTemplate(
+                            carContext,
+                            session,
+                            false
+                        ) {
+                            invalidateTabView()
+                        }
+                    else
+                        LowApiLevelMessage()
                 }
                 CID_MENU -> {
-                    carDataSurfaceCallback.pause()
+                    session.carDataSurfaceCallback.pause()
                     MenuList()
                 }
                 else -> throw Exception("Unsupported Content ID!")
@@ -187,5 +194,14 @@ class CarStatsViewerScreen(
             }
         }
     }
+
+    private fun LowApiLevelMessage() = MessageTemplate.Builder("API level 7 required for embedded view").apply {
+        addAction(Action.Builder().apply {
+            setTitle("Open external map view")
+            setOnClickListener {
+                screenManager.push(RealTimeDataScreen(carContext, session))
+            }
+        }.build())
+    }.build()
 }
 

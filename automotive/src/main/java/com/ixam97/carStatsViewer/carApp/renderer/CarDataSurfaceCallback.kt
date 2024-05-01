@@ -30,8 +30,6 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
 
     private var rendererEnabled = false
 
-    var rendererEnabledDebug = false
-
     private val defaultRenderer = DefaultRenderer(carContext)
 
     private var canvasSize = Rect(0,0,0,0)
@@ -104,7 +102,6 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
     }
 
     private fun renderFrame(clearFrame: Boolean = false) {
-        if (!rendererEnabledDebug) return
         val thread = Thread.currentThread().name
         if (thread != "main") {
             InAppLogger.w("[$TAG] Rendering not in main thread. Aborting")

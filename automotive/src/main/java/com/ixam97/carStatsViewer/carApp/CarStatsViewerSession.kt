@@ -10,6 +10,7 @@ import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.lifecycle.DefaultLifecycleObserver
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.carApp.renderer.CarDataSurfaceCallback
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.ui.activities.PermissionsActivity
 
@@ -18,7 +19,10 @@ class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
 
     val permissions = PermissionsActivity.PERMISSIONS.toList()
 
+    lateinit var carDataSurfaceCallback: CarDataSurfaceCallback
+
     override fun onCreateScreen(intent: Intent): Screen {
+        carDataSurfaceCallback = CarDataSurfaceCallback(carContext)
 
         val screens = mutableListOf<Screen>(CarStatsViewerScreen(carContext, this))
 
