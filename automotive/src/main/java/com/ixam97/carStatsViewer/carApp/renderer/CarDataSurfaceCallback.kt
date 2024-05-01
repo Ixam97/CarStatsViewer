@@ -30,7 +30,7 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
 
     private var rendererEnabled = false
 
-    private val defaultRenderer = DefaultRenderer(carContext)
+    val defaultRenderer = DefaultRenderer(carContext)
 
     private var canvasSize = Rect(0,0,0,0)
 
@@ -94,6 +94,8 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
         rendererEnabled = true
         invalidatePlot()
     }
+
+    fun isEnabled() = rendererEnabled
 
     fun requestRenderFrame() {
         synchronized(this) {

@@ -19,7 +19,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.carApp.renderer.CarDataSurfaceCallback
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.throttle
@@ -56,6 +55,14 @@ class CarStatsViewerScreen(
     private var lastInvalidate: Long = 0L
     private var invalidateInQueue = false
 
+    private val realTimeDataTemplate = RealTimeDataTemplate(
+        carContext = carContext,
+        session = session,
+        backButton = false,
+        navigationOnly = true,
+        invalidateCallback = this::invalidateTabView
+    )
+
     internal var selectedTabContentID = CID_TRIP_DATA
         set(value) {
             if (field != value) {
@@ -71,8 +78,10 @@ class CarStatsViewerScreen(
     init {
         lifecycle.addObserver(this)
         lifecycleScope.launch {
-            CarStatsViewer.dataProcessor.realTimeDataFlow.throttle(100).collect {
-                session.carDataSurfaceCallback.requestRenderFrame()
+            CarStatsViewer.dataProcessor.realTimeDataFlow.throttle(1000).collect {
+                if (carContext.carAppApiLevel >= 7 && session.carDataSurfaceCallback.isEnabled()) {
+                    session.carDataSurfaceCallback.requestRenderFrame()
+                }
             }
         }
         lifecycleScope.launch {
@@ -145,17 +154,10 @@ class CarStatsViewerScreen(
                     CarStatsList()
                 }
                 CID_CANVAS -> {
-                    session.carDataSurfaceCallback.resume()
-                    if (carContext.carAppApiLevel >= 7)
-                        RealTimeDateTemplate(
-                            carContext,
-                            session,
-                            false
-                        ) {
-                            invalidateTabView()
-                        }
-                    else
-                        LowApiLevelMessage()
+                    if (carContext.carAppApiLevel >= 7) {
+                        session.carDataSurfaceCallback.resume()
+                        realTimeDataTemplate.getTemplate()
+                    } else LowApiLevelMessage()
                 }
                 CID_MENU -> {
                     session.carDataSurfaceCallback.pause()

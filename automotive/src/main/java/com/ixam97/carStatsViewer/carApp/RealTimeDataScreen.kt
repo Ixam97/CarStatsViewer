@@ -3,19 +3,35 @@ package com.ixam97.carStatsViewer.carApp
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.Template
-import com.ixam97.carStatsViewer.carApp.renderer.CarDataSurfaceCallback
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.lifecycleScope
+import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.utils.throttle
+import kotlinx.coroutines.launch
 
 class RealTimeDataScreen(
     carContext: CarContext,
     val session: CarStatsViewerSession
-): Screen(carContext) {
-    override fun onGetTemplate(): Template {
-        return RealTimeDateTemplate(
-            carContext,
-            session,
-            backButton = true
-        ) {
-            invalidate()
+): Screen(carContext), DefaultLifecycleObserver {
+
+    private val realTimeDataTemplate = RealTimeDataTemplate(
+        carContext,
+        session,
+        backButton = true,
+        navigationOnly = false
+    ) {
+        invalidate()
+    }
+
+    init {
+        lifecycle.addObserver(this)
+        lifecycleScope.launch {
+            CarStatsViewer.dataProcessor.realTimeDataFlow.throttle(500).collect {
+                if (session.carDataSurfaceCallback.isEnabled()) session.carDataSurfaceCallback.requestRenderFrame()
+            }
         }
+    }
+    override fun onGetTemplate(): Template {
+        return realTimeDataTemplate.getTemplate()
     }
 }

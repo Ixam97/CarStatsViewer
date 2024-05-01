@@ -64,6 +64,9 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
     private var horizontalOverflowFlag = false
     var debugFlag = false
 
+    var useFixedSizes: Boolean = false
+    var drawBoundingBoxes: Boolean = false
+
     init {
         mLeftInsetPaint.color = Color.RED
         mLeftInsetPaint.isAntiAlias = true
@@ -210,10 +213,10 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
         // InAppLogger.d("[$TAG] Rendering Frame")
         val density = CarStatsViewer.appContext.resources.displayMetrics.density
         // InAppLogger.d("[$TAG] Density: $density")
-        canvas.scale(density, density)
+        // canvas.scale(density, density)
 
         var correctedArea = if (visibleArea != null) {
-            if (debugFlag) { visibleArea
+            if (!useFixedSizes) { visibleArea
                 /*
                 Rect(
                     visibleArea.left,
@@ -238,10 +241,11 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
                          */
                     }
                 }
-            }.applyDensity(density)
+            }//.applyDensity(density)
         } else null
 
         if (correctedArea != null) {
+            if (drawBoundingBoxes) drawBoundingBox(canvas, correctedArea, correctedArea)
 
             val consumptionUnit = CarStatsViewer.appPreferences.consumptionUnit
             val distanceUnit = CarStatsViewer.appPreferences.distanceUnit
