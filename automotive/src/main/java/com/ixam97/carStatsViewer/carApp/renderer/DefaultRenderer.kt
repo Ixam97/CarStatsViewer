@@ -30,7 +30,8 @@ import kotlin.math.roundToInt
 class DefaultRenderer(val carContext: CarContext): Renderer {
 
     companion object {
-        val polestarPS2Rect = Rect(0, 340, 999, 1183)
+        // val polestarPS2Rect = Rect(0, 340, 999, 1183)
+        val polestarPS2Rect = Rect(0, 297, 999, 1359) // Different rect in real car
         val volvoEX40Rect = Rect(0, 84, 670, 884)
 
         val layoutList = mapOf(

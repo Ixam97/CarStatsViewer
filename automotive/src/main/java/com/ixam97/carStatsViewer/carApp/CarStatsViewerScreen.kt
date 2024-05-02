@@ -29,8 +29,10 @@ import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.throttle
+import kotlinx.android.synthetic.main.activity_main.main_consumption_gage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 
 @ExperimentalCarApi
@@ -219,22 +221,41 @@ class CarStatsViewerScreen(
         // setItemSize(GridTemplate.ITEM_SIZE_LARGE)
         setSingleList(ItemList.Builder().apply {
             addItem(GridItem.Builder().apply {
-                setTitle(realTimeData?.power?.toString())
+                setTitle("${((realTimeData?.power?:0f)/1_000_000)} kW")
                 setText("Power")
-                setImage(gauge.draw(500).asCarIcon())
+                setImage(gauge.draw(128, (realTimeData?.power?:0f)/1_000_000, min = -150f, max = 300f).asCarIcon())
                 setItemSize(GridTemplate.ITEM_SIZE_LARGE)
             }.build())
             addItem(GridItem.Builder().apply {
-                setTitle(realTimeData?.instConsumption?.toString())
+
+                var instCons = realTimeData?.instConsumption
+                val instConsVal: Number? = if (instCons != null && (realTimeData?.speed?:0f) * 3.6 > 3) {
+                    if (appPreferences.consumptionUnit) {
+                        appPreferences.distanceUnit.asUnit(instCons).roundToInt()
+                    } else {
+                        appPreferences.distanceUnit.asUnit(instCons).roundToInt() / 10
+                    }
+                } else {
+                    null
+                }
+                val instUnit = if (appPreferences.consumptionUnit) {
+                    "Wh/${appPreferences.distanceUnit.unit()}"
+                } else {
+                    "kWh/100${appPreferences.distanceUnit.unit()}"
+                }
+
+                if ((realTimeData?.speed?:0f) * 3.6 < 3) instCons = null
+
+                setTitle("${instConsVal?: "∞"} $instUnit")
                 setText("Consumption")
-                setImage(gauge.draw(500).asCarIcon())
+                setImage(gauge.draw(128, instCons?:0f, -300f, 600f).asCarIcon())
                 setItemSize(GridTemplate.ITEM_SIZE_MEDIUM)
             }.build())
         }.build())
     }.build()
 
     private fun realTimeDataPaneTemplate() = PaneTemplate.Builder(Pane.Builder().apply {
-        setImage(gauge.draw(500).asCarIcon(), )
+        setImage(gauge.draw(480, 240f).asCarIcon(), )
         addRow(Row.Builder().apply {
             setTitle("Test Title")
         }.build())
