@@ -11,7 +11,7 @@
         <item>Adição de \"About Car Stats Viewer\" (incluindo revisão do ReadMe com informações sobre suporte e contribuição)</item>
         <item>Adicionada tradução para dinamarquês</item>
         <item>Estrutura de dados reformulada para aumentar a estabilidade e a escalabilidade</item>
-        <item>[V](0.23.0</item>
+        <item>[V](0.23.0)</item>
         <item>Correções gerais de bugs e melhorias de estabilidade</item>
         <item>Corrigidas unidades na visualização principal que não atualizavam</item>
         <item>Menu de configurações reestruturado</item>
@@ -19,7 +19,7 @@
         <item>Adicionada notificação de reinício após uma reinicialização, atualização ou falha do aplicativo</item>
         <item>Adicionado rastreamento de localização e histórico de elevação</item>
         <item>Adicionadas várias APIs de dados em tempo real:\n- Dados em tempo real ABRP OTA\n- Webhook HTTP com BasicAuth</item>
-        <item>[V](0.24.0</item>
+        <item>[V](0.24.0)</item>
         <item>Variação de altitude adicionada no resumo da viagem (experimental)</item>
         <item>Melhoria das condições de notificação de reinicialização</item>
         <item>Corrigidas datas erradas das sessões de carregamento no resumo</item>

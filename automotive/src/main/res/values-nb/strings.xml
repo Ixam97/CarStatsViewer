@@ -11,7 +11,7 @@
         <item>Lagt til \"Om Car Stats Viewer\" (inkudert overhalt LesMeg med info om støtte og bidrag)</item>
         <item>Lagt til dansk oversettelse</item>
         <item>Datastruktur fornyet for å forbere stabilitet og skalerbarhet</item>
-        <item>[V](0.23.0</item>
+        <item>[V](0.23.0)</item>
         <item>Generelle bugfixer og stabilitetsforbedringer</item>
         <item>Fikset hovedvisning enheter ikke oppdateres</item>
         <item>Restrukturert innstillingsmeny</item>
@@ -19,7 +19,7 @@
         <item>Lagt til notifikasjon for restart etter reboot, oppdatering eller app krasj</item>
         <item>Lagt til lokasjonssporing og elevasjonshistorie</item>
         <item>Lagt til flere live-data API:\n-APRP OTA live data\n-HTTP Webhook med BasicAuth</item>
-        <item>[V](0.24.0</item>
+        <item>[V](0.24.0)</item>
         <item>Endret energisporingsforhold (eksperimentell)</item>
         <item>Forbedret restartsvarsler forhold</item>
         <item>Rettet feil datoer for ladeøkter i oppsummering</item>

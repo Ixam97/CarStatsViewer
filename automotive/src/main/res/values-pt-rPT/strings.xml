@@ -11,7 +11,7 @@
         <item>Adicionado \"Sobre o Car Stats Viewer\" (incluindo revisão do Leia-me com informações sobre suporte e contribuição)</item>
         <item>Adicionada tradução dinamarquesa</item>
         <item>Estrutura de dados renovada para aumentar a estabilidade e a escalabilidade</item>
-        <item>[V](0.23.0</item>
+        <item>[V](0.23.0)</item>
         <item>Correções de erros e melhorias de estabilidade</item>
         <item>Correção da atualização das unidades da vista principal</item>
         <item>Reestruturação do menu de definições</item>
@@ -19,7 +19,7 @@
         <item>Adicionada notificação de reinicialização após uma reinicialização, atualização ou falha no aplicativo</item>
         <item>Adicionado rastreamento de localização e histórico de elevação</item>
         <item>Adicionadas várias APIs de dados em tempo real:\n- Dados ao vivo da ABRP OTA\n- Webhook HTTP com BasicAuth</item>
-        <item>[V](0.24.0</item>
+        <item>[V](0.24.0)</item>
         <item>Alteração das condições de monitorização da energia (experimental)</item>
         <item>Condições de notificação de reinício melhoradas</item>
         <item>Correcção das datas erradas das sessões de carregamento no resumo</item>

@@ -11,7 +11,7 @@
         <item>\"Über Car Stats Viewer\" hinzugefügt, (inkl. grundlegende Überarbeitung der ReadMe mit Hinweisen zur Unterstützung und Mitwirkung)</item>
         <item>Dänische Übersetzung hinzugefügt</item>
         <item>Datenstruktur grundlegend überarbeitet, um die Stabilität und Skalierbarkeit zu verbessern</item>
-        <item>[V](0.23.0</item>
+        <item>[V](0.23.0)</item>
         <item>Allgemeine Bugfixes und Stabilitätsverbesserungen.</item>
         <item>Fehler behoben, der das aktualisieren der Einheiten in der Hauptansicht verhindert hat</item>
         <item>Einstellungsmenü umstrukturiert</item>
@@ -19,7 +19,7 @@
         <item>Neustart-Benachrichtigung nach Update, Reboot oder Absturz hinzugefügt</item>
         <item>Standorterfassung mit Höhenverlauf hinzugefügt</item>
         <item>Mehrere Live-Daten-APIs hinzugefügt:\n- ABRP OTA Live Data\n- HTTP Webhook mit BasicAuth</item>
-        <item>[V](0.24.0</item>
+        <item>[V](0.24.0)</item>
         <item>Bedingungen für Energieerfassung angepasst (experimentell)</item>
         <item>Bedingungen für Neustart-Benachrichtigungen verbessert</item>
         <item>Falsche Datumsangaben der Ladekurven in der Zusammenfassung behoben</item>
