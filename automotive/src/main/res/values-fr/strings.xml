@@ -11,7 +11,7 @@
         <item>Ajout de la page \"À propos\"</item>
         <item>Ajout de langue (danois)</item>
         <item>Structure de données revue pour améliorer la stabilité</item>
-        <item>VERSION 0.23</item>
+        <item>[V](0.23)</item>
         <item>Corrections et améliorations</item>
         <item>Correction du rafraîchissement des unités de l\'écran principal</item>
         <item>Menu d\'options restructuré</item>
@@ -19,13 +19,13 @@
         <item>Ajout d\'un message après redémarrage anormal de l\'application</item>
         <item>Ajout de suivi de localisation et d\'altitude</item>
         <item>Ajout d\'API pour données en temps réel:\n- Données en direct ABRP\n- Lien de rappel HTTP avec BasicAuth</item>
-        <item>VERSION 0.24</item>
+        <item>[V](0.24)</item>
         <item>Modification des conditions de suivi de l\'énergie (expérimental)</item>
         <item>Amélioration de la notification lors d\'une remise en marche</item>
         <item>Correction des dates de sessions de recharge</item>
         <item>Correction des unités dans le graphique du sommaire</item>
         <item>Ajoute de la variation d\'altitude dans le sommaire (expérimental)</item>
-        <item>VERSION 0.24.1</item>
+        <item>[V](0.24.1)</item>
         <item>Corrections de bogues et améliorations.</item>
         <item>Ajustement apporté à la structure de données du lien de rappel HTTP.</item>
         <item>Il est maintenant possible de réinitialiser le trajet manuel dans la vue principale.</item>
@@ -35,22 +35,22 @@
         <item>Ajout d\'un historique pour consulter les anciens trajets.</item>
         <item>Un session de recharge peut maintenant être stoppées jusqu\'à 5 minutes avant le départ d\'une nouvelle session, même si la voiture a été déplacée.</item>
         <item>Ajout d\'une base de données robuste et performante pour les données de trajets.</item>
-        <item>VERSION 0.25.0</item>
+        <item>[V](0.25.0)</item>
         <item>Corrections de bogues mineurs.</item>
         <item>Le partage de l\'emplacement peut maintenant être configuré individuellement pour chaque API.</item>
         <item>Ajout du modèle 2024 dans configuration de véhicule.</item>
         <item>Ajustements à l\'interface, principalement dans le sommaire.</item>
-        <item>VERSION 0.25.1</item>
+        <item>[V](0.25.1)</item>
         <item>Correction d\'une situation où l\'application n\'affichait pas les distance en miles.</item>
         <item>Correction d\'une situation où des sessions de charge incorrectes étaient affichées dans le sommaire. </item>
         <item>Améliorations du rendu du graphique et de la performance.</item>
         <item>Ajout d\'une option de rappel sur téléphone lorsque le véhicule est quitté.</item>
         <item>Extension des capacités de l\'API Webhook.</item>
-        <item>VERSION 0.25.2</item>
+        <item>[V](0.25.2)</item>
         <item>Base de données maintenant séparée en morceaux pour prévenir des faux négatifs.</item>
         <item>Simplification du sélecteur d\'axe secondaire.</item>
         <item>Ajout d\'une palette de couleurs expérimentale.</item>
-        <item>VERSION 0.26.0</item>
+        <item>[V](0.26.0)</item>
     </string-array>
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Permissions</string>

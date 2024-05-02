@@ -12,7 +12,7 @@
         <item>Tilføjet \"Om Car Stats Viewer\" (inkl. ændringer til ReadMe med info om at støtte og bidrage)</item>
         <item>Tilføjet dansk oversættelse</item>
         <item>Datastrukturen fornyet for at øge stabiliteten og skalerbarheden</item>
-        <item>VERSION 0.23</item>
+        <item>[V](0.23)</item>
         <item>Generelle fejlrettelser og stabilitetsforbedringer</item>
         <item>Rettede hovedvisningsenheder, der ikke opdateres</item>
         <item>Omstruktureret indstillingsmenu</item>
@@ -20,13 +20,13 @@
         <item>Tilføjet meddelelse om genstart efter genstart, opdatering eller app-nedbrud</item>
         <item>Tilføjet placeringssporing og højdehistorik</item>
         <item>Der er tilføjet flere API\'er til live data:\n- ABRP OTA live data\n- HTTP Webhook med BasicAuth</item>
-        <item>VERSION 0.24</item>
+        <item>[V](0.24)</item>
         <item>Ændrede betingelser for energisporing (eksperimentelt)</item>
         <item>Forbedrede betingelser for genstartsmeddelelser</item>
         <item>Rettet forkerte datoer for opladningssessioner i oversigten</item>
         <item>Rettede forkerte enheder i oversigtsdiagrammet</item>
         <item>Højdeændring tilføjet i turoversigt (eksperimentel)</item>
-        <item>VERSION 0.24.1</item>
+        <item>[V](0.24.1)</item>
         <item>Generelle fejlrettelser og stabilitetsforbedringer.</item>
         <item>Justerede HTTP-webhook-datasættet til den nye datastruktur.</item>
         <item>Det er nu muligt at nulstille den manuelle tur fra hovedvisningen.</item>
@@ -36,22 +36,22 @@
         <item>Tilføjet rejsehistorik for at se tidligere ture.</item>
         <item>Opladningssessionen kan nu afbrydes op til 5 minutter før start af en ny session, selvom bilen blev flyttet.</item>
         <item>Implementeret en lokal database for mere robust og effektiv lagring af turdata.</item>
-        <item>VERSION 0.25.0</item>
+        <item>[V](0.25.0)</item>
         <item>Mindre fejlrettelser</item>
         <item>Delingen af den aktuelle placering kan nu konfigureres for hver API individuelt.</item>
         <item>Tilføjede køretøjskonfiguration for MY24</item>
         <item>Tilpasninger i brugerinterface - særligt i rejseopsummering</item>
-        <item>VERSION 0.25.1</item>
+        <item>[V](0.25.1)</item>
         <item>Rettede en fejl, der gør at appen ikke bruger miles som distanceenhed</item>
         <item>Rettet en udfordring der indimellem viser forkerte ladesessioner i rejseopsummering</item>
         <item>Optimeringer i plotgengivelse og indlæsningsydelse.</item>
         <item>Tilføjede en mulighed for at påmindelse om at huske telefonen når bilen forlades</item>
         <item>Udvidede Webhook API-funktioner.</item>
-        <item>VERSION 0.25.2</item>
+        <item>[V](0.25.2)</item>
         <item>Adskilt databaseupload i bidder for at forhindre falske negativer og vise fremskridt.</item>
         <item>Simpel anden akse valg</item>
         <item>Tilføjet eksperimentel farvepalette</item>
-        <item>VERSION 0.26.0</item>
+        <item>[V](0.26.0)</item>
     </string-array>
 
     <!-- PermissionsActivity -->

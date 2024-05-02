@@ -11,7 +11,7 @@
         <item>Lisätty \"About Car Stats Viewer\" (sis. peruskorjauksen ReadMe ja tiedot tukemisesta ja osallistumisesta kehitystyöhön)</item>
         <item>Lisätty tanskankielinen käännös</item>
         <item>Tietorakennetta uusittu vakauden ja skaalautuvuuden lisäämiseksi</item>
-        <item>VERSION 0.23</item>
+        <item>[V](0.23)</item>
         <item>Yleisiä virheenkorjauksia ja vakauden parannuksia</item>
         <item>Korjattu, \"päänäkymän yksiköt\" eivät päivity</item>
         <item>Uudelleenjärjestetty asetusvalikko</item>
@@ -19,13 +19,13 @@
         <item>Lisätty uudelleenkäynnistysilmoitus uudelleenkäynnistyksen, päivityksen tai sovelluksen kaatumisen jälkeen</item>
         <item>Lisätty sijainnin seuranta ja korkeushistoria</item>
         <item>Lisätty useita live-datan sovellusliittymiä:\n- ABRP OTA live-data\n- HTTP Webhook BasicAuthilla</item>
-        <item>VERSION 0.24</item>
+        <item>[V](0.24)</item>
         <item>Muutettu energian seurannan ehtoja (kokeellinen)</item>
         <item>Parannettu uudelleenkäynnistyksen ilmoitusehtoja</item>
         <item>Korjattu latausistuntojen yhteenvedon väärät päivämäärät</item>
         <item>Korjattu yhteenvetokaavion virheelliset yksiköt</item>
         <item>Lisätty korkeuden muutos matkan yhteenvetoon (kokeellinen)</item>
-        <item>VERSION 0.24.1</item>
+        <item>[V](0.24.1)</item>
         <item>Yleisiä virheenkorjauksia ja vakauden parannuksia</item>
         <item>HTTP-webhookin tietojoukko sovitettu uuteen tietorakenteeseen.</item>
         <item>Manuaalisen matkan voi nyt nollata päänäkymästä.</item>
@@ -35,22 +35,22 @@
         <item>Lisätty matkahistoria aiempien matkojen tarkastelemiseksi.</item>
         <item>Lataussessio voidaan nyt keskeyttää enintään 5 minuutiksi ennen uuden jakson aloittamista, vaikka autoa olisi siirretty.</item>
         <item>Toteutettu paikallinen tietokanta matkatietojen vakaampaa ja tehokkaampaa tallentamista varten.</item>
-        <item>VERSION 0.25.0</item>
+        <item>[V](0.25.0)</item>
         <item>Pieniä virhekorjauksia.</item>
         <item>Nykyisen sijainnin jakaminen voidaan nyt määrittää jokaiselle API:lle erikseen.</item>
         <item>Lisätty ajoneuvon kokoonpano MY24:lle.</item>
         <item>Käyttöliittymän parannuksia, erityisesti matkan yhteenvedossa.</item>
-        <item>VERSION 0.25.1</item>
+        <item>[V](0.25.1)</item>
         <item>Korjattu ongelma, jonka vuoksi sovellus ei käyttänyt maileja etäisyysyksikkönä.</item>
         <item>Korjattu ongelma, jossa joskus väärät latausistunnot näkyivät matkan yhteenvedossa.</item>
         <item>Kuvaajien renderöinnin sekä ohjelman käynnistyksen optimointeja.</item>
         <item>Lisätty mahdollisuus puhelinmuistutukseen autosta lähdettäessä.</item>
         <item>Webhook API -ominaisuuksien laajennuksia.</item>
-        <item>VERSION 0.25.2</item>
+        <item>[V](0.25.2)</item>
         <item>Tietokannan lähettäminen jaettu osiin väärien negatiivisten estämiseksi ja edistymisen näyttämiseksi.</item>
         <item>Toissijaisen akselin valitsimen yksinkertaistaminen.</item>
         <item>Lisätty kokeellinen värimaailma.</item>
-        <item>VERSION 0.26.0</item>
+        <item>[V](0.26.0)</item>
     </string-array>
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Käyttöön tarvittavat käyttöoikeudet</string>

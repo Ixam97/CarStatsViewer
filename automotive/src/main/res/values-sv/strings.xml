@@ -11,7 +11,7 @@
         <item>Lagt till \"About Car Stats Viewer\" (inklusive översyn av ReadMe med information om stöd och bidrag)</item>
         <item>Lagt till svensk översättning</item>
         <item>Datastrukturen har förnyats för att öka stabiliteten och skalbarheten</item>
-        <item>VERSION 0.23</item>
+        <item>[V](0.23)</item>
         <item>Diverse felrättningar och stabilitetsförbättringar</item>
         <item>Rättat att enheter i huvudvyn inte uppdaterades</item>
         <item>Omstrukturerad inställningsmeny</item>
@@ -19,13 +19,13 @@
         <item>Lägg till meddelande om omstart efter omstart, uppdatering eller krasch av appen</item>
         <item>Lade till platsspårning och höjdhistorik</item>
         <item>Flera API:er för levande data har lagts till:\n- ABRP OTA live data\n- HTTP Webhook med BasicAuth</item>
-        <item>VERSION 0.24</item>
+        <item>[V](0.24)</item>
         <item>Ändrade villkor för energispårning (experimentellt)</item>
         <item>Förbättrade notifieringar vid omstart</item>
         <item>Fixade fel datum för laddningssessioner i sammanfattning</item>
         <item>Fixade fel enheter i sammanfattningsdiagrammet</item>
         <item>Höjdförändring tillagd i resesammanfattningen (experimentellt)</item>
-        <item>VERSION 0.24.1</item>
+        <item>[V](0.24.1)</item>
         <item>Allmänna buggfixar och stabilitetsförbättringar.</item>
         <item>Justerade formatet för HTTP-webhook till den nya datastrukturen.</item>
         <item>Det är nu möjligt att återställa den manuella trippen från huvudvyn.</item>
@@ -35,22 +35,22 @@
         <item>Har lagt till historik för att se tidigare resor.</item>
         <item>Laddningssessionen kan nu avbrytas upp till 5 minuter innan en ny session påbörjas, även om bilen har flyttats.</item>
         <item>Implementerade en lokal databas för mer robust och effektiv lagring av resedata.</item>
-        <item>VERSION 0.25.0</item>
+        <item>[V](0.25.0)</item>
         <item>Mindre buggfixar.</item>
         <item>Delningen av den aktuella platsen kan nu konfigureras individuellt för varje API.</item>
         <item>Lagt till fordonskonfiguration för MY24.</item>
         <item>Justeringar av användargränssnittet, särskilt i resesammanfattningen.</item>
-        <item>VERSION 0.25.1</item>
+        <item>[V](0.25.1)</item>
         <item>Åtgärdat ett problem som gjorde att appen inte använde miles som avståndsenhet.</item>
         <item>Åtgärdade ett problem där felaktiga laddningssessioner ibland visades i resesammanfattningen.</item>
         <item>Optimering av plotrendering och laddningsprestanda.</item>
         <item>Lagt till ett alternativ för en telefonpåminnelse när man lämnar bilen.</item>
         <item>Utökade funktioner för Webhook API.</item>
-        <item>VERSION 0.25.2</item>
+        <item>[V](0.25.2)</item>
         <item>Separerad databasuppladdning i bitar för att förhindra falska negativa resultat och visa framsteg.</item>
         <item>Förenklad väljare för sekundär axel.</item>
         <item>Experimentellt färgschema har lagts till.</item>
-        <item>VERSION 0.26.0</item>
+        <item>[V](0.26.0)</item>
     </string-array>
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Behörigheter krävs för användning</string>
