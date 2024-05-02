@@ -1,37 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="changes_0_26_2">
+    <string-array name="changes">
+        <item>VERSION 0.26.2</item>
         <item>Verbesserung der Diagramm-Steuerelemente in der Tripzusammenfassung</item>
         <item>Defektes Layout nach Polestar OTA P3.0.3 behoben</item>
         <item>Einige Layoutprobleme im Volvo Infotainment wurden behoben</item>
-    </string-array>
-
-    <string-array name="changes_0_26_1">
+        <item>VERSION 0.26.1</item>
         <item>Fix für Android 12 (P3.0)</item>
-    </string-array>
-
-    <string-array name="changes_0_26_0">
+        <item>VERSION 0.26.0</item>
         <item>Experimentelles Farbschema hinzugefügt.</item>
         <item>Vereinfachte Auswahl der Sekundärachse.</item>
         <item>Der Datenbankupload wurde in Abschnitte unterteilt, um falsche Fehlermeldungen zu vermeiden und den Fortschritt anzeigen zu können.</item>
-    </string-array>
-
-    <string-array name="changes_0_25_2">
+        <item>VERSION 0.25.2</item>
         <item>Erweiterung der Webhook-API.</item>
         <item>Option für eine Handy-Erinnerung beim verlassen des Fahrzeugs hinzugefügt.</item>
         <item>Optimierungen bei der Lade- und Rendergeschwindigkeit der Statistikdiagramme.</item>
         <item>Fehler behoben, bei dem zum Teil falsche Ladevorgänge angezeigt wurden.</item>
         <item>Fehler behoben, der verhinderte, dass Meilen als Distanzeinheit verwendet werden.</item>
-    </string-array>
-
-    <string-array name="changes_0_25_1">
+        <item>VERSION 0.25.1</item>
         <item>Anpassungen an der UI, insbesondere in der Tripzusammenfassung.</item>
         <item>Fahrzeugkonfiguration für MY24 hinzugefügt.</item>
         <item>Die Weitergabe des Standortes kann nun für jede API einzeln festgelegt werden.</item>
         <item>Kleinere Bugfixes.</item>
-    </string-array>
-
-    <string-array name="changes_0_25_0">
+        <item>VERSION 0.25.0</item>
         <item>Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips.</item>
         <item>Ladevorgänge können nun für bis zu 5 Minuten unterbrochen werden, bevor ein neuer Ladevorgang angelegt wird, sogar, wenn das Auto bewegt wurde.</item>
         <item>Tripverlauf hinzugefügt, um vergangene Trips anzeigen zu können.</item>
@@ -41,17 +32,13 @@
         <item>Der manuelle Trip kann nun direkt aus der Hauptansicht heraus zurückgesetzt werden.</item>
         <item>Der Datensatz für den HTTP-Webhook wurde an die neue Datenstruktur angepasst.</item>
         <item>Allgemeine Bugfixes und Stabilitätsverbesserungen.</item>
-    </string-array>
-
-    <string-array name="changes_0_24_1">
+        <item>VERSION 0.24.1</item>
         <item>Höhenunterschied in der Zusammenfassung hinzugefügt (experimentell)</item>
         <item>Falsche Einheiten im Diagramm der Zusammenfassung behoben</item>
         <item>Falsche Datumsangaben der Ladekurven in der Zusammenfassung behoben</item>
         <item>Bedingungen für Neustart-Benachrichtigungen verbessert</item>
         <item>Bedingungen für Energieerfassung angepasst (experimentell)</item>
-    </string-array>
-
-    <string-array name="changes_0_24">
+        <item>VERSION 0.24</item>
         <item>Mehrere Live-Daten-APIs hinzugefügt:\n- ABRP OTA Live Data\n- HTTP Webhook mit BasicAuth</item>
         <item>Standorterfassung mit Höhenverlauf hinzugefügt</item>
         <item>Neustart-Benachrichtigung nach Update, Reboot oder Absturz hinzugefügt</item>
@@ -59,9 +46,7 @@
         <item>Einstellungsmenü umstrukturiert</item>
         <item>Fehler behoben, der das aktualisieren der Einheiten in der Hauptansicht verhindert hat</item>
         <item>Allgemeine Bugfixes und Stabilitätsverbesserungen.</item>
-    </string-array>
-
-    <string-array name="changes_0_23">
+        <item>VERSION 0.23</item>
         <item>Datenstruktur grundlegend überarbeitet, um die Stabilität und Skalierbarkeit zu verbessern</item>
         <item>Dänische Übersetzung hinzugefügt</item>
         <item>\"Über Car Stats Viewer\" hinzugefügt, (inkl. grundlegende Überarbeitung der ReadMe mit Hinweisen zur Unterstützung und Mitwirkung)</item>
