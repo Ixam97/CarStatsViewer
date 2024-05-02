@@ -104,6 +104,10 @@
     <string name="main_secondary_axis">Sekundärachse: %s</string>
     <string name="main_changelog_dialog_title">Änderungen in Version %s:</string>
 
+    <string name="dialog_changes_title_updated">Update installiert!</string>
+    <string name="dialog_changes_title_changelog">Versionsverlauf</string>
+    <string name="dialog_changes_message">%1$s wurde auf Version %2$s aktualisiert!</string>
+
     <!-- SummaryActivity -->
     <string name="summary_title">Tripzusammenfassung</string>
     <string name="summary_button_reset_trip">Trip zurücksetzen</string>

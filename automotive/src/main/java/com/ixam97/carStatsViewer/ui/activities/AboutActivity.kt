@@ -29,7 +29,7 @@ class AboutActivity : FragmentActivity() {
         }
 
         about_version_widget.setOnRowClickListener {
-            CarStatsViewer.getChangelogDialog(this).show()
+            CarStatsViewer.getChangelogDialog(this, isChangelog = true).show()
         }
         about_support_widget.setOnRowClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.readme_link))))

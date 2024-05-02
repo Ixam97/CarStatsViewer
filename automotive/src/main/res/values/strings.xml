@@ -129,6 +129,11 @@
         <item>[V](0.26.2)</item>
     </string-array>
 
+    <string-array translatable="false" name="pending_changes">
+        <item>Overhauled changelog creation method</item>
+        <item>[V](0.27.0)</item>
+    </string-array>
+
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
 
     <!-- Restart Dialog -->
@@ -179,6 +184,10 @@
     <string name="main_button_show_speed">Show speed</string>
     <string name="main_secondary_axis">Secondary axis: %s</string>
     <string name="main_changelog_dialog_title">Changes in version %s:</string>
+
+    <string name="dialog_changes_title_updated">Update installed!</string>
+    <string name="dialog_changes_title_changelog">Changelog</string>
+    <string name="dialog_changes_message">%1$s has been updated to version %2$s!</string>
 
     <!-- SummaryActivity -->
     <string name="summary_title">Trip summary</string>
