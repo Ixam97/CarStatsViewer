@@ -16,7 +16,6 @@
         <item>Klaus Rheinwald</item>
     </string-array>
     <string-array name="supporters" translatable="false">
-        <item>Ahti Hinnov</item>
         <item>Robin Hellström</item>
         <item>Benjamin Stegmann</item>
         <item>Horst Zimmermann</item>
@@ -35,6 +34,9 @@
         <item>Oliver Charlton</item>
         <item>Dennis Berggren</item>
         <item>Erik Jan Rouwenhorst</item>
+        <item>Ahti Hinnov</item>
+        <item>Jonas Friedemann Heuer</item>
+        <item>David Baumann</item>
     </string-array>
     <string-array name="translators" translatable="false">
         <item>Emacee</item>
@@ -44,6 +46,7 @@
         <item>Oddvar Rasmussen</item>
         <item>DoubleYou</item>
         <item>078emil</item>
+        <item>Dominik Brüning</item>
         <item>Juha Mönkkönen</item>
         <item>Ossi Lahtinen</item>
         <item>J-P</item>
@@ -51,7 +54,9 @@
         <item>Jere Kataja</item>
         <item>Pedro Leite</item>
         <item>Michele Campeotto</item>
+        <item>Teribot</item>
         <item>GD</item>
+        <item>Joachim Appinger</item>
         <item>Robin Hellström</item>
         <item>Silver Beard</item>
         <item>Eric van Engelen</item>
@@ -59,138 +64,75 @@
         <item>Luiz Pacifico Centa</item>
         <item>Ricardo Blauth</item>
         <item>Marcelo Fornereto</item>
+        <item>Rafael Miranda</item>
+        <item>Patrick Pimentel</item>
+        <item>GuidoMa</item>
+        <item>Mário Franco</item>
     </string-array>
 
-    <string-array translatable="false" name="changes">
-        <item>VERSION 0.27.0</item>
+    <string-array name="changes">
+        <item>Various bug fixes and stability improvements</item>
+        <item>Optimized driver distraction optimization</item>
+        <item>Stabilized behaviour of charging curve when the app is paused while charging</item>
+        <item>Debug-Logs can be sent via SMTP (experimental!)</item>
+        <item>Specific values in plot views can be highlighted by double tapping</item>
+        <item>Various visual improvements for the plot views</item>
+        <item>Added multiple trip trackers running at the same time (manual trip, since last charge, auto trip, current month)</item>
+        <item>Added "About Car Stats Viewer" (incl. overhaul ReadMe with info about supporting and contributing)</item>
+        <item>Added danish translation</item>
+        <item>Data structure revamped to increase stability and scalability</item>
+        <item>[V](0.23.0)</item>
+        <item>General bugfixes and stability improvements</item>
+        <item>Fixed main view units not updating</item>
+        <item>Restructured settings menu</item>
+        <item>Added vehicle setup</item>
+        <item>Added restart notification after a reboot, update or app crash</item>
+        <item>Added location tracking and elevation history</item>
+        <item>Added multiple live data APIs:\n- ABRP OTA live data\n- HTTP Webhook with BasicAuth</item>
+        <item>[V](0.24.0)</item>
+        <item>Changed energy tracking conditions (experimental)</item>
+        <item>Improved restart notification conditions</item>
+        <item>Fixed wrong dates of charging sessions in summary</item>
+        <item>Fixed wrong units in summary diagram</item>
+        <item>Altitude change added in trip summary (experimental)</item>
+        <item>[V](0.24.1)</item>
+        <item>General bugfixes and stability improvements.</item>
+        <item>Adjusted the HTTP webhook data set to the new data structure.</item>
+        <item>It is now possible to reset the manual trip from the main view.</item>
+        <item>Added setting to select which APIs connection status should be displayed in the main view.</item>
+        <item>Added an icon representing the selected trip type. Tapping on the trip stats cycles between the 4 trip types.</item>
+        <item>Added quick select buttons for 20, 40 and 100 km in the trip summary.</item>
+        <item>Added the trip history to view past trips.</item>
+        <item>Charging session can now be interrupted up to 5 minutes before beginning a new session, even if the car was moved.</item>
+        <item>Implemented a local database for more robust and performant saving of trip data.</item>
+        <item>[V](0.25.0)</item>
+        <item>Minor bugfixes.</item>
+        <item>The sharing of the current location can now be configured for each API individually.</item>
+        <item>Added vehicle configuration for MY24.</item>
+        <item>UI adjustments, especially in the trip summary.</item>
+        <item>[V](0.25.1)</item>
+        <item>Fixed an issue causing the app to not use miles as distance unit.</item>
+        <item>Fixed an issue where sometimes wrong charging sessions would be shown in trip summary.</item>
+        <item>Optimizations in plot rendering and loading performance.</item>
+        <item>Added an option for a phone reminder when leaving the car.</item>
+        <item>Expanded Webhook API capabilities.</item>
+        <item>[V](0.25.2)</item>
+        <item>Separated database upload into chunks to prevent false negatives and display progress.</item>
+        <item>Simplified secondary axis selector.</item>
+        <item>Added experimental color scheme.</item>
+        <item>[V](0.26.0)</item>
+        <item>Fix for Android 12 (P3.0)</item>
+        <item>[V](0.26.1)</item>
+        <item>Fixed some layout issues on Volvo Infotainment</item>
+        <item>Fixed broken layout after Polestar OTA P3.0.3</item>
+        <item>Tweaked summary plot controls</item>
+        <item>[V](0.26.2)</item>
+    </string-array>
+
+    <string-array translatable="false" name="pending_changes">
+        <item>Overhauled changelog creation method</item>
         <item>Implemented the Automotive Template Host for a potential public Play Store release</item>
-        <item>VERSION 0.26.2</item>
-        <item>Tweaked summary plot controls</item>
-        <item>Fixed broken layout after Polestar OTA P3.0.3</item>
-        <item>Fixed some layout issues on Volvo Infotainment</item>
-        <item>VERSION 0.26.1</item>
-        <item>Fix for Android 12 (P3.0)</item>
-        <item>VERSION 0.26.0</item>
-        <item>Added experimental color scheme.</item>
-        <item>Simplified secondary axis selector.</item>
-        <item>Separated database upload into chunks to prevent false negatives and display progress.</item>
-        <item>VERSION 0.25.2</item>
-        <item>Expanded Webhook API capabilities.</item>
-        <item>Added an option for a phone reminder when leaving the car.</item>
-        <item>Optimizations in plot rendering and loading performance.</item>
-        <item>Fixed an issue where sometimes wrong charging sessions would be shown in trip summary.</item>
-        <item>Fixed an issue causing the app to not use miles as distance unit.</item>
-        <item>VERSION 0.25.1</item>
-        <item>UI adjustments, especially in the trip summary.</item>
-        <item>Added vehicle configuration for MY24.</item>
-        <item>The sharing of the current location can now be configured for each API individually.</item>
-        <item>Minor bugfixes.</item>
-        <item>VERSION 0.25.0</item>
-        <item>Implemented a local database for more robust and performant saving of trip data.</item>
-        <item>Charging session can now be interrupted up to 5 minutes before beginning a new session, even if the car was moved.</item>
-        <item>Added the trip history to view past trips.</item>
-        <item>Added quick select buttons for 20, 40 and 100 km in the trip summary.</item>
-        <item>Added an icon representing the selected trip type. Taping on the trip stats cycles between the 4 trip types.</item>
-        <item>Added setting to select which APIs connection status should be displayed in the main view.</item>
-        <item>It is now possible to reset the manual trip from the main view.</item>
-        <item>Adjusted the HTTP webhook data set to the new data structure.</item>
-        <item>General bugfixes and stability improvements.</item>
-        <item>VERSION 0.24.1</item>
-        <item>Altitude change added in trip summary (experimental)</item>
-        <item>Fixed wrong units in summary diagram</item>
-        <item>Fixed wrong dates of charging sessions in summary</item>
-        <item>Improved restart notification conditions</item>
-        <item>Changed energy tracking conditions (experimental)</item>
-        <item>VERSION 0.24.0</item>
-        <item>Added multiple live data APIs:\n- ABRP OTA live data\n- HTTP Webhook with BasicAuth</item>
-        <item>Added location tracking and elevation history</item>
-        <item>Added restart notification after a reboot, update or app crash</item>
-        <item>Added vehicle setup</item>
-        <item>Restructured settings menu</item>
-        <item>Fixed main view units not updating</item>
-        <item>General bugfixes and stability improvements</item>
-        <item>VERSION 0.23.0</item>
-        <item>Data structure revamped to increase stability and scalability</item>
-        <item>Added danish translation</item>
-        <item>Added "About Car Stats Viewer" (incl. overhaul ReadMe with info about supporting and contributing)</item>
-        <item>Added multiple trip trackers running at the same time (manual trip, since last charge, auto trip, current month)</item>
-        <item>Various visual improvements for the plot views</item>
-        <item>Specific values in plot views can be highlighted by double taping</item>
-        <item>Debug-Logs can be sent via SMTP (experimental!)</item>
-        <item>Stabilized behaviour of charging curve when the app is paused while charging</item>
-        <item>Optimized driver distraction optimization</item>
-        <item>Various bug fixes and stability improvements</item>
-    </string-array>
-
-    <string-array name="changes_0_26_2">
-        <item>Tweaked summary plot controls</item>
-        <item>Fixed broken layout after Polestar OTA P3.0.3</item>
-        <item>Fixed some layout issues on Volvo Infotainment</item>
-    </string-array>
-    <string-array name="changes_0_26_1">
-        <item>Fix for Android 12 (P3.0)</item>
-    </string-array>
-    <string-array name="changes_0_26_0">
-        <item>Added experimental color scheme.</item>
-        <item>Simplified secondary axis selector.</item>
-        <item>Separated database upload into chunks to prevent false negatives and display progress.</item>
-    </string-array>
-
-    <string-array name="changes_0_25_2">
-        <item>Expanded Webhook API capabilities.</item>
-        <item>Added an option for a phone reminder when leaving the car.</item>
-        <item>Optimizations in plot rendering and loading performance.</item>
-        <item>Fixed an issue where sometimes wrong charging sessions would be shown in trip summary.</item>
-        <item>Fixed an issue causing the app to not use miles as distance unit.</item>
-    </string-array>
-    <string-array name="changes_0_25_1">
-        <item>UI adjustments, especially in the trip summary.</item>
-        <item>Added vehicle configuration for MY24.</item>
-        <item>The sharing of the current location can now be configured for each API individually.</item>
-        <item>Minor bugfixes.</item>
-    </string-array>
-
-    <string-array name="changes_0_25_0">
-        <item>Implemented a local database for more robust and performant saving of trip data.</item>
-        <item>Charging session can now be interrupted up to 5 minutes before beginning a new session, even if the car was moved.</item>
-        <item>Added the trip history to view past trips.</item>
-        <item>Added quick select buttons for 20, 40 and 100 km in the trip summary.</item>
-        <item>Added an icon representing the selected trip type. Taping on the trip stats cycles between the 4 trip types.</item>
-        <item>Added setting to select which APIs connection status should be displayed in the main view.</item>
-        <item>It is now possible to reset the manual trip from the main view.</item>
-        <item>Adjusted the HTTP webhook data set to the new data structure.</item>
-        <item>General bugfixes and stability improvements.</item>
-    </string-array>
-
-    <string-array name="changes_0_24_1">
-        <item>Altitude change added in trip summary (experimental)</item>
-        <item>Fixed wrong units in summary diagram</item>
-        <item>Fixed wrong dates of charging sessions in summary</item>
-        <item>Improved restart notification conditions</item>
-        <item>Changed energy tracking conditions (experimental)</item>
-    </string-array>
-
-    <string-array name="changes_0_24">
-        <item>Added multiple live data APIs:\n- ABRP OTA live data\n- HTTP Webhook with BasicAuth</item>
-        <item>Added location tracking and elevation history</item>
-        <item>Added restart notification after a reboot, update or app crash</item>
-        <item>Added vehicle setup</item>
-        <item>Restructured settings menu</item>
-        <item>Fixed main view units not updating</item>
-        <item>General bugfixes and stability improvements</item>
-    </string-array>
-
-    <string-array name="changes_0_23">
-        <item>Data structure revamped to increase stability and scalability</item>
-        <item>Added danish translation</item>
-        <item>Added "About Car Stats Viewer" (incl. overhaul ReadMe with info about supporting and contributing)</item>
-        <item>Added multiple trip trackers running at the same time (manual trip, since last charge, auto trip, current month)</item>
-        <item>Various visual improvements for the plot views</item>
-        <item>Specific values in plot views can be highlighted by double taping</item>
-        <item>Debug-Logs can be sent via SMTP (experimental!)</item>
-        <item>Stabilized behaviour of charging curve when the app is paused while charging</item>
-        <item>Optimized driver distraction optimization</item>
-        <item>Various bug fixes and stability improvements</item>
+        <item>[V](0.27.0)</item>
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
@@ -243,6 +185,10 @@
     <string name="main_button_show_speed">Show speed</string>
     <string name="main_secondary_axis">Secondary axis: %s</string>
     <string name="main_changelog_dialog_title">Changes in version %s:</string>
+
+    <string name="dialog_changes_title_updated">Update installed!</string>
+    <string name="dialog_changes_title_changelog">Changelog</string>
+    <string name="dialog_changes_message">%1$s has been updated to version %2$s!</string>
 
     <!-- SummaryActivity -->
     <string name="summary_title">Trip summary</string>

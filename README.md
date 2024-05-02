@@ -32,7 +32,6 @@ Please let me now if you do not want to be listed in the supporters list.
 <details>
 <summary><h3>Supporters</h3></summary>
 
- * Ahti Hinnov
  * Robin Hellström 
  * Benjamin Stegmann
  * Horst Zimmermann
@@ -51,6 +50,9 @@ Please let me now if you do not want to be listed in the supporters list.
  * Oliver Charlton
  * Dennis Berggren
  * Erik Jan Rouwenhorst
+ * Ahti Hinnov
+ * Jonas Friedemann Heuer
+ * David Baumann
 
 </details>
 
@@ -72,16 +74,16 @@ If you are using the app and miss the translation into your language, feel free 
 
 Currently the following languages are already available:
 
- - :gb: English
- - :de: German
- - :netherlands: Dutch
- - :sweden: Swedish
- - :norway: Norwegian
- - :denmark: Danish
- - :fr: French
-- :portugal: Portuguese (Portugal)
-- :finland: Finnish
-- :brazil: Portuguese (Brazil)
+ * :gb: English
+ * :de: German
+ * :netherlands: Dutch
+ * :sweden: Swedish
+ * :norway: Norwegian
+ * :denmark: Danish
+ * :fr: French
+ * :portugal: Portuguese (Portugal)
+ * :finland: Finnish
+ * :brazil: Portuguese (Brazil)
 
 <details>
 <summary><h3>Translators</h3></summary>
@@ -93,6 +95,7 @@ Currently the following languages are already available:
  * Oddvar Rasmussen
  * DoubleYou
  * 078emil
+ * Dominik Brüning
  * Juha Mönkkönen
  * Ossi Lahtinen
  * J-P
@@ -100,7 +103,9 @@ Currently the following languages are already available:
  * Jere Kataja
  * Pedro Leite
  * Michele Campeotto
+ * Teribot
  * GD
+ * Joachim Appinger
  * Robin Hellström
  * Silver Beard
  * Eric van Engelen
@@ -108,6 +113,10 @@ Currently the following languages are already available:
  * Luiz Pacifico Centa
  * Ricardo Blauth
  * Marcelo Fornereto
+ * Rafael Miranda
+ * Patrick Pimentel
+ * GuidoMa
+ * Mário Franco
 
 </details>
 
@@ -118,8 +127,8 @@ Currently the following languages are already available:
 <summary>Please read before contributing and creating Pull Requests!</summary>
 
 
-- If you want to contribute code you are very welcome to. When creating a Pull Request, make sure to use [active_development](https://github.com/Ixam97/CarStatsViewer/tree/active_development). With the exception of hotfixes I will not merge any PRs into master since that branch is used by other forks to build the app bundle for the Play Store.
-- Also describe what you want to archive with your code contribution. Uncommented PRs with no context on what they do are hard to understand and review. To make it easier for me to review and test your contribution make sure to [allow edits from maintainers](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork).
+ * If you want to contribute code you are very welcome to. When creating a Pull Request, make sure to use [active_development](https://github.com/Ixam97/CarStatsViewer/tree/active_development). With the exception of hotfixes I will not merge any PRs into master since that branch is used by other forks to build the app bundle for the Play Store.
+ * Also describe what you want to archive with your code contribution. Uncommented PRs with no context on what they do are hard to understand and review. To make it easier for me to review and test your contribution make sure to [allow edits from maintainers](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork).
 
 Please also be aware that I will not just include everything. It has to fit into my goals I want to archive with this app. I may just say "I don't feel it" (yes, I know, this joke is getting old 😅). It would be best to open an issue beforehand, describing what you want to see in the app and offer your help before starting to code. This way it is possible to exchange ideas before spending hours in coding.
 
@@ -128,12 +137,12 @@ Please also be aware that I will not just include everything. It has to fit into
 
 ## Contributors
 
-- Dario Bosshard (Consumption and charge curve diagrams)
-- Klaus Rheinwald (Testing and consulting)
-- Jakob Schlyter (Lokalise setup and maintenance)
-- FreshDave29
-- rdu
-- Jannick Fahlbusch
+ * Dario Bosshard (Consumption and charge curve diagrams)
+ * Klaus Rheinwald (Testing and consulting)
+ * Jakob Schlyter (Lokalise setup and maintenance)
+ * FreshDave29
+ * rdu
+ * Jannick Fahlbusch
 
 
 ## Links

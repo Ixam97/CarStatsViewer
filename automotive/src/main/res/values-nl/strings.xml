@@ -1,5 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <string-array name="changes">
+        <item>Diverse bugfixes en stabiliteitsverbeteringen</item>
+        <item>Geoptimaliseerde afleiding van de bestuurder</item>
+        <item>Gestabiliseerd gedrag van de laadcurve wanneer de app wordt gepauzeerd tijdens het laden</item>
+        <item>Debug-Logs kunnen worden verzonden via SMTP (experimenteel!)</item>
+        <item>Specifieke waarden in de grafiek kunnen worden gemarkeerd door op de grafiek te dubbelklikken.</item>
+        <item>Diverse visuele verbeteringen voor de plotweergaven</item>
+        <item>Meerdere rittrackers toegevoegd die tegelijkertijd worden uitgevoerd (handmatige rit, sinds laatste lading, automatische rit, huidige maand)</item>
+        <item>\"Over Car Stats Viewer\" toegevoegd (incl. gereviseerde ReadMe met informatie over ondersteuning en bijdragen)</item>
+        <item>Deense vertaling toegevoegd</item>
+        <item>Datastructuur vernieuwd om de stabiliteit en schaalbaarheid te vergroten</item>
+        <item>[V](0.23.0)</item>
+        <item>Algemene bugfixes en stabiliteitsverbeteringen</item>
+        <item>Probleem opgelost dat eenheden in de hoofdweergave niet werden ververst</item>
+        <item>Instellingenmenu geherstructureerd</item>
+        <item>Voertuigconfiguratie toegevoegd</item>
+        <item>Herstartmelding toegevoegd na een herstart, update of app-crash</item>
+        <item>Locatietracking en hoogtegeschiedenis toegevoegd</item>
+        <item>Meerdere live data-API\'s toegevoegd:\n- ABRP OTA live-gegevens\n- HTTP-webhook met BasicAuth</item>
+        <item>[V](0.24.0)</item>
+        <item>Gewijzigde condities voor het volgen van energie (experimenteel)</item>
+        <item>Verbeterde voorwaarden voor herstartmeldingen</item>
+        <item>Foute data van laadsessies in samenvatting verholpen</item>
+        <item>Verkeerde eenheden in overzichtsdiagram verholpen</item>
+        <item>Hoogteverandering toegevoegd in ritoverzicht (experimenteel)</item>
+        <item>[V](0.24.1)</item>
+        <item>Algemene bugfixes en stabiliteitsverbeteringen</item>
+        <item>De HTTP webhook dataset aangepast aan de nieuwe datastructuur.</item>
+        <item>Het is nu mogelijk om de handmatige rit vanuit het hoofdscherm te resetten.</item>
+        <item>Instelling toegevoegd om te selecteren welke API-verbindingsstatus moet worden weergegeven in de hoofdweergave.</item>
+        <item>Een pictogram toegevoegd dat het geselecteerde type rit weergeeft. Als u op het pictogram van de rit tikt, kunt u tussen de 4 soorten ritten schakelen.</item>
+        <item>Knoppen toegevoegd voor 20, 40 en 100 km in het ritoverzicht.</item>
+        <item>Rittengeschiedenis toegevoegd om eerdere ritten te bekijken.</item>
+        <item>Een oplaadsessie kan nu tot 5 minuten worden onderbroken voordat een nieuwe sessie begint, zelfs als de auto werd verplaatst.</item>
+        <item>Een lokale database geïmplementeerd voor een robuustere en performantere opslag van ritgegevens.</item>
+        <item>[V](0.25.0)</item>
+        <item>Kleine bugfixes.</item>
+        <item>Het delen van de huidige locatie kan nu voor elke API afzonderlijk worden geconfigureerd.</item>
+        <item>Voertuigconfiguratie toegevoegd voor MY24.</item>
+        <item>UI-aanpassingen, vooral in het reisoverzicht.</item>
+        <item>[V](0.25.1)</item>
+        <item>Probleem verholpen waardoor de app mijlen niet als afstandseenheid gebruikte.</item>
+        <item>Er is een probleem opgelost waarbij soms verkeerde oplaadsessies werden weergegeven in het ritoverzicht.</item>
+        <item>Probleem verholpen waardoor de app mijlen niet als afstandseenheid gebruikte.</item>
+        <item>Er is een probleem opgelost waarbij soms verkeerde oplaadsessies werden weergegeven in het ritoverzicht.</item>
+        <item>Optimalisaties in het renderen en laden van plots.</item>
+        <item>[V](0.25.2)</item>
+        <item>Database-uploads in stukken verdeeld om valse negatieven te voorkomen en voortgang weer te geven.</item>
+        <item>Vereenvoudigde selector voor secundaire assen.</item>
+        <item>Experimenteel kleurenschema toegevoegd.</item>
+        <item>[V](0.26.0)</item>
+    </string-array>
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Noodzakelijke permissies</string>
     <string name="permissions_dialog_text">Deze app heeft bepaalde toelatingen nodig om te kunnen werken. Zonder de aangegeven toelatingen, kunnen de gegevens van het voertuig niet worden verzameld.</string>
@@ -99,18 +151,6 @@
     <string name="SinceChargeData">Sinds de laatste laadbeurt</string>
     <string name="AutoTripData">Automatische rit</string>
     <string name="CurrentMonthData">Huidige maand</string>
-    <string-array name="changes_0_23">
-        <item>Datastructuur vernieuwd om de stabiliteit en schaalbaarheid te vergroten</item>
-        <item>Deense vertaling toegevoegd</item>
-        <item>\"Over Car Stats Viewer\" toegevoegd (incl. gereviseerde ReadMe met informatie over ondersteuning en bijdragen)</item>
-        <item>Meerdere rittrackers toegevoegd die tegelijkertijd worden uitgevoerd (handmatige rit, sinds laatste lading, automatische rit, huidige maand)</item>
-        <item>Diverse visuele verbeteringen voor de plotweergaven</item>
-        <item>Specifieke waarden in de grafiek kunnen worden gemarkeerd door op de grafiek te dubbelklikken.</item>
-        <item>Debug-Logs kunnen worden verzonden via SMTP (experimenteel!)</item>
-        <item>Gestabiliseerd gedrag van de laadcurve wanneer de app wordt gepauzeerd tijdens het laden</item>
-        <item>Geoptimaliseerde afleiding van de bestuurder</item>
-        <item>Diverse bugfixes en stabiliteitsverbeteringen</item>
-    </string-array>
     <string name="main_changelog_dialog_title">Wijzigingen in versie %s:</string>
     <string name="settings_apis_title">API-instellingen</string>
     <!-- Restart Dialog -->
@@ -153,41 +193,12 @@
     <string name="vehicle_performance">Performance upgrade</string>
     <string name="vehicle_bst">BST Editie</string>
     <string name="vehicle_launch">Lanceringseditie</string>
-    <string-array name="changes_0_24">
-        <item>Meerdere live data-API\'s toegevoegd:
- - ABRP OTA live-gegevens
- - HTTP-webhook met BasicAuth</item>
-        <item>Locatietracking en hoogtegeschiedenis toegevoegd</item>
-        <item>Herstartmelding toegevoegd na een herstart, update of app-crash</item>
-        <item>Voertuigconfiguratie toegevoegd</item>
-        <item>Instellingenmenu geherstructureerd</item>
-        <item>Probleem opgelost dat eenheden in de hoofdweergave niet werden ververst</item>
-        <item>Algemene bugfixes en stabiliteitsverbeteringen</item>
-    </string-array>
     <string name="settings_use_location">Locatie volgen</string>
     <string name="settings_autostart">Automatische start van de app</string>
     <string name="plot_dimensionY_SPEED">Snelheid</string>
     <string name="plot_dimensionY_ALTITUDE">Hoogte</string>
-    <string-array name="changes_0_24_1">
-        <item>Hoogteverandering toegevoegd in ritoverzicht (experimenteel)</item>
-        <item>Verkeerde eenheden in overzichtsdiagram verholpen</item>
-        <item>Foute data van laadsessies in samenvatting verholpen</item>
-        <item>Verbeterde voorwaarden voor herstartmeldingen</item>
-        <item>Gewijzigde condities voor het volgen van energie (experimenteel)</item>
-    </string-array>
     <string name="summary_altitude">Hoogteverandering</string>
     <string name="about_translators">Vertalers</string>
-    <string-array name="changes_0_25_0">
-        <item>Een lokale database geïmplementeerd voor een robuustere en performantere opslag van ritgegevens.</item>
-        <item>Een oplaadsessie kan nu tot 5 minuten worden onderbroken voordat een nieuwe sessie begint, zelfs als de auto werd verplaatst.</item>
-        <item>Rittengeschiedenis toegevoegd om eerdere ritten te bekijken.</item>
-        <item>Knoppen toegevoegd voor 20, 40 en 100 km in het ritoverzicht.</item>
-        <item>Een pictogram toegevoegd dat het geselecteerde type rit weergeeft. Als u op het pictogram van de rit tikt, kunt u tussen de 4 soorten ritten schakelen.</item>
-        <item>Instelling toegevoegd om te selecteren welke API-verbindingsstatus moet worden weergegeven in de hoofdweergave.</item>
-        <item>Het is nu mogelijk om de handmatige rit vanuit het hoofdscherm te resetten.</item>
-        <item>De HTTP webhook dataset aangepast aan de nieuwe datastructuur.</item>
-        <item>Algemene bugfixes en stabiliteitsverbeteringen</item>
-    </string-array>
     <string name="restart_notification_reason_unknown">%s is herstart om een onbekende reden.</string>
     <string name="summary_speed">Gemiddelde snelheid</string>
     <string-array name="trip_type_names">
@@ -220,33 +231,15 @@
     <string name="history_dialog_multi_delete_deselect">Alles deselecteren</string>
     <string name="settings_distance_unit">Mijlen als afstandseenheid</string>
     <string name="settings_apis_connection_selector">Verbindingspictogram in hoofdweergave:</string>
-    <string-array name="changes_0_25_1">
-        <item>UI-aanpassingen, vooral in het reisoverzicht.</item>
-        <item>Voertuigconfiguratie toegevoegd voor MY24.</item>
-        <item>Het delen van de huidige locatie kan nu voor elke API afzonderlijk worden geconfigureerd.</item>
-        <item>Kleine bugfixes.</item>
-    </string-array>
     <string name="CurrentTripData_short">Handmatig</string>
     <string name="SinceChargeData_short">Sinds laadbeurt</string>
     <string name="AutoTripData_short">Automatisch</string>
     <string name="CurrentMonthData_short">Maand</string>
     <string name="snackbar_ok">OK</string>
     <string name="screenshot_taken">Screenshot gemaakt (totaal van %s ).</string>
-    <string-array name="changes_0_25_2">
-        <item>Optimalisaties in het renderen en laden van plots.</item>
-        <item>Er is een probleem opgelost waarbij soms verkeerde oplaadsessies werden weergegeven in het ritoverzicht.</item>
-        <item>Probleem verholpen waardoor de app mijlen niet als afstandseenheid gebruikte.</item>
-        <item>Er is een probleem opgelost waarbij soms verkeerde oplaadsessies werden weergegeven in het ritoverzicht.</item>
-        <item>Probleem verholpen waardoor de app mijlen niet als afstandseenheid gebruikte.</item>
-    </string-array>
     <string name="settings_phone_reminder">Telefoonherinnering</string>
     <string name="notification_phone">Heb je je mobiele telefoon meegenomen?</string>
     <string name="notification_valuables">Laat geen waardevolle spullen zichtbaar achter in de auto.</string>
-    <string-array name="changes_0_26_0">
-        <item>Experimenteel kleurenschema toegevoegd.</item>
-        <item>Vereenvoudigde selector voor secundaire assen.</item>
-        <item>Database-uploads in stukken verdeeld om valse negatieven te voorkomen en voortgang weer te geven.</item>
-    </string-array>
     <string name="settings_experimental_colors">Experimenteel kleurenschema</string>
     <string name="history_dialog_upload_title">Database uploaden naar API</string>
     <string name="history_dialog_upload_message">Je staat op het punt om de hele lokale database te uploaden naar het eindpunt dat is opgegeven in de Webhook API!

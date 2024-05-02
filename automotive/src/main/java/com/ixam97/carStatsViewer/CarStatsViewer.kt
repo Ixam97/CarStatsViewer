@@ -8,10 +8,12 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.airbnb.paris.extensions.style
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
 import com.ixam97.carStatsViewer.database.log.LogDao
@@ -21,6 +23,7 @@ import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
+import com.ixam97.carStatsViewer.utils.ChangeLogCreator.createChangelog
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.ScreenshotButton
 import com.ixam97.carStatsViewer.utils.Watchdog
@@ -108,65 +111,37 @@ class CarStatsViewer : Application() {
             }
         }
 
-        fun getChangelogDialog(context: Context): AlertDialog.Builder {
+        fun getChangelogDialog(context: Context, isChangelog: Boolean = false): AlertDialog.Builder {
             return AlertDialog.Builder(context).apply {
+                val latestVersion = BuildConfig.VERSION_NAME.dropLast(5)
+                setTitle(context.getString(
+                    if (!isChangelog) R.string.dialog_changes_title_updated
+                    else R.string.dialog_changes_title_changelog
+                ))
                 setPositiveButton(context.getString(R.string.dialog_close)) { dialog, _ ->
                     dialog.cancel()
                 }
                 val layout = LayoutInflater.from(context).inflate(R.layout.dialog_changelog, null)
+                val container = layout.findViewById<LinearLayout>(R.id.dialog_changelog_container)
 
-                fun applyChangelogVersion(
-                    versionString: String,
-                    changesArrayResId: Int,
-                    titleViewResId: Int,
-                    textViewResId: Int,
-                ) {
-                    val changesArray = context.resources.getStringArray(changesArrayResId)
-                    var changelog = ""
-                    changesArray.forEachIndexed { index, change ->
-                        changelog += "• $change"
-                        if (index < changesArray.size - 1) changelog += "\n\n"
-                    }
-                    layout.findViewById<TextView>(titleViewResId).text = context.getString(R.string.main_changelog_dialog_title, versionString)
-                    layout.findViewById<TextView>(textViewResId).text = changelog
+                val changesList = createChangelog(context)
+
+                if (!isChangelog)
+                    container.addView(TextView(context).apply {
+                        text = context.getString(R.string.dialog_changes_message, context.getString(R.string.app_name), latestVersion)
+                        style(R.style.changes_text)
+                    })
+
+                changesList.forEach { change ->
+                    container.addView(TextView(context).apply {
+                        text = change.key
+                        style(R.style.title_text_style)
+                    })
+                    container.addView(TextView(context).apply {
+                        text = change.value
+                        style(R.style.changes_text)
+                    })
                 }
-
-                applyChangelogVersion(
-                    versionString = "0.26.2",
-                    titleViewResId = R.id.changes_0_26_2_title,
-                    textViewResId = R.id.changes_0_26_2,
-                    changesArrayResId = R.array.changes_0_26_2
-                )
-                applyChangelogVersion(
-                    versionString = "0.26.1",
-                    titleViewResId = R.id.changes_0_26_1_title,
-                    textViewResId = R.id.changes_0_26_1,
-                    changesArrayResId = R.array.changes_0_26_1
-                )
-                applyChangelogVersion(
-                    versionString = "0.26.0",
-                    titleViewResId = R.id.changes_0_26_0_title,
-                    textViewResId = R.id.changes_0_26_0,
-                    changesArrayResId = R.array.changes_0_26_0
-                )
-                applyChangelogVersion(
-                    versionString = "0.25.2",
-                    titleViewResId = R.id.changes_0_25_2_title,
-                    textViewResId = R.id.changes_0_25_2,
-                    changesArrayResId = R.array.changes_0_25_2
-                )
-                applyChangelogVersion(
-                    versionString = "0.25.1",
-                    titleViewResId = R.id.changes_0_25_1_title,
-                    textViewResId = R.id.changes_0_25_1,
-                    changesArrayResId = R.array.changes_0_25_1
-                )
-                applyChangelogVersion(
-                    versionString = "0.25.0",
-                    titleViewResId = R.id.changes_0_25_0_title,
-                    textViewResId = R.id.changes_0_25_0,
-                    changesArrayResId = R.array.changes_0_25_0
-                )
 
                 applyTypeface(layout)
                 setView(layout)
