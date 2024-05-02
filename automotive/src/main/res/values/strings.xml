@@ -61,7 +61,7 @@
         <item>Marcelo Fornereto</item>
     </string-array>
 
-    <string-array translatable="false" name="changes">
+    <string-array name="changes">
         <item>VERSION 0.26.2</item>
         <item>Tweaked summary plot controls</item>
         <item>Fixed broken layout after Polestar OTA P3.0.3</item>
