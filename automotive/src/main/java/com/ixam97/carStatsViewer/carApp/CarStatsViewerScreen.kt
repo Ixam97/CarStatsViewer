@@ -7,7 +7,13 @@ import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.model.Action
 import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
+import androidx.car.app.model.GridItem
+import androidx.car.app.model.GridTemplate
+import androidx.car.app.model.ItemList
 import androidx.car.app.model.MessageTemplate
+import androidx.car.app.model.Pane
+import androidx.car.app.model.PaneTemplate
+import androidx.car.app.model.Row
 import androidx.car.app.model.Tab
 import androidx.car.app.model.TabContents
 import androidx.car.app.model.TabTemplate
@@ -19,6 +25,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.throttle
@@ -39,13 +46,14 @@ class CarStatsViewerScreen(
     private val CID_CANVAS = "cid_canvas"
     private val CID_STATUS = "cid_status"
 
-    private val INVALIDATE_INTERVAL_MS = 500L
+    private val INVALIDATE_INTERVAL_MS = 1000L
 
     internal var apiState: Map<String, Int> = mapOf()
 
     internal val appPreferences = CarStatsViewer.appPreferences
 
     internal var drivingSession: DrivingSession? = null
+    private var realTimeData: RealTimeData? = null
 
     internal val colorError = CarColor.createCustom(carContext.getColor(R.color.bad_red), carContext.getColor(R.color.bad_red))
     internal val colorDisconnected = CarColor.createCustom(carContext.getColor(R.color.inactive_text_color), carContext.getColor(R.color.disabled_tint))
@@ -54,6 +62,8 @@ class CarStatsViewerScreen(
 
     private var lastInvalidate: Long = 0L
     private var invalidateInQueue = false
+
+    private val gauge = Gauge(carContext)
 
     private val realTimeDataTemplate = RealTimeDataTemplate(
         carContext = carContext,
@@ -78,10 +88,9 @@ class CarStatsViewerScreen(
     init {
         lifecycle.addObserver(this)
         lifecycleScope.launch {
-            CarStatsViewer.dataProcessor.realTimeDataFlow.throttle(1000).collect {
-                if (carContext.carAppApiLevel >= 7 && session.carDataSurfaceCallback.isEnabled()) {
-                    session.carDataSurfaceCallback.requestRenderFrame()
-                }
+            CarStatsViewer.dataProcessor.realTimeDataFlow.throttle(250).collect {
+                realTimeData = it
+                invalidateTabView()
             }
         }
         lifecycleScope.launch {
@@ -154,10 +163,10 @@ class CarStatsViewerScreen(
                     CarStatsList()
                 }
                 CID_CANVAS -> {
-                    if (carContext.carAppApiLevel >= 7) {
+                    if (carContext.carAppApiLevel >= 8) {
                         session.carDataSurfaceCallback.resume()
                         realTimeDataTemplate.getTemplate()
-                    } else LowApiLevelMessage()
+                    } else realTimeDataGridTemplate() // LowApiLevelMessage()
                 }
                 CID_MENU -> {
                     session.carDataSurfaceCallback.pause()
@@ -205,5 +214,30 @@ class CarStatsViewerScreen(
             }
         }.build())
     }.build()
+
+    private fun realTimeDataGridTemplate() = GridTemplate.Builder().apply {
+        // setItemSize(GridTemplate.ITEM_SIZE_LARGE)
+        setSingleList(ItemList.Builder().apply {
+            addItem(GridItem.Builder().apply {
+                setTitle(realTimeData?.power?.toString())
+                setText("Power")
+                setImage(gauge.draw(500).asCarIcon())
+                setItemSize(GridTemplate.ITEM_SIZE_LARGE)
+            }.build())
+            addItem(GridItem.Builder().apply {
+                setTitle(realTimeData?.instConsumption?.toString())
+                setText("Consumption")
+                setImage(gauge.draw(500).asCarIcon())
+                setItemSize(GridTemplate.ITEM_SIZE_MEDIUM)
+            }.build())
+        }.build())
+    }.build()
+
+    private fun realTimeDataPaneTemplate() = PaneTemplate.Builder(Pane.Builder().apply {
+        setImage(gauge.draw(500).asCarIcon(), )
+        addRow(Row.Builder().apply {
+            setTitle("Test Title")
+        }.build())
+    }.build()).build()
 }
 

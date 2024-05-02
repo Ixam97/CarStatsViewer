@@ -8,11 +8,14 @@ import androidx.car.app.ScreenManager
 import androidx.car.app.Session
 import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.lifecycleScope
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.carApp.renderer.CarDataSurfaceCallback
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.ui.activities.PermissionsActivity
+import com.ixam97.carStatsViewer.utils.throttle
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCarApi::class)
 class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
@@ -23,11 +26,17 @@ class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
 
     override fun onCreateScreen(intent: Intent): Screen {
         carDataSurfaceCallback = CarDataSurfaceCallback(carContext)
+        lifecycleScope.launch {
+            CarStatsViewer.dataProcessor.realTimeDataFlow.throttle(1000).collect {
+                if (carContext.carAppApiLevel >= 7 && carDataSurfaceCallback.isEnabled()) {
+                    carDataSurfaceCallback.requestRenderFrame()
+                }
+            }
+        }
 
         val screens = mutableListOf<Screen>(CarStatsViewerScreen(carContext, this))
 
-        val mLifecycle = lifecycle
-        mLifecycle.addObserver(this)
+        lifecycle.addObserver(this)
 
         if (CarStatsViewer.appPreferences.versionString != BuildConfig.VERSION_NAME) {
             screens.add(ChangesScreen(carContext))

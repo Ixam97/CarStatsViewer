@@ -71,7 +71,6 @@ internal fun CarStatsViewerScreen.MenuList() = ListTemplate.Builder().apply {
                 setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_canvas)).build())
                 setBrowsable(true)
                 setOnClickListener {
-                    session.carDataSurfaceCallback.resume()
                     screenManager.push(RealTimeDataScreen(carContext, session))
                 }
             }.build())
