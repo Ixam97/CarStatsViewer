@@ -11,7 +11,7 @@
         <item>Ajout de la page \"À propos\"</item>
         <item>Ajout de langue (danois)</item>
         <item>Structure de données revue pour améliorer la stabilité</item>
-        <item>[V](0.23)</item>
+        <item>[V](0.23.0</item>
         <item>Corrections et améliorations</item>
         <item>Correction du rafraîchissement des unités de l\'écran principal</item>
         <item>Menu d\'options restructuré</item>
@@ -19,7 +19,7 @@
         <item>Ajout d\'un message après redémarrage anormal de l\'application</item>
         <item>Ajout de suivi de localisation et d\'altitude</item>
         <item>Ajout d\'API pour données en temps réel:\n- Données en direct ABRP\n- Lien de rappel HTTP avec BasicAuth</item>
-        <item>[V](0.24)</item>
+        <item>[V](0.24.0</item>
         <item>Modification des conditions de suivi de l\'énergie (expérimental)</item>
         <item>Amélioration de la notification lors d\'une remise en marche</item>
         <item>Correction des dates de sessions de recharge</item>

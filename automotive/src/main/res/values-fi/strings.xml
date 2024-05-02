@@ -11,7 +11,7 @@
         <item>Lisätty \"About Car Stats Viewer\" (sis. peruskorjauksen ReadMe ja tiedot tukemisesta ja osallistumisesta kehitystyöhön)</item>
         <item>Lisätty tanskankielinen käännös</item>
         <item>Tietorakennetta uusittu vakauden ja skaalautuvuuden lisäämiseksi</item>
-        <item>[V](0.23)</item>
+        <item>[V](0.23.0</item>
         <item>Yleisiä virheenkorjauksia ja vakauden parannuksia</item>
         <item>Korjattu, \"päänäkymän yksiköt\" eivät päivity</item>
         <item>Uudelleenjärjestetty asetusvalikko</item>
@@ -19,7 +19,7 @@
         <item>Lisätty uudelleenkäynnistysilmoitus uudelleenkäynnistyksen, päivityksen tai sovelluksen kaatumisen jälkeen</item>
         <item>Lisätty sijainnin seuranta ja korkeushistoria</item>
         <item>Lisätty useita live-datan sovellusliittymiä:\n- ABRP OTA live-data\n- HTTP Webhook BasicAuthilla</item>
-        <item>[V](0.24)</item>
+        <item>[V](0.24.0</item>
         <item>Muutettu energian seurannan ehtoja (kokeellinen)</item>
         <item>Parannettu uudelleenkäynnistyksen ilmoitusehtoja</item>
         <item>Korjattu latausistuntojen yhteenvedon väärät päivämäärät</item>

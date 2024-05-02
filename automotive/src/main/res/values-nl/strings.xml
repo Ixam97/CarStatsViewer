@@ -11,7 +11,7 @@
         <item>\"Over Car Stats Viewer\" toegevoegd (incl. gereviseerde ReadMe met informatie over ondersteuning en bijdragen)</item>
         <item>Deense vertaling toegevoegd</item>
         <item>Datastructuur vernieuwd om de stabiliteit en schaalbaarheid te vergroten</item>
-        <item>[V](0.23)</item>
+        <item>[V](0.23.0</item>
         <item>Algemene bugfixes en stabiliteitsverbeteringen</item>
         <item>Probleem opgelost dat eenheden in de hoofdweergave niet werden ververst</item>
         <item>Instellingenmenu geherstructureerd</item>
@@ -19,7 +19,7 @@
         <item>Herstartmelding toegevoegd na een herstart, update of app-crash</item>
         <item>Locatietracking en hoogtegeschiedenis toegevoegd</item>
         <item>Meerdere live data-API\'s toegevoegd:\n- ABRP OTA live-gegevens\n- HTTP-webhook met BasicAuth</item>
-        <item>[V](0.24)</item>
+        <item>[V](0.24.0</item>
         <item>Gewijzigde condities voor het volgen van energie (experimenteel)</item>
         <item>Verbeterde voorwaarden voor herstartmeldingen</item>
         <item>Foute data van laadsessies in samenvatting verholpen</item>

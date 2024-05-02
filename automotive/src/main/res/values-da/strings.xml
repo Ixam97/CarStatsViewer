@@ -12,7 +12,7 @@
         <item>Tilføjet \"Om Car Stats Viewer\" (inkl. ændringer til ReadMe med info om at støtte og bidrage)</item>
         <item>Tilføjet dansk oversættelse</item>
         <item>Datastrukturen fornyet for at øge stabiliteten og skalerbarheden</item>
-        <item>[V](0.23)</item>
+        <item>[V](0.23.0</item>
         <item>Generelle fejlrettelser og stabilitetsforbedringer</item>
         <item>Rettede hovedvisningsenheder, der ikke opdateres</item>
         <item>Omstruktureret indstillingsmenu</item>
@@ -20,7 +20,7 @@
         <item>Tilføjet meddelelse om genstart efter genstart, opdatering eller app-nedbrud</item>
         <item>Tilføjet placeringssporing og højdehistorik</item>
         <item>Der er tilføjet flere API\'er til live data:\n- ABRP OTA live data\n- HTTP Webhook med BasicAuth</item>
-        <item>[V](0.24)</item>
+        <item>[V](0.24.0</item>
         <item>Ændrede betingelser for energisporing (eksperimentelt)</item>
         <item>Forbedrede betingelser for genstartsmeddelelser</item>
         <item>Rettet forkerte datoer for opladningssessioner i oversigten</item>
