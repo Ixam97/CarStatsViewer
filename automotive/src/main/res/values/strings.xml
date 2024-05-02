@@ -373,7 +373,4 @@
     <string name="car_app_permissions_message">Car Stats Viewer needs access to location and vehicle data permissions to function. Please grant these permissions.\n\nLocation tracking can be switched on or off in the app settings. No data is sent to any servers by default.</string>
     <string name="car_app_permissions_grant">Grant permissions</string>
     <string name="car_app_permissions_deny">Deny and exit</string>
-
-    <string name="car_app_changes_title">Update %1$s installed!</string>
-    <string name="car_app_changes_message">%1$s has been updated to version %2$s!</string> <!-- Insert short name -->
 </resources>

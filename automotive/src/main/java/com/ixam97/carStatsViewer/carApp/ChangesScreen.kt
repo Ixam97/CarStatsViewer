@@ -35,7 +35,7 @@ class ChangesScreen(carContext: CarContext): Screen(carContext) {
             setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_upgrade)).build())
         }.build()).apply {
             setHeader(Header.Builder().apply {
-                setTitle(carContext.getString(R.string.car_app_changes_title, BuildConfig.VERSION_NAME.dropLast(5)))
+                setTitle(carContext.getString(R.string.dialog_changes_title_updated))
                 setStartHeaderAction(Action.APP_ICON)
             }.build())
         }.build()
@@ -43,10 +43,9 @@ class ChangesScreen(carContext: CarContext): Screen(carContext) {
 
     private fun createVersionNoticesRows(): List<Row> {
         val changesRowList = mutableListOf<Row>()
-        val changes = carContext.resources.getStringArray(R.array.changes)
-        ChangeLogCreator.createChangelogFromList(changes.toList()).forEach {
+        ChangeLogCreator.createChangelog(carContext).forEach {
             changesRowList.add(Row.Builder().apply {
-                setTitle(carContext.getString(R.string.main_changelog_dialog_title, it.key))
+                setTitle(it.key)
                 addText(it.value)
             }.build())
         }
@@ -55,7 +54,7 @@ class ChangesScreen(carContext: CarContext): Screen(carContext) {
 
     private fun messageRow(): Row {
         val message = carContext.getString(
-            R.string.car_app_changes_message,
+            R.string.dialog_changes_message,
             carContext.getString(R.string.app_name),
             BuildConfig.VERSION_NAME.dropLast(5)
         )
