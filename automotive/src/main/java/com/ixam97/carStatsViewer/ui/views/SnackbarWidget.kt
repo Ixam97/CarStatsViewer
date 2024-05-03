@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
 import android.view.animation.AnimationUtils
-import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -20,9 +19,7 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.utils.InAppLogger
-import com.ixam97.carStatsViewer.utils.applyTypeface
-import kotlinx.android.synthetic.main.widget_snackbar.view.*
+import kotlinx.android.synthetic.main.widget_snackbar.view.progress_bar
 import kotlin.math.roundToInt
 
 
@@ -190,7 +187,5 @@ class SnackbarWidget private constructor(
             })
             this.startAnimation(anim)
         }
-
-        applyTypeface(this)
     }
 }

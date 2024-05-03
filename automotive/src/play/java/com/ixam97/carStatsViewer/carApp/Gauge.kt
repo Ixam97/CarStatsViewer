@@ -21,10 +21,6 @@ class Gauge(
     private val valuePaint = Paint().apply {
         color = Color.BLACK
         textSize = valueTextSize
-        CarStatsViewer.typefaceRegular?.let {
-            typeface = it
-            letterSpacing = -0.025f
-        }
         isAntiAlias = true
     }
 

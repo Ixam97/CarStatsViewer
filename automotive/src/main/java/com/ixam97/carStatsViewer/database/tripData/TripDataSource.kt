@@ -1,7 +1,5 @@
 package com.ixam97.carStatsViewer.database.tripData
 
-import androidx.room.Query
-
 interface TripDataSource {
 
     /*

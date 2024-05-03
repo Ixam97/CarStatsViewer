@@ -1,10 +1,15 @@
 package com.ixam97.carStatsViewer
 
-import android.app.*
+import android.app.Activity
+import android.app.AlarmManager
+import android.app.AlertDialog
+import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Typeface
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -18,7 +23,8 @@ import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
 import com.ixam97.carStatsViewer.database.log.LogDao
 import com.ixam97.carStatsViewer.database.log.LogDatabase
-import com.ixam97.carStatsViewer.database.tripData.*
+import com.ixam97.carStatsViewer.database.tripData.LocalTripDataSource
+import com.ixam97.carStatsViewer.database.tripData.TripDataDatabase
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
@@ -27,7 +33,6 @@ import com.ixam97.carStatsViewer.utils.ChangeLogCreator.createChangelog
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.ScreenshotButton
 import com.ixam97.carStatsViewer.utils.Watchdog
-import com.ixam97.carStatsViewer.utils.applyTypeface
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,9 +79,9 @@ class CarStatsViewer : Application() {
 
         lateinit var logDao: LogDao
 
-        var typefaceRegular: Typeface? = null
-        var typefaceMedium: Typeface? = null
-        var isPolestarTypeface = false
+        // var typefaceRegular: Typeface? = null
+        // var typefaceMedium: Typeface? = null
+        // var isPolestarTypeface = false
 
         val appContextIsInitialized: Boolean get() = this::appContext.isInitialized
 
@@ -142,10 +147,7 @@ class CarStatsViewer : Application() {
                         style(R.style.changes_text)
                     })
                 }
-
-                applyTypeface(layout)
                 setView(layout)
-
                 setCancelable(true)
                 create()
             }

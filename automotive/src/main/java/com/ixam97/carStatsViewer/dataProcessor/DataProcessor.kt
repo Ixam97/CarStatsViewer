@@ -1,37 +1,35 @@
 package com.ixam97.carStatsViewer.dataProcessor
 
+// import com.ixam97.carStatsViewer.utils.TimestampSynchronizer
 import android.app.Notification
-import android.app.PendingIntent
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import androidx.core.graphics.drawable.toBitmap
-import com.ixam97.carStatsViewer.AutoStartReceiver
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.Defines
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesData
-import com.ixam97.carStatsViewer.utils.TimeTracker
-import com.ixam97.carStatsViewer.database.tripData.*
+import com.ixam97.carStatsViewer.database.tripData.ChargingPoint
+import com.ixam97.carStatsViewer.database.tripData.ChargingSession
+import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
+import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.emulatorPowerSign
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotLineMarkerType
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.Ticker
-// import com.ixam97.carStatsViewer.utils.TimestampSynchronizer
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableSharedFlow
+import com.ixam97.carStatsViewer.utils.TimeTracker
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
-import java.util.*
-import java.util.concurrent.Executor
+import kotlinx.coroutines.launch
+import java.util.Date
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 

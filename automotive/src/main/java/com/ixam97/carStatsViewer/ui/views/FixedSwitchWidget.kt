@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
-import com.airbnb.paris.extensions.style
 import com.ixam97.carStatsViewer.R
 
 class FixedSwitchWidget @JvmOverloads constructor(

@@ -158,20 +158,12 @@ class GageView @JvmOverloads constructor(
     private val namePaint = Paint().apply {
         color = Color.GRAY
         textSize = descriptionTextSize
-        CarStatsViewer.typefaceRegular?.let {
-            typeface = it
-            letterSpacing = -0.025f
-        }
         isAntiAlias = true
     }
 
     private val unitPaint = Paint().apply {
         color = getPrimaryColor()
         textSize = descriptionTextSize
-        CarStatsViewer.typefaceRegular?.let {
-            typeface = it
-            letterSpacing = -0.025f
-        }
         isAntiAlias = true
     }
 
@@ -199,10 +191,6 @@ class GageView @JvmOverloads constructor(
     private val valuePaint = Paint().apply {
         color = Color.WHITE
         textSize = valueTextSize
-        CarStatsViewer.typefaceRegular?.let {
-            typeface = it
-            letterSpacing = -0.025f
-        }
         isAntiAlias = true
     }
 

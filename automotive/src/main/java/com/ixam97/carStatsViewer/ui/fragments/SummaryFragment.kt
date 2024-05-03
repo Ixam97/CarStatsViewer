@@ -12,7 +12,6 @@ import android.view.View
 import android.widget.SeekBar
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.graphics.drawable.toDrawable
-import androidx.core.graphics.toColor
 import androidx.core.view.forEach
 import androidx.core.view.get
 import androidx.core.view.isVisible
@@ -22,31 +21,71 @@ import androidx.lifecycle.lifecycleScope
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
-import com.ixam97.carStatsViewer.ui.activities.MainActivity
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.emulatorMode
+import com.ixam97.carStatsViewer.ui.activities.MainActivity
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionSmoothingType
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionY
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotHighlightMethod
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotLineLabelFormat
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotMarkerType
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotSessionGapRendering
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLine
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLineConfiguration
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotRange
-import com.ixam97.carStatsViewer.ui.plot.enums.*
 import com.ixam97.carStatsViewer.utils.DataConverters
-import com.ixam97.carStatsViewer.utils.StringFormatters
-import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import com.ixam97.carStatsViewer.utils.applyTypeface
+import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.getColorFromAttribute
-import kotlinx.android.synthetic.main.activity_main.main_consumption_plot
-import kotlinx.android.synthetic.main.activity_main.main_image_button_alt
-import kotlinx.android.synthetic.main.activity_main.main_image_button_soc
-import kotlinx.android.synthetic.main.activity_main.main_image_button_speed
-import kotlinx.android.synthetic.main.activity_main.main_secondary_dimension_indicator
-import kotlinx.android.synthetic.main.activity_main.main_secondary_selector_container
-import kotlinx.android.synthetic.main.fragment_summary.*
-import kotlinx.coroutines.*
-import java.util.*
+import kotlinx.android.synthetic.main.fragment_summary.summary_altitude_widget
+import kotlinx.android.synthetic.main.fragment_summary.summary_button_back
+import kotlinx.android.synthetic.main.fragment_summary.summary_button_dist_100
+import kotlinx.android.synthetic.main.fragment_summary.summary_button_dist_20
+import kotlinx.android.synthetic.main.fragment_summary.summary_button_dist_40
+import kotlinx.android.synthetic.main.fragment_summary.summary_button_dist_all
+import kotlinx.android.synthetic.main.fragment_summary.summary_button_reset
+import kotlinx.android.synthetic.main.fragment_summary.summary_button_trip_next
+import kotlinx.android.synthetic.main.fragment_summary.summary_button_trip_prev
+import kotlinx.android.synthetic.main.fragment_summary.summary_charge_container
+import kotlinx.android.synthetic.main.fragment_summary.summary_charge_plot_button_next
+import kotlinx.android.synthetic.main.fragment_summary.summary_charge_plot_button_prev
+import kotlinx.android.synthetic.main.fragment_summary.summary_charge_plot_seek_bar
+import kotlinx.android.synthetic.main.fragment_summary.summary_charge_plot_sub_title_curve
+import kotlinx.android.synthetic.main.fragment_summary.summary_charge_plot_view
+import kotlinx.android.synthetic.main.fragment_summary.summary_charge_time_widget
+import kotlinx.android.synthetic.main.fragment_summary.summary_charged_energy_warning_text
+import kotlinx.android.synthetic.main.fragment_summary.summary_charged_widget
+import kotlinx.android.synthetic.main.fragment_summary.summary_consumption_container
+import kotlinx.android.synthetic.main.fragment_summary.summary_consumption_plot
+import kotlinx.android.synthetic.main.fragment_summary.summary_consumption_widget
+import kotlinx.android.synthetic.main.fragment_summary.summary_distance_widget
+import kotlinx.android.synthetic.main.fragment_summary.summary_energy_widget
+import kotlinx.android.synthetic.main.fragment_summary.summary_image_button_alt
+import kotlinx.android.synthetic.main.fragment_summary.summary_image_button_soc
+import kotlinx.android.synthetic.main.fragment_summary.summary_image_button_speed
+import kotlinx.android.synthetic.main.fragment_summary.summary_progress_bar
+import kotlinx.android.synthetic.main.fragment_summary.summary_secondary_dimension_indicator
+import kotlinx.android.synthetic.main.fragment_summary.summary_secondary_selector_container
+import kotlinx.android.synthetic.main.fragment_summary.summary_selected_trip_bar
+import kotlinx.android.synthetic.main.fragment_summary.summary_selector_title
+import kotlinx.android.synthetic.main.fragment_summary.summary_speed_widget
+import kotlinx.android.synthetic.main.fragment_summary.summary_temperature_widget
+import kotlinx.android.synthetic.main.fragment_summary.summary_time_widget
+import kotlinx.android.synthetic.main.fragment_summary.summary_title
+import kotlinx.android.synthetic.main.fragment_summary.summary_trip_date_text
+import kotlinx.android.synthetic.main.fragment_summary.summary_trip_selector
+import kotlinx.android.synthetic.main.fragment_summary.summary_type_icon
+import kotlinx.android.synthetic.main.fragment_summary.summary_view_selector
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -109,10 +148,6 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        CarStatsViewer.typefaceRegular?.let {
-            applyTypeface(view)
-        }
 
         consumptionPlotLinePaint = PlotLinePaint(
             PlotPaint.byColor(getColorFromAttribute(requireContext(), R.attr.primary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),

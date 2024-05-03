@@ -5,8 +5,8 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.ixam97.carStatsViewer.ui.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
+import com.ixam97.carStatsViewer.ui.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

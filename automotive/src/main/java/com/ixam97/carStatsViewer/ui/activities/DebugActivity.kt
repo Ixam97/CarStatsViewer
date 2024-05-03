@@ -17,18 +17,38 @@ import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.adapters.LogAdapter
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.database.log.LogEntry
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.mailSender.MailSender
-import com.ixam97.carStatsViewer.adapters.LogAdapter
 import com.ixam97.carStatsViewer.ui.views.MultiSelectWidget
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
-import com.ixam97.carStatsViewer.utils.*
-import kotlinx.android.synthetic.main.activity_debug.*
-import kotlinx.coroutines.*
+import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
+import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.logLength
+import com.ixam97.carStatsViewer.utils.logLevel
+import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
+import kotlinx.android.synthetic.main.activity_debug.checkbox_send_current_trips
+import kotlinx.android.synthetic.main.activity_debug.checkbox_send_past_trips
+import kotlinx.android.synthetic.main.activity_debug.debug_button_back
+import kotlinx.android.synthetic.main.activity_debug.debug_settings
+import kotlinx.android.synthetic.main.activity_debug.log_button_reload
+import kotlinx.android.synthetic.main.activity_debug.log_button_send
+import kotlinx.android.synthetic.main.activity_debug.log_live_log
+import kotlinx.android.synthetic.main.activity_debug.log_progress_bar
+import kotlinx.android.synthetic.main.activity_debug.log_recyclerview
+import kotlinx.android.synthetic.main.activity_debug.log_reset_log
+import kotlinx.android.synthetic.main.activity_debug.log_text_sender
+import kotlinx.android.synthetic.main.activity_debug.log_text_target_mail
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
-import java.util.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Date
 
 class DebugActivity : FragmentActivity() {
 
@@ -66,10 +86,6 @@ class DebugActivity : FragmentActivity() {
         appPreferences = AppPreferences(applicationContext)
 
         setContentViewAndTheme(this, R.layout.activity_debug)
-
-        CarStatsViewer.typefaceMedium?.let {
-            applyTypeface(log_activity)
-        }
 
         log_live_log.isChecked = true
 

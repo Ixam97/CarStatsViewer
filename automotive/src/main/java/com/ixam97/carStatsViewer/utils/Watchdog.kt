@@ -1,11 +1,12 @@
 package com.ixam97.carStatsViewer.utils
 
-import com.ixam97.carStatsViewer.CarStatsViewer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.concurrent.Executor
 
 class Watchdog() {
     private val _watchdogStateFlow = MutableStateFlow<WatchdogState>(WatchdogState())

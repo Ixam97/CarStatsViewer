@@ -1,6 +1,6 @@
 package com.ixam97.carStatsViewer.utils
 
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.flow
 
 object Ticker {
     fun tickerFlow(interval: Long) = flow {

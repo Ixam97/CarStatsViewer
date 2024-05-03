@@ -1,7 +1,6 @@
 package com.ixam97.carStatsViewer.liveDataApi
 
 import android.content.Context
-import android.os.Handler
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
