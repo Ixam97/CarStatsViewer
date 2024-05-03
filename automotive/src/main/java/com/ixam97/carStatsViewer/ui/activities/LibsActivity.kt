@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.ui.activities
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -11,13 +10,14 @@ import android.widget.TextView
 import android.widget.Toolbar.LayoutParams
 import androidx.fragment.app.FragmentActivity
 import com.airbnb.paris.extensions.style
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.utils.applyTypeface
 import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.util.withContext
-import kotlinx.android.synthetic.main.activity_libs.*
+import kotlinx.android.synthetic.main.activity_libs.libs_button_back
+import kotlinx.android.synthetic.main.activity_libs.libs_container
 
 class LibsActivity: FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,10 +84,6 @@ class LibsActivity: FragmentActivity() {
                 dividerLine.setBackgroundColor(Color.TRANSPARENT)
                 libs_container.addView(dividerLine)
             }
-        }
-
-        CarStatsViewer.typefaceMedium?.let {
-            applyTypeface(libs_activity)
         }
     }
 }

@@ -1,13 +1,17 @@
 package com.ixam97.carStatsViewer.ui.activities
 
-import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.utils.applyTypeface
 import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
-import kotlinx.android.synthetic.main.activity_settings_main_view.*
+import kotlinx.android.synthetic.main.activity_settings_main_view.settings_charge_plot_switch_secondary_color
+import kotlinx.android.synthetic.main.activity_settings_main_view.settings_charge_plot_switch_visible_gages
+import kotlinx.android.synthetic.main.activity_settings_main_view.settings_consumption_plot_switch_secondary_color
+import kotlinx.android.synthetic.main.activity_settings_main_view.settings_consumption_plot_switch_visible_gages
+import kotlinx.android.synthetic.main.activity_settings_main_view.settings_main_view_back
+import kotlinx.android.synthetic.main.activity_settings_main_view.settings_multiselect_connection_selector
+import kotlinx.android.synthetic.main.activity_settings_main_view.settings_multiselect_trip
 
 class SettingsMainViewActivity: FragmentActivity() {
 
@@ -16,10 +20,6 @@ class SettingsMainViewActivity: FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentViewAndTheme(this, R.layout.activity_settings_main_view)
-
-        CarStatsViewer.typefaceMedium?.let {
-            applyTypeface(settings_main_view_activity)
-        }
 
         settings_consumption_plot_switch_secondary_color.isChecked = appPreferences.consumptionPlotSecondaryColor
         settings_consumption_plot_switch_visible_gages.isChecked = appPreferences.consumptionPlotVisibleGages

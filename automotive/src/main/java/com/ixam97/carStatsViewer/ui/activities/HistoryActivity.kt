@@ -15,21 +15,29 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.database.tripData.DrivingSession
-import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
-import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.adapters.TripHistoryAdapter
-import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
+import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
-import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
+import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.ui.views.TripHistoryRowWidget
-import com.ixam97.carStatsViewer.utils.applyTypeface
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
-import kotlinx.android.synthetic.main.activity_history.*
-import kotlinx.coroutines.*
-import java.util.*
+import kotlinx.android.synthetic.main.activity_history.history_button_back
+import kotlinx.android.synthetic.main.activity_history.history_button_filters
+import kotlinx.android.synthetic.main.activity_history.history_button_upload
+import kotlinx.android.synthetic.main.activity_history.history_fragment_container
+import kotlinx.android.synthetic.main.activity_history.history_multi_container
+import kotlinx.android.synthetic.main.activity_history.history_multi_delete
+import kotlinx.android.synthetic.main.activity_history.history_multi_info
+import kotlinx.android.synthetic.main.activity_history.history_trips_recycler_view
+import kotlinx.android.synthetic.main.activity_history.trip_history_progress_bar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Calendar
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -105,10 +113,6 @@ class HistoryActivity  : FragmentActivity() {
 
         history_multi_delete.setOnClickListener {
             createMultiDeleteDialog()
-        }
-
-        CarStatsViewer.typefaceMedium?.let {
-            applyTypeface(history_activity)
         }
 
         history_button_upload.setOnClickListener {

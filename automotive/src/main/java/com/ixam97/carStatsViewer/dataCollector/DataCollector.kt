@@ -12,19 +12,27 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.ui.activities.MainActivity
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesClient
 import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.locationClient.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationClient.LocationClient
+import com.ixam97.carStatsViewer.ui.activities.MainActivity
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.WatchdogState
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class DataCollector: Service() {
 

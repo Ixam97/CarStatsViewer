@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.log.LogEntry
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import kotlinx.android.synthetic.main.recyclerview_log_row.view.*
+import kotlinx.android.synthetic.main.recyclerview_log_row.view.log_row
 import java.text.SimpleDateFormat
 
 class LogAdapter(var log: List<LogEntry>): RecyclerView.Adapter<LogAdapter.LogViewHolder>() {

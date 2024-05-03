@@ -5,8 +5,8 @@ import android.content.SharedPreferences
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
+import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.Exclude
 
 class AppPreferences(

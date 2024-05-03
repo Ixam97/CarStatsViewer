@@ -10,38 +10,90 @@ import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.graphics.drawable.toDrawable
-import androidx.core.view.drawToBitmap
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.ixam97.carStatsViewer.*
+import com.ixam97.carStatsViewer.BuildConfig
+import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.dataProcessor.DrivingState
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.databinding.ActivityMainBinding
+import com.ixam97.carStatsViewer.emulatorMode
+import com.ixam97.carStatsViewer.emulatorPowerSign
 import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionSmoothingType
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionY
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotHighlightMethod
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotLineLabelFormat
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotSessionGapRendering
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotGlobalConfiguration
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLine
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLineConfiguration
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotRange
-import com.ixam97.carStatsViewer.ui.plot.enums.*
-import com.ixam97.carStatsViewer.ui.views.GageView
-import com.ixam97.carStatsViewer.ui.views.PlotView
-import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
-import com.ixam97.carStatsViewer.utils.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.*
+import com.ixam97.carStatsViewer.utils.DataConverters
+import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
+import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.StringFormatters
+import com.ixam97.carStatsViewer.utils.Ticker
+import com.ixam97.carStatsViewer.utils.WatchdogState
+import com.ixam97.carStatsViewer.utils.getColorFromAttribute
+import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
+import kotlinx.android.synthetic.main.activity_main.main_SoC_gage
+import kotlinx.android.synthetic.main.activity_main.main_button_back
+import kotlinx.android.synthetic.main.activity_main.main_button_dismiss_charge_plot
+import kotlinx.android.synthetic.main.activity_main.main_button_history
+import kotlinx.android.synthetic.main.activity_main.main_button_perf
+import kotlinx.android.synthetic.main.activity_main.main_button_reset
+import kotlinx.android.synthetic.main.activity_main.main_button_settings
+import kotlinx.android.synthetic.main.activity_main.main_button_summary_charge
+import kotlinx.android.synthetic.main.activity_main.main_charge_gage
+import kotlinx.android.synthetic.main.activity_main.main_charge_layout
+import kotlinx.android.synthetic.main.activity_main.main_charge_plot
+import kotlinx.android.synthetic.main.activity_main.main_consumption_gage
+import kotlinx.android.synthetic.main.activity_main.main_consumption_layout
+import kotlinx.android.synthetic.main.activity_main.main_consumption_plot
+import kotlinx.android.synthetic.main.activity_main.main_distance_selector
+import kotlinx.android.synthetic.main.activity_main.main_fragment_container
+import kotlinx.android.synthetic.main.activity_main.main_gage_avg_consumption_text_view
+import kotlinx.android.synthetic.main.activity_main.main_gage_avg_speed_text_view
+import kotlinx.android.synthetic.main.activity_main.main_gage_charge_time_text_view
+import kotlinx.android.synthetic.main.activity_main.main_gage_charged_energy_text_view
+import kotlinx.android.synthetic.main.activity_main.main_gage_distance_text_view
+import kotlinx.android.synthetic.main.activity_main.main_gage_time_text_view
+import kotlinx.android.synthetic.main.activity_main.main_gage_trip_name
+import kotlinx.android.synthetic.main.activity_main.main_gage_used_power_text_view
+import kotlinx.android.synthetic.main.activity_main.main_icon_abrp_status
+import kotlinx.android.synthetic.main.activity_main.main_icon_location_status
+import kotlinx.android.synthetic.main.activity_main.main_image_button_alt
+import kotlinx.android.synthetic.main.activity_main.main_image_button_soc
+import kotlinx.android.synthetic.main.activity_main.main_image_button_speed
+import kotlinx.android.synthetic.main.activity_main.main_image_button_summary
+import kotlinx.android.synthetic.main.activity_main.main_power_gage
+import kotlinx.android.synthetic.main.activity_main.main_secondary_dimension_indicator
+import kotlinx.android.synthetic.main.activity_main.main_secondary_selector_container
+import kotlinx.android.synthetic.main.activity_main.main_soc_gage
+import kotlinx.android.synthetic.main.activity_main.main_speed_gage
+import kotlinx.android.synthetic.main.activity_main.main_title
+import kotlinx.android.synthetic.main.activity_main.main_title_dashboard
+import kotlinx.android.synthetic.main.activity_main.main_title_icon
+import kotlinx.android.synthetic.main.activity_main.main_trip_type_icon
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -377,10 +429,6 @@ class MainActivity : FragmentActivity() {
             PlotPaint.byColor(getColorFromAttribute(this, R.attr.secondary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
             PlotPaint.byColor(getColorFromAttribute(this, R.attr.tertiary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size))
         ) { appPreferences.consumptionPlotSecondaryColor }
-
-        CarStatsViewer.typefaceMedium?.let {
-            applyTypeface(main_activity)
-        }
 
         setupDefaultUi()
         setUiEventListeners()

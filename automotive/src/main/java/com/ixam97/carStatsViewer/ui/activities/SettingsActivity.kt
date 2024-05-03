@@ -1,18 +1,30 @@
 package com.ixam97.carStatsViewer.ui.activities
 
-import android.content.*
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.ixam97.carStatsViewer.*
-import com.ixam97.carStatsViewer.appPreferences.AppPreference
-import com.ixam97.carStatsViewer.utils.InAppLogger
-import com.ixam97.carStatsViewer.utils.applyTypeface
+import com.ixam97.carStatsViewer.BuildConfig
+import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
-import kotlinx.android.synthetic.main.activity_settings.*
+import kotlinx.android.synthetic.main.activity_settings.settings_about_widget
+import kotlinx.android.synthetic.main.activity_settings.settings_apis_widget
+import kotlinx.android.synthetic.main.activity_settings.settings_button_back
+import kotlinx.android.synthetic.main.activity_settings.settings_main_view_widget
+import kotlinx.android.synthetic.main.activity_settings.settings_switch_alt_layout
+import kotlinx.android.synthetic.main.activity_settings.settings_switch_autostart
+import kotlinx.android.synthetic.main.activity_settings.settings_switch_consumption_unit
+import kotlinx.android.synthetic.main.activity_settings.settings_switch_notifications
+import kotlinx.android.synthetic.main.activity_settings.settings_switch_phone_reminder
+import kotlinx.android.synthetic.main.activity_settings.settings_switch_theme
+import kotlinx.android.synthetic.main.activity_settings.settings_switch_theme_container
+import kotlinx.android.synthetic.main.activity_settings.settings_switch_use_location
+import kotlinx.android.synthetic.main.activity_settings.settings_vehicle_widget
+import kotlinx.android.synthetic.main.activity_settings.settings_version_text
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -49,12 +61,6 @@ class SettingsActivity : FragmentActivity() {
             }
         }
         setContentViewAndTheme(this, R.layout.activity_settings)
-
-        CarStatsViewer.typefaceMedium?.let {
-            applyTypeface(settings_activity)
-        }
-
-        if (!CarStatsViewer.isPolestarTypeface) settings_vehicle_widget.isVisible = false
 
         setupSettingsMaster()
     }

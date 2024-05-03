@@ -1,6 +1,11 @@
 package com.ixam97.carStatsViewer.database.tripData
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Ignore
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Upsert
 
 @Dao
 interface TripDao {

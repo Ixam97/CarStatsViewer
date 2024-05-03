@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.ui.activities
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
@@ -9,19 +8,23 @@ import androidx.fragment.app.FragmentActivity
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.utils.applyTypeface
 import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
-import kotlinx.android.synthetic.main.activity_about.*
+import kotlinx.android.synthetic.main.activity_about.about_button_back
+import kotlinx.android.synthetic.main.activity_about.about_club_widget
+import kotlinx.android.synthetic.main.activity_about.about_contributors_widget
+import kotlinx.android.synthetic.main.activity_about.about_forums_widget
+import kotlinx.android.synthetic.main.activity_about.about_github_issues_widget
+import kotlinx.android.synthetic.main.activity_about.about_libs_widget
+import kotlinx.android.synthetic.main.activity_about.about_support_widget
+import kotlinx.android.synthetic.main.activity_about.about_supporters_widget
+import kotlinx.android.synthetic.main.activity_about.about_translators_widget
+import kotlinx.android.synthetic.main.activity_about.about_version_widget
 
 class AboutActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentViewAndTheme(this, R.layout.activity_about)
-
-        CarStatsViewer.typefaceMedium?.let {
-            applyTypeface(about_activity)
-        }
 
         about_button_back.setOnClickListener {
             finish()

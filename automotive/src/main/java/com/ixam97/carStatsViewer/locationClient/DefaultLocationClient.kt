@@ -1,18 +1,16 @@
 package com.ixam97.carStatsViewer.locationClient
 
+// import com.google.android.gms.location.*
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.location.LocationManager
-// import com.google.android.gms.location.*
-import com.google.android.gms.tasks.CancellationTokenSource
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.tasks.await
 import org.matthiaszimmermann.location.egm96.Geoid
 import kotlin.math.absoluteValue
 
