@@ -221,7 +221,7 @@ class CarStatsViewerScreen(
         // setItemSize(GridTemplate.ITEM_SIZE_LARGE)
         setSingleList(ItemList.Builder().apply {
             addItem(GridItem.Builder().apply {
-                setTitle("${((realTimeData?.power?:0f)/1_000_000)} kW")
+                setTitle("${(((realTimeData?.power?:0f)/1_000_000) * 10).toInt() / 10f } kW")
                 setText("Power")
                 setImage(gauge.draw(128, (realTimeData?.power?:0f)/1_000_000, min = -150f, max = 300f).asCarIcon())
                 setItemSize(GridTemplate.ITEM_SIZE_LARGE)
