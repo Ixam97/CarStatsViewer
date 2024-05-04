@@ -5,6 +5,7 @@ import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.model.Action
+import androidx.car.app.model.Badge
 import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
 import androidx.car.app.model.GridItem
@@ -74,6 +75,7 @@ class CarStatsViewerScreen(
         navigationOnly = true,
         invalidateCallback = this::invalidateTabView
     )
+    private val tripDataTemplate = TripDataTemplate(carContext)
 
     internal var selectedTabContentID = CID_TRIP_DATA
         set(value) {
@@ -158,7 +160,7 @@ class CarStatsViewerScreen(
             when (selectedTabContentID) {
                 CID_TRIP_DATA -> {
                     session.carDataSurfaceCallback.pause()
-                    TripDataList(drivingSession)
+                    tripDataTemplate.tripDataPaneTemplate(drivingSession, realTimeData)
                 }
                 CID_STATUS -> {
                     session.carDataSurfaceCallback.pause()
@@ -221,12 +223,21 @@ class CarStatsViewerScreen(
         // setItemSize(GridTemplate.ITEM_SIZE_LARGE)
         setSingleList(ItemList.Builder().apply {
             addItem(GridItem.Builder().apply {
+                val selected = appPreferences.carAppSelectedRealTimeData == 1
                 setTitle("${(((realTimeData?.power?:0f)/1_000_000) * 10).toInt() / 10f } kW")
                 setText("Power")
-                setImage(gauge.draw(128, (realTimeData?.power?:0f)/1_000_000, min = -150f, max = 300f).asCarIcon())
+                setImageWithBadge(
+                    gauge.draw(128, (realTimeData?.power?:0f)/1_000_000, min = -150f, max = 300f, selected = selected).asCarIcon(),
+                    appPreferences.carAppSelectedRealTimeData == 1
+                )
                 setItemSize(GridTemplate.ITEM_SIZE_LARGE)
+                setOnClickListener {
+                    appPreferences.carAppSelectedRealTimeData = if (appPreferences.carAppSelectedRealTimeData == 1) 0 else 1
+                    invalidateTabView()
+                }
             }.build())
             addItem(GridItem.Builder().apply {
+                val selected = appPreferences.carAppSelectedRealTimeData == 2
 
                 var instCons = realTimeData?.instConsumption
                 val instConsVal: Number? = if (instCons != null && (realTimeData?.speed?:0f) * 3.6 > 3) {
@@ -248,8 +259,15 @@ class CarStatsViewerScreen(
 
                 setTitle("${instConsVal?: "∞"} $instUnit")
                 setText("Consumption")
-                setImage(gauge.draw(128, instCons?:0f, -300f, 600f).asCarIcon())
+                setImageWithBadge(
+                    gauge.draw(128, instCons?:0f, -300f, 600f, selected = selected).asCarIcon(),
+                    selected
+                )
                 setItemSize(GridTemplate.ITEM_SIZE_MEDIUM)
+                setOnClickListener {
+                    appPreferences.carAppSelectedRealTimeData = if (appPreferences.carAppSelectedRealTimeData == 2) 0 else 2
+                    invalidateTabView()
+                }
             }.build())
         }.build())
     }.build()
@@ -260,5 +278,16 @@ class CarStatsViewerScreen(
             setTitle("Test Title")
         }.build())
     }.build()).build()
+
+    private fun checkedBadge() = Badge.Builder().apply {
+        setIcon(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_check)).build())
+    }.build()
+
+    private fun GridItem.Builder.setImageWithBadge(carIcon: CarIcon, checked: Boolean = false) {
+        when (checked) {
+            true -> setImage(carIcon, checkedBadge())
+            false -> setImage(carIcon)
+        }
+    }
 }
 

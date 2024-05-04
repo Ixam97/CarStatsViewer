@@ -273,6 +273,7 @@
 
     <!-- Car App -->
     <string name="car_app_trip_data">Tripdaten</string>
+    <string name="car_app_strip_selection">Tripauswahl</string>
     <string name="car_app_dashboard">Dashboard</string>
     <string name="car_app_menu">Verschiedenes</string>
     <string name="car_app_toast_reset_confirmation">Manuellert Trip wurde zurückgesetzt</string>

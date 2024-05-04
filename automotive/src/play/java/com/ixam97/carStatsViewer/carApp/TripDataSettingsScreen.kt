@@ -24,7 +24,7 @@ class TripDataSettingsScreen(carContext: CarContext) : Screen(carContext) {
     }
 
     private fun tripDataSettingsList() = ListTemplate.Builder().apply {
-        setTitle(carContext.getString(R.string.car_app_trip_data))
+        setTitle(carContext.getString(R.string.car_app_strip_selection))
         setHeaderAction(Action.BACK)
         if (CarStatsViewer.appPreferences.mainViewTrip == 0) {
             setActionStrip(ActionStrip.Builder().apply {
