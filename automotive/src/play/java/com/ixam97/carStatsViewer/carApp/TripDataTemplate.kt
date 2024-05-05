@@ -1,5 +1,7 @@
 package com.ixam97.carStatsViewer.carApp
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import androidx.annotation.OptIn
 import androidx.car.app.CarContext
 import androidx.car.app.ScreenManager
@@ -82,16 +84,26 @@ class TripDataTemplate(val carContext: CarContext) {
                 ))
             }
             addAction(configAction(showTitle = true))
-            if (session.session_type == 1 && carContext.carAppApiLevel >= 7) {
+            if (session.session_type == 1) {
                 addAction(resetAction(showTitle = true))
             }
             val selectedGaugeIndex = CarStatsViewer.appPreferences.carAppSelectedRealTimeData
 
-            if (realTimeData != null) when (selectedGaugeIndex) {
-                1 -> setImage(gauge.drawPowerGauge(480, realTimeData.power?:0f).asCarIcon())
-                2 -> setImage(gauge.drawConsumptionGauge(480, realTimeData.instConsumption, realTimeData.speed).asCarIcon())
-                else -> { /* Don't show an image */ }
+            if (realTimeData != null) {
+
+                val gaugeBitmap = Bitmap.createBitmap(480, 480, Bitmap.Config.ARGB_8888)
+                val canvas = Canvas(gaugeBitmap)
+                canvas.drawBitmap(gauge.drawPowerGauge(480, 230, realTimeData.power?:0f), 0f, 0f ,null)
+                canvas.drawBitmap(gauge.drawConsumptionGauge(480, 230, realTimeData.instConsumption, realTimeData.speed), 0f, 250f, null)
+
+                setImage(gaugeBitmap.asCarIcon())
             }
+
+            // if (realTimeData != null) when (selectedGaugeIndex) {
+            //     1 -> setImage(.asCarIcon())
+            //     2 -> setImage(.asCarIcon())
+            //     else -> { /* Don't show an image */ }
+            // }
 
         }
     }.build()).build()

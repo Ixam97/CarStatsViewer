@@ -363,6 +363,7 @@
     <string name="car_app_trip_data">Trip Data</string>
     <string name="car_app_strip_selection">Trip selection</string>
     <string name="car_app_dashboard">Dashboard</string>
+    <string name="car_app_legacy_dashboard">Legacy Dashboard</string>
     <string name="car_app_menu">Miscellaneous</string>
     <string name="car_app_status">Car Status</string>
     <string name="car_app_toast_reset_confirmation">Manual Trip has been reset.</string>

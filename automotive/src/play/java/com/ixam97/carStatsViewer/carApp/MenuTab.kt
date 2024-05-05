@@ -34,8 +34,8 @@ internal fun CarStatsViewerScreen.MenuList() = ListTemplate.Builder().apply {
 
     setSingleList(ItemList.Builder().apply {
         addItem(Row.Builder().apply{
-            setTitle(carContext.getString(R.string.car_app_dashboard))
-            setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_diagram)).build())
+            setTitle(carContext.getString(R.string.car_app_legacy_dashboard))
+            setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_dashboard)).build())
             setBrowsable(true)
             setOnClickListener {
                 carContext.startActivity(mainActivityIntent)
@@ -43,7 +43,7 @@ internal fun CarStatsViewerScreen.MenuList() = ListTemplate.Builder().apply {
         }.build())
         addItem(Row.Builder().apply{
             setTitle(carContext.getString(R.string.history_title))
-            setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_history)).build())
+            setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_history)).build())
             setBrowsable(true)
             setOnClickListener {
                 carContext.startActivity(historyActivityIntent)
@@ -51,7 +51,7 @@ internal fun CarStatsViewerScreen.MenuList() = ListTemplate.Builder().apply {
         }.build())
         addItem(Row.Builder().apply{
             setTitle(carContext.getString(R.string.settings_title))
-            setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_settings)).build())
+            setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_settings)).build())
             setBrowsable(true)
             setOnClickListener {
                 carContext.startActivity(settingsActivityIntent)
