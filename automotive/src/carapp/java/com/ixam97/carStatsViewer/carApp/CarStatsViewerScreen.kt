@@ -1,6 +1,9 @@
 package com.ixam97.carStatsViewer.carApp
 
+import android.car.Car
+import android.content.pm.PackageManager
 import androidx.car.app.AppManager
+import androidx.car.app.CarAppPermission
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.annotations.ExperimentalCarApi
@@ -31,7 +34,6 @@ import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.throttle
-import kotlinx.android.synthetic.main.activity_main.main_consumption_gage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -170,7 +172,7 @@ class CarStatsViewerScreen(
                     CarStatsList()
                 }
                 CID_CANVAS -> {
-                    if (carContext.carAppApiLevel >= 8) {
+                    if (carContext.carAppApiLevel >= 7 && BuildConfig.FLAVOR_version == "dev") {
                         session.carDataSurfaceCallback.resume()
                         realTimeDataTemplate.getTemplate()
                     } else realTimeDataGridTemplate() // LowApiLevelMessage()
