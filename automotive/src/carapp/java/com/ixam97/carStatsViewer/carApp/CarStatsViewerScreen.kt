@@ -68,6 +68,7 @@ class CarStatsViewerScreen(
 
     private var lastInvalidate: Long = 0L
     private var invalidateInQueue = false
+    private var enableInvalidate = false
 
     private val gauge = Gauge(carContext)
 
@@ -130,11 +131,16 @@ class CarStatsViewerScreen(
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
+        enableInvalidate = false
+        InAppLogger.d("[$TAG] Pausing Screen Lifecycle")
         // session.carDataSurfaceCallback.pause()
     }
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
+        enableInvalidate = true
+        invalidateTabView()
+        InAppLogger.d("[$TAG] Resuming Screen Lifecycle")
         // session.carDataSurfaceCallback.resume()
     }
 
@@ -196,7 +202,7 @@ class CarStatsViewerScreen(
     }.build()
 
     internal fun invalidateTabView() {
-        if (invalidateInQueue) return
+        if (invalidateInQueue || !enableInvalidate) return
         val nanoTime = System.nanoTime()
         if (lastInvalidate + 1_000_000_000 < nanoTime) {
             invalidate()
