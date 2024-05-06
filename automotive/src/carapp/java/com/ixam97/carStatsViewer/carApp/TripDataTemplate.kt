@@ -2,6 +2,7 @@ package com.ixam97.carStatsViewer.carApp
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import androidx.annotation.OptIn
 import androidx.car.app.CarContext
 import androidx.car.app.ScreenManager
@@ -63,11 +64,6 @@ class TripDataTemplate(val carContext: CarContext) {
                     R.drawable.ic_distance_large
                 ))
                 addRow(createDataRow(
-                    StringFormatters.getEnergyString(it.used_energy.toFloat()),
-                    carContext.getString(R.string.summary_used_energy),
-                    R.drawable.ic_energy_large
-                ))
-                addRow(createDataRow(
                     StringFormatters.getAvgConsumptionString(it.used_energy.toFloat(), it.driven_distance.toFloat()),
                     carContext.getString(R.string.summary_average_consumption),
                     R.drawable.ic_diagram
@@ -82,6 +78,11 @@ class TripDataTemplate(val carContext: CarContext) {
                     carContext.getString(R.string.summary_travel_time),
                     R.drawable.ic_time_large
                 ))
+                addRow(createDataRow(
+                    StringFormatters.getEnergyString(it.used_energy.toFloat()),
+                    carContext.getString(R.string.summary_used_energy),
+                    R.drawable.ic_energy_large
+                ))
             }
             addAction(configAction(showTitle = true))
             if (session.session_type == 1) {
@@ -93,8 +94,9 @@ class TripDataTemplate(val carContext: CarContext) {
 
                 val gaugeBitmap = Bitmap.createBitmap(480, 480, Bitmap.Config.ARGB_8888)
                 val canvas = Canvas(gaugeBitmap)
-                canvas.drawBitmap(gauge.drawPowerGauge(480, 230, realTimeData.power?:0f), 0f, 0f ,null)
-                canvas.drawBitmap(gauge.drawConsumptionGauge(480, 230, realTimeData.instConsumption, realTimeData.speed), 0f, 250f, null)
+                canvas.drawBitmap(gauge.drawPowerGauge(480, 170, realTimeData.power?:0f), 0f, 0f ,null)
+                canvas.drawBitmap(gauge.drawConsumptionGauge(480, 170, realTimeData.instConsumption, realTimeData.speed), 0f, 180f, null)
+                canvas.drawBitmap(gauge.draw(width = 480, height = 140, value = realTimeData.alt?:0f, valueString = realTimeData.alt?.toInt().toString(), unitString = "m", textOnly = true), 0f, 360f, null)
 
                 setImage(gaugeBitmap.asCarIcon())
             }

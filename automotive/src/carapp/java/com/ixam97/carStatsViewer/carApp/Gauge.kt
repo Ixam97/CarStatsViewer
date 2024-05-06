@@ -70,8 +70,9 @@ class Gauge(
         max: Float = 100f,
         valueString: String? = null,
         unitString: String? = null,
-        selected: Boolean = false
-    ): Bitmap = draw(size, size, value, min, max, valueString, unitString, selected)
+        selected: Boolean = false,
+        textOnly: Boolean = false,
+    ): Bitmap = draw(size, size, value, min, max, valueString, unitString, selected, textOnly)
 
     fun draw(
         width: Int,
@@ -81,7 +82,8 @@ class Gauge(
         max: Float = 100f,
         valueString: String? = null,
         unitString: String? = null,
-        selected: Boolean = false
+        selected: Boolean = false,
+        textOnly: Boolean = false,
     ): Bitmap {
 
         valuePaint.textSize = max(width, height) / 4f
@@ -108,60 +110,62 @@ class Gauge(
         val floatHeight = height.toFloat()
         val floatWidth = width.toFloat()
 
-        val zeroLineY: Float = bottomLine * (max / (max - min))
-        val zeroLineX: Float = floatWidth - (floatWidth * (max / (max - min)))
-        var valueLineY: Float = (zeroLineY - value * (bottomLine / (max - min)))
-        var valueLineX: Float = (zeroLineX + value) * (floatWidth / (max - min))
+        if (!textOnly) {
+            val zeroLineY: Float = bottomLine * (max / (max - min))
+            val zeroLineX: Float = floatWidth - (floatWidth * (max / (max - min)))
+            var valueLineY: Float = (zeroLineY - value * (bottomLine / (max - min)))
+            var valueLineX: Float = (zeroLineX + value) * (floatWidth / (max - min))
 
-        if (valueLineY > bottomLine) valueLineY = bottomLine
-        else if (valueLineY <= 0) valueLineY = 0f
+            if (valueLineY > bottomLine) valueLineY = bottomLine
+            else if (valueLineY <= 0) valueLineY = 0f
 
-        if (valueLineX > floatWidth) valueLineX = floatWidth
-        else if (valueLineX <= 0) valueLineX = 0f
+            if (valueLineX > floatWidth) valueLineX = floatWidth
+            else if (valueLineX <= 0) valueLineX = 0f
 
-        if (value > 0 || value < 0) {
-            gageBarRect.apply {
-                if (width < height) {
-                    left = 0f
-                    right = floatWidth
-                    bottom = zeroLineY
-                    top = valueLineY
-                } else {
-                    left = zeroLineX
-                    right = valueLineX
-                    top = topLine
-                    bottom = floatHeight
+            if (value > 0 || value < 0) {
+                gageBarRect.apply {
+                    if (width < height) {
+                        left = 0f
+                        right = floatWidth
+                        bottom = zeroLineY
+                        top = valueLineY
+                    } else {
+                        left = zeroLineX
+                        right = valueLineX
+                        top = topLine
+                        bottom = floatHeight
+                    }
                 }
+                canvas.drawRect(gageBarRect, if (value > 0) posPaint else negPaint)
             }
-            canvas.drawRect(gageBarRect, if (value > 0) posPaint else negPaint)
-        }
 
-        if (min < 0) {
-            gageZeroLine.apply {
-                if (width < height) {
-                    reset()
-                    moveTo(0f, zeroLineY)
-                    lineTo(floatWidth, zeroLineY)
-                    close()
-                } else {
-                    reset()
-                    moveTo(zeroLineX, topLine)
-                    lineTo(zeroLineX, floatHeight)
-                    close()
+            if (min < 0) {
+                gageZeroLine.apply {
+                    if (width < height) {
+                        reset()
+                        moveTo(0f, zeroLineY)
+                        lineTo(floatWidth, zeroLineY)
+                        close()
+                    } else {
+                        reset()
+                        moveTo(zeroLineX, topLine)
+                        lineTo(zeroLineX, floatHeight)
+                        close()
+                    }
                 }
+                canvas.drawPath(gageZeroLine, zeroLinePaint)
             }
-            canvas.drawPath(gageZeroLine, zeroLinePaint)
-        }
 
-        gageBorder.apply {
-            reset()
-            moveTo(0f + borderPaint.strokeWidth/2, topLine + borderPaint.strokeWidth/2)
-            lineTo(0f + borderPaint.strokeWidth/2, floatHeight  - borderPaint.strokeWidth/2)
-            lineTo(floatWidth - borderPaint.strokeWidth/2, floatHeight - borderPaint.strokeWidth/2)
-            lineTo(floatWidth - borderPaint.strokeWidth/2, topLine + borderPaint.strokeWidth/2)
-            close()
+            gageBorder.apply {
+                reset()
+                moveTo(0f + borderPaint.strokeWidth/2, topLine + borderPaint.strokeWidth/2)
+                lineTo(0f + borderPaint.strokeWidth/2, floatHeight  - borderPaint.strokeWidth/2)
+                lineTo(floatWidth - borderPaint.strokeWidth/2, floatHeight - borderPaint.strokeWidth/2)
+                lineTo(floatWidth - borderPaint.strokeWidth/2, topLine + borderPaint.strokeWidth/2)
+                close()
+            }
+            canvas.drawPath(gageBorder, borderPaint)
         }
-        canvas.drawPath(gageBorder, borderPaint)
 
         valueString?.let { it ->
             canvas.drawText(it, 0f, topLine - textOffsetY, valuePaint)
