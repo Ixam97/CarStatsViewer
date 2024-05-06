@@ -21,21 +21,21 @@ android {
     productFlavors {
         stable {
             dimension "version"
+        }
+
+        legacy {
+            dimension "aaos"
             applicationId "com.ixam97.carStatsViewer"
+        }
+
+        carapp {
+            dimension "aaos"
+            applicationId "de.ixam97.carStatsViewer"
         }
 
         dev {
             dimension "version"
             applicationId "com.ixam97.carStatsViewer_dev"
-        }
-
-        regular {
-            dimension "aaos"
-        }
-
-        play {
-            dimension "aaos"
-            // applicationIdSuffix "play"
         }
     }
 
