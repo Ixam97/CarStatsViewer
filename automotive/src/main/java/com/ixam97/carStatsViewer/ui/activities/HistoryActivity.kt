@@ -69,11 +69,11 @@ class HistoryActivity  : FragmentActivity() {
         super.startActivity(intent)
         if (intent?.hasExtra("noTransition") == true) {
             if (!intent.getBooleanExtra("noTransition", false)) {
-                if (BuildConfig.FLAVOR_aaos != "play")
+                if (BuildConfig.FLAVOR_aaos != "carapp")
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
             }
         } else {
-            if (BuildConfig.FLAVOR_aaos != "play")
+            if (BuildConfig.FLAVOR_aaos != "carapp")
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
     }
@@ -107,7 +107,7 @@ class HistoryActivity  : FragmentActivity() {
 
         history_button_back.setOnClickListener {
             finish()
-            if (BuildConfig.FLAVOR_aaos != "play")
+            if (BuildConfig.FLAVOR_aaos != "carapp")
                 overridePendingTransition(R.anim.stay_still, R.anim.slide_out_right)
         }
 

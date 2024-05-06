@@ -28,7 +28,7 @@ class AboutActivity : FragmentActivity() {
 
         about_button_back.setOnClickListener {
             finish()
-            if (BuildConfig.FLAVOR_aaos != "play")
+            if (BuildConfig.FLAVOR_aaos != "carapp")
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
@@ -57,7 +57,7 @@ class AboutActivity : FragmentActivity() {
 
         about_libs_widget.setOnRowClickListener {
             startActivity(Intent(this, LibsActivity::class.java))
-            if (BuildConfig.FLAVOR_aaos != "play")
+            if (BuildConfig.FLAVOR_aaos != "carapp")
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 

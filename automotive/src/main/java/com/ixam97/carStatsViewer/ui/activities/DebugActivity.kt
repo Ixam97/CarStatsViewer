@@ -101,7 +101,7 @@ class DebugActivity : FragmentActivity() {
 
         debug_button_back.setOnClickListener {
             finish()
-            if (BuildConfig.FLAVOR_aaos != "play")
+            if (BuildConfig.FLAVOR_aaos != "carapp")
                 overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
         }
 

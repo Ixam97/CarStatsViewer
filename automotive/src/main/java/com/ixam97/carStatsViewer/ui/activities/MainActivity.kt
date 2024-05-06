@@ -442,7 +442,7 @@ class MainActivity : FragmentActivity() {
             appPreferences.versionString = BuildConfig.VERSION_NAME
         }
 
-        if (BuildConfig.FLAVOR_aaos == "play") {
+        if (BuildConfig.FLAVOR_aaos == "carapp") {
             main_title.visibility = View.GONE
             main_title_icon.visibility = View.GONE
             main_title_dashboard.visibility = View.VISIBLE
@@ -757,7 +757,7 @@ class MainActivity : FragmentActivity() {
 
         main_button_settings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
-            if (BuildConfig.FLAVOR_aaos != "play")
+            if (BuildConfig.FLAVOR_aaos != "carapp")
                 overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }
         /*
@@ -822,7 +822,7 @@ class MainActivity : FragmentActivity() {
 
         main_button_history.setOnClickListener {
             startActivity(Intent(this, HistoryActivity::class.java))
-            if (BuildConfig.FLAVOR_aaos != "play")
+            if (BuildConfig.FLAVOR_aaos != "carapp")
                 overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }
 

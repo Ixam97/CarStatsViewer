@@ -24,6 +24,7 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
@@ -119,8 +120,10 @@ class CarStatsViewerScreen(
 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
-        carContext.getCarService(AppManager::class.java)
-            .setSurfaceCallback(session.carDataSurfaceCallback)
+        if (BuildConfig.FLAVOR_version == "dev") {
+            carContext.getCarService(AppManager::class.java)
+                .setSurfaceCallback(session.carDataSurfaceCallback)
+        }
     }
 
     override fun onPause(owner: LifecycleOwner) {
