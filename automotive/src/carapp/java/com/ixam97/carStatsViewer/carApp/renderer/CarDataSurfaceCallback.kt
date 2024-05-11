@@ -93,6 +93,7 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
     }
 
     fun pause() {
+        if (!rendererEnabled) return
         synchronized(this) {
             renderFrame(clearFrame = true)
         }
@@ -101,6 +102,7 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
     }
 
     fun resume() {
+        if (rendererEnabled) return
         rendererEnabled = true
         invalidatePlot()
         InAppLogger.i("[$TAG] Renderer enabled")

@@ -1,9 +1,6 @@
 package com.ixam97.carStatsViewer.carApp
 
-import android.car.Car
-import android.content.pm.PackageManager
 import androidx.car.app.AppManager
-import androidx.car.app.CarAppPermission
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.annotations.ExperimentalCarApi
@@ -68,7 +65,7 @@ class CarStatsViewerScreen(
 
     private var lastInvalidate: Long = 0L
     private var invalidateInQueue = false
-    private var enableInvalidate = false
+    private var invalidateTabViewEnabled = false
 
     private val gauge = Gauge(carContext)
 
@@ -131,15 +128,15 @@ class CarStatsViewerScreen(
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)
-        enableInvalidate = false
+        invalidateTabViewEnabled = false
         InAppLogger.d("[$TAG] Pausing Screen Lifecycle")
         // session.carDataSurfaceCallback.pause()
     }
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        enableInvalidate = true
-        invalidateTabView()
+        invalidateTabViewEnabled = true
+        invalidate() // TabView()
         InAppLogger.d("[$TAG] Resuming Screen Lifecycle")
         // session.carDataSurfaceCallback.resume()
     }
@@ -151,7 +148,7 @@ class CarStatsViewerScreen(
     private fun createTabTemplate() = TabTemplate.Builder(object : TabCallback {
         override fun onTabSelected(tabContentId: String) {
             selectedTabContentID = tabContentId
-            invalidateTabView()
+            invalidate() // TabView()
             InAppLogger.v("[$TAG] Tab change requested invalidate.")
         }
     }).apply {
@@ -202,7 +199,7 @@ class CarStatsViewerScreen(
     }.build()
 
     internal fun invalidateTabView() {
-        if (invalidateInQueue || !enableInvalidate) return
+        if (invalidateInQueue || !invalidateTabViewEnabled) return
         val nanoTime = System.nanoTime()
         if (lastInvalidate + 1_000_000_000 < nanoTime) {
             invalidate()
@@ -244,7 +241,7 @@ class CarStatsViewerScreen(
                 setItemSize(GridTemplate.ITEM_SIZE_LARGE)
                 setOnClickListener {
                     appPreferences.carAppSelectedRealTimeData = if (appPreferences.carAppSelectedRealTimeData == 1) 0 else 1
-                    invalidateTabView()
+                    invalidate() // TabView()
                 }
             }.build())
             addItem(GridItem.Builder().apply {
@@ -277,7 +274,7 @@ class CarStatsViewerScreen(
                 setItemSize(GridTemplate.ITEM_SIZE_MEDIUM)
                 setOnClickListener {
                     appPreferences.carAppSelectedRealTimeData = if (appPreferences.carAppSelectedRealTimeData == 2) 0 else 2
-                    invalidateTabView()
+                    invalidate() // TabView()
                 }
             }.build())
         }.build())
