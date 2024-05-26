@@ -10,12 +10,14 @@
 
 ## [Changes](/CHANGES.md)
 
+## [Building and installing Car Stats Viewer](/docs/BUILD.md)
+
 
 ## Installing the app on a car
 
 Currently the app is not available in the public Play Store. This is due to strict requirements by Google what kind of apps are allowed to be installed on cars. As of now the App is only available via internal test tracks which are limited to 100 users each. Here you can find a listing of all available Test Tracks: [Polestar Club](https://polestar.fans/t/carstatsviewer-informationen/15027)
 
-There are currently ongoing talks with Polestar to bring the app to a broader audience. But this will take some time and Polestar will most likely require some changes to make the app comply with their safety and usability standards.
+There are currently ongoing talks with Polestar to find ways of bringing the app to a broader audience.
 
 ## Using the webhook API
 
