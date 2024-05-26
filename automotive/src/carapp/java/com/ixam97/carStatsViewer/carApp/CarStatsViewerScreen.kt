@@ -95,7 +95,12 @@ class CarStatsViewerScreen(
         lifecycleScope.launch {
             CarStatsViewer.dataProcessor.realTimeDataFlow.throttle(250).collect {
                 realTimeData = it
-                invalidateTabView()
+                val realTimeDataOnTripData = selectedTabContentID == CID_TRIP_DATA && appPreferences.carAppRealTimeData
+                val realTimeDataOnDashboard = selectedTabContentID == CID_CANVAS && appPreferences.carAppRealTimeData && !(carContext.carAppApiLevel >= 7 && BuildConfig.FLAVOR_version == "dev")
+                if (realTimeDataOnDashboard || realTimeDataOnTripData) {
+                    invalidateTabView()
+                    InAppLogger.v("[$TAG] Real time data flow requested invalidate.")
+                }
             }
         }
         lifecycleScope.launch {
@@ -104,7 +109,7 @@ class CarStatsViewerScreen(
                 drivingSession = it
                 if (selectedTabContentID != CID_CANVAS) {
                     invalidateTabView()
-                    InAppLogger.v("[$TAG] Session data flow requested invalidate.")
+                    // InAppLogger.v("[$TAG] Session data flow requested invalidate.")
                 }
             }
         }
@@ -113,7 +118,7 @@ class CarStatsViewerScreen(
                 apiState = it.apiState
                 //invalidate()
                 invalidateTabView()
-                InAppLogger.v("[$TAG] Watchdog requested invalidate.")
+                // InAppLogger.v("[$TAG] Watchdog requested invalidate.")
             }
         }
     }
@@ -162,23 +167,27 @@ class CarStatsViewerScreen(
         setHeaderAction(Action.APP_ICON)
         addTab(createTab(tripType, CID_TRIP_DATA, R.drawable.ic_car_app_list))
         addTab(createTab(R.string.car_app_dashboard, CID_CANVAS, R.drawable.ic_car_app_dashboard))
-        addTab(createTab(R.string.car_app_status, CID_STATUS, R.drawable.ic_car_app_status))
+        addTab(createTab(R.string.car_app_status, CID_STATUS, R.drawable.ic_connected))
         addTab(createTab(R.string.car_app_menu, CID_MENU, R.drawable.ic_car_app_menu))
         setTabContents(TabContents.Builder(
             when (selectedTabContentID) {
                 CID_TRIP_DATA -> {
                     session.carDataSurfaceCallback.pause()
-                    tripDataTemplate.tripDataPaneTemplate(drivingSession, realTimeData)
+                    tripDataTemplate.tripDataPaneTemplate(drivingSession, if (appPreferences.carAppRealTimeData) realTimeData else null)
                 }
                 CID_STATUS -> {
                     session.carDataSurfaceCallback.pause()
-                    CarStatsList()
+                    ApiStatusList()
                 }
                 CID_CANVAS -> {
                     if (carContext.carAppApiLevel >= 7 && BuildConfig.FLAVOR_version == "dev") {
                         session.carDataSurfaceCallback.resume()
                         realTimeDataTemplate.getTemplate()
-                    } else realTimeDataGridTemplate() // LowApiLevelMessage()
+                    } else if (appPreferences.carAppRealTimeData) {
+                        realTimeDataGridTemplate()
+                    } else {
+                        liveDataDisabledMessage()
+                    }
                 }
                 CID_MENU -> {
                     session.carDataSurfaceCallback.pause()
@@ -227,25 +236,30 @@ class CarStatsViewerScreen(
         }.build())
     }.build()
 
+    private fun liveDataDisabledMessage() = MessageTemplate.Builder(
+        "Live Data is disabled in the settings."
+    ).build()
+
     private fun realTimeDataGridTemplate() = GridTemplate.Builder().apply {
         // setItemSize(GridTemplate.ITEM_SIZE_LARGE)
         setSingleList(ItemList.Builder().apply {
             addItem(GridItem.Builder().apply {
-                val selected = appPreferences.carAppSelectedRealTimeData == 1
+                // val selected = appPreferences.carAppSelectedRealTimeData == 1
                 setTitle("${(((realTimeData?.power?:0f)/1_000_000) * 10).toInt() / 10f } kW")
                 setText("Power")
-                setImageWithBadge(
-                    gauge.draw(128, (realTimeData?.power?:0f)/1_000_000, min = -150f, max = 300f, selected = selected).asCarIcon(),
-                    appPreferences.carAppSelectedRealTimeData == 1
+                setImage(
+                // setImageWithBadge(
+                    gauge.draw(128, (realTimeData?.power?:0f)/1_000_000, min = -150f, max = 300f, selected = false /* selected */).asCarIcon(),
+                    // appPreferences.carAppSelectedRealTimeData == 1
                 )
                 setItemSize(GridTemplate.ITEM_SIZE_LARGE)
-                setOnClickListener {
-                    appPreferences.carAppSelectedRealTimeData = if (appPreferences.carAppSelectedRealTimeData == 1) 0 else 1
-                    invalidate() // TabView()
-                }
+                // setOnClickListener {
+                //     appPreferences.carAppSelectedRealTimeData = if (appPreferences.carAppSelectedRealTimeData == 1) 0 else 1
+                //     invalidate() // TabView()
+                // }
             }.build())
             addItem(GridItem.Builder().apply {
-                val selected = appPreferences.carAppSelectedRealTimeData == 2
+                // val selected = appPreferences.carAppSelectedRealTimeData == 2
 
                 var instCons = realTimeData?.instConsumption
                 val instConsVal: Number? = if (instCons != null && (realTimeData?.speed?:0f) * 3.6 > 3) {
@@ -267,15 +281,15 @@ class CarStatsViewerScreen(
 
                 setTitle("${instConsVal?: "∞"} $instUnit")
                 setText("Consumption")
-                setImageWithBadge(
-                    gauge.draw(128, instCons?:0f, -300f, 600f, selected = selected).asCarIcon(),
-                    selected
+                setImage( //WithBadge(
+                    gauge.draw(128, instCons?:0f, -300f, 600f, selected = false /* selected */).asCarIcon(),
+                    // selected
                 )
                 setItemSize(GridTemplate.ITEM_SIZE_MEDIUM)
-                setOnClickListener {
-                    appPreferences.carAppSelectedRealTimeData = if (appPreferences.carAppSelectedRealTimeData == 2) 0 else 2
-                    invalidate() // TabView()
-                }
+                // setOnClickListener {
+                //     appPreferences.carAppSelectedRealTimeData = if (appPreferences.carAppSelectedRealTimeData == 2) 0 else 2
+                //     invalidate() // TabView()
+                // }
             }.build())
         }.build())
     }.build()

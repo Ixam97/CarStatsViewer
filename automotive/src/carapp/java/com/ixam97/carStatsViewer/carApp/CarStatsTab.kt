@@ -1,19 +1,28 @@
 package com.ixam97.carStatsViewer.carApp
 
+import android.content.Intent
 import androidx.annotation.OptIn
 import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.model.CarIcon
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
+import androidx.car.app.model.ParkedOnlyOnClickListener
 import androidx.car.app.model.Row
 import androidx.car.app.model.SectionedItemList
 import androidx.core.graphics.drawable.IconCompat
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
+import com.ixam97.carStatsViewer.ui.activities.SettingsActivity
+import com.ixam97.carStatsViewer.ui.activities.SettingsApisActivity
 
 @OptIn(ExperimentalCarApi::class)
-internal fun CarStatsViewerScreen.CarStatsList() = ListTemplate.Builder().apply {
-    addSectionedList(SectionedItemList.create(
+internal fun CarStatsViewerScreen.ApiStatusList() = ListTemplate.Builder().apply {
+
+    val settingsApisActivityIntent = Intent(carContext, SettingsApisActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+
+    /* addSectionedList(SectionedItemList.create(
         ItemList.Builder().apply {
             addItem(Row.Builder().apply {
                 setTitle("Not yet supported!")
@@ -21,7 +30,7 @@ internal fun CarStatsViewerScreen.CarStatsList() = ListTemplate.Builder().apply 
             }.build())
         }.build(),
         "Real time data"
-    ))
+    )) */
     addSectionedList(SectionedItemList.create(
         ItemList.Builder().apply {
 
@@ -43,6 +52,15 @@ internal fun CarStatsViewerScreen.CarStatsList() = ListTemplate.Builder().apply 
                     setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_connected)).setTint(apiIconColor).build())
                 }.build())
             }
+
+            addItem(Row.Builder().apply {
+                setTitle(carContext.getString(R.string.settings_apis_title))
+                setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_api)).build())
+                setBrowsable(true)
+                setOnClickListener(ParkedOnlyOnClickListener.create {
+                    carContext.startActivity(settingsApisActivityIntent)
+                })
+            }.build())
 
             if (apiState.isEmpty()) {
                 addItem(Row.Builder().apply {

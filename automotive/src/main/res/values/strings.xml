@@ -365,7 +365,7 @@
     <string name="car_app_dashboard">Dashboard</string>
     <string name="car_app_legacy_dashboard">Legacy Dashboard</string>
     <string name="car_app_menu">Miscellaneous</string>
-    <string name="car_app_status">Car Status</string>
+    <string name="car_app_status">API Status</string>
     <string name="car_app_toast_reset_confirmation">Manual Trip has been reset.</string>
     <string name="car_app_toast_reset_hint">Press again to reset manual Trip.</string>
     <string name="car_app_canvas">Canvas Test</string>
@@ -375,4 +375,6 @@
     <string name="car_app_permissions_message">Car Stats Viewer needs access to location and vehicle data permissions to function. Please grant these permissions.\n\nLocation tracking can be switched on or off in the app settings. No data is sent to any servers by default.</string>
     <string name="car_app_permissions_grant">Grant permissions</string>
     <string name="car_app_permissions_deny">Deny and exit</string>
+    <string name="car_app_show_real_time_data_title">Show real time data</string>
+    <string name="car_app_show_real_time_data_hint">If this option is enabled, UI might react with noticeable delay due to high frequency of UI updates issued by real time data.</string>
 </resources>

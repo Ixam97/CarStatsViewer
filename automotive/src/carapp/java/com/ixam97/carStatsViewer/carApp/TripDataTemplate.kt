@@ -88,15 +88,17 @@ class TripDataTemplate(val carContext: CarContext) {
             if (session.session_type == 1) {
                 addAction(resetAction(showTitle = true))
             }
-            val selectedGaugeIndex = CarStatsViewer.appPreferences.carAppSelectedRealTimeData
+            // val selectedGaugeIndex = CarStatsViewer.appPreferences.carAppSelectedRealTimeData
 
             if (realTimeData != null) {
 
+                val useLocation = CarStatsViewer.appPreferences.useLocation
+
                 val gaugeBitmap = Bitmap.createBitmap(480, 480, Bitmap.Config.ARGB_8888)
                 val canvas = Canvas(gaugeBitmap)
-                canvas.drawBitmap(gauge.drawPowerGauge(480, 170, realTimeData.power?:0f), 0f, 0f ,null)
-                canvas.drawBitmap(gauge.drawConsumptionGauge(480, 170, realTimeData.instConsumption, realTimeData.speed), 0f, 180f, null)
-                canvas.drawBitmap(gauge.draw(width = 480, height = 140, value = realTimeData.alt?:0f, valueString = realTimeData.alt?.toInt().toString(), unitString = "m", textOnly = true), 0f, 360f, null)
+                canvas.drawBitmap(gauge.drawPowerGauge(480, if (useLocation) 170 else 235, realTimeData.power?:0f), 0f, 0f ,null)
+                canvas.drawBitmap(gauge.drawConsumptionGauge(480, if (useLocation) 170 else 235, realTimeData.instConsumption, realTimeData.speed), 0f, if (useLocation) 180f else 245f, null)
+                if (useLocation) canvas.drawBitmap(gauge.draw(width = 480, height = 140, value = realTimeData.alt?:0f, valueString = realTimeData.alt?.toInt().toString(), unitString = "m", textOnly = true), 0f, 360f, null)
 
                 setImage(gaugeBitmap.asCarIcon())
             }

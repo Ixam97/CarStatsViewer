@@ -276,7 +276,10 @@
     <string name="car_app_strip_selection">Tripauswahl</string>
     <string name="car_app_dashboard">Dashboard</string>
     <string name="car_app_legacy_dashboard">Klassisches Dashboard</string>
+    <string name="car_app_status">API-Status</string>
     <string name="car_app_menu">Verschiedenes</string>
     <string name="car_app_toast_reset_confirmation">Manuellert Trip wurde zurückgesetzt</string>
     <string name="car_app_toast_reset_hint">Erneut tippen, um manuellen Trip zurückzusetzen.</string>
+    <string name="car_app_show_real_time_data_title">Zeige Echtzeitdaten</string>
+    <string name="car_app_show_real_time_data_hint">Wenn diese Option aktiviert ist, kann die UI aufgrund der hohen Update-Frequenz durch Echtzeitdaten sehr träge auf Eingaben reagieren.</string>
 </resources>

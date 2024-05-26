@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 29
         targetSdkVersion 33
-        versionCode 235
-        versionName "0.27.0.0029"
+        versionCode 236
+        versionName "0.27.0.0030"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -30,7 +30,7 @@ android {
 
         carapp {
             dimension "aaos"
-            applicationId "de.ixam97.carStatsViewer"
+            applicationId "de.ixam97.carStatsViewer.play"
         }
 
         dev {
