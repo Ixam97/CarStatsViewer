@@ -11,6 +11,8 @@ Car Stats Viewer is divided in different build flavors depending on it's intende
 
 Branches other than `master` are considered to be in active developement and contain unfinished and instable features. Do not use these branches unless you konw what you are doing!</b>
 
+It is not required to refactor all packages in the Android Studio project. This might lead to issues once updates get released. Instead, just rename the `applicationId` in the `build.gradle`. This will lead to a custom package name when building the app without affecting source code.
+
 Additionally, there will soon be a second flavor dimension to differentiate between the legacy version of Car Stats Viewer and the new version utilizing the Automotive Template Host. More on that when the time comes.
 
 ## API Credentials
