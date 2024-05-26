@@ -7,7 +7,9 @@ Car Stats Viewer is divided in different build flavors depending on it's intende
 * Stable: Intended for general use by everyone. Only uses completed and mostly tested features.
 * Dev: Intended to only be used by developers while implementing new features. Many aspects are not stable for use and are only recommended for debugging.
 
-<b>If you want to publish the app yourself as an internal test, only use the stable flavor!</b>
+<b>If you want to publish the app yourself as an internal test, only use the stable flavor from the master branch!
+
+Branches other than `master` are considered to be in active developement and contain unfinished and instable features. Do not use these branches unless you konw what you are doing!</b>
 
 Additionally, there will soon be a second flavor dimension to differentiate between the legacy version of Car Stats Viewer and the new version utilizing the Automotive Template Host. More on that when the time comes.
 
@@ -29,7 +31,7 @@ Once setup, signed App Bundles can be uploaded as internal test releases.
 
 ## Create signed App Bundles
 
-Android Studio is used to build the App. To be able to upload the App to the Google Play Store, a signed bundle is required: https://developer.android.com/studio/publish/app-signing
+[Android Studio](https://developer.android.com/studio) is used to build the App. To be able to upload the App to the Google Play Store, a signed bundle is required: https://developer.android.com/studio/publish/app-signing
 
 When building the bundle, select `stableRelease` as Build Variant. The created `.abb`-file can then be uploaded to the Play Console.
 
