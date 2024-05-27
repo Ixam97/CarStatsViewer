@@ -1,17 +1,20 @@
 package com.ixam97.carStatsViewer.carApp
 
+import android.car.Car
 import android.content.Intent
 import androidx.annotation.OptIn
 import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.model.CarIcon
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
+import androidx.car.app.model.ParkedOnlyOnClickListener
 import androidx.car.app.model.Row
 import androidx.car.app.model.Toggle
 import androidx.core.graphics.drawable.IconCompat
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.compose.ComposeActivity
 import com.ixam97.carStatsViewer.ui.activities.DebugActivity
 import com.ixam97.carStatsViewer.ui.activities.HistoryActivity
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
@@ -29,8 +32,10 @@ internal fun CarStatsViewerScreen.MenuList() = ListTemplate.Builder().apply {
     val historyActivityIntent = Intent(carContext, HistoryActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
-
     val debugActivityIntent = Intent(carContext, DebugActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+    val composeActivityIntent = Intent(carContext, ComposeActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
 
@@ -68,6 +73,14 @@ internal fun CarStatsViewerScreen.MenuList() = ListTemplate.Builder().apply {
             }.setChecked(appPreferences.carAppRealTimeData).build())
         }.build())
         if (BuildConfig.FLAVOR_version == "dev") {
+            addItem(Row.Builder().apply {
+                setTitle("Compose Test UI")
+                setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).build())
+                setBrowsable(true)
+                setOnClickListener(ParkedOnlyOnClickListener.create {
+                    carContext.startActivity(composeActivityIntent)
+                })
+            }.build())
             addItem(Row.Builder().apply{
                 setTitle("Debug")
                 setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).build())

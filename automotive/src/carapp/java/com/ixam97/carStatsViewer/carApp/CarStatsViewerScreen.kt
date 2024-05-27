@@ -87,7 +87,7 @@ class CarStatsViewerScreen(
 
         }
 
-    private var lifecycle = getLifecycle()
+    // private var lifecycle = getLifecycle()
 
 
     init {
