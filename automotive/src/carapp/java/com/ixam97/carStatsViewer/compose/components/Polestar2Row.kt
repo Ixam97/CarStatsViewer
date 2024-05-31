@@ -1,6 +1,7 @@
 package com.ixam97.carStatsViewer.compose.components
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,13 +34,16 @@ fun Polestar2Row(
     enabled: Boolean = true
 ) {
     val rowModifier = if (onClick != null) {
-        modifier.clickable(onClick = onClick, enabled = enabled)
+        modifier
+            .clickable(onClick = onClick, enabled = enabled)
+            .defaultMinSize(minHeight = 101.dp)
     } else {
         modifier
+            .defaultMinSize(minHeight = 101.dp)
     }
     Row (
         modifier = rowModifier
-            .padding(horizontal = 24.dp, vertical = 6.dp),
+            .padding(horizontal = 24.dp),
         // verticalAlignment = Alignment.CenterVertically
     ) {
         if (iconResId != null) {
@@ -60,7 +64,7 @@ fun Polestar2Row(
                 modifier = Modifier
                     .weight(1f)
                     .defaultMinSize(minHeight = 101.dp)
-                    .padding(vertical = 15.dp),
+                    .padding(vertical = 21.dp),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(text = title, color = if (enabled) Color.White else disabledTextColor)
