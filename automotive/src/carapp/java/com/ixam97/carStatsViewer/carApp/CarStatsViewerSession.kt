@@ -54,6 +54,10 @@ class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
             startService()
         }
 
+        if (CarStatsViewer.appPreferences.versionString.isEmpty()) {
+            screens.add(DevNoticeScreen(carContext))
+        }
+
         if (screens.size > 1) {
             val screenManager = carContext.getCarService(ScreenManager::class.java)
             for (i in 0 until screens.size - 1) {

@@ -9,11 +9,13 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.ixam97.carStatsViewer.R
 
 @Composable
-fun CarIconButton(onCLick: () -> Unit, @DrawableRes iconResId: Int) {
+fun CarIconButton(onCLick: () -> Unit, @DrawableRes iconResId: Int, tint: Color = Color.White) {
     IconButton(
         modifier = Modifier
             .padding(10.dp)
@@ -22,7 +24,7 @@ fun CarIconButton(onCLick: () -> Unit, @DrawableRes iconResId: Int) {
     ) {
         Icon(
             painterResource(id = iconResId),
-            tint = MaterialTheme.colors.secondary,
+            tint = tint,
             contentDescription = null
         )
     }

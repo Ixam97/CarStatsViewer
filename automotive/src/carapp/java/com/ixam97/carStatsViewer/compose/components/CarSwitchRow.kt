@@ -34,7 +34,7 @@ fun CarSwitchRow(
                 .scale(2f)
                 .padding(horizontal = 10.dp),
             checked = switchState,
-            onCheckedChange = { onClick() }
+            onCheckedChange = null
         )
     }
 }

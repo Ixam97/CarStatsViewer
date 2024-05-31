@@ -5,6 +5,12 @@ import androidx.compose.material.darkColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
+val themedBrands = listOf(
+    "Polestar",
+    "Volvo",
+    "Toy Vehicle"
+)
+
 private fun carAppColorPalate(primaryColor: Color? = null) = darkColors(
     primary = primaryColor ?: primaryGray,
     secondary = primaryColor ?: secondaryGray,
@@ -27,7 +33,20 @@ fun ComposeTestTheme(carMake: String? = null, content: @Composable () -> Unit) {
 
     MaterialTheme(
         colors = colors,
-        typography = Typography,
+        typography = defaultTypography,
+        shapes = Shapes,
+        content = content
+    )
+}
+
+@Composable
+fun PolestarTheme(content: @Composable () -> Unit) {
+    val colors = carAppColorPalate(
+        primaryColor = polestarOrange
+    )
+    MaterialTheme(
+        colors = colors,
+        typography = polestarTypography,
         shapes = Shapes,
         content = content
     )
