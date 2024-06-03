@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.dataProcessor
 
+// import com.ixam97.carStatsViewer.utils.TimestampSynchronizer
 import android.app.Notification
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.Defines
@@ -29,7 +30,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
-import java.util.*
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -89,6 +89,7 @@ class DataProcessor {
         private set(value) {
             field = value
             _realTimeDataFlow.value = value
+            // aaosExec?.execute(aaosRunnable)
         }
 
     // private var chargingTripData = ChargingTripData()
@@ -97,6 +98,12 @@ class DataProcessor {
     //         _chargingTripDataFlow.value = field
     //     }
 
+    var selectedSessionData : DrivingSession? = null
+        private set(value) {
+            field = value
+            _selectedSessionDataFlow.value = value
+            // aaosExec?.execute(aaosRunnable)
+        }
 
     private val _realTimeDataFlow = MutableStateFlow(realTimeData)
     val realTimeDataFlow = _realTimeDataFlow.asStateFlow()
@@ -136,7 +143,7 @@ class DataProcessor {
                     CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId).let { session ->
                         localSessions.add(session)
                         if (session.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
-                            _selectedSessionDataFlow.value = session
+                            selectedSessionData = session
                         }
                     }
                 }
@@ -500,7 +507,7 @@ class DataProcessor {
                     localSessions[index] = session.copy(last_edited_epoch_time = System.currentTimeMillis())
                     localSessions[index].drivingPoints = drivingPoints
                     if (session.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
-                        _selectedSessionDataFlow.value = localSessions[index]
+                        selectedSessionData = localSessions[index]
                     }
                 }
                 localSessions
@@ -552,7 +559,7 @@ class DataProcessor {
                 )
                 localSessions[index].drivingPoints = drivingPoints
                 if (localSession.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
-                    _selectedSessionDataFlow.value = localSessions[index]
+                    selectedSessionData = localSessions[index]
                 }
             }
             localSessions
@@ -677,8 +684,10 @@ class DataProcessor {
 
     /** Change the selected trip type to update the trip data flow with */
     fun changeSelectedTrip(tripType: Int) {
-        if (localSessionsState.value.isNotEmpty())
-            _selectedSessionDataFlow.value = localSessionsState.value.first{it.session_type == tripType}
+        if (localSessionsState.value.isNotEmpty()) {
+            selectedSessionData = localSessionsState.value.first { it.session_type == tripType }
+            updateTripDataValues()
+        }
     }
 
     suspend fun resetTrip(tripType: Int, drivingState: Int) {
@@ -704,6 +713,7 @@ class DataProcessor {
         timerMap[tripType]?.reset()
         loadSessionsToMemory().join()
         if (drivingState == DrivingState.DRIVE) timerMap[tripType]?.start()
+        // aaosExec?.execute(aaosRunnable)
     }
 
     private fun startChargingSession(): Job {

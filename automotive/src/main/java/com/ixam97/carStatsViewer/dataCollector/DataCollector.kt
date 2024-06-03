@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.io.File
 
 class DataCollector: Service() {
 
@@ -113,15 +114,26 @@ class DataCollector: Service() {
             carPropertiesData = dataProcessor.carPropertiesData
         )
 
+        fun emulatorCarMake(): String {
+            val propertyMake = carPropertiesClient.getStringProperty(CarProperties.INFO_MAKE)
+            if (propertyMake == "Toy Vehicle") {
+                if (File("/product/fonts/PolestarUnica77-Regular.otf").exists())
+                    return "Polestar"
+            }
+            return propertyMake
+        }
+
         dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
             batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
-            vehicleMake = carPropertiesClient.getStringProperty(CarProperties.INFO_MAKE),
+            vehicleMake =  emulatorCarMake(),
             modelName = carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL),
             distanceUnit = when (carPropertiesClient.getIntProperty(CarProperties.DISTANCE_DISPLAY_UNITS)) {
                 VehicleUnit.MILE -> DistanceUnitEnum.MILES
                 else -> DistanceUnitEnum.KM
             }
         )
+
+
 
         dataProcessor.staticVehicleData.let {
             InAppLogger.i("[NEO] Make: ${it.vehicleMake}, model: ${it.modelName}, battery capacity: ${(it.batteryCapacity?:0f)/1000} kWh")
@@ -205,6 +217,13 @@ class DataCollector: Service() {
                 CarStatsViewer.watchdog.triggerWatchdog()
             }
         }
+
+        // serviceScope.launch {
+        //     while (true) {
+        //         CarStatsViewer.dataProcessor.updateTripDataValuesByTick()
+        //         delay(2_000)
+        //     }
+        // }
 
         serviceScope.launch {
             // Notification updater

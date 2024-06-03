@@ -441,6 +441,16 @@ class MainActivity : FragmentActivity() {
             CarStatsViewer.getChangelogDialog(this).show()
             appPreferences.versionString = BuildConfig.VERSION_NAME
         }
+
+        if (BuildConfig.FLAVOR_aaos == "carapp") {
+            main_title.visibility = View.GONE
+            main_title_icon.visibility = View.GONE
+            main_title_dashboard.visibility = View.VISIBLE
+            main_button_back.visibility = View.VISIBLE
+            main_button_back.setOnClickListener {
+                finish()
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -747,7 +757,8 @@ class MainActivity : FragmentActivity() {
 
         main_button_settings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
-            overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
+            if (BuildConfig.FLAVOR_aaos != "carapp")
+                overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }
         /*
         main_button_secondary_dimension.setOnClickListener {
@@ -811,7 +822,8 @@ class MainActivity : FragmentActivity() {
 
         main_button_history.setOnClickListener {
             startActivity(Intent(this, HistoryActivity::class.java))
-            overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
+            if (BuildConfig.FLAVOR_aaos != "carapp")
+                overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }
 
         main_button_reset.setOnClickListener {

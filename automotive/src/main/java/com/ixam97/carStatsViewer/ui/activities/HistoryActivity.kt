@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.adapters.TripHistoryAdapter
@@ -68,10 +69,12 @@ class HistoryActivity  : FragmentActivity() {
         super.startActivity(intent)
         if (intent?.hasExtra("noTransition") == true) {
             if (!intent.getBooleanExtra("noTransition", false)) {
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                if (BuildConfig.FLAVOR_aaos != "carapp")
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
             }
         } else {
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+            if (BuildConfig.FLAVOR_aaos != "carapp")
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
     }
 
@@ -104,7 +107,8 @@ class HistoryActivity  : FragmentActivity() {
 
         history_button_back.setOnClickListener {
             finish()
-            overridePendingTransition(R.anim.stay_still, R.anim.slide_out_right)
+            if (BuildConfig.FLAVOR_aaos != "carapp")
+                overridePendingTransition(R.anim.stay_still, R.anim.slide_out_right)
         }
 
         history_button_filters.setOnClickListener {

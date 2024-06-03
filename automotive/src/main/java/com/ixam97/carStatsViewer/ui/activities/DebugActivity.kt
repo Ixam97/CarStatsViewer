@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.GsonBuilder
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.adapters.LogAdapter
@@ -100,7 +101,8 @@ class DebugActivity : FragmentActivity() {
 
         debug_button_back.setOnClickListener {
             finish()
-            overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
+            if (BuildConfig.FLAVOR_aaos != "carapp")
+                overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
         }
 
         log_button_send.setOnClickListener {

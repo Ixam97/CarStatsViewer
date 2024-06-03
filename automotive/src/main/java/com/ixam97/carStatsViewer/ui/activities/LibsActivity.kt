@@ -11,7 +11,6 @@ import android.widget.Toolbar.LayoutParams
 import androidx.fragment.app.FragmentActivity
 import com.airbnb.paris.extensions.style
 import com.ixam97.carStatsViewer.BuildConfig
-import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import com.mikepenz.aboutlibraries.Libs
@@ -26,7 +25,8 @@ class LibsActivity: FragmentActivity() {
 
         libs_button_back.setOnClickListener {
             finish()
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            if (BuildConfig.FLAVOR_aaos != "carapp")
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
         val libs = Libs.Builder().withContext(applicationContext).build()

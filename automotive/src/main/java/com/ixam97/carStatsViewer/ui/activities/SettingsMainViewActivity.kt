@@ -2,6 +2,7 @@ package com.ixam97.carStatsViewer.ui.activities
 
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
@@ -28,7 +29,8 @@ class SettingsMainViewActivity: FragmentActivity() {
 
         settings_main_view_back.setOnClickListener {
             finish()
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            if (BuildConfig.FLAVOR_aaos != "carapp")
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
         settings_multiselect_trip.entries = ArrayList(resources.getStringArray(R.array.trip_type_names).toMutableList().apply{removeAt(0)})

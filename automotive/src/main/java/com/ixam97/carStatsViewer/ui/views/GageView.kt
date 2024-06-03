@@ -8,6 +8,7 @@ import android.view.View
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import java.util.*
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 
@@ -70,6 +71,80 @@ class GageView @JvmOverloads constructor(
         gageValueFloat = value
         gageValueInt = null
         this.invalidate()
+    }
+
+    /**
+     * Made this callable externally. Allows the gage to be drawn on a Canvas outside of a Layout.
+     * Returns a Rect with its boundaries.
+     */
+    fun drawGage(canvas: Canvas, xOffset: Int = 0, yOffset: Int = 0): Rect {
+        canvas.translate(xOffset.toFloat(), yOffset.toFloat())
+        var gageValue = 0f
+        var gagePaint = posPaint
+
+        if (gageValueInt != null) gageValue = gageValueInt!!.toFloat()
+        if (gageValueFloat != null) gageValue = gageValueFloat!!
+
+        if (gageValue < 0) gagePaint = negPaint
+
+        var gageZeroLineYPos = ((viewHeight - borderPaint.strokeWidth)/(maxValue - minValue)) * maxValue
+
+        if (gageValue < minValue) gageValue = minValue
+        if (gageValue > maxValue) gageValue = maxValue
+
+        val gageValueWidth = valuePaint.measureText(gageValue())
+        val gageNameWidth = namePaint.measureText(gageName)
+        val gageUnitWidth = unitPaint.measureText(gageUnit)
+
+        val gageRectYPos =
+            borderPaint.strokeWidth.coerceAtLeast(gageZeroLineYPos - (gageZeroLineYPos / maxValue) * gageValue)
+
+        val textXStart = when (barVisibility) {
+            true -> gageWidth + xTextMargin
+            else -> 0f
+        }
+
+        if (barVisibility) {
+            gageBarRect.left = borderPaint.strokeWidth
+            gageBarRect.top = gageRectYPos
+            gageBarRect.right = (gageWidth - borderPaint.strokeWidth/2)
+            gageBarRect.bottom = gageZeroLineYPos
+
+            gageBorder.moveTo(borderPaint.strokeWidth/2 , borderPaint.strokeWidth/2 )
+            gageBorder.lineTo(borderPaint.strokeWidth/2 , viewHeight - borderPaint.strokeWidth/2 )
+            gageBorder.lineTo(gageWidth , viewHeight - borderPaint.strokeWidth/2 )
+            gageBorder.lineTo(gageWidth , borderPaint.strokeWidth/2 )
+            gageBorder.close()
+            // gageBorder.lineTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
+
+            if (minValue >= 0) gageZeroLineYPos += borderPaint.strokeWidth/2
+            gageZeroLine.reset() // Reset the path to not draw zero line multiple times
+            gageZeroLine.moveTo(0f , gageZeroLineYPos )
+            gageZeroLine.lineTo(gageWidth + borderPaint.strokeWidth/2 , gageZeroLineYPos )
+
+
+            canvas.drawRect(
+                borderPaint.strokeWidth ,
+                borderPaint.strokeWidth ,
+                gageWidth - borderPaint.strokeWidth/2 ,
+                viewHeight-borderPaint.strokeWidth ,
+                backgroundPaint)
+            canvas.drawRect(gageBarRect, gagePaint) // actual gage
+            canvas.drawPath(gageBorder, borderPaint) // gage border
+            canvas.drawPath(gageZeroLine, zeroLinePaint) // zero Line
+
+            gageBorder.reset()
+            gageZeroLine.reset()
+        }
+
+        canvas.drawText(gageName, textXStart, nameYPos , namePaint)
+        canvas.drawText(gageUnit, textXStart + xTextMargin * 0.5f + gageNameWidth, nameYPos , unitPaint)
+        canvas.drawText(gageValue(), textXStart, valueYPos , valuePaint)
+
+        canvas.translate(-xOffset.toFloat(), -yOffset.toFloat())
+
+        val rightEdge = textXStart + max(xTextMargin * 0.5f + gageNameWidth + gageUnitWidth, gageValueWidth)
+        return Rect(xOffset, yOffset, rightEdge.toInt() + xOffset, viewHeight.toInt() + yOffset )
     }
 
     private val posPaint = Paint().apply {
@@ -137,67 +212,7 @@ class GageView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        var gageValue = 0f
-        var gagePaint = posPaint
-
-        if (gageValueInt != null) gageValue = gageValueInt!!.toFloat()
-        if (gageValueFloat != null) gageValue = gageValueFloat!!
-
-        if (gageValue < 0) gagePaint = negPaint
-
-        var gageZeroLineYPos = ((viewHeight - borderPaint.strokeWidth)/(maxValue - minValue)) * maxValue
-
-        if (gageValue < minValue) gageValue = minValue
-        if (gageValue > maxValue) gageValue = maxValue
-
-        val gageValueWidth = valuePaint.measureText(gageValue())
-        val gageNameWidth = namePaint.measureText(gageName)
-        val gageUnitWidth = unitPaint.measureText(gageUnit)
-
-        val gageRectYPos =
-            borderPaint.strokeWidth.coerceAtLeast(gageZeroLineYPos - (gageZeroLineYPos / maxValue) * gageValue)
-
-        val textXStart = when (barVisibility) {
-            true -> gageWidth + xTextMargin
-            else -> 0f
-        }
-
-        if (barVisibility) {
-            gageBarRect.left = borderPaint.strokeWidth
-            gageBarRect.top = gageRectYPos
-            gageBarRect.right = gageWidth - borderPaint.strokeWidth/2
-            gageBarRect.bottom = gageZeroLineYPos
-
-            gageBorder.moveTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
-            gageBorder.lineTo(borderPaint.strokeWidth/2, viewHeight - borderPaint.strokeWidth/2)
-            gageBorder.lineTo(gageWidth, viewHeight - borderPaint.strokeWidth/2)
-            gageBorder.lineTo(gageWidth, borderPaint.strokeWidth/2)
-            gageBorder.close()
-            // gageBorder.lineTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
-
-            if (minValue >= 0) gageZeroLineYPos += borderPaint.strokeWidth/2
-            gageZeroLine.reset() // Reset the path to not draw zero line multiple times
-            gageZeroLine.moveTo(0f, gageZeroLineYPos)
-            gageZeroLine.lineTo(gageWidth + borderPaint.strokeWidth/2, gageZeroLineYPos)
-
-
-            canvas.drawRect(
-                borderPaint.strokeWidth,
-                borderPaint.strokeWidth,
-                gageWidth - borderPaint.strokeWidth/2,
-                viewHeight-borderPaint.strokeWidth,
-                backgroundPaint)
-            canvas.drawRect(gageBarRect, gagePaint) // actual gage
-            canvas.drawPath(gageBorder, borderPaint) // gage border
-            canvas.drawPath(gageZeroLine, zeroLinePaint) // zero Line
-
-            gageBorder.reset()
-            gageZeroLine.reset()
-        }
-
-        canvas.drawText(gageName, textXStart, nameYPos, namePaint)
-        canvas.drawText(gageUnit, textXStart + xTextMargin * 0.5f + gageNameWidth, nameYPos, unitPaint)
-        canvas.drawText(gageValue(), textXStart, valueYPos, valuePaint)
+        drawGage(canvas)
 
         //}
     }

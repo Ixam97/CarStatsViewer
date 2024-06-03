@@ -5,22 +5,32 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
 android {
-    compileSdkVersion 33
+    compileSdk 34
 
     defaultConfig {
         minSdkVersion 29
         targetSdkVersion 33
-        versionCode 231
-        versionName "0.27.0.0025"
+        versionCode 240
+        versionName "0.27.0.0033"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    flavorDimensions "version"
+
+    flavorDimensions = ["version", "aaos"]
 
     productFlavors {
         stable {
             dimension "version"
+        }
+
+        legacy {
+            dimension "aaos"
             applicationId "com.ixam97.carStatsViewer"
+        }
+
+        carapp {
+            dimension "aaos"
+            applicationId "de.ixam97.carStatsViewer.carApp"
         }
 
         dev {
@@ -63,6 +73,11 @@ android {
     // android.car exists since Android 10 (API level 29) Revision 5.
     useLibrary 'android.car'
     namespace 'com.ixam97.carStatsViewer'
+
+
+    buildFeatures {
+        compose true
+    }
 }
 
 aboutLibraries {
@@ -87,6 +102,14 @@ dependencies {
     implementation 'com.airbnb.android:paris:2.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.github.matthiaszimmermann:EGM96:master-SNAPSHOT'
+
+    implementation "androidx.car.app:app:1.7.0-alpha02"
+    implementation "androidx.car.app:app-automotive:1.7.0-alpha02"
+
+    implementation 'androidx.activity:activity-compose:1.7.2'
+    implementation 'androidx.compose.ui:ui:1.6.7'
+    implementation 'androidx.compose.material:material:1.6.7'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0'
 
     implementation("androidx.room:room-ktx:2.5.0")
     kapt("androidx.room:room-compiler:2.5.0")
