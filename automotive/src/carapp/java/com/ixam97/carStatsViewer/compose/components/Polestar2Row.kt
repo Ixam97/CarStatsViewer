@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.theme.disabledTextColor
@@ -31,15 +34,16 @@ fun Polestar2Row(
     text: String? = null,
     @DrawableRes iconResId: Int? = null,
     onClick: (() -> Unit)? = null,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    minHeight: Dp = 113.dp
 ) {
     val rowModifier = if (onClick != null) {
         modifier
             .clickable(onClick = onClick, enabled = enabled)
-            .defaultMinSize(minHeight = 101.dp)
+            .defaultMinSize(minHeight = minHeight)
     } else {
         modifier
-            .defaultMinSize(minHeight = 101.dp)
+            .defaultMinSize(minHeight = minHeight)
     }
     Row (
         modifier = rowModifier
@@ -49,7 +53,7 @@ fun Polestar2Row(
         if (iconResId != null) {
             Icon(
                 modifier = Modifier
-                    .height(101.dp)
+                    .height(minHeight.coerceAtLeast(80.dp))
                     .width(80.dp),
                 painter = painterResource(id = iconResId),
                 contentDescription = null,
@@ -58,18 +62,20 @@ fun Polestar2Row(
             Spacer(modifier = Modifier.size(24.dp))
         }
         Row(
+            modifier = Modifier
+                .defaultMinSize(minHeight = minHeight),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .defaultMinSize(minHeight = 101.dp)
-                    .padding(vertical = 21.dp),
+                    .fillMaxSize()
+                    .padding(top = 21.dp, bottom = 15.dp),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(text = title, color = if (enabled) Color.White else disabledTextColor)
                 if (text != null) {
-                    Spacer(modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.size(15.dp))
                     Text(
                         text = text,
                         color = if (enabled) colorResource(id = R.color.secondary_text_color) else disabledTextColor

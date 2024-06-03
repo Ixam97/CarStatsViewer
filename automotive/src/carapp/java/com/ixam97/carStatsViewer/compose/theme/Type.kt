@@ -61,5 +61,11 @@ val polestarTypography = Typography(
         fontWeight = FontWeight.Medium,
         fontSize = 48.sp,
         color = Color.White
+    ),
+    h2 = TextStyle(
+        // fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = 38.sp,
+        color = Color.White
     )
 )

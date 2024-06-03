@@ -13,12 +13,16 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.ComposeViewModel
 import com.ixam97.carStatsViewer.compose.components.Polestar2Header
+import com.ixam97.carStatsViewer.compose.components.Polestar2MultiSelect
 import com.ixam97.carStatsViewer.compose.components.Polestar2Radiobutton
 import com.ixam97.carStatsViewer.compose.components.Polestar2Row
 import com.ixam97.carStatsViewer.compose.components.Polestar2Switch
@@ -42,6 +46,8 @@ fun PolestarTestScreen(viewModel: ComposeViewModel) {
             Polestar2Header {
                 viewModel.finishActivity()
             }
+
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -50,7 +56,7 @@ fun PolestarTestScreen(viewModel: ComposeViewModel) {
                 Polestar2Switch(
                     switchState = composeActivityState.switchStates[2],
                     title = "Lorem ipsum",
-                    text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
+                    text = "Lorem ipsum dolor sit amet",
                     onClick = {viewModel.setSwitch(2, !composeActivityState.switchStates[2])}
                 )
                 Divider(
@@ -138,6 +144,29 @@ fun PolestarTestScreen(viewModel: ComposeViewModel) {
                     iconResId = R.drawable.ic_debug,
                     onClick = { }
                 )
+                Divider(
+                    modifier = Modifier
+                        .height(2.dp)
+                        .padding(horizontal = 23.dp)
+                )
+                val options = listOf(
+                    "One",
+                    "Two",
+                    "Three",
+                    "Four",
+                    "Five",
+                    "Six",
+                    "Seven"
+                )
+
+                var selectedIndex by remember { mutableStateOf(0) }
+                Polestar2MultiSelect(
+                    title = "Multi Select",
+                    text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
+                    options = options,
+                    onIndexChanged = { selectedIndex = it },
+                    selectedIndex = selectedIndex,
+                    enabled = composeActivityState.switchStates[2])
             }
         }
     }

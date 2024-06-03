@@ -54,8 +54,8 @@ fun Polestar2Radiobutton(
         Spacer(modifier = Modifier.width(20.dp))
         Column(
             modifier = Modifier
-                .size(101.dp)
-                .padding(vertical = 6.dp),
+                .padding(vertical = 6.dp)
+                .size(101.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

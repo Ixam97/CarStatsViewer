@@ -18,6 +18,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -55,9 +56,9 @@ fun Polestar2Switch(
         Spacer(modifier = Modifier.width(20.dp))
         Box(
             modifier = Modifier
+                .padding(vertical = 6.dp)
                 .height(101.dp)
                 .width(288.dp)
-                .padding(vertical = 6.dp)
                 .background(colorResource(id = R.color.default_button_color))
         ) {
             Box(

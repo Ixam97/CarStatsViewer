@@ -66,7 +66,7 @@ internal fun CarStatsViewerScreen.MenuList() = ListTemplate.Builder().apply {
         }.build())
         addItem(Row.Builder().apply {
             setTitle(carContext.getString(R.string.car_app_show_real_time_data_title))
-            addText(carContext.getString(R.string.car_app_show_real_time_data_hint))
+            addText("Lorem ipsum dolor sit amet")// carContext.getString(R.string.car_app_show_real_time_data_hint))
             setToggle(Toggle.Builder {
                 appPreferences.carAppRealTimeData = it
                 invalidateTabView()
