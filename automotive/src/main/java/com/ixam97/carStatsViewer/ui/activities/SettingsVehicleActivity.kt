@@ -1,5 +1,5 @@
 package com.ixam97.carStatsViewer.ui.activities
-
+/*
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentActivity
@@ -143,3 +143,4 @@ class SettingsVehicleActivity : FragmentActivity() {
 
     }
 }
+*/

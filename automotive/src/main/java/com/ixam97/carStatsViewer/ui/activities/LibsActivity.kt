@@ -12,18 +12,22 @@ import androidx.fragment.app.FragmentActivity
 import com.airbnb.paris.extensions.style
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.databinding.ActivityLibsBinding
 import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.util.withContext
-import kotlinx.android.synthetic.main.activity_libs.libs_button_back
-import kotlinx.android.synthetic.main.activity_libs.libs_container
 
 class LibsActivity: FragmentActivity() {
+
+    private lateinit var binding: ActivityLibsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentViewAndTheme(this, R.layout.activity_libs)
+        binding = ActivityLibsBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentViewAndTheme(this, view)
 
-        libs_button_back.setOnClickListener {
+        binding.libsButtonBack.setOnClickListener {
             finish()
             if (BuildConfig.FLAVOR_aaos != "carapp")
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
@@ -78,11 +82,11 @@ class LibsActivity: FragmentActivity() {
                 setBackgroundColor(Color.DKGRAY)
             }
 
-            libs_container.addView(container)
-            if (index < libraries.size - 1) libs_container.addView(dividerLine)
+            binding.libsContainer.addView(container)
+            if (index < libraries.size - 1) binding.libsContainer.addView(dividerLine)
             else {
                 dividerLine.setBackgroundColor(Color.TRANSPARENT)
-                libs_container.addView(dividerLine)
+                binding.libsContainer.addView(dividerLine)
             }
         }
     }

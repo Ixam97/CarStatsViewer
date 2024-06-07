@@ -69,7 +69,7 @@
         </activity>
         <activity android:name=".ui.activities.HistoryActivity" android:exported="true" />
         <activity android:name=".ui.activities.SettingsMainViewActivity" android:exported="false"/>
-        <activity android:name=".ui.activities.SettingsVehicleActivity" android:exported="false"/>
+        <!--<activity android:name=".ui.activities.SettingsVehicleActivity" android:exported="false"/>-->
         <activity android:name=".ui.activities.LibsActivity" android:exported="false" />
         <activity android:name=".ui.activities.AboutActivity" android:exported="false" />
         <activity android:name=".ui.activities.SettingsApisActivity" android:exported="false" />

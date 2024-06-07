@@ -19,7 +19,6 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import com.ixam97.carStatsViewer.R
-import kotlinx.android.synthetic.main.widget_snackbar.view.progress_bar
 import kotlin.math.roundToInt
 
 
@@ -106,7 +105,7 @@ class SnackbarWidget private constructor(
         val onePercent = maxWidth.toFloat() / 100
         val newWidth = onePercent * percent
 
-        val layoutParams = progress_bar.layoutParams
+        val layoutParams = findViewById<View>(R.id.progress_bar).layoutParams
         layoutParams.width = newWidth.roundToInt()
         progressBar.layoutParams = layoutParams
     }
@@ -175,7 +174,7 @@ class SnackbarWidget private constructor(
                     widthAnimator.duration = snackbarParameters.duration
                     widthAnimator.interpolator = LinearInterpolator()
                     widthAnimator.addUpdateListener { barAnimation ->
-                        val layoutParams = progress_bar.layoutParams
+                        val layoutParams = findViewById<View>(R.id.progress_bar).layoutParams
                         layoutParams.width = barAnimation.animatedValue as Int
                         progressBar.layoutParams = layoutParams
                     }

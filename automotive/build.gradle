@@ -1,8 +1,11 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.mikepenz.aboutlibraries.plugin'
+plugins {
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.aboutlibraries)
+    alias(libs.plugins.kotlinKapt)
+    alias(libs.plugins.composeCompiler)
+}
 
 android {
     compileSdk 34
@@ -10,8 +13,8 @@ android {
     defaultConfig {
         minSdkVersion 29
         targetSdkVersion 33
-        versionCode 241
-        versionName "0.27.0.0034"
+        versionCode 242
+        versionName "0.27.0.0035"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -74,6 +77,14 @@ android {
     useLibrary 'android.car'
     namespace 'com.ixam97.carStatsViewer'
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 
     buildFeatures {
         compose true
@@ -86,38 +97,39 @@ aboutLibraries {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.activity:activity-ktx:1.6.1'
-    implementation 'androidx.fragment:fragment-ktx:1.5.5'
-    implementation 'androidx.recyclerview:recyclerview:1.3.0'
-    implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.1'
-    implementation 'org.eclipse.angus:jakarta.mail:2.0.0'
-    implementation 'com.google.android.gms:play-services-location:21.0.1'
-    implementation 'com.mikepenz:aboutlibraries-core:10.6.1'
-    implementation 'com.airbnb.android:paris:2.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.github.matthiaszimmermann:EGM96:master-SNAPSHOT'
+    // implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation libs.kotlin.stdlib
+    implementation libs.androidx.ktx
+    implementation libs.androidx.activity
+    implementation libs.androidx.fragment
+    implementation libs.androidx.recyclerview
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.constraintlayout
+    implementation libs.google.gson
+    implementation libs.google.gms.location
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.play.services
+    implementation libs.jakarta.mail
+    implementation libs.aboutlibraries.core
+    implementation libs.airbnb.paris
+    implementation libs.github.egm96
 
-    implementation "androidx.car.app:app:1.7.0-alpha02"
-    implementation "androidx.car.app:app-automotive:1.7.0-alpha02"
+    implementation libs.androidx.car.app
+    implementation libs.androidx.car.app.automotive
 
-    implementation 'androidx.activity:activity-compose:1.7.2'
-    implementation 'androidx.compose.ui:ui:1.6.7'
-    implementation 'androidx.compose.material:material:1.6.7'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0'
+    implementation libs.androidx.activity.compose
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.material
+    implementation libs.androidx.lifecycle.viewmodel.compose
+    implementation libs.androidx.navigation.compose
 
-    implementation("androidx.room:room-ktx:2.5.0")
-    kapt("androidx.room:room-compiler:2.5.0")
+    implementation libs.androidx.room
+    kapt libs.androidx.room.compiler
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
+    debugImplementation libs.squareup.leakcanary
 
     // to fix unresolved references to android.car
-    def sdkDir = project.android.sdkDirectory.canonicalPath
-    def androidCarJar = "$sdkDir/platforms/android-33/optional/android.car.jar"
-    implementation(files(androidCarJar))
+    // def sdkDir = project.android.sdkDirectory.canonicalPath
+    // def androidCarJar = "$sdkDir/platforms/android-33/optional/android.car.jar"
+    // implementation(files(androidCarJar))
 }

@@ -18,6 +18,7 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.adapters.TripHistoryAdapter
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import com.ixam97.carStatsViewer.databinding.ActivityHistoryBinding
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
@@ -25,15 +26,6 @@ import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.ui.views.TripHistoryRowWidget
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
-import kotlinx.android.synthetic.main.activity_history.history_button_back
-import kotlinx.android.synthetic.main.activity_history.history_button_filters
-import kotlinx.android.synthetic.main.activity_history.history_button_upload
-import kotlinx.android.synthetic.main.activity_history.history_fragment_container
-import kotlinx.android.synthetic.main.activity_history.history_multi_container
-import kotlinx.android.synthetic.main.activity_history.history_multi_delete
-import kotlinx.android.synthetic.main.activity_history.history_multi_info
-import kotlinx.android.synthetic.main.activity_history.history_trips_recycler_view
-import kotlinx.android.synthetic.main.activity_history.trip_history_progress_bar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,6 +38,7 @@ import kotlin.math.roundToInt
 class HistoryActivity  : FragmentActivity() {
 
     private lateinit var context : Context
+    private lateinit var binding: ActivityHistoryBinding
     private val appPreferences = CarStatsViewer.appPreferences
 
     private val tripsAdapter = TripHistoryAdapter(
@@ -80,47 +73,56 @@ class HistoryActivity  : FragmentActivity() {
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch { withContext(Dispatchers.IO) {
-            runOnUiThread { trip_history_progress_bar.visibility = View.VISIBLE }
-            tripsAdapter.reloadDataBase()
-            runOnUiThread { trip_history_progress_bar.visibility = View.GONE }
-        }}
+        with(binding){
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    runOnUiThread { tripHistoryProgressBar.visibility = View.VISIBLE }
+                    tripsAdapter.reloadDataBase()
+                    runOnUiThread { tripHistoryProgressBar.visibility = View.GONE }
+                }
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        binding = ActivityHistoryBinding.inflate(layoutInflater)
+        val view = binding.root
+
         context = applicationContext
 
-        setContentViewAndTheme(this, R.layout.activity_history)
+        setContentViewAndTheme(this, view)
 
-        history_trips_recycler_view.adapter = tripsAdapter
-        history_trips_recycler_view.layoutManager = LinearLayoutManager(this@HistoryActivity)
+        with(binding){
+            historyTripsRecyclerView.adapter = tripsAdapter
+            historyTripsRecyclerView.layoutManager = LinearLayoutManager(this@HistoryActivity)
 
-        appPreferences.run {
-            if (!tripFilterManual || !tripFilterAuto || !tripFilterCharge || !tripFilterMonth || tripFilterTime > 0) {
-                history_button_filters.setImageDrawable(getDrawable(R.drawable.ic_filter_active))
-            } else {
-                history_button_filters.setImageDrawable(getDrawable(R.drawable.ic_filter))
+            appPreferences.run {
+                if (!tripFilterManual || !tripFilterAuto || !tripFilterCharge || !tripFilterMonth || tripFilterTime > 0) {
+                    historyButtonFilters.setImageDrawable(getDrawable(R.drawable.ic_filter_active))
+                } else {
+                    historyButtonFilters.setImageDrawable(getDrawable(R.drawable.ic_filter))
+                }
             }
-        }
 
-        history_button_back.setOnClickListener {
-            finish()
-            if (BuildConfig.FLAVOR_aaos != "carapp")
-                overridePendingTransition(R.anim.stay_still, R.anim.slide_out_right)
-        }
+            historyButtonBack.setOnClickListener {
+                finish()
+                if (BuildConfig.FLAVOR_aaos != "carapp")
+                    overridePendingTransition(R.anim.stay_still, R.anim.slide_out_right)
+            }
 
-        history_button_filters.setOnClickListener {
-            createFilterDialog()
-        }
+            historyButtonFilters.setOnClickListener {
+                createFilterDialog()
+            }
 
-        history_multi_delete.setOnClickListener {
-            createMultiDeleteDialog()
-        }
+            historyMultiDelete.setOnClickListener {
+                createMultiDeleteDialog()
+            }
 
-        history_button_upload.setOnClickListener {
-            openUploadDialog()
+            historyButtonUpload.setOnClickListener {
+                openUploadDialog()
+            }
         }
 
     }
@@ -134,7 +136,7 @@ class HistoryActivity  : FragmentActivity() {
                 CarStatsViewer.dataProcessor.changeSelectedTrip(session.session_type)
             }
             runOnUiThread {
-                history_fragment_container.visibility = View.VISIBLE
+                binding.historyFragmentContainer.visibility = View.VISIBLE
                 supportFragmentManager.commit {
                     setCustomAnimations(
                         R.anim.slide_in_up,
@@ -154,13 +156,13 @@ class HistoryActivity  : FragmentActivity() {
     }
 
     private fun setMultiSelectVisibility() {
-        history_multi_container?.let {
+        binding.historyMultiContainer?.let {
             if (multiSelectMode) {
                 it.visibility = View.VISIBLE
-                history_button_filters.visibility = View.GONE
+                binding.historyButtonFilters.visibility = View.GONE
             } else {
                 it.visibility = View.GONE
-                history_button_filters.visibility = View.VISIBLE
+                binding.historyButtonFilters.visibility = View.VISIBLE
             }
         }
     }
@@ -175,7 +177,7 @@ class HistoryActivity  : FragmentActivity() {
             tripsAdapter.selectTrip(sessionId, false)
             selectedIds.remove(sessionId)
         }
-        history_multi_info.text = "${getString(R.string.history_selected)} ${selectedIds.size}"
+        binding.historyMultiInfo.text = "${getString(R.string.history_selected)} ${selectedIds.size}"
         InAppLogger.d("[Trip History] selected IDs: $selectedIds")
     }
 
@@ -209,9 +211,9 @@ class HistoryActivity  : FragmentActivity() {
             .setCancelable(true)
             .setPositiveButton(getString(R.string.dialog_reset_confirm)) { _, _ ->
                 lifecycleScope.launch{ withContext(Dispatchers.IO) {
-                    runOnUiThread { trip_history_progress_bar.visibility = View.VISIBLE }
+                    runOnUiThread { binding.tripHistoryProgressBar.visibility = View.VISIBLE }
                     tripsAdapter.resetTrip(tripType).join()
-                    runOnUiThread { trip_history_progress_bar.visibility = View.GONE }
+                    runOnUiThread { binding.tripHistoryProgressBar.visibility = View.GONE }
                 }}
             }
             .setNegativeButton(getString(R.string.dialog_reset_cancel)) { dialog, _ ->
@@ -252,7 +254,7 @@ class HistoryActivity  : FragmentActivity() {
             .setPositiveButton(getString(R.string.history_dialog_multi_delete_delete, selectedIds.size.toString())) {_,_->
                 lifecycleScope.launch { withContext(Dispatchers.IO) {
                     val numSelected = selectedIds.size
-                    runOnUiThread { trip_history_progress_bar.visibility = View.VISIBLE }
+                    runOnUiThread { binding.tripHistoryProgressBar.visibility = View.VISIBLE }
                     selectedIds.forEach {
                         CarStatsViewer.tripDataSource.deleteDrivingSessionById(it)
                     }
@@ -260,7 +262,7 @@ class HistoryActivity  : FragmentActivity() {
                     tripsAdapter.reloadDataBase()
                     runOnUiThread {
                         multiSelectMode = false
-                        trip_history_progress_bar.visibility = View.GONE
+                        binding.tripHistoryProgressBar.visibility = View.GONE
                         SnackbarWidget.Builder(this@HistoryActivity, "$numSelected trips have been deleted.")
                             .setDuration(3000)
                             .setButton("OK")
@@ -271,7 +273,7 @@ class HistoryActivity  : FragmentActivity() {
             }
             .setNeutralButton(getString(R.string.history_dialog_multi_delete_deselect)) { dialog, _ ->
                 lifecycleScope.launch { withContext(Dispatchers.IO) {
-                    runOnUiThread { trip_history_progress_bar.visibility = View.VISIBLE }
+                    runOnUiThread { binding.tripHistoryProgressBar.visibility = View.VISIBLE }
                     selectedIds.forEach {
                         tripsAdapter.selectTrip(it, false)
                     }
@@ -280,7 +282,7 @@ class HistoryActivity  : FragmentActivity() {
                     runOnUiThread {
                         tripsAdapter.notifyDataSetChanged()
                         multiSelectMode = false
-                        trip_history_progress_bar.visibility = View.GONE
+                        binding.tripHistoryProgressBar.visibility = View.GONE
                     }
                 }}
                 dialog.cancel()
@@ -362,16 +364,16 @@ class HistoryActivity  : FragmentActivity() {
         appPreferences.tripFilterTime = filterTime
 
         lifecycleScope.launch { withContext(Dispatchers.IO) {
-            runOnUiThread { trip_history_progress_bar.visibility = View.VISIBLE }
+            runOnUiThread { binding.tripHistoryProgressBar.visibility = View.VISIBLE }
             tripsAdapter.reloadDataBase()
-            runOnUiThread { trip_history_progress_bar.visibility = View.GONE }
+            runOnUiThread { binding.tripHistoryProgressBar.visibility = View.GONE }
         }}
 
         appPreferences.run {
             if (!tripFilterManual || !tripFilterAuto || !tripFilterCharge || !tripFilterMonth || tripFilterTime > 0) {
-                history_button_filters.setImageDrawable(getDrawable(R.drawable.ic_filter_active))
+                binding.historyButtonFilters.setImageDrawable(getDrawable(R.drawable.ic_filter_active))
             } else {
-                history_button_filters.setImageDrawable(getDrawable(R.drawable.ic_filter))
+                binding.historyButtonFilters.setImageDrawable(getDrawable(R.drawable.ic_filter))
             }
         }
     }

@@ -5,11 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.log.LogEntry
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import kotlinx.android.synthetic.main.recyclerview_log_row.view.log_row
 import java.text.SimpleDateFormat
 
 class LogAdapter(var log: List<LogEntry>): RecyclerView.Adapter<LogAdapter.LogViewHolder>() {
@@ -22,7 +22,7 @@ class LogAdapter(var log: List<LogEntry>): RecyclerView.Adapter<LogAdapter.LogVi
     }
 
     override fun onBindViewHolder(holder: LogViewHolder, position: Int) {
-        holder.itemView.log_row.apply {
+        holder.itemView.findViewById<TextView>(R.id.log_row).apply {
             val logEntry = log[position]
             val logStringBuilder = StringBuilder()
             if (logEntry.message.contains("Car Stats Viewer"))

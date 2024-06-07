@@ -41,3 +41,4 @@ proguard-project.txt
 credentials.xml
 /automotive/stable/
 /automotive/debug/
+/.kotlin/
