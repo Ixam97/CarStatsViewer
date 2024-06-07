@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.carApp
 
-import android.car.Car
 import android.content.Intent
 import androidx.annotation.OptIn
 import androidx.car.app.annotations.ExperimentalCarApi
@@ -12,17 +11,21 @@ import androidx.car.app.model.Row
 import androidx.car.app.model.Toggle
 import androidx.core.graphics.drawable.IconCompat
 import com.ixam97.carStatsViewer.BuildConfig
-import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.ComposeActivity
 import com.ixam97.carStatsViewer.ui.activities.DebugActivity
 import com.ixam97.carStatsViewer.ui.activities.HistoryActivity
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
+
+import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
 import com.ixam97.carStatsViewer.ui.activities.SettingsActivity
 
 @OptIn(ExperimentalCarApi::class)
 internal fun CarStatsViewerScreen.MenuList() = ListTemplate.Builder().apply {
 
+    val composeSettingsActivityIntent = Intent(carContext, ComposeSettingsActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
     val settingsActivityIntent = Intent(carContext, SettingsActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
@@ -66,13 +69,21 @@ internal fun CarStatsViewerScreen.MenuList() = ListTemplate.Builder().apply {
         }.build())
         addItem(Row.Builder().apply {
             setTitle(carContext.getString(R.string.car_app_show_real_time_data_title))
-            addText("Lorem ipsum dolor sit amet")// carContext.getString(R.string.car_app_show_real_time_data_hint))
+            addText(carContext.getString(R.string.car_app_show_real_time_data_hint))
             setToggle(Toggle.Builder {
                 appPreferences.carAppRealTimeData = it
                 invalidateTabView()
             }.setChecked(appPreferences.carAppRealTimeData).build())
         }.build())
         if (BuildConfig.FLAVOR_version == "dev") {
+            addItem(Row.Builder().apply {
+                setTitle("Compose Settings")
+                setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).build())
+                setBrowsable(true)
+                setOnClickListener(ParkedOnlyOnClickListener.create {
+                    carContext.startActivity(composeSettingsActivityIntent)
+                })
+            }.build())
             addItem(Row.Builder().apply {
                 setTitle("Compose Test UI")
                 setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).build())

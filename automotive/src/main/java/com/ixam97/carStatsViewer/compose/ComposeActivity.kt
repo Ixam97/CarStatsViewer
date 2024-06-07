@@ -8,7 +8,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.screens.HelloWorldScreen
 import com.ixam97.carStatsViewer.compose.screens.PolestarTestScreen
-import com.ixam97.carStatsViewer.compose.theme.ComposeTestTheme
+import com.ixam97.carStatsViewer.compose.theme.CarTheme
 import com.ixam97.carStatsViewer.compose.theme.PolestarTheme
 
 class ComposeActivity: ComponentActivity() {
@@ -29,7 +29,7 @@ class ComposeActivity: ComponentActivity() {
                     PolestarTestScreen(viewModel = composeViewModel)
                 }
             else
-                ComposeTestTheme(composeViewModel.vehicleBrand) {
+                CarTheme(composeViewModel.vehicleBrand) {
                     HelloWorldScreen(viewModel = composeViewModel)
                 }
         }

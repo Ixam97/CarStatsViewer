@@ -21,7 +21,7 @@ val polestarFont = FontFamily(
         )
     )
 
-// Set of Material typography styles to start with
+
 val defaultTypography = Typography(
     defaultFontFamily = FontFamily.Default,
     body1 = TextStyle(
@@ -36,6 +36,39 @@ val defaultTypography = Typography(
         fontSize = 30.sp
     ),
     h1 = TextStyle(
+        // fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = 38.sp,
+        color = Color.White
+    ),
+    h2 = TextStyle(
+        // fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = 35.sp,
+        color = Color.White
+    )
+)
+
+val defaultPolestarTypography = Typography(
+    defaultFontFamily = polestarFont,
+    body1 = TextStyle(
+        // fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 30.sp,
+        color = Color.White
+    ),
+    button = TextStyle(
+        // fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 30.sp
+    ),
+    h1 = TextStyle(
+        // fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = 38.sp,
+        color = Color.White
+    ),
+    h2 = TextStyle(
         // fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = 35.sp,

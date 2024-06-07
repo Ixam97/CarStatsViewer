@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.R
@@ -29,30 +31,41 @@ import com.ixam97.carStatsViewer.R
 fun SideTabLayout(
     modifier: Modifier = Modifier,
     tabs: List<SideTab>,
-    tabsColumnWidth: Dp?
+    tabsColumnWidth: Dp? = null,
+    tabsColumnBackground: Color = MaterialTheme.colors.surface
 ) {
     var selectedIndex by remember { mutableStateOf(0) }
     Box(modifier = modifier) {
         Row {
             Column(
                 modifier = Modifier
-                    .width(IntrinsicSize.Min)
+                    .width(IntrinsicSize.Max)
                     .fillMaxHeight()
-                    .background(colorResource(id = R.color.slideup_activity_background)),
+                    .background(tabsColumnBackground),
                 // verticalArrangement = Arrangement.spacedBy(30.dp)
             ) {
                 tabs.forEachIndexed { index, tab ->
                     Text(
                         modifier = Modifier
                             .clickable { selectedIndex = index }
+                            .background(if (index == selectedIndex) MaterialTheme.colors.secondary else Color.Transparent)
                             .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 30.dp),
+                            .padding(horizontal = 20.dp, vertical = 30.dp)
+                            .padding(end = 30.dp),
                         text = tab.tabTitle,
                         style = MaterialTheme.typography.h2,
-                        color = if (index == selectedIndex) MaterialTheme.colors.secondary else Color.White
+                        // color = if (index == selectedIndex) MaterialTheme.colors.secondary else Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Visible
                     )
                 }
             }
+            // Divider(
+            //     modifier = Modifier
+            //         .padding(20.dp)
+            //         .fillMaxHeight()
+            //         .width(2.dp)
+            // )
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {

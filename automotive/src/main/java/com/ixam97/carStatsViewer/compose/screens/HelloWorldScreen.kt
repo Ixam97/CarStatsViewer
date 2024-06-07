@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,9 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.ComposeViewModel
 import com.ixam97.carStatsViewer.compose.components.CarIconButton
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
+import com.ixam97.carStatsViewer.compose.components.SideTab
+import com.ixam97.carStatsViewer.compose.components.SideTabLayout
+import com.ixam97.carStatsViewer.compose.theme.PolestarTheme
 import com.ixam97.carStatsViewer.compose.theme.darkBackground
 import com.ixam97.carStatsViewer.compose.theme.headerBackground
 import com.ixam97.carStatsViewer.compose.theme.themedBrands
@@ -41,9 +45,9 @@ fun HelloWorldScreen(viewModel: ComposeViewModel) {
 
     Box(modifier = Modifier
         .fillMaxSize()
-        .padding(15.dp)
-        .clip(RoundedCornerShape(10.dp))
-        .background(color = darkBackground)
+        // .padding(15.dp)
+        // .clip(RoundedCornerShape(10.dp))
+        .background(color = MaterialTheme.colors.background)
     ) {
         Column(
             modifier = Modifier
@@ -53,7 +57,7 @@ fun HelloWorldScreen(viewModel: ComposeViewModel) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = headerBackground),
+                    .background(color = MaterialTheme.colors.background),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CarIconButton(
@@ -92,37 +96,51 @@ fun HelloWorldScreen(viewModel: ComposeViewModel) {
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                CarSwitchRow(
-                    switchState = composeActivityState.switchStates[0],
-                    onClick = { viewModel.setSwitch(0, !composeActivityState.switchStates[0]) }
-                ) {
-                    Text(text = "Lorem Ipsum istilani")
-                }
-                CarSwitchRow(
-                    switchState = composeActivityState.switchStates[1],
-                    onClick = { viewModel.setSwitch(1, !composeActivityState.switchStates[1]) }
-                ) {
-                    Text(text = "Row 2")
-                }
-                CarSwitchRow(
-                    switchState = composeActivityState.switchStates[2],
-                    onClick = { viewModel.setSwitch(2, !composeActivityState.switchStates[2]) }
-                ) {
-                    Text(text = "Row 3")
-                }
-                if (viewModel.vehicleBrand == "Polestar") {
-                    Row(
-                        modifier = Modifier
-                            .height(100.dp)
-                            .clickable { viewModel.increaseScreenIndex() }
-                            .padding(horizontal = 30.dp),
-                        verticalAlignment = Alignment.CenterVertically
+
+                val tabs = listOf(
+                    SideTab(
+                        tabTitle = "Allgemein"
                     ) {
-                        Text(text = "Open Polestar UI")
-                        Spacer(modifier = Modifier.weight(1f))
-                        Icon(painterResource(id = R.drawable.ic_chevron_right), contentDescription = null, tint = MaterialTheme.colors.onSurface)
+                        CarSwitchRow(
+                            switchState = composeActivityState.switchStates[0],
+                            onClick = { viewModel.setSwitch(0, !composeActivityState.switchStates[0]) }
+                        ) {
+                            Text(text = "Lorem Ipsum istilani")
+                        }
+                        CarSwitchRow(
+                            switchState = composeActivityState.switchStates[1],
+                            onClick = { viewModel.setSwitch(1, !composeActivityState.switchStates[1]) }
+                        ) {
+                            Text(text = "Row 2")
+                        }
+                        CarSwitchRow(
+                            switchState = composeActivityState.switchStates[2],
+                            onClick = { viewModel.setSwitch(2, !composeActivityState.switchStates[2]) }
+                        ) {
+                            Text(text = "Row 3")
+                        }
+                        if (viewModel.vehicleBrand == "Polestar") {
+                            Row(
+                                modifier = Modifier
+                                    .height(100.dp)
+                                    .clickable { viewModel.increaseScreenIndex() }
+                                    .padding(horizontal = 30.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = "Open Polestar UI")
+                                Spacer(modifier = Modifier.weight(1f))
+                                Icon(painterResource(id = R.drawable.ic_chevron_right), contentDescription = null, tint = MaterialTheme.colors.onSurface)
+                            }
+                        }
+                    }, 
+                    SideTab("Polestar UI") {
+                        PolestarTheme {
+                            PolestarTestScreen(viewModel = viewModel)
+                        }
                     }
-                }
+                )
+                SideTabLayout(tabs = tabs)
+
             }
         }
     }

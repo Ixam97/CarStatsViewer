@@ -6,6 +6,7 @@ import android.app.Service
 import android.car.VehicleUnit
 import android.content.Intent
 import android.location.Location
+import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
 import com.google.android.gms.common.ConnectionResult
@@ -119,9 +120,12 @@ class DataCollector: Service() {
             if (propertyMake == "Toy Vehicle") {
                 if (File("/product/fonts/PolestarUnica77-Regular.otf").exists())
                     return "Polestar"
+                else return Build.BRAND
             }
             return propertyMake
         }
+
+        InAppLogger.i("Brand: ${emulatorCarMake()}")
 
         dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
             batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
