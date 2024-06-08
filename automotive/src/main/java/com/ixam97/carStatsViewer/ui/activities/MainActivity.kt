@@ -723,14 +723,14 @@ class MainActivity : FragmentActivity() {
 
         mainPowerGage.gageName = getString(R.string.main_gage_power)
         mainPowerGage.gageUnit = "kW"
-        mainPowerGage.primaryColor = getColorFromAttribute(this@MainActivity, android.R.attr.colorControlActivated)
+        mainPowerGage.primaryColor = getColor(R.color.polestar_orange)
         mainPowerGage.maxValue = if (appPreferences.consumptionPlotSingleMotor) 170f else 300f
         mainPowerGage.minValue = if (appPreferences.consumptionPlotSingleMotor) -100f else -150f
         mainPowerGage.setValue(0f)
 
         mainConsumptionGage.gageName = getString(R.string.main_gage_consumption)
         mainConsumptionGage.gageUnit = "kWh/100km"
-        mainConsumptionGage.primaryColor = getColorFromAttribute(this@MainActivity, android.R.attr.colorControlActivated)
+        mainConsumptionGage.primaryColor = getColor(R.color.polestar_orange) // getColorFromAttribute(this@MainActivity, android.R.attr.colorControlActivated)
         mainConsumptionGage.minValue = -30f
         mainConsumptionGage.maxValue = 60f
         mainConsumptionGage.setValue(0f)
@@ -752,12 +752,20 @@ class MainActivity : FragmentActivity() {
 
     private fun setUiEventListeners() = with(binding) {
 
-        mainTitleIcon.setOnClickListener {
+        fun toggleEmulatorPowerSign() {
             if (emulatorMode) {
                 emulatorPowerSign = if (emulatorPowerSign < 0) 1
                 else -1
                 Toast.makeText(this@MainActivity, "Power sign: ${if(emulatorPowerSign<0) "-" else "+"}", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        mainTitle.setOnClickListener {
+            toggleEmulatorPowerSign()
+        }
+
+        mainTitleDashboard.setOnClickListener {
+            toggleEmulatorPowerSign()
         }
 
         mainButtonSettings.setOnClickListener {

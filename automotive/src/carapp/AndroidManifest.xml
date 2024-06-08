@@ -74,7 +74,6 @@
         <activity android:name=".ui.activities.AboutActivity" android:exported="false" />
         <activity android:name=".ui.activities.SettingsApisActivity" android:exported="false" />
         <activity android:name=".ui.activities.DebugActivity" android:exported="false" />
-        <activity android:name=".compose.ComposeActivity" android:exported="false" />
         <activity android:name=".compose.ComposeSettingsActivity" android:exported="false" />
 
         <meta-data android:name="com.android.automotive"

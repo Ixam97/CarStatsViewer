@@ -114,7 +114,7 @@ class Gauge(
             val zeroLineY: Float = bottomLine * (max / (max - min))
             val zeroLineX: Float = floatWidth - (floatWidth * (max / (max - min)))
             var valueLineY: Float = (zeroLineY - value * (bottomLine / (max - min)))
-            var valueLineX: Float = (zeroLineX + value) * (floatWidth / (max - min))
+            var valueLineX: Float = (zeroLineX + value * (floatWidth / (max - min)))
 
             if (valueLineY > bottomLine) valueLineY = bottomLine
             else if (valueLineY <= 0) valueLineY = 0f
