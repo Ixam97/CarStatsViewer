@@ -60,7 +60,7 @@ class SettingsActivity : FragmentActivity() {
         if (moving == doOptimize) return
         with(binding) {
             settingsMainViewWidget.isEnabled = !doOptimize
-            settingsVehicleWidget.isEnabled = !doOptimize
+            // settingsVehicleWidget.isEnabled = !doOptimize
             settingsApisWidget.isEnabled = !doOptimize
             settingsAboutWidget.isEnabled = !doOptimize
         }
