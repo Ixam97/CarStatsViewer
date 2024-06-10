@@ -87,7 +87,7 @@ internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
 
     addSectionedList(SectionedItemList.create(
         legacyViewsList,
-        "Other Views"
+        carContext.getString(R.string.car_app_menu_other_views)
     ))
 
     if (BuildConfig.FLAVOR_version == "dev") {

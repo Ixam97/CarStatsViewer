@@ -367,6 +367,7 @@
     <string name="car_app_legacy_dashboard_desc">Opens the Dashboard known from the legacy version of Car Stats Viewer. Also contains the real time charging curve while charging. Not available while driving!</string>
     <string name="car_app_legacy_history_desc">Shows a list of all past trips and allows to view detailed statistics for each trip. Not available while driving!</string>
     <string name="car_app_menu">Miscellaneous</string>
+    <string name="car_app_menu_other_views">Other Views</string>
     <string name="car_app_status">API Status</string>
     <string name="car_app_toast_reset_confirmation">Manual Trip has been reset.</string>
     <string name="car_app_toast_reset_hint">Press again to reset manual Trip.</string>
@@ -377,7 +378,7 @@
     <string name="car_app_permissions_grant">Grant permissions</string>
     <string name="car_app_permissions_deny">Deny and exit</string>
 
-    <string name="car_app_dev_notice_message">Car Stats Viewer is still in development! Be aware that features may change, get added or removed without notice and data loss may occur! If you find bugs or want to give feedback, please visit the GitHub repository of the app. A link can be found in the apps settings - About Car Stats Viewer.</string>
+    <string name="car_app_dev_notice_message">Car Stats Viewer is still in development! Be aware that features may change, get added or removed without notice and data loss may occur!\n\nIf you find bugs or want to give feedback, please visit the GitHub repository of the app or the thread in the Polestar Club Forum on this topic. A link can be found in the apps Settings → About Car Stats Viewer.</string>
     <string name="car_app_dev_notice_title" translatable="false">@string/app_name</string>
     <string name="car_app_dev_notice_confirm">Understood</string>
 

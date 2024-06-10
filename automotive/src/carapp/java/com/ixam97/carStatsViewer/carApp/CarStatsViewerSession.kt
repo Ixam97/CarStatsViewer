@@ -54,7 +54,7 @@ class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
             startService()
         }
 
-        if (CarStatsViewer.appPreferences.versionString.isEmpty()) {
+        if (CarStatsViewer.appPreferences.versionString != BuildConfig.VERSION_NAME) {
             screens.add(DevNoticeScreen(carContext))
         }
 
