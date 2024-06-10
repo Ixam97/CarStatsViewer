@@ -1,16 +1,25 @@
 package com.ixam97.carStatsViewer.compose.screens.settingsScreens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
+import com.ixam97.carStatsViewer.compose.components.CarRow
+import com.ixam97.carStatsViewer.compose.components.CarSegmentedButton
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
 import com.ixam97.carStatsViewer.compose.components.SideTab
 
@@ -19,7 +28,11 @@ fun GeneralSettingsTab(
     settingsState: SettingsViewModel.SettingsState,
     viewModel: SettingsViewModel
 ) = SideTab("General") {
-    Column {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+    ) {
         CarSwitchRow(
             switchState = settingsState.locationTracking,
             onClick = { viewModel.setLocationTracking(!settingsState.locationTracking)}
@@ -40,6 +53,5 @@ fun GeneralSettingsTab(
         ) {
             Text(text = stringResource(id = R.string.settings_autostart))
         }
-
     }
 }

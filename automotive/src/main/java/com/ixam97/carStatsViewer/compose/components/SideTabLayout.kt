@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -20,12 +21,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.compose.theme.CarTheme
 
 @Composable
 fun SideTabLayout(
@@ -41,17 +44,20 @@ fun SideTabLayout(
                 modifier = Modifier
                     .width(IntrinsicSize.Max)
                     .fillMaxHeight()
-                    .background(tabsColumnBackground),
+                    .background(tabsColumnBackground)
+                    .padding(top = 10.dp),
                 // verticalArrangement = Arrangement.spacedBy(30.dp)
             ) {
                 tabs.forEachIndexed { index, tab ->
                     Text(
                         modifier = Modifier
                             .clickable { selectedIndex = index }
-                            .background(if (index == selectedIndex) MaterialTheme.colors.secondary else Color.Transparent)
                             .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 30.dp)
-                            .padding(end = 30.dp),
+                            .padding(horizontal = 20.dp, vertical = 10.dp)
+                            .clip(RoundedCornerShape(CarTheme.buttonCornerRadius))
+                            .background(if (index == selectedIndex) MaterialTheme.colors.secondary else Color.Transparent)
+                            .padding(CarTheme.buttonPaddingValues)
+                            .padding(end = 10.dp),
                         text = tab.tabTitle,
                         style = MaterialTheme.typography.h2,
                         // color = if (index == selectedIndex) MaterialTheme.colors.secondary else Color.White,

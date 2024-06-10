@@ -1,6 +1,7 @@
 package com.ixam97.carStatsViewer.compose.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -34,8 +35,8 @@ fun CarGradientButton(
     enabled: Boolean = true,
     active: Boolean = false,
     gradient: Brush = CarTheme.activeElementBrush,
-    shape: Shape = RoundedCornerShape(percent = 0),
-    contentPadding: PaddingValues = PaddingValues(horizontal = 40.dp, vertical = 20.dp),
+    shape: Shape = RoundedCornerShape(CarTheme.buttonCornerRadius),
+    contentPadding: PaddingValues = CarTheme.buttonPaddingValues,
     content: @Composable (RowScope.() -> Unit)
 ) {
     Button(
@@ -49,7 +50,13 @@ fun CarGradientButton(
         ),
         contentPadding = PaddingValues()
     ) {
-        val boxModifier = if (active) Modifier.background(gradient) else Modifier.background(MaterialTheme.colors.surface)
+        val boxModifier = if (active) {
+            Modifier
+                .background(gradient)
+        } else {
+            Modifier
+                .background(MaterialTheme.colors.surface)
+        }
         Box(modifier = boxModifier) {
             Row(
                 modifier = Modifier.padding(contentPadding),

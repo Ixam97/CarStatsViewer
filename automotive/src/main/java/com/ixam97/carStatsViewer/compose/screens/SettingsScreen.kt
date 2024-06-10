@@ -34,7 +34,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
     
     val tabsList = listOf(
         GeneralSettingsTab(settingsState = settingsState.value, viewModel = viewModel),
-        AppearanceTab(),
+        AppearanceTab(viewModel),
         AboutTab()
     )
     

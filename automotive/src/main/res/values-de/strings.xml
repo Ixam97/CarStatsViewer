@@ -276,6 +276,8 @@
     <string name="car_app_strip_selection">Tripauswahl</string>
     <string name="car_app_dashboard">Dashboard</string>
     <string name="car_app_legacy_dashboard">Klassisches Dashboard</string>
+    <string name="car_app_legacy_dashboard_desc">Öffnet das Dashboard aus der klassischen Version von Car Stats Viewer. Enthält während eines Ladevorgangs die Echtzeit-Ladekurve. Nicht während der Fahrt verfügbar!</string>
+    <string name="car_app_legacy_history_desc">Zeigt eine Liste mit allen vergangenen Trips und lässt Details zu diesen Trips anzeigen. Nicht während der Fahrt verfügbar!</string>
     <string name="car_app_status">API-Status</string>
     <string name="car_app_menu">Verschiedenes</string>
     <string name="car_app_toast_reset_confirmation">Manuellert Trip wurde zurückgesetzt</string>
@@ -285,6 +287,9 @@
     <string name="car_app_permissions_message">Car Stats Viewer benötigt Zugriff auf Standort- und Fahrzeugdaten-Berechtigungen, um zu funktionieren.\n\nDie Standorterfassung kann in den App-Einstellungen ein oder aus geschaltet werden. Standardmäßig werden keine Daten an Server übermittelt.</string>
     <string name="car_app_permissions_grant">Berechtigungen erteilen</string>
     <string name="car_app_permissions_deny">Ablehnen und beenden</string>
+
+    <string name="car_app_advanced_settings">Erweiterte Einstellungen</string>
+    <string name="car_app_quick_settings">Schnelleinstellungen</string>
     <string name="car_app_show_real_time_data_title">Zeige Echtzeitdaten</string>
     <string name="car_app_show_real_time_data_hint">Wenn diese Option aktiviert ist, kann die UI aufgrund der hohen Update-Frequenz durch Echtzeitdaten sehr träge auf Eingaben reagieren.</string>
 </resources>

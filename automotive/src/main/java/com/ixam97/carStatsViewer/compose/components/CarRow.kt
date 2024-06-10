@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -49,9 +50,11 @@ fun CarRow(
         modifier
             .clickable(onClick = onClick, enabled = enabled)
             .defaultMinSize(minHeight = minHeight)
+            .height(IntrinsicSize.Max)
     } else {
         modifier
             .defaultMinSize(minHeight = minHeight)
+            .height(IntrinsicSize.Max)
     }
     Row (
         modifier = rowModifier
@@ -84,12 +87,15 @@ fun CarRow(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(text = title, color = MaterialTheme.colors.onBackground.copy(alpha = if (enabled) 1f else 0.46f))
-                if (text != null) {
+                if (text != null && customContent == null) {
                     Spacer(modifier = Modifier.size(15.dp))
                     Text(
                         text = text,
                         color = if (enabled) colorResource(id = R.color.secondary_text_color) else disabledTextColor
                     )
+                } else if (customContent != null) {
+                    Spacer(modifier = Modifier.size(15.dp))
+                    customContent()
                 }
             }
             if (onClick != null && browsable) {

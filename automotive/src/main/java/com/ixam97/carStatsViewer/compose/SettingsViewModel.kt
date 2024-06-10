@@ -27,6 +27,9 @@ class SettingsViewModel: ViewModel() {
         val secondaryPlotColor: Int = 0
     )
 
+    private val _themeSettingState = MutableStateFlow<Int>(0)
+    val themeSettingStateFLow = _themeSettingState.asStateFlow()
+
     private val _finishActivityLiveData = MutableLiveData<Event<Boolean>>()
     val finishActivityLiveData: LiveData<Event<Boolean>> = _finishActivityLiveData
 
@@ -66,6 +69,10 @@ class SettingsViewModel: ViewModel() {
 
     fun setAutoAppStart(autoAppStart: Boolean) {
         _settingsStateFlow.update { it.copy(autoAppStart = autoAppStart) }
+    }
+
+    fun setTheme(themeIndex: Int) {
+        _themeSettingState.update { themeIndex }
     }
 
 }

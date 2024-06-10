@@ -27,6 +27,11 @@ import androidx.lifecycle.lifecycleScope
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carApp.tabsScreenTabs.apiStatusList
+import com.ixam97.carStatsViewer.carApp.tabsScreenTabs.miscList
+import com.ixam97.carStatsViewer.carApp.tabsScreenTabs.settingsList
+import com.ixam97.carStatsViewer.carApp.utils.Gauge
+import com.ixam97.carStatsViewer.carApp.utils.asCarIcon
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -37,7 +42,7 @@ import kotlin.math.roundToInt
 
 
 @ExperimentalCarApi
-class CarStatsViewerScreen(
+class TabsScreen(
     carContext: CarContext,
     val session: CarStatsViewerSession
 ) : Screen(carContext), DefaultLifecycleObserver {
@@ -45,9 +50,10 @@ class CarStatsViewerScreen(
     internal val TAG = "CarStatsViewerScreen"
 
     private val CID_TRIP_DATA = "cid_trip_data"
-    private val CID_MENU = "cid_menu"
-    private val CID_CANVAS = "cid_canvas"
+    private val CID_MISC = "cid_menu"
+    private val CID_DASHBOARD = "cid_canvas"
     private val CID_STATUS = "cid_status"
+    private val CID_SETTINGS = "cid_settings"
 
     private val INVALIDATE_INTERVAL_MS = 1000L
 
@@ -96,7 +102,7 @@ class CarStatsViewerScreen(
             CarStatsViewer.dataProcessor.realTimeDataFlow.throttle(250).collect {
                 realTimeData = it
                 val realTimeDataOnTripData = selectedTabContentID == CID_TRIP_DATA && appPreferences.carAppRealTimeData
-                val realTimeDataOnDashboard = selectedTabContentID == CID_CANVAS && appPreferences.carAppRealTimeData && !(carContext.carAppApiLevel >= 7 && BuildConfig.FLAVOR_version == "dev")
+                val realTimeDataOnDashboard = selectedTabContentID == CID_DASHBOARD && appPreferences.carAppRealTimeData && !(carContext.carAppApiLevel >= 7 && BuildConfig.FLAVOR_version == "dev")
                 if (realTimeDataOnDashboard || realTimeDataOnTripData) {
                     invalidateTabView()
                     InAppLogger.v("[$TAG] Real time data flow requested invalidate.")
@@ -107,7 +113,7 @@ class CarStatsViewerScreen(
             CarStatsViewer.dataProcessor.selectedSessionDataFlow.collect {
                 session.carDataSurfaceCallback.updateSession()
                 drivingSession = it
-                if (selectedTabContentID != CID_CANVAS) {
+                if (selectedTabContentID != CID_DASHBOARD) {
                     invalidateTabView()
                     // InAppLogger.v("[$TAG] Session data flow requested invalidate.")
                 }
@@ -166,9 +172,10 @@ class CarStatsViewerScreen(
         }
         setHeaderAction(Action.APP_ICON)
         addTab(createTab(tripType, CID_TRIP_DATA, R.drawable.ic_car_app_list))
-        addTab(createTab(R.string.car_app_dashboard, CID_CANVAS, R.drawable.ic_car_app_dashboard))
+        // addTab(createTab(R.string.car_app_dashboard, CID_DASHBOARD, R.drawable.ic_car_app_dashboard))
         addTab(createTab(R.string.car_app_status, CID_STATUS, R.drawable.ic_connected))
-        addTab(createTab(R.string.car_app_menu, CID_MENU, R.drawable.ic_car_app_menu))
+        addTab(createTab(R.string.settings_title, CID_SETTINGS, R.drawable.ic_car_app_settings))
+        addTab(createTab(R.string.car_app_menu, CID_MISC, R.drawable.ic_car_app_menu))
         setTabContents(TabContents.Builder(
             when (selectedTabContentID) {
                 CID_TRIP_DATA -> {
@@ -177,21 +184,25 @@ class CarStatsViewerScreen(
                 }
                 CID_STATUS -> {
                     session.carDataSurfaceCallback.pause()
-                    ApiStatusList()
+                    apiStatusList()
                 }
-                CID_CANVAS -> {
-                    if (carContext.carAppApiLevel >= 7 && BuildConfig.FLAVOR_version == "dev") {
-                        session.carDataSurfaceCallback.resume()
-                        realTimeDataTemplate.getTemplate()
-                    } else if (appPreferences.carAppRealTimeData) {
-                        realTimeDataGridTemplate()
-                    } else {
-                        liveDataDisabledMessage()
-                    }
-                }
-                CID_MENU -> {
+                // CID_DASHBOARD -> {
+                //     if (carContext.carAppApiLevel >= 7 && BuildConfig.FLAVOR_version == "dev") {
+                //         session.carDataSurfaceCallback.resume()
+                //         realTimeDataTemplate.getTemplate()
+                //     } else if (appPreferences.carAppRealTimeData) {
+                //         realTimeDataGridTemplate()
+                //     } else {
+                //         liveDataDisabledMessage()
+                //     }
+                // }
+                CID_SETTINGS -> {
                     session.carDataSurfaceCallback.pause()
-                    MenuList()
+                    settingsList()
+                }
+                CID_MISC -> {
+                    session.carDataSurfaceCallback.pause()
+                    miscList()
                 }
                 else -> throw Exception("Unsupported Content ID!")
             }

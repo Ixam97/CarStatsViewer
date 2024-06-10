@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.carApp
+package com.ixam97.carStatsViewer.carApp.utils
 
 import android.graphics.Bitmap
 import androidx.car.app.model.CarIcon

@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.compose.theme
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
@@ -8,6 +9,7 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 
 val themedBrands = listOf(
     "Polestar",
@@ -76,6 +78,8 @@ object CarTheme {
         @Composable
         get() = pHeaderLineBrush?: solidBrush
 
+    val buttonCornerRadius = 20.dp
+    val buttonPaddingValues = PaddingValues(horizontal = 40.dp, vertical = 20.dp)
 
 }
 
@@ -89,10 +93,15 @@ fun CarTheme(carMake: String? = null, content: @Composable () -> Unit) {
         "Polestar" -> {
             typography = defaultPolestarTypography
             colors = polestarColors
+            pActiveElementBrush = Brush.horizontalGradient(listOf(colors.primary, colors.primary))
+            pHeaderLineBrush = Brush.horizontalGradient(listOf(colors.primary, colors.primary))
+
         }
         "VolvoCars" -> {
             colors = volvoColors
             typography = defaultTypography
+            pActiveElementBrush = Brush.horizontalGradient(listOf(colors.primary, colors.primary))
+            pHeaderLineBrush = Brush.horizontalGradient(listOf(colors.primary, colors.primary))
         }
         else -> {
             colors = clubColorsDark
@@ -103,7 +112,6 @@ fun CarTheme(carMake: String? = null, content: @Composable () -> Unit) {
         }
     }
 
-    // val typography = defaultTypography(fontFamily?: FontFamily.Default)
 
     MaterialTheme(
         colors = colors,

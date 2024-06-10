@@ -34,7 +34,7 @@ class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
             }
         }
 
-        val screens = mutableListOf<Screen>(CarStatsViewerScreen(carContext, this))
+        val screens = mutableListOf<Screen>(TabsScreen(carContext, this))
 
         lifecycle.addObserver(this)
 

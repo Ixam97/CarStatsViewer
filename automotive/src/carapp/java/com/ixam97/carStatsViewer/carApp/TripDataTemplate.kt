@@ -2,7 +2,6 @@ package com.ixam97.carStatsViewer.carApp
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import androidx.annotation.OptIn
 import androidx.car.app.CarContext
 import androidx.car.app.ScreenManager
@@ -18,6 +17,8 @@ import androidx.car.app.model.Row
 import androidx.core.graphics.drawable.IconCompat
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carApp.utils.Gauge
+import com.ixam97.carStatsViewer.carApp.utils.asCarIcon
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType

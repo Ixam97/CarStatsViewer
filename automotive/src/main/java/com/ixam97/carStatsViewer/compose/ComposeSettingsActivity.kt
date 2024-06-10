@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.SwitchDefaults
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.screens.SettingsScreen
@@ -17,12 +18,13 @@ class ComposeSettingsActivity: ComponentActivity() {
 
         setContent {
             val settingsViewModel: SettingsViewModel = viewModel()
+            val themeSetting = settingsViewModel.themeSettingStateFLow.collectAsState()
 
             settingsViewModel.finishActivityLiveData.observe(this) {
                 if (it.consume() == true) finish()
             }
 
-            CarTheme(Build.BRAND) {
+            CarTheme( if (themeSetting.value == 0) Build.BRAND else null ) {
                 SettingsScreen(viewModel = settingsViewModel)
             }
         }

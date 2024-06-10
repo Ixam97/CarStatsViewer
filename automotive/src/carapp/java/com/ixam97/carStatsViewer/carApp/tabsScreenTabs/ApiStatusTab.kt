@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.carApp
+package com.ixam97.carStatsViewer.carApp.tabsScreenTabs
 
 import android.content.Intent
 import androidx.annotation.OptIn
@@ -11,12 +11,12 @@ import androidx.car.app.model.Row
 import androidx.car.app.model.SectionedItemList
 import androidx.core.graphics.drawable.IconCompat
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carApp.TabsScreen
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
-import com.ixam97.carStatsViewer.ui.activities.SettingsActivity
 import com.ixam97.carStatsViewer.ui.activities.SettingsApisActivity
 
 @OptIn(ExperimentalCarApi::class)
-internal fun CarStatsViewerScreen.ApiStatusList() = ListTemplate.Builder().apply {
+internal fun TabsScreen.apiStatusList() = ListTemplate.Builder().apply {
 
     val settingsApisActivityIntent = Intent(carContext, SettingsApisActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
