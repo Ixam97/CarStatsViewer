@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.ixam97.carStatsViewer.carApp.ChangesScreen
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 
 @Composable
