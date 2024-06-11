@@ -32,7 +32,7 @@ internal fun TabsScreen.settingsList() = ListTemplate.Builder().apply {
     val quickSettingsItemList = ItemList.Builder().apply {
         addItem(Row.Builder().apply {
             setTitle(carContext.getString(R.string.car_app_show_real_time_data_title))
-            addText(carContext.getString(R.string.car_app_show_real_time_data_hint))
+            addText(carContext.getString(R.string.car_app_show_real_time_data_subtitle) + "\n \n" + carContext.getString(R.string.car_app_show_real_time_data_hint))
             setToggle(Toggle.Builder {
                 appPreferences.carAppRealTimeData = it
                 invalidateTabView()

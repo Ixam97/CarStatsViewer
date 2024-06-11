@@ -293,5 +293,6 @@
     <string name="car_app_advanced_settings">Erweiterte Einstellungen</string>
     <string name="car_app_quick_settings">Schnelleinstellungen</string>
     <string name="car_app_show_real_time_data_title">Zeige Echtzeitdaten</string>
+    <string name="car_app_show_real_time_data_subtitle">Leistung, Momentanverbrauch und Höhe im Trips-Tab.</string>
     <string name="car_app_show_real_time_data_hint">Wenn diese Option aktiviert ist, kann die UI aufgrund der hohen Update-Frequenz durch Echtzeitdaten sehr träge auf Eingaben reagieren.</string>
 </resources>

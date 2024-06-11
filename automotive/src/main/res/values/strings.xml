@@ -385,5 +385,6 @@
     <string name="car_app_advanced_settings">Advanced Settings</string>
     <string name="car_app_quick_settings">Quick Settings</string>
     <string name="car_app_show_real_time_data_title">Show real time data</string>
+    <string name="car_app_show_real_time_data_subtitle">Power, inst. consumption and altitude in the Trips Tab.</string>
     <string name="car_app_show_real_time_data_hint">If this option is enabled, UI might react with noticeable delay due to high frequency of UI updates issued by real time data.</string>
 </resources>
