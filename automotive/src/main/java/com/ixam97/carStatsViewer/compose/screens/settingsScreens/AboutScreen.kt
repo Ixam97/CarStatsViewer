@@ -13,19 +13,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.SideTab
+import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
+import kotlinx.serialization.Serializable
 
 @Composable
-fun AboutTab() = SideTab("About CSV") {
-    AboutContent()
-}
-
-@Composable
-fun AboutContent() = Column (
+fun AboutScreen(
+    navController: NavController
+) = Column (
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
@@ -57,7 +57,7 @@ fun AboutContent() = Column (
 
     CarGradientButton(
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
-        onClick = { /*TODO*/ }
+        onClick = { navController.navigate(SettingsScreens.ABOUT_CHANGELOG) }
     ) {
         Text(text = "Changelog")
     }

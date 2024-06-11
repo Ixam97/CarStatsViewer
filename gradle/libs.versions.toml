@@ -14,6 +14,7 @@ car-app = "1.7.0-alpha02"
 gson = "2.10.1"
 gms-location = "21.3.0" # Newer version requires Kotlin 1.9, see above
 kotlinx = "1.7.3"
+serialization = "1.7.0"
 compose = "1.6.7"
 jakara-mail = "2.0.0"
 aboutlibraries = "10.6.1"
@@ -45,7 +46,7 @@ google-gms-location = { group = "com.google.android.gms", name = "play-services-
 
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx"}
 kotlinx-coroutines-play-services = {group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "kotlinx"}
-
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 jakarta-mail = { group = "org.eclipse.angus", name = "jakarta.mail", version.ref = "jakara-mail"}
 aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutlibraries"}
 airbnb-paris = { group = "com.airbnb.android", name = "paris", version.ref = "paris"}

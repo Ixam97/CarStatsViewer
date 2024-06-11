@@ -13,8 +13,8 @@ android {
     defaultConfig {
         minSdkVersion 29
         targetSdkVersion 33
-        versionCode 243
-        versionName "0.27.0.0036"
+        versionCode 244
+        versionName "0.27.0.0037"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -122,6 +122,7 @@ dependencies {
     implementation libs.androidx.compose.material
     implementation libs.androidx.lifecycle.viewmodel.compose
     implementation libs.androidx.navigation.compose
+    implementation libs.kotlinx.serialization.json
 
     implementation libs.androidx.room
     kapt libs.androidx.room.compiler
