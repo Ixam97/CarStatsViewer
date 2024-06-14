@@ -17,7 +17,9 @@
 
 Currently the app is not available in the public Play Store. This is due to strict requirements by Google what kind of apps are allowed to be installed on cars. As of now the App is only available via internal test tracks which are limited to 100 users each. Here you can find a listing of all available Test Tracks: [Polestar Club](https://polestar.fans/t/carstatsviewer-informationen/15027)
 
-There are currently ongoing talks with Polestar to find ways of bringing the app to a broader audience. Though Polestar won't release the app themselves as a publisher, progress has been made for a public release by myself. The app is currently in an Closed Alpha Test which has passed the Google Review. Read more aobut it in [Issue #225](https://github.com/Ixam97/CarStatsViewer/issues/225).
+There are currently ongoing talks with Polestar to find ways of bringing the app to a broader audience. Though Polestar won't release the app themselves as a publisher, progress has been made for a public release by myself. The "Play Edition" is currently in an Closed Alpha Test which has passed the Google Review. Read more aobut it in [Issue #225](https://github.com/Ixam97/CarStatsViewer/issues/225).
+
+**Please note:** The dashboard known from previous versions of the app (now called "Legacy") cannot be shown while driving! If you are already participating in one of the many internal test tracks, you won't have a benefit from this version of the app. If the legacy dashboard is important to you, I recommend to keep using the internal test track. However, feedback on the "Play Edition" is welcome from everybody. The apps can be installed and used in parallel without problem.
 
 ## Using the webhook API
 
