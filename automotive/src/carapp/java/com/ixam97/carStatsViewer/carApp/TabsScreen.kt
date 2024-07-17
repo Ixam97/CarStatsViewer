@@ -47,7 +47,7 @@ class TabsScreen(
     val session: CarStatsViewerSession
 ) : Screen(carContext), DefaultLifecycleObserver {
 
-    internal val TAG = "CarStatsViewerScreen"
+    internal val TAG = "TabsScreen"
 
     private val CID_TRIP_DATA = "cid_trip_data"
     private val CID_MISC = "cid_menu"
@@ -180,6 +180,8 @@ class TabsScreen(
             when (selectedTabContentID) {
                 CID_TRIP_DATA -> {
                     session.carDataSurfaceCallback.pause()
+
+                    InAppLogger.v("[$TAG] Refreshing trip data template")
                     tripDataTemplate.tripDataPaneTemplate(drivingSession, if (appPreferences.carAppRealTimeData) realTimeData else null)
                 }
                 CID_STATUS -> {
@@ -263,6 +265,7 @@ class TabsScreen(
                     gauge.draw(128, (realTimeData?.power?:0f)/1_000_000, min = -150f, max = 300f, selected = false /* selected */).asCarIcon(),
                     // appPreferences.carAppSelectedRealTimeData == 1
                 )
+                InAppLogger.v("[$TAG] Refreshing image")
                 setItemSize(GridTemplate.ITEM_SIZE_LARGE)
                 // setOnClickListener {
                 //     appPreferences.carAppSelectedRealTimeData = if (appPreferences.carAppSelectedRealTimeData == 1) 0 else 1

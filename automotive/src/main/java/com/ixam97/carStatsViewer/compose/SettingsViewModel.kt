@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -73,6 +74,11 @@ class SettingsViewModel: ViewModel() {
 
     fun setTheme(themeIndex: Int) {
         _themeSettingState.update { themeIndex }
+    }
+
+    override fun onCleared() {
+        InAppLogger.d("ViewModel cleared!")
+        super.onCleared()
     }
 
 }
