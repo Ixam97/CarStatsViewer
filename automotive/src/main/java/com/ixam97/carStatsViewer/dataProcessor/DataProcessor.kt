@@ -792,7 +792,25 @@ class DataProcessor {
             }
             _currentChargingSessionDataFlow.value = localChargingSession
             CoroutineScope(Dispatchers.IO).launch {
-                (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(realTimeData, chargingSessions = if (localChargingSession == null) null else listOf(localChargingSession!!))
+                var chargingSession = localChargingSession
+
+                localChargingSession?.let {
+                    var chargedSoc = 0f
+
+                    chargingSession!!.chargingPoints?.let { cp ->
+                        if (cp.size > 1) {
+                            val startSoc = (cp.first().state_of_charge * 100f).roundToInt()
+                            val endSoc = (cp.last().state_of_charge * 100f).roundToInt()
+                            chargedSoc = (endSoc - startSoc).toFloat() / 100f
+                        }
+                    }
+
+                    chargingSession = chargingSession!!.copy(charged_soc = chargedSoc)
+                    chargingSession!!.chargingPoints = it.chargingPoints
+                    chargingSession!!.chargeTime = it.chargeTime
+                }
+
+                (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(realTimeData, chargingSessions = if (chargingSession == null) null else listOf(chargingSession!!))
             }
             InAppLogger.i("[NEO] Charging session with ID ${localChargingSession?.charging_session_id} ended")
         }
