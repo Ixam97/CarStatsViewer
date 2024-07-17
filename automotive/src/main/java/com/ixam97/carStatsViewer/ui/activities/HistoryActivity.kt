@@ -17,6 +17,7 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.adapters.TripHistoryAdapter
+import com.ixam97.carStatsViewer.database.tripData.ChargingPoint
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.databinding.ActivityHistoryBinding
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
@@ -437,9 +438,29 @@ class HistoryActivity  : FragmentActivity() {
             }
 
             for (i in 0 until chargingSessionsSize) {
+                var chargingSession = CarStatsViewer.tripDataSource.getCompleteChargingSessionById(chargingSessions[i].charging_session_id)
+                val chargeTime = if (chargingSession.end_epoch_time == null) 0 else {
+                    chargingSession.end_epoch_time!! - chargingSession.start_epoch_time
+                }
+
+                var chargedSoc = 0f
+                var chargingPoints: List<ChargingPoint>? = null
+                chargingSession.chargingPoints?.let { cp ->
+                    if (cp.size > 1) {
+                        val startSoc = (cp.first().state_of_charge * 100f).roundToInt()
+                        val endSoc = (cp.last().state_of_charge * 100f).roundToInt()
+                        chargedSoc = (endSoc - startSoc).toFloat() / 100f
+                        chargingPoints = cp
+                    }
+                }
+
+                chargingSession = chargingSession.copy(charged_soc = chargedSoc)
+                chargingSession.chargingPoints = chargingPoints
+                chargingSession.chargeTime = chargeTime
+
                 result = (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(
                     CarStatsViewer.dataProcessor.realTimeData,
-                    chargingSessions = chargingSessions.slice(setOf(i))
+                    chargingSessions = listOf(chargingSession)
                 )
                 val percentage = (((i + 1 + drivingPointsChunks).toFloat() / totalParts) * 100).roundToInt()
                 if (result == ConnectionStatus.CONNECTED) {
