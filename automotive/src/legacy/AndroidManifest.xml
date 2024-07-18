@@ -55,6 +55,9 @@
             android:foregroundServiceType="location"
             android:enabled="true"
             android:exported="true"/>
+        <service android:name=".liveDataApi.uploadService.UploadService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

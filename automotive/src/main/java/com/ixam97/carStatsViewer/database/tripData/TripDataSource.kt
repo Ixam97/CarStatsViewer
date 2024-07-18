@@ -62,4 +62,10 @@ interface TripDataSource {
     suspend fun getAllDrivingPoints(): List<DrivingPoint>
 
     suspend fun getAllChargingSessions(): List<ChargingSession>
+
+    suspend fun getDrivingPointsSize(): Int
+
+    suspend fun getDrivingPointsChunk(startTimestamp: Long, chunkSize: Int): List<DrivingPoint>
+
+    suspend fun getChargingSessionsSize(): Int
 }

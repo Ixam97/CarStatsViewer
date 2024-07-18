@@ -168,7 +168,12 @@ class HttpLiveData (
         })
     }
 
-    suspend fun sendWithDrivingPoint(realTimeData: RealTimeData, drivingPoints: List<DrivingPoint>? = null, chargingSessions: List<ChargingSession>? = null): ConnectionStatus? {
+    suspend fun sendWithDrivingPoint(
+        realTimeData: RealTimeData,
+        drivingPoints: List<DrivingPoint>? = null,
+        chargingSessions: List<ChargingSession>? = null,
+        useBacklog: Boolean = true
+    ): ConnectionStatus? {
         // Wrap with mutex lock to prevent concurrent reads of the backlog.
         mutex.withLock {
             if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataEnabled) {
@@ -177,30 +182,42 @@ class HttpLiveData (
             }
 
 
-            if (CarStatsViewer.appPreferences.httpApiTelemetryType > 0) {
-                // Don't send driving points if disabled in settings
-                if (drivingPoints != null) {
-                    if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation) {
-                        drivingPoints?.forEach {drivingPoint ->
-                            drivingPointBacklog.add(drivingPoint.copy(lat = null, lon = null, alt = null))
+            if (useBacklog) {
+                if (CarStatsViewer.appPreferences.httpApiTelemetryType > 0) {
+                    // Don't send driving points if disabled in settings
+                    if (drivingPoints != null) {
+                        if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation) {
+                            drivingPoints?.forEach { drivingPoint ->
+                                drivingPointBacklog.add(
+                                    drivingPoint.copy(
+                                        lat = null,
+                                        lon = null,
+                                        alt = null
+                                    )
+                                )
+                            }
+                        } else {
+                            drivingPointBacklog.addAll(drivingPoints)
                         }
-                    } else {
-                        drivingPointBacklog.addAll(drivingPoints)
                     }
-                }
-                if (chargingSessions != null) {
-                    if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation) {
-                        chargingSessions?.forEach { chargingSession ->
-                            chargingSessionBacklog.add(chargingSession.copy(lat = null, lon = null))
+                    if (chargingSessions != null) {
+                        if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation) {
+                            chargingSessions?.forEach { chargingSession ->
+                                chargingSessionBacklog.add(
+                                    chargingSession.copy(
+                                        lat = null,
+                                        lon = null
+                                    )
+                                )
+                            }
+                        } else {
+                            chargingSessionBacklog.addAll(chargingSessions)
                         }
                     }
-                    else {
-                        chargingSessionBacklog.addAll(chargingSessions)
-                    }
+                } else {
+                    drivingPointBacklog.clear()
+                    chargingSessionBacklog.clear()
                 }
-            } else {
-                drivingPointBacklog.clear()
-                chargingSessionBacklog.clear()
             }
 
             if (!realTimeData.isInitialized()) return null
@@ -225,8 +242,15 @@ class HttpLiveData (
                     // ABRP debug
                     abrpPackage = if (CarStatsViewer.appPreferences.httpLiveDataSendABRPDataset) (CarStatsViewer.liveDataApis[0] as AbrpLiveData).lastPackage else null,
 
-                    drivingPoints = if (drivingPointBacklog.size == 0) null else drivingPointBacklog,
-                    chargingSessions = if (chargingSessionBacklog.size == 0) null else chargingSessionBacklog,
+                    drivingPoints = if (!useBacklog) {
+                        drivingPoints
+                    } else if (drivingPointBacklog.size == 0){
+                        null
+                    } else drivingPointBacklog,
+                    chargingSessions = if (!useBacklog) {
+                        chargingSessions
+                    } else if (chargingSessionBacklog.size == 0) null else chargingSessionBacklog
+                    ,
 
                     appVersion = BuildConfig.VERSION_NAME,
                     apiVersion = "2.1"
@@ -248,6 +272,8 @@ class HttpLiveData (
                 InAppLogger.e("[HTTP] Dataset error")
                 ConnectionStatus.ERROR
             }
+
+            InAppLogger.v("Backlog sizes: driving points: ${drivingPointBacklog.size}, charging sessions: ${chargingSessionBacklog.size}")
 
             return connectionStatus
         }

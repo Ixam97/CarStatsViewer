@@ -359,6 +359,7 @@
 
     <string name="history_dialog_upload_title">Upload Database to API</string>
     <string name="history_dialog_upload_message">You are about to upload the entire local database to the endpoint specified in the Webhook API!\n\nMake sure there is no duplicate data on the server to prevent implausible values.\n\nThis Action may take some time depending on the amount of data. Please remain on this page until a success notification is shown!</string>
+    <string name="history_dialog_upload_message_2">You are about to upload the entire local database to the endpoint specified in the Webhook API!\n\nMake sure there is no duplicate data on the server to prevent implausible values.\n\nThis Action may take some time depending on the amount of data. A progress notification will be added to the Notification Center. The system can be used as usual.</string>
     <string name="history_dialog_upload_upload_button">Upload</string>
 
     <!-- Car App -->

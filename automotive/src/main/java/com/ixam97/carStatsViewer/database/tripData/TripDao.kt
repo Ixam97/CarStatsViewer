@@ -128,5 +128,14 @@ interface TripDao {
     @Query("SELECT * FROM ChargingSession")
     fun getAllChargingSessions(): List<ChargingSession>
 
+    @Query("SELECT COUNT(driving_point_epoch_time) FROM DrivingPoint")
+    fun getDrivingPointsSize(): Int
+
+    @Query("SELECT * FROM DrivingPoint WHERE driving_point_epoch_time > :startTimestamp ORDER BY driving_point_epoch_time ASC LIMIT :chunkSize")
+    fun getDrivingPointsChunk(startTimestamp: Long, chunkSize: Int): List<DrivingPoint>
+
+    @Query("SELECT COUNT(charging_session_id) FROM ChargingSession")
+    fun getChargingSessionsSize(): Int
+
 }
 

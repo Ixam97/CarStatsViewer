@@ -22,6 +22,7 @@ import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.databinding.ActivityHistoryBinding
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
+import com.ixam97.carStatsViewer.liveDataApi.uploadService.UploadService
 import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.ui.views.TripHistoryRowWidget
@@ -380,15 +381,9 @@ class HistoryActivity  : FragmentActivity() {
     }
 
     private fun openUploadDialog() {
-        var uploadDialog = AlertDialog.Builder(this@HistoryActivity).apply {
+        val uploadDialog = AlertDialog.Builder(this@HistoryActivity).apply {
             setTitle(R.string.history_dialog_upload_title)
-            // setMessage("You are about to upload the entire local database to the API endpoint"+
-            //         " specified in the HTTP webhook settings!\n\nMake sure you have reset the"+
-            //         " data on the server before this to prevent data duplication. If supported by" +
-            //         " the API endpoint this will happen automatically \n\n" +
-            //         " This action may take a long time to finish depending on the database size." +
-            //         " Please remain on this page until a notification is shown!")
-            setMessage(R.string.history_dialog_upload_message)
+            setMessage(R.string.history_dialog_upload_message_2)
             setNegativeButton(R.string.dialog_reset_cancel) { _,_ ->
 
             }
@@ -400,109 +395,8 @@ class HistoryActivity  : FragmentActivity() {
     }
 
     private fun uploadDatabase() {
-        val chunkSize = 250
-        CoroutineScope(Dispatchers.IO).launch {
-            val waitSnack = SnackbarWidget.Builder(this@HistoryActivity, "Upload in progress, 0%")
-                .build()
-            runOnUiThread {
-                this@HistoryActivity.window.findViewById<FrameLayout>(android.R.id.content).addView(waitSnack)
-            }
-            val drivingPoints = CarStatsViewer.tripDataSource.getAllDrivingPoints()
-            InAppLogger.i("[HIST] Done loading ${drivingPoints.size} driving points")
-            val chargingSessions = CarStatsViewer.tripDataSource.getAllChargingSessions()
-            InAppLogger.i("[HIST] Done loading ${chargingSessions.size} charging sessions")
-
-            val drivingPointsChunks = ceil(drivingPoints.size.toFloat() / chunkSize).roundToInt()
-            InAppLogger.i("Divided ${drivingPoints.size} driving points into to $drivingPointsChunks chunks")
-            val chargingSessionsSize = chargingSessions.size
-            val totalParts = drivingPointsChunks + chargingSessionsSize
-
-            var result: ConnectionStatus? = null
-
-            for (i in 0 until drivingPointsChunks) {
-                result = (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(
-                    CarStatsViewer.dataProcessor.realTimeData,
-                    drivingPoints.slice(chunkSize * i..min(chunkSize * (i+1), drivingPoints.size - 1))
-                )
-                val percentage = (((i + 1).toFloat() / totalParts) * 100).roundToInt()
-                if (result == ConnectionStatus.CONNECTED) {
-                    InAppLogger.v("Chunk $i transferred, $percentage%")
-                    runOnUiThread {
-                        waitSnack.updateMessage("Upload in progress, $percentage%")
-                        waitSnack.setProgressBarPercent(percentage)
-                    }
-                } else {
-                    InAppLogger.e("Chunk $i failed..")
-                    break
-                }
-            }
-
-            for (i in 0 until chargingSessionsSize) {
-                var chargingSession = CarStatsViewer.tripDataSource.getCompleteChargingSessionById(chargingSessions[i].charging_session_id)
-                val chargeTime = if (chargingSession.end_epoch_time == null) 0 else {
-                    chargingSession.end_epoch_time!! - chargingSession.start_epoch_time
-                }
-
-                var chargedSoc = 0f
-                var chargingPoints: List<ChargingPoint>? = null
-                chargingSession.chargingPoints?.let { cp ->
-                    if (cp.size > 1) {
-                        val startSoc = (cp.first().state_of_charge * 100f).roundToInt()
-                        val endSoc = (cp.last().state_of_charge * 100f).roundToInt()
-                        chargedSoc = (endSoc - startSoc).toFloat() / 100f
-                        chargingPoints = cp
-                    }
-                }
-
-                chargingSession = chargingSession.copy(charged_soc = chargedSoc)
-                chargingSession.chargingPoints = chargingPoints
-                chargingSession.chargeTime = chargeTime
-
-                result = (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(
-                    CarStatsViewer.dataProcessor.realTimeData,
-                    chargingSessions = listOf(chargingSession)
-                )
-                val percentage = (((i + 1 + drivingPointsChunks).toFloat() / totalParts) * 100).roundToInt()
-                if (result == ConnectionStatus.CONNECTED) {
-                    InAppLogger.v("Charging session $i transferred, $percentage%")
-                    runOnUiThread {
-                        waitSnack.updateMessage("Upload in progress, $percentage%")
-                        waitSnack.setProgressBarPercent(percentage)
-                    }
-                } else {
-                    InAppLogger.e("Charging session $i failed..")
-                    break
-                }
-            }
-/*
-            val result = (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(
-                CarStatsViewer.dataProcessor.realTimeData,
-                drivingPoints,
-                chargingSessions
-            )
-
- */
-
-            runOnUiThread {
-                this@HistoryActivity.window.findViewById<FrameLayout>(android.R.id.content).removeView(waitSnack)
-                when (result) {
-                    ConnectionStatus.CONNECTED, ConnectionStatus.LIMITED -> {
-                        SnackbarWidget.Builder(this@HistoryActivity, "Database uploaded successfully.")
-                            .setIsError(false)
-                            .setDuration(3000)
-                            .setStartDrawable(R.drawable.ic_upload)
-                            .show()
-                    }
-                    else ->{
-                        SnackbarWidget.Builder(this@HistoryActivity, "Database upload failed.")
-                            .setIsError(true)
-                            .setDuration(3000)
-                            .show()
-                    }
-                }
-            }
-
-        }
-
+        val uploadIntent = Intent(context, UploadService::class.java)
+        uploadIntent.putExtra("type", "full_db")
+        startService(uploadIntent)
     }
 }

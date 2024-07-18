@@ -205,4 +205,16 @@ class LocalTripDataSource(
         return tripDao.getAllChargingSessions()
     }
 
+    override suspend fun getDrivingPointsSize(): Int {
+        return tripDao.getDrivingPointsSize()
+    }
+
+    override suspend fun getDrivingPointsChunk(startTimestamp: Long, chunkSize: Int): List<DrivingPoint> {
+        return tripDao.getDrivingPointsChunk(startTimestamp, chunkSize)
+    }
+
+    override suspend fun getChargingSessionsSize(): Int {
+        return tripDao.getChargingSessionsSize()
+    }
+
 }

@@ -55,6 +55,8 @@ class CarStatsViewer : Application() {
         const val RESTART_NOTIFICATION_ID = 1
         const val FOREGROUND_CHANNEL_ID = "ForegroundChannel"
         const val FOREGROUND_NOTIFICATION_ID = 2
+        const val UPLOAD_CHANNEL_ID = "UploadChannel"
+        const val UPLOAD_NOTIFICATION_ID = 3
 
         var screenshotBitmap = arrayListOf<Bitmap>()
 
@@ -325,9 +327,18 @@ class CarStatsViewer : Application() {
             description = FOREGROUND_CHANNEL_ID
         }
 
+        val uploadChannel = NotificationChannel(
+            UPLOAD_CHANNEL_ID,
+            UPLOAD_CHANNEL_ID,
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = FOREGROUND_CHANNEL_ID
+        }
+
         notificationManager.createNotificationChannels(listOf(
             restartChannel,
-            foregroundChannel
+            foregroundChannel,
+            uploadChannel
         ))
         return notificationManager
     }
