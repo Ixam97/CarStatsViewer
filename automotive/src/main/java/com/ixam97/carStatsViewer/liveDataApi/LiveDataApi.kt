@@ -90,7 +90,7 @@ abstract class LiveDataApi(
      */
     protected abstract suspend fun sendNow(realTimeData: RealTimeData)
 
-    private fun updateWatchdog() {
+    protected fun updateWatchdog() {
         val currentApiStateMap = CarStatsViewer.watchdog.getCurrentWatchdogState().apiState.toMutableMap()
         currentApiStateMap[apiIdentifier] = connectionStatus.status
         CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(

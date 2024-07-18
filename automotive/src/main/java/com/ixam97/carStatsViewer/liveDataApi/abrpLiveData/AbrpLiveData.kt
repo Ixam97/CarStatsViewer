@@ -145,6 +145,8 @@ class AbrpLiveData (
 
             abrp_use_api.setSwitchClickListener() {
                 AppPreferences(context).abrpUseApi = abrp_use_api.isChecked
+                if(!abrp_use_api.isChecked) connectionStatus = ConnectionStatus.UNUSED
+                updateWatchdog()
             }
 
             abrp_use_location.setSwitchClickListener() {

@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.ui.activities
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -120,6 +121,14 @@ class HistoryActivity  : FragmentActivity() {
 
             historyMultiDelete.setOnClickListener {
                 createMultiDeleteDialog()
+            }
+
+            if (CarStatsViewer.liveDataApis[1].connectionStatus == ConnectionStatus.UNUSED) {
+                historyButtonUpload.isEnabled = false
+                historyButtonUpload.setColorFilter(
+                    getColor(R.color.disabled_tint),
+                    PorterDuff.Mode.SRC_IN
+                )
             }
 
             historyButtonUpload.setOnClickListener {
