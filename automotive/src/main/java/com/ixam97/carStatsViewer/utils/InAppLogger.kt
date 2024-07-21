@@ -23,6 +23,9 @@ var AppPreferences.logLength: Int get() = LogLength.value; set(value) {LogLength
 
 object InAppLogger {
 
+    // number of days to keep logs, delete after
+    private const val deleteDays: Int = 28
+
     private val _realTimeLog = MutableStateFlow<LogEntry?>(null)
     val realTimeLog = _realTimeLog.asStateFlow()
 
@@ -61,6 +64,11 @@ object InAppLogger {
                     message = message
                 )
                 logDao.insert(newLogEntry)
+
+                // Delete old log entries older than 'deleteDays'
+                val trimTime = System.currentTimeMillis() - (86_400_000L * deleteDays)
+                logDao.trim(trimTime)
+
                 _realTimeLog.value = newLogEntry// "${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(newLogEntry.epochTime)} ${typeSymbol(newLogEntry.type)}: ${newLogEntry.message}"
             } catch (e: java.lang.Exception) {
                 e.printStackTrace()
