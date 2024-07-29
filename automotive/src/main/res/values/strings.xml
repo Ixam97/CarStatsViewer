@@ -130,10 +130,11 @@
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
-        <item>The Webhook now populates \"charged_soc\" at the end of a charging session</item>
-        <item>The database upload now contains charging curves</item>
-        <item>Overhauled changelog creation method</item>
-        <item>Implemented the Automotive Template Host for a potential public Play Store release</item>
+        <item>Reduced database access by limiting the logging within debug settings.</item>
+        <item>The Webhook now populates \"charged_soc\" at the end of a charging session.</item>
+        <item>The database upload now contains charging curves and creates a separate service. You no longer need to remain on the trip history screen during the Upload.</item>
+        <item>Overhauled changelog creation method.</item>
+        <item>Implemented the Automotive Template Host for a potential public Play Store release.</item>
         <item>[V](0.27.0)</item>
     </string-array>
 
