@@ -27,6 +27,7 @@ import com.ixam97.carStatsViewer.compose.screens.settingsScreens.AboutScreen
 import com.ixam97.carStatsViewer.compose.screens.settingsScreens.AppearanceScreen
 import com.ixam97.carStatsViewer.compose.screens.settingsScreens.ChangelogScreen
 import com.ixam97.carStatsViewer.compose.screens.settingsScreens.GeneralSettingsScreen
+import com.ixam97.carStatsViewer.compose.screens.settingsScreens.WebViewScreen
 import com.ixam97.carStatsViewer.compose.theme.CarTheme
 
 object SettingsScreens {
@@ -34,6 +35,7 @@ object SettingsScreens {
     const val APPEARANCE = "Appearance"
     const val ABOUT = "About"
     const val ABOUT_CHANGELOG = "About_Changelog"
+    const val WEBVIEW = "WebView"
 }
 
 @Composable
@@ -55,7 +57,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             content = { AppearanceScreen(viewModel = viewModel) }
         ),
         SideTab(
-            tabTitle = "About CSV",
+            tabTitle = "About Car Stats Viewer",
             route = SettingsScreens.ABOUT,
             type = SideTab.Type.Tab,
             content = { navController -> AboutScreen(navController = navController) }
@@ -65,7 +67,13 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             route = SettingsScreens.ABOUT_CHANGELOG,
             type = SideTab.Type.Detail,
             content = { navController -> ChangelogScreen(navController = navController) }
-        )
+        ),
+        SideTab(
+            tabTitle = "WebView Test",
+            route = SettingsScreens.WEBVIEW,
+            type = SideTab.Type.Tab,
+            content = { WebViewScreen() }
+    )
     )
     
     Column(

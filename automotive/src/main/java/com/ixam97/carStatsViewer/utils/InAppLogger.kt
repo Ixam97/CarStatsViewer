@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
 val AppPreferences.LogLevel: AppPreference<Int>
-    get() = AppPreference<Int>("preference_log_level", Log.VERBOSE, sharedPref)
+    get() = AppPreference<Int>("preference_log_level", Log.INFO, sharedPref)
 val AppPreferences.LogLength: AppPreference<Int>
     get() = AppPreference<Int>("preference_log_length", 4, sharedPref)
 
@@ -55,6 +55,9 @@ object InAppLogger {
         val logTime = System.currentTimeMillis()
         val messageTime = SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(logTime)
         Log.println(type,"InAppLogger:", "$messageTime ${typeSymbol(type)}: $message")
+
+        // respect the log level setting when writing to database to reduce stress.
+        if (type < CarStatsViewer.appPreferences.logLevel + 2) return
 
         CoroutineScope(Dispatchers.IO).launch {
             try {

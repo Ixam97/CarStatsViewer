@@ -625,18 +625,18 @@ class DataProcessor {
             // } else if ((!emulatorMode && timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentPower.timestamp) < System.currentTimeMillis() - 500) || (emulatorMode && timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp) < System.currentTimeMillis() - 500)) {
             //     InAppLogger.w("[NEO] Power value is too old!")
             } else {
-                InAppLogger.d("[CHARGING CURVE] Before time check: ")
-                InAppLogger.d("[CHARGING CURVE] SoC timestamp: ${carPropertiesData.BatteryLevel.timestamp}")
-                InAppLogger.d("[CHARGING CURVE] Power timestamp: ${carPropertiesData.CurrentPower.timestamp}")
+                // InAppLogger.d("[CHARGING CURVE] Before time check: ")
+                // InAppLogger.d("[CHARGING CURVE] SoC timestamp: ${carPropertiesData.BatteryLevel.timestamp}")
+                // InAppLogger.d("[CHARGING CURVE] Power timestamp: ${carPropertiesData.CurrentPower.timestamp}")
                 // while ((!emulatorMode && timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentPower.timestamp) < System.currentTimeMillis() - 500) || (emulatorMode && timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp) < System.currentTimeMillis() - 500)) {
                 while ((!emulatorMode && carPropertiesData.CurrentPower.timestamp < System.nanoTime() - 500_000_000) || (emulatorMode && carPropertiesData.CurrentSpeed.timestamp < System.nanoTime() - 500_000_000)) {
                     InAppLogger.w("[NEO] Power value is too old!")
                     delay(250)
                 }
 
-                InAppLogger.d("[CHARGING CURVE] After time check: ")
-                InAppLogger.d("[CHARGING CURVE] SoC timestamp: ${carPropertiesData.BatteryLevel.timestamp}")
-                InAppLogger.d("[CHARGING CURVE] Power timestamp: ${carPropertiesData.CurrentPower.timestamp}")
+                // InAppLogger.d("[CHARGING CURVE] After time check: ")
+                // InAppLogger.d("[CHARGING CURVE] SoC timestamp: ${carPropertiesData.BatteryLevel.timestamp}")
+                // InAppLogger.d("[CHARGING CURVE] Power timestamp: ${carPropertiesData.CurrentPower.timestamp}")
 
                 val currentTime = System.currentTimeMillis()
                 // InAppLogger.d("Time delta: ${currentTime - lastChargingPointTime}")

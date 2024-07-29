@@ -71,7 +71,7 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
 
     override fun onVisibleAreaChanged(visibleArea: Rect) {
         synchronized(this) {
-            InAppLogger.i(
+            InAppLogger.d(
                 "[$TAG] Visible area changed " + surface + ". stableArea: "
                         + stableArea + " visibleArea:" + visibleArea
             )
@@ -82,7 +82,7 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
 
     override fun onStableAreaChanged(stableArea: Rect) {
         synchronized(this) {
-            InAppLogger.i(
+            InAppLogger.d(
                 "[$TAG] Stable area changed " + surface + ". stableArea: "
                         + stableArea + " visibleArea:" + visibleArea
             )
@@ -98,14 +98,14 @@ class CarDataSurfaceCallback(val carContext: CarContext): SurfaceCallback {
             renderFrame(clearFrame = true)
         }
         rendererEnabled = false
-        InAppLogger.i("[$TAG] Renderer paused")
+        InAppLogger.d("[$TAG] Renderer paused")
     }
 
     fun resume() {
         if (rendererEnabled) return
         rendererEnabled = true
         invalidatePlot()
-        InAppLogger.i("[$TAG] Renderer enabled")
+        InAppLogger.d("[$TAG] Renderer enabled")
     }
 
     fun isEnabled() = rendererEnabled
