@@ -29,6 +29,8 @@ object InAppLogger {
     private val _realTimeLog = MutableStateFlow<LogEntry?>(null)
     val realTimeLog = _realTimeLog.asStateFlow()
 
+    private var lastTrim = 0L
+
     fun typeSymbol(type: Int): String = when (type) {
         Log.VERBOSE -> "V"
         Log.DEBUG -> "D"
@@ -68,9 +70,13 @@ object InAppLogger {
                 )
                 logDao.insert(newLogEntry)
 
-                // Delete old log entries older than 'deleteDays'
-                val trimTime = System.currentTimeMillis() - (86_400_000L * deleteDays)
-                logDao.trim(trimTime)
+                // Delete old log entries older than 'deleteDays', only trim once every 24h.
+                val currentTime = System.currentTimeMillis()
+                if (currentTime > lastTrim + 86_400_000L) {
+                    lastTrim = currentTime
+                    val trimTime = currentTime - (86_400_000L * deleteDays)
+                    logDao.trim(trimTime)
+                }
 
                 _realTimeLog.value = newLogEntry// "${SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS").format(newLogEntry.epochTime)} ${typeSymbol(newLogEntry.type)}: ${newLogEntry.message}"
             } catch (e: java.lang.Exception) {
