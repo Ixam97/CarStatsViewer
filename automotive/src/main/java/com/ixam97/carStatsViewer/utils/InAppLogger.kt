@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
 val AppPreferences.LogLevel: AppPreference<Int>
-    get() = AppPreference<Int>("preference_log_level", Log.INFO, sharedPref)
+    get() = AppPreference<Int>("preference_log_level_2", 3, sharedPref)
 val AppPreferences.LogLength: AppPreference<Int>
     get() = AppPreference<Int>("preference_log_length", 4, sharedPref)
 
