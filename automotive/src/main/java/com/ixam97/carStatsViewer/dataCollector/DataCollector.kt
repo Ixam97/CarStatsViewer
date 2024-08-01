@@ -73,8 +73,8 @@ class DataCollector: Service() {
 
         startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
         InAppLogger.i("[NEO] Foreground service started in onStartCommand()")
-        super.onStartCommand(intent, flags, startId)
-        return START_NOT_STICKY
+        // super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     override fun onCreate() {
