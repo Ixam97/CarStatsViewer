@@ -11,7 +11,6 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.databinding.ActivitySettingsBinding
-import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -41,6 +40,7 @@ class SettingsActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
 
         context = applicationContext
+        if (CarStatsViewer.appPreferences.colorTheme > 0) setTheme(R.style.ColorTestTheme)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         val view = binding.root
 
@@ -51,7 +51,7 @@ class SettingsActivity : FragmentActivity() {
                 }
             }
         }
-        setContentViewAndTheme(this, view)
+        setContentView(view)
 
         setupSettingsMaster()
     }

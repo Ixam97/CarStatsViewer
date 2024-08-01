@@ -29,7 +29,6 @@ import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.logLength
 import com.ixam97.carStatsViewer.utils.logLevel
-import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -55,6 +54,7 @@ class DebugActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (CarStatsViewer.appPreferences.colorTheme > 0) setTheme(R.style.ColorTestTheme)
         binding = ActivityDebugBinding.inflate(layoutInflater)
 
         val view = binding.root
@@ -84,7 +84,7 @@ class DebugActivity : FragmentActivity() {
 
             appPreferences = AppPreferences(applicationContext)
 
-            setContentViewAndTheme(this@DebugActivity, view)
+            setContentView(view)
 
             logLiveLog.isChecked = true
 

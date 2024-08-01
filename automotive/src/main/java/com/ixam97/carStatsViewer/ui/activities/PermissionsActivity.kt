@@ -11,7 +11,6 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.databinding.ActivityPermissionsBinding
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,9 +30,10 @@ class PermissionsActivity: Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (CarStatsViewer.appPreferences.colorTheme > 0) setTheme(R.style.ColorTestTheme)
         binding = ActivityPermissionsBinding.inflate(layoutInflater)
         val view = binding.root
-        setContentViewAndTheme(this, view)
+        setContentView(view)
 
         binding.permissionsVersion.text = "Version ${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
 

@@ -6,7 +6,6 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.databinding.ActivitySettingsMainViewBinding
-import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 
 class SettingsMainViewActivity: FragmentActivity() {
 
@@ -15,8 +14,9 @@ class SettingsMainViewActivity: FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (CarStatsViewer.appPreferences.colorTheme > 0) setTheme(R.style.ColorTestTheme)
         binding = ActivitySettingsMainViewBinding.inflate(layoutInflater)
-        setContentViewAndTheme(this, binding.root)
+        setContentView(binding.root)
 
         with(binding){
             settingsConsumptionPlotSwitchSecondaryColor.isChecked =

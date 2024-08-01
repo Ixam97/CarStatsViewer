@@ -49,7 +49,6 @@ import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.Ticker
 import com.ixam97.carStatsViewer.utils.WatchdogState
 import com.ixam97.carStatsViewer.utils.getColorFromAttribute
-import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -166,6 +165,7 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (CarStatsViewer.appPreferences.colorTheme > 0) setTheme(R.style.ColorTestTheme)
         binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
         val view = binding.root
 
@@ -424,7 +424,7 @@ class MainActivity : FragmentActivity() {
         // GageView.valueTextSize = resources.getDimension(R.dimen.gage_value_text_size)
         // GageView.descriptionTextSize = resources.getDimension(R.dimen.gage_desc_text_size)
 
-        setContentViewAndTheme(this, view)
+        setContentView(view)
         appliedTheme = appPreferences.colorTheme
 
         consumptionPlotLinePaint  = PlotLinePaint(

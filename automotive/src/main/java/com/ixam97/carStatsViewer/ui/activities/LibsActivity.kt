@@ -11,9 +11,9 @@ import android.widget.Toolbar.LayoutParams
 import androidx.fragment.app.FragmentActivity
 import com.airbnb.paris.extensions.style
 import com.ixam97.carStatsViewer.BuildConfig
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.databinding.ActivityLibsBinding
-import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.util.withContext
 
@@ -23,9 +23,10 @@ class LibsActivity: FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (CarStatsViewer.appPreferences.colorTheme > 0) setTheme(R.style.ColorTestTheme)
         binding = ActivityLibsBinding.inflate(layoutInflater)
         val view = binding.root
-        setContentViewAndTheme(this, view)
+        setContentView(view)
 
         binding.libsButtonBack.setOnClickListener {
             finish()

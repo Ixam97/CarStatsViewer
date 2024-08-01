@@ -12,7 +12,6 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.databinding.ActivitySettingsApisBinding
-import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import kotlinx.coroutines.launch
 
 class SettingsApisActivity: FragmentActivity() {
@@ -23,8 +22,9 @@ class SettingsApisActivity: FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (CarStatsViewer.appPreferences.colorTheme > 0) setTheme(R.style.ColorTestTheme)
         binding = ActivitySettingsApisBinding.inflate(layoutInflater)
-        setContentViewAndTheme(this, binding.root)
+        setContentView(binding.root)
 
         with(binding){
             settingsApisConnectionSelector.entries =

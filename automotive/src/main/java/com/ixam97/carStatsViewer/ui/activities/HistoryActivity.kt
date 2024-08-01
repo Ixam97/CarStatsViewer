@@ -28,7 +28,6 @@ import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.ui.views.TripHistoryRowWidget
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -90,12 +89,13 @@ class HistoryActivity  : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (CarStatsViewer.appPreferences.colorTheme > 0) setTheme(R.style.ColorTestTheme)
         binding = ActivityHistoryBinding.inflate(layoutInflater)
         val view = binding.root
 
         context = applicationContext
 
-        setContentViewAndTheme(this, view)
+        setContentView(view)
 
         with(binding){
             historyTripsRecyclerView.adapter = tripsAdapter

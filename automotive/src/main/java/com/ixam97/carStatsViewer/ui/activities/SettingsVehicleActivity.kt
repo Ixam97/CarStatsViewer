@@ -7,7 +7,6 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.VehicleDefinitions
-import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 import kotlinx.android.synthetic.main.activity_settings_vehicle.settings_vehicle_button_back
 import kotlinx.android.synthetic.main.activity_settings_vehicle.settings_vehicle_code
 import kotlinx.android.synthetic.main.activity_settings_vehicle.settings_vehicle_multiselect_drivetrain

@@ -9,7 +9,6 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.databinding.ActivityAboutBinding
-import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
 
 class AboutActivity : FragmentActivity() {
 
@@ -18,9 +17,10 @@ class AboutActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (CarStatsViewer.appPreferences.colorTheme > 0) setTheme(R.style.ColorTestTheme)
         binding = ActivityAboutBinding.inflate(layoutInflater)
         val view = binding.root
-        setContentViewAndTheme(this, view)
+        setContentView(view)
 
 
 
