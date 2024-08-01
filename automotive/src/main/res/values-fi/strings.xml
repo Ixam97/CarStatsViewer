@@ -1,57 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string-array name="changes">
-        <item>Erilaisia virheenkorjauksia ja vakauden parannuksia</item>
-        <item>Kuljettajan häiriötekijöiden optimointi</item>
-        <item>Vakautettu latauskäyrän näkymää, kun sovellus on keskeytetty latauksen aikana</item>
-        <item>Debug-logit voidaan lähettää SMTP:n kautta (kokeellinen!)</item>
-        <item>Tiettyjä arvoja kaavionäkymässä voidaan korostaa kaksoisnapauttamalla</item>
-        <item>Erilaisia visuaalisia parannuksia kaavionäkymissä.</item>
-        <item>Lisätty useita samanaikaisesti käynnissä olevia osamatkaseurannan vaihtoehtoja (manuaalinen osamatka, edellisestä latauksesta, automaattinen osamatka, kuluva kuukausi)</item>
-        <item>Lisätty \"About Car Stats Viewer\" (sis. peruskorjauksen ReadMe ja tiedot tukemisesta ja osallistumisesta kehitystyöhön)</item>
-        <item>Lisätty tanskankielinen käännös</item>
-        <item>Tietorakennetta uusittu vakauden ja skaalautuvuuden lisäämiseksi</item>
-        <item>[V](0.23.0)</item>
-        <item>Yleisiä virheenkorjauksia ja vakauden parannuksia</item>
-        <item>Korjattu, \"päänäkymän yksiköt\" eivät päivity</item>
-        <item>Uudelleenjärjestetty asetusvalikko</item>
-        <item>Lisätty ajoneuvon asetukset/varusteet</item>
-        <item>Lisätty uudelleenkäynnistysilmoitus uudelleenkäynnistyksen, päivityksen tai sovelluksen kaatumisen jälkeen</item>
-        <item>Lisätty sijainnin seuranta ja korkeushistoria</item>
-        <item>Lisätty useita live-datan sovellusliittymiä:\n- ABRP OTA live-data\n- HTTP Webhook BasicAuthilla</item>
-        <item>[V](0.24.0)</item>
-        <item>Muutettu energian seurannan ehtoja (kokeellinen)</item>
-        <item>Parannettu uudelleenkäynnistyksen ilmoitusehtoja</item>
-        <item>Korjattu latausistuntojen yhteenvedon väärät päivämäärät</item>
-        <item>Korjattu yhteenvetokaavion virheelliset yksiköt</item>
-        <item>Lisätty korkeuden muutos matkan yhteenvetoon (kokeellinen)</item>
-        <item>[V](0.24.1)</item>
-        <item>Yleisiä virheenkorjauksia ja vakauden parannuksia</item>
-        <item>HTTP-webhookin tietojoukko sovitettu uuteen tietorakenteeseen.</item>
-        <item>Manuaalisen matkan voi nyt nollata päänäkymästä.</item>
-        <item>Lisätty asetus, jolla voit valita, minkä API-yhteyden tila näytetään päänäkymässä.</item>
-        <item>Lisätty valittua matkatyyppiä kuvaava kuvake. Napauttamalla matkatilastoja vaihdetaan 4 matkatyypin välillä.</item>
-        <item>Lisätty 20km, 40km ja 100km pikavalintapainikkeet matkan yhteenvedossa.</item>
-        <item>Lisätty matkahistoria aiempien matkojen tarkastelemiseksi.</item>
-        <item>Lataussessio voidaan nyt keskeyttää enintään 5 minuutiksi ennen uuden jakson aloittamista, vaikka autoa olisi siirretty.</item>
-        <item>Toteutettu paikallinen tietokanta matkatietojen vakaampaa ja tehokkaampaa tallentamista varten.</item>
-        <item>[V](0.25.0)</item>
-        <item>Pieniä virhekorjauksia.</item>
-        <item>Nykyisen sijainnin jakaminen voidaan nyt määrittää jokaiselle API:lle erikseen.</item>
-        <item>Lisätty ajoneuvon kokoonpano MY24:lle.</item>
-        <item>Käyttöliittymän parannuksia, erityisesti matkan yhteenvedossa.</item>
-        <item>[V](0.25.1)</item>
-        <item>Korjattu ongelma, jonka vuoksi sovellus ei käyttänyt maileja etäisyysyksikkönä.</item>
-        <item>Korjattu ongelma, jossa joskus väärät latausistunnot näkyivät matkan yhteenvedossa.</item>
-        <item>Kuvaajien renderöinnin sekä ohjelman käynnistyksen optimointeja.</item>
-        <item>Lisätty mahdollisuus puhelinmuistutukseen autosta lähdettäessä.</item>
-        <item>Webhook API -ominaisuuksien laajennuksia.</item>
-        <item>[V](0.25.2)</item>
-        <item>Tietokannan lähettäminen jaettu osiin väärien negatiivisten estämiseksi ja edistymisen näyttämiseksi.</item>
-        <item>Toissijaisen akselin valitsimen yksinkertaistaminen.</item>
-        <item>Lisätty kokeellinen värimaailma.</item>
-        <item>[V](0.26.0)</item>
-    </string-array>
     <!-- PermissionsActivity -->
     <string name="permissions_dialog_title">Käyttöön tarvittavat käyttöoikeudet</string>
     <string name="permissions_dialog_text">Tämän sovelluksen käyttäminen edellyttää käyttöoikeuksia. Ilman vaadittuja käyttöoikeuksia sovellus ei voi lukea tietoja autosta.</string>
@@ -133,6 +81,7 @@
     <string name="quit_dialog_message">Lokitiedot kopioidaan leikepöydälle.</string>
     <string name="dialog_close">Sulje</string>
     <string name="dialog_reset_title">Nollataanko osamatkatiedot?</string>
+    <!-- This message has changed. Please make sure you adjust the translation accordingly! -->
     <!--This message has changed. Please make sure you adjust the translation accordingly!-->
     <string name="dialog_reset_message">Nykyinen manuaalinen matka nollataan. Se tallennetaan matkahistoriaan.</string>
     <string name="dialog_reset_do_save">Tallenna</string>
@@ -248,4 +197,95 @@ Varmista ettei palvelimella ole päällekkäistä tietoa estääksesi epäuskott
 
 Tämä toiminto kestää jonkin aikaa riippuen siirrettävästä tiedon määrästä. Pysythän tällä sivulla, kunnesa näet onnistumisilmoitus!</string>
     <string name="history_dialog_upload_upload_button">Lähetä palvelimelle</string>
+    <string-array name="changes">
+        <item>Erilaisia virheenkorjauksia ja vakauden parannuksia</item>
+        <item>Kuljettajan häiriötekijöiden optimointi</item>
+        <item>Vakautettu latauskäyrän näkymää, kun sovellus on keskeytetty latauksen aikana</item>
+        <item>Debug-logit voidaan lähettää SMTP:n kautta (kokeellinen!)</item>
+        <item>Tiettyjä arvoja kaavionäkymässä voidaan korostaa kaksoisnapauttamalla</item>
+        <item>Erilaisia visuaalisia parannuksia kaavionäkymissä.</item>
+        <item>Lisätty useita samanaikaisesti käynnissä olevia osamatkaseurannan vaihtoehtoja (manuaalinen osamatka, edellisestä latauksesta, automaattinen osamatka, kuluva kuukausi)</item>
+        <item>Lisätty \"About Car Stats Viewer\" (sis. peruskorjauksen ReadMe ja tiedot tukemisesta ja osallistumisesta kehitystyöhön)</item>
+        <item>Lisätty tanskankielinen käännös</item>
+        <item>Tietorakennetta uusittu vakauden ja skaalautuvuuden lisäämiseksi</item>
+        <item>[V](0.23.0)</item>
+        <item>Yleisiä virheenkorjauksia ja vakauden parannuksia</item>
+        <item>Korjattu, \"päänäkymän yksiköt\" eivät päivity</item>
+        <item>Uudelleenjärjestetty asetusvalikko</item>
+        <item>Lisätty ajoneuvon asetukset/varusteet</item>
+        <item>Lisätty uudelleenkäynnistysilmoitus uudelleenkäynnistyksen, päivityksen tai sovelluksen kaatumisen jälkeen</item>
+        <item>Lisätty sijainnin seuranta ja korkeushistoria</item>
+        <item>Lisätty useita live-datan sovellusliittymiä:
+- ABRP OTA live-data
+- HTTP Webhook BasicAuthilla</item>
+        <item>[V](0.24.0)</item>
+        <item>Muutettu energian seurannan ehtoja (kokeellinen)</item>
+        <item>Parannettu uudelleenkäynnistyksen ilmoitusehtoja</item>
+        <item>Korjattu latausistuntojen yhteenvedon väärät päivämäärät</item>
+        <item>Korjattu yhteenvetokaavion virheelliset yksiköt</item>
+        <item>Lisätty korkeuden muutos matkan yhteenvetoon (kokeellinen)</item>
+        <item>[V](0.24.1)</item>
+        <item>Yleisiä virheenkorjauksia ja vakauden parannuksia</item>
+        <item>HTTP-webhookin tietojoukko sovitettu uuteen tietorakenteeseen.</item>
+        <item>Manuaalisen matkan voi nyt nollata päänäkymästä.</item>
+        <item>Lisätty asetus, jolla voit valita, minkä API-yhteyden tila näytetään päänäkymässä.</item>
+        <item>Lisätty valittua matkatyyppiä kuvaava kuvake. Napauttamalla matkatilastoja vaihdetaan 4 matkatyypin välillä.</item>
+        <item>Lisätty 20km, 40km ja 100km pikavalintapainikkeet matkan yhteenvedossa.</item>
+        <item>Lisätty matkahistoria aiempien matkojen tarkastelemiseksi.</item>
+        <item>Lataussessio voidaan nyt keskeyttää enintään 5 minuutiksi ennen uuden jakson aloittamista, vaikka autoa olisi siirretty.</item>
+        <item>Toteutettu paikallinen tietokanta matkatietojen vakaampaa ja tehokkaampaa tallentamista varten.</item>
+        <item>[V](0.25.0)</item>
+        <item>Pieniä virhekorjauksia.</item>
+        <item>Nykyisen sijainnin jakaminen voidaan nyt määrittää jokaiselle API:lle erikseen.</item>
+        <item>Lisätty ajoneuvon kokoonpano MY24:lle.</item>
+        <item>Käyttöliittymän parannuksia, erityisesti matkan yhteenvedossa.</item>
+        <item>[V](0.25.1)</item>
+        <item>Korjattu ongelma, jonka vuoksi sovellus ei käyttänyt maileja etäisyysyksikkönä.</item>
+        <item>Korjattu ongelma, jossa joskus väärät latausistunnot näkyivät matkan yhteenvedossa.</item>
+        <item>Kuvaajien renderöinnin sekä ohjelman käynnistyksen optimointeja.</item>
+        <item>Lisätty mahdollisuus puhelinmuistutukseen autosta lähdettäessä.</item>
+        <item>Webhook API -ominaisuuksien laajennuksia.</item>
+        <item>[V](0.25.2)</item>
+        <item>Tietokannan lähettäminen jaettu osiin väärien negatiivisten estämiseksi ja edistymisen näyttämiseksi.</item>
+        <item>Toissijaisen akselin valitsimen yksinkertaistaminen.</item>
+        <item>Lisätty kokeellinen värimaailma.</item>
+        <item>[V](0.26.0)</item>
+        <item>Korjaus Android 12:lle (P3.0)</item>
+        <!--taping or tapping?-->
+        <item>[V](0.26.1)</item>
+        <item>Korjattu joitakin Volvo Infotainmentin asetteluongelmia</item>
+        <item>Korjattu rikkinäinen ulkoasu Polestar OTA P3.0.3:n jälkeen.</item>
+        <item>Hienosäädetty yhteenvedon säätimiä</item>
+        <item>[V](0.26.2)</item>
+    </string-array>
+    <string name="dialog_changes_title_updated">Päivitys asennettu!</string>
+    <string name="dialog_changes_title_changelog">Muutosloki</string>
+    <string name="dialog_changes_message">on päivitetty versioon</string>
+    <!-- Car App -->
+    <string name="car_app_trip_data">Matkatiedot</string>
+    <string name="car_app_strip_selection">Matkan valinta</string>
+    <string name="car_app_dashboard">Koontinäyttö</string>
+    <string name="car_app_legacy_dashboard">Vanha koontinäyttö</string>
+    <string name="car_app_menu">Sekalaista</string>
+    <string name="car_app_status">API-tila</string>
+    <string name="car_app_toast_reset_confirmation">Manuaalinen osamatka on nollattu.</string>
+    <string name="car_app_toast_reset_hint">Paina uudelleen nollataksesi manuaalisen osamatkan.</string>
+    <string name="car_app_unknown">Tuntematon</string>
+    <string name="car_app_permissions_message">Car Stats Viewer tarvitsee sijainti- ja ajoneuvotietojen käyttöoikeudet toimiakseen. Myönnä nämä käyttöoikeudet.
+
+Sijaintitiedot voidaan kytkeä päälle tai pois sovelluksen asetuksista. Mitään tietoja ei lähetetä oletuksena palvelimille.</string>
+    <string name="car_app_permissions_grant">Myönnä käyttöoikeudet</string>
+    <string name="car_app_permissions_deny">Kieltäydy ja poistu</string>
+    <string name="car_app_dev_notice_message">Car Stats Viewer on edelleen kehitteillä! Huomioi että ominaisuudet voivat muuttua, niitä voidaan lisätä tai poistaa ilman erillistä ilmoitusta ja tietoja voi hävitä!
+
+Jos löydät virheitä tai haluat antaa palautetta, vieraile sovelluksen GitHub-arkistossa tai Polestar Club -foorumin viestiketjussa. Linkki löytyy sovelluksesta Asetukset → Tietoa Car Stats Vieweristä.</string>
+    <string name="car_app_dev_notice_confirm">Ymmärretty</string>
+    <string name="car_app_show_real_time_data_title">Näytä reaaliaikaiset tiedot</string>
+    <string name="car_app_show_real_time_data_hint">Jos tämä asetus on käytössä, käyttöliittymässä saattaa olla huomattavaa viivettä reaaliaikaisten tietojen päivitystiheyden vuoksi.</string>
+    <string name="car_app_legacy_dashboard_desc">Avaa Car Stats Viewerin vanhasta versiosta tunnetun koontinäytön. Sisältää reaaliaikaisen latauskäyrän latauksen aikana. Ei käytettävissä ajon aikana!</string>
+    <string name="car_app_legacy_history_desc">Näyttää luettelon kaikista aiemmista matkoistaja mahdollistaa yksityiskohtaisten tilastojen tarkastelun matkakohtaisesti. Ei käytettävissä ajon aikana!</string>
+    <string name="car_app_advanced_settings">Lisäasetukset</string>
+    <string name="car_app_quick_settings">Pika-asetukset</string>
+    <string name="car_app_menu_other_views">Muut näkymät</string>
+    <string name="car_app_show_real_time_data_subtitle">Teho, välitön kulutus ja korkeus Matkat-välilehdellä.</string>
 </resources>
