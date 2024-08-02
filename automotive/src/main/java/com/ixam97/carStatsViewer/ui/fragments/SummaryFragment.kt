@@ -73,7 +73,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
     private var chargePlotLine = PlotLine(
         PlotLineConfiguration(
-            PlotRange(0f, 20f, 0f, 160f, 20f),
+            PlotRange(0f, 20f, 0f, 400f, 20f),
             PlotLineLabelFormat.FLOAT,
             PlotHighlightMethod.AVG_BY_TIME,
             "kW"

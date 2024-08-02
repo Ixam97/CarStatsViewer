@@ -127,15 +127,19 @@
         <item>Fixed broken layout after Polestar OTA P3.0.3</item>
         <item>Tweaked summary plot controls</item>
         <item>[V](0.26.2)</item>
+        <item>Fixed experimental color scheme not working.</item>
+        <item>Debug logs get deleted after 28 days once a day.</item>
+        <item>Reduced database access by limiting the logging within debug settings.</item>
+        <item>The Webhook now populates \"charged_soc\" at the end of a charging session.</item>
+        <item>The database upload now contains charging curves.</item>
+        <item>The database upload now creates a separate service. You no longer need to remain on the trip history screen during the Upload. A notification will be posted to the notification center to show progress.</item>
+        <item>Charging curve no longer cuts off above 160 kW in Trip Summary.</item>
+        <item>Overhauled changelog creation method.</item>
+        <item>Implemented the Automotive App Host for a potential public Play Store release (not contained in legacy builds).</item>
+        <item>[V](0.27.0)</item>
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
-        <item>Reduced database access by limiting the logging within debug settings.</item>
-        <item>The Webhook now populates \"charged_soc\" at the end of a charging session.</item>
-        <item>The database upload now contains charging curves and creates a separate service. You no longer need to remain on the trip history screen during the Upload.</item>
-        <item>Overhauled changelog creation method.</item>
-        <item>Implemented the Automotive Template Host for a potential public Play Store release.</item>
-        <item>[V](0.27.0)</item>
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
