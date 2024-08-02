@@ -13,8 +13,8 @@ android {
     defaultConfig {
         minSdkVersion 29
         targetSdkVersion 34
-        versionCode 247
-        versionName "0.27.0.0040"
+        versionCode 249
+        versionName "0.27.0.0041"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -51,6 +51,7 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 
     packagingOptions {
@@ -116,6 +117,8 @@ dependencies {
 
     implementation libs.androidx.car.app
     implementation libs.androidx.car.app.automotive
+
+    // implementation 'com.mapbox.maps:android:11.5.1'
 
     implementation libs.androidx.activity.compose
     implementation libs.androidx.compose.ui

@@ -29,6 +29,23 @@ allprojects {
         maven { url 'https://jitpack.io' }
         google()
         mavenCentral()
+
+        // Mapbox Maven repository
+        /*
+        maven {
+
+            url = uri("https://api.mapbox.com/downloads/v2/releases/maven")
+            // Do not change the username below. It should always be "mapbox" (not your username).
+            credentials.username = "mapbox"
+            // Use the secret token stored in gradle.properties as the password
+
+            Properties properties = new Properties()
+            properties.load(file("local.properties").newDataInputStream())
+
+            credentials.password = properties.getProperty("MAPBOX_DOWNLOADS_TOKEN")
+            authentication { basic(BasicAuthentication) }
+        }
+        */
     }
 }
 
