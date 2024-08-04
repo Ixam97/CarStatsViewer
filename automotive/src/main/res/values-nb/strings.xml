@@ -251,12 +251,23 @@ Pass på at det ikke er noen duplisertee data på serveren for å forhindre usan
         <item>Lagt til experimentelt fargeskjema.</item>
         <item>[V](0.26.0)</item>
         <item>Fix for Android 12 (P3.0)</item>
+        <!-- taping or tapping? -->
         <!--taping or tapping?-->
         <item>[V](0.26.1)</item>
         <item>Ordnet noen layout-problemer på Vovlvo Infotainment</item>
         <item>Ordnet brutt layout etter Polestar OTA P3.0.3</item>
         <item>Justert kontroller for sammendragsplott</item>
         <item>[V](0.26.2)</item>
+        <item>Fikset ikke-fungerende eksperimentelt fargeskjema.</item>
+        <item>Feilsøkingslogger blir slettet etter 28 dager én gang om dagen.</item>
+        <item>Redusert databasetilgang ved å begrense loggingen i feilsøkingsinnstillingene.</item>
+        <item>Webhook fyller nå \"charged_soc\" på slutten av en ladeøkt.</item>
+        <item>Databaseopplastingen inneholder nå ladekurver.</item>
+        <item>Databaseopplastingen oppretter nå en egen tjeneste. Du trenger ikke lenger å være på turhistorikkskjermen under opplastingen. Et varsel vil bli lagt ut til varslingssenteret for å vise fremdriften.</item>
+        <item>Ladekurven kutter ikke lenger over 160 kW i turoppsummering.</item>
+        <item>Overhalt metode for opprettelse av endringslogg.</item>
+        <item>Implementert Automotive App Host for en potensiell offentlig Play Store-utgivelse (ikke inkludert i eldre versjoner).</item>
+        <item>[V](0.27.0)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Oppdatering installert!</string>
     <string name="dialog_changes_title_changelog">Endringslogg</string>
@@ -288,4 +299,9 @@ Pass på at det ikke er noen duplisertee data på serveren for å forhindre usan
     <string name="car_app_quick_settings">Hurtiginnstillinger</string>
     <string name="car_app_menu_other_views">Andre visninger</string>
     <string name="car_app_show_real_time_data_subtitle">Strøm, momentforbruk og høyde i turfanen.</string>
+    <string name="history_dialog_upload_message_2">Du er i ferd med å laste opp hele den lokale databasen til endepunktet spesifisert i Webhook API! 
+
+Sørg for at det ikke er noen dupliserte data på serveren for å forhindre usannsynlige verdier. 
+
+Denne handlingen kan ta litt tid avhengig av datamengden. Et fremdriftsvarsel vil bli lagt til varslingssenteret. Systemet kan brukes som vanlig.</string>
 </resources>
