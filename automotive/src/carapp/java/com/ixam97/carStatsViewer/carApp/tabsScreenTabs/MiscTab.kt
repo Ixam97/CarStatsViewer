@@ -20,6 +20,7 @@ import com.ixam97.carStatsViewer.ui.activities.HistoryActivity
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
 
 import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
+import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 import com.ixam97.carStatsViewer.ui.activities.SettingsActivity
 
 @OptIn(ExperimentalCarApi::class)
@@ -87,8 +88,8 @@ internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
 
         addItem(Row.Builder().apply{
             setTitle("Throw Exception")
-            setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug))
-                .setTint(CarColor.RED)
+            setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_kill))
+                .setTint(colorError)
                 .build()
             )
             setBrowsable(true)
@@ -104,6 +105,29 @@ internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
     ))
 
     if (BuildConfig.FLAVOR_version == "dev") {
+        addSectionedList(SectionedItemList.create(
+            ItemList.Builder().apply {
+                apiState.forEach { (apiName, status) ->
+                    val apiIconColor = when (ConnectionStatus.fromInt(status)) {
+                        ConnectionStatus.UNUSED -> colorDisconnected
+                        ConnectionStatus.CONNECTED -> colorConnected
+                        ConnectionStatus.LIMITED -> colorLimited
+                        else -> colorError
+                    }
+                    addItem(Row.Builder().apply {
+                        setTitle(apiName)
+                        addText(when (ConnectionStatus.fromInt(status)) {
+                            ConnectionStatus.UNUSED -> "Disabled"
+                            ConnectionStatus.CONNECTED -> "Connected"
+                            ConnectionStatus.LIMITED -> "Limited"
+                            else -> "Error"
+                        })
+                        setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_connected)).setTint(apiIconColor).build())
+                    }.build())
+                }
+            }.build(),
+            carContext.getString(R.string.car_app_status)
+        ))
         addSectionedList(SectionedItemList.create(
             debugList,
             "Debug Views"

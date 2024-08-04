@@ -172,8 +172,8 @@ class TabsScreen(
         }
         setHeaderAction(Action.APP_ICON)
         addTab(createTab(tripType, CID_TRIP_DATA, R.drawable.ic_car_app_list))
-        // addTab(createTab(R.string.car_app_dashboard, CID_DASHBOARD, R.drawable.ic_car_app_dashboard))
-        addTab(createTab(R.string.car_app_status, CID_STATUS, R.drawable.ic_connected))
+        if (BuildConfig.FLAVOR_version == "dev") addTab(createTab(R.string.car_app_dashboard, CID_DASHBOARD, R.drawable.ic_car_app_dashboard))
+        else addTab(createTab(R.string.car_app_status, CID_STATUS, R.drawable.ic_connected))
         addTab(createTab(R.string.settings_title, CID_SETTINGS, R.drawable.ic_car_app_settings))
         addTab(createTab(R.string.car_app_menu, CID_MISC, R.drawable.ic_car_app_menu))
         setTabContents(TabContents.Builder(
@@ -188,16 +188,14 @@ class TabsScreen(
                     session.carDataSurfaceCallback.pause()
                     apiStatusList()
                 }
-                // CID_DASHBOARD -> {
-                //     if (carContext.carAppApiLevel >= 7 && BuildConfig.FLAVOR_version == "dev") {
-                //         session.carDataSurfaceCallback.resume()
-                //         realTimeDataTemplate.getTemplate()
-                //     } else if (appPreferences.carAppRealTimeData) {
-                //         realTimeDataGridTemplate()
-                //     } else {
-                //         liveDataDisabledMessage()
-                //     }
-                // }
+                CID_DASHBOARD -> {
+                    if (carContext.carAppApiLevel >= 7 && BuildConfig.FLAVOR_version == "dev") {
+                        session.carDataSurfaceCallback.resume()
+                        realTimeDataTemplate.getTemplate()
+                    } else {
+                        LowApiLevelMessage()
+                    }
+                }
                 CID_SETTINGS -> {
                     session.carDataSurfaceCallback.pause()
                     settingsList()

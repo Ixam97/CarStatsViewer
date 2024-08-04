@@ -277,6 +277,10 @@ class DebugActivity : FragmentActivity() {
                 }
             }
 
+            debugKill.setOnClickListener {
+                throw RuntimeException("Debug Exception")
+            }
+
             debugSettings.setOnClickListener {
                 val settingsDialog =
                     AlertDialog.Builder(ContextThemeWrapper(this@DebugActivity, R.style.redTextEdit)).apply {

@@ -27,6 +27,17 @@
 
         <View style="@style/filler"/>
 
+
+        <ImageButton
+            android:id="@+id/debug_kill"
+            android:layout_width="@dimen/std_icon_size"
+            android:layout_height="@dimen/std_icon_size"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_kill"
+            android:background="@android:color/transparent"
+            android:layout_marginVertical="15dp"
+            android:layout_marginEnd="10dp"/>
+
         <ImageButton
             android:id="@+id/debug_settings"
             android:layout_width="@dimen/std_icon_size"
