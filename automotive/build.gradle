@@ -10,7 +10,7 @@ plugins {
 /*
  * Use these definitions to configure what features requiring third party APIs you want to use
  */
-def useFirebase = true
+def useFirebase = false
 
 if (useFirebase) {
     apply plugin: 'com.google.gms.google-services'
