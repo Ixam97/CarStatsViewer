@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.carApp.tabsScreenTabs
 import android.content.Intent
 import androidx.annotation.OptIn
 import androidx.car.app.annotations.ExperimentalCarApi
+import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
@@ -81,6 +82,18 @@ internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
             setBrowsable(true)
             setOnClickListener {
                 screenManager.push(RealTimeDataScreen(carContext, session))
+            }
+        }.build())
+
+        addItem(Row.Builder().apply{
+            setTitle("Throw Exception")
+            setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug))
+                .setTint(CarColor.RED)
+                .build()
+            )
+            setBrowsable(true)
+            setOnClickListener {
+                throw RuntimeException("Debug Exception")
             }
         }.build())
     }.build()

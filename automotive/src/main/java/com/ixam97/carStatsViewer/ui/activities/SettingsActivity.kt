@@ -3,10 +3,13 @@ package com.ixam97.carStatsViewer.ui.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.firebase.Firebase
+import com.google.firebase.app
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
@@ -70,6 +73,12 @@ class SettingsActivity : FragmentActivity() {
     private fun setupSettingsMaster() {
         with(binding){
             settingsSwitchNotifications.isChecked = appPreferences.notifications
+            if (getString(R.string.useFirebase) == "true") {
+                settingsSwitchAnalytics.isChecked = Firebase.app.isDataCollectionDefaultEnabled
+            } else {
+                settingsSwitchAnalytics.visibility = View.GONE
+                settingsSwitchAnalyticsDivider.visibility = View.GONE
+            }
             settingsSwitchConsumptionUnit.isChecked = appPreferences.consumptionUnit
             settingsSwitchUseLocation.isChecked = appPreferences.useLocation
             settingsSwitchAutostart.isChecked = appPreferences.autostart
@@ -93,6 +102,12 @@ class SettingsActivity : FragmentActivity() {
 
             settingsSwitchNotifications.setSwitchClickListener {
                 appPreferences.notifications = settingsSwitchNotifications.isChecked
+            }
+
+            settingsSwitchAnalytics.setSwitchClickListener {
+                if (getString(R.string.useFirebase) == "true") {
+                    Firebase.app.setDataCollectionDefaultEnabled(settingsSwitchAnalytics.isChecked)
+                }
             }
 
             settingsSwitchConsumptionUnit.setSwitchClickListener {

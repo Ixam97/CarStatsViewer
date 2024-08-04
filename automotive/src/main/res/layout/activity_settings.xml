@@ -61,6 +61,17 @@
             <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
+                android:id="@+id/settings_switch_analytics"
+                app:text="Enable crash reports and analytics"/>
+
+            <View
+                android:id="@+id/settings_switch_analytics_divider"
+                style="@style/menu_divider_style"
+                android:background="?android:attr/listDivider" />
+
+            <com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
                 android:id="@+id/settings_switch_notifications"
                 app:text="@string/settings_notifications"/>
 

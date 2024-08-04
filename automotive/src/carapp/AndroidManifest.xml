@@ -35,6 +35,9 @@
             <intent-filter>
                 <action android:name="com.ixam97.carStatsViewer.RestartAction" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="com.ixam97.carStatsViewer.NOTIFICATION_DELETE" />
+            </intent-filter>
         </receiver>
         <service
             android:name=".carApp.CarStatsViewerService"

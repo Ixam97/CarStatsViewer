@@ -10,7 +10,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.widget.LinearLayout
@@ -87,6 +89,7 @@ class CarStatsViewer : Application() {
 
         val appContextIsInitialized: Boolean get() = this::appContext.isInitialized
 
+
         fun setupRestartAlarm(context: Context, reason: String, delay: Long, cancel: Boolean = false, extendedLogging: Boolean = false) {
             val serviceIntent = Intent(context, AutoStartReceiver::class.java)
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -101,11 +104,37 @@ class CarStatsViewer : Application() {
             alarmManager.cancel(pendingIntent)
             if (cancel) return
             if (delay < 10_000) {
-                alarmManager.set(
-                    AlarmManager.RTC,
-                    System.currentTimeMillis() + delay,
-                    pendingIntent
-                )
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        if (alarmManager.canScheduleExactAlarms()) {
+                            alarmManager.setExact(
+                                AlarmManager.RTC,
+                                System.currentTimeMillis() + delay,
+                                pendingIntent
+                            )
+                        } else {
+                            Log.d("ALARM", "CANNOT SETUP EXACT ALARMS!")
+                            alarmManager.set(
+                                AlarmManager.RTC,
+                                System.currentTimeMillis() + delay,
+                                pendingIntent
+                            )
+                        }
+                    } else {
+                        alarmManager.setExact(
+                            AlarmManager.RTC,
+                            System.currentTimeMillis() + delay,
+                            pendingIntent
+                        )
+                    }
+                } catch (e: Exception) {
+                    InAppLogger.w(e.stackTraceToString())
+                    alarmManager.set(
+                        AlarmManager.RTC,
+                        System.currentTimeMillis() + delay,
+                        pendingIntent
+                    )
+                }
                 InAppLogger.i("[ASR] Setup single shot alarm")
             } else {
                 alarmManager.setRepeating(
@@ -172,22 +201,23 @@ class CarStatsViewer : Application() {
         ).build()
         logDao = logDatabase.logDao()
 
-        Thread.setDefaultUncaughtExceptionHandler { t, e ->
+        if(getString(R.string.useFirebase) != "true") {
+            Thread.setDefaultUncaughtExceptionHandler { t, e ->
 
-            try {
-                setupRestartAlarm(applicationContext, "crash", 2_000, extendedLogging = true)
-                InAppLogger.i("setup crash alarm")
-            } catch (e: Exception) {
-                InAppLogger.e(e.stackTraceToString())
-            }
+                try {
+                    setupRestartAlarm(applicationContext, "crash", 2_000, extendedLogging = true)
+                    InAppLogger.i("setup crash alarm")
+                } catch (e: Exception) {
+                    InAppLogger.e(e.stackTraceToString())
+                }
 
-            InAppLogger.e("[NEO] Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
-            val crashTime = System.nanoTime()
-            while (System.nanoTime() < crashTime + 500_000_000) {
-                // Give the logger some time
+                InAppLogger.e("[NEO] Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
+                val crashTime = System.nanoTime()
+                while (System.nanoTime() < crashTime + 500_000_000) {
+                    // Give the logger some time
+                }
+                exitProcess(1)
             }
-            InAppLogger.e("exit")
-            exitProcess(0)
         }
 
         InAppLogger.i("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
