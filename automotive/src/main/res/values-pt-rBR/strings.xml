@@ -251,12 +251,23 @@
         <item>Adicionado esquema de cores experimental.</item>
         <item>[V](0.26.0)</item>
         <item>Correção para Android 12 (P3.0)</item>
+        <!-- taping or tapping? -->
         <!--taping or tapping?-->
         <item>[V](0.26.1)</item>
         <item>Corrigidos alguns problemas de layout no Volvo Infotainment</item>
         <item>Correção do layout quebrado após o Polestar OTA P3.0.3</item>
         <item>Ajuste nos Controles do gráfico de resumo</item>
         <item>[V](0.26.2)</item>
+        <item>Adicionado esquema de cores experimental.</item>
+        <item>Os logs de depuração são excluídos após 28 dias, uma vez por dia.</item>
+        <item>Acesso reduzido ao banco de dados limitando o registro em log nas configurações de depuração.</item>
+        <item>O Webhook agora preenche \"charged_soc\" no final de uma sessão de cobrança.</item>
+        <item>O upload do banco de dados agora contém curvas de carga.</item>
+        <item>O upload do banco de dados agora cria um serviço separado. Você não precisa mais permanecer na tela do histórico de viagem durante o Upload. Uma notificação será postada na central de notificações para mostrar o progresso.</item>
+        <item>A curva de carga não é mais interrompida acima de 160 kW no Resumo da viagem.</item>
+        <item>Método de criação de changelog revisado.</item>
+        <item>Implementação do Automotive App Host para uma possível versão pública da Play Store (não contida em compilações herdadas).</item>
+        <item>[V](0.27.0)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Atualização instalada!</string>
     <string name="dialog_changes_title_changelog">Lista de alterações</string>
@@ -288,4 +299,9 @@ Se você encontrar bugs ou quiser fazer comentários, visite o repositório GitH
     <string name="car_app_quick_settings">Configurações Rápidas</string>
     <string name="car_app_menu_other_views">Outras Visões</string>
     <string name="car_app_show_real_time_data_subtitle">Potência, consumo instantâneo e altitude na aba Viagens.</string>
+    <string name="history_dialog_upload_message_2">Você está prestes a fazer upload de todo o banco de dados local para o servidor especificado no Webhook! 
+
+ Certifique-se de que não tenha dados duplicados no servidor para evitar valores implausíveis. 
+
+ Esta ação pode levar algum tempo dependendo da quantidade de dados. Por favor, permaneça nesta página até que uma notificação de sucesso seja exibida!</string>
 </resources>

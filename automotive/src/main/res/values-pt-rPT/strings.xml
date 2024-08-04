@@ -83,7 +83,7 @@
     <string name="dialog_reset_title">Redefinir dados de viagem?</string>
     <!-- This message has changed. Please make sure you adjust the translation accordingly! -->
     <!--This message has changed. Please make sure you adjust the translation accordingly!-->
-    <string name="dialog_reset_message">Os dados atuais da viagem serão redefinidos para zero. Quer salvar a viagem?</string>
+    <string name="dialog_reset_message">Os dados atuais da viagem serão redefinidos para zero. Vão ser guardados no histórico das viagens.</string>
     <string name="dialog_reset_do_save">Guardar</string>
     <string name="dialog_reset_no_save">Não gravar</string>
     <string name="dialog_reset_cancel">Cancelar</string>
@@ -251,12 +251,23 @@
         <item>Adicionado esquema de cores experimental.</item>
         <item>[V](0.26.0)</item>
         <item>Correção para Android 12 (P3.0)</item>
+        <!-- taping or tapping? -->
         <!--taping or tapping?-->
         <item>[V](0.26.1)</item>
         <item>Correção de alguns problemas de layout no Volvo Infotainment</item>
         <item>Corrigido layout quebrado após Polestar OTA P3.0.3</item>
         <item>Controlos de resumo de gráfico ajustados</item>
         <item>[V](0.26.2)</item>
+        <item>Corrigido o esquema de cores experimental que não funcionava.</item>
+        <item>Os registos de depuração são eliminados após 28 dias, uma vez por dia.</item>
+        <item>Acesso reduzido à base de dados, limitando o registo nas definições de depuração.</item>
+        <item>O Webhook preenche agora \"charged_soc\" no final de uma sessão de carregamento.</item>
+        <item>O carregamento da base de dados contém agora curvas de carga.</item>
+        <item>O carregamento da base de dados cria agora um serviço separado. Já não é necessário permanecer no ecrã do histórico de viagens durante o Upload. Será colocada uma notificação no centro de notificações para mostrar o progresso.</item>
+        <item>A curva de carregamento já não é interrompida acima dos 160 kW no resumo da viagem.</item>
+        <item>Método de criação de changelog revisto.</item>
+        <item>Implementação do Automotive App Host para uma possível versão pública na Play Store (não presente em compilações legadas).</item>
+        <item>[V] (0.27.0)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Atualização instalada!</string>
     <string name="dialog_changes_title_changelog">Registo de alterações</string>
