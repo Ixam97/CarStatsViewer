@@ -280,6 +280,7 @@
 
     <string name="history_dialog_upload_title">Datenbank über API hochladen</string>
     <string name="history_dialog_upload_message">Du bist im Begriff die gesamte lokale Datenbank an den in der Webhook API definierten Endpoint hochzuladen!\n\nStelle sicher, dass auf dem Server keine Datenduplikate entstehen, um unplausible Werte zu vermeiden.\n\nDiese Aktion kann abhängig von der Datenmenge einige Zeit in Anspruch nehmen. Bitte bleibe auf dieser Seite, bis eine Benachrichtigung über den Erfolg des Uploads erscheint!</string>
+    <string name="history_dialog_upload_message_2">Du bist im Begriff die gesamte lokale Datenbank an den in der Webhook API definierten Endpoint hochzuladen!\n\nStelle sicher, dass auf dem Server keine Datenduplikate entstehen, um unplausible Werte zu vermeiden.\n\nDiese Aktion kann abhängig von der Datenmenge einige Zeit in Anspruch nehmen. Es wird eine Benachrichtigung erzeugt, die den Fortschritt anzeigt. Das System kann in der Zeit wie gewohnt verwendet werden.</string>
     <string name="history_dialog_upload_upload_button">Hochladen</string>
 
     <!-- Car App -->
