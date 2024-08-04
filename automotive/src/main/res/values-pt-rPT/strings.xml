@@ -266,6 +266,7 @@
         <item>O carregamento da base de dados cria agora um serviço separado. Já não é necessário permanecer no ecrã do histórico de viagens durante o Upload. Será colocada uma notificação no centro de notificações para mostrar o progresso.</item>
         <item>A curva de carregamento já não é interrompida acima dos 160 kW no resumo da viagem.</item>
         <item>Método de criação de changelog revisto.</item>
+        <item></item>
         <item>Implementação do Automotive App Host para uma possível versão pública na Play Store (não presente em compilações legadas).</item>
         <item>[V] (0.27.0)</item>
     </string-array>

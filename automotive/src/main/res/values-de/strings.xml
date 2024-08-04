@@ -65,6 +65,7 @@
         <item>Der Datenbank-Upload läuft nun in einem eigenen Dienst. Es muss nicht länger der Tripverlauf geöffnet bleiben. Eine Benachrichtigung informiert über den Fortschritt.</item>
         <item>Die Ladekurve wird in der Tripzusammenfassung nicht mehr bei 160 kW abgeschnitten.</item>
         <item>Die Art und Weise, wie Changelogs generiert werden, wurde überarbeitet.</item>
+        <item>Implementierung von Firebase Crashlytics. Kann in den einstellungen deaktivert werden.</item>
         <item>Implementierung des Automotive App Host für einen potentiellen öffentlichen Release im Play Store (nicht in klassischen Builds enthalten).</item>
         <item>[V](0.27.0)</item>
     </string-array>

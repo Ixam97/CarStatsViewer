@@ -135,6 +135,7 @@
         <item>The database upload now creates a separate service. You no longer need to remain on the trip history screen during the Upload. A notification will be posted to the notification center to show progress.</item>
         <item>Charging curve no longer cuts off above 160 kW in Trip Summary.</item>
         <item>Overhauled changelog creation method.</item>
+        <item>Implemented Firebase Crashlytics. Can be disabled in settings.</item>
         <item>Implemented the Automotive App Host for a potential public Play Store release (not contained in legacy builds).</item>
         <item>[V](0.27.0)</item>
     </string-array>
