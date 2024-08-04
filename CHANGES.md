@@ -2,7 +2,7 @@
 
 ## 0.27.0
 - Implementierung des Automotive App Host für einen potentiellen öffentlichen Release im Play Store (nicht in klassischen Builds enthalten).
-- Implementierung von Firebase Crashlytics. Kann in den einstellungen deaktivert werden.
+- Implementierung von Firebase Crashlytics. Kann in den Einstellungen deaktivert werden.
 - Die Art und Weise, wie Changelogs generiert werden, wurde überarbeitet.
 - Die Ladekurve wird in der Tripzusammenfassung nicht mehr bei 160 kW abgeschnitten.
 - Der Datenbank-Upload läuft nun in einem eigenen Dienst. Es muss nicht länger der Tripverlauf geöffnet bleiben. Eine Benachrichtigung informiert über den Fortschritt.
