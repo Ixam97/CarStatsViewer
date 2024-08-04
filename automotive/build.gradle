@@ -7,12 +7,10 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
-/*
- * Use these definitions to configure what features requiring third party APIs you want to use
- */
-def useFirebase = false
+def firebase = useFirbase.toBoolean()
+def mapbox = useMapbox.toBoolean()
 
-if (useFirebase) {
+if (firebase) {
     apply plugin: 'com.google.gms.google-services'
     apply plugin: 'com.google.firebase.crashlytics'
 }
@@ -23,8 +21,8 @@ android {
     defaultConfig {
         minSdkVersion 29
         targetSdkVersion 34
-        versionCode 252
-        versionName "0.27.0.0044"
+        versionCode 253
+        versionName "0.27.0.0045"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -34,7 +32,7 @@ android {
     productFlavors {
         stable {
             dimension "version"
-            resValue("string","useFirebase", useFirebase.toString())
+            resValue("string","useFirebase", firebase.toString())
         }
 
         legacy {
@@ -50,8 +48,15 @@ android {
         dev {
             dimension "version"
             applicationId "com.ixam97.carStatsViewer_dev"
-            resValue("string","useFirebase", useFirebase.toString())
+            resValue("string","useFirebase", firebase.toString())
         }
+    }
+
+    // use a dummy if mapbox api is not configured
+    if (mapbox) {
+        sourceSets.main.java.srcDirs += ['src/mapbox/java']
+    } else {
+        sourceSets.main.java.srcDirs += ['src/mapboxdummy/java']
     }
 
     buildTypes {
@@ -130,7 +135,10 @@ dependencies {
     implementation libs.androidx.car.app
     implementation libs.androidx.car.app.automotive
 
-    // implementation 'com.mapbox.maps:android:11.5.1'
+    if (mapbox) {
+        implementation 'com.mapbox.maps:android:11.6.0-rc.1'
+        implementation 'com.mapbox.extension:maps-compose:11.6.0-rc.1'
+    }
 
     implementation libs.androidx.activity.compose
     implementation libs.androidx.compose.ui

@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.compose.screens
 
+import android.view.WindowInsets.Side
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ object SettingsScreens {
     const val APPEARANCE = "Appearance"
     const val ABOUT = "About"
     const val ABOUT_CHANGELOG = "About_Changelog"
+    const val MAPBOX_TEST = "MapboxTest"
 }
 
 @Composable
@@ -53,6 +55,12 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             route = SettingsScreens.ABOUT_CHANGELOG,
             type = SideTab.Type.Detail,
             content = { navController -> ChangelogScreen(navController = navController) }
+        ),
+        SideTab(
+            tabTitle = "Mapbox Test",
+            route = SettingsScreens.MAPBOX_TEST,
+            type = SideTab.Type.Tab,
+            content = { MapboxScreen() }
         )
     )
     

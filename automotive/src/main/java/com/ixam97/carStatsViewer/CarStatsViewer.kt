@@ -30,6 +30,7 @@ import com.ixam97.carStatsViewer.database.tripData.TripDataDatabase
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
+import com.ixam97.carStatsViewer.mapbox.Mapbox
 import com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
 import com.ixam97.carStatsViewer.utils.ChangeLogCreator.createChangelog
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -221,6 +222,8 @@ class CarStatsViewer : Application() {
         }
 
         InAppLogger.i("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
+
+        InAppLogger.i("Mapbox is dummy: ${Mapbox.isDummy()}")
 
         InAppLogger.d("Screen width: ${resources.configuration.screenWidthDp}dp")
 /*

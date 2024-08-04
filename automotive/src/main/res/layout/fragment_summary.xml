@@ -343,15 +343,6 @@
                 <View style="@style/menu_divider_style"
                     android:background="?android:attr/listDivider"/>
 
-                <!--<com.mapbox.maps.MapView
-                    android:id="@+id/mapView"
-                    android:layout_marginEnd="50dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="600dp" />
-
-                <View style="@style/menu_divider_style"
-                    android:background="?android:attr/listDivider"/>-->
-
                 <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
                     android:id="@+id/summary_distance_widget"
                     android:layout_width="match_parent"
