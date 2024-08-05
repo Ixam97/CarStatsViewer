@@ -184,8 +184,6 @@
     <string name="SinceChargeData_short">Desde a carga</string>
     <string name="AutoTripData_short">Automático</string>
     <string name="CurrentMonthData_short">Mês</string>
-    <string name="snackbar_ok">OK</string>
-    <string name="screenshot_taken">Captura de tela feita (total de %s).</string>
     <string name="settings_phone_reminder">Lembrete de telefone</string>
     <string name="notification_phone">Você pegou seu celular?</string>
     <string name="notification_valuables">Não deixe nenhum objeto de valor visível no carro.</string>
@@ -266,7 +264,7 @@
         <item>O upload do banco de dados agora cria um serviço separado. Você não precisa mais permanecer na tela do histórico de viagem durante o Upload. Uma notificação será postada na central de notificações para mostrar o progresso.</item>
         <item>A curva de carga não é mais interrompida acima de 160 kW no Resumo da viagem.</item>
         <item>Método de criação de changelog revisado.</item>
-        <item></item>
+        <item>Implementação do Firebase Crashlytics. Pode ser desativado nas configurações.</item>
         <item>Implementação do Automotive App Host para uma possível versão pública da Play Store (não contida em compilações herdadas).</item>
         <item>[V](0.27.0)</item>
     </string-array>
@@ -305,4 +303,6 @@ Se você encontrar bugs ou quiser fazer comentários, visite o repositório GitH
  Certifique-se de que não tenha dados duplicados no servidor para evitar valores implausíveis. 
 
  Esta ação pode levar algum tempo dependendo da quantidade de dados. Por favor, permaneça nesta página até que uma notificação de sucesso seja exibida!</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Captura de tela feita (total de %s).</string>
 </resources>

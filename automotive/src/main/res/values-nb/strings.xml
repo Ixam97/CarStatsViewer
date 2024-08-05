@@ -184,8 +184,6 @@
     <string name="SinceChargeData_short">Siden lading</string>
     <string name="AutoTripData_short">Automatisk</string>
     <string name="CurrentMonthData_short">Måned</string>
-    <string name="snackbar_ok">OK</string>
-    <string name="screenshot_taken">Screenshot tatt (av totalt %s).</string>
     <string name="settings_phone_reminder">Telefonpåminnelse</string>
     <string name="notification_phone">Tok du med mobiltelefonen?</string>
     <string name="notification_valuables">Ikke legg igjen synlige verdisaker i bilen.</string>
@@ -266,7 +264,7 @@ Pass på at det ikke er noen duplisertee data på serveren for å forhindre usan
         <item>Databaseopplastingen oppretter nå en egen tjeneste. Du trenger ikke lenger å være på turhistorikkskjermen under opplastingen. Et varsel vil bli lagt ut til varslingssenteret for å vise fremdriften.</item>
         <item>Ladekurven kutter ikke lenger over 160 kW i turoppsummering.</item>
         <item>Overhalt metode for opprettelse av endringslogg.</item>
-        <item></item>
+        <item>Implementert Firebase Crashlytics. Kan deaktiveres i innstillinger.</item>
         <item>Implementert Automotive App Host for en potensiell offentlig Play Store-utgivelse (ikke inkludert i eldre versjoner).</item>
         <item>[V](0.27.0)</item>
     </string-array>
@@ -305,4 +303,6 @@ Pass på at det ikke er noen duplisertee data på serveren for å forhindre usan
 Sørg for at det ikke er noen dupliserte data på serveren for å forhindre usannsynlige verdier. 
 
 Denne handlingen kan ta litt tid avhengig av datamengden. Et fremdriftsvarsel vil bli lagt til varslingssenteret. Systemet kan brukes som vanlig.</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Screenshot tatt (av totalt %s).</string>
 </resources>
