@@ -184,8 +184,6 @@
     <string name="SinceChargeData_short">Sinds laadbeurt</string>
     <string name="AutoTripData_short">Automatisch</string>
     <string name="CurrentMonthData_short">Maand</string>
-    <string name="snackbar_ok">OK</string>
-    <string name="screenshot_taken">Screenshot gemaakt (totaal van %s ).</string>
     <string name="settings_phone_reminder">Telefoonherinnering</string>
     <string name="notification_phone">Heb je je mobiele telefoon meegenomen?</string>
     <string name="notification_valuables">Laat geen waardevolle spullen zichtbaar achter in de auto.</string>
@@ -258,6 +256,17 @@ Deze actie kan enige tijd duren, afhankelijk van de hoeveelheid gegevens. Blijf 
         <item>Gebroken lay-out na Polestar OTA P3.0.3 gerepareerd</item>
         <item>Besturing samenvattingsplot aangepast</item>
         <item>[V](0.26.2)</item>
+        <item>Probleem opgelost waarbij experimenteel kleurenschema niet werkte.</item>
+        <item>Debuglogs worden eenmaal per dag na 28 dagen verwijderd.</item>
+        <item>Verminderde databasetoegang door het loggen te beperken binnen de debug-instellingen.</item>
+        <item>De webhook vult nu \"charged_soc\" aan het einde van een oplaadsessie.</item>
+        <item>De database-upload bevat nu laadcurves.</item>
+        <item>Met het uploaden van de database wordt nu een aparte service gemaakt. U hoeft niet langer op het scherm met de reisgeschiedenis te blijven tijdens het uploaden. Er wordt een melding naar het meldingscentrum gestuurd om de voortgang weer te geven.</item>
+        <item>Oplaadcurve wordt niet langer afgebroken boven 160 kW in ritoverzicht.</item>
+        <item>Gewijzigde methode voor het maken van changelogs.</item>
+        <item>Firebase Crashlytics geïmplementeerd. Kan worden uitgeschakeld in de instellingen.</item>
+        <item>De Automotive App Host geïmplementeerd voor een mogelijke openbare Play Store-release (niet opgenomen in oudere builds).</item>
+        <item>[V](0,27,0)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Update geïnstalleerd!</string>
     <string name="dialog_changes_title_changelog">Overzicht wijzigingen</string>
@@ -294,4 +303,6 @@ Als je bugs vindt of feedback wilt geven, bezoek dan de GitHub repository van de
 Zorg ervoor dat er geen dubbele gegevens op de server staan om onwaarschijnlijke waarden te voorkomen.
 
 Deze actie kan enige tijd duren, afhankelijk van de hoeveelheid gegevens. Er wordt een voortgangsmelding toegevoegd aan het Meldingencentrum. Het systeem kan gewoon worden gebruikt.</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Screenshot gemaakt (totaal van %s ).</string>
 </resources>

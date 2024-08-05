@@ -184,8 +184,6 @@
     <string name="SinceChargeData_short">Viimeisen latauksen jälkeen</string>
     <string name="AutoTripData_short">Automaattinen</string>
     <string name="CurrentMonthData_short">Kuukausi</string>
-    <string name="snackbar_ok">OK</string>
-    <string name="screenshot_taken">Kuvakaappaus otettu (yhteensä %s ).</string>
     <string name="settings_phone_reminder">Puhelinmuistutus</string>
     <string name="notification_phone">Otitko matkapuhelimesi mukaan?</string>
     <string name="notification_valuables">Älä jätä arvoesineitä näkyville autoon.</string>
@@ -258,6 +256,17 @@ Tämä toiminto kestää jonkin aikaa riippuen siirrettävästä tiedon määrä
         <item>Korjattu rikkinäinen ulkoasu Polestar OTA P3.0.3:n jälkeen.</item>
         <item>Hienosäädetty yhteenvedon säätimiä</item>
         <item>[V](0.26.2)</item>
+        <item>Korjattu toimimaton kokeellinen värimaailma.</item>
+        <item>28 päivää vanhat virheenkorjauslokit poistetaan päivittäin.</item>
+        <item>Vähennetty tietokannan käyttöä rajoittamalla lokikirjoitusta virheenkorjausasetuksissa.</item>
+        <item>Webhook täyttää nyt \"charged_soc\" arvon latausistunnon lopussa.</item>
+        <item>Tietokannan lähetys sisältää nyt latauskäyrät.</item>
+        <item>Tietokannan lähetys luo nyt erillisen palvelun. Sinun ei enää tarvitse pysyä matkahistorianäkymässä lähetyksen aikana. Ilmoituskeskukseen lisätään edistymisilmoitus.</item>
+        <item>Latauskäyrää ei enää leikata 160kW:n yläpuolella matkan yhteenvedossa.</item>
+        <item>Uudistettiin muutoslokin luontitapa.</item>
+        <item>Otettu käyttöön Firebase Crashlytics. Voidaan poistaa käytöstä asetuksista.</item>
+        <item>Otettu käyttöön Automotive App Host mahdollista julkista Play Store -julkaisua varten (ei sisälly vanhoissa versioissa).</item>
+        <item>[V](0.27.0)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Päivitys asennettu!</string>
     <string name="dialog_changes_title_changelog">Muutosloki</string>
@@ -289,4 +298,11 @@ Jos löydät virheitä tai haluat antaa palautetta, vieraile sovelluksen GitHub-
     <string name="car_app_quick_settings">Pika-asetukset</string>
     <string name="car_app_menu_other_views">Muut näkymät</string>
     <string name="car_app_show_real_time_data_subtitle">Teho, välitön kulutus ja korkeus Matkat-välilehdellä.</string>
+    <string name="history_dialog_upload_message_2">Olet lähettämässä koko paikallisen tietokannan palvelimelle joka on määritetty Webhook API:ssa!
+
+Varmista ettei palvelimella ole päällekkäistä tietoa estääksesi epäuskottavat ja virheelliset arvot.
+
+Tämä toiminto kestää jonkin aikaa riippuen siirrettävästä tiedon määrästä. Ilmoituskeskukseen lisätään edistymisilmoitus. Järjestelmää voidaan käyttää normaalisti.</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Kuvakaappaus otettu (yhteensä %s ).</string>
 </resources>

@@ -190,8 +190,6 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
     <string name="SinceChargeData_short">Depuis la charge</string>
     <string name="AutoTripData_short">Automatique</string>
     <string name="CurrentMonthData_short">Mois</string>
-    <string name="snackbar_ok">OK</string>
-    <string name="screenshot_taken">Capture d\'écran prise (total de %s)</string>
     <string name="settings_phone_reminder">Rappel de téléphone</string>
     <string name="notification_phone">Avez-vous récupéré votre téléphone mobile ?</string>
     <string name="notification_valuables">Ne pas laisser d\'objets de valeur visible dans la voiture.</string>
@@ -257,4 +255,6 @@ Cette opération peut prendre du temps, dépendament du volume de données. Veui
         <item>Ajout d\'une palette de couleurs expérimentale.</item>
         <item>[V](0.26.0)</item>
     </string-array>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Capture d\'écran prise (total de %s)</string>
 </resources>

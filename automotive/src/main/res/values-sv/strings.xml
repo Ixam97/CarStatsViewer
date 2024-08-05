@@ -184,8 +184,6 @@
     <string name="SinceChargeData_short">Sedan laddning</string>
     <string name="AutoTripData_short">Automatisk</string>
     <string name="CurrentMonthData_short">Månad</string>
-    <string name="snackbar_ok">OK</string>
-    <string name="screenshot_taken">Skärmdump tagen (totalt %s ).</string>
     <string name="settings_phone_reminder">Telefonpåminnelse</string>
     <string name="notification_phone">Tog du med dig din mobiltelefon?</string>
     <string name="notification_valuables">Lämna inga värdeföremål synliga i bilen.</string>
@@ -270,4 +268,6 @@ Denna åtgärd kan ta lite tid beroende på mängden data. Vänligen stanna kvar
     <string name="car_app_advanced_settings">Avancerade inställningar</string>
     <string name="car_app_quick_settings">Snabbinställningar</string>
     <string name="car_app_menu_other_views">Andra vyer</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Skärmdump tagen (totalt %s ).</string>
 </resources>
