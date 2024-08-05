@@ -200,6 +200,10 @@
     <string name="AutoTripData_short">Automatisch</string>
     <string name="CurrentMonthData_short">Monat</string>
 
+    <string name="snackbar_ok">OK</string>
+
+    <string name="screenshot_taken">Screenshot aufgenommen (insgesamt %s).</string>
+
     <string-array name="trip_type_names">
         <item>Unbekannter Triptyp</item>
         <item>Manueller Trip</item>
