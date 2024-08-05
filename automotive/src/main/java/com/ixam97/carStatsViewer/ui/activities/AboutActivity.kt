@@ -55,6 +55,10 @@ class AboutActivity : FragmentActivity() {
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 
+        binding.aboutPrivacyWidget.setOnRowClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.privacy_policy_link))))
+        }
+
         binding.aboutVersionWidget.bottomText = "%s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 
         var contributors = ""
