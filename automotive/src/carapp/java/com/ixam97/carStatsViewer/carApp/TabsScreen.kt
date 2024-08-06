@@ -113,7 +113,7 @@ class TabsScreen(
             CarStatsViewer.dataProcessor.selectedSessionDataFlow.collect {
                 session.carDataSurfaceCallback.updateSession()
                 drivingSession = it
-                if (selectedTabContentID != CID_DASHBOARD) {
+                if (selectedTabContentID == CID_TRIP_DATA) {
                     invalidateTabView()
                     // InAppLogger.v("[$TAG] Session data flow requested invalidate.")
                 }
@@ -123,7 +123,8 @@ class TabsScreen(
             CarStatsViewer.watchdog.watchdogStateFlow.collect {
                 apiState = it.apiState
                 //invalidate()
-                invalidateTabView()
+                if (selectedTabContentID == CID_STATUS || selectedTabContentID == CID_MISC)
+                    invalidateTabView()
                 // InAppLogger.v("[$TAG] Watchdog requested invalidate.")
             }
         }
