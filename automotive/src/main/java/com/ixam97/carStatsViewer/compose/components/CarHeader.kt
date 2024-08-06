@@ -14,9 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.theme.CarTheme
 
@@ -36,7 +34,7 @@ fun CarHeader(
         ) {
             if (onBackClick != null) {
                 CarIconButton(
-                    onCLick = onBackClick,
+                    onClick = onBackClick,
                     iconResId = R.drawable.ic_arrow_back,
                     tint = if (!minimal) MaterialTheme.colors.secondary else MaterialTheme.colors.onBackground
                 )

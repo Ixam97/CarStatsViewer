@@ -1,6 +1,7 @@
 package com.ixam97.carStatsViewer.ui.activities
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
 import android.view.ContextThemeWrapper
@@ -19,6 +20,7 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.adapters.LogAdapter
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
+import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
 import com.ixam97.carStatsViewer.database.log.LogEntry
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.databinding.ActivityDebugBinding
@@ -102,6 +104,14 @@ class DebugActivity : FragmentActivity() {
                 finish()
                 if (BuildConfig.FLAVOR_aaos != "carapp")
                     overridePendingTransition(R.anim.stay_still, R.anim.slide_out_down)
+            }
+
+            if(BuildConfig.FLAVOR_version == "dev") {
+                debugCompose.setOnRowClickListener {
+                    startActivity(Intent(this@DebugActivity, ComposeSettingsActivity::class.java))
+                }
+            } else {
+                debugCompose.visibility = View.GONE
             }
 
             logButtonSend.setOnClickListener {
