@@ -12,13 +12,15 @@ Furthermore, the App contains multiple API interfaces. Via these APIs data can b
 
 The App uses Mapbox to provide the user with additional geographic information about the data recorded. This means that IP addresses and/or browser identifiers can be transmitted to Mapbox. If the user location is displayed on the map, this data may also be transmitted. Additionally the App might transmit previously recorded location data to provide the user with a visual and readable representation of this data.
 
+Further, Mapbox might collect anonymous usage data to improve their services. This is turned off by default and can be configured in the attributions (i) of Mapbox within the respective map view.
+
 Refer to the [Mapbox privacy policy](https://www.mapbox.com/legal/privacy) for more information.
 
-## Google Firebase Crashlytics
+## Google Firebase Crashlytics and Google Analytics
 
-The App uses Firebase Crashlytics, a service provided by Google, to collect anonymous crash and error reports and will transfer them to the developer via internet. This is done so the developer can discover and fix issues in the app.
+The App uses Firebase Crashlytics and Analytics, services provided by Google, to collect anonymous crash and error reports as well as general usage data and will transfer them to the developer via internet. This is done so the developer can discover and fix issues in the app.
 
-The user of the app can disable this feature via the settings screen. This setting is on by default.
+The user of the app can disable these features via the settings screen. This setting is on by default.
 
 More details about the data usage can be found in [Google's Firebase support documentation](https://firebase.google.com/support/privacy).
 
