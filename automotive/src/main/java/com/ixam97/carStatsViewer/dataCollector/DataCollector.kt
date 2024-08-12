@@ -9,8 +9,10 @@ import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
+import androidx.car.app.activity.CarAppActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
@@ -90,7 +92,7 @@ class DataCollector: Service() {
             PendingIntent.getActivity(
                 applicationContext,
                 0,
-                Intent(applicationContext, MainActivity::class.java),
+                Intent(applicationContext, if (BuildConfig.FLAVOR_aaos != "carapp") MainActivity::class.java else CarAppActivity::class.java),
                 PendingIntent.FLAG_IMMUTABLE
             )
         )
