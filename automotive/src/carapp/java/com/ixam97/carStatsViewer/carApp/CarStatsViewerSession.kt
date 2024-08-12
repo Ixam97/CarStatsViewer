@@ -45,6 +45,7 @@ class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
 
         if (CarStatsViewer.appPreferences.versionString != BuildConfig.VERSION_NAME) {
             screens.add(ChangesScreen(carContext))
+            CarStatsViewer.appPreferences.versionString = BuildConfig.VERSION_NAME
         }
 
         var neededPermissions = permissions.filter { carContext.checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }

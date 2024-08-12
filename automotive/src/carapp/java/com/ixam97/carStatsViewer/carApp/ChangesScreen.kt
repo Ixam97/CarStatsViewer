@@ -45,8 +45,8 @@ class ChangesScreen(carContext: CarContext): Screen(carContext) {
         val changesRowList = mutableListOf<Row>()
         ChangeLogCreator.createChangelog(carContext).forEach {
             changesRowList.add(Row.Builder().apply {
-                setTitle(it.key)
-                addText(it.value)
+                setTitle(it.key.ifBlank { "THERE WAS AN ERROR CREATING CHANGELOG! Please get in touch with the developer via ixam97@ixam97.de" })
+                addText(it.value.ifBlank { "THERE WAS AN ERROR CREATING CHANGELOG! Please get in touch with the developer via ixam97@ixam97.de" })
             }.build())
         }
         return changesRowList
