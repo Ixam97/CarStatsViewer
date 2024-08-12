@@ -176,7 +176,7 @@ class TabsScreen(
         if (BuildConfig.FLAVOR_version == "dev") addTab(createTab(R.string.car_app_dashboard, CID_DASHBOARD, R.drawable.ic_car_app_dashboard))
         else addTab(createTab(R.string.car_app_status, CID_STATUS, R.drawable.ic_connected))
         addTab(createTab(R.string.settings_title, CID_SETTINGS, R.drawable.ic_car_app_settings))
-        addTab(createTab(R.string.car_app_menu, CID_MISC, R.drawable.ic_car_app_menu))
+        if (BuildConfig.FLAVOR_version == "dev") addTab(createTab(R.string.car_app_menu, CID_MISC, R.drawable.ic_car_app_menu))
         setTabContents(TabContents.Builder(
             when (selectedTabContentID) {
                 CID_TRIP_DATA -> {

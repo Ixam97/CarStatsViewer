@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.carApp
 
+import android.car.Car
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.annotation.OptIn
@@ -13,14 +14,18 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.carApp.renderer.CarDataSurfaceCallback
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
-import com.ixam97.carStatsViewer.ui.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.utils.throttle
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCarApi::class)
 class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
 
-    val permissions = PermissionsActivity.PERMISSIONS.toList()
+    val permissions = listOf(
+        Car.PERMISSION_ENERGY,
+        Car.PERMISSION_SPEED,
+        android.Manifest.permission.ACCESS_FINE_LOCATION,
+        android.Manifest.permission.ACCESS_COARSE_LOCATION
+    )
 
     lateinit var carDataSurfaceCallback: CarDataSurfaceCallback
 
