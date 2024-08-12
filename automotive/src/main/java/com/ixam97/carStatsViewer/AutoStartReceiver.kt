@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.car.app.activity.CarAppActivity
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.ui.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -118,6 +119,12 @@ class AutoStartReceiver: BroadcastReceiver() {
             Intent(context.applicationContext, PermissionsActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE
         )
+        val actionCarAppActivityPendingIntent = PendingIntent.getActivity(
+            context.applicationContext,
+            2,
+            Intent(context.applicationContext, CarAppActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE
+        )
         val deleteIntent = PendingIntent.getBroadcast(
             context.applicationContext,
             0,
@@ -143,15 +150,13 @@ class AutoStartReceiver: BroadcastReceiver() {
                     context.getString(R.string.restart_notification_service),
                     actionServicePendingIntent
             ).build())
-            if (BuildConfig.FLAVOR_aaos != "carapp") {
-                addAction(
-                    Notification.Action.Builder(
-                        null,
-                        context.getString(R.string.restart_notification_app),
-                        actionActivityPendingIntent
-                    ).build()
-                )
-            }
+            addAction(
+                Notification.Action.Builder(
+                    null,
+                    context.getString(R.string.restart_notification_app),
+                    if (BuildConfig.FLAVOR_aaos != "carapp") actionActivityPendingIntent else actionCarAppActivityPendingIntent
+                ).build()
+            )
             /*
             addAction(Notification.Action.Builder(
                     null,
