@@ -142,6 +142,8 @@
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
+        <item>Improved crash reporting.</item>
+        <item>Trying to fix concurrent modification errors.</item>
         <item>(Play Edition) Fixed an issue where notification interactions would crash the app.</item>
         <item>(Play Edition) Trying to catch crashes on changelog creation.</item>
         <item>[V](0.27.1)</item>
