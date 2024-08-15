@@ -2,6 +2,8 @@ package com.ixam97.carStatsViewer.dataProcessor
 
 // import com.ixam97.carStatsViewer.utils.TimestampSynchronizer
 import android.app.Notification
+import androidx.car.app.model.CarIcon
+import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.ixam97.carStatsViewer.CarStatsViewer
@@ -690,8 +692,17 @@ class DataProcessor {
     /** Change the selected trip type to update the trip data flow with */
     fun changeSelectedTrip(tripType: Int) {
         if (localSessionsState.value.isNotEmpty()) {
-            selectedSessionData = localSessionsState.value.first { it.session_type == tripType }
-            updateTripDataValues()
+            try {
+                selectedSessionData = localSessionsState.value.first { it.session_type == tripType }
+                updateTripDataValues()
+            } catch (e: Exception) {
+                val type = when (tripType) {
+                    TripType.MANUAL, TripType.MONTH, TripType.AUTO, TripType.SINCE_CHARGE -> TripType.tripTypesNameMap[tripType]
+                    else -> "Unknown Trip Type!"
+                }
+                Firebase.crashlytics.log("Error switching trip type! It appears there is no \"$type\".\n${e.message}")
+                Firebase.crashlytics.recordException(e)
+            }
         }
     }
 
