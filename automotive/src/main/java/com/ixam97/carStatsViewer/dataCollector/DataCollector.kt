@@ -47,7 +47,7 @@ class DataCollector: Service() {
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private lateinit var foregroundServiceNotification: Notification.Builder
-    private lateinit var locationClient: LocationClient
+    private var locationClient: LocationClient? = null
     private var locationClientJob: Job? = null
 
     private lateinit var carPropertiesClient: CarPropertiesClient
@@ -154,15 +154,17 @@ class DataCollector: Service() {
 
         InAppLogger.i("[NEO] Google API availability: ${GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS}")
 
-        locationClient = DefaultLocationClient(
-            //CarStatsViewer.appContext,
-            //LocationServices.getFusedLocationProviderClient(this)
-        )
+        serviceScope.launch {
+            locationClient = DefaultLocationClient(
+                //CarStatsViewer.appContext,
+                //LocationServices.getFusedLocationProviderClient(this)
+            )
 
-        // startLocationClient(5_000)
+            // startLocationClient(5_000)
 
-        if (CarStatsViewer.appPreferences.useLocation) {
-            startLocationClient(5_000)
+            if (CarStatsViewer.appPreferences.useLocation) {
+                startLocationClient(5_000)
+            }
         }
 
         CarStatsViewer.liveDataApis[0]
@@ -273,34 +275,40 @@ class DataCollector: Service() {
     }
 
     private fun stopLocationClient() {
-        InAppLogger.i("[NEO] Location client is being canceled")
-        locationClient.stopLocationUpdates()
-        dataProcessor.processLocation(null, null, null)
-        lastLocation = null
-        locationClientJob?.cancel()
-        locationClientJob = null
+
+        locationClient?.let {
+            InAppLogger.i("[NEO] Location client is being canceled")
+
+            it.stopLocationUpdates()
+            dataProcessor.processLocation(null, null, null)
+            lastLocation = null
+            locationClientJob?.cancel()
+            locationClientJob = null
+        }
     }
 
     private fun startLocationClient(interval: Long) {
-        InAppLogger.i("[NEO] Location client is being started")
+        locationClient?.let {
+            InAppLogger.i("[NEO] Location client is being started")
 
-        locationClient.stopLocationUpdates()
-        locationClientJob?.cancel()
-        locationClientJob = locationClient.getLocationUpdates(interval, this@DataCollector)
-            .catch { e ->
-                InAppLogger.e("[LOC] ${e.message}")
-            }
-            .onEach { location ->
-                if (location != null) {
-                    dataProcessor.processLocation(location.latitude, location.longitude, location.altitude)
-                    CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(locationState = WatchdogState.NOMINAL))
-                } else {
-                    dataProcessor.processLocation(null, null, null)
-                    CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(locationState = WatchdogState.ERROR))
+            it.stopLocationUpdates()
+            locationClientJob?.cancel()
+            locationClientJob = it.getLocationUpdates(interval, this@DataCollector)
+                .catch { e ->
+                    InAppLogger.e("[LOC] ${e.message}")
                 }
-                lastLocation = location
-            }
-            .launchIn(serviceScope)
+                .onEach { location ->
+                    if (location != null) {
+                        dataProcessor.processLocation(location.latitude, location.longitude, location.altitude)
+                        CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(locationState = WatchdogState.NOMINAL))
+                    } else {
+                        dataProcessor.processLocation(null, null, null)
+                        CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(locationState = WatchdogState.ERROR))
+                    }
+                    lastLocation = location
+                }
+                .launchIn(serviceScope)
+        }
     }
 
 }
