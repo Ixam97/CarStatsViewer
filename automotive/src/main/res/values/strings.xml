@@ -147,6 +147,8 @@
         <item>(Play Edition) Fixed an issue where notification interactions would crash the app.</item>
         <item>(Play Edition) Trying to catch crashes on changelog creation.</item>
         <item>[V](0.27.1)</item>
+        <item>Added error handling and logging to trip changes.</item>
+        <item>[V](0.27.2)</item>
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
