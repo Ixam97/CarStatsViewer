@@ -68,6 +68,17 @@
         <item>Implementierung von Firebase Crashlytics. Kann in den Einstellungen deaktivert werden.</item>
         <item>Implementierung des Automotive App Host für einen potentiellen öffentlichen Release im Play Store (nicht in klassischen Builds enthalten).</item>
         <item>[V](0.27.0)</item>
+        <item>Absturzmeldungen verbessert.</item>
+        <item>Abstürze beim Speichern von Tripdaten behoben.</item>
+        <item>(Play Edition) Fehler behoben, bei dem das interagieren mit Benachrichtigungen zu Abstürzen führt.</item>
+        <item>(Play Edition) Abstürze bei der Erstellung von Changelogs werden abgefangen.</item>
+        <item>(Play Edition) Das Legacy Dashboard und der Tripverlauf wurden aufgrund von Einschränkungen durch Google-Richtlinien vorübergehend deaktiviert.</item>
+        <item>[V](0.27.1)</item>
+        <item>Fehlerbehandlung und Logging beim Wechsel von Trips hinzugefügt.</item>
+        <item>[V](0.27.2)</item>
+        <item>BITTE BEACHTEN: Derzeit meldet der EX30 keine Leistungsdaten an die App. Daher sind keine Energiestatisitiken verfügbar. Es ist derzeit unklar, ob und wann dies von Volvo behoben wird.</item>
+        <item>Zusätzliche Fartbeginn-Bedingungen hinzugefügt (z.B. für den Volvo EX30).</item>
+        <item>[V](0.27.3)</item>
     </string-array>
 
     <!-- Restart Dialog -->
@@ -301,6 +312,7 @@
     <string name="car_app_toast_reset_hint">Erneut tippen, um manuellen Trip zurückzusetzen.</string>
 
     <string name="car_app_dev_notice_message">Car Stats Viewer befindet sich noch in Entwicklung! Bitte beachte, dass Funktionen unangekündigt verändert, hinzugefügt oder entfernt werden können und Datenverlust auftreten kann!\n\nFalls Fehler auftreten oder Rückmeldung gegeben werden möchte, besuche das GitHub Repository der App oder den Thread im Polestar Club Forum. Links finden sich in den Einstellungen → Über Car Stats Viewer.</string>
+    <string name="car_app_dev_notice_confirm">Verstanden</string>
     <string name="car_app_permissions_title" translatable="false">@string/app_name</string>
     <string name="car_app_permissions_message">Car Stats Viewer benötigt Zugriff auf Standort- und Fahrzeugdaten-Berechtigungen, um zu funktionieren.\n\nDie Standorterfassung kann in den App-Einstellungen ein oder aus geschaltet werden. Standardmäßig werden keine Daten an Server übermittelt.</string>
     <string name="car_app_permissions_grant">Berechtigungen erteilen</string>

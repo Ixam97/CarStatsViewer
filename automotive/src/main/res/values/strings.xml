@@ -139,16 +139,20 @@
         <item>Implemented Firebase Crashlytics. Can be disabled in settings.</item>
         <item>Implemented the Automotive App Host for a potential public Play Store release (not contained in legacy builds).</item>
         <item>[V](0.27.0)</item>
-    </string-array>
-
-    <string-array translatable="false" name="pending_changes">
         <item>Improved crash reporting.</item>
-        <item>Trying to fix concurrent modification errors.</item>
+        <item>Fixed crashes caused by saving trip data.</item>
         <item>(Play Edition) Fixed an issue where notification interactions would crash the app.</item>
-        <item>(Play Edition) Trying to catch crashes on changelog creation.</item>
+        <item>(Play Edition) Catching crashes on changelog creation.</item>
+        <item>(Play Edition) Temporarily deactivated Legacy Dashboard and Trip History because of limitations imposed by Google Guidelines.</item>
         <item>[V](0.27.1)</item>
         <item>Added error handling and logging to trip changes.</item>
         <item>[V](0.27.2)</item>
+        <item>PLEASE NOTE: Currently the EX30 does not report any power values to the app. Therefore no energy statistics will be available. It is currently unclear if and when this will be fixed by Volvo.</item>
+        <item>Added additional drive start conditions (for example for the Volvo EX30)</item>
+        <item>[V](0.27.3)</item>
+    </string-array>
+
+    <string-array translatable="false" name="pending_changes">
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
