@@ -207,7 +207,7 @@ class DataProcessor {
         when (carProperty) {
             CarProperties.PERF_VEHICLE_SPEED -> speedUpdate()
             CarProperties.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE -> powerUpdate()
-            CarProperties.IGNITION_STATE, CarProperties.EV_CHARGE_PORT_CONNECTED -> stateUpdate()
+            CarProperties.IGNITION_STATE, CarProperties.EV_CHARGE_PORT_CONNECTED, CarProperties.GEAR_SELECTION -> stateUpdate()
             CarProperties.EV_BATTERY_LEVEL -> stateOfChargeUpdate()
         }
     }

@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.dataProcessor
 
+import android.car.VehicleGear
 import android.car.VehicleIgnitionState
 
 data class RealTimeData(
@@ -32,7 +33,7 @@ data class RealTimeData(
 
     private fun getDriveState(): Int {
         return if (chargePortConnected == true) DrivingState.CHARGE
-        else if (ignitionState == VehicleIgnitionState.START) DrivingState.DRIVE
+        else if (ignitionState == VehicleIgnitionState.START || (ignitionState == VehicleIgnitionState.ON && selectedGear == VehicleGear.GEAR_DRIVE)) DrivingState.DRIVE
         else if (ignitionState != VehicleIgnitionState.UNDEFINED && ignitionState != null) DrivingState.PARKED
         else DrivingState.UNKNOWN
     }
