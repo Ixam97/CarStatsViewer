@@ -14,6 +14,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
@@ -288,7 +290,16 @@ class DebugActivity : FragmentActivity() {
             }
 
             debugKill.setOnClickListener {
-                throw RuntimeException("Debug Exception")
+                try {
+                    throw RuntimeException("Debug Exception")
+                } catch (e: Exception) {
+                    if (getString(R.string.useFirebase) == "true") {
+                        Firebase.crashlytics.log("This is a logging test")
+                        Firebase.crashlytics.recordException(e)
+                    } else {
+                        InAppLogger.e(e.toString())
+                    }
+                }
             }
 
             debugSettings.setOnClickListener {

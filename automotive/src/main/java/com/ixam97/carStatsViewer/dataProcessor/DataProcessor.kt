@@ -582,8 +582,11 @@ class DataProcessor {
                 CarStatsViewer.tripDataSource.updateDrivingSession(localSession)
             }
         } catch (e: Exception) {
-            Firebase.crashlytics.recordException(e)
             InAppLogger.e("FATAL ERROR! Writing trips was not successful: ${e.stackTraceToString()}")
+            if (CarStatsViewer.appContext.getString(R.string.useFirebase) == "true") {
+                Firebase.crashlytics.log("FATAL ERROR! Writing trips was not successful")
+                Firebase.crashlytics.recordException(e)
+            }
         }
     }
 
@@ -700,8 +703,13 @@ class DataProcessor {
                     TripType.MANUAL, TripType.MONTH, TripType.AUTO, TripType.SINCE_CHARGE -> TripType.tripTypesNameMap[tripType]
                     else -> "Unknown Trip Type!"
                 }
-                Firebase.crashlytics.log("Error switching trip type! It appears there is no \"$type\".\n${e.message}")
-                Firebase.crashlytics.recordException(e)
+                if (CarStatsViewer.appContext.getString(R.string.useFirebase) == "true") {
+                    Firebase.crashlytics.log("Error switching trip type! It appears there is no \"$type\".\n${e.message}")
+                    Firebase.crashlytics.recordException(e)
+                } else {
+                    InAppLogger.e("Error switching trip type! It appears there is no \"$type\".\n${e.message}")
+                    InAppLogger.e(e.stackTraceToString())
+                }
             }
         }
     }
