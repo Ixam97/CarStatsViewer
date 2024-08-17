@@ -4,19 +4,19 @@
 
 Car Stats Viewer is divided in different build flavors depending on it's intended use case:
 
-* Stable: Intended for general use by everyone. Only uses completed and mostly tested features.
-* Dev: Intended to only be used by developers while implementing new features. Many aspects are not stable for use and are only recommended for debugging.
+* `stable`: Intended for general use by everyone. Only uses completed and mostly tested features.
+* `dev`: Intended to only be used by developers while implementing new features. Many aspects are not stable for use and are only recommended for debugging.
 
 In addition to that, there is also a second flavor dimension. This is used to build either the legacy or car app variant of Car Stats Viewer
 
-* Legacy: The classic variant of Car Stats Viewer. It is build using only custom activities, therefore not following the guidelines put in place by Google regarding In-Car-Apps.
-* Carapp: Implements the Google Automotive App Host. While-driving views are controlled and limited by the App Host to enforce drive distraction guidelines and apply the OEMs styling.
+* `legacy`: The classic variant of Car Stats Viewer. It is build using only custom activities, therefore not following the guidelines put in place by Google regarding In-Car-Apps.
+* `carapp`: Implements the Google Automotive App Host. While-driving views are controlled and limited by the App Host to enforce drive distraction guidelines and apply the OEMs styling.
 
 <b>If you want to publish the app yourself as an internal test, only use the stable flavor from the master branch!
 
 Branches other than `master` are considered to be in active development and contain unfinished and unstable features. Do not use these branches unless you know what you are doing!</b>
 
-It is not required to refactor all packages in the Android Studio project. This might lead to issues once updates get released. Instead, just rename the `applicationId` in the `automotive\build.gradle`. This will lead to a custom package name when building the app without affecting source code.
+It is not required to refactor all packages in the Android Studio project. This might lead to issues once updates get released. Instead, just rename the `applicationId` (either for the `legacy` or `carapp` build flavour) in the `automotive\build.gradle`. This will lead to a custom package name when building the app without affecting source code.
 
 ## Using additional features
 
@@ -57,7 +57,7 @@ Once setup, signed App Bundles can be uploaded as internal test releases.
 
 [Android Studio](https://developer.android.com/studio) is used to build the App. To be able to upload the App to the Google Play Store, a signed bundle is required: https://developer.android.com/studio/publish/app-signing
 
-When building the bundle, select `stableLegacyRelease` or `stableCarappDebug` as Build Variant. The created `.aab`-file can then be uploaded to the Play Console.
+When building the bundle, select `stableLegacyRelease` or `stableCarappRelease` as Build Variant. The created `.aab`-file can then be uploaded to the Play Console.
 
 ## Internal Testing
 
