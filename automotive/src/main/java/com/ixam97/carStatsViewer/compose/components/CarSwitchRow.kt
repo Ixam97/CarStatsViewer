@@ -20,13 +20,13 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CarSwitchRow(
     switchState: Boolean,
-    onClick: () -> Unit,
+    onClick: (newState: Boolean) -> Unit,
     content: @Composable () -> Unit
 ) {
     Row(
         modifier = Modifier
             .heightIn(min = 100.dp)
-            .clickable { onClick() }
+            .clickable { onClick(!switchState) }
             .padding(horizontal = 30.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

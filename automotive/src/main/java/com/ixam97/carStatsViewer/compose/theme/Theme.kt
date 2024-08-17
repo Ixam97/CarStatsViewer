@@ -7,6 +7,11 @@ import androidx.compose.material.Typography
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -61,64 +66,95 @@ val volvoColors = darkColors(
 private var pActiveElementBrush: Brush? = null
 private var pHeaderLineBrush: Brush? = null
 
+data class CarThemeBrushes(
+    var activeElementBrush: Brush = CarTheme.solidBrush,
+    var headerLineBrush: Brush = CarTheme.solidBrush
+) {
+    fun updateBrushesFrom(others: CarThemeBrushes) {
+        activeElementBrush = others.activeElementBrush
+        headerLineBrush = others.headerLineBrush
+    }
+}
+
 object CarTheme {
 
-    val solidBrush: Brush
-        @Composable
-        get() = pActiveElementBrush?: Brush.linearGradient(listOf(
-            MaterialTheme.colors.primary,
-            MaterialTheme.colors.primary
+    val solidBrush = Brush.linearGradient(listOf(
+            darkColors().primary,
+            darkColors().primary
         ))
 
-    val activeElementBrush: Brush
+    val brushes: CarThemeBrushes
         @Composable
-        get() = pActiveElementBrush?: solidBrush
-
-    val headerLineBrush: Brush
-        @Composable
-        get() = pHeaderLineBrush?: solidBrush
+        @ReadOnlyComposable
+        get() = LocalBrushes.current
 
     val buttonCornerRadius = 20.dp
     val buttonPaddingValues = PaddingValues(horizontal = 40.dp, vertical = 20.dp)
 
 }
 
+internal val LocalBrushes = staticCompositionLocalOf { CarThemeBrushes() }
+
 @Composable
 fun CarTheme(carMake: String? = null, content: @Composable () -> Unit) {
 
     val typography: Typography
     val colors: Colors
+    val brushes: CarThemeBrushes
 
     when (carMake) {
         "Polestar" -> {
             typography = defaultPolestarTypography
             colors = polestarColors
-            pActiveElementBrush = Brush.horizontalGradient(listOf(colors.primary, colors.primary))
-            pHeaderLineBrush = Brush.horizontalGradient(listOf(colors.primary, colors.primary))
+            brushes = CarThemeBrushes(
+                Brush.horizontalGradient(listOf(colors.primary, colors.primary)),
+                Brush.horizontalGradient(listOf(colors.primary, colors.primary))
+            )
 
         }
         "VolvoCars" -> {
             colors = volvoColors
             typography = defaultTypography
-            pActiveElementBrush = Brush.horizontalGradient(listOf(colors.primary, colors.primary))
-            pHeaderLineBrush = Brush.horizontalGradient(listOf(colors.primary, colors.primary))
+            brushes = CarThemeBrushes(
+                Brush.horizontalGradient(listOf(colors.primary, colors.primary)),
+                Brush.horizontalGradient(listOf(colors.primary, colors.primary))
+            )
+        }
+        "Orange" -> {
+            colors = polestarColors
+            typography = defaultTypography
+            brushes = CarThemeBrushes(
+                Brush.horizontalGradient(listOf(colors.primary, colors.primary)),
+                Brush.horizontalGradient(listOf(colors.primary, colors.primary))
+            )
         }
         else -> {
             colors = clubColorsDark
             typography = defaultTypography
-            pActiveElementBrush = Brush.horizontalGradient(listOf(clubBlue, clubViolet))
-            pHeaderLineBrush = Brush.horizontalGradient(listOf(clubVioletDark, clubViolet, clubBlue, clubBlueDark))
-
+            brushes = CarThemeBrushes(
+                Brush.horizontalGradient(listOf(clubBlue, clubViolet)),
+                Brush.horizontalGradient(listOf(clubVioletDark, clubViolet, clubBlue, clubBlueDark))
+            )
         }
     }
 
+    val rememberedBrushes = remember {
+        brushes.copy()
+    }.apply { updateBrushesFrom(brushes) }
 
-    MaterialTheme(
-        colors = colors,
-        typography = typography,
-        shapes = Shapes,
-        content = content
-    )
+    CompositionLocalProvider(
+        LocalBrushes provides rememberedBrushes
+    ) {
+        MaterialTheme(
+            colors = colors,
+            typography = typography,
+            shapes = Shapes,
+            content = content
+        )
+    }
+
+
+
 }
 
 @Composable

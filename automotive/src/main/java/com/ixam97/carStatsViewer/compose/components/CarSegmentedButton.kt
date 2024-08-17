@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.compose.theme.CarTheme
+import com.ixam97.carStatsViewer.compose.theme.LocalBrushes
 
 @Composable
 fun CarSegmentedButton(
@@ -36,7 +37,7 @@ fun CarSegmentedButton(
     selectedIndex: Int,
     onSelectedIndexChanged: (index: Int) -> Unit,
     enabled: Boolean = true,
-    gradient: Brush = CarTheme.activeElementBrush,
+    gradient: Brush = CarTheme.brushes.activeElementBrush,
     contentPadding: PaddingValues = CarTheme.buttonPaddingValues,
     shape: Shape = RoundedCornerShape(CarTheme.buttonCornerRadius),
 ) {

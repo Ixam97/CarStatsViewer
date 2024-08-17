@@ -6,13 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -33,34 +30,12 @@ fun AppearanceSettings(viewModel: SettingsViewModel) {
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        var selectedIndex by remember { mutableStateOf(0) }
-
-        CarSwitchRow(
-            switchState = false,
-            onClick = {  }
-        ) {
-            Text(text = stringResource(id = R.string.settings_consumption_unit, CarStatsViewer.appPreferences.distanceUnit.unit()))
-        }
-        Divider(Modifier.padding(horizontal = 20.dp))
-        CarSwitchRow(
-            switchState = false,
-            onClick = {  }
-        ) {
-            Text(text = stringResource(id = R.string.settings_visible_gages))
-        }
-        Divider(Modifier.padding(horizontal = 20.dp))
-        CarRow(
-            title = "Secondary plot color",
-            customContent = {
-                CarSegmentedButton(
-                    // modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
-                    options = listOf("Green", "White"),
-                    selectedIndex = 0,
-                    onSelectedIndexChanged = { index ->
-
-                    }
-                )
-            }
+        Text(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .padding(top = 24.dp, bottom = 10.dp),
+            color = MaterialTheme.colors.primary,
+            text = "General"
         )
         Divider(Modifier.padding(horizontal = 20.dp))
         CarRow(
@@ -72,6 +47,75 @@ fun AppearanceSettings(viewModel: SettingsViewModel) {
                     selectedIndex = themeSetting.value,
                     onSelectedIndexChanged = { index ->
                         viewModel.setTheme(index)
+                    }
+                )
+            }
+        )
+        Divider(Modifier.padding(horizontal = 20.dp))
+        CarSwitchRow(
+            switchState = viewModel.settingsState.altConsumptionUnit,
+            onClick = { newState -> viewModel.settingsState = viewModel.settingsState.copy(altConsumptionUnit = newState) }
+        ) {
+            Text(text = stringResource(id = R.string.settings_consumption_unit, CarStatsViewer.appPreferences.distanceUnit.unit()))
+        }
+        Divider(Modifier.padding(horizontal = 20.dp))
+        Text(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .padding(top = 24.dp, bottom = 10.dp),
+            color = MaterialTheme.colors.primary,
+            text = stringResource(id = R.string.settings_consumption_plot)
+        )
+        Divider(Modifier.padding(horizontal = 20.dp))
+        CarSwitchRow(
+            switchState = viewModel.settingsState.showConsumptionGages,
+            onClick = { newState ->
+                viewModel.settingsState = viewModel.settingsState.copy(showConsumptionGages = newState)
+            }
+        ) {
+            Text(text = stringResource(id = R.string.settings_visible_gages))
+        }
+        Divider(Modifier.padding(horizontal = 20.dp))
+        CarRow(
+            title = stringResource(R.string.settings_plot_secondary_color_2),
+            customContent = {
+                CarSegmentedButton(
+                    // modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
+                    options = listOf("Green", "White"),
+                    selectedIndex = viewModel.settingsState.secondaryConsumptionPlotColor,
+                    onSelectedIndexChanged = { index ->
+                        viewModel.settingsState = viewModel.settingsState.copy(secondaryConsumptionPlotColor = index)
+                    }
+                )
+            }
+        )
+        Divider(Modifier.padding(horizontal = 20.dp))
+        Text(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .padding(top = 24.dp, bottom = 10.dp),
+            color = MaterialTheme.colors.primary,
+            text = stringResource(id = R.string.settings_charge_plot)
+        )
+        Divider(Modifier.padding(horizontal = 20.dp))
+        CarSwitchRow(
+            switchState = viewModel.settingsState.showChargingGages,
+            onClick = { newState ->
+                viewModel.settingsState = viewModel.settingsState.copy(showChargingGages = newState)
+            }
+        ) {
+            Text(text = stringResource(id = R.string.settings_visible_gages))
+        }
+        Divider(Modifier.padding(horizontal = 20.dp))
+        CarRow(
+            title = stringResource(R.string.settings_plot_secondary_color_2),
+            customContent = {
+                CarSegmentedButton(
+                    // modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
+                    options = listOf("Green", "White"),
+                    selectedIndex = viewModel.settingsState.secondaryChargePlotColor,
+                    onSelectedIndexChanged = { index ->
+                        viewModel.settingsState = viewModel.settingsState.copy(secondaryChargePlotColor = index)
                     }
                 )
             }

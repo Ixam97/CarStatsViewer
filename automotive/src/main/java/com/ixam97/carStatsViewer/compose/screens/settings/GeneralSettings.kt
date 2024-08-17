@@ -17,7 +17,6 @@ import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
 
 @Composable
 fun GeneralSettings(
-    settingsState: SettingsViewModel.SettingsState,
     viewModel: SettingsViewModel
 ) {
     Column(

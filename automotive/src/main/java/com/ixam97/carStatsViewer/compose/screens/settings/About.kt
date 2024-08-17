@@ -16,13 +16,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
 
 @Composable
 fun About(
-    navController: NavController
+    navController: NavController,
+    viewModel: SettingsViewModel
 ) = Column (
         modifier = Modifier
             .fillMaxSize()
@@ -49,7 +51,7 @@ fun About(
     Divider(modifier = Modifier.padding(horizontal = 24.dp))
     CarRow(
         title = "Version",
-        onClick = { /* enable dev mode */ },
+        onClick = { viewModel.versionClick() },
         text = "${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
     )
 

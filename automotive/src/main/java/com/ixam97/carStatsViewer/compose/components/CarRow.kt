@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -39,6 +40,7 @@ fun CarRow(
     leadingContent: ( @Composable () -> Unit)? = null,
     trailingContent: ( @Composable () -> Unit)? = null,
     @DrawableRes iconResId:  Int? = null,
+    iconImageVector: ImageVector? = null,
     browsable: Boolean = false,
     external: Boolean = false,
     onClick: (() -> Unit)? = null,
@@ -72,6 +74,16 @@ fun CarRow(
                     .height(minHeight.coerceAtLeast(80.dp))
                     .width(80.dp),
                 painter = painterResource(id = iconResId),
+                contentDescription = null,
+                tint = if (enabled) Color.White else disabledTextColor
+            )
+            Spacer(modifier = Modifier.size(24.dp))
+        } else if (iconImageVector != null) {
+            Icon(
+                modifier = Modifier
+                    .height(minHeight.coerceAtLeast(50.dp))
+                    .width(50.dp),
+                imageVector = iconImageVector,
                 contentDescription = null,
                 tint = if (enabled) Color.White else disabledTextColor
             )
