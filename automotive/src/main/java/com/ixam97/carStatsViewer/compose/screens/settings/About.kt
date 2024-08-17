@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.compose.screens.settingsScreens
+package com.ixam97.carStatsViewer.compose.screens.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,12 +18,10 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.compose.components.CarRow
-import com.ixam97.carStatsViewer.compose.components.SideTab
 import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
-import kotlinx.serialization.Serializable
 
 @Composable
-fun AboutScreen(
+fun About(
     navController: NavController
 ) = Column (
         modifier = Modifier

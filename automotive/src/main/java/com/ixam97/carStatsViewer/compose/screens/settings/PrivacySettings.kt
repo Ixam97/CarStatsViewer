@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.compose.screens.settingsScreens
+package com.ixam97.carStatsViewer.compose.screens.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,16 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
-import com.ixam97.carStatsViewer.compose.components.SideTab
-import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
 
 @Composable
-fun GeneralSettingsScreen(
-    settingsState: SettingsViewModel.SettingsState,
+fun PrivacySettings(
     viewModel: SettingsViewModel
 ) {
     Column(
@@ -29,24 +25,17 @@ fun GeneralSettingsScreen(
             .verticalScroll(rememberScrollState())
     ) {
         CarSwitchRow(
-            switchState = settingsState.locationTracking,
-            onClick = { viewModel.setLocationTracking(!settingsState.locationTracking)}
+            switchState = false,
+            onClick = { }
         ) {
             Text(text = stringResource(id = R.string.settings_use_location))
         }
         Divider(Modifier.padding(horizontal = 20.dp))
         CarSwitchRow(
-            switchState = settingsState.altConsumptionUnit,
-            onClick = { viewModel.setAltConsumptionUnit(!settingsState.altConsumptionUnit)}
+            switchState = false,
+            onClick = { }
         ) {
-            Text(text = stringResource(id = R.string.settings_consumption_unit, CarStatsViewer.appPreferences.distanceUnit.unit()))
-        }
-        Divider(Modifier.padding(horizontal = 20.dp))
-        CarSwitchRow(
-            switchState = settingsState.autoAppStart,
-            onClick = { viewModel.setAutoAppStart(!settingsState.autoAppStart)}
-        ) {
-            Text(text = stringResource(id = R.string.settings_autostart))
+            Text(text = "Enable crash reports and analytics")
         }
     }
 }

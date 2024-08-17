@@ -33,7 +33,7 @@ import com.ixam97.carStatsViewer.compose.theme.disabledTextColor
 @Composable
 fun CarRow(
     modifier: Modifier = Modifier,
-    title: String,
+    title: String? = null,
     text: String? = null,
     customContent: ( @Composable () -> Unit)? = null,
     leadingContent: ( @Composable () -> Unit)? = null,
@@ -62,6 +62,10 @@ fun CarRow(
             // .then(modifier),
         // verticalAlignment = Alignment.CenterVertically
     ) {
+        if (leadingContent != null) {
+            leadingContent()
+            Spacer(modifier = Modifier.size(24.dp))
+        }
         if (iconResId != null) {
             Icon(
                 modifier = Modifier
@@ -86,7 +90,8 @@ fun CarRow(
                     .padding(top = 21.dp, bottom = 15.dp),
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(text = title, color = MaterialTheme.colors.onBackground.copy(alpha = if (enabled) 1f else 0.46f))
+                if (title != null)
+                    Text(text = title, color = MaterialTheme.colors.onBackground.copy(alpha = if (enabled) 1f else 0.46f))
                 if (text != null && customContent == null) {
                     Spacer(modifier = Modifier.size(15.dp))
                     Text(
@@ -98,6 +103,12 @@ fun CarRow(
                     customContent()
                 }
             }
+
+            if (trailingContent != null) {
+                Spacer(modifier = Modifier.size(20.dp))
+                trailingContent()
+            }
+
             if (onClick != null && browsable) {
                 Spacer(modifier = Modifier.size(20.dp))
                 Icon(
@@ -109,11 +120,6 @@ fun CarRow(
                     contentDescription = null,
                     tint = if (enabled) Color.White else disabledTextColor
                 )
-            }
-
-            if (trailingContent != null) {
-                Spacer(modifier = Modifier.size(20.dp))
-                trailingContent()
             }
         }
     }
