@@ -62,7 +62,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
     private var completedChargingSessions = listOf<ChargingSession>()
 
     constructor(session: DrivingSession) :this() {
-        this.session = session
+        this.session = session.copy() // Using a copy of the session to not have extremely long driving points and charging sessions in the dataProcessor to limit memory usage.
     }
 
     val appPreferences = CarStatsViewer.appPreferences

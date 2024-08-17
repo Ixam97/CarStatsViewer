@@ -48,6 +48,7 @@ object Defines {
     const val PLOT_ENERGY_INTERVAL = 100L
     const val AUTO_RESET_TIME = 14_400_000L // 4h
     const val PLOT_DISTANCE_INTERVAL = 100.0
+    const val MAIN_VIEW_DRIVING_POINTS = 2_000
 }
 
 class CarStatsViewer : Application() {

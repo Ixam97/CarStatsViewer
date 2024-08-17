@@ -2,6 +2,7 @@ package com.ixam97.carStatsViewer.dataProcessor
 
 // import com.ixam97.carStatsViewer.utils.TimestampSynchronizer
 import android.app.Notification
+import android.util.Log
 import androidx.car.app.model.CarIcon
 import androidx.core.graphics.drawable.IconCompat
 import com.google.firebase.crashlytics.ktx.crashlytics
@@ -144,7 +145,13 @@ class DataProcessor {
             _localSessionsState.update { localSessions ->
                 localSessions.clear()
                 CarStatsViewer.tripDataSource.getActiveDrivingSessionsIds().forEach { sessionId ->
-                    CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId).let { session ->
+                    // CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId).let { session ->
+                    CarStatsViewer.tripDataSource.getDrivingSession(sessionId)?.let { loadedSession ->
+                        val session = loadedSession.copy()
+                        session.drivingPoints = CarStatsViewer.tripDataSource.getDrivingPointsSince(
+                            startTime = loadedSession.start_epoch_time,
+                            limit = Defines.MAIN_VIEW_DRIVING_POINTS
+                        )
                         localSessions.add(session)
                         if (session.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
                             selectedSessionData = session
@@ -507,10 +514,10 @@ class DataProcessor {
             _localSessionsState.update { localSessions ->
                 val localSessionsCopy = localSessions.toMutableList() // Copying the list before read and write at the same time
                 localSessionsCopy.forEachIndexed { index, session ->
-                    val drivingPoints = session.drivingPoints?.toMutableList()
-                    drivingPoints?.add(drivingPoint)
+                    val drivingPoints = session.drivingPoints?.toMutableList()?: mutableListOf()
+                    drivingPoints.add(drivingPoint)
                     localSessions[index] = session.copy(last_edited_epoch_time = System.currentTimeMillis())
-                    localSessions[index].drivingPoints = drivingPoints
+                    localSessions[index].drivingPoints = drivingPoints.drop((drivingPoints.size - Defines.MAIN_VIEW_DRIVING_POINTS).coerceAtLeast(0))
                     if (session.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
                         selectedSessionData = localSessions[index]
                     }

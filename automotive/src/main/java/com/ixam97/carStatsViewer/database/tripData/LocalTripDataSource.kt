@@ -34,6 +34,10 @@ class LocalTripDataSource(
         return drivingPoint
     }
 
+    override suspend fun getDrivingPointsSince(startTime: Long, limit: Int): List<DrivingPoint> {
+        return tripDao.getDrivingPointsSince(startTime, limit)
+    }
+
     override suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long? {
         endDrivingSession(timestamp, prevSessionId)?.let {
             InAppLogger.v("$TAG Driving session with ID $prevSessionId has been superseded")
