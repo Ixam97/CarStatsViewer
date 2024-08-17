@@ -137,9 +137,7 @@ dependencies {
     implementation libs.androidx.car.app.automotive
 
     if (mapbox) {
-        // implementation 'org.maplibre.gl:android-sdk:11.1.0'
-        implementation('com.mapbox.maps:android:11.6.0-rc.1')
-        // implementation 'com.mapbox.extension:maps-compose:11.6.0-rc.1'
+        implementation('com.mapbox.maps:android:11.6.0')
     }
 
     implementation libs.androidx.activity.compose
