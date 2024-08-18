@@ -110,6 +110,8 @@ class TabsScreen(
             }
         }
         lifecycleScope.launch {
+            delay(1_000)
+            delay(1_000)
             CarStatsViewer.dataProcessor.selectedSessionDataFlow.collect {
                 session.carDataSurfaceCallback.updateSession()
                 drivingSession = it
@@ -174,7 +176,7 @@ class TabsScreen(
         setHeaderAction(Action.APP_ICON)
         addTab(createTab(tripType, CID_TRIP_DATA, R.drawable.ic_car_app_list))
         if (BuildConfig.FLAVOR_version == "dev") addTab(createTab(R.string.car_app_dashboard, CID_DASHBOARD, R.drawable.ic_car_app_dashboard))
-        else addTab(createTab(R.string.car_app_status, CID_STATUS, R.drawable.ic_connected))
+        else addTab(createTab(R.string.car_app_menu, CID_STATUS, R.drawable.ic_car_app_menu))
         addTab(createTab(R.string.settings_title, CID_SETTINGS, R.drawable.ic_car_app_settings))
         if (BuildConfig.FLAVOR_version == "dev") addTab(createTab(R.string.car_app_menu, CID_MISC, R.drawable.ic_car_app_menu))
         setTabContents(TabContents.Builder(
