@@ -89,8 +89,15 @@ class TripDetailsScreen(carContext: CarContext, private val pTrip: DrivingSessio
             }.build())
             addEndHeaderAction(Action.Builder().apply {
                 setIcon(carContext.carIconFromRes(R.drawable.ic_delete))
-                setOnClickListener {  }
-                setEnabled(false)
+                setOnClickListener {
+                    screenManager.pushForResult(ConfirmDeleteTripScreen(carContext)) { result ->
+                        if (result == true) {
+                            // Delete selected Trip
+                            setResult("DeleteTrip")
+                            screenManager.pop()
+                        }
+                    }
+                }
             }.build())
             setStartHeaderAction(Action.BACK)
         }.build())

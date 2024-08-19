@@ -131,13 +131,25 @@ class TripHistoryScreen(carContext: CarContext):
                 setTitle("${ StringFormatters.getDateString(Date(trip.start_epoch_time)) }, ID: ${trip.driving_session_id}")
                 addText(tripDataString(trip))
                 setOnClickListener {
-                    screenManager.push(TripDetailsScreen(carContext, trip))
+                    screenManager.pushForResult(TripDetailsScreen(carContext, trip)) { result ->
+                        if (result == "DeleteTrip") {
+                            pastDrivingSessions.remove(trip)
+                            invalidate()
+                        }
+                    }
                 }
                 if (carContext.carAppApiLevel >= 6) {
                     addAction(Action.Builder().apply {
                         setIcon(carContext.carIconFromRes(R.drawable.ic_delete))
-                        setOnClickListener { }
-                        setEnabled(false)
+                        setOnClickListener {
+                            screenManager.pushForResult(ConfirmDeleteTripScreen(carContext)) { result ->
+                                if (result == true) {
+                                    // delete corresponding trip and reload list.
+                                    pastDrivingSessions.remove(trip)
+                                    invalidate()
+                                }
+                            }
+                        }
                     }.build())
                 }
             }.build())
