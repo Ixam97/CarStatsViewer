@@ -24,6 +24,7 @@ import com.ixam97.carStatsViewer.carApp.utils.manualTripIcon
 import com.ixam97.carStatsViewer.carApp.utils.monthTripIcon
 import com.ixam97.carStatsViewer.carApp.utils.sinceChargeTripIcon
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,6 +34,10 @@ import java.util.Date
 class TripHistoryScreen(carContext: CarContext):
     Screen(carContext), DefaultLifecycleObserver
 {
+    private var showManualTrips: Boolean = CarStatsViewer.appPreferences.tripFilterManual
+    private var showSinceChargeTrips: Boolean = CarStatsViewer.appPreferences.tripFilterCharge
+    private var showAutomaticTrips: Boolean = CarStatsViewer.appPreferences.tripFilterAuto
+    private var showMonthlyTrips: Boolean = CarStatsViewer.appPreferences.tripFilterMonth
 
     private val maxListLength = carContext.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
     private val screenManager = carContext.getCarService(ScreenManager::class.java)
@@ -51,19 +56,8 @@ class TripHistoryScreen(carContext: CarContext):
     }
 
     override fun onCreate(owner: LifecycleOwner) {
+        loadTripsFromDataSource()
         super.onCreate(owner)
-        lifecycleScope.launch(Dispatchers.IO) {
-            activeDrivingSessions.addAll(CarStatsViewer.tripDataSource.getActiveDrivingSessions())
-            activeDrivingSessions.sortBy { it.session_type }
-
-            pastDrivingSessions.addAll(CarStatsViewer.tripDataSource.getPastDrivingSessions())
-            pastDrivingSessions.sortByDescending { it.driving_session_id }
-
-            contentLoaded = true
-            withContext(Dispatchers.Main) {
-                invalidate()
-            }
-        }
     }
 
     private fun TripHistoryListTemplate() = ListTemplate.Builder().apply {
@@ -77,7 +71,9 @@ class TripHistoryScreen(carContext: CarContext):
             addEndHeaderAction(Action.Builder().apply {
                 setIcon(carContext.carIconFromRes(R.drawable.ic_filter))
                 setOnClickListener {
-
+                    screenManager.pushForResult(TripHistoryFilterScreen(carContext)) { result ->
+                        loadTripsFromDataSource()
+                    }
                 }
                 setEnabled(false)
             }.build())
@@ -132,7 +128,10 @@ class TripHistoryScreen(carContext: CarContext):
                 addText(tripDataString(trip))
                 setOnClickListener {
                     screenManager.pushForResult(TripDetailsScreen(carContext, trip)) { result ->
-                        if (result == "DeleteTrip") {
+                        if (result == "DeleteTrip" && (trip.end_epoch_time?:0) > 0) {
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                CarStatsViewer.tripDataSource.deleteDrivingSessionById(trip.driving_session_id)
+                            }
                             pastDrivingSessions.remove(trip)
                             invalidate()
                         }
@@ -143,8 +142,11 @@ class TripHistoryScreen(carContext: CarContext):
                         setIcon(carContext.carIconFromRes(R.drawable.ic_delete))
                         setOnClickListener {
                             screenManager.pushForResult(ConfirmDeleteTripScreen(carContext)) { result ->
-                                if (result == true) {
+                                if (result == true && (trip.end_epoch_time?:0) > 0) {
                                     // delete corresponding trip and reload list.
+                                    lifecycleScope.launch(Dispatchers.IO) {
+                                        CarStatsViewer.tripDataSource.deleteDrivingSessionById(trip.driving_session_id)
+                                    }
                                     pastDrivingSessions.remove(trip)
                                     invalidate()
                                 }
@@ -163,6 +165,42 @@ class TripHistoryScreen(carContext: CarContext):
         val time = StringFormatters.getElapsedTimeString(trip.drive_time, true)
 
         return "$distance, $energy, $consumption, $time"
+    }
+
+    private fun loadTripsFromDataSource() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            contentLoaded = false
+            invalidate()
+            showManualTrips = CarStatsViewer.appPreferences.tripFilterManual
+            showSinceChargeTrips = CarStatsViewer.appPreferences.tripFilterCharge
+            showAutomaticTrips = CarStatsViewer.appPreferences.tripFilterAuto
+            showMonthlyTrips = CarStatsViewer.appPreferences.tripFilterMonth
+
+            activeDrivingSessions.clear()
+            activeDrivingSessions.addAll(CarStatsViewer.tripDataSource.getActiveDrivingSessions())
+            activeDrivingSessions.sortBy { it.session_type }
+
+            pastDrivingSessions.clear()
+            pastDrivingSessions.addAll(CarStatsViewer.tripDataSource.getPastDrivingSessions())
+            pastDrivingSessions.sortByDescending { it.driving_session_id }
+
+            pastDrivingSessions.apply {
+                clear()
+                val trips = CarStatsViewer.tripDataSource.getPastDrivingSessions()
+                addAll(trips.subList(0, (trips.size - 1).coerceAtMost(49)))
+                sortByDescending { it.driving_session_id }
+
+                if (!showManualTrips) { removeIf { it.session_type == TripType.MANUAL } }
+                if (!showSinceChargeTrips) { removeIf { it.session_type == TripType.SINCE_CHARGE } }
+                if (!showAutomaticTrips) { removeIf { it.session_type == TripType.AUTO } }
+                if (!showMonthlyTrips) { removeIf { it.session_type == TripType.MONTH } }
+            }
+
+            contentLoaded = true
+            withContext(Dispatchers.Main) {
+                invalidate()
+            }
+        }
     }
 
 }
