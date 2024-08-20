@@ -153,6 +153,8 @@
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
+        <item>(Play Edition) Re-Added trip history, but with limited information for now.</item>
+        <item>[V](0.28.0)</item>
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>

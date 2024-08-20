@@ -184,17 +184,20 @@ class TripHistoryScreen(carContext: CarContext):
             pastDrivingSessions.addAll(CarStatsViewer.tripDataSource.getPastDrivingSessions())
             pastDrivingSessions.sortByDescending { it.driving_session_id }
 
-            pastDrivingSessions.apply {
-                clear()
-                val trips = CarStatsViewer.tripDataSource.getPastDrivingSessions()
-                addAll(trips.subList(0, (trips.size - 1).coerceAtMost(49)))
-                sortByDescending { it.driving_session_id }
+            if (pastDrivingSessions.isNotEmpty()) {
+                pastDrivingSessions.apply {
+                    clear()
+                    val trips = CarStatsViewer.tripDataSource.getPastDrivingSessions().sortedByDescending { it.driving_session_id }
+                    addAll(trips.subList(0, (trips.size).coerceAtMost(49)))
+                    // sortByDescending { it.driving_session_id }
 
-                if (!showManualTrips) { removeIf { it.session_type == TripType.MANUAL } }
-                if (!showSinceChargeTrips) { removeIf { it.session_type == TripType.SINCE_CHARGE } }
-                if (!showAutomaticTrips) { removeIf { it.session_type == TripType.AUTO } }
-                if (!showMonthlyTrips) { removeIf { it.session_type == TripType.MONTH } }
+                    if (!showManualTrips) { removeIf { it.session_type == TripType.MANUAL } }
+                    if (!showSinceChargeTrips) { removeIf { it.session_type == TripType.SINCE_CHARGE } }
+                    if (!showAutomaticTrips) { removeIf { it.session_type == TripType.AUTO } }
+                    if (!showMonthlyTrips) { removeIf { it.session_type == TripType.MONTH } }
+                }
             }
+
 
             contentLoaded = true
             withContext(Dispatchers.Main) {
