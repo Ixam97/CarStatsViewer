@@ -105,7 +105,7 @@ class TabsScreen(
                 val realTimeDataOnDashboard = selectedTabContentID == CID_DASHBOARD && appPreferences.carAppRealTimeData && !(carContext.carAppApiLevel >= 7 && BuildConfig.FLAVOR_version == "dev")
                 if (realTimeDataOnDashboard || realTimeDataOnTripData) {
                     invalidateTabView()
-                    InAppLogger.v("[$TAG] Real time data flow requested invalidate.")
+                    // InAppLogger.v("[$TAG] Real time data flow requested invalidate.")
                 }
             }
         }
@@ -226,7 +226,7 @@ class TabsScreen(
         val nanoTime = System.nanoTime()
         if (lastInvalidate + 1_000_000_000 < nanoTime) {
             invalidate()
-            InAppLogger.d("[$TAG] Invalidated")
+            // InAppLogger.d("[$TAG] Invalidated")
             lastInvalidate = nanoTime
         } else {
             invalidateInQueue = true
@@ -234,7 +234,7 @@ class TabsScreen(
                 val remainingDelay = INVALIDATE_INTERVAL_MS - (nanoTime - lastInvalidate) / 1_000_000
                 delay(remainingDelay)
                 invalidate()
-                InAppLogger.d("[$TAG] Invalidated")
+                // InAppLogger.d("[$TAG] Invalidated")
                 lastInvalidate = System.nanoTime()
                 invalidateInQueue = false
             }

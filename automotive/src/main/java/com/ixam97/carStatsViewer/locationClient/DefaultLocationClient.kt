@@ -69,10 +69,10 @@ class DefaultLocationClient(): LocationClient {
                     InAppLogger.e("[LOC] GPS Altitude is 0m!")
                 }
 
-                if (result != null)
-                    InAppLogger.v("[LOC] lat: %.5f lon: %.5f  alt: %.0fm time: %d".format(result.latitude, result.longitude, result.altitude, result.time))
-                else
-                    InAppLogger.w("[LOC] Location is null!")
+                // if (result != null)
+                //     // InAppLogger.v("[LOC] lat: %.5f lon: %.5f  alt: %.0fm time: %d".format(result.latitude, result.longitude, result.altitude, result.time))
+                // else
+                if (result == null) InAppLogger.w("[LOC] Location is null!")
 
                 emit(result)
                 delay(interval)
