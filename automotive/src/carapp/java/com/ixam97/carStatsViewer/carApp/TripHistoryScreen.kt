@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.carApp
 
-import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.ScreenManager
@@ -44,8 +43,8 @@ class TripHistoryScreen(carContext: CarContext):
 
     private var contentLoaded = false
 
-    private val activeDrivingSessions = mutableListOf<DrivingSession>()
-    private val pastDrivingSessions = mutableListOf<DrivingSession>()
+    private var activeDrivingSessions = listOf<DrivingSession>()
+    private var pastDrivingSessions = listOf<DrivingSession>()
 
     init {
         lifecycle.addObserver(this)
@@ -132,7 +131,9 @@ class TripHistoryScreen(carContext: CarContext):
                             lifecycleScope.launch(Dispatchers.IO) {
                                 CarStatsViewer.tripDataSource.deleteDrivingSessionById(trip.driving_session_id)
                             }
-                            pastDrivingSessions.remove(trip)
+                            val mutablePastDrivingSessions = pastDrivingSessions.toMutableList()
+                            mutablePastDrivingSessions.remove(trip)
+                            pastDrivingSessions = mutablePastDrivingSessions.toList()
                             invalidate()
                         }
                     }
@@ -147,7 +148,9 @@ class TripHistoryScreen(carContext: CarContext):
                                     lifecycleScope.launch(Dispatchers.IO) {
                                         CarStatsViewer.tripDataSource.deleteDrivingSessionById(trip.driving_session_id)
                                     }
-                                    pastDrivingSessions.remove(trip)
+                                    val mutablePastDrivingSessions = pastDrivingSessions.toMutableList()
+                                    mutablePastDrivingSessions.remove(trip)
+                                    pastDrivingSessions = mutablePastDrivingSessions.toList()
                                     invalidate()
                                 }
                             }
@@ -176,28 +179,19 @@ class TripHistoryScreen(carContext: CarContext):
             showAutomaticTrips = CarStatsViewer.appPreferences.tripFilterAuto
             showMonthlyTrips = CarStatsViewer.appPreferences.tripFilterMonth
 
-            activeDrivingSessions.clear()
-            activeDrivingSessions.addAll(CarStatsViewer.tripDataSource.getActiveDrivingSessions())
-            activeDrivingSessions.sortBy { it.session_type }
+            activeDrivingSessions = CarStatsViewer.tripDataSource.getActiveDrivingSessions()
+                .sortedBy { it.session_type }
 
-            pastDrivingSessions.clear()
-            pastDrivingSessions.addAll(CarStatsViewer.tripDataSource.getPastDrivingSessions())
-            pastDrivingSessions.sortByDescending { it.driving_session_id }
+            val trips = CarStatsViewer.tripDataSource.getPastDrivingSessions()
+                .sortedByDescending { it.driving_session_id }
+                .toMutableList()
 
-            if (pastDrivingSessions.isNotEmpty()) {
-                pastDrivingSessions.apply {
-                    clear()
-                    val trips = CarStatsViewer.tripDataSource.getPastDrivingSessions().sortedByDescending { it.driving_session_id }
-                    addAll(trips.subList(0, (trips.size).coerceAtMost(49)))
-                    // sortByDescending { it.driving_session_id }
+            if (!showManualTrips) { trips.removeIf { it.session_type == TripType.MANUAL } }
+            if (!showSinceChargeTrips) { trips.removeIf { it.session_type == TripType.SINCE_CHARGE } }
+            if (!showAutomaticTrips) { trips.removeIf { it.session_type == TripType.AUTO } }
+            if (!showMonthlyTrips) { trips.removeIf { it.session_type == TripType.MONTH } }
 
-                    if (!showManualTrips) { removeIf { it.session_type == TripType.MANUAL } }
-                    if (!showSinceChargeTrips) { removeIf { it.session_type == TripType.SINCE_CHARGE } }
-                    if (!showAutomaticTrips) { removeIf { it.session_type == TripType.AUTO } }
-                    if (!showMonthlyTrips) { removeIf { it.session_type == TripType.MONTH } }
-                }
-            }
-
+            pastDrivingSessions = trips.subList(0, (trips.size).coerceAtMost(50.coerceAtMost(maxListLength)))
 
             contentLoaded = true
             withContext(Dispatchers.Main) {
