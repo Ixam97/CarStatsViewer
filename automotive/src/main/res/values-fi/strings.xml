@@ -267,6 +267,17 @@ Tämä toiminto kestää jonkin aikaa riippuen siirrettävästä tiedon määrä
         <item>Otettu käyttöön Firebase Crashlytics. Voidaan poistaa käytöstä asetuksista.</item>
         <item>Otettu käyttöön Automotive App Host mahdollista julkista Play Store -julkaisua varten (ei sisälly vanhoissa versioissa).</item>
         <item>[V](0.27.0)</item>
+        <item>Parannettu kaatumisraportointia.</item>
+        <item>Korjattu matkatietojen tallentamisesta aiheutuneet kaatumiset.</item>
+        <item>(Play-version) Korjattu ongelma jossa vuorovaikutus ilmoitusten kanssa kaatoi sovelluksen.</item>
+        <item>(Play-versio) Kaatumisten havaitseminen muutoslokin luomisen yhteydessä.</item>
+        <item>(Play-versio) Väliaikaisesti poistettu käytöstä vanha koontinäkymä sekä matkahistoria Googlen ohjesääntöjen rajoitusten takia.</item>
+        <item>[V](0.27.1)</item>
+        <item>Lisätty virheenkäsittelyä ja lokitietojen kerääminen matkojen muutoksiin.</item>
+        <item>[V](0.27.2)</item>
+        <item>HUOMAUTUS: EX30 ei tällä hetkellä raportoi sovellukseen mitään tehoarvoja. Siksi energiatilastoja ei ole saatavilla. Tällä hetkellä on epäselvää, korjaako Volvo tämän ja milloin.</item>
+        <item>Lisätty ajon käynnistystä koskevia lisäehtoja (esimerkiksi Volvo EX30:ssä)</item>
+        <item>[V](0.27.3)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Päivitys asennettu!</string>
     <string name="dialog_changes_title_changelog">Muutosloki</string>

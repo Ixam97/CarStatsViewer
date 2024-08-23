@@ -267,6 +267,17 @@ Pass på at det ikke er noen duplisertee data på serveren for å forhindre usan
         <item>Implementert Firebase Crashlytics. Kan deaktiveres i innstillinger.</item>
         <item>Implementert Automotive App Host for en potensiell offentlig Play Store-utgivelse (ikke inkludert i eldre versjoner).</item>
         <item>[V](0.27.0)</item>
+        <item>Forbedret krasjrapportering.</item>
+        <item>Fikset krasj forårsaket av lagring av turdata.</item>
+        <item>(Play Edition) Fikset et problem hvor varsler sammen krasjer appen.</item>
+        <item>(Play Edition) Fanger krasj ved opprettelse av endringslogg.</item>
+        <item>(Play Edition) Midlertidig deaktivert Legacy Dashboard og Turhistorikk på grunn av begrensninger pålagt av Googles retningslinjer.</item>
+        <item>[V](0.27.1)</item>
+        <item>Lagt til feilhåndtering og logging til turendringer.</item>
+        <item>[V](0.27.2)</item>
+        <item>MERK: For øyeblikket rapporterer ikke EX30 noen strømverdier til appen. Derfor vil ingen energistatistikk være tilgjengelig. Det er foreløpig uklart om og når dette vil bli fikset av Volvo.</item>
+        <item>Lagt til ekstra kjørestartbetingelser (for eksempel for Volvo EX30)</item>
+        <item>[V](0.27.3)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Oppdatering installert!</string>
     <string name="dialog_changes_title_changelog">Endringslogg</string>

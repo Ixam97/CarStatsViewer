@@ -255,6 +255,8 @@ Cette opération peut prendre du temps, dépendament du volume de données. Veui
         <item>Ajout d\'une palette de couleurs expérimentale.</item>
         <item>[V](0.26.0)</item>
     </string-array>
+    <string name="car_app_menu">Divers</string>
+    <string name="car_app_advanced_settings">Paramètres avancés</string>
     <string name="snackbar_ok">OK</string>
     <string name="screenshot_taken">Capture d\'écran prise (total de %s)</string>
 </resources>

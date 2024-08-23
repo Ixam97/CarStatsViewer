@@ -248,7 +248,72 @@ Denne handling kan tage en del tid afhængig af datamængden. Bliv på denne sid
         <item>Simpel anden akse valg</item>
         <item>Tilføjet eksperimentel farvepalette</item>
         <item>[V](0.26.0)</item>
+        <item>Rettelse til Android 12 (P3.0)</item>
+        <!-- taping or tapping? -->
+        <!--taping or tapping?-->
+        <item>[V](0.26.1)</item>
+        <item>Rettede nogle layoutproblemer på Volvo Infotainment</item>
+        <item>Rettet ødelagt layout efter Polestar OTA P3.0.3</item>
+        <item>Justeret kontrol af oversigtsplot</item>
+        <item>[V](0.26.2)</item>
+        <item>Rettede eksperimentelt farveskema, der ikke virkede.</item>
+        <item>Debug-logfiler slettes efter 28 dage en gang om dagen.</item>
+        <item>Reduceret databaseadgang ved at begrænse logningen inden for fejlfindingsindstillinger.</item>
+        <item>Webhook udfylder nu \"charged_soc\" i slutningen af en opladningssession.</item>
+        <item>Databaseoverførslen indeholder nu opladningskurver.</item>
+        <item>Databaseuploaden opretter nu en separat tjeneste. Du behøver ikke længere at forblive på rejsehistorikskærmen under uploaden. En meddelelse vil blive sendt til meddelelsescentret for at vise fremskridt.</item>
+        <item>Opladningskurven afskærer ikke længere over 160 kW i Trip Summary.</item>
+        <item>Revideret metode til oprettelse af changelog.</item>
+        <item>Implementeret Firebase Crashlytics. Kan deaktiveres i indstillinger.</item>
+        <item>Implementerede Automotive App Host for en potentiel offentlig Play Butik-udgivelse (ikke indeholdt i ældre builds).</item>
+        <item>[V](0.27.0)</item>
+        <item>Forbedret rapportering af nedbrud.</item>
+        <item>Rettet nedbrud forårsaget af lagring af turdata.</item>
+        <item>(Play Edition) Rettede et problem, hvor notifikationsinteraktioner ville få appen til at gå ned.</item>
+        <item>(Play Edition) Fanger nedbrud ved oprettelse af ændringslog.</item>
+        <item>(Play Edition) Midlertidigt deaktiveret Legacy Dashboard og Trip History på grund af begrænsninger pålagt af Googles retningslinjer.</item>
+        <item>[V](0.27.1)</item>
+        <item>Tilføjet fejlhåndtering og logning til turændringer.</item>
+        <item>[V](0.27.2)</item>
+        <item>BEMÆRK: I øjeblikket rapporterer EX30 ikke nogen strømværdier til appen. Derfor vil der ikke være nogen energistatistik tilgængelig. Det er i øjeblikket uklart, om og hvornår dette vil blive rettet af Volvo.</item>
+        <item>Tilføjet yderligere betingelser for start af kørsel (f.eks. for Volvo EX30)</item>
+        <item>[V](0.27.3)</item>
     </string-array>
+    <string name="dialog_changes_title_updated">Opdatering installeret!</string>
+    <string name="dialog_changes_title_changelog">Ændringslog</string>
+    <string name="dialog_changes_message">%1$s er blevet opdateret til version %2$s!</string>
+    <!-- Car App -->
+    <string name="car_app_trip_data">Turdata</string>
+    <string name="car_app_strip_selection">Valg af tur</string>
+    <string name="car_app_dashboard">Dashboard</string>
+    <string name="car_app_legacy_dashboard">Ældre Dashboard</string>
+    <string name="car_app_menu">Diverse</string>
+    <string name="car_app_status">API-status</string>
+    <string name="car_app_toast_reset_confirmation">Manuel tur er blevet nulstillet.</string>
+    <string name="car_app_toast_reset_hint">Tryk igen for at nulstille manuel trip.</string>
+    <string name="car_app_unknown">Ukendt</string>
+    <string name="car_app_permissions_message">Car Stats Viewer skal have adgang til placering og køretøjsdatatilladelser for at fungere. Giv venligst disse tilladelser. 
+
+Placeringssporing kan slås til eller fra i appindstillingerne. Ingen data sendes som standard til nogen servere.</string>
+    <string name="car_app_permissions_grant">Giv tilladelser</string>
+    <string name="car_app_permissions_deny">Afvis og afslut</string>
+    <string name="car_app_dev_notice_message">Car Stats Viewer er stadig under udvikling! Vær opmærksom på, at funktioner kan ændre sig, blive tilføjet eller fjernet uden varsel, og datatab kan forekomme! 
+
+Hvis du finder fejl eller ønsker at give feedback, bedes du besøge GitHub-lageret i appen eller tråden i Polestar Club Forum om dette emne. Et link kan findes i apps Indstillinger → Om Car Stats Viewer.</string>
+    <string name="car_app_dev_notice_confirm">Forstået</string>
+    <string name="car_app_show_real_time_data_title">Vis data i realtid</string>
+    <string name="car_app_show_real_time_data_hint">Hvis denne mulighed er aktiveret, kan brugergrænsefladen reagere med mærkbar forsinkelse på grund af høj frekvens af brugergrænsefladeopdateringer udstedt af realtidsdata.</string>
+    <string name="car_app_legacy_dashboard_desc">Åbner det Dashboard, der er kendt fra den ældre version af Car Stats Viewer. Indeholder også opladningskurven i realtid under opladning. Ikke tilgængelig under kørsel!</string>
+    <string name="car_app_legacy_history_desc">Viser en liste over alle tidligere ture og giver mulighed for at se detaljerede statistikker for hver tur. Ikke tilgængelig under kørsel!</string>
+    <string name="car_app_advanced_settings">Avancerede indstillinger</string>
+    <string name="car_app_quick_settings">Hurtige indstillinger</string>
+    <string name="car_app_menu_other_views">Andre skærme</string>
+    <string name="car_app_show_real_time_data_subtitle">Effekt, inst. forbrug og højde i fanen Ture.</string>
+    <string name="history_dialog_upload_message_2">Du er ved at uploade hele den lokale database til det slutpunkt, der er angivet i Webhook API! 
+
+Sørg for, at der ikke er duplikerede data på serveren for at forhindre usandsynlige værdier. 
+
+Denne handling kan tage noget tid afhængigt af mængden af data. En statusmeddelelse vil blive tilføjet til Notifikationscenteret. Systemet kan bruges som normalt.</string>
     <string name="snackbar_ok">Okay</string>
     <string name="screenshot_taken">Skærmbillede taget (totalt %s).</string>
 </resources>
