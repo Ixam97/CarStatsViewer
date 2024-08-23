@@ -10,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,8 @@ fun About(
             .verticalScroll(rememberScrollState())
     ) {
 
+    val context = LocalContext.current
+
     @Composable
     fun contributorsString(): String {
         var contributorsString = ""
@@ -51,7 +54,7 @@ fun About(
     Divider(modifier = Modifier.padding(horizontal = 24.dp))
     CarRow(
         title = "Version",
-        onClick = { viewModel.versionClick() },
+        onClick = { viewModel.versionClick(context) },
         text = "${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
     )
 

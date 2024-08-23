@@ -22,6 +22,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.dataProcessor.DrivingState
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
@@ -769,7 +770,8 @@ class MainActivity : FragmentActivity() {
         }
 
         mainButtonSettings.setOnClickListener {
-            startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+            // startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
+            startActivity(Intent(this@MainActivity, ComposeSettingsActivity::class.java))
             if (BuildConfig.FLAVOR_aaos != "carapp")
                 overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }

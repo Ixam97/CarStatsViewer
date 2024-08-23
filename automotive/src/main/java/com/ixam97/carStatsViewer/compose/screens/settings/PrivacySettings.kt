@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
+import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
 
 @Composable
@@ -25,17 +26,21 @@ fun PrivacySettings(
             .verticalScroll(rememberScrollState())
     ) {
         CarSwitchRow(
-            switchState = false,
-            onClick = { }
+            switchState = viewModel.settingsState.locationTracking,
+            onClick = { viewModel.setLocationTracking(it) }
         ) {
             Text(text = stringResource(id = R.string.settings_use_location))
         }
         Divider(Modifier.padding(horizontal = 20.dp))
-        CarSwitchRow(
-            switchState = false,
-            onClick = { }
-        ) {
-            Text(text = "Enable crash reports and analytics")
+        if (stringResource(R.string.useFirebase) == "true") {
+            CarSwitchRow(
+                switchState = viewModel.settingsState.analytics,
+                onClick = { viewModel.setAnalytics(it) }
+            ) {
+                Text(text = "Enable crash reports and analytics")
+            }
+        } else {
+            CarRow(title = "Google Firebase is not included in this build.")
         }
     }
 }

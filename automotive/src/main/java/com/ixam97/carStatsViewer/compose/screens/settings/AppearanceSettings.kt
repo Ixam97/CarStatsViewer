@@ -54,7 +54,7 @@ fun AppearanceSettings(viewModel: SettingsViewModel) {
         Divider(Modifier.padding(horizontal = 20.dp))
         CarSwitchRow(
             switchState = viewModel.settingsState.altConsumptionUnit,
-            onClick = { newState -> viewModel.settingsState = viewModel.settingsState.copy(altConsumptionUnit = newState) }
+            onClick = { newState -> viewModel.setAltConsumptionUnit(newState) }
         ) {
             Text(text = stringResource(id = R.string.settings_consumption_unit, CarStatsViewer.appPreferences.distanceUnit.unit()))
         }
@@ -70,7 +70,7 @@ fun AppearanceSettings(viewModel: SettingsViewModel) {
         CarSwitchRow(
             switchState = viewModel.settingsState.showConsumptionGages,
             onClick = { newState ->
-                viewModel.settingsState = viewModel.settingsState.copy(showConsumptionGages = newState)
+                viewModel.setShowConsumptionGages(newState)
             }
         ) {
             Text(text = stringResource(id = R.string.settings_visible_gages))
@@ -84,7 +84,7 @@ fun AppearanceSettings(viewModel: SettingsViewModel) {
                     options = listOf("Green", "White"),
                     selectedIndex = viewModel.settingsState.secondaryConsumptionPlotColor,
                     onSelectedIndexChanged = { index ->
-                        viewModel.settingsState = viewModel.settingsState.copy(secondaryConsumptionPlotColor = index)
+                        viewModel.setSecondaryConsumptionPlotColor(index)
                     }
                 )
             }
@@ -101,7 +101,7 @@ fun AppearanceSettings(viewModel: SettingsViewModel) {
         CarSwitchRow(
             switchState = viewModel.settingsState.showChargingGages,
             onClick = { newState ->
-                viewModel.settingsState = viewModel.settingsState.copy(showChargingGages = newState)
+                viewModel.setShowChargingGages(newState)
             }
         ) {
             Text(text = stringResource(id = R.string.settings_visible_gages))
@@ -115,7 +115,7 @@ fun AppearanceSettings(viewModel: SettingsViewModel) {
                     options = listOf("Green", "White"),
                     selectedIndex = viewModel.settingsState.secondaryChargePlotColor,
                     onSelectedIndexChanged = { index ->
-                        viewModel.settingsState = viewModel.settingsState.copy(secondaryChargePlotColor = index)
+                        viewModel.setSecondaryChargePlotColor(index)
                     }
                 )
             }

@@ -1,10 +1,12 @@
 package com.ixam97.carStatsViewer.compose.components
 
 import android.util.Log
-import android.view.WindowInsets.Side
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -13,16 +15,16 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,26 +38,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.theme.CarTheme
 import com.ixam97.carStatsViewer.compose.theme.LocalBrushes
-import com.ixam97.carStatsViewer.compose.theme.disabledTextColor
 
 @Composable
 fun SideTabLayout(
     modifier: Modifier = Modifier,
     tabs: List<SideTab>,
-    tabsColumnWidth: Dp? = null,
     topLevelBackAction: () -> Unit,
     topLevelTitle: String,
     tabsColumnBackground: Color = MaterialTheme.colors.surface
@@ -83,7 +79,11 @@ fun SideTabLayout(
             ) {
                 NavHost(
                     navController = navController,
-                    startDestination = "Parent"
+                    startDestination = "Parent",
+                    enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(250)) },
+                    exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Start, tween(250)) },
+                    popEnterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(250)) },
+                    popExitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.End, tween(250)) }
                 ) {
                     composable("Parent") {
                         Column {
@@ -133,44 +133,49 @@ fun SideTabLayout(
                         title = topLevelTitle,
                         onBackClick = topLevelBackAction
                     )
-                    Spacer(modifier = Modifier.size(30.dp))
-                    tabs.filter{it.type == SideTab.Type.Tab}.forEachIndexed { index, tab ->
-                        if (tab.enabled) {
-                            Row(
-                                modifier = Modifier
-                                    .clickable {
-                                        selectedIndex = index
-                                        navController.navigate(tab.route) {
-                                            navController.popBackStack()
-                                        }
-                                    }
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 10.dp, vertical = 10.dp)
-                                    .clip(RoundedCornerShape(CarTheme.buttonCornerRadius))
-                                    .background(if (index == selectedIndex) MaterialTheme.colors.secondary else Color.Transparent)
-                                    .padding(CarTheme.buttonPaddingValues)
-                                    .padding(end = 10.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                if (tab.tabIcon != null) {
-                                    Icon(
-                                        modifier = Modifier
-                                            .heightIn(min = 50.dp)
-                                            .width(50.dp),
-                                        imageVector = tab.tabIcon,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colors.onBackground
-                                    )
-                                    Spacer(Modifier.size(24.dp))
-                                }
-                                Text(
+                    Column(
+                        modifier = Modifier.verticalScroll(rememberScrollState())
+                    ) {
 
-                                    text = tab.tabTitle,
-                                    style = MaterialTheme.typography.h2,
-                                    // color = if (index == selectedIndex) MaterialTheme.colors.secondary else Color.White,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Visible
-                                )
+                        Spacer(modifier = Modifier.size(30.dp))
+                        tabs.filter{it.type == SideTab.Type.Tab}.forEachIndexed { index, tab ->
+                            if (tab.enabled) {
+                                Row(
+                                    modifier = Modifier
+                                        .clickable {
+                                            selectedIndex = index
+                                            navController.navigate(tab.route) {
+                                                navController.popBackStack()
+                                            }
+                                        }
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 10.dp, vertical = 10.dp)
+                                        .clip(RoundedCornerShape(CarTheme.buttonCornerRadius))
+                                        .background(if (index == selectedIndex) MaterialTheme.colors.secondary else Color.Transparent)
+                                        .padding(CarTheme.buttonPaddingValues)
+                                        .padding(end = 10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    if (tab.tabIcon != null) {
+                                        Icon(
+                                            modifier = Modifier
+                                                .heightIn(min = 50.dp)
+                                                .width(50.dp),
+                                            imageVector = tab.tabIcon,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colors.onBackground
+                                        )
+                                        Spacer(Modifier.size(24.dp))
+                                    }
+                                    Text(
+
+                                        text = tab.tabTitle,
+                                        style = MaterialTheme.typography.h2,
+                                        // color = if (index == selectedIndex) MaterialTheme.colors.secondary else Color.White,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Visible
+                                    )
+                                }
                             }
                         }
                     }
@@ -186,7 +191,11 @@ fun SideTabLayout(
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = tabs.filter { it.type == SideTab.Type.Tab }[0].route
+                        startDestination = tabs.filter { it.type == SideTab.Type.Tab }[0].route,
+                        enterTransition = { fadeIn() },
+                        exitTransition = { fadeOut() },
+                        popEnterTransition = { fadeIn() },
+                        popExitTransition = { fadeOut() }
                     ) {
                         tabs.forEach { tab ->
                             composable(tab.route) {

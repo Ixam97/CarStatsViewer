@@ -25,22 +25,22 @@ fun GeneralSettings(
             .verticalScroll(rememberScrollState())
     ) {
         CarSwitchRow(
-            switchState = false,
-            onClick = { }
+            switchState = viewModel.settingsState.autoAppStart,
+            onClick = { viewModel.setAutoAppStart(it) }
         ) {
             Text(text = stringResource(id = R.string.settings_autostart))
         }
         Divider(Modifier.padding(horizontal = 20.dp))
         CarSwitchRow(
-            switchState = false,
-            onClick = { }
+            switchState = viewModel.settingsState.phoneNotification,
+            onClick = { viewModel.setPhoneNotification(it) }
         ) {
             Text(text = stringResource(id = R.string.settings_phone_reminder))
         }
         Divider(Modifier.padding(horizontal = 20.dp))
         CarSwitchRow(
-            switchState = false,
-            onClick = { }
+            switchState = viewModel.settingsState.detailedNotifications,
+            onClick = { viewModel.setDetailedNotifications(it) }
         ) {
             Text(text = stringResource(id = R.string.settings_notifications))
         }
