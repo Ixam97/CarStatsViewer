@@ -267,6 +267,17 @@
         <item>Implementado o Firebase Crashlytics. Pode ser desativado nas definições.</item>
         <item>Implementação do Automotive App Host para uma possível versão pública na Play Store (não presente em compilações legadas).</item>
         <item>[V] (0.27.0)</item>
+        <item>Relatórios de falhas aprimorados.</item>
+        <item>Correção de falhas causadas pela gravação de dados de viagem.</item>
+        <item>(Play Edition) Foi corrigido um problema em que as interações de notificação bloqueavam a aplicação.</item>
+        <item>(Play Edition) Deteção de falhas na criação do changelog.</item>
+        <item>(Play Edition) Desactivou temporariamente o Painel de controlo do legado e o Histórico de viagens devido a limitações impostas pelas Diretrizes da Google.</item>
+        <item>[V](0.27.1)</item>
+        <item>Adicionado tratamento de erros e registo de alterações de viagem.</item>
+        <item>[V](0.27.2)</item>
+        <item>NOTA: Atualmente, o EX30 não comunica quaisquer valores de energia à aplicação. Por conseguinte, não estão disponíveis estatísticas de energia. Atualmente, não é claro se e quando isto será corrigido pela Volvo.</item>
+        <item>Adicionadas condições de arranque adicionais (por exemplo, para o Volvo EX30)</item>
+        <item>[V](0.27.3)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Atualização instalada!</string>
     <string name="dialog_changes_title_changelog">Registo de alterações</string>
