@@ -41,7 +41,7 @@ class TripHistoryScreen(carContext: CarContext):
     private val maxListLength = carContext.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
     private val screenManager = carContext.getCarService(ScreenManager::class.java)
 
-    private var contentLoaded = false
+    private var loading = true
 
     private var activeDrivingSessions = listOf<DrivingSession>()
     private var pastDrivingSessions = listOf<DrivingSession>()
@@ -63,21 +63,30 @@ class TripHistoryScreen(carContext: CarContext):
         setHeader(Header.Builder().apply {
             setTitle(carContext.getString(R.string.history_title))
             setStartHeaderAction(Action.BACK)
-            addEndHeaderAction(Action.Builder().apply {
-                setTitle("Refresh")
-                setOnClickListener { invalidate() }
-            }.build())
-            addEndHeaderAction(Action.Builder().apply {
-                setIcon(carContext.carIconFromRes(R.drawable.ic_filter))
-                setOnClickListener {
-                    screenManager.pushForResult(TripHistoryFilterScreen(carContext)) { result ->
-                        loadTripsFromDataSource()
+            if(loading) {
+                addEndHeaderAction(Action.Builder().apply {
+                    setTitle("Refresh")
+                    setOnClickListener { invalidate() }
+                }.build())
+            } else {
+                addEndHeaderAction(Action.Builder().apply {
+                    setIcon(carContext.carIconFromRes(R.drawable.ic_upload))
+                    setOnClickListener {
+
                     }
-                }
-                setEnabled(false)
-            }.build())
+                }.build())
+                addEndHeaderAction(Action.Builder().apply {
+                    setIcon(carContext.carIconFromRes(R.drawable.ic_filter))
+                    setOnClickListener {
+                        screenManager.pushForResult(TripHistoryFilterScreen(carContext)) { result ->
+                            loadTripsFromDataSource()
+                        }
+                    }
+                    setEnabled(false)
+                }.build())
+            }
         }.build())
-        if (contentLoaded) {
+        if (!loading) {
             addSectionedList(
                 SectionedItemList.create(
                     activeTripsItemList(),
@@ -93,7 +102,7 @@ class TripHistoryScreen(carContext: CarContext):
                 )
             }
         }
-        setLoading(!contentLoaded)
+        setLoading(loading)
     }.build()
 
     private fun activeTripsItemList() = ItemList.Builder().apply {
@@ -172,7 +181,7 @@ class TripHistoryScreen(carContext: CarContext):
 
     private fun loadTripsFromDataSource() {
         lifecycleScope.launch(Dispatchers.IO) {
-            contentLoaded = false
+            loading = true
             invalidate()
             showManualTrips = CarStatsViewer.appPreferences.tripFilterManual
             showSinceChargeTrips = CarStatsViewer.appPreferences.tripFilterCharge
@@ -193,7 +202,7 @@ class TripHistoryScreen(carContext: CarContext):
 
             pastDrivingSessions = trips.subList(0, (trips.size).coerceAtMost(50.coerceAtMost(maxListLength)))
 
-            contentLoaded = true
+            loading = false
             withContext(Dispatchers.Main) {
                 invalidate()
             }
