@@ -267,6 +267,17 @@ Deze actie kan enige tijd duren, afhankelijk van de hoeveelheid gegevens. Blijf 
         <item>Firebase Crashlytics geïmplementeerd. Kan worden uitgeschakeld in de instellingen.</item>
         <item>De Automotive App Host geïmplementeerd voor een mogelijke openbare Play Store-release (niet opgenomen in oudere builds).</item>
         <item>[V](0,27,0)</item>
+        <item>Verbeterde crashrapportage.</item>
+        <item>Crashes opgelost die werden veroorzaakt door het opslaan van reisgegevens.</item>
+        <item>(Play Edition) Er is een probleem opgelost waarbij interacties met meldingen de app deden crashen.</item>
+        <item>(Play Edition) Crashes opvangen bij het maken van een changelog.</item>
+        <item>(Play Edition) Het oude dashboard en de reisgeschiedenis zijn tijdelijk gedeactiveerd vanwege beperkingen opgelegd door de richtlijnen van Google.</item>
+        <item>[V] (0.27.1)</item>
+        <item>Foutverwerking en -registratie toegevoegd aan reiswijzigingen.</item>
+        <item>[V] (0.27.2)</item>
+        <item>LET OP: Momenteel rapporteert de EX30 geen vermogenswaarden aan de app. Daarom zijn er geen energiestatistieken beschikbaar. Het is momenteel onduidelijk of en wanneer dit door Volvo wordt opgelost.</item>
+        <item>Extra startvoorwaarden toegevoegd (bijvoorbeeld voor de Volvo EX30)</item>
+        <item>[V] (0.27.3)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Update geïnstalleerd!</string>
     <string name="dialog_changes_title_changelog">Overzicht wijzigingen</string>
