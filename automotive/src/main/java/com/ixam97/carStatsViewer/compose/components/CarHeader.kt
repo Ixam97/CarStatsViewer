@@ -55,3 +55,39 @@ fun CarHeader(
         )
     }
 }
+
+@Composable
+fun CarHeaderWithContent(
+    onBackClick: (() -> Unit)? = null,
+    minimal: Boolean = false,
+    headerLineBrush: Brush = CarTheme.brushes.headerLineBrush,
+    content: @Composable () -> Unit
+) {
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(90.dp),
+            // .background(color = if (!minimal) MaterialTheme.colors.background else Color.Transparent),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (onBackClick != null) {
+                CarIconButton(
+                    onClick = onBackClick,
+                    iconResId = R.drawable.ic_arrow_back,
+                    tint = if (!minimal) MaterialTheme.colors.secondary else MaterialTheme.colors.onBackground
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+            } else Spacer(modifier = Modifier.width(24.dp))
+            content()
+        }
+        if (!minimal) Box(
+            modifier = Modifier
+                .height(3.dp)
+                .fillMaxWidth()
+                .background(
+                    brush = headerLineBrush
+                ),
+        )
+    }
+}

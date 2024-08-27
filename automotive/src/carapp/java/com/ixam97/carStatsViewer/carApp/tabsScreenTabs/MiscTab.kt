@@ -3,7 +3,6 @@ package com.ixam97.carStatsViewer.carApp.tabsScreenTabs
 import android.content.Intent
 import androidx.annotation.OptIn
 import androidx.car.app.annotations.ExperimentalCarApi
-import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
@@ -21,13 +20,16 @@ import com.ixam97.carStatsViewer.ui.activities.HistoryActivity
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
 
 import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
+import com.ixam97.carStatsViewer.compose.ComposeTripDetailsActivity
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
-import com.ixam97.carStatsViewer.ui.activities.SettingsActivity
 
 @OptIn(ExperimentalCarApi::class)
 internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
 
     val composeSettingsActivityIntent = Intent(carContext, ComposeSettingsActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+    val composeTripDetailsScreen = Intent(carContext, ComposeTripDetailsActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
     val mainActivityIntent = Intent(carContext, MainActivity::class.java).apply {
@@ -69,6 +71,14 @@ internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
             setBrowsable(true)
             setOnClickListener(ParkedOnlyOnClickListener.create {
                 carContext.startActivity(composeSettingsActivityIntent)
+            })
+        }.build())
+        addItem(Row.Builder().apply {
+            setTitle("Compose Trip Details")
+            setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).build())
+            setBrowsable(true)
+            setOnClickListener(ParkedOnlyOnClickListener.create {
+                carContext.startActivity(composeTripDetailsScreen)
             })
         }.build())
         addItem(Row.Builder().apply{

@@ -108,12 +108,12 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             content = { DevSettings() },
             enabled = viewModel.isDevEnabled
         ),
-        // SideTab(
-        //     tabTitle = "Mapbox Test",
-        //     route = SettingsScreens.MAPBOX_TEST,
-        //     type = SideTab.Type.Tab,
-        //     content = { MapboxScreen() }
-        // )
+        SideTab(
+            tabTitle = "Mapbox Test",
+            route = SettingsScreens.MAPBOX_TEST,
+            type = SideTab.Type.Tab,
+            content = { MapboxScreen() }
+        )
     )
     
     Column(
