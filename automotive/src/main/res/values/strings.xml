@@ -7,6 +7,7 @@
     <string name="polestar_fans_link" translatable="false">https://polestar.fans/t/carstatsviewer-informationen/15027</string>
     <string name="polestar_forum_link" translatable="false">https://www.polestar-forum.com/threads/car-stats-viewer-a-better-range-assistant.10261/#post-188544</string>
     <string name="github_issues_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/issues</string>
+    <string name="privacy_policy_link" translatable="false">https://github.com/Ixam97/CarStatsViewer/blob/master/docs/PRIVACY.md</string>
     <string-array name="contributors" translatable="false">
         <item>Dario Bosshard</item>
         <item>Jakob Schlyter</item>
@@ -16,7 +17,6 @@
         <item>Klaus Rheinwald</item>
     </string-array>
     <string-array name="supporters" translatable="false">
-        <item>Ahti Hinnov</item>
         <item>Robin Hellström</item>
         <item>Benjamin Stegmann</item>
         <item>Horst Zimmermann</item>
@@ -35,6 +35,9 @@
         <item>Oliver Charlton</item>
         <item>Dennis Berggren</item>
         <item>Erik Jan Rouwenhorst</item>
+        <item>Ahti Hinnov</item>
+        <item>Jonas Friedemann Heuer</item>
+        <item>David Baumann</item>
     </string-array>
     <string-array name="translators" translatable="false">
         <item>Emacee</item>
@@ -44,6 +47,7 @@
         <item>Oddvar Rasmussen</item>
         <item>DoubleYou</item>
         <item>078emil</item>
+        <item>Dominik Brüning</item>
         <item>Juha Mönkkönen</item>
         <item>Ossi Lahtinen</item>
         <item>J-P</item>
@@ -51,7 +55,9 @@
         <item>Jere Kataja</item>
         <item>Pedro Leite</item>
         <item>Michele Campeotto</item>
+        <item>Teribot</item>
         <item>GD</item>
+        <item>Joachim Appinger</item>
         <item>Robin Hellström</item>
         <item>Silver Beard</item>
         <item>Eric van Engelen</item>
@@ -59,77 +65,94 @@
         <item>Luiz Pacifico Centa</item>
         <item>Ricardo Blauth</item>
         <item>Marcelo Fornereto</item>
+        <item>Rafael Miranda</item>
+        <item>Patrick Pimentel</item>
+        <item>GuidoMa</item>
+        <item>Mário Franco</item>
     </string-array>
 
-    <string-array name="changes_0_26_2">
-        <item>Tweaked summary plot controls</item>
-        <item>Fixed broken layout after Polestar OTA P3.0.3</item>
-        <item>Fixed some layout issues on Volvo Infotainment</item>
-    </string-array>
-    <string-array name="changes_0_26_1">
-        <item>Fix for Android 12 (P3.0)</item>
-    </string-array>
-    <string-array name="changes_0_26_0">
-        <item>Added experimental color scheme.</item>
-        <item>Simplified secondary axis selector.</item>
-        <item>Separated database upload into chunks to prevent false negatives and display progress.</item>
-    </string-array>
-
-    <string-array name="changes_0_25_2">
-        <item>Expanded Webhook API capabilities.</item>
-        <item>Added an option for a phone reminder when leaving the car.</item>
-        <item>Optimizations in plot rendering and loading performance.</item>
-        <item>Fixed an issue where sometimes wrong charging sessions would be shown in trip summary.</item>
-        <item>Fixed an issue causing the app to not use miles as distance unit.</item>
-    </string-array>
-    <string-array name="changes_0_25_1">
-        <item>UI adjustments, especially in the trip summary.</item>
-        <item>Added vehicle configuration for MY24.</item>
-        <item>The sharing of the current location can now be configured for each API individually.</item>
-        <item>Minor bugfixes.</item>
-    </string-array>
-
-    <string-array name="changes_0_25_0">
-        <item>Implemented a local database for more robust and performant saving of trip data.</item>
-        <item>Charging session can now be interrupted up to 5 minutes before beginning a new session, even if the car was moved.</item>
-        <item>Added the trip history to view past trips.</item>
-        <item>Added quick select buttons for 20, 40 and 100 km in the trip summary.</item>
-        <item>Added an icon representing the selected trip type. Taping on the trip stats cycles between the 4 trip types.</item>
-        <item>Added setting to select which APIs connection status should be displayed in the main view.</item>
-        <item>It is now possible to reset the manual trip from the main view.</item>
-        <item>Adjusted the HTTP webhook data set to the new data structure.</item>
-        <item>General bugfixes and stability improvements.</item>
-    </string-array>
-
-    <string-array name="changes_0_24_1">
-        <item>Altitude change added in trip summary (experimental)</item>
-        <item>Fixed wrong units in summary diagram</item>
-        <item>Fixed wrong dates of charging sessions in summary</item>
-        <item>Improved restart notification conditions</item>
-        <item>Changed energy tracking conditions (experimental)</item>
-    </string-array>
-
-    <string-array name="changes_0_24">
-        <item>Added multiple live data APIs:\n- ABRP OTA live data\n- HTTP Webhook with BasicAuth</item>
-        <item>Added location tracking and elevation history</item>
-        <item>Added restart notification after a reboot, update or app crash</item>
-        <item>Added vehicle setup</item>
-        <item>Restructured settings menu</item>
-        <item>Fixed main view units not updating</item>
-        <item>General bugfixes and stability improvements</item>
-    </string-array>
-
-    <string-array name="changes_0_23">
-        <item>Data structure revamped to increase stability and scalability</item>
-        <item>Added danish translation</item>
-        <item>Added "About Car Stats Viewer" (incl. overhaul ReadMe with info about supporting and contributing)</item>
-        <item>Added multiple trip trackers running at the same time (manual trip, since last charge, auto trip, current month)</item>
-        <item>Various visual improvements for the plot views</item>
-        <item>Specific values in plot views can be highlighted by double taping</item>
-        <item>Debug-Logs can be sent via SMTP (experimental!)</item>
-        <item>Stabilized behaviour of charging curve when the app is paused while charging</item>
-        <item>Optimized driver distraction optimization</item>
+    <string-array name="changes">
         <item>Various bug fixes and stability improvements</item>
+        <item>Optimized driver distraction optimization</item>
+        <item>Stabilized behaviour of charging curve when the app is paused while charging</item>
+        <item>Debug-Logs can be sent via SMTP (experimental!)</item>
+        <item>Specific values in plot views can be highlighted by double tapping</item>
+        <item>Various visual improvements for the plot views</item>
+        <item>Added multiple trip trackers running at the same time (manual trip, since last charge, auto trip, current month)</item>
+        <item>Added "About Car Stats Viewer" (incl. overhaul ReadMe with info about supporting and contributing)</item>
+        <item>Added danish translation</item>
+        <item>Data structure revamped to increase stability and scalability</item>
+        <item>[V](0.23.0)</item>
+        <item>General bugfixes and stability improvements</item>
+        <item>Fixed main view units not updating</item>
+        <item>Restructured settings menu</item>
+        <item>Added vehicle setup</item>
+        <item>Added restart notification after a reboot, update or app crash</item>
+        <item>Added location tracking and elevation history</item>
+        <item>Added multiple live data APIs:\n- ABRP OTA live data\n- HTTP Webhook with BasicAuth</item>
+        <item>[V](0.24.0)</item>
+        <item>Changed energy tracking conditions (experimental)</item>
+        <item>Improved restart notification conditions</item>
+        <item>Fixed wrong dates of charging sessions in summary</item>
+        <item>Fixed wrong units in summary diagram</item>
+        <item>Altitude change added in trip summary (experimental)</item>
+        <item>[V](0.24.1)</item>
+        <item>General bugfixes and stability improvements.</item>
+        <item>Adjusted the HTTP webhook data set to the new data structure.</item>
+        <item>It is now possible to reset the manual trip from the main view.</item>
+        <item>Added setting to select which APIs connection status should be displayed in the main view.</item>
+        <item>Added an icon representing the selected trip type. Tapping on the trip stats cycles between the 4 trip types.</item>
+        <item>Added quick select buttons for 20, 40 and 100 km in the trip summary.</item>
+        <item>Added the trip history to view past trips.</item>
+        <item>Charging session can now be interrupted up to 5 minutes before beginning a new session, even if the car was moved.</item>
+        <item>Implemented a local database for more robust and performant saving of trip data.</item>
+        <item>[V](0.25.0)</item>
+        <item>Minor bugfixes.</item>
+        <item>The sharing of the current location can now be configured for each API individually.</item>
+        <item>Added vehicle configuration for MY24.</item>
+        <item>UI adjustments, especially in the trip summary.</item>
+        <item>[V](0.25.1)</item>
+        <item>Fixed an issue causing the app to not use miles as distance unit.</item>
+        <item>Fixed an issue where sometimes wrong charging sessions would be shown in trip summary.</item>
+        <item>Optimizations in plot rendering and loading performance.</item>
+        <item>Added an option for a phone reminder when leaving the car.</item>
+        <item>Expanded Webhook API capabilities.</item>
+        <item>[V](0.25.2)</item>
+        <item>Separated database upload into chunks to prevent false negatives and display progress.</item>
+        <item>Simplified secondary axis selector.</item>
+        <item>Added experimental color scheme.</item>
+        <item>[V](0.26.0)</item>
+        <item>Fix for Android 12 (P3.0)</item>
+        <item>[V](0.26.1)</item>
+        <item>Fixed some layout issues on Volvo Infotainment</item>
+        <item>Fixed broken layout after Polestar OTA P3.0.3</item>
+        <item>Tweaked summary plot controls</item>
+        <item>[V](0.26.2)</item>
+        <item>Fixed experimental color scheme not working.</item>
+        <item>Debug logs get deleted after 28 days once a day.</item>
+        <item>Reduced database access by limiting the logging within debug settings.</item>
+        <item>The Webhook now populates \"charged_soc\" at the end of a charging session.</item>
+        <item>The database upload now contains charging curves.</item>
+        <item>The database upload now creates a separate service. You no longer need to remain on the trip history screen during the Upload. A notification will be posted to the notification center to show progress.</item>
+        <item>Charging curve no longer cuts off above 160 kW in Trip Summary.</item>
+        <item>Overhauled changelog creation method.</item>
+        <item>Implemented Firebase Crashlytics. Can be disabled in settings.</item>
+        <item>Implemented the Automotive App Host for a potential public Play Store release (not contained in legacy builds).</item>
+        <item>[V](0.27.0)</item>
+        <item>Improved crash reporting.</item>
+        <item>Fixed crashes caused by saving trip data.</item>
+        <item>(Play Edition) Fixed an issue where notification interactions would crash the app.</item>
+        <item>(Play Edition) Catching crashes on changelog creation.</item>
+        <item>(Play Edition) Temporarily deactivated Legacy Dashboard and Trip History because of limitations imposed by Google Guidelines.</item>
+        <item>[V](0.27.1)</item>
+        <item>Added error handling and logging to trip changes.</item>
+        <item>[V](0.27.2)</item>
+        <item>PLEASE NOTE: Currently the EX30 does not report any power values to the app. Therefore no energy statistics will be available. It is currently unclear if and when this will be fixed by Volvo.</item>
+        <item>Added additional drive start conditions (for example for the Volvo EX30)</item>
+        <item>[V](0.27.3)</item>
+    </string-array>
+
+    <string-array translatable="false" name="pending_changes">
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
@@ -182,6 +205,10 @@
     <string name="main_button_show_speed">Show speed</string>
     <string name="main_secondary_axis">Secondary axis: %s</string>
     <string name="main_changelog_dialog_title">Changes in version %s:</string>
+
+    <string name="dialog_changes_title_updated">Update installed!</string>
+    <string name="dialog_changes_title_changelog">Changelog</string>
+    <string name="dialog_changes_message">%1$s has been updated to version %2$s!</string>
 
     <!-- SummaryActivity -->
     <string name="summary_title">Trip summary</string>
@@ -350,5 +377,35 @@
 
     <string name="history_dialog_upload_title">Upload Database to API</string>
     <string name="history_dialog_upload_message">You are about to upload the entire local database to the endpoint specified in the Webhook API!\n\nMake sure there is no duplicate data on the server to prevent implausible values.\n\nThis Action may take some time depending on the amount of data. Please remain on this page until a success notification is shown!</string>
+    <string name="history_dialog_upload_message_2">You are about to upload the entire local database to the endpoint specified in the Webhook API!\n\nMake sure there is no duplicate data on the server to prevent implausible values.\n\nThis Action may take some time depending on the amount of data. A progress notification will be added to the Notification Center. The system can be used as usual.</string>
     <string name="history_dialog_upload_upload_button">Upload</string>
+
+    <!-- Car App -->
+    <string name="car_app_trip_data">Trip Data</string>
+    <string name="car_app_strip_selection">Trip selection</string>
+    <string name="car_app_dashboard">Dashboard</string>
+    <string name="car_app_legacy_dashboard">Legacy Dashboard</string>
+    <string name="car_app_legacy_dashboard_desc">Opens the Dashboard known from the legacy version of Car Stats Viewer. Also contains the real time charging curve while charging. Not available while driving!</string>
+    <string name="car_app_legacy_history_desc">Shows a list of all past trips and allows to view detailed statistics for each trip. Not available while driving!</string>
+    <string name="car_app_menu">Miscellaneous</string>
+    <string name="car_app_menu_other_views">Other Views</string>
+    <string name="car_app_status">API Status</string>
+    <string name="car_app_toast_reset_confirmation">Manual Trip has been reset.</string>
+    <string name="car_app_toast_reset_hint">Press again to reset manual Trip.</string>
+    <string name="car_app_unknown">Unknown</string>
+
+    <string name="car_app_permissions_title" translatable="false">@string/app_name</string>
+    <string name="car_app_permissions_message">Car Stats Viewer needs access to location and vehicle data permissions to function. Please grant these permissions.\n\nLocation tracking can be switched on or off in the app settings. No data is sent to any servers by default.</string>
+    <string name="car_app_permissions_grant">Grant permissions</string>
+    <string name="car_app_permissions_deny">Deny and exit</string>
+
+    <string name="car_app_dev_notice_message">Car Stats Viewer is still in development! Be aware that features may change, get added or removed without notice and data loss may occur!\n\nIf you find bugs or want to give feedback, please visit the GitHub repository of the app or the thread in the Polestar Club Forum on this topic. A link can be found in the apps Settings → About Car Stats Viewer.</string>
+    <string name="car_app_dev_notice_title" translatable="false">@string/app_name</string>
+    <string name="car_app_dev_notice_confirm">Understood</string>
+
+    <string name="car_app_advanced_settings">Advanced Settings</string>
+    <string name="car_app_quick_settings">Quick Settings</string>
+    <string name="car_app_show_real_time_data_title">Show real time data</string>
+    <string name="car_app_show_real_time_data_subtitle">Power, inst. consumption and altitude in the Trips Tab.</string>
+    <string name="car_app_show_real_time_data_hint">If this option is enabled, UI might react with noticeable delay due to high frequency of UI updates issued by real time data.</string>
 </resources>

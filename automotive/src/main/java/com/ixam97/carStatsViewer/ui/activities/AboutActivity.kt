@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.ui.activities
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
@@ -9,54 +8,58 @@ import androidx.fragment.app.FragmentActivity
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.utils.applyTypeface
-import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
-import kotlinx.android.synthetic.main.activity_about.*
+import com.ixam97.carStatsViewer.databinding.ActivityAboutBinding
 
 class AboutActivity : FragmentActivity() {
 
+    private lateinit var binding: ActivityAboutBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentViewAndTheme(this, R.layout.activity_about)
 
-        CarStatsViewer.typefaceMedium?.let {
-            applyTypeface(about_activity)
-        }
+        if (CarStatsViewer.appPreferences.colorTheme > 0) setTheme(R.style.ColorTestTheme)
+        binding = ActivityAboutBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        about_button_back.setOnClickListener {
+
+
+        binding.aboutButtonBack.setOnClickListener {
             finish()
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            if (BuildConfig.FLAVOR_aaos != "carapp")
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
-        about_version_widget.setOnRowClickListener {
-            CarStatsViewer.getChangelogDialog(this).show()
+        binding.aboutVersionWidget.setOnRowClickListener {
+            CarStatsViewer.getChangelogDialog(this, isChangelog = true).show()
         }
-        about_support_widget.setOnRowClickListener {
+        binding.aboutSupportWidget.setOnRowClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.readme_link))))
         }
 
-        about_support_widget.setOnRowClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.readme_link))))
-        }
-
-        about_forums_widget.setOnRowClickListener {
+        binding.aboutForumsWidget.setOnRowClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.polestar_forum_link))))
         }
 
-        about_club_widget.setOnRowClickListener() {
+        binding.aboutClubWidget.setOnRowClickListener() {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.polestar_fans_link))))
         }
 
-        about_github_issues_widget.setOnRowClickListener() {
+        binding.aboutGithubIssuesWidget.setOnRowClickListener() {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.github_issues_link))))
         }
 
-        about_libs_widget.setOnRowClickListener {
+        binding.aboutLibsWidget.setOnRowClickListener {
             startActivity(Intent(this, LibsActivity::class.java))
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+            if (BuildConfig.FLAVOR_aaos != "carapp")
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 
-        about_version_widget.bottomText = "%s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
+        binding.aboutPrivacyWidget.setOnRowClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.privacy_policy_link))))
+        }
+
+        binding.aboutVersionWidget.bottomText = "%s (%s)".format(BuildConfig.VERSION_NAME, BuildConfig.APPLICATION_ID)
 
         var contributors = ""
         val contributorsArray = resources.getStringArray(R.array.contributors)
@@ -64,9 +67,9 @@ class AboutActivity : FragmentActivity() {
             contributors += contributor
             if (index < contributorsArray.size -1) contributors += ", "
         }
-        about_contributors_widget.bottomText = contributors
+        binding.aboutContributorsWidget.bottomText = contributors
 
-        about_translators_widget.setOnRowClickListener {
+        binding.aboutTranslatorsWidget.setOnRowClickListener {
             val translatorsDialog = AlertDialog.Builder(this).apply {
                 setPositiveButton(getString(R.string.dialog_close)) { dialog, _ ->
                     dialog.cancel()
@@ -85,7 +88,7 @@ class AboutActivity : FragmentActivity() {
             translatorsDialog.show()
         }
 
-        about_supporters_widget.setOnRowClickListener {
+        binding.aboutSupportersWidget.setOnRowClickListener {
             val supportersDialog = AlertDialog.Builder(this).apply {
                 setPositiveButton(getString(R.string.dialog_close)) { dialog, _ ->
                     dialog.cancel()

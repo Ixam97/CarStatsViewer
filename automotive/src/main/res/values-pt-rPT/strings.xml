@@ -81,8 +81,9 @@
     <string name="quit_dialog_message">O log será copiado para a área de transferência.</string>
     <string name="dialog_close">Fechar</string>
     <string name="dialog_reset_title">Redefinir dados de viagem?</string>
+    <!-- This message has changed. Please make sure you adjust the translation accordingly! -->
     <!--This message has changed. Please make sure you adjust the translation accordingly!-->
-    <string name="dialog_reset_message">Os dados atuais da viagem serão redefinidos para zero. Quer salvar a viagem?</string>
+    <string name="dialog_reset_message">Os dados atuais da viagem serão redefinidos para zero. Vão ser guardados no histórico das viagens.</string>
     <string name="dialog_reset_do_save">Guardar</string>
     <string name="dialog_reset_no_save">Não gravar</string>
     <string name="dialog_reset_cancel">Cancelar</string>
@@ -99,18 +100,6 @@
     <string name="SinceChargeData">Desde a última carga</string>
     <string name="AutoTripData">Viagem automática</string>
     <string name="CurrentMonthData">Mês atual</string>
-    <string-array name="changes_0_23">
-        <item>Estrutura de dados renovada para aumentar a estabilidade e a escalabilidade</item>
-        <item>Adicionada tradução dinamarquesa</item>
-        <item>Adicionado \"Sobre o Car Stats Viewer\" (incluindo revisão do Leia-me com informações sobre suporte e contribuição)</item>
-        <item>Adicionado vários rastreadores de viagem em execução ao mesmo tempo (viagem manual, desde a última carga, viagem automática, mês atual)</item>
-        <item>Várias melhorias visuais para as visualizações dos graficos</item>
-        <item>Valores específicos em visualizações de graficos podem ser destacados com um toque duplo</item>
-        <item>Debug-Logs podem ser enviados via SMTP (experimental!)</item>
-        <item>Comportamento estabilizado da curva de carga quando a aplicação é pausada durante a carga</item>
-        <item>Otimização otimizada da distração do condutor</item>
-        <item>Várias correções de bugs e melhorias de estabilidade</item>
-    </string-array>
     <string name="main_changelog_dialog_title">Alterações na versão %s:</string>
     <string name="settings_apis_title">Configurações da API</string>
     <!-- Restart Dialog -->
@@ -153,41 +142,12 @@
     <string name="vehicle_performance">Atualização de Perfomance</string>
     <string name="vehicle_bst">Edição BST</string>
     <string name="vehicle_launch">Edição de Lançamento</string>
-    <string-array name="changes_0_24">
-        <item>Adicionadas várias APIs de dados em tempo real:
-- Dados ao vivo da ABRP OTA
-- Webhook HTTP com BasicAuth</item>
-        <item>Adicionado rastreamento de localização e histórico de elevação</item>
-        <item>Adicionada notificação de reinicialização após uma reinicialização, atualização ou falha no aplicativo</item>
-        <item>Adicionada a configuração do veículo</item>
-        <item>Reestruturação do menu de definições</item>
-        <item>Correção da atualização das unidades da vista principal</item>
-        <item>Correções de erros e melhorias de estabilidade</item>
-    </string-array>
     <string name="settings_use_location">Rastreamento da localização</string>
     <string name="settings_autostart">Arranque automático da aplicação</string>
     <string name="plot_dimensionY_SPEED">Velocidade</string>
     <string name="plot_dimensionY_ALTITUDE">Altitude</string>
-    <string-array name="changes_0_24_1">
-        <item>Mudança de altitude adicionada no resumo da viagem (experimental)</item>
-        <item>Unidades erradas corrigidas no diagrama de resumo</item>
-        <item>Correcção das datas erradas das sessões de carregamento no resumo</item>
-        <item>Condições de notificação de reinício melhoradas</item>
-        <item>Alteração das condições de monitorização da energia (experimental)</item>
-    </string-array>
     <string name="summary_altitude">Mudança de altitude</string>
     <string name="about_translators">Tradutores</string>
-    <string-array name="changes_0_25_0">
-        <item>Implementação de uma base de dados local para um armazenamento mais robusto e eficaz dos dados de viagem.</item>
-        <item>A sessão de carregamento agora pode ser interrompida até 5 minutos antes de iniciar uma nova sessão, mesmo que o carro tenha sido movido.</item>
-        <item>Adicionado o histórico de viagens para ver viagens anteriores.</item>
-        <item>Adicionados botões de seleção rápida para 20, 40 e 100 km no resumo da viagem.</item>
-        <item>Foi adicionado um ícone que representa o tipo de viagem selecionado. Tocar nas estatísticas de viagem alterna entre os 4 tipos de viagem.</item>
-        <item>Adicionada definição para selecionar que estado de ligação das APIs deve ser apresentado na vista principal.</item>
-        <item>Agora é possível repor a viagem manual a partir da vista principal.</item>
-        <item>Ajustado o conjunto de dados do webhook HTTP para a nova estrutura de dados.</item>
-        <item>Correções de erros e melhorias de estabilidade.</item>
-    </string-array>
     <string name="restart_notification_reason_unknown">%s foi reiniciado por um motivo desconhecido.</string>
     <string name="summary_speed">Velocidade média</string>
     <string-array name="trip_type_names">
@@ -220,4 +180,140 @@
     <string name="history_dialog_multi_delete_deselect">Desmarcar tudo</string>
     <string name="settings_distance_unit">Milhas como unidade de distância</string>
     <string name="settings_apis_connection_selector">Ícone de conetividade na vista principal:</string>
+    <string name="CurrentTripData_short">Manual</string>
+    <string name="SinceChargeData_short">Desde a carga</string>
+    <string name="AutoTripData_short">Automático</string>
+    <string name="CurrentMonthData_short">Mês</string>
+    <string name="settings_phone_reminder">Lembrete de telefone</string>
+    <string name="notification_phone">Levou o seu telemóvel?</string>
+    <string name="notification_valuables">Não deixe nenhum objeto de valor visível no carro.</string>
+    <string name="settings_experimental_colors">Esquema de cores experimental</string>
+    <string name="history_dialog_upload_title">Fazer upload do banco de dados para a API</string>
+    <string name="history_dialog_upload_message">Você está prestes a fazer upload de todo o banco de dados local para o endpoint especificado para API Webhook! 
+
+ Certifique-se de que não tenha dados duplicados no servidor para evitar valores implausíveis. 
+
+ Esta ação pode levar algum tempo dependendo da quantidade de dados. Por favor, permaneça nesta página até que uma notificação de sucesso seja exibida!</string>
+    <string name="history_dialog_upload_upload_button">Upload</string>
+    <string-array name="changes">
+        <item>Várias correções de bugs e melhorias de estabilidade</item>
+        <item>Otimização otimizada da distração do condutor</item>
+        <item>Comportamento estabilizado da curva de carga quando a aplicação é pausada durante a carga</item>
+        <item>Debug-Logs podem ser enviados via SMTP (experimental!)</item>
+        <item>Valores específicos em visualizações de graficos podem ser destacados com um toque duplo</item>
+        <item>Várias melhorias visuais para as visualizações dos graficos</item>
+        <item>Adicionado vários rastreadores de viagem em execução ao mesmo tempo (viagem manual, desde a última carga, viagem automática, mês atual)</item>
+        <item>Adicionado \"Sobre o Car Stats Viewer\" (incluindo revisão do Leia-me com informações sobre suporte e contribuição)</item>
+        <item>Adicionada tradução dinamarquesa</item>
+        <item>Estrutura de dados renovada para aumentar a estabilidade e a escalabilidade</item>
+        <item>[V](0.23.0)</item>
+        <item>Correções de erros e melhorias de estabilidade</item>
+        <item>Correção da atualização das unidades da vista principal</item>
+        <item>Reestruturação do menu de definições</item>
+        <item>Adicionada a configuração do veículo</item>
+        <item>Adicionada notificação de reinicialização após uma reinicialização, atualização ou falha no aplicativo</item>
+        <item>Adicionado rastreamento de localização e histórico de elevação</item>
+        <item>Adicionadas várias APIs de dados em tempo real:
+- Dados em directo OTA para ABRP
+- Webhook HTTP com BasicAuth</item>
+        <item>[V](0.24.0)</item>
+        <item>Alteração das condições de monitorização da energia (experimental)</item>
+        <item>Condições de notificação de reinício melhoradas</item>
+        <item>Correcção das datas erradas das sessões de carregamento no resumo</item>
+        <item>Unidades erradas corrigidas no diagrama de resumo</item>
+        <item>Mudança de altitude adicionada no resumo da viagem (experimental)</item>
+        <item>[V](0.24.1)</item>
+        <item>Correções de erros e melhorias de estabilidade.</item>
+        <item>Ajustado o conjunto de dados do webhook HTTP para a nova estrutura de dados.</item>
+        <item>Agora é possível repor a viagem manual a partir da vista principal.</item>
+        <item>Adicionada definição para selecionar que estado de ligação das APIs deve ser apresentado na vista principal.</item>
+        <item>Foi adicionado um ícone que representa o tipo de viagem selecionado. Tocar nas estatísticas de viagem alterna entre os 4 tipos de viagem.</item>
+        <item>Adicionados botões de seleção rápida para 20, 40 e 100 km no resumo da viagem.</item>
+        <item>Adicionado o histórico de viagens para ver viagens anteriores.</item>
+        <item>A sessão de carregamento agora pode ser interrompida até 5 minutos antes de iniciar uma nova sessão, mesmo que o carro tenha sido movido.</item>
+        <item>Implementação de uma base de dados local para um armazenamento mais robusto e eficaz dos dados de viagem.</item>
+        <item>[V](0.25.0)</item>
+        <item>Pequenas correcções de erros.</item>
+        <item>A partilha da localização atual pode agora ser configurada individualmente para cada API.</item>
+        <item>Adicionada configuração de veículo para MY24.</item>
+        <item>Ajustes da interface do utilizador, especialmente no resumo da viagem.</item>
+        <item>[V](0.25.1)</item>
+        <item>Foi corrigido um problema que fazia com que a aplicação não utilizasse milhas como unidade de distância.</item>
+        <item>Foi corrigido um problema em que, por vezes, eram apresentadas sessões de carregamento erradas no resumo da viagem.</item>
+        <item>Optimizações no desempenho de renderização e carregamento de gráficos.</item>
+        <item>Adicionada uma opção para um lembrete de telemóvel ao sair do carro.</item>
+        <item>Capacidades alargadas da API Webhook.</item>
+        <item>[V](0.25.2)</item>
+        <item>Separação do carregamento da base de dados em partes para evitar falsos negativos e apresentar o progresso.</item>
+        <item>Seletor de eixos secundários simplificado.</item>
+        <item>Adicionado esquema de cores experimental.</item>
+        <item>[V](0.26.0)</item>
+        <item>Correção para Android 12 (P3.0)</item>
+        <!-- taping or tapping? -->
+        <!--taping or tapping?-->
+        <item>[V](0.26.1)</item>
+        <item>Correção de alguns problemas de layout no Volvo Infotainment</item>
+        <item>Corrigido layout quebrado após Polestar OTA P3.0.3</item>
+        <item>Controlos de resumo de gráfico ajustados</item>
+        <item>[V](0.26.2)</item>
+        <item>Corrigido o esquema de cores experimental que não funcionava.</item>
+        <item>Os registos de depuração são eliminados após 28 dias, uma vez por dia.</item>
+        <item>Acesso reduzido à base de dados, limitando o registo nas definições de depuração.</item>
+        <item>O Webhook preenche agora \"charged_soc\" no final de uma sessão de carregamento.</item>
+        <item>O carregamento da base de dados contém agora curvas de carga.</item>
+        <item>O carregamento da base de dados cria agora um serviço separado. Já não é necessário permanecer no ecrã do histórico de viagens durante o Upload. Será colocada uma notificação no centro de notificações para mostrar o progresso.</item>
+        <item>A curva de carregamento já não é interrompida acima dos 160 kW no resumo da viagem.</item>
+        <item>Método de criação de changelog revisto.</item>
+        <item>Implementado o Firebase Crashlytics. Pode ser desativado nas definições.</item>
+        <item>Implementação do Automotive App Host para uma possível versão pública na Play Store (não presente em compilações legadas).</item>
+        <item>[V] (0.27.0)</item>
+        <item>Relatórios de falhas aprimorados.</item>
+        <item>Correção de falhas causadas pela gravação de dados de viagem.</item>
+        <item>(Play Edition) Foi corrigido um problema em que as interações de notificação bloqueavam a aplicação.</item>
+        <item>(Play Edition) Deteção de falhas na criação do changelog.</item>
+        <item>(Play Edition) Desactivou temporariamente o Painel de controlo do legado e o Histórico de viagens devido a limitações impostas pelas Diretrizes da Google.</item>
+        <item>[V](0.27.1)</item>
+        <item>Adicionado tratamento de erros e registo de alterações de viagem.</item>
+        <item>[V](0.27.2)</item>
+        <item>NOTA: Atualmente, o EX30 não comunica quaisquer valores de energia à aplicação. Por conseguinte, não estão disponíveis estatísticas de energia. Atualmente, não é claro se e quando isto será corrigido pela Volvo.</item>
+        <item>Adicionadas condições de arranque adicionais (por exemplo, para o Volvo EX30)</item>
+        <item>[V](0.27.3)</item>
+    </string-array>
+    <string name="dialog_changes_title_updated">Atualização instalada!</string>
+    <string name="dialog_changes_title_changelog">Registo de alterações</string>
+    <string name="dialog_changes_message">%1$s foi atualizado para a versão %2$s!</string>
+    <!-- Car App -->
+    <string name="car_app_trip_data">Dados da viagem</string>
+    <string name="car_app_strip_selection">Seleção da viagem</string>
+    <string name="car_app_dashboard">Painel de controlo</string>
+    <string name="car_app_legacy_dashboard">Painel de controlo legado</string>
+    <string name="car_app_menu">Diversos</string>
+    <string name="car_app_status">Estado da API</string>
+    <string name="car_app_toast_reset_confirmation">Viagem manual foi reposta</string>
+    <string name="car_app_toast_reset_hint">Prima novamente para repor a Viagem manual</string>
+    <string name="car_app_unknown">Desconhecido</string>
+    <string name="car_app_permissions_message">O Car Stats Viewer necessita de permissões de acesso aos dados de localização e do veículo para funcionar.Por favor, conceda estas permissões.
+
+O rastreio da localização pode ser ativado ou desativado nas definições da aplicação. Por defeito, não são enviados dados para nenhum servidor.</string>
+    <string name="car_app_permissions_grant">Conceder autorizações</string>
+    <string name="car_app_permissions_deny">Negar e Sair</string>
+    <string name="car_app_dev_notice_message">O Car Stats Viewer ainda está a ser desenvolvido! Tenha em atenção que as funcionalidades podem ser alteradas, adicionadas ou removidas sem aviso prévio e que pode ocorrer perda de dados!
+
+Se encontrar erros ou quiser dar feedback, visite o repositório GitHub da aplicação ou o tópico no Fórum do Polestar Club sobre este tema. Pode ser encontrada uma ligação nas Definições da aplicação → Acerca do visualizador de estatísticas do automóvel.</string>
+    <string name="car_app_dev_notice_confirm">Compreendido</string>
+    <string name="car_app_show_real_time_data_title">Mostrar dados em tempo real</string>
+    <string name="car_app_show_real_time_data_hint">Se esta opção estiver activada, a IU pode reagir com um atraso notável devido à elevada frequência de actualizações da IU feita em tempo real.</string>
+    <string name="car_app_legacy_dashboard_desc">Abre o painel de controlo conhecido da versão anterior do Car Stats Viewer. Também contém a curva de carga em tempo real durante o carregamento. Não disponível durante a condução!</string>
+    <string name="car_app_legacy_history_desc">Mostra uma lista de todas as viagens anteriores e permite ver estatísticas pormenorizadas de cada viagem. Não disponível durante a condução!</string>
+    <string name="car_app_advanced_settings">Configurações Avançadas</string>
+    <string name="car_app_quick_settings">Configurações Rápidas</string>
+    <string name="car_app_menu_other_views">Outras Vistas</string>
+    <string name="car_app_show_real_time_data_subtitle">Potência, consumo instantâneo e altitude no separador Viagens.</string>
+    <string name="history_dialog_upload_message_2">Está prestes a carregar toda o base de dados local para o endpoint especificado na API do Webhook!
+
+Certifique-se de que não existem dados duplicados no servidor para evitar valores implausíveis.
+
+Essa ação pode levar algum tempo, dependendo da quantidade de dados. Uma notificação de progresso será adicionada à Central de Notificações. O sistema pode ser usado normalmente.</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Captura de tela feita (total de %s).</string>
 </resources>

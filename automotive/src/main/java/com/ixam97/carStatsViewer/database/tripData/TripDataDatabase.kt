@@ -2,7 +2,6 @@ package com.ixam97.carStatsViewer.database.tripData
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.migration.AutoMigrationSpec
 
 @Database(entities =
     [

@@ -8,6 +8,7 @@ import android.view.View
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import java.util.*
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 
@@ -72,83 +73,12 @@ class GageView @JvmOverloads constructor(
         this.invalidate()
     }
 
-    private val posPaint = Paint().apply {
-        color = getPrimaryColor()
-    }
-
-    private val negPaint = Paint().apply {
-        color = Color.LTGRAY
-    }
-
-    private val namePaint = Paint().apply {
-        color = Color.GRAY
-        textSize = descriptionTextSize
-        CarStatsViewer.typefaceRegular?.let {
-            typeface = it
-            letterSpacing = -0.025f
-        }
-        isAntiAlias = true
-    }
-
-    private val unitPaint = Paint().apply {
-        color = getPrimaryColor()
-        textSize = descriptionTextSize
-        CarStatsViewer.typefaceRegular?.let {
-            typeface = it
-            letterSpacing = -0.025f
-        }
-        isAntiAlias = true
-    }
-
-    private val borderPaint = Paint().apply {
-        color = Color.DKGRAY
-        color = Color.argb(
-            (Color.alpha(color) * .5f).roundToInt(),
-            Color.red(color),
-            Color.green(color),
-            Color.blue(color))
-        strokeWidth = 2f
-        style = Paint.Style.STROKE
-    }
-
-    private val backgroundPaint = Paint().apply {
-        color = Color.BLACK
-        style = Paint.Style.FILL
-    }
-    private val zeroLinePaint = Paint().apply {
-        color = Color.GRAY
-        strokeWidth = 2f
-        style = Paint.Style.STROKE
-    }
-
-    private val valuePaint = Paint().apply {
-        color = Color.WHITE
-        textSize = valueTextSize
-        CarStatsViewer.typefaceRegular?.let {
-            typeface = it
-            letterSpacing = -0.025f
-        }
-        isAntiAlias = true
-    }
-
-    private val xTextMargin = dpToPx(15f)
-    private val yTextMargin = dpToPx(10f)
-    private val gageWidth = 2 * descriptionTextSize
-
-    private val nameYPos = namePaint.textSize * 0.76f
-    private val valueYPos = nameYPos + valuePaint.textSize * 0.9f
-    private val unitYPos = valueYPos - (valuePaint.textSize * 0.8f - unitPaint.textSize)
-
-    private val viewHeight = valueYPos + dpToPx(3f)
-    private var viewWidth = 0f
-
-    private var gageBarRect = RectF()
-    private val gageBorder = Path()
-    private val gageZeroLine = Path()
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-
+    /**
+     * Made this callable externally. Allows the gage to be drawn on a Canvas outside of a Layout.
+     * Returns a Rect with its boundaries.
+     */
+    fun drawGage(canvas: Canvas, xOffset: Int = 0, yOffset: Int = 0): Rect {
+        canvas.translate(xOffset.toFloat(), yOffset.toFloat())
         var gageValue = 0f
         var gagePaint = posPaint
 
@@ -177,27 +107,27 @@ class GageView @JvmOverloads constructor(
         if (barVisibility) {
             gageBarRect.left = borderPaint.strokeWidth
             gageBarRect.top = gageRectYPos
-            gageBarRect.right = gageWidth - borderPaint.strokeWidth/2
+            gageBarRect.right = (gageWidth - borderPaint.strokeWidth/2)
             gageBarRect.bottom = gageZeroLineYPos
 
-            gageBorder.moveTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
-            gageBorder.lineTo(borderPaint.strokeWidth/2, viewHeight - borderPaint.strokeWidth/2)
-            gageBorder.lineTo(gageWidth, viewHeight - borderPaint.strokeWidth/2)
-            gageBorder.lineTo(gageWidth, borderPaint.strokeWidth/2)
+            gageBorder.moveTo(borderPaint.strokeWidth/2 , borderPaint.strokeWidth/2 )
+            gageBorder.lineTo(borderPaint.strokeWidth/2 , viewHeight - borderPaint.strokeWidth/2 )
+            gageBorder.lineTo(gageWidth , viewHeight - borderPaint.strokeWidth/2 )
+            gageBorder.lineTo(gageWidth , borderPaint.strokeWidth/2 )
             gageBorder.close()
             // gageBorder.lineTo(borderPaint.strokeWidth/2, borderPaint.strokeWidth/2)
 
             if (minValue >= 0) gageZeroLineYPos += borderPaint.strokeWidth/2
             gageZeroLine.reset() // Reset the path to not draw zero line multiple times
-            gageZeroLine.moveTo(0f, gageZeroLineYPos)
-            gageZeroLine.lineTo(gageWidth + borderPaint.strokeWidth/2, gageZeroLineYPos)
+            gageZeroLine.moveTo(0f , gageZeroLineYPos )
+            gageZeroLine.lineTo(gageWidth + borderPaint.strokeWidth/2 , gageZeroLineYPos )
 
 
             canvas.drawRect(
-                borderPaint.strokeWidth,
-                borderPaint.strokeWidth,
-                gageWidth - borderPaint.strokeWidth/2,
-                viewHeight-borderPaint.strokeWidth,
+                borderPaint.strokeWidth ,
+                borderPaint.strokeWidth ,
+                gageWidth - borderPaint.strokeWidth/2 ,
+                viewHeight-borderPaint.strokeWidth ,
                 backgroundPaint)
             canvas.drawRect(gageBarRect, gagePaint) // actual gage
             canvas.drawPath(gageBorder, borderPaint) // gage border
@@ -207,9 +137,82 @@ class GageView @JvmOverloads constructor(
             gageZeroLine.reset()
         }
 
-        canvas.drawText(gageName, textXStart, nameYPos, namePaint)
-        canvas.drawText(gageUnit, textXStart + xTextMargin * 0.5f + gageNameWidth, nameYPos, unitPaint)
-        canvas.drawText(gageValue(), textXStart, valueYPos, valuePaint)
+        canvas.drawText(gageName, textXStart, nameYPos , namePaint)
+        canvas.drawText(gageUnit, textXStart + xTextMargin * 0.5f + gageNameWidth, nameYPos , unitPaint)
+        canvas.drawText(gageValue(), textXStart, valueYPos , valuePaint)
+
+        canvas.translate(-xOffset.toFloat(), -yOffset.toFloat())
+
+        val rightEdge = textXStart + max(xTextMargin * 0.5f + gageNameWidth + gageUnitWidth, gageValueWidth)
+        return Rect(xOffset, yOffset, rightEdge.toInt() + xOffset, viewHeight.toInt() + yOffset )
+    }
+
+    private val posPaint = Paint().apply {
+        color = getPrimaryColor()
+    }
+
+    private val negPaint = Paint().apply {
+        color = Color.LTGRAY
+    }
+
+    private val namePaint = Paint().apply {
+        color = Color.GRAY
+        textSize = descriptionTextSize
+        isAntiAlias = true
+    }
+
+    private val unitPaint = Paint().apply {
+        color = getPrimaryColor()
+        textSize = descriptionTextSize
+        isAntiAlias = true
+    }
+
+    private val borderPaint = Paint().apply {
+        color = Color.DKGRAY
+        color = Color.argb(
+            (Color.alpha(color) * .5f).roundToInt(),
+            Color.red(color),
+            Color.green(color),
+            Color.blue(color))
+        strokeWidth = 2f
+        style = Paint.Style.STROKE
+    }
+
+    private val backgroundPaint = Paint().apply {
+        color = Color.BLACK
+        style = Paint.Style.FILL
+    }
+    private val zeroLinePaint = Paint().apply {
+        color = Color.GRAY
+        strokeWidth = 2f
+        style = Paint.Style.STROKE
+    }
+
+    private val valuePaint = Paint().apply {
+        color = Color.WHITE
+        textSize = valueTextSize
+        isAntiAlias = true
+    }
+
+    private val xTextMargin = dpToPx(15f)
+    private val yTextMargin = dpToPx(10f)
+    private val gageWidth = 2 * descriptionTextSize
+
+    private val nameYPos = namePaint.textSize * 0.76f
+    private val valueYPos = nameYPos + valuePaint.textSize * 0.9f
+    private val unitYPos = valueYPos - (valuePaint.textSize * 0.8f - unitPaint.textSize)
+
+    private val viewHeight = valueYPos + dpToPx(3f)
+    private var viewWidth = 0f
+
+    private var gageBarRect = RectF()
+    private val gageBorder = Path()
+    private val gageZeroLine = Path()
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+
+        drawGage(canvas)
 
         //}
     }

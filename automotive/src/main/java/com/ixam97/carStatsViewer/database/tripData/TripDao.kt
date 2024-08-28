@@ -1,6 +1,11 @@
 package com.ixam97.carStatsViewer.database.tripData
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Ignore
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Upsert
 
 @Dao
 interface TripDao {
@@ -10,6 +15,9 @@ interface TripDao {
 
     @Query("SELECT * FROM DrivingPoint ORDER BY driving_point_epoch_time DESC LIMIT 1")
     fun getLatestDrivingPoint(): DrivingPoint?
+
+    @Query("SELECT * FROM DRIVINGPOINT WHERE driving_point_epoch_time >= :startTime ORDER BY driving_point_epoch_time ASC LIMIT :limit")
+    fun getDrivingPointsSince(startTime: Long, limit: Int): List<DrivingPoint>
 
     @Upsert
     fun upsertChargingPoint(chargingPoint: ChargingPoint)
@@ -122,6 +130,15 @@ interface TripDao {
 
     @Query("SELECT * FROM ChargingSession")
     fun getAllChargingSessions(): List<ChargingSession>
+
+    @Query("SELECT COUNT(driving_point_epoch_time) FROM DrivingPoint")
+    fun getDrivingPointsSize(): Int
+
+    @Query("SELECT * FROM DrivingPoint WHERE driving_point_epoch_time > :startTimestamp ORDER BY driving_point_epoch_time ASC LIMIT :chunkSize")
+    fun getDrivingPointsChunk(startTimestamp: Long, chunkSize: Int): List<DrivingPoint>
+
+    @Query("SELECT COUNT(charging_session_id) FROM ChargingSession")
+    fun getChargingSessionsSize(): Int
 
 }
 

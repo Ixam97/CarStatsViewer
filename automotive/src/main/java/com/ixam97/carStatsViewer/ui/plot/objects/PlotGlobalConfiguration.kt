@@ -1,7 +1,11 @@
 package com.ixam97.carStatsViewer.ui.plot.objects
 
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionSmoothingType
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionY
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotHighlightMethod
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotLineLabelFormat
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotSessionGapRendering
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
-import com.ixam97.carStatsViewer.ui.plot.enums.*
 
 object PlotGlobalConfiguration {
     val DataVersion : Int? = 20230206

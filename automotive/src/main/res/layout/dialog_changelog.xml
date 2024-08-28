@@ -3,12 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
+        android:id="@+id/dialog_changelog_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="25dp"
         android:paddingBottom="50dp"
         android:orientation="vertical">
-        <TextView
+        <!--<TextView
             android:id="@+id/changes_0_26_2_title"
             android:text="0.26.2:"
             style="@style/title_text_style"
@@ -95,6 +96,6 @@
             style="@style/menu_row_top_text"
             android:id="@+id/changes_0_25_0"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"/>-->
     </LinearLayout>
 </ScrollView>

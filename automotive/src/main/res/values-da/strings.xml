@@ -81,6 +81,7 @@
     <string name="quit_dialog_message">Log vil blive kopieret til udklipsholder.</string>
     <string name="dialog_close">Luk</string>
     <string name="dialog_reset_title">Vil du nulstille rejsedata?</string>
+    <!-- This message has changed. Please make sure you adjust the translation accordingly! -->
     <!--This message has changed. Please make sure you adjust the translation accordingly!-->
     <string name="dialog_reset_message">Den aktuelle manuelle tur nulstilles. Det vil blive gemt i rejsehistorikken.</string>
     <string name="dialog_reset_do_save">Gem</string>
@@ -99,18 +100,6 @@
     <string name="SinceChargeData">Siden sidste opladning</string>
     <string name="AutoTripData">Automatisk tur</string>
     <string name="CurrentMonthData">Indeværende måned</string>
-    <string-array name="changes_0_23">
-        <item>Datastrukturen fornyet for at øge stabiliteten og skalerbarheden</item>
-        <item>Tilføjet dansk oversættelse</item>
-        <item>Tilføjet \"Om Car Stats Viewer\" (inkl. ændringer til ReadMe med info om at støtte og bidrage)</item>
-        <item>Tilføjet flere tur-trackere, der kører på samme tid (manuel tur, siden sidste opladning, automatisk tur, nuværende måned)</item>
-        <item>Forskellige visuelle forbedringer for plotvisningerne</item>
-        <item>Specifikke værdier i plotvisninger kan fremhæves ved dobbelttaping</item>
-        <item>Debug-logs kan sendes via SMTP (eksperimentel!)</item>
-        <item>Stabiliseret opførsel af opladningskurven, når appen er sat på pause under opladning</item>
-        <item>Optimeret optimering af chaufførens distraktion</item>
-        <item>Forskellige fejlrettelser og stabilitetsforbedringer</item>
-    </string-array>
     <string name="main_changelog_dialog_title">Ændringer i version %s:</string>
     <string name="settings_apis_title">API-indstillinger</string>
     <!-- Restart Dialog -->
@@ -153,41 +142,12 @@
     <string name="vehicle_performance">Performance opgradering</string>
     <string name="vehicle_bst">BST-udgave</string>
     <string name="vehicle_launch">Launch Edition</string>
-    <string-array name="changes_0_24">
-        <item>Der er tilføjet flere API\'er til live data:
-- ABRP OTA live data
-- HTTP Webhook med BasicAuth</item>
-        <item>Tilføjet placeringssporing og højdehistorik</item>
-        <item>Tilføjet meddelelse om genstart efter genstart, opdatering eller app-nedbrud</item>
-        <item>Tilføjet køretøjsopsætning</item>
-        <item>Omstruktureret indstillingsmenu</item>
-        <item>Rettede hovedvisningsenheder, der ikke opdateres</item>
-        <item>Generelle fejlrettelser og stabilitetsforbedringer</item>
-    </string-array>
     <string name="settings_use_location">Sporing af placering</string>
     <string name="settings_autostart">Automatisk start af app</string>
     <string name="plot_dimensionY_SPEED">Hastighed</string>
     <string name="plot_dimensionY_ALTITUDE">Højde</string>
-    <string-array name="changes_0_24_1">
-        <item>Højdeændring tilføjet i turoversigt (eksperimentel)</item>
-        <item>Rettede forkerte enheder i oversigtsdiagrammet</item>
-        <item>Rettet forkerte datoer for opladningssessioner i oversigten</item>
-        <item>Forbedrede betingelser for genstartsmeddelelser</item>
-        <item>Ændrede betingelser for energisporing (eksperimentelt)</item>
-    </string-array>
     <string name="summary_altitude">Højdeændring</string>
     <string name="about_translators">Oversættere</string>
-    <string-array name="changes_0_25_0">
-        <item>Implementeret en lokal database for mere robust og effektiv lagring af turdata.</item>
-        <item>Opladningssessionen kan nu afbrydes op til 5 minutter før start af en ny session, selvom bilen blev flyttet.</item>
-        <item>Tilføjet rejsehistorik for at se tidligere ture.</item>
-        <item>Tilføjet hurtigvalgsknapper til 20, 40 og 100 km i turoversigten.</item>
-        <item>Tilføjet et ikon, der repræsenterer den valgte rejsetype. Ved at trykke på turstatistikken skifter mellem de 4 turtyper.</item>
-        <item>Tilføjet indstilling til at vælge, hvilke API\'ers forbindelsesstatus der skal vises i hovedvisningen.</item>
-        <item>Det er nu muligt at nulstille den manuelle tur fra hovedvisningen.</item>
-        <item>Justerede HTTP-webhook-datasættet til den nye datastruktur.</item>
-        <item>Generelle fejlrettelser og stabilitetsforbedringer.</item>
-    </string-array>
     <string name="restart_notification_reason_unknown">%s er genstartet af en ukendt årsag.</string>
     <string name="summary_speed">Gennemsnitshastighed</string>
     <string-array name="trip_type_names">
@@ -220,33 +180,13 @@
     <string name="history_dialog_multi_delete_deselect">Fravælg alle</string>
     <string name="settings_distance_unit">Mil som afstandsenhed</string>
     <string name="settings_apis_connection_selector">Forbindelsesikon i hovedvisning:</string>
-    <string-array name="changes_0_25_1">
-        <item>Tilpasninger i brugerinterface - særligt i rejseopsummering</item>
-        <item>Tilføjede køretøjskonfiguration for MY24</item>
-        <item>Delingen af den aktuelle placering kan nu konfigureres for hver API individuelt.</item>
-        <item>Mindre fejlrettelser</item>
-    </string-array>
     <string name="CurrentTripData_short">Manuel</string>
     <string name="SinceChargeData_short">Siden opladning</string>
     <string name="AutoTripData_short">Automatisk</string>
     <string name="CurrentMonthData_short">Måned</string>
-    <string name="snackbar_ok">Okay</string>
-    <string name="screenshot_taken">Skærmbillede taget (totalt %s).</string>
-    <string-array name="changes_0_25_2">
-        <item>Udvidede Webhook API-funktioner.</item>
-        <item>Tilføjede en mulighed for at påmindelse om at huske telefonen når bilen forlades</item>
-        <item>Optimeringer i plotgengivelse og indlæsningsydelse.</item>
-        <item>Rettet en udfordring der indimellem viser forkerte ladesessioner i rejseopsummering</item>
-        <item>Rettede en fejl, der gør at appen ikke bruger miles som distanceenhed</item>
-    </string-array>
     <string name="settings_phone_reminder">Telefon påmindelse</string>
     <string name="notification_phone">Tog du din mobiltelefon?</string>
     <string name="notification_valuables">Efterlad ikke værdifulde ting i bilen</string>
-    <string-array name="changes_0_26_0">
-        <item>Tilføjet eksperimentel farvepalette</item>
-        <item>Simpel anden akse valg</item>
-        <item>Adskilt databaseupload i bidder for at forhindre falske negativer og vise fremskridt.</item>
-    </string-array>
     <string name="settings_experimental_colors">Eksperimentelle farvepalette</string>
     <string name="history_dialog_upload_title">Opload database til API</string>
     <string name="history_dialog_upload_message">Du skal til at oploade hele databasen til destinationen angivet i webhook API!
@@ -255,4 +195,125 @@ Kontroller at der ikke er dublikerede i data på serveren for at undgå usandsyn
 
 Denne handling kan tage en del tid afhængig af datamængden. Bliv på denne side indtil vises en successmeddelelse!</string>
     <string name="history_dialog_upload_upload_button">Opload</string>
+    <string-array name="changes">
+        <item>Forskellige fejlrettelser og stabilitetsforbedringer</item>
+        <item>Optimeret optimering af chaufførens distraktion</item>
+        <item>Stabiliseret opførsel af opladningskurven, når appen er sat på pause under opladning</item>
+        <item>Debug-logs kan sendes via SMTP (eksperimentel!)</item>
+        <item>Specifikke værdier i plotvisninger kan fremhæves ved dobbelttaping</item>
+        <item>Forskellige visuelle forbedringer for plotvisningerne</item>
+        <item>Tilføjet flere tur-trackere, der kører på samme tid (manuel tur, siden sidste opladning, automatisk tur, nuværende måned)</item>
+        <item>Tilføjet \"Om Car Stats Viewer\" (inkl. ændringer til ReadMe med info om at støtte og bidrage)</item>
+        <item>Tilføjet dansk oversættelse</item>
+        <item>Datastrukturen fornyet for at øge stabiliteten og skalerbarheden</item>
+        <item>[V](0.23.0)</item>
+        <item>Generelle fejlrettelser og stabilitetsforbedringer</item>
+        <item>Rettede hovedvisningsenheder, der ikke opdateres</item>
+        <item>Omstruktureret indstillingsmenu</item>
+        <item>Tilføjet køretøjsopsætning</item>
+        <item>Tilføjet meddelelse om genstart efter genstart, opdatering eller app-nedbrud</item>
+        <item>Tilføjet placeringssporing og højdehistorik</item>
+        <item>Der er tilføjet flere API\'er til live data:
+- ABRP OTA live data
+- HTTP Webhook med BasicAuth</item>
+        <item>[V](0.24.0)</item>
+        <item>Ændrede betingelser for energisporing (eksperimentelt)</item>
+        <item>Forbedrede betingelser for genstartsmeddelelser</item>
+        <item>Rettet forkerte datoer for opladningssessioner i oversigten</item>
+        <item>Rettede forkerte enheder i oversigtsdiagrammet</item>
+        <item>Højdeændring tilføjet i turoversigt (eksperimentel)</item>
+        <item>[V](0.24.1)</item>
+        <item>Generelle fejlrettelser og stabilitetsforbedringer.</item>
+        <item>Justerede HTTP-webhook-datasættet til den nye datastruktur.</item>
+        <item>Det er nu muligt at nulstille den manuelle tur fra hovedvisningen.</item>
+        <item>Tilføjet indstilling til at vælge, hvilke API\'ers forbindelsesstatus der skal vises i hovedvisningen.</item>
+        <item>Tilføjet et ikon, der repræsenterer den valgte rejsetype. Ved at trykke på turstatistikken skifter mellem de 4 turtyper.</item>
+        <item>Tilføjet hurtigvalgsknapper til 20, 40 og 100 km i turoversigten.</item>
+        <item>Tilføjet rejsehistorik for at se tidligere ture.</item>
+        <item>Opladningssessionen kan nu afbrydes op til 5 minutter før start af en ny session, selvom bilen blev flyttet.</item>
+        <item>Implementeret en lokal database for mere robust og effektiv lagring af turdata.</item>
+        <item>[V](0.25.0)</item>
+        <item>Mindre fejlrettelser</item>
+        <item>Delingen af den aktuelle placering kan nu konfigureres for hver API individuelt.</item>
+        <item>Tilføjede køretøjskonfiguration for MY24</item>
+        <item>Tilpasninger i brugerinterface - særligt i rejseopsummering</item>
+        <item>[V](0.25.1)</item>
+        <item>Rettede en fejl, der gør at appen ikke bruger miles som distanceenhed</item>
+        <item>Rettet en udfordring der indimellem viser forkerte ladesessioner i rejseopsummering</item>
+        <item>Optimeringer i plotgengivelse og indlæsningsydelse.</item>
+        <item>Tilføjede en mulighed for at påmindelse om at huske telefonen når bilen forlades</item>
+        <item>Udvidede Webhook API-funktioner.</item>
+        <item>[V](0.25.2)</item>
+        <item>Adskilt databaseupload i bidder for at forhindre falske negativer og vise fremskridt.</item>
+        <item>Simpel anden akse valg</item>
+        <item>Tilføjet eksperimentel farvepalette</item>
+        <item>[V](0.26.0)</item>
+        <item>Rettelse til Android 12 (P3.0)</item>
+        <!-- taping or tapping? -->
+        <!--taping or tapping?-->
+        <item>[V](0.26.1)</item>
+        <item>Rettede nogle layoutproblemer på Volvo Infotainment</item>
+        <item>Rettet ødelagt layout efter Polestar OTA P3.0.3</item>
+        <item>Justeret kontrol af oversigtsplot</item>
+        <item>[V](0.26.2)</item>
+        <item>Rettede eksperimentelt farveskema, der ikke virkede.</item>
+        <item>Debug-logfiler slettes efter 28 dage en gang om dagen.</item>
+        <item>Reduceret databaseadgang ved at begrænse logningen inden for fejlfindingsindstillinger.</item>
+        <item>Webhook udfylder nu \"charged_soc\" i slutningen af en opladningssession.</item>
+        <item>Databaseoverførslen indeholder nu opladningskurver.</item>
+        <item>Databaseuploaden opretter nu en separat tjeneste. Du behøver ikke længere at forblive på rejsehistorikskærmen under uploaden. En meddelelse vil blive sendt til meddelelsescentret for at vise fremskridt.</item>
+        <item>Opladningskurven afskærer ikke længere over 160 kW i Trip Summary.</item>
+        <item>Revideret metode til oprettelse af changelog.</item>
+        <item>Implementeret Firebase Crashlytics. Kan deaktiveres i indstillinger.</item>
+        <item>Implementerede Automotive App Host for en potentiel offentlig Play Butik-udgivelse (ikke indeholdt i ældre builds).</item>
+        <item>[V](0.27.0)</item>
+        <item>Forbedret rapportering af nedbrud.</item>
+        <item>Rettet nedbrud forårsaget af lagring af turdata.</item>
+        <item>(Play Edition) Rettede et problem, hvor notifikationsinteraktioner ville få appen til at gå ned.</item>
+        <item>(Play Edition) Fanger nedbrud ved oprettelse af ændringslog.</item>
+        <item>(Play Edition) Midlertidigt deaktiveret Legacy Dashboard og Trip History på grund af begrænsninger pålagt af Googles retningslinjer.</item>
+        <item>[V](0.27.1)</item>
+        <item>Tilføjet fejlhåndtering og logning til turændringer.</item>
+        <item>[V](0.27.2)</item>
+        <item>BEMÆRK: I øjeblikket rapporterer EX30 ikke nogen strømværdier til appen. Derfor vil der ikke være nogen energistatistik tilgængelig. Det er i øjeblikket uklart, om og hvornår dette vil blive rettet af Volvo.</item>
+        <item>Tilføjet yderligere betingelser for start af kørsel (f.eks. for Volvo EX30)</item>
+        <item>[V](0.27.3)</item>
+    </string-array>
+    <string name="dialog_changes_title_updated">Opdatering installeret!</string>
+    <string name="dialog_changes_title_changelog">Ændringslog</string>
+    <string name="dialog_changes_message">%1$s er blevet opdateret til version %2$s!</string>
+    <!-- Car App -->
+    <string name="car_app_trip_data">Turdata</string>
+    <string name="car_app_strip_selection">Valg af tur</string>
+    <string name="car_app_dashboard">Dashboard</string>
+    <string name="car_app_legacy_dashboard">Ældre Dashboard</string>
+    <string name="car_app_menu">Diverse</string>
+    <string name="car_app_status">API-status</string>
+    <string name="car_app_toast_reset_confirmation">Manuel tur er blevet nulstillet.</string>
+    <string name="car_app_toast_reset_hint">Tryk igen for at nulstille manuel trip.</string>
+    <string name="car_app_unknown">Ukendt</string>
+    <string name="car_app_permissions_message">Car Stats Viewer skal have adgang til placering og køretøjsdatatilladelser for at fungere. Giv venligst disse tilladelser. 
+
+Placeringssporing kan slås til eller fra i appindstillingerne. Ingen data sendes som standard til nogen servere.</string>
+    <string name="car_app_permissions_grant">Giv tilladelser</string>
+    <string name="car_app_permissions_deny">Afvis og afslut</string>
+    <string name="car_app_dev_notice_message">Car Stats Viewer er stadig under udvikling! Vær opmærksom på, at funktioner kan ændre sig, blive tilføjet eller fjernet uden varsel, og datatab kan forekomme! 
+
+Hvis du finder fejl eller ønsker at give feedback, bedes du besøge GitHub-lageret i appen eller tråden i Polestar Club Forum om dette emne. Et link kan findes i apps Indstillinger → Om Car Stats Viewer.</string>
+    <string name="car_app_dev_notice_confirm">Forstået</string>
+    <string name="car_app_show_real_time_data_title">Vis data i realtid</string>
+    <string name="car_app_show_real_time_data_hint">Hvis denne mulighed er aktiveret, kan brugergrænsefladen reagere med mærkbar forsinkelse på grund af høj frekvens af brugergrænsefladeopdateringer udstedt af realtidsdata.</string>
+    <string name="car_app_legacy_dashboard_desc">Åbner det Dashboard, der er kendt fra den ældre version af Car Stats Viewer. Indeholder også opladningskurven i realtid under opladning. Ikke tilgængelig under kørsel!</string>
+    <string name="car_app_legacy_history_desc">Viser en liste over alle tidligere ture og giver mulighed for at se detaljerede statistikker for hver tur. Ikke tilgængelig under kørsel!</string>
+    <string name="car_app_advanced_settings">Avancerede indstillinger</string>
+    <string name="car_app_quick_settings">Hurtige indstillinger</string>
+    <string name="car_app_menu_other_views">Andre skærme</string>
+    <string name="car_app_show_real_time_data_subtitle">Effekt, inst. forbrug og højde i fanen Ture.</string>
+    <string name="history_dialog_upload_message_2">Du er ved at uploade hele den lokale database til det slutpunkt, der er angivet i Webhook API! 
+
+Sørg for, at der ikke er duplikerede data på serveren for at forhindre usandsynlige værdier. 
+
+Denne handling kan tage noget tid afhængigt af mængden af data. En statusmeddelelse vil blive tilføjet til Notifikationscenteret. Systemet kan bruges som normalt.</string>
+    <string name="snackbar_ok">Okay</string>
+    <string name="screenshot_taken">Skærmbillede taget (totalt %s).</string>
 </resources>

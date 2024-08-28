@@ -3,9 +3,7 @@ package com.ixam97.carStatsViewer.liveDataApi.http
 import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
-import android.widget.Button
 import android.widget.EditText
-import android.widget.Switch
 import android.widget.TextView
 import com.google.gson.Gson
 import com.ixam97.carStatsViewer.BuildConfig
@@ -16,6 +14,7 @@ import com.ixam97.carStatsViewer.dataProcessor.IgnitionState
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
+import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
@@ -28,8 +27,7 @@ import java.io.DataOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.nio.charset.StandardCharsets
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Base64
 
 
 class HttpLiveData (
@@ -137,6 +135,8 @@ class HttpLiveData (
 
         httpLiveDataEnabled.setSwitchClickListener {
             AppPreferences(context).httpLiveDataEnabled = httpLiveDataEnabled.isChecked
+            if (!httpLiveDataEnabled.isChecked) connectionStatus = ConnectionStatus.UNUSED
+            updateWatchdog()
         }
         httpLiveDataLocation.setSwitchClickListener {
             AppPreferences(context).httpLiveDataLocation = httpLiveDataLocation.isChecked
@@ -170,7 +170,12 @@ class HttpLiveData (
         })
     }
 
-    suspend fun sendWithDrivingPoint(realTimeData: RealTimeData, drivingPoints: List<DrivingPoint>? = null, chargingSessions: List<ChargingSession>? = null): LiveDataApi.ConnectionStatus? {
+    suspend fun sendWithDrivingPoint(
+        realTimeData: RealTimeData,
+        drivingPoints: List<DrivingPoint>? = null,
+        chargingSessions: List<ChargingSession>? = null,
+        useBacklog: Boolean = true
+    ): ConnectionStatus? {
         // Wrap with mutex lock to prevent concurrent reads of the backlog.
         mutex.withLock {
             if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataEnabled) {
@@ -179,30 +184,42 @@ class HttpLiveData (
             }
 
 
-            if (CarStatsViewer.appPreferences.httpApiTelemetryType > 0) {
-                // Don't send driving points if disabled in settings
-                if (drivingPoints != null) {
-                    if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation) {
-                        drivingPoints?.forEach {drivingPoint ->
-                            drivingPointBacklog.add(drivingPoint.copy(lat = null, lon = null, alt = null))
+            if (useBacklog) {
+                if (CarStatsViewer.appPreferences.httpApiTelemetryType > 0) {
+                    // Don't send driving points if disabled in settings
+                    if (drivingPoints != null) {
+                        if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation) {
+                            drivingPoints?.forEach { drivingPoint ->
+                                drivingPointBacklog.add(
+                                    drivingPoint.copy(
+                                        lat = null,
+                                        lon = null,
+                                        alt = null
+                                    )
+                                )
+                            }
+                        } else {
+                            drivingPointBacklog.addAll(drivingPoints)
                         }
-                    } else {
-                        drivingPointBacklog.addAll(drivingPoints)
                     }
-                }
-                if (chargingSessions != null) {
-                    if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation) {
-                        chargingSessions?.forEach { chargingSession ->
-                            chargingSessionBacklog.add(chargingSession.copy(lat = null, lon = null))
+                    if (chargingSessions != null) {
+                        if (!AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation) {
+                            chargingSessions?.forEach { chargingSession ->
+                                chargingSessionBacklog.add(
+                                    chargingSession.copy(
+                                        lat = null,
+                                        lon = null
+                                    )
+                                )
+                            }
+                        } else {
+                            chargingSessionBacklog.addAll(chargingSessions)
                         }
                     }
-                    else {
-                        chargingSessionBacklog.addAll(chargingSessions)
-                    }
+                } else {
+                    drivingPointBacklog.clear()
+                    chargingSessionBacklog.clear()
                 }
-            } else {
-                drivingPointBacklog.clear()
-                chargingSessionBacklog.clear()
             }
 
             if (!realTimeData.isInitialized()) return null
@@ -227,8 +244,15 @@ class HttpLiveData (
                     // ABRP debug
                     abrpPackage = if (CarStatsViewer.appPreferences.httpLiveDataSendABRPDataset) (CarStatsViewer.liveDataApis[0] as AbrpLiveData).lastPackage else null,
 
-                    drivingPoints = if (drivingPointBacklog.size == 0) null else drivingPointBacklog,
-                    chargingSessions = if (chargingSessionBacklog.size == 0) null else chargingSessionBacklog,
+                    drivingPoints = if (!useBacklog) {
+                        drivingPoints
+                    } else if (drivingPointBacklog.size == 0){
+                        null
+                    } else drivingPointBacklog,
+                    chargingSessions = if (!useBacklog) {
+                        chargingSessions
+                    } else if (chargingSessionBacklog.size == 0) null else chargingSessionBacklog
+                    ,
 
                     appVersion = BuildConfig.VERSION_NAME,
                     apiVersion = "2.1"
@@ -250,6 +274,8 @@ class HttpLiveData (
                 InAppLogger.e("[HTTP] Dataset error")
                 ConnectionStatus.ERROR
             }
+
+            InAppLogger.v("Backlog sizes: driving points: ${drivingPointBacklog.size}, charging sessions: ${chargingSessionBacklog.size}")
 
             return connectionStatus
         }

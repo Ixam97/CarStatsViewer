@@ -127,6 +127,13 @@
                 android:layout_height="wrap_content"
                 app:topText="@string/about_third_party_licenses"/>
 
+            <com.ixam97.carStatsViewer.ui.views.MenuRowWidget
+                android:id="@+id/about_privacy_widget"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:topText="Privacy"
+                app:isExternalLink="true"/>
+
         </LinearLayout>
     </ScrollView>
 

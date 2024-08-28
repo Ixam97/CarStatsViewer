@@ -5,8 +5,8 @@ import android.content.SharedPreferences
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
+import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.Exclude
 
 class AppPreferences(
@@ -61,6 +61,10 @@ class AppPreferences(
 
     private val PhoneNotification = AppPreference<Boolean>("preference_phone_notification", false, sharedPref)
     private val ColorTheme = AppPreference<Int>("preference_color_theme", 0, sharedPref)
+
+    private val CarAppSelectedRealTimeData = AppPreference<Int>("preference_car_app_selected_real_time_data", 1, sharedPref)
+    private val CarAppRealTimeData = AppPreference<Boolean>("preference_car_app_real_time_data", false, sharedPref)
+
     var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
     var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
@@ -103,6 +107,9 @@ class AppPreferences(
 
     var phoneNotification: Boolean get() = PhoneNotification.value; set(value) {PhoneNotification.value = value}
     var colorTheme: Int get() = ColorTheme.value; set(value) {ColorTheme.value = value}
+
+    // var carAppSelectedRealTimeData: Int get() = CarAppSelectedRealTimeData.value; set(value) {CarAppSelectedRealTimeData.value = value}
+    var carAppRealTimeData: Boolean get() = CarAppRealTimeData.value; set(value) {CarAppRealTimeData.value = value}
 
     // Preferences not saved permanently:
     val exclusionStrategy = AppPreferences.exclusionStrategy

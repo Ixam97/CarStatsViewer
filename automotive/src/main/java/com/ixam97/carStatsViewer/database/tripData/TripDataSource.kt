@@ -1,7 +1,5 @@
 package com.ixam97.carStatsViewer.database.tripData
 
-import androidx.room.Query
-
 interface TripDataSource {
 
     /*
@@ -10,6 +8,8 @@ interface TripDataSource {
     suspend fun addDrivingPoint(drivingPoint: DrivingPoint)
 
     suspend fun getLatestDrivingPoint(): DrivingPoint?
+
+    suspend fun getDrivingPointsSince(startTime: Long, limit: Int): List<DrivingPoint>
 
     suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long?
 
@@ -64,4 +64,10 @@ interface TripDataSource {
     suspend fun getAllDrivingPoints(): List<DrivingPoint>
 
     suspend fun getAllChargingSessions(): List<ChargingSession>
+
+    suspend fun getDrivingPointsSize(): Int
+
+    suspend fun getDrivingPointsChunk(startTimestamp: Long, chunkSize: Int): List<DrivingPoint>
+
+    suspend fun getChargingSessionsSize(): Int
 }

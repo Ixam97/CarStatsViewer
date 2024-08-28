@@ -1,77 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="changes_0_26_2">
-        <item>Verbesserung der Diagramm-Steuerelemente in der Tripzusammenfassung</item>
-        <item>Defektes Layout nach Polestar OTA P3.0.3 behoben</item>
-        <item>Einige Layoutprobleme im Volvo Infotainment wurden behoben</item>
-    </string-array>
-
-    <string-array name="changes_0_26_1">
-        <item>Fix für Android 12 (P3.0)</item>
-    </string-array>
-
-    <string-array name="changes_0_26_0">
-        <item>Experimentelles Farbschema hinzugefügt.</item>
-        <item>Vereinfachte Auswahl der Sekundärachse.</item>
-        <item>Der Datenbankupload wurde in Abschnitte unterteilt, um falsche Fehlermeldungen zu vermeiden und den Fortschritt anzeigen zu können.</item>
-    </string-array>
-
-    <string-array name="changes_0_25_2">
-        <item>Erweiterung der Webhook-API.</item>
-        <item>Option für eine Handy-Erinnerung beim verlassen des Fahrzeugs hinzugefügt.</item>
-        <item>Optimierungen bei der Lade- und Rendergeschwindigkeit der Statistikdiagramme.</item>
-        <item>Fehler behoben, bei dem zum Teil falsche Ladevorgänge angezeigt wurden.</item>
-        <item>Fehler behoben, der verhinderte, dass Meilen als Distanzeinheit verwendet werden.</item>
-    </string-array>
-
-    <string-array name="changes_0_25_1">
-        <item>Anpassungen an der UI, insbesondere in der Tripzusammenfassung.</item>
-        <item>Fahrzeugkonfiguration für MY24 hinzugefügt.</item>
-        <item>Die Weitergabe des Standortes kann nun für jede API einzeln festgelegt werden.</item>
-        <item>Kleinere Bugfixes.</item>
-    </string-array>
-
-    <string-array name="changes_0_25_0">
-        <item>Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips.</item>
-        <item>Ladevorgänge können nun für bis zu 5 Minuten unterbrochen werden, bevor ein neuer Ladevorgang angelegt wird, sogar, wenn das Auto bewegt wurde.</item>
-        <item>Tripverlauf hinzugefügt, um vergangene Trips anzeigen zu können.</item>
-        <item>Schnellwahltasten für 20, 40 und 100 km in der Tripzusammenfassung hinzugefügt.</item>
-        <item>Icon hinzugefügt, das den aktuell ausgewählten Trip-Typ symbolisiert. Tippen auf die Trip-Statistiken wechselt zum nächsten Trip-Typ.</item>
-        <item>Einstellung hinzugefügt, welche API den Verbindungsstatus in der Hauptansicht anzeigen soll.</item>
-        <item>Der manuelle Trip kann nun direkt aus der Hauptansicht heraus zurückgesetzt werden.</item>
-        <item>Der Datensatz für den HTTP-Webhook wurde an die neue Datenstruktur angepasst.</item>
-        <item>Allgemeine Bugfixes und Stabilitätsverbesserungen.</item>
-    </string-array>
-
-    <string-array name="changes_0_24_1">
-        <item>Höhenunterschied in der Zusammenfassung hinzugefügt (experimentell)</item>
-        <item>Falsche Einheiten im Diagramm der Zusammenfassung behoben</item>
-        <item>Falsche Datumsangaben der Ladekurven in der Zusammenfassung behoben</item>
-        <item>Bedingungen für Neustart-Benachrichtigungen verbessert</item>
-        <item>Bedingungen für Energieerfassung angepasst (experimentell)</item>
-    </string-array>
-
-    <string-array name="changes_0_24">
-        <item>Mehrere Live-Daten-APIs hinzugefügt:\n- ABRP OTA Live Data\n- HTTP Webhook mit BasicAuth</item>
-        <item>Standorterfassung mit Höhenverlauf hinzugefügt</item>
-        <item>Neustart-Benachrichtigung nach Update, Reboot oder Absturz hinzugefügt</item>
-        <item>Fahrzeugkonfiguration hinzugefügt</item>
-        <item>Einstellungsmenü umstrukturiert</item>
-        <item>Fehler behoben, der das aktualisieren der Einheiten in der Hauptansicht verhindert hat</item>
-        <item>Allgemeine Bugfixes und Stabilitätsverbesserungen.</item>
-    </string-array>
-
-    <string-array name="changes_0_23">
-        <item>Datenstruktur grundlegend überarbeitet, um die Stabilität und Skalierbarkeit zu verbessern</item>
-        <item>Dänische Übersetzung hinzugefügt</item>
-        <item>\"Über Car Stats Viewer\" hinzugefügt, (inkl. grundlegende Überarbeitung der ReadMe mit Hinweisen zur Unterstützung und Mitwirkung)</item>
-        <item>Es können neben dem manuellen Trip mehrere, automatisch zurückgesetzte Trips ausgewählt werden</item>
-        <item>Verschiedene optische Anpassungen an den Diagrammen</item>
-        <item>Einzelne Werte eines Diagramms können per doppeltipp hervorgehoben werden</item>
-        <item>Möglichkeit zum verschicken von Debug-Logs per SMTP (experimentell!)</item>
-        <item>Stabilisierung des Verhaltens der Ladekurve, wenn die Ausführung der App zwischenzeitlich unterbrochen wird</item>
-        <item>Optimierung der Fahrerablenkung</item>
+    <string-array name="changes">
         <item>Zahlreiche weitere Bugfixes und Stabilitätsverbesserungen.</item>
+        <item>Optimierung der Fahrerablenkung</item>
+        <item>Stabilisierung des Verhaltens der Ladekurve, wenn die Ausführung der App zwischenzeitlich unterbrochen wird</item>
+        <item>Möglichkeit zum verschicken von Debug-Logs per SMTP (experimentell!)</item>
+        <item>Einzelne Werte eines Diagramms können per doppeltipp hervorgehoben werden</item>
+        <item>Verschiedene optische Anpassungen an den Diagrammen</item>
+        <item>Es können neben dem manuellen Trip mehrere, automatisch zurückgesetzte Trips ausgewählt werden</item>
+        <item>\"Über Car Stats Viewer\" hinzugefügt, (inkl. grundlegende Überarbeitung der ReadMe mit Hinweisen zur Unterstützung und Mitwirkung)</item>
+        <item>Dänische Übersetzung hinzugefügt</item>
+        <item>Datenstruktur grundlegend überarbeitet, um die Stabilität und Skalierbarkeit zu verbessern</item>
+        <item>[V](0.23.0)</item>
+        <item>Allgemeine Bugfixes und Stabilitätsverbesserungen.</item>
+        <item>Fehler behoben, der das aktualisieren der Einheiten in der Hauptansicht verhindert hat</item>
+        <item>Einstellungsmenü umstrukturiert</item>
+        <item>Fahrzeugkonfiguration hinzugefügt</item>
+        <item>Neustart-Benachrichtigung nach Update, Reboot oder Absturz hinzugefügt</item>
+        <item>Standorterfassung mit Höhenverlauf hinzugefügt</item>
+        <item>Mehrere Live-Daten-APIs hinzugefügt:\n- ABRP OTA Live Data\n- HTTP Webhook mit BasicAuth</item>
+        <item>[V](0.24.0)</item>
+        <item>Bedingungen für Energieerfassung angepasst (experimentell)</item>
+        <item>Bedingungen für Neustart-Benachrichtigungen verbessert</item>
+        <item>Falsche Datumsangaben der Ladekurven in der Zusammenfassung behoben</item>
+        <item>Falsche Einheiten im Diagramm der Zusammenfassung behoben</item>
+        <item>Höhenunterschied in der Zusammenfassung hinzugefügt (experimentell)</item>
+        <item>[V](0.24.1)</item>
+        <item>Allgemeine Bugfixes und Stabilitätsverbesserungen.</item>
+        <item>Der Datensatz für den HTTP-Webhook wurde an die neue Datenstruktur angepasst.</item>
+        <item>Der manuelle Trip kann nun direkt aus der Hauptansicht heraus zurückgesetzt werden.</item>
+        <item>Einstellung hinzugefügt, welche API den Verbindungsstatus in der Hauptansicht anzeigen soll.</item>
+        <item>Icon hinzugefügt, das den aktuell ausgewählten Trip-Typ symbolisiert. Tippen auf die Trip-Statistiken wechselt zum nächsten Trip-Typ.</item>
+        <item>Schnellwahltasten für 20, 40 und 100 km in der Tripzusammenfassung hinzugefügt.</item>
+        <item>Tripverlauf hinzugefügt, um vergangene Trips anzeigen zu können.</item>
+        <item>Ladevorgänge können nun für bis zu 5 Minuten unterbrochen werden, bevor ein neuer Ladevorgang angelegt wird, sogar, wenn das Auto bewegt wurde.</item>
+        <item>Implementierung einer lokalen Datenbank für eine robustere und leistungsfähigere Speicherung von Trips.</item>
+        <item>[V](0.25.0)</item>
+        <item>Kleinere Bugfixes.</item>
+        <item>Die Weitergabe des Standortes kann nun für jede API einzeln festgelegt werden.</item>
+        <item>Fahrzeugkonfiguration für MY24 hinzugefügt.</item>
+        <item>Anpassungen an der UI, insbesondere in der Tripzusammenfassung.</item>
+        <item>[V](0.25.1)</item>
+        <item>Fehler behoben, der verhinderte, dass Meilen als Distanzeinheit verwendet werden.</item>
+        <item>Fehler behoben, bei dem zum Teil falsche Ladevorgänge angezeigt wurden.</item>
+        <item>Optimierungen bei der Lade- und Rendergeschwindigkeit der Statistikdiagramme.</item>
+        <item>Option für eine Handy-Erinnerung beim verlassen des Fahrzeugs hinzugefügt.</item>
+        <item>Erweiterung der Webhook-API.</item>
+        <item>[V](0.25.2)</item>
+        <item>Der Datenbankupload wurde in Abschnitte unterteilt, um falsche Fehlermeldungen zu vermeiden und den Fortschritt anzeigen zu können.</item>
+        <item>Vereinfachte Auswahl der Sekundärachse.</item>
+        <item>Experimentelles Farbschema hinzugefügt.</item>
+        <item>[V](0.26.0)</item>
+        <item>Fix für Android 12 (P3.0)</item>
+        <item>[V](0.26.1)</item>
+        <item>Einige Layoutprobleme im Volvo Infotainment wurden behoben</item>
+        <item>Defektes Layout nach Polestar OTA P3.0.3 behoben</item>
+        <item>Verbesserung der Diagramm-Steuerelemente in der Tripzusammenfassung</item>
+        <item>[V](0.26.2)</item>
+        <item>Fehler beim Anwenden des experimentellen Farbschemas behoben.</item>
+        <item>Debug-Logs werden nach 28 Tagen ein Mal täglich gelöscht.</item>
+        <item>Datenbankzugriffe reduziert durch das verwenden der Debug-Einstellung bei der Speicherung von Logs.</item>
+        <item>Der Webhook füllt nun das Feld \"charged_soc\" am Ende eines Ladevorgangs aus.</item>
+        <item>Der Datenbank-Upload enthält nun Ladekurven.</item>
+        <item>Der Datenbank-Upload läuft nun in einem eigenen Dienst. Es muss nicht länger der Tripverlauf geöffnet bleiben. Eine Benachrichtigung informiert über den Fortschritt.</item>
+        <item>Die Ladekurve wird in der Tripzusammenfassung nicht mehr bei 160 kW abgeschnitten.</item>
+        <item>Die Art und Weise, wie Changelogs generiert werden, wurde überarbeitet.</item>
+        <item>Implementierung von Firebase Crashlytics. Kann in den Einstellungen deaktivert werden.</item>
+        <item>Implementierung des Automotive App Host für einen potentiellen öffentlichen Release im Play Store (nicht in klassischen Builds enthalten).</item>
+        <item>[V](0.27.0)</item>
+        <item>Absturzmeldungen verbessert.</item>
+        <item>Abstürze beim Speichern von Tripdaten behoben.</item>
+        <item>(Play Edition) Fehler behoben, bei dem das interagieren mit Benachrichtigungen zu Abstürzen führt.</item>
+        <item>(Play Edition) Abstürze bei der Erstellung von Changelogs werden abgefangen.</item>
+        <item>(Play Edition) Das Legacy Dashboard und der Tripverlauf wurden aufgrund von Einschränkungen durch Google-Richtlinien vorübergehend deaktiviert.</item>
+        <item>[V](0.27.1)</item>
+        <item>Fehlerbehandlung und Logging beim Wechsel von Trips hinzugefügt.</item>
+        <item>[V](0.27.2)</item>
+        <item>BITTE BEACHTEN: Derzeit meldet der EX30 keine Leistungsdaten an die App. Daher sind keine Energiestatisitiken verfügbar. Es ist derzeit unklar, ob und wann dies von Volvo behoben wird.</item>
+        <item>Zusätzliche Fartbeginn-Bedingungen hinzugefügt (z.B. für den Volvo EX30).</item>
+        <item>[V](0.27.3)</item>
     </string-array>
 
     <!-- Restart Dialog -->
@@ -118,6 +125,10 @@
     <string name="main_button_show_speed">Geschwindigkeit anzeigen</string>
     <string name="main_secondary_axis">Sekundärachse: %s</string>
     <string name="main_changelog_dialog_title">Änderungen in Version %s:</string>
+
+    <string name="dialog_changes_title_updated">Update installiert!</string>
+    <string name="dialog_changes_title_changelog">Versionsverlauf</string>
+    <string name="dialog_changes_message">%1$s wurde auf Version %2$s aktualisiert!</string>
 
     <!-- SummaryActivity -->
     <string name="summary_title">Tripzusammenfassung</string>
@@ -200,6 +211,10 @@
     <string name="AutoTripData_short">Automatisch</string>
     <string name="CurrentMonthData_short">Monat</string>
 
+    <string name="snackbar_ok">OK</string>
+
+    <string name="screenshot_taken">Screenshot aufgenommen (insgesamt %s).</string>
+
     <string-array name="trip_type_names">
         <item>Unbekannter Triptyp</item>
         <item>Manueller Trip</item>
@@ -280,5 +295,32 @@
 
     <string name="history_dialog_upload_title">Datenbank über API hochladen</string>
     <string name="history_dialog_upload_message">Du bist im Begriff die gesamte lokale Datenbank an den in der Webhook API definierten Endpoint hochzuladen!\n\nStelle sicher, dass auf dem Server keine Datenduplikate entstehen, um unplausible Werte zu vermeiden.\n\nDiese Aktion kann abhängig von der Datenmenge einige Zeit in Anspruch nehmen. Bitte bleibe auf dieser Seite, bis eine Benachrichtigung über den Erfolg des Uploads erscheint!</string>
+    <string name="history_dialog_upload_message_2">Du bist im Begriff die gesamte lokale Datenbank an den in der Webhook API definierten Endpoint hochzuladen!\n\nStelle sicher, dass auf dem Server keine Datenduplikate entstehen, um unplausible Werte zu vermeiden.\n\nDiese Aktion kann abhängig von der Datenmenge einige Zeit in Anspruch nehmen. Es wird eine Benachrichtigung erzeugt, die den Fortschritt anzeigt. Das System kann in der Zeit wie gewohnt verwendet werden.</string>
     <string name="history_dialog_upload_upload_button">Hochladen</string>
+
+    <!-- Car App -->
+    <string name="car_app_trip_data">Tripdaten</string>
+    <string name="car_app_strip_selection">Tripauswahl</string>
+    <string name="car_app_dashboard">Dashboard</string>
+    <string name="car_app_legacy_dashboard">Klassisches Dashboard</string>
+    <string name="car_app_legacy_dashboard_desc">Öffnet das Dashboard aus der klassischen Version von Car Stats Viewer. Enthält während eines Ladevorgangs die Echtzeit-Ladekurve. Nicht während der Fahrt verfügbar!</string>
+    <string name="car_app_legacy_history_desc">Zeigt eine Liste mit allen vergangenen Trips und lässt Details zu diesen Trips anzeigen. Nicht während der Fahrt verfügbar!</string>
+    <string name="car_app_status">API-Status</string>
+    <string name="car_app_menu">Verschiedenes</string>
+    <string name="car_app_menu_other_views">Weitere Ansichten</string>
+    <string name="car_app_toast_reset_confirmation">Manuellert Trip wurde zurückgesetzt</string>
+    <string name="car_app_toast_reset_hint">Erneut tippen, um manuellen Trip zurückzusetzen.</string>
+
+    <string name="car_app_dev_notice_message">Car Stats Viewer befindet sich noch in Entwicklung! Bitte beachte, dass Funktionen unangekündigt verändert, hinzugefügt oder entfernt werden können und Datenverlust auftreten kann!\n\nFalls Fehler auftreten oder Rückmeldung gegeben werden möchte, besuche das GitHub Repository der App oder den Thread im Polestar Club Forum. Links finden sich in den Einstellungen → Über Car Stats Viewer.</string>
+    <string name="car_app_dev_notice_confirm">Verstanden</string>
+    <string name="car_app_permissions_title" translatable="false">@string/app_name</string>
+    <string name="car_app_permissions_message">Car Stats Viewer benötigt Zugriff auf Standort- und Fahrzeugdaten-Berechtigungen, um zu funktionieren.\n\nDie Standorterfassung kann in den App-Einstellungen ein oder aus geschaltet werden. Standardmäßig werden keine Daten an Server übermittelt.</string>
+    <string name="car_app_permissions_grant">Berechtigungen erteilen</string>
+    <string name="car_app_permissions_deny">Ablehnen und beenden</string>
+
+    <string name="car_app_advanced_settings">Erweiterte Einstellungen</string>
+    <string name="car_app_quick_settings">Schnelleinstellungen</string>
+    <string name="car_app_show_real_time_data_title">Zeige Echtzeitdaten</string>
+    <string name="car_app_show_real_time_data_subtitle">Leistung, Momentanverbrauch und Höhe im Trips-Tab.</string>
+    <string name="car_app_show_real_time_data_hint">Wenn diese Option aktiviert ist, kann die UI aufgrund der hohen Update-Frequenz durch Echtzeitdaten sehr träge auf Eingaben reagieren.</string>
 </resources>

@@ -8,53 +8,58 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.utils.applyTypeface
-import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
-import kotlinx.android.synthetic.main.activity_settings_apis.*
+import com.ixam97.carStatsViewer.databinding.ActivitySettingsApisBinding
 import kotlinx.coroutines.launch
 
 class SettingsApisActivity: FragmentActivity() {
+
+    private lateinit var binding: ActivitySettingsApisBinding
 
     val appPreferences = CarStatsViewer.appPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentViewAndTheme(this, R.layout.activity_settings_apis)
+        if (CarStatsViewer.appPreferences.colorTheme > 0) setTheme(R.style.ColorTestTheme)
+        binding = ActivitySettingsApisBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        CarStatsViewer.typefaceMedium?.let {
-            applyTypeface(settings_apis_activity)
-        }
+        with(binding){
+            settingsApisConnectionSelector.entries =
+                ArrayList(CarStatsViewer.liveDataApis.map { getString(it.apiNameStringId) })
+            settingsApisConnectionSelector.selectedIndex = appPreferences.mainViewConnectionApi
+            settingsApisConnectionSelector.setOnIndexChangedListener {
+                appPreferences.mainViewConnectionApi = settingsApisConnectionSelector.selectedIndex
+            }
 
-        settings_apis_connection_selector.entries = ArrayList(CarStatsViewer.liveDataApis.map { getString(it.apiNameStringId) })
-        settings_apis_connection_selector.selectedIndex = appPreferences.mainViewConnectionApi
-        settings_apis_connection_selector.setOnIndexChangedListener {
-            appPreferences.mainViewConnectionApi = settings_apis_connection_selector.selectedIndex
-        }
+            settingsApisButtonBack.setOnClickListener {
+                finish()
+                if (BuildConfig.FLAVOR_aaos != "carapp")
+                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            }
 
-        settings_apis_button_back.setOnClickListener {
-            finish()
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-        }
+            settingsApisAbrpRow.setOnMainClickListener {
+                CarStatsViewer.liveDataApis[0].showSettingsDialog(this@SettingsApisActivity)
+            }
 
-        settings_apis_abrp_row.setOnMainClickListener {
-            CarStatsViewer.liveDataApis[0].showSettingsDialog(this@SettingsApisActivity)
-        }
+            settingsApisHttpRow.setOnMainClickListener {
+                CarStatsViewer.liveDataApis[1].showSettingsDialog(this@SettingsApisActivity)
+            }
 
-        settings_apis_http_row.setOnMainClickListener {
-            CarStatsViewer.liveDataApis[1].showSettingsDialog(this@SettingsApisActivity)
-        }
+            settingsApisSmtpRow.setOnMainClickListener {
+                showSmtpLoginDialog()
+            }
 
-        settings_apis_smtp_row.setOnMainClickListener {
-            showSmtpLoginDialog()
-        }
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                CarStatsViewer.watchdog.watchdogStateFlow.collect {
-                    settings_apis_abrp_row.connectionStatus = it.apiState[CarStatsViewer.liveDataApis[0].apiIdentifier]?:0
-                    settings_apis_http_row.connectionStatus = it.apiState[CarStatsViewer.liveDataApis[1].apiIdentifier]?:0
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    CarStatsViewer.watchdog.watchdogStateFlow.collect {
+                        settingsApisAbrpRow.connectionStatus =
+                            it.apiState[CarStatsViewer.liveDataApis[0].apiIdentifier] ?: 0
+                        settingsApisHttpRow.connectionStatus =
+                            it.apiState[CarStatsViewer.liveDataApis[1].apiIdentifier] ?: 0
+                    }
                 }
             }
         }

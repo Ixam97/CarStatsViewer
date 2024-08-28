@@ -6,25 +6,37 @@ import android.app.Service
 import android.car.VehicleUnit
 import android.content.Intent
 import android.location.Location
+import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
+import androidx.car.app.activity.CarAppActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.ui.activities.MainActivity
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesClient
 import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.locationClient.DefaultLocationClient
 import com.ixam97.carStatsViewer.locationClient.LocationClient
+import com.ixam97.carStatsViewer.ui.activities.MainActivity
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.WatchdogState
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import java.io.File
 
 class DataCollector: Service() {
 
@@ -35,7 +47,7 @@ class DataCollector: Service() {
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private lateinit var foregroundServiceNotification: Notification.Builder
-    private lateinit var locationClient: LocationClient
+    private var locationClient: LocationClient? = null
     private var locationClientJob: Job? = null
 
     private lateinit var carPropertiesClient: CarPropertiesClient
@@ -63,8 +75,8 @@ class DataCollector: Service() {
 
         startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
         InAppLogger.i("[NEO] Foreground service started in onStartCommand()")
-        super.onStartCommand(intent, flags, startId)
-        return START_NOT_STICKY
+        // super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     override fun onCreate() {
@@ -80,7 +92,7 @@ class DataCollector: Service() {
             PendingIntent.getActivity(
                 applicationContext,
                 0,
-                Intent(applicationContext, MainActivity::class.java),
+                Intent(applicationContext, if (BuildConfig.FLAVOR_aaos != "carapp") MainActivity::class.java else CarAppActivity::class.java),
                 PendingIntent.FLAG_IMMUTABLE
             )
         )
@@ -105,15 +117,29 @@ class DataCollector: Service() {
             carPropertiesData = dataProcessor.carPropertiesData
         )
 
+        fun emulatorCarMake(): String {
+            val propertyMake = carPropertiesClient.getStringProperty(CarProperties.INFO_MAKE)
+            if (propertyMake == "Toy Vehicle") {
+                if (File("/product/fonts/PolestarUnica77-Regular.otf").exists())
+                    return "Polestar"
+                else return Build.BRAND
+            }
+            return propertyMake
+        }
+
+        InAppLogger.i("Brand: ${emulatorCarMake()}")
+
         dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
             batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
-            vehicleMake = carPropertiesClient.getStringProperty(CarProperties.INFO_MAKE),
+            vehicleMake =  emulatorCarMake(),
             modelName = carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL),
             distanceUnit = when (carPropertiesClient.getIntProperty(CarProperties.DISTANCE_DISPLAY_UNITS)) {
                 VehicleUnit.MILE -> DistanceUnitEnum.MILES
                 else -> DistanceUnitEnum.KM
             }
         )
+
+
 
         dataProcessor.staticVehicleData.let {
             InAppLogger.i("[NEO] Make: ${it.vehicleMake}, model: ${it.modelName}, battery capacity: ${(it.batteryCapacity?:0f)/1000} kWh")
@@ -128,15 +154,17 @@ class DataCollector: Service() {
 
         InAppLogger.i("[NEO] Google API availability: ${GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS}")
 
-        locationClient = DefaultLocationClient(
-            //CarStatsViewer.appContext,
-            //LocationServices.getFusedLocationProviderClient(this)
-        )
+        serviceScope.launch {
+            locationClient = DefaultLocationClient(
+                //CarStatsViewer.appContext,
+                //LocationServices.getFusedLocationProviderClient(this)
+            )
 
-        // startLocationClient(5_000)
+            // startLocationClient(5_000)
 
-        if (CarStatsViewer.appPreferences.useLocation) {
-            startLocationClient(5_000)
+            if (CarStatsViewer.appPreferences.useLocation) {
+                startLocationClient(5_000)
+            }
         }
 
         CarStatsViewer.liveDataApis[0]
@@ -162,7 +190,7 @@ class DataCollector: Service() {
         }
 
         if (CarStatsViewer.appPreferences.autostart)
-            CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000, extendedLogging = true)
+            CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 9_500, extendedLogging = true)
 
         serviceScope.launch {
             CarStatsViewer.watchdog.watchdogTriggerFlow.collect {
@@ -197,6 +225,13 @@ class DataCollector: Service() {
                 CarStatsViewer.watchdog.triggerWatchdog()
             }
         }
+
+        // serviceScope.launch {
+        //     while (true) {
+        //         CarStatsViewer.dataProcessor.updateTripDataValuesByTick()
+        //         delay(2_000)
+        //     }
+        // }
 
         serviceScope.launch {
             // Notification updater
@@ -240,34 +275,40 @@ class DataCollector: Service() {
     }
 
     private fun stopLocationClient() {
-        InAppLogger.i("[NEO] Location client is being canceled")
-        locationClient.stopLocationUpdates()
-        dataProcessor.processLocation(null, null, null)
-        lastLocation = null
-        locationClientJob?.cancel()
-        locationClientJob = null
+
+        locationClient?.let {
+            InAppLogger.i("[NEO] Location client is being canceled")
+
+            it.stopLocationUpdates()
+            dataProcessor.processLocation(null, null, null)
+            lastLocation = null
+            locationClientJob?.cancel()
+            locationClientJob = null
+        }
     }
 
     private fun startLocationClient(interval: Long) {
-        InAppLogger.i("[NEO] Location client is being started")
+        locationClient?.let {
+            InAppLogger.i("[NEO] Location client is being started")
 
-        locationClient.stopLocationUpdates()
-        locationClientJob?.cancel()
-        locationClientJob = locationClient.getLocationUpdates(interval, this@DataCollector)
-            .catch { e ->
-                InAppLogger.e("[LOC] ${e.message}")
-            }
-            .onEach { location ->
-                if (location != null) {
-                    dataProcessor.processLocation(location.latitude, location.longitude, location.altitude)
-                    CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(locationState = WatchdogState.NOMINAL))
-                } else {
-                    dataProcessor.processLocation(null, null, null)
-                    CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(locationState = WatchdogState.ERROR))
+            it.stopLocationUpdates()
+            locationClientJob?.cancel()
+            locationClientJob = it.getLocationUpdates(interval, this@DataCollector)
+                .catch { e ->
+                    InAppLogger.e("[LOC] ${e.message}")
                 }
-                lastLocation = location
-            }
-            .launchIn(serviceScope)
+                .onEach { location ->
+                    if (location != null) {
+                        dataProcessor.processLocation(location.latitude, location.longitude, location.altitude)
+                        CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(locationState = WatchdogState.NOMINAL))
+                    } else {
+                        dataProcessor.processLocation(null, null, null)
+                        CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(locationState = WatchdogState.ERROR))
+                    }
+                    lastLocation = location
+                }
+                .launchIn(serviceScope)
+        }
     }
 
 }

@@ -1,7 +1,5 @@
 package com.ixam97.carStatsViewer.carPropertiesClient
 
-import android.car.VehiclePropertyIds
-
 class CarProperty(val propertyId: Int) {
 
     private val startupTimestamp = System.nanoTime()

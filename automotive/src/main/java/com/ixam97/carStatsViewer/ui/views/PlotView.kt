@@ -1,7 +1,16 @@
 package com.ixam97.carStatsViewer.ui.views
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.DashPathEffect
+import android.graphics.LinearGradient
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.PointF
+import android.graphics.Rect
+import android.graphics.Shader
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
 import android.util.AttributeSet
@@ -16,11 +25,23 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
-import com.ixam97.carStatsViewer.ui.plot.enums.*
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionSmoothingType
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionY
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDirection
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotHighlightMethod
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotLabelPosition
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotLineLabelFormat
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotMarkerType
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotSessionGapRendering
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotMarkerPaint
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
-import com.ixam97.carStatsViewer.ui.plot.objects.*
+import com.ixam97.carStatsViewer.ui.plot.objects.PlotGlobalConfiguration
+import com.ixam97.carStatsViewer.ui.plot.objects.PlotLine
+import com.ixam97.carStatsViewer.ui.plot.objects.PlotLineConfiguration
+import com.ixam97.carStatsViewer.ui.plot.objects.PlotLineItem
+import com.ixam97.carStatsViewer.ui.plot.objects.PlotMarkers
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -174,6 +195,9 @@ class PlotView @JvmOverloads constructor(
 
     private val appPreferences : AppPreferences
 
+    private var mWidth: Int
+    private var mHeight: Int
+
     init {
         val attributes = context.obtainStyledAttributes(attrs, R.styleable.PlotView)
         try {
@@ -185,6 +209,9 @@ class PlotView @JvmOverloads constructor(
         }
         setupPaint()
         appPreferences = AppPreferences(context)
+
+        mWidth = width
+        mHeight = height
     }
 
     // Setup paint with color and stroke styles
@@ -289,7 +316,7 @@ class PlotView @JvmOverloads constructor(
         invalidate()
     }
 
-    private fun x(index: Any?, min: Any, max: Any, maxX: Float): Float? {
+    private fun x(index: Number?, min: Number, max: Number, maxX: Float): Float? {
         if (min is Float) {
             return x(index as Float?, min, max as Float, maxX)
         }
@@ -376,7 +403,7 @@ class PlotView @JvmOverloads constructor(
     private val mScrollGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         private val shiftingFraction = 50L
 
-        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+        override fun onScroll(e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             touchDimensionShiftDistance += distanceX * touchDistanceMultiplier
 
             val targetDimensionShift = (((touchDimensionShift + touchDimensionShiftDistance * touchDimensionShiftByPixel) / ((dimensionRestriction?:shiftingFraction) / shiftingFraction)).toLong() * ((dimensionRestriction?:shiftingFraction) / shiftingFraction))
@@ -432,7 +459,7 @@ class PlotView @JvmOverloads constructor(
                 }
                 touchDimensionShift = dimensionShift ?: 0L
                 touchDimensionShiftDistance = 0f
-                touchDimensionShiftByPixel = restriction.toFloat() / width.toFloat()
+                touchDimensionShiftByPixel = restriction.toFloat() / mWidth.toFloat()
 
                 val dimensionMax = plotLines.mapNotNull { it.first.distanceDimension(dimension) }.maxOfOrNull { it }?.toLong() ?: return true
                 touchDimensionMax = dimensionMax + (min - dimensionMax % min)
@@ -454,9 +481,11 @@ class PlotView @JvmOverloads constructor(
         return true
     }
 
-    override fun onDraw(canvas: Canvas) {
-        Log.d("PLOT", "onDraw, dimensionRestriction: $dimensionRestriction, dimensionShift:$dimensionShift")
-        super.onDraw(canvas)
+    fun drawDiagram(canvas: Canvas, boundingRect: Rect? = null) {
+        boundingRect?.let {
+            mWidth = it.right - it.left
+            mHeight = it.bottom - it.top
+        }
         dataPointMap.clear()
         alignZero()
         drawBackground(canvas)
@@ -466,12 +495,20 @@ class PlotView @JvmOverloads constructor(
         drawYLines(canvas)
     }
 
+    override fun onDraw(canvas: Canvas) {
+        // Log.d("PLOT", "onDraw, dimensionRestriction: $dimensionRestriction, dimensionShift:$dimensionShift")
+        mWidth = width
+        mHeight = height
+        super.onDraw(canvas)
+        drawDiagram(canvas)
+    }
+
     private var dataPointMap : HashMap<PlotLine, List<PlotLineItem>> = HashMap()
     private fun dataPoints(plotLine: PlotLine?) : List<PlotLineItem>? {
         if (plotLine == null) return null
-        Log.d("PLOT", "dataPointMap.containsKey = ${dataPointMap.containsKey(plotLine)}")
+        // Log.d("PLOT", "dataPointMap.containsKey = ${dataPointMap.containsKey(plotLine)}")
         if (!dataPointMap.containsKey(plotLine)) {
-            Log.i("PLOT", "Getting data points")
+            // Log.i("PLOT", "Getting data points")
             dataPointMap[plotLine] = plotLine.getDataPoints(dimension, dimensionRestriction, dimensionShift)
         }
         return dataPointMap[plotLine]
@@ -505,15 +542,15 @@ class PlotView @JvmOverloads constructor(
     }
 
     private fun drawBackground(canvas: Canvas) {
-        val maxX = width.toFloat()
-        val maxY = height.toFloat()
+        val maxX = mWidth.toFloat()
+        val maxY = mHeight.toFloat()
 
         canvas.drawRect(xMargin.toFloat(), yMargin.toFloat(), maxX - xMargin, maxY - yMargin, backgroundPaint)
     }
 
     private fun drawXLines(canvas: Canvas) {
-        val maxX = width.toFloat()
-        val maxY = height.toFloat()
+        val maxX = mWidth.toFloat()
+        val maxY = mHeight.toFloat()
 
         val distanceDimension = when {
             dimensionRestriction != null -> dimensionRestriction!!.toFloat()
@@ -586,8 +623,8 @@ class PlotView @JvmOverloads constructor(
     }
 
     private fun drawYBaseLines(canvas: Canvas) {
-        val maxX = width.toFloat()
-        val maxY = height.toFloat()
+        val maxX = mWidth.toFloat()
+        val maxY = mHeight.toFloat()
 
         for (i in 0 until yLineCount) {
             val cordY = y(i.toFloat(), 0f, yLineCount.toFloat() - 1, maxY)!!
@@ -601,8 +638,8 @@ class PlotView @JvmOverloads constructor(
     }
 
     private fun drawPlot(canvas: Canvas) {
-        val maxX = width.toFloat()
-        val maxY = height.toFloat()
+        val maxX = mWidth.toFloat()
+        val maxY = mHeight.toFloat()
 
         val dimensionYArrayList = arrayListOf(dimensionYPrimary, dimensionYSecondary)
         if (dimensionYAdditional?.isEmpty() == false) dimensionYArrayList.addAll(dimensionYAdditional!!)
@@ -667,7 +704,7 @@ class PlotView @JvmOverloads constructor(
         }
     }
 
-    private fun toPlotPointCollection(configuration: PlotLineConfiguration, line: PlotLine, dimensionY: PlotDimensionY?, minValue: Float, maxValue: Float, minDimension: Any, maxDimension: Any, maxX: Float, maxY: Float, smoothing: Float?, smoothingPercentage: Float?): ArrayList<ArrayList<PointF>> {
+    private fun toPlotPointCollection(configuration: PlotLineConfiguration, line: PlotLine, dimensionY: PlotDimensionY?, minValue: Float, maxValue: Float, minDimension: Number, maxDimension: Number, maxX: Float, maxY: Float, smoothing: Float?, smoothingPercentage: Float?): ArrayList<ArrayList<PointF>> {
         // val dataPoints = line.getDataPoints(dimension, dimensionRestriction, dimensionShift, true)
         val dataPoints = dataPoints(line)!!
         val plotLineItemPointCollection = line.toPlotLineItemPointCollection(dataPoints, dimension, smoothing, minDimension, maxDimension)
@@ -824,7 +861,7 @@ class PlotView @JvmOverloads constructor(
         canvas.drawCircle(point.x, point.y, 3f, paint)
     }
 
-    private fun drawMarker(canvas: Canvas, minDimension: Any, maxDimension: Any, maxX: Float, maxY: Float) {
+    private fun drawMarker(canvas: Canvas, minDimension: Number, maxDimension: Number, maxX: Float, maxY: Float) {
 
         val markers = plotMarkers?.markers?.filter {
             val isNotOnEdge = when (dimension) {
@@ -953,8 +990,8 @@ class PlotView @JvmOverloads constructor(
     }
     
     private fun drawYLines(canvas: Canvas) {
-        val maxX = width.toFloat()
-        val maxY = height.toFloat()
+        val maxX = mWidth.toFloat()
+        val maxY = mHeight.toFloat()
 
         val bounds = Rect()
         labelPaint.getTextBounds("Dummy", 0, "Dummy".length, bounds)

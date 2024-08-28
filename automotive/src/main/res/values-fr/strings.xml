@@ -81,6 +81,7 @@
     <string name="quit_dialog_message">Le journal sera copié dans le presse-papiers.</string>
     <string name="dialog_close">Fermer</string>
     <string name="dialog_reset_title">Réinitialiser ce trajet?</string>
+    <!-- This message has changed. Please make sure you adjust the translation accordingly! -->
     <!--This message has changed. Please make sure you adjust the translation accordingly!-->
     <string name="dialog_reset_message">Ce trajet sera remis à zéro. Il sera archivé dans l\'historique.</string>
     <string name="dialog_reset_do_save">Sauvegarder</string>
@@ -99,18 +100,6 @@
     <string name="SinceChargeData">Depuis la dernière charge</string>
     <string name="AutoTripData">Trajet automatique</string>
     <string name="CurrentMonthData">Ce mois-ci</string>
-    <string-array name="changes_0_23">
-        <item>Structure de données revue pour améliorer la stabilité</item>
-        <item>Ajout de langue (danois)</item>
-        <item>Ajout de la page \"À propos\"</item>
-        <item>Ajout de plusieurs contextes de suivi de données simultanés (Trajet manuel, Depuis dernière charge, Trajet automatique, Ce mois-ci)</item>
-        <item>Plusieurs améliorations apportées aux graphiques</item>
-        <item>Taper deux fois sur un graphique permet d\'afficher des valeurs précises</item>
-        <item>Journaux de débogage peuvent être envoyés par courriel (expérimental)</item>
-        <item>Correction du comportement de la courbe de recharge lorsque le conducteur quitte le véhicule</item>
-        <item>Réduction de la distraction du conducteur</item>
-        <item>Corrections et améliorations</item>
-    </string-array>
     <string name="main_changelog_dialog_title">Changements dans la version %s.</string>
     <string name="settings_apis_title">Configuration API</string>
     <!-- Restart Dialog -->
@@ -159,41 +148,12 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
     <string name="vehicle_performance">Mise à niveau du logiciel de performance</string>
     <string name="vehicle_bst">Édition BST</string>
     <string name="vehicle_launch">Édition Lancement</string>
-    <string-array name="changes_0_24">
-        <item>Ajout d\'API pour données en temps réel:
-- Données en direct ABRP
-- Lien de rappel HTTP avec BasicAuth</item>
-        <item>Ajout de suivi de localisation et d\'altitude</item>
-        <item>Ajout d\'un message après redémarrage anormal de l\'application</item>
-        <item>Ajout de la configuration du véhicule</item>
-        <item>Menu d\'options restructuré</item>
-        <item>Correction du rafraîchissement des unités de l\'écran principal</item>
-        <item>Corrections et améliorations</item>
-    </string-array>
     <string name="settings_use_location">Suivi de localisation</string>
     <string name="settings_autostart">Lancement automatique de l\'application</string>
     <string name="plot_dimensionY_SPEED">Vitesse</string>
     <string name="plot_dimensionY_ALTITUDE">Altitude</string>
-    <string-array name="changes_0_24_1">
-        <item>Ajoute de la variation d\'altitude dans le sommaire (expérimental)</item>
-        <item>Correction des unités dans le graphique du sommaire</item>
-        <item>Correction des dates de sessions de recharge</item>
-        <item>Amélioration de la notification lors d\'une remise en marche</item>
-        <item>Modification des conditions de suivi de l\'énergie (expérimental)</item>
-    </string-array>
     <string name="summary_altitude">Variation d\'altitude</string>
     <string name="about_translators">Traducteurs</string>
-    <string-array name="changes_0_25_0">
-        <item>Ajout d\'une base de données robuste et performante pour les données de trajets.</item>
-        <item>Un session de recharge peut maintenant être stoppées jusqu\'à 5 minutes avant le départ d\'une nouvelle session, même si la voiture a été déplacée.</item>
-        <item>Ajout d\'un historique pour consulter les anciens trajets.</item>
-        <item>Ajout de boutons pour visualiser les derniers 20, 40 ou 100km dans le sommaire.</item>
-        <item>Ajout d\'une icone représentant le type de trajet choisi. Taper les statistiques pour cycler aux travers de 4 types.</item>
-        <item>Ajout d\'une option pour afficher le statut des APIs désirés dans la vue principale.</item>
-        <item>Il est maintenant possible de réinitialiser le trajet manuel dans la vue principale.</item>
-        <item>Ajustement apporté à la structure de données du lien de rappel HTTP.</item>
-        <item>Corrections de bogues et améliorations.</item>
-    </string-array>
     <string name="restart_notification_reason_unknown">%s a redémarré pour une raison inconnue.</string>
     <string name="summary_speed">Vitesse moyenne</string>
     <string-array name="trip_type_names">
@@ -226,33 +186,13 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
     <string name="history_dialog_multi_delete_deselect">Désélectionner tout</string>
     <string name="settings_distance_unit">Distances en miles</string>
     <string name="settings_apis_connection_selector">Icône de connectivité dans la vue principale</string>
-    <string-array name="changes_0_25_1">
-        <item>Ajustements à l\'interface, principalement dans le sommaire.</item>
-        <item>Ajout du modèle 2024 dans configuration de véhicule.</item>
-        <item>Le partage de l\'emplacement peut maintenant être configuré individuellement pour chaque API.</item>
-        <item>Corrections de bogues mineurs.</item>
-    </string-array>
     <string name="CurrentTripData_short">Manuel</string>
     <string name="SinceChargeData_short">Depuis la charge</string>
     <string name="AutoTripData_short">Automatique</string>
     <string name="CurrentMonthData_short">Mois</string>
-    <string name="snackbar_ok">OK</string>
-    <string name="screenshot_taken">Capture d\'écran prise (total de %s)</string>
-    <string-array name="changes_0_25_2">
-        <item>Extension des capacités de l\'API Webhook.</item>
-        <item>Ajout d\'une option de rappel sur téléphone lorsque le véhicule est quitté.</item>
-        <item>Améliorations du rendu du graphique et de la performance.</item>
-        <item>Correction d\'une situation où des sessions de charge incorrectes étaient affichées dans le sommaire. </item>
-        <item>Correction d\'une situation où l\'application n\'affichait pas les distance en miles.</item>
-    </string-array>
     <string name="settings_phone_reminder">Rappel de téléphone</string>
     <string name="notification_phone">Avez-vous récupéré votre téléphone mobile ?</string>
     <string name="notification_valuables">Ne pas laisser d\'objets de valeur visible dans la voiture.</string>
-    <string-array name="changes_0_26_0">
-        <item>Ajout d\'une palette de couleurs expérimentale.</item>
-        <item>Simplification du sélecteur d\'axe secondaire.</item>
-        <item>Base de données maintenant séparée en morceaux pour prévenir des faux négatifs.</item>
-    </string-array>
     <string name="settings_experimental_colors">Palette de couleurs expérimentale</string>
     <string name="history_dialog_upload_title">Téléversement de la base de données vers l\'API</string>
     <string name="history_dialog_upload_message">Vous êtes sur le point de téléverser la base de données entière au destinataire spécifié dans l\'API Webhook.
@@ -261,4 +201,62 @@ Assurez-vous que le serveur soit exempt de données existantes pour éviter les 
 
 Cette opération peut prendre du temps, dépendament du volume de données. Veuillez rester sur cette page jusqu\'à la confirmation de succès.</string>
     <string name="history_dialog_upload_upload_button">Téléversement</string>
+    <string-array name="changes">
+        <item>Corrections et améliorations</item>
+        <item>Réduction de la distraction du conducteur</item>
+        <item>Correction du comportement de la courbe de recharge lorsque le conducteur quitte le véhicule</item>
+        <item>Journaux de débogage peuvent être envoyés par courriel (expérimental)</item>
+        <item>Taper deux fois sur un graphique permet d\'afficher des valeurs précises</item>
+        <item>Plusieurs améliorations apportées aux graphiques</item>
+        <item>Ajout de plusieurs contextes de suivi de données simultanés (Trajet manuel, Depuis dernière charge, Trajet automatique, Ce mois-ci)</item>
+        <item>Ajout de la page \"À propos\"</item>
+        <item>Ajout de langue (danois)</item>
+        <item>Structure de données revue pour améliorer la stabilité</item>
+        <item>[V](0.23.0)</item>
+        <item>Corrections et améliorations</item>
+        <item>Correction du rafraîchissement des unités de l\'écran principal</item>
+        <item>Menu d\'options restructuré</item>
+        <item>Ajout de la configuration du véhicule</item>
+        <item>Ajout d\'un message après redémarrage anormal de l\'application</item>
+        <item>Ajout de suivi de localisation et d\'altitude</item>
+        <item>Ajout d\'API pour données en temps réel:
+- Données en direct ABRP
+- Lien de rappel HTTP avec BasicAuth</item>
+        <item>[V](0.24.0)</item>
+        <item>Modification des conditions de suivi de l\'énergie (expérimental)</item>
+        <item>Amélioration de la notification lors d\'une remise en marche</item>
+        <item>Correction des dates de sessions de recharge</item>
+        <item>Correction des unités dans le graphique du sommaire</item>
+        <item>Ajoute de la variation d\'altitude dans le sommaire (expérimental)</item>
+        <item>[V](0.24.1)</item>
+        <item>Corrections de bogues et améliorations.</item>
+        <item>Ajustement apporté à la structure de données du lien de rappel HTTP.</item>
+        <item>Il est maintenant possible de réinitialiser le trajet manuel dans la vue principale.</item>
+        <item>Ajout d\'une option pour afficher le statut des APIs désirés dans la vue principale.</item>
+        <item>Ajout d\'une icone représentant le type de trajet choisi. Taper les statistiques pour cycler aux travers de 4 types.</item>
+        <item>Ajout de boutons pour visualiser les derniers 20, 40 ou 100km dans le sommaire.</item>
+        <item>Ajout d\'un historique pour consulter les anciens trajets.</item>
+        <item>Un session de recharge peut maintenant être stoppées jusqu\'à 5 minutes avant le départ d\'une nouvelle session, même si la voiture a été déplacée.</item>
+        <item>Ajout d\'une base de données robuste et performante pour les données de trajets.</item>
+        <item>[V](0.25.0)</item>
+        <item>Corrections de bogues mineurs.</item>
+        <item>Le partage de l\'emplacement peut maintenant être configuré individuellement pour chaque API.</item>
+        <item>Ajout du modèle 2024 dans configuration de véhicule.</item>
+        <item>Ajustements à l\'interface, principalement dans le sommaire.</item>
+        <item>[V](0.25.1)</item>
+        <item>Correction d\'une situation où l\'application n\'affichait pas les distance en miles.</item>
+        <item>Correction d\'une situation où des sessions de charge incorrectes étaient affichées dans le sommaire. </item>
+        <item>Améliorations du rendu du graphique et de la performance.</item>
+        <item>Ajout d\'une option de rappel sur téléphone lorsque le véhicule est quitté.</item>
+        <item>Extension des capacités de l\'API Webhook.</item>
+        <item>[V](0.25.2)</item>
+        <item>Base de données maintenant séparée en morceaux pour prévenir des faux négatifs.</item>
+        <item>Simplification du sélecteur d\'axe secondaire.</item>
+        <item>Ajout d\'une palette de couleurs expérimentale.</item>
+        <item>[V](0.26.0)</item>
+    </string-array>
+    <string name="car_app_menu">Divers</string>
+    <string name="car_app_advanced_settings">Paramètres avancés</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">Capture d\'écran prise (total de %s)</string>
 </resources>

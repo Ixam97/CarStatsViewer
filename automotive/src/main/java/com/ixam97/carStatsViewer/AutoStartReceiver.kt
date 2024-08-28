@@ -1,12 +1,15 @@
 package com.ixam97.carStatsViewer
 
+import android.app.ActivityManager
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.ixam97.carStatsViewer.ui.activities.PermissionsActivity
+import android.util.Log
+import androidx.car.app.activity.CarAppActivity
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
+import com.ixam97.carStatsViewer.ui.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,8 +17,28 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AutoStartReceiver: BroadcastReceiver() {
+
+    private fun isServiceRunning(className: String): Boolean {
+        Log.d("ActivityManager", "Compare to: $className")
+        val activityManager = CarStatsViewer.appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        activityManager.getRunningServices(10).forEach { runningServiceInfo ->
+            Log.d("ActivityManager", runningServiceInfo.service.className)
+            if (runningServiceInfo.service.className == className) {
+                Log.d("ActivityManager", "MATCH")
+                return true
+            }
+        }
+        return false
+    }
+
     override fun onReceive(context: Context, intent: Intent?) {
 
+        Log.d("ASR", "Action: ${intent?.action}")
+
+        if ((intent?.action?: "") == "com.ixam97.carStatsViewer.NOTIFICATION_DELETE") {
+            CarStatsViewer.restartNotificationDismissed = true
+            return
+        }
 
         val reasonMap = mapOf(
             "crash" to context.getString(R.string.restart_notification_reason_crash),
@@ -25,14 +48,15 @@ class AutoStartReceiver: BroadcastReceiver() {
         )
         var reason: String? = CarStatsViewer.restartReason
 
-        InAppLogger.v("[ASR] Conditions: Service started: ${CarStatsViewer.foregroundServiceStarted}, dismissed: ${CarStatsViewer.restartNotificationDismissed}")
+        InAppLogger.v("[ASR] Conditions: Service started: ${isServiceRunning(DataCollector::class.java.name)}, dismissed: ${CarStatsViewer.restartNotificationDismissed}")
 
         if (!CarStatsViewer.appPreferences.autostart) return
-
-        CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 10_000, extendedLogging = false)
-
-        if (CarStatsViewer.foregroundServiceStarted) return
         if (CarStatsViewer.restartNotificationDismissed) return
+
+        CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 9_500, extendedLogging = true)
+
+        // if (CarStatsViewer.foregroundServiceStarted) return
+        if (isServiceRunning(DataCollector::class.java.name)) return
         if (CarStatsViewer.restartNotificationShown) return
 
         InAppLogger.d("[ASR] Auto Star Receiver triggered")
@@ -95,6 +119,20 @@ class AutoStartReceiver: BroadcastReceiver() {
             Intent(context.applicationContext, PermissionsActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE
         )
+        val actionCarAppActivityPendingIntent = PendingIntent.getActivity(
+            context.applicationContext,
+            2,
+            Intent(context.applicationContext, CarAppActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        val deleteIntent = PendingIntent.getBroadcast(
+            context.applicationContext,
+            0,
+            Intent(context.applicationContext, AutoStartReceiver::class.java).apply {
+                action = "com.ixam97.carStatsViewer.NOTIFICATION_DELETE"
+            },
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         val startupNotificationBuilder = Notification.Builder(
             context.applicationContext,
@@ -103,6 +141,7 @@ class AutoStartReceiver: BroadcastReceiver() {
             .setContentTitle(notificationText)
             .setContentText(context.getString(R.string.restart_notification_message))
             .setSmallIcon(R.mipmap.ic_launcher_notification)
+            .setDeleteIntent(deleteIntent)
             .setOngoing(false)
 
         startupNotificationBuilder.apply {
@@ -111,11 +150,13 @@ class AutoStartReceiver: BroadcastReceiver() {
                     context.getString(R.string.restart_notification_service),
                     actionServicePendingIntent
             ).build())
-            addAction(Notification.Action.Builder(
+            addAction(
+                Notification.Action.Builder(
                     null,
-                context.getString(R.string.restart_notification_app),
-                    actionActivityPendingIntent
-            ).build())
+                    context.getString(R.string.restart_notification_app),
+                    if (BuildConfig.FLAVOR_aaos != "carapp") actionActivityPendingIntent else actionCarAppActivityPendingIntent
+                ).build()
+            )
             /*
             addAction(Notification.Action.Builder(
                     null,

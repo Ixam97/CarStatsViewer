@@ -1,5 +1,30 @@
 # Changelog [DE]:
 
+## 0.27.3
+- Zusätzliche Fartbeginn-Bedingungen hinzugefügt (z.B. für den Volvo EX30).
+
+## 0.27.2
+- Fehlerbehandlung und Logging beim Wechsel von Trips hinzugefügt.
+
+## 0.27.1
+- (Play Edition) Das Legacy Dashboard und der Tripverlauf wurden aufgrund von Einschränkungen durch Google-Richtlinien vorübergehend deaktiviert.
+- (Play Edition) Abstürze bei der Erstellung von Changelogs werden abgefangen.
+- (Play Edition) Fehler behoben, bei dem das interagieren mit Benachrichtigungen zu Abstürzen führt.
+- Abstürze beim Speichern von Tripdaten behoben.
+- Absturzmeldungen verbessert.
+
+## 0.27.0
+- Implementierung des Automotive App Host für einen potentiellen öffentlichen Release im Play Store (nicht in klassischen Builds enthalten).
+- Implementierung von Firebase Crashlytics. Kann in den Einstellungen deaktivert werden.
+- Die Art und Weise, wie Changelogs generiert werden, wurde überarbeitet.
+- Die Ladekurve wird in der Tripzusammenfassung nicht mehr bei 160 kW abgeschnitten.
+- Der Datenbank-Upload läuft nun in einem eigenen Dienst. Es muss nicht länger der Tripverlauf geöffnet bleiben. Eine Benachrichtigung informiert über den Fortschritt.
+- Der Datenbank-Upload enthält nun Ladekurven.
+- Der Webhook füllt nun das Feld \"charged_soc\" am Ende eines Ladevorgangs aus.
+- Datenbankzugriffe reduziert durch das verwenden der Debug-Einstellung bei der Speicherung von Logs.
+- Debug-Logs werden nach 28 Tagen ein Mal täglich gelöscht.
+- Fehler beim Anwenden des experimentellen Farbschemas behoben.
+
 ## 0.26.2
 - Verbesserung der Diagramm-Steuerelemente in der Tripzusammenfassung
 - Defektes Layout nach Polestar OTA P3.0.3 behoben

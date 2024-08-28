@@ -1,6 +1,9 @@
 package com.ixam97.carStatsViewer.database.log
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
 
 @Dao
 interface LogDao {
@@ -32,4 +35,7 @@ interface LogDao {
 
     @Query("DELETE FROM LogEntries")
     fun clear()
+
+    @Query("DELETE FROM LogEntries WHERE epochTime < :timeLimit")
+    fun trim(timeLimit: Long)
 }

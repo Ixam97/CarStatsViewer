@@ -131,6 +131,7 @@
         android:background="?android:attr/listDivider"/>
 
     <ScrollView
+        android:id="@+id/summary_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

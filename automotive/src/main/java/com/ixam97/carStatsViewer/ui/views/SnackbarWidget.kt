@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
 import android.view.animation.AnimationUtils
-import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -20,9 +19,6 @@ import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.utils.InAppLogger
-import com.ixam97.carStatsViewer.utils.applyTypeface
-import kotlinx.android.synthetic.main.widget_snackbar.view.*
 import kotlin.math.roundToInt
 
 
@@ -109,7 +105,7 @@ class SnackbarWidget private constructor(
         val onePercent = maxWidth.toFloat() / 100
         val newWidth = onePercent * percent
 
-        val layoutParams = progress_bar.layoutParams
+        val layoutParams = findViewById<View>(R.id.progress_bar).layoutParams
         layoutParams.width = newWidth.roundToInt()
         progressBar.layoutParams = layoutParams
     }
@@ -178,7 +174,7 @@ class SnackbarWidget private constructor(
                     widthAnimator.duration = snackbarParameters.duration
                     widthAnimator.interpolator = LinearInterpolator()
                     widthAnimator.addUpdateListener { barAnimation ->
-                        val layoutParams = progress_bar.layoutParams
+                        val layoutParams = findViewById<View>(R.id.progress_bar).layoutParams
                         layoutParams.width = barAnimation.animatedValue as Int
                         progressBar.layoutParams = layoutParams
                     }
@@ -190,7 +186,5 @@ class SnackbarWidget private constructor(
             })
             this.startAnimation(anim)
         }
-
-        applyTypeface(this)
     }
 }

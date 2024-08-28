@@ -4,15 +4,15 @@ import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.widget.EditText
-import android.widget.Switch
-import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.CarStatsViewer
-import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataProcessor.DrivingState
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
+import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
+import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.ui.views.FixedSwitchWidget
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import org.json.JSONObject
 import java.io.DataOutputStream
 import java.net.HttpURLConnection
@@ -145,6 +145,8 @@ class AbrpLiveData (
 
             abrp_use_api.setSwitchClickListener() {
                 AppPreferences(context).abrpUseApi = abrp_use_api.isChecked
+                if(!abrp_use_api.isChecked) connectionStatus = ConnectionStatus.UNUSED
+                updateWatchdog()
             }
 
             abrp_use_location.setSwitchClickListener() {

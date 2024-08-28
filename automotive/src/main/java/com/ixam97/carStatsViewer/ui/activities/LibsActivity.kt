@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.ui.activities
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -11,22 +10,28 @@ import android.widget.TextView
 import android.widget.Toolbar.LayoutParams
 import androidx.fragment.app.FragmentActivity
 import com.airbnb.paris.extensions.style
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.utils.applyTypeface
-import com.ixam97.carStatsViewer.utils.setContentViewAndTheme
+import com.ixam97.carStatsViewer.databinding.ActivityLibsBinding
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.util.withContext
-import kotlinx.android.synthetic.main.activity_libs.*
 
 class LibsActivity: FragmentActivity() {
+
+    private lateinit var binding: ActivityLibsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentViewAndTheme(this, R.layout.activity_libs)
+        if (CarStatsViewer.appPreferences.colorTheme > 0) setTheme(R.style.ColorTestTheme)
+        binding = ActivityLibsBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        libs_button_back.setOnClickListener {
+        binding.libsButtonBack.setOnClickListener {
             finish()
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            if (BuildConfig.FLAVOR_aaos != "carapp")
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         }
 
         val libs = Libs.Builder().withContext(applicationContext).build()
@@ -78,16 +83,12 @@ class LibsActivity: FragmentActivity() {
                 setBackgroundColor(Color.DKGRAY)
             }
 
-            libs_container.addView(container)
-            if (index < libraries.size - 1) libs_container.addView(dividerLine)
+            binding.libsContainer.addView(container)
+            if (index < libraries.size - 1) binding.libsContainer.addView(dividerLine)
             else {
                 dividerLine.setBackgroundColor(Color.TRANSPARENT)
-                libs_container.addView(dividerLine)
+                binding.libsContainer.addView(dividerLine)
             }
-        }
-
-        CarStatsViewer.typefaceMedium?.let {
-            applyTypeface(libs_activity)
         }
     }
 }

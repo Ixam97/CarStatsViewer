@@ -1,6 +1,6 @@
 package com.ixam97.carStatsViewer.utils
 
-import java.util.*
+import java.util.Date
 
 /**
  * The TimeTracker is able to track a time span based on the Date-object.

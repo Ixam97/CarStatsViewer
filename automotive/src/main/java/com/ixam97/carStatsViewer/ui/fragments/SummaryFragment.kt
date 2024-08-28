@@ -9,10 +9,10 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.graphics.drawable.toDrawable
-import androidx.core.graphics.toColor
 import androidx.core.view.forEach
 import androidx.core.view.get
 import androidx.core.view.isVisible
@@ -22,41 +22,47 @@ import androidx.lifecycle.lifecycleScope
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
-import com.ixam97.carStatsViewer.ui.activities.MainActivity
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
+import com.ixam97.carStatsViewer.databinding.FragmentSummaryBinding
 import com.ixam97.carStatsViewer.emulatorMode
+import com.ixam97.carStatsViewer.ui.activities.MainActivity
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionSmoothingType
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionY
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotHighlightMethod
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotLineLabelFormat
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotMarkerType
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotSessionGapRendering
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLine
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLineConfiguration
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotRange
-import com.ixam97.carStatsViewer.ui.plot.enums.*
 import com.ixam97.carStatsViewer.utils.DataConverters
-import com.ixam97.carStatsViewer.utils.StringFormatters
-import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import com.ixam97.carStatsViewer.utils.applyTypeface
+import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.getColorFromAttribute
-import kotlinx.android.synthetic.main.activity_main.main_consumption_plot
-import kotlinx.android.synthetic.main.activity_main.main_image_button_alt
-import kotlinx.android.synthetic.main.activity_main.main_image_button_soc
-import kotlinx.android.synthetic.main.activity_main.main_image_button_speed
-import kotlinx.android.synthetic.main.activity_main.main_secondary_dimension_indicator
-import kotlinx.android.synthetic.main.activity_main.main_secondary_selector_container
-import kotlinx.android.synthetic.main.fragment_summary.*
-import kotlinx.coroutines.*
-import java.util.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
+
 class SummaryFragment() : Fragment(R.layout.fragment_summary) {
+
+    private var _binding: FragmentSummaryBinding? = null
+    private val binding get() = _binding!!
 
     lateinit var session: DrivingSession
     private var completedChargingSessions = listOf<ChargingSession>()
 
     constructor(session: DrivingSession) :this() {
-        this.session = session
+        this.session = session.copy() // Using a copy of the session to not have extremely long driving points and charging sessions in the dataProcessor to limit memory usage.
     }
 
     val appPreferences = CarStatsViewer.appPreferences
@@ -65,7 +71,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
     private var chargePlotLine = PlotLine(
         PlotLineConfiguration(
-            PlotRange(0f, 20f, 0f, 160f, 20f),
+            PlotRange(0f, 20f, 0f, 400f, 20f),
             PlotLineLabelFormat.FLOAT,
             PlotHighlightMethod.AVG_BY_TIME,
             "kW"
@@ -107,12 +113,22 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentSummaryBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        CarStatsViewer.typefaceRegular?.let {
-            applyTypeface(view)
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(binding) {
+        super.onViewCreated(view, savedInstanceState)
 
         consumptionPlotLinePaint = PlotLinePaint(
             PlotPaint.byColor(getColorFromAttribute(requireContext(), R.attr.primary_plot_color), CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)),
@@ -124,7 +140,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         setSecondaryConsumptionPlotDimension(appPreferences.secondaryConsumptionDimension)
         setupListeners()
 
-        summary_view_selector.buttonList[2].isEnabled = false
+        summaryViewSelector.buttonList[2].isEnabled = false
 
         // Don't allow the scroll view to scroll when interacting with plots
         fun disallowIntercept(v: View, event: MotionEvent) {
@@ -138,23 +154,23 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             }
         }
 
-        summary_consumption_plot.setOnTouchListener { v, event ->
+        summaryConsumptionPlot.setOnTouchListener { v, event ->
             disallowIntercept(v, event)
             false
         }
-        summary_charge_plot_view.setOnTouchListener { v, event ->
+        summaryChargePlotView.setOnTouchListener { v, event ->
             disallowIntercept(v, event)
             false
         }
 
         // check if a session has been provided, else close fragment
-        if (this::session.isInitialized) {
+        if (this@SummaryFragment::session.isInitialized) {
             applySession(session)
         } else {
             requireActivity().supportFragmentManager.commit { remove(this@SummaryFragment) }
         }
 
-        summary_secondary_dimension_indicator.background = if (appPreferences.consumptionPlotSecondaryColor) {
+        summarySecondaryDimensionIndicator.background = if (appPreferences.consumptionPlotSecondaryColor) {
             getColorFromAttribute(requireContext(), R.attr.tertiary_plot_color).toDrawable()
         } else {
             getColorFromAttribute(requireContext(), R.attr.secondary_plot_color).toDrawable()
@@ -163,21 +179,21 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         // summary_button_dist_all.text = "${appPreferences.distanceUnit.toUnit(((session.driven_distance.toLong() / 5_000) + 1) * 5)} ${appPreferences.distanceUnit.unit()}"
     }
 
-    private fun setupListeners() {
+    private fun setupListeners() = with(binding) {
         setupHeader()
 
-        summary_button_reset.setOnClickListener {
+        summaryButtonReset.setOnClickListener {
             createResetDialog()
         }
 
-        summary_view_selector.setOnIndexChangedListener{
-            when (summary_view_selector.selectedIndex) {
+        summaryViewSelector.setOnIndexChangedListener{
+            when (summaryViewSelector.selectedIndex) {
                 0 -> switchToConsumptionLayout()
                 1 -> switchToChargeLayout()
             }
         }
 
-        summary_button_back.setOnClickListener {
+        summaryButtonBack.setOnClickListener {
             requireActivity().supportFragmentManager.commit {
                 setCustomAnimations(
                     R.anim.slide_in_up,
@@ -189,38 +205,38 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             }
         }
 
-        summary_button_dist_20.setOnClickListener {
-            summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(20_000) + 1
-            summary_consumption_plot.dimensionShift = 0
+        summaryButtonDist20.setOnClickListener {
+            summaryConsumptionPlot.dimensionRestriction = appPreferences.distanceUnit.asUnit(20_000) + 1
+            summaryConsumptionPlot.dimensionShift = 0
         }
-        summary_button_dist_40.setOnClickListener {
-            summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(40_000) + 1
-            summary_consumption_plot.dimensionShift = 0
+        summaryButtonDist40.setOnClickListener {
+            summaryConsumptionPlot.dimensionRestriction = appPreferences.distanceUnit.asUnit(40_000) + 1
+            summaryConsumptionPlot.dimensionShift = 0
         }
-        summary_button_dist_100.setOnClickListener {
-            summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(100_000) + 1
-            summary_consumption_plot.dimensionShift = 0
+        summaryButtonDist100.setOnClickListener {
+            summaryConsumptionPlot.dimensionRestriction = appPreferences.distanceUnit.asUnit(100_000) + 1
+            summaryConsumptionPlot.dimensionShift = 0
         }
-        summary_button_dist_all.setOnClickListener {
-            summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((session.driven_distance.toLong() / 5_000) + 1) * 5_000) + 1
-            summary_consumption_plot.dimensionShift = 0
+        summaryButtonDistAll.setOnClickListener {
+            summaryConsumptionPlot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((session.driven_distance.toLong() / 5_000) + 1) * 5_000) + 1
+            summaryConsumptionPlot.dimensionShift = 0
         }
 
-        summary_image_button_speed.setOnClickListener {
+        summaryImageButtonSpeed.setOnClickListener {
             var currentIndex = appPreferences.secondaryConsumptionDimension
             currentIndex = if (currentIndex == 1) 0 else 1
             setSecondaryConsumptionPlotDimension(currentIndex)
             appPreferences.secondaryConsumptionDimension = currentIndex
         }
 
-        summary_image_button_soc.setOnClickListener {
+        summaryImageButtonSoc.setOnClickListener {
             var currentIndex = appPreferences.secondaryConsumptionDimension
             currentIndex = if (currentIndex == 2) 0 else 2
             setSecondaryConsumptionPlotDimension(currentIndex)
             appPreferences.secondaryConsumptionDimension = currentIndex
         }
 
-        summary_image_button_alt.setOnClickListener {
+        summaryImageButtonAlt.setOnClickListener {
             var currentIndex = appPreferences.secondaryConsumptionDimension
             currentIndex = if (currentIndex == 3) 0 else 3
             setSecondaryConsumptionPlotDimension(currentIndex)
@@ -228,8 +244,8 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         }
     }
 
-    private fun setupHeader() {
-        summary_button_trip_prev.setOnClickListener {
+    private fun setupHeader() = with(binding) {
+        summaryButtonTripPrev.setOnClickListener {
             var tripIndex = appPreferences.mainViewTrip
             tripIndex--
             if (tripIndex < 0) tripIndex = 3
@@ -237,7 +253,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             changeSelectedTrip(tripIndex)
         }
 
-        summary_button_trip_next.setOnClickListener {
+        summaryButtonTripNext.setOnClickListener {
             var tripIndex = appPreferences.mainViewTrip
             tripIndex++
             if (tripIndex > 3) tripIndex = 0
@@ -245,7 +261,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             changeSelectedTrip(tripIndex)
         }
 
-        summary_selector_title.setOnClickListener {
+        summarySelectorTitle.setOnClickListener {
             var tripIndex = appPreferences.mainViewTrip
             tripIndex++
             if (tripIndex > 3) tripIndex = 0
@@ -254,7 +270,7 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
         }
     }
 
-    private fun setupPlots() {
+    private fun setupPlots() = with(binding) {
         if (appPreferences.consumptionUnit) {
             consumptionPlotLine.Configuration.Unit = "Wh/%s".format(appPreferences.distanceUnit.unit())
             consumptionPlotLine.Configuration.LabelFormat = PlotLineLabelFormat.NUMBER
@@ -265,44 +281,44 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
             consumptionPlotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 10f
         }
 
-        summary_consumption_plot.dimension = PlotDimensionX.DISTANCE
-        summary_consumption_plot.dimensionRestrictionMin = appPreferences.distanceUnit.asUnit(
+        summaryConsumptionPlot.dimension = PlotDimensionX.DISTANCE
+        summaryConsumptionPlot.dimensionRestrictionMin = appPreferences.distanceUnit.asUnit(
             MainActivity.DISTANCE_TRIP_DIVIDER)
-        summary_consumption_plot.dimensionSmoothing = 0.02f
-        summary_consumption_plot.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
-        summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
-        summary_consumption_plot.visibleMarkerTypes.add(PlotMarkerType.PARK)
+        summaryConsumptionPlot.dimensionSmoothing = 0.02f
+        summaryConsumptionPlot.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
+        summaryConsumptionPlot.visibleMarkerTypes.add(PlotMarkerType.CHARGE)
+        summaryConsumptionPlot.visibleMarkerTypes.add(PlotMarkerType.PARK)
 
-        summary_consumption_plot.addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
-        summary_consumption_plot.sessionGapRendering = PlotSessionGapRendering.JOIN
+        summaryConsumptionPlot.addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
+        summaryConsumptionPlot.sessionGapRendering = PlotSessionGapRendering.JOIN
 
-        summary_charge_plot_view.dimension = PlotDimensionX.TIME
-        summary_charge_plot_view.dimensionRestrictionMin = TimeUnit.MINUTES.toMillis(5)
-        summary_charge_plot_view.dimensionSmoothing = 0.01f
-        summary_charge_plot_view.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
-        summary_charge_plot_view.dimensionYSecondary = PlotDimensionY.STATE_OF_CHARGE
+        summaryChargePlotView.dimension = PlotDimensionX.TIME
+        summaryChargePlotView.dimensionRestrictionMin = TimeUnit.MINUTES.toMillis(5)
+        summaryChargePlotView.dimensionSmoothing = 0.01f
+        summaryChargePlotView.dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
+        summaryChargePlotView.dimensionYSecondary = PlotDimensionY.STATE_OF_CHARGE
 
-        summary_charge_plot_view.addPlotLine(chargePlotLine, chargePlotLinePaint)
-        summary_charge_plot_view.sessionGapRendering = PlotSessionGapRendering.GAP
+        summaryChargePlotView.addPlotLine(chargePlotLine, chargePlotLinePaint)
+        summaryChargePlotView.sessionGapRendering = PlotSessionGapRendering.GAP
     }
 
-    private fun applySession(session: DrivingSession) {
+    private fun applySession(session: DrivingSession) = with(binding) {
         switchToConsumptionLayout()
-        summary_view_selector.buttonList[1].isEnabled = false
+        summaryViewSelector.buttonList[1].isEnabled = false
 
         if (session.session_type != TripType.MANUAL) {
-            summary_button_reset.isEnabled = false
-            summary_button_reset.setColorFilter(applicationContext.getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
+            summaryButtonReset.isEnabled = false
+            summaryButtonReset.setColorFilter(applicationContext.getColor(R.color.disabled_tint), PorterDuff.Mode.SRC_IN)
         } else {
-            summary_button_reset.isEnabled = true
-            summary_button_reset.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
+            summaryButtonReset.isEnabled = true
+            summaryButtonReset.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
         }
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 requireActivity().runOnUiThread {
-                    summary_consumption_plot.visibility = View.GONE
-                    summary_progress_bar.visibility = View.VISIBLE
+                    summaryConsumptionPlot.visibility = View.GONE
+                    summaryProgressBar.visibility = View.VISIBLE
                 }
                 if (session.drivingPoints == null || session.chargingSessions == null) {
                     val fullSession = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId = session.driving_session_id)
@@ -335,14 +351,14 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
                     delay(500)
                     requireActivity().runOnUiThread {
-                        summary_altitude_widget.topText = StringFormatters.getAltitudeString(altUp, altDown)
+                        summaryAltitudeWidget.topText = StringFormatters.getAltitudeString(altUp, altDown)
                         consumptionPlotLine.reset()
                         consumptionPlotLine.addDataPoints(plotPoints)
-                        summary_consumption_plot.setPlotMarkers(plotMarkers)
-                        summary_consumption_plot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((appPreferences.distanceUnit.toUnit(session.driven_distance.toFloat()) / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) + 1
-                        summary_consumption_plot.invalidate()
-                        summary_consumption_plot.visibility = View.VISIBLE
-                        summary_progress_bar.visibility = View.GONE
+                        summaryConsumptionPlot.setPlotMarkers(plotMarkers)
+                        summaryConsumptionPlot.dimensionRestriction = appPreferences.distanceUnit.asUnit(((appPreferences.distanceUnit.toUnit(session.driven_distance.toFloat()) / MainActivity.DISTANCE_TRIP_DIVIDER).toInt() + 1) * MainActivity.DISTANCE_TRIP_DIVIDER) + 1
+                        summaryConsumptionPlot.invalidate()
+                        summaryConsumptionPlot.visibility = View.VISIBLE
+                        summaryProgressBar.visibility = View.GONE
                     }
                 }
 
@@ -354,27 +370,27 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
                     }
                     requireActivity().runOnUiThread {
 
-                        summary_view_selector.buttonList[1].text = "${getString(R.string.summary_charging_sessions)}: ${completedChargingSessions.size}"
-                        summary_view_selector.buttonList[1].isEnabled = completedChargingSessions.isNotEmpty()
+                        summaryViewSelector.buttonList[1].text = "${getString(R.string.summary_charging_sessions)}: ${completedChargingSessions.size}"
+                        summaryViewSelector.buttonList[1].isEnabled = completedChargingSessions.isNotEmpty()
 
-                        summary_charge_plot_seek_bar.max = (completedChargingSessions.size - 1).coerceAtLeast(0)
-                        summary_charge_plot_seek_bar.progress = (completedChargingSessions.size - 1).coerceAtLeast(0)
-                        summary_charge_plot_seek_bar.setOnSeekBarChangeListener(seekBarChangeListener)
+                        summaryChargePlotSeekBar.max = (completedChargingSessions.size - 1).coerceAtLeast(0)
+                        summaryChargePlotSeekBar.progress = (completedChargingSessions.size - 1).coerceAtLeast(0)
+                        summaryChargePlotSeekBar.setOnSeekBarChangeListener(seekBarChangeListener)
 
-                        summary_charge_plot_button_next.setOnClickListener {
-                            val newProgress = summary_charge_plot_seek_bar.progress + 1
+                        summaryChargePlotButtonNext.setOnClickListener {
+                            val newProgress = summaryChargePlotSeekBar.progress + 1
                             if (newProgress <= (completedChargingSessions.size - 1)) {
-                                summary_charge_plot_seek_bar.progress = newProgress
+                                summaryChargePlotSeekBar.progress = newProgress
                             }
-                            summary_charge_plot_view.dimensionShift = 0L
+                            summaryChargePlotView.dimensionShift = 0L
                         }
 
-                        summary_charge_plot_button_prev.setOnClickListener {
-                            val newProgress = summary_charge_plot_seek_bar.progress - 1
+                        summaryChargePlotButtonPrev.setOnClickListener {
+                            val newProgress = summaryChargePlotSeekBar.progress - 1
                             if (newProgress >= 0) {
-                                summary_charge_plot_seek_bar.progress = newProgress
+                                summaryChargePlotSeekBar.progress = newProgress
                             }
-                            summary_charge_plot_view.dimensionShift = 0L
+                            summaryChargePlotView.dimensionShift = 0L
                         }
 
                         setVisibleChargeCurve(completedChargingSessions.size - 1)
@@ -387,166 +403,157 @@ class SummaryFragment() : Fragment(R.layout.fragment_summary) {
 
         if ((session.end_epoch_time?:0) > 0 ) {
             when (session.session_type) {
-                TripType.MANUAL -> summary_title.setCompoundDrawables(applicationContext.getDrawable(R.drawable.ic_hand),null,null, null)
-                TripType.SINCE_CHARGE -> summary_title.setCompoundDrawables(applicationContext.getDrawable(R.drawable.ic_charger),null,null, null)
-                TripType.AUTO -> summary_title.setCompoundDrawables(applicationContext.getDrawable(R.drawable.ic_day),null,null, null)
-                TripType.MONTH -> summary_title.setCompoundDrawables(applicationContext.getDrawable(R.drawable.ic_month),null,null, null)
+                TripType.MANUAL -> summaryTitle.setCompoundDrawables(applicationContext.getDrawable(R.drawable.ic_hand),null,null, null)
+                TripType.SINCE_CHARGE -> summaryTitle.setCompoundDrawables(applicationContext.getDrawable(R.drawable.ic_charger),null,null, null)
+                TripType.AUTO -> summaryTitle.setCompoundDrawables(applicationContext.getDrawable(R.drawable.ic_day),null,null, null)
+                TripType.MONTH -> summaryTitle.setCompoundDrawables(applicationContext.getDrawable(R.drawable.ic_month),null,null, null)
             }
-            summary_title.text = "${StringFormatters.getDateString(Date(session.start_epoch_time))}, ${resources.getStringArray(R.array.trip_type_names)[session.session_type]}"
+            summaryTitle.text = "${StringFormatters.getDateString(Date(session.start_epoch_time))}, ${resources.getStringArray(R.array.trip_type_names)[session.session_type]}"
         } else {
             when (session.session_type) {
-                TripType.MANUAL -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_hand))
-                TripType.SINCE_CHARGE -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_charger))
-                TripType.AUTO -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_day))
-                TripType.MONTH -> summary_type_icon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_month))
+                TripType.MANUAL -> summaryTypeIcon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_hand))
+                TripType.SINCE_CHARGE -> summaryTypeIcon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_charger))
+                TripType.AUTO -> summaryTypeIcon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_day))
+                TripType.MONTH -> summaryTypeIcon.setImageDrawable(applicationContext.getDrawable(R.drawable.ic_month))
             }
-            summary_title.visibility = View.GONE
-            summary_trip_selector.visibility = View.VISIBLE
-            summary_selector_title.text = resources.getStringArray(R.array.trip_type_names)[session.session_type]
-            summary_selected_trip_bar.forEach { bar ->
+            summaryTitle.visibility = View.GONE
+            summaryTripSelector.visibility = View.VISIBLE
+            summarySelectorTitle.text = resources.getStringArray(R.array.trip_type_names)[session.session_type]
+            summarySelectedTripBar.forEach { bar ->
                 bar.background = getColorFromAttribute(requireContext(), R.attr.widget_background).toDrawable()
                 // bar.background = applicationContext.getColor(R.color.club_night_variant).toDrawable()
             }
             // summary_selected_trip_bar[appPreferences.mainViewTrip].background = applicationContext.getDrawable(R.drawable.bg_button_selected)
-            summary_selected_trip_bar[appPreferences.mainViewTrip].background = getColorFromAttribute(requireContext(), android.R.attr.colorControlActivated).toDrawable()
+            summarySelectedTripBar[appPreferences.mainViewTrip].background = getColorFromAttribute(requireContext(), android.R.attr.colorControlActivated).toDrawable()
         }
 
-        summary_trip_date_text.text = getString(R.string.summary_trip_start_date).format(StringFormatters.getDateString(Date(session.start_epoch_time)))
-        summary_distance_widget.topText = StringFormatters.getTraveledDistanceString(session.driven_distance.toFloat())
-        summary_altitude_widget.topText = StringFormatters.getAltitudeString(0f, 0f)
-        summary_energy_widget.topText = StringFormatters.getEnergyString(session.used_energy.toFloat())
-        summary_consumption_widget.topText = StringFormatters.getAvgConsumptionString(session.used_energy.toFloat(), session.driven_distance.toFloat())
-        summary_time_widget.topText = StringFormatters.getElapsedTimeString(session.drive_time)
-        summary_speed_widget.topText = StringFormatters.getAvgSpeedString(session.driven_distance.toFloat(), session.drive_time)
+        summaryTripDateText.text = getString(R.string.summary_trip_start_date).format(StringFormatters.getDateString(Date(session.start_epoch_time)))
+        summaryDistanceWidget.topText = StringFormatters.getTraveledDistanceString(session.driven_distance.toFloat())
+        summaryAltitudeWidget.topText = StringFormatters.getAltitudeString(0f, 0f)
+        summaryEnergyWidget.topText = StringFormatters.getEnergyString(session.used_energy.toFloat())
+        summaryConsumptionWidget.topText = StringFormatters.getAvgConsumptionString(session.used_energy.toFloat(), session.driven_distance.toFloat())
+        summaryTimeWidget.topText = StringFormatters.getElapsedTimeString(session.drive_time)
+        summarySpeedWidget.topText = StringFormatters.getAvgSpeedString(session.driven_distance.toFloat(), session.drive_time)
 
-        summary_view_selector.selectedIndex = 0
+        summaryViewSelector.selectedIndex = 0
     }
 
-    private fun setSecondaryConsumptionPlotDimension(secondaryConsumptionDimension: Int) {
+    private fun setSecondaryConsumptionPlotDimension(secondaryConsumptionDimension: Int) = with(binding) {
         if(requireActivity() is MainActivity) {
             (requireActivity() as MainActivity).setSecondaryConsumptionPlotDimension(secondaryConsumptionDimension)
         }
 
         val constraintSet = ConstraintSet()
-        constraintSet.clone(summary_secondary_selector_container)
+        constraintSet.clone(summarySecondarySelectorContainer)
 
         when (secondaryConsumptionDimension) {
             1 -> {
                 constraintSet.connect(R.id.summary_secondary_dimension_indicator, ConstraintSet.LEFT, R.id.summary_image_button_speed, ConstraintSet.LEFT)
                 constraintSet.connect(R.id.summary_secondary_dimension_indicator, ConstraintSet.RIGHT, R.id.summary_image_button_speed, ConstraintSet.RIGHT)
-                summary_secondary_dimension_indicator.isVisible = true
+                summarySecondaryDimensionIndicator.isVisible = true
             }
             2 -> {
                 constraintSet.connect(R.id.summary_secondary_dimension_indicator, ConstraintSet.LEFT, R.id.summary_image_button_soc, ConstraintSet.LEFT)
                 constraintSet.connect(R.id.summary_secondary_dimension_indicator, ConstraintSet.RIGHT, R.id.summary_image_button_soc, ConstraintSet.RIGHT)
-                summary_secondary_dimension_indicator.isVisible = true
+                summarySecondaryDimensionIndicator.isVisible = true
             }
             3 -> {
                 constraintSet.connect(R.id.summary_secondary_dimension_indicator, ConstraintSet.LEFT, R.id.summary_image_button_alt, ConstraintSet.LEFT)
                 constraintSet.connect(R.id.summary_secondary_dimension_indicator, ConstraintSet.RIGHT, R.id.summary_image_button_alt, ConstraintSet.RIGHT)
-                summary_secondary_dimension_indicator.isVisible = true
+                summarySecondaryDimensionIndicator.isVisible = true
             }
             else -> {
                 constraintSet.connect(R.id.summary_secondary_dimension_indicator, ConstraintSet.LEFT, R.id.summary_image_button_speed, ConstraintSet.RIGHT)
                 constraintSet.connect(R.id.summary_secondary_dimension_indicator, ConstraintSet.RIGHT, R.id.summary_image_button_speed, ConstraintSet.RIGHT)
-                summary_secondary_dimension_indicator.visibility = View.GONE
+                summarySecondaryDimensionIndicator.visibility = View.GONE
             }
         }
-        constraintSet.applyTo(summary_secondary_selector_container)
-        summary_consumption_plot.dimensionYSecondary = PlotDimensionY.IndexMap[secondaryConsumptionDimension]
-        summary_consumption_plot.invalidate()
+        constraintSet.applyTo(summarySecondarySelectorContainer)
+        summaryConsumptionPlot.dimensionYSecondary = PlotDimensionY.IndexMap[secondaryConsumptionDimension]
+        summaryConsumptionPlot.invalidate()
     }
 
-    private fun setVisibleChargeCurve(progress: Int) {
-        summary_charge_plot_view.reset()
+    private fun setVisibleChargeCurve(progress: Int) = with(binding) {
+        summaryChargePlotView.reset()
         chargePlotLine.reset()
 
         if (completedChargingSessions.isEmpty() || progress >= completedChargingSessions.size || progress < 0 || completedChargingSessions[progress].chargingPoints?.isEmpty() == true) {
-            summary_charge_plot_sub_title_curve.text = "%s (0/0)".format(
+            summaryChargePlotSubTitleCurve.text = "%s (0/0)".format(
                 getString(R.string.settings_sub_title_last_charge_plot))
 
-            summary_charge_plot_button_next.isEnabled = false
-            summary_charge_plot_button_next.alpha = CarStatsViewer.disabledAlpha
-            summary_charge_plot_button_prev.isEnabled = false
-            summary_charge_plot_button_prev.alpha = CarStatsViewer.disabledAlpha
+            summaryChargePlotButtonNext.isEnabled = false
+            summaryChargePlotButtonNext.alpha = CarStatsViewer.disabledAlpha
+            summaryChargePlotButtonPrev.isEnabled = false
+            summaryChargePlotButtonPrev.alpha = CarStatsViewer.disabledAlpha
 
-            summary_charged_widget.topText = "-/-"
-            summary_charge_time_widget.topText = "-/-"
-            summary_temperature_widget.topText = "-/-"
+            summaryChargedWidget.topText = "-/-"
+            summaryChargeTimeWidget.topText = "-/-"
+            summaryTemperatureWidget.topText = "-/-"
 
             return
         }
 
-        summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
-            getString(R.string.settings_sub_title_last_charge_plot),
-            completedChargingSessions.size,
-            completedChargingSessions.size,
-            StringFormatters.getDateString(Date(completedChargingSessions.last().start_epoch_time))
-        )
+        summaryChargePlotSubTitleCurve.text = "${getString(R.string.settings_sub_title_last_charge_plot)} (${completedChargingSessions.size}/${completedChargingSessions.size}, ${StringFormatters.getDateString(Date(completedChargingSessions.last().start_epoch_time))}"
 
         if (completedChargingSessions.size - 1 != 0) {
-            summary_charge_plot_sub_title_curve.text = "%s (%d/%d, %s)".format(
-                getString(R.string.settings_sub_title_last_charge_plot),
-                progress + 1,
-                completedChargingSessions.size,
-                StringFormatters.getDateString(Date(completedChargingSessions[progress].start_epoch_time)))
+            summaryChargePlotSubTitleCurve.text = "${getString(R.string.settings_sub_title_last_charge_plot)} (${progress + 1}/${completedChargingSessions.size}, ${StringFormatters.getDateString(Date(completedChargingSessions.last().start_epoch_time))}"
 
             when (progress) {
                 0 -> {
-                    summary_charge_plot_button_prev.isEnabled = false
-                    summary_charge_plot_button_prev.alpha = CarStatsViewer.disabledAlpha
-                    summary_charge_plot_button_next.isEnabled = true
-                    summary_charge_plot_button_next.alpha = 1f
+                    summaryChargePlotButtonPrev.isEnabled = false
+                    summaryChargePlotButtonPrev.alpha = CarStatsViewer.disabledAlpha
+                    summaryChargePlotButtonNext.isEnabled = true
+                    summaryChargePlotButtonNext.alpha = 1f
                 }
                 completedChargingSessions.size - 1 -> {
-                    summary_charge_plot_button_next.isEnabled = false
-                    summary_charge_plot_button_next.alpha = CarStatsViewer.disabledAlpha
-                    summary_charge_plot_button_prev.isEnabled = true
-                    summary_charge_plot_button_prev.alpha = 1f
+                    summaryChargePlotButtonNext.isEnabled = false
+                    summaryChargePlotButtonNext.alpha = CarStatsViewer.disabledAlpha
+                    summaryChargePlotButtonPrev.isEnabled = true
+                    summaryChargePlotButtonPrev.alpha = 1f
                 }
                 else -> {
-                    summary_charge_plot_button_next.isEnabled = true
-                    summary_charge_plot_button_next.alpha = 1f
-                    summary_charge_plot_button_prev.isEnabled = true
-                    summary_charge_plot_button_prev.alpha = 1f
+                    summaryChargePlotButtonNext.isEnabled = true
+                    summaryChargePlotButtonNext.alpha = 1f
+                    summaryChargePlotButtonPrev.isEnabled = true
+                    summaryChargePlotButtonPrev.alpha = 1f
                 }
             }
         }
 
         if  ((completedChargingSessions[progress].chargingPoints?.filter { it.point_marker_type == 2}?.size?:0) > 1) {
-            summary_charged_energy_warning_text.visibility = View.VISIBLE
+            summaryChargedEnergyWarningText.visibility = View.VISIBLE
         } else {
-            summary_charged_energy_warning_text.visibility = View.GONE
+            summaryChargedEnergyWarningText.visibility = View.GONE
         }
 
-        summary_charged_widget.topText = String.format(
+        summaryChargedWidget.topText = String.format(
             "%s, %d%%  →  %d%%",
             StringFormatters.getEnergyString(completedChargingSessions[progress].charged_energy.toFloat()),
             ((completedChargingSessions[progress].chargingPoints?.first()?.state_of_charge?:0f)*100f).roundToInt(),
             ((completedChargingSessions[progress].chargingPoints?.last()?.state_of_charge?:0f)*100f).roundToInt()
         )
-        summary_charge_time_widget.topText = StringFormatters.getElapsedTimeString((completedChargingSessions[progress].end_epoch_time?:0) - completedChargingSessions[progress].start_epoch_time)
-        summary_temperature_widget.topText = StringFormatters.getTemperatureString(completedChargingSessions[progress].outside_temp)
+        summaryChargeTimeWidget.topText = StringFormatters.getElapsedTimeString((completedChargingSessions[progress].end_epoch_time?:0) - completedChargingSessions[progress].start_epoch_time)
+        summaryTemperatureWidget.topText = StringFormatters.getTemperatureString(completedChargingSessions[progress].outside_temp)
 
         chargePlotLine.reset()
         completedChargingSessions[progress].chargingPoints?.let {
             if (it.isNotEmpty()) chargePlotLine.addDataPoints(DataConverters.chargePlotLineFromChargingPoints(it))
         }
 
-        summary_charge_plot_view.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes((completedChargingSessions[progress].end_epoch_time?:0) - completedChargingSessions[progress].start_epoch_time) / 5) + 1) * 5 + 1
-        summary_charge_plot_view.invalidate()
+        summaryChargePlotView.dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes((completedChargingSessions[progress].end_epoch_time?:0) - completedChargingSessions[progress].start_epoch_time) / 5) + 1) * 5 + 1
+        summaryChargePlotView.invalidate()
     }
 
-    private fun switchToConsumptionLayout() {
-        summary_consumption_container.visibility = View.VISIBLE
-        summary_charge_container.visibility = View.GONE
-        summary_consumption_container.scrollTo(0,0)
+    private fun switchToConsumptionLayout() = with(binding) {
+        summaryConsumptionContainer.visibility = View.VISIBLE
+        summaryChargeContainer.visibility = View.GONE
+        summaryConsumptionContainer.scrollTo(0,0)
     }
 
-    private fun switchToChargeLayout() {
-        summary_consumption_container.visibility = View.GONE
-        summary_charge_container.visibility = View.VISIBLE
-        summary_charge_container.scrollTo(0,0)
+    private fun switchToChargeLayout() = with(binding) {
+        summaryConsumptionContainer.visibility = View.GONE
+        summaryChargeContainer.visibility = View.VISIBLE
+        summaryChargeContainer.scrollTo(0,0)
     }
 
     private fun createResetDialog() {
