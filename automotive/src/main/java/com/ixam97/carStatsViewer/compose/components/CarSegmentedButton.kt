@@ -1,7 +1,6 @@
 package com.ixam97.carStatsViewer.compose.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -9,13 +8,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -36,7 +32,7 @@ fun CarSegmentedButton(
     selectedIndex: Int,
     onSelectedIndexChanged: (index: Int) -> Unit,
     enabled: Boolean = true,
-    gradient: Brush = CarTheme.activeElementBrush,
+    gradient: Brush = CarTheme.brushes.activeElementBrush,
     contentPadding: PaddingValues = CarTheme.buttonPaddingValues,
     shape: Shape = RoundedCornerShape(CarTheme.buttonCornerRadius),
 ) {
@@ -78,6 +74,7 @@ fun CarSegmentedButton(
                         .weight(1f)
                         .padding(paddingValues = contentPadding),
                     text = option,
+                    softWrap = false,
                     textAlign = TextAlign.Center
                 )
             }

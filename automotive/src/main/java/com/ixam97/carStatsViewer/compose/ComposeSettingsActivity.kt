@@ -24,7 +24,13 @@ class ComposeSettingsActivity: ComponentActivity() {
                 if (it.consume() == true) finish()
             }
 
-            CarTheme( if (themeSetting.value == 0) Build.BRAND else null ) {
+            val brand = when (themeSetting.value) {
+                0 -> Build.BRAND
+                2 -> "Orange"
+                else -> null
+            }
+
+            CarTheme(brand) {
                 SettingsScreen(viewModel = settingsViewModel)
             }
         }

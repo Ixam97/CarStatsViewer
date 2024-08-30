@@ -44,7 +44,7 @@ val defaultTypography = Typography(
     h2 = TextStyle(
         // fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
-        fontSize = 35.sp,
+        fontSize = 32.sp,
         color = Color.White
     )
 )

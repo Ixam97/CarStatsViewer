@@ -110,9 +110,9 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
         }
 
         diagram.apply {
-            textSize = carContext.resources.getDimension(R.dimen.reduced_font_size)
-            xMargin = carContext.resources.getDimension(R.dimen.plot_x_margin).toInt()
-            yMargin = carContext.resources.getDimension(R.dimen.plot_y_margin).toInt()
+            mTextSize = carContext.resources.getDimension(R.dimen.reduced_font_size)
+            mXMargin = carContext.resources.getDimension(R.dimen.plot_x_margin).toInt()
+            mYMargin = carContext.resources.getDimension(R.dimen.plot_y_margin).toInt()
             dimension = PlotDimensionX.DISTANCE
             addPlotLine(consumptionPlotLine, consumptionPlotLinePaint)
         }

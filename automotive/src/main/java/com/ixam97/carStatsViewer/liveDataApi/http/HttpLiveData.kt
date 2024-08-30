@@ -222,21 +222,25 @@ class HttpLiveData (
                 }
             }
 
-            if (!realTimeData.isInitialized()) return null
+            if (!realTimeData.isInitialized()) {
+                InAppLogger.w("Real time data is not entirely initialized: ${realTimeData}")
+                connectionStatus = ConnectionStatus.ERROR
+                return null
+            }
 
             connectionStatus = try {
                 val useLocation = AppPreferences(CarStatsViewer.appContext).httpLiveDataLocation
                 val gson = Gson()
                 val dataSet = HttpDataSet(
                     timestamp = System.currentTimeMillis(),
-                    speed = realTimeData.speed!!,
-                    power = realTimeData.power!!,
-                    selectedGear = StringFormatters.getGearString(realTimeData.selectedGear!!),
-                    ignitionState = IgnitionState.nameMap[realTimeData.ignitionState!!]?:"UNKNOWN",
-                    chargePortConnected = realTimeData.chargePortConnected!!,
-                    batteryLevel = realTimeData.batteryLevel!!,
-                    stateOfCharge = realTimeData.stateOfCharge!!,
-                    ambientTemperature = realTimeData.ambientTemperature!!,
+                    speed = realTimeData.speed,
+                    power = realTimeData.power,
+                    selectedGear = if (realTimeData.selectedGear == null) "UNKNOWN" else StringFormatters.getGearString(realTimeData.selectedGear),
+                    ignitionState = IgnitionState.nameMap[realTimeData.ignitionState]?:"UNKNOWN",
+                    chargePortConnected = realTimeData.chargePortConnected,
+                    batteryLevel = realTimeData.batteryLevel,
+                    stateOfCharge = realTimeData.stateOfCharge,
+                    ambientTemperature = realTimeData.ambientTemperature,
                     lat = if (useLocation) realTimeData.lat else null,
                     lon = if (useLocation) realTimeData.lon else null,
                     alt = if (useLocation) realTimeData.alt else null,

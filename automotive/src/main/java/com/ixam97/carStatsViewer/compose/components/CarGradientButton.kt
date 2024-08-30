@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.compose.theme.CarTheme
+import com.ixam97.carStatsViewer.compose.theme.LocalBrushes
 
 @Composable
 fun CarGradientButton(
@@ -34,7 +35,7 @@ fun CarGradientButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     active: Boolean = false,
-    gradient: Brush = CarTheme.activeElementBrush,
+    gradient: Brush = CarTheme.brushes.activeElementBrush,
     shape: Shape = RoundedCornerShape(CarTheme.buttonCornerRadius),
     contentPadding: PaddingValues = CarTheme.buttonPaddingValues,
     content: @Composable (RowScope.() -> Unit)

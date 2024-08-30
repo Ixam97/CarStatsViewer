@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.compose.screens.settingsScreens
+package com.ixam97.carStatsViewer.compose.screens.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,26 +10,29 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.compose.components.CarRow
-import com.ixam97.carStatsViewer.compose.components.SideTab
 import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
-import kotlinx.serialization.Serializable
 
 @Composable
-fun AboutScreen(
-    navController: NavController
+fun About(
+    navController: NavController,
+    viewModel: SettingsViewModel
 ) = Column (
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
+
+    val context = LocalContext.current
 
     @Composable
     fun contributorsString(): String {
@@ -51,7 +54,7 @@ fun AboutScreen(
     Divider(modifier = Modifier.padding(horizontal = 24.dp))
     CarRow(
         title = "Version",
-        onClick = { /* enable dev mode */ },
+        onClick = { viewModel.versionClick(context) },
         text = "${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
     )
 
