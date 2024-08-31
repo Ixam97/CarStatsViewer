@@ -29,9 +29,6 @@ internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
     val composeSettingsActivityIntent = Intent(carContext, ComposeSettingsActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
-    val composeTripDetailsScreen = Intent(carContext, ComposeTripDetailsActivity::class.java).apply {
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-    }
     val mainActivityIntent = Intent(carContext, MainActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
@@ -71,14 +68,6 @@ internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
             setBrowsable(true)
             setOnClickListener(ParkedOnlyOnClickListener.create {
                 carContext.startActivity(composeSettingsActivityIntent)
-            })
-        }.build())
-        addItem(Row.Builder().apply {
-            setTitle("Compose Trip Details")
-            setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).build())
-            setBrowsable(true)
-            setOnClickListener(ParkedOnlyOnClickListener.create {
-                carContext.startActivity(composeTripDetailsScreen)
             })
         }.build())
         addItem(Row.Builder().apply{

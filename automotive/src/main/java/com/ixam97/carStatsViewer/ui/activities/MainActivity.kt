@@ -23,6 +23,7 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
+import com.ixam97.carStatsViewer.compose.ComposeTripDetailsActivity
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.dataProcessor.DrivingState
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
@@ -819,11 +820,28 @@ class MainActivity : FragmentActivity() {
         */
 
         mainImageButtonSummary.setOnClickListener {
-            openSummaryFragment()
+            // openSummaryFragment()
+            val sessionId = CarStatsViewer.dataProcessor.selectedSessionData?.driving_session_id
+
+            if (sessionId != null) {
+                val summaryIntent =
+                    Intent(this@MainActivity, ComposeTripDetailsActivity::class.java)
+                summaryIntent.putExtra("SessionId", sessionId)
+                startActivity(summaryIntent)
+            }
         }
 
         mainButtonSummaryCharge.setOnClickListener {
-            openSummaryFragment()
+            // openSummaryFragment()
+
+            val sessionId = CarStatsViewer.dataProcessor.selectedSessionData?.driving_session_id
+
+            if (sessionId != null) {
+                val summaryIntent =
+                    Intent(this@MainActivity, ComposeTripDetailsActivity::class.java)
+                summaryIntent.putExtra("SessionId", sessionId)
+                startActivity(summaryIntent)
+            }
         }
 
         mainButtonDismissChargePlot.setOnClickListener {
