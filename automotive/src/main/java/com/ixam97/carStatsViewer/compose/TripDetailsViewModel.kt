@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.map.Mapbox
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,9 @@ class TripDetailsViewModel: ViewModel() {
         val selectedSection: Int = 0,
         val startLocation: String? = null,
         val endLocation: String? = null,
-        val selectedSecondaryDimension: Int = 0
+        val selectedSecondaryDimension: Int = 0,
+        val showChargingSessionDetails: Boolean = false,
+        val chargingSession: ChargingSession? = null
     )
 
     private val _changeDistanceFlow = MutableSharedFlow<Float>()
@@ -120,9 +123,22 @@ class TripDetailsViewModel: ViewModel() {
         )
     }
 
-    fun selectChargingSessionOnMap(id: Long) {
+    fun selectChargingSession(id:Long) {
+        tripDetailsState.drivingSession?.chargingSessions?.let { chargingSessions ->
+            val session = chargingSessions.find { it.charging_session_id == id }
+            session?.let { session ->
+                tripDetailsState = tripDetailsState.copy(
+                    selectedSection = CHARGING_SECTION,
+                    showChargingSessionDetails = true,
+                    chargingSession = session
+                )
+            }
+        }
+    }
+
+    fun closeChargingSessionDetails() {
         tripDetailsState = tripDetailsState.copy(
-            selectedSection = CHARGING_SECTION
+            showChargingSessionDetails = false
         )
     }
 }

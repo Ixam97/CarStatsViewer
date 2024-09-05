@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
@@ -24,6 +25,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
@@ -37,6 +40,7 @@ import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,8 +59,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.TripDetailsViewModel
+import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.compose.components.CarHeaderWithContent
 import com.ixam97.carStatsViewer.compose.components.CarSegmentedButton
+import com.ixam97.carStatsViewer.compose.theme.slideUpBackground
+import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.map.Mapbox
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
@@ -76,7 +83,10 @@ import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.DataConverters
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.getColorFromAttribute
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.Date
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun TripDetailsPortraitScreen(
@@ -86,6 +96,7 @@ fun TripDetailsPortraitScreen(
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colors.background)
     ) {
         val width = maxWidth
         val height = maxHeight
@@ -291,13 +302,20 @@ fun TripDetailsPortraitScreen(
                                 }
                             }
 
-                            1 -> {
-                                Box(
+                            TripDetailsViewModel.CHARGING_SECTION -> {
+                                if (trip.chargingSessions?.isNotEmpty() == true) {
+                                    trip.chargingSessions?.let {
+                                        ChargingSessions(
+                                            viewModel = viewModel,
+                                            chargingSessions = it
+                                        )
+                                    }
+                                } else Box(
                                     modifier = Modifier
                                         .fillMaxSize(),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text("No data available")
+                                    Text("No charging sessions available in this trip.")
                                 }
                             }
 
@@ -307,7 +325,7 @@ fun TripDetailsPortraitScreen(
                                         .fillMaxWidth()
                                         .weight(1f),
                                     trip = trip,
-                                    chargingMarkerOnClick = {id -> viewModel.selectChargingSessionOnMap(id)}
+                                    chargingMarkerOnClick = {id -> viewModel.selectChargingSession(id)}
                                 )
                             }
                         }
@@ -323,7 +341,7 @@ fun TripDetailsPortraitScreen(
                             Mapbox.MapBoxContainer(
                                 modifier = Modifier,
                                 trip = trip,
-                                chargingMarkerOnClick = {id -> viewModel.selectChargingSessionOnMap(id)}
+                                chargingMarkerOnClick = {id -> viewModel.selectChargingSession(id)}
                             )
                         }
                     }
@@ -429,6 +447,7 @@ fun TripDetails(
             )
             Icon(
                 modifier = Modifier
+                    .padding(end = 24.dp)
                     .size(60.dp),
                 imageVector = if (visibleDetails) {
                     Icons.Default.UnfoldLess
@@ -570,6 +589,207 @@ fun ConsumptionPlot(
             }
         }
     )
+}
+
+@Composable
+fun ChargingPlot(
+    plotLine: PlotLine,
+    plotLinePaint: PlotLinePaint,
+    limitedHeight: Boolean,
+    time: Long
+) {
+    val appPreferences = CarStatsViewer.appPreferences
+
+    val density = LocalDensity.current.density
+
+    AndroidView(
+        modifier = Modifier
+            .then(
+                if (limitedHeight) {
+                    Modifier.height(500.dp)
+                } else {
+                    Modifier
+                }
+            )
+            .padding(horizontal = 24.dp),
+        factory = { context ->
+            PlotView(
+                context,
+                xMargin = (70 * density).toInt(),
+                yMargin = (60 * density).toInt()
+            ).apply {
+                dimension = PlotDimensionX.TIME
+                dimensionRestrictionMin = TimeUnit.MINUTES.toMillis(5)
+                dimensionSmoothing = 0.01f
+                dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
+                dimensionYSecondary = PlotDimensionY.STATE_OF_CHARGE
+
+                addPlotLine(plotLine, plotLinePaint)
+                dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(time / 5)) + 1) * 5 + 1
+                sessionGapRendering = PlotSessionGapRendering.JOIN
+                setOnTouchListener { v, event ->
+                    disallowIntercept(v, event)
+                    false
+                }
+            }
+        },
+        update = { plotView ->
+        }
+    )
+}
+
+@Composable
+fun ChargingSessions(
+    viewModel: TripDetailsViewModel,
+    chargingSessions: List<ChargingSession>
+) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            items(chargingSessions, itemContent = { session: ChargingSession ->
+                Column (
+                    modifier = Modifier.fillMaxWidth()
+                        .clickable {
+                            viewModel.selectChargingSession(session.charging_session_id)
+                        }
+                ) {
+                    var location by remember { mutableStateOf<String?>("Loading location ...") }
+                    TripDataRow(
+                        title = StringFormatters.getDateString(Date(session.start_epoch_time)),
+                        text = location?: "Location not available"
+                    )
+                    Divider(Modifier.padding(horizontal = 24.dp))
+
+                    LaunchedEffect(Unit) {
+                        withContext(Dispatchers.IO) {
+                            location = if (session.lat != null && session.lon != null)
+                                Mapbox.getAddress(session.lon.toDouble(), session.lat.toDouble())
+                            else null
+                        }
+                    }
+                }
+            })
+        }
+
+        AnimatedVisibility(
+            visible = viewModel.tripDetailsState.showChargingSessionDetails,
+            enter = expandVertically(),
+            exit = shrinkVertically()
+        ) {
+            viewModel.tripDetailsState.chargingSession?.let {
+                ChargingSessionDetails(
+                    session = it,
+                    onCollapseClick = { viewModel.closeChargingSessionDetails() }
+                )
+            }?: Text("Error")
+        }
+    }
+}
+
+@Composable
+fun ChargingSessionDetails(
+    session: ChargingSession,
+    onCollapseClick: () -> Unit
+) {
+    val context = LocalContext.current
+    val plotPoints = DataConverters.chargePlotLineFromChargingPoints(session.chargingPoints?: listOf())
+    var location by remember { mutableStateOf<String?>("Loading location ...") }
+
+    val chargePlotPaint =PlotLinePaint(
+        PlotPaint.byColor(
+            context.getColor(R.color.charge_plot_color),
+            CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)
+        ),
+        PlotPaint.byColor(
+            context.getColor(R.color.secondary_plot_color),
+            CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)
+        ),
+        PlotPaint.byColor(
+            context.getColor(R.color.secondary_plot_color_alt),
+            CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)
+        )
+    ) { CarStatsViewer.appPreferences.chargePlotSecondaryColor }
+
+    val chargePlotLine = PlotLine(
+        PlotLineConfiguration(
+            PlotRange(0f, 20f, 0f, 400f, 20f),
+            PlotLineLabelFormat.FLOAT,
+            PlotHighlightMethod.AVG_BY_TIME,
+            "kW"
+        )
+    )
+
+    chargePlotLine.addDataPoints(plotPoints)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(slideUpBackground)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    onCollapseClick()
+                },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TripDataRow(
+                modifier = Modifier.weight(1f),
+                title = StringFormatters.getDateString(Date(session.start_epoch_time)),
+                text = location ?: "Location not available"
+            )
+            Icon(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .size(60.dp),
+                imageVector = Icons.Default.UnfoldLess,
+                contentDescription = null,
+                tint = Color.White
+            )
+        }
+        Divider(Modifier.padding(horizontal = 24.dp))
+        if (session.end_epoch_time != null) {
+            TripDataRow(
+                title = StringFormatters.getEnergyString(session.charged_energy.toFloat()),
+                text = stringResource(R.string.summary_charged_energy),
+                iconResId = R.drawable.ic_energy_large
+            )
+            Divider(Modifier.padding(horizontal = 24.dp))
+            TripDataRow(
+                title = StringFormatters.getElapsedTimeString(session.end_epoch_time - session.start_epoch_time),
+                text = stringResource(R.string.summary_charge_time),
+                iconResId = R.drawable.ic_time_large
+            )
+            Divider(Modifier.padding(horizontal = 24.dp))
+            ChargingPlot(
+                plotLine = chargePlotLine,
+                plotLinePaint = chargePlotPaint,
+                limitedHeight = false,
+                time = session.end_epoch_time - session.start_epoch_time
+            )
+        } else {
+            Text(
+                modifier = Modifier.padding(24.dp),
+                text = "Ongoing charging session ..."
+            )
+        }
+
+        LaunchedEffect(Unit) {
+            withContext(Dispatchers.IO) {
+                location = if (session.lat != null && session.lon != null)
+                    Mapbox.getAddress(session.lon.toDouble(), session.lat.toDouble())
+                else null
+            }
+        }
+    }
 }
 
 @Composable

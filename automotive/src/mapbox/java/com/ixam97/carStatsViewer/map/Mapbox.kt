@@ -145,9 +145,11 @@ object Mapbox: MapboxInterface {
                                     }
                                     pointAnnotationManager.addClickListener(
                                         OnPointAnnotationClickListener { annotation ->
-                                            println( "Charging Session ID: ${annotation.getData()?.asLong}")
-                                            annotation.getData()?.asLong?.let { id ->
-                                                chargingMarkerOnClick(id)
+                                            if (annotation.getData()?.isJsonNull == false) {
+                                                println( "Charging Session ID: ${annotation.getData()?.asLong}")
+                                                annotation.getData()?.asLong?.let { id ->
+                                                    chargingMarkerOnClick(id)
+                                                }
                                             }
                                             true
                                         }
