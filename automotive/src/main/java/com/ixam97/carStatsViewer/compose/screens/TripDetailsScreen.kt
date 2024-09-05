@@ -21,15 +21,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -38,12 +35,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRightAlt
 import androidx.compose.material.icons.filled.UnfoldLess
 import androidx.compose.material.icons.filled.UnfoldMore
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -62,10 +57,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.TripDetailsViewModel
-import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.compose.components.CarHeaderWithContent
 import com.ixam97.carStatsViewer.compose.components.CarSegmentedButton
-import com.ixam97.carStatsViewer.compose.theme.badRed
 import com.ixam97.carStatsViewer.compose.theme.clubHint
 import com.ixam97.carStatsViewer.compose.theme.slideUpBackground
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
@@ -817,7 +810,7 @@ fun ChargingSessionDetails(
                     text = stringResource(R.string.summary_charged_energy),
                     iconResId = R.drawable.ic_energy_large
                 )
-                // if ((session.chargingPoints?.filter { it.point_marker_type == 2}?.size?:0) > 1) {
+                if ((session.chargingPoints?.filter { it.point_marker_type == 2}?.size?:0) > 1) {
                     Icon(
                         modifier = Modifier.padding(horizontal = 24.dp).size(60.dp),
                         imageVector = Icons.Outlined.Warning,
@@ -830,7 +823,7 @@ fun ChargingSessionDetails(
                         color = clubHint,
                         fontSize = 25.sp
                     )
-                // }
+                }
             }
             Divider(Modifier.padding(horizontal = 24.dp))
             TripDataRow(
