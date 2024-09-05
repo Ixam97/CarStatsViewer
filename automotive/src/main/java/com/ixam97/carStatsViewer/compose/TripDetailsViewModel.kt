@@ -17,6 +17,12 @@ import kotlinx.coroutines.launch
 
 class TripDetailsViewModel: ViewModel() {
 
+    companion object {
+        const val DETAILS_SECTION = 0
+        const val CHARGING_SECTION = 1
+        const val MAP_SECTION = 2
+    }
+
     data class TripDetailsState(
         val drivingSession: DrivingSession? = null,
         val selectedSection: Int = 0,
@@ -111,6 +117,12 @@ class TripDetailsViewModel: ViewModel() {
         CarStatsViewer.appPreferences.secondaryConsumptionDimension = index
         tripDetailsState = tripDetailsState.copy(
             selectedSecondaryDimension = index
+        )
+    }
+
+    fun selectChargingSessionOnMap(id: Long) {
+        tripDetailsState = tripDetailsState.copy(
+            selectedSection = CHARGING_SECTION
         )
     }
 }

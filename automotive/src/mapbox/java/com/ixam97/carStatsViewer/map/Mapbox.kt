@@ -59,7 +59,11 @@ object Mapbox: MapboxInterface {
 
     @OptIn(MapboxDelicateApi::class)
     @Composable
-    override fun MapBoxContainer(modifier: Modifier, trip: DrivingSession?) {
+    override fun MapBoxContainer(
+        modifier: Modifier,
+        trip: DrivingSession?,
+        chargingMarkerOnClick: ((id: Long) -> Unit)
+    ) {
 
         var coordinates = listOf<Point>()
         var updateViewport by remember { mutableStateOf(false) }
@@ -141,25 +145,31 @@ object Mapbox: MapboxInterface {
                                     }
                                     pointAnnotationManager.addClickListener(
                                         OnPointAnnotationClickListener { annotation ->
-                                        println( "Charging Session ID: ${annotation.getData()?.asLong}")
-                                        true
-                                    })
+                                            println( "Charging Session ID: ${annotation.getData()?.asLong}")
+                                            annotation.getData()?.asLong?.let { id ->
+                                                chargingMarkerOnClick(id)
+                                            }
+                                            true
+                                        }
+                                    )
                                 }
                             }
-                            pointAnnotationManager.create(
-                                PointAnnotationOptions()
-                                    .withPoint(coordinates.last())
-                                    .withIconImage(destinationMarkerBitmap)
-                                    .withIconAnchor(IconAnchor.BOTTOM)
-                                    .withIconSize(0.75)
-                            )
-                            pointAnnotationManager.create(
-                                PointAnnotationOptions()
-                                    .withPoint(coordinates.first())
-                                    .withIconImage(startMarkerBitmap)
-                                    .withIconAnchor(IconAnchor.BOTTOM)
-                                    .withIconSize(0.75)
-                            )
+                            if (coordinates.isNotEmpty()) {
+                                pointAnnotationManager.create(
+                                    PointAnnotationOptions()
+                                        .withPoint(coordinates.last())
+                                        .withIconImage(destinationMarkerBitmap)
+                                        .withIconAnchor(IconAnchor.BOTTOM)
+                                        .withIconSize(0.75)
+                                )
+                                pointAnnotationManager.create(
+                                    PointAnnotationOptions()
+                                        .withPoint(coordinates.first())
+                                        .withIconImage(startMarkerBitmap)
+                                        .withIconAnchor(IconAnchor.BOTTOM)
+                                        .withIconSize(0.75)
+                                )
+                            }
                         }
 
                         addOnLayoutChangeListener(initialCameraListener)

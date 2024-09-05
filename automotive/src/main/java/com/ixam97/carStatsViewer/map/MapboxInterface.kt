@@ -1,7 +1,10 @@
 package com.ixam97.carStatsViewer.map
 
 import android.location.Geocoder
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
@@ -13,8 +16,17 @@ interface MapboxInterface {
     @Composable
     fun MapBoxContainer(
         modifier: Modifier,
-        trip: DrivingSession?
-    )
+        trip: DrivingSession?,
+        chargingMarkerOnClick: ((id: Long) -> Unit)
+    ) {
+        Box (
+            modifier = modifier,
+            contentAlignment = Alignment.Center
+        ) {
+            Text("No Mapbox API configured!")
+        }
+
+    }
 
     // Using the built in Android Geocoder
     suspend fun getAddress(lon: Double, lat: Double): String {

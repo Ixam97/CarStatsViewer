@@ -9,13 +9,13 @@ room = "2.6.1"
 appcompat = "1.7.0"
 constraintlayout = "2.1.4"
 lifecycle = "2.8.4"
-navigation = "2.8.0-beta06"
+navigation = "2.8.0"
 car-app = "1.7.0-beta01"
 gson = "2.10.1"
 gms-location = "21.3.0"
 kotlinx = "1.7.3"
 serialization = "1.7.0"
-compose = "1.6.8"
+composeBom = "2024.09.00"
 jakara-mail = "2.0.0"
 aboutlibraries = "10.6.1"
 aboutlibraries-plugin = "10.9.2"
@@ -35,9 +35,11 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-car-app = {group = "androidx.car.app", name = "app", version.ref = "car-app"}
 androidx-car-app-automotive = {group = "androidx.car.app", name = "app-automotive", version.ref = "car-app"}
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-activity-compose = { group="androidx.activity", name = "activity-compose", version.ref = "activity"}
-androidx-compose-ui = { group="androidx.compose.ui", name = "ui", version.ref = "compose"}
-androidx-compose-material = { group="androidx.compose.material", name = "material", version.ref = "compose"}
+androidx-compose-ui = { group="androidx.compose.ui", name = "ui" }
+androidx-compose-material = { group="androidx.compose.material", name = "material" }
+androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation"}
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle"}
 androidx-room = { group = "androidx.room", name = "room-ktx", version.ref = "room"}

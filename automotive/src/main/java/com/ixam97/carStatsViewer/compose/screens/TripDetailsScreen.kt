@@ -4,6 +4,8 @@ import android.app.Activity
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +31,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowRightAlt
+import androidx.compose.material.icons.filled.UnfoldLess
+import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -164,7 +168,7 @@ fun TripDetailsPortraitScreen(
                             color = if (tripDetailsState.selectedSection == 1) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
                         )
                     }
-                    if (!splitScreenCondition) {
+                    if (!splitScreenCondition && !Mapbox.isDummy()) {
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
@@ -302,7 +306,8 @@ fun TripDetailsPortraitScreen(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .weight(1f),
-                                    trip = trip
+                                    trip = trip,
+                                    chargingMarkerOnClick = {id -> viewModel.selectChargingSessionOnMap(id)}
                                 )
                             }
                         }
@@ -317,7 +322,8 @@ fun TripDetailsPortraitScreen(
 
                             Mapbox.MapBoxContainer(
                                 modifier = Modifier,
-                                trip = trip
+                                trip = trip,
+                                chargingMarkerOnClick = {id -> viewModel.selectChargingSessionOnMap(id)}
                             )
                         }
                     }
@@ -358,7 +364,8 @@ fun TripDataRow(
             Text(
                 text = text,
                 fontSize = 25.sp,
-                color = colorResource(id = R.color.secondary_text_color)
+                color = colorResource(id = R.color.secondary_text_color),
+                softWrap = false
             )
         }
     }
@@ -385,10 +392,19 @@ fun TripDetails(
         prevAlt = alt
     }
 
+    val tripTypes = LocalContext.current.resources.getStringArray(R.array.trip_type_names)
+
     Column {
+        var visibleDetails by remember { mutableStateOf(true) }
+        Text(modifier = Modifier
+            .padding(vertical = 15.dp, horizontal = 24.dp),
+            text = "Trip type: ${tripTypes[trip.session_type]}"
+        )
         Row(
             modifier = Modifier
-                .padding(horizontal = 24.dp),
+                .clickable {
+                    visibleDetails = !visibleDetails
+                },
             verticalAlignment = Alignment.CenterVertically
         ) {
             TripDataRow(
@@ -400,7 +416,7 @@ fun TripDetails(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
                     .size(60.dp),
-                imageVector = Icons.Default.ArrowForward,
+                imageVector = Icons.Default.ArrowRightAlt,
                 contentDescription = null,
                 tint = Color.White
             )
@@ -411,56 +427,73 @@ fun TripDetails(
                 } else "Ongoing trip",
                 text = endLocation
             )
+            Icon(
+                modifier = Modifier
+                    .size(60.dp),
+                imageVector = if (visibleDetails) {
+                    Icons.Default.UnfoldLess
+                } else {
+                    Icons.Default.UnfoldMore
+                },
+                contentDescription = null,
+                tint = Color.White
+            )
         }
-        Divider(Modifier.padding(horizontal = 24.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
+        androidx.compose.animation.AnimatedVisibility(
+            visible =  visibleDetails,
+            enter = expandVertically(),
+            exit = shrinkVertically()
         ) {
-            Column(
+            Divider(Modifier.padding(horizontal = 24.dp))
+            Row(
                 modifier = Modifier
-                    .weight(1f)
+                    .fillMaxWidth()
+                    .wrapContentHeight()
             ) {
-                TripDataRow(
-                    title = StringFormatters.getTraveledDistanceString(trip.driven_distance.toFloat()),
-                    text = stringResource(R.string.summary_traveled_distance),
-                    iconResId = R.drawable.ic_distance
-                )
-                Divider(Modifier.padding(start = 24.dp))
-                TripDataRow(
-                    title = StringFormatters.getEnergyString(trip.used_energy.toFloat()),
-                    text = stringResource(R.string.summary_used_energy),
-                    iconResId = R.drawable.ic_energy_large
-                )
-                Divider(Modifier.padding(start = 24.dp))
-                TripDataRow(
-                    title = StringFormatters.getAvgConsumptionString(trip.used_energy.toFloat(), trip.driven_distance.toFloat()),
-                    text = stringResource(R.string.summary_average_consumption),
-                    iconResId = R.drawable.ic_avg_consumption
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-            ) {
-                TripDataRow(
-                    title = StringFormatters.getAvgSpeedString(trip.driven_distance.toFloat(), trip.drive_time),
-                    text = stringResource(R.string.summary_speed),
-                    iconResId = R.drawable.ic_speed_large
-                )
-                Divider(Modifier.padding(horizontal = 24.dp))
-                TripDataRow(
-                    title = StringFormatters.getAltitudeString(altUp, altDown),
-                    text = stringResource(R.string.summary_altitude),
-                    iconResId = R.drawable.ic_altitude
-                )
-                Divider(Modifier.padding(horizontal = 24.dp))
-                TripDataRow(
-                    title = StringFormatters.getElapsedTimeString(trip.drive_time, true),
-                    text = stringResource(R.string.summary_travel_time),
-                    iconResId = R.drawable.ic_time_large
-                )
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    TripDataRow(
+                        title = StringFormatters.getTraveledDistanceString(trip.driven_distance.toFloat()),
+                        text = stringResource(R.string.summary_traveled_distance),
+                        iconResId = R.drawable.ic_distance
+                    )
+                    Divider(Modifier.padding(start = 24.dp))
+                    TripDataRow(
+                        title = StringFormatters.getEnergyString(trip.used_energy.toFloat()),
+                        text = stringResource(R.string.summary_used_energy),
+                        iconResId = R.drawable.ic_energy_large
+                    )
+                    Divider(Modifier.padding(start = 24.dp))
+                    TripDataRow(
+                        title = StringFormatters.getAvgConsumptionString(trip.used_energy.toFloat(), trip.driven_distance.toFloat()),
+                        text = stringResource(R.string.summary_average_consumption),
+                        iconResId = R.drawable.ic_avg_consumption
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    TripDataRow(
+                        title = StringFormatters.getAvgSpeedString(trip.driven_distance.toFloat(), trip.drive_time),
+                        text = stringResource(R.string.summary_speed),
+                        iconResId = R.drawable.ic_speed_large
+                    )
+                    Divider(Modifier.padding(horizontal = 24.dp))
+                    TripDataRow(
+                        title = StringFormatters.getAltitudeString(altUp, altDown),
+                        text = stringResource(R.string.summary_altitude),
+                        iconResId = R.drawable.ic_altitude
+                    )
+                    Divider(Modifier.padding(horizontal = 24.dp))
+                    TripDataRow(
+                        title = StringFormatters.getElapsedTimeString(trip.drive_time, true),
+                        text = stringResource(R.string.summary_travel_time),
+                        iconResId = R.drawable.ic_time_large
+                    )
+                }
             }
         }
     }
