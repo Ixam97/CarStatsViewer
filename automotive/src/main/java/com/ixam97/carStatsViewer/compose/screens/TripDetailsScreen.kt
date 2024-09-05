@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,6 +38,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRightAlt
 import androidx.compose.material.icons.filled.UnfoldLess
 import androidx.compose.material.icons.filled.UnfoldMore
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -62,6 +65,8 @@ import com.ixam97.carStatsViewer.compose.TripDetailsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.compose.components.CarHeaderWithContent
 import com.ixam97.carStatsViewer.compose.components.CarSegmentedButton
+import com.ixam97.carStatsViewer.compose.theme.badRed
+import com.ixam97.carStatsViewer.compose.theme.clubHint
 import com.ixam97.carStatsViewer.compose.theme.slideUpBackground
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
@@ -87,6 +92,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 @Composable
 fun TripDetailsPortraitScreen(
@@ -145,18 +151,25 @@ fun TripDetailsPortraitScreen(
             }
 
             CarHeaderWithContent(
-                onBackClick = { (context as Activity).finish() }
+                onBackClick = {
+                    if (viewModel.tripDetailsState.showChargingSessionDetails) {
+                        viewModel.closeChargingSessionDetails()
+                    } else {
+                        (context as Activity).finish()
+                    }
+                }
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(40.dp)
+                    // horizontalArrangement = Arrangement.spacedBy(40.dp)
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .clickable { viewModel.setSelectedSection(0) },
+                            .clickable { viewModel.setSelectedSection(0) }
+                            .padding(horizontal = 20.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -169,7 +182,8 @@ fun TripDetailsPortraitScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .clickable { viewModel.setSelectedSection(1) },
+                            .clickable { viewModel.setSelectedSection(1) }
+                            .padding(horizontal = 20.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -183,7 +197,8 @@ fun TripDetailsPortraitScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
-                                .clickable { viewModel.setSelectedSection(2) },
+                                .clickable { viewModel.setSelectedSection(2) }
+                                .padding(horizontal = 20.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -205,18 +220,16 @@ fun TripDetailsPortraitScreen(
                     Text("No data available")
                 }
             } else {
-                Row(
-
-                ) {
+                Row {
                     Column(
                         modifier = Modifier
-                            .then(
-                                if (height < 1000.dp) {
-                                    Modifier.verticalScroll(rememberScrollState())
-                                } else {
-                                    Modifier
-                                }
-                            )
+                            // .then(
+                            //     if (height < 1000.dp) {
+                            //         Modifier.verticalScroll(rememberScrollState())
+                            //     } else {
+                            //         Modifier
+                            //     }
+                            // )
                             .weight(1f)
                             .fillMaxHeight(),
                     ) {
@@ -460,8 +473,8 @@ fun TripDetails(
         }
         androidx.compose.animation.AnimatedVisibility(
             visible =  visibleDetails,
-            enter = expandVertically(),
-            exit = shrinkVertically()
+            enter = expandVertically(expandFrom = Alignment.Top),
+            exit = shrinkVertically(shrinkTowards = Alignment.Top)
         ) {
             Divider(Modifier.padding(horizontal = 24.dp))
             Row(
@@ -580,7 +593,10 @@ fun ConsumptionPlot(
             }
         },
         update = { plotView ->
-            plotView.dimensionRestriction = appPreferences.distanceUnit.asUnit(distance).toLong() + 1
+            if (distance != 0f) {
+                plotView.dimensionRestriction = appPreferences.distanceUnit.asUnit(distance).toLong() + 1
+                plotView.dimensionShift = 0
+            }
             plotView.dimensionYSecondary = when (secondaryDimension) {
                 1 -> PlotDimensionY.SPEED
                 2 -> PlotDimensionY.STATE_OF_CHARGE
@@ -644,6 +660,8 @@ fun ChargingSessions(
     chargingSessions: List<ChargingSession>
 ) {
 
+    // viewModel.tripDetailsState.drivingSession?.drivingPoints.
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -653,7 +671,23 @@ fun ChargingSessions(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            items(chargingSessions, itemContent = { session: ChargingSession ->
+            items(chargingSessions.filter { it.end_epoch_time != null }, itemContent = { session: ChargingSession ->
+
+                val endSoc = viewModel.tripDetailsState.drivingSession?.drivingPoints?.find {
+                    it.driving_point_epoch_time >= session.end_epoch_time!!
+                }?.state_of_charge?: session.chargingPoints?.last()?.state_of_charge
+                val startSoc = viewModel.tripDetailsState.drivingSession?.drivingPoints?.findLast {
+                    it.driving_point_epoch_time <= session.start_epoch_time
+                }?.state_of_charge?: session.chargingPoints?.first()?.state_of_charge
+
+                val socString = if (endSoc != null && startSoc != null) {
+                    String.format(
+                        "%d%%  →  %d%%",
+                        (startSoc * 100f).roundToInt(),
+                        (endSoc * 100f).roundToInt(),
+                    )
+                } else "SoC unavailable"
+
                 Column (
                     modifier = Modifier.fillMaxWidth()
                         .clickable {
@@ -662,7 +696,7 @@ fun ChargingSessions(
                 ) {
                     var location by remember { mutableStateOf<String?>("Loading location ...") }
                     TripDataRow(
-                        title = StringFormatters.getDateString(Date(session.start_epoch_time)),
+                        title = "${StringFormatters.getDateString(Date(session.start_epoch_time))}, $socString",
                         text = location?: "Location not available"
                     )
                     Divider(Modifier.padding(horizontal = 24.dp))
@@ -680,12 +714,13 @@ fun ChargingSessions(
 
         AnimatedVisibility(
             visible = viewModel.tripDetailsState.showChargingSessionDetails,
-            enter = expandVertically(),
-            exit = shrinkVertically()
+            enter = expandVertically(expandFrom = Alignment.Top),
+            exit = shrinkVertically(shrinkTowards = Alignment.Top)
         ) {
             viewModel.tripDetailsState.chargingSession?.let {
                 ChargingSessionDetails(
                     session = it,
+                    viewModel = viewModel,
                     onCollapseClick = { viewModel.closeChargingSessionDetails() }
                 )
             }?: Text("Error")
@@ -696,8 +731,25 @@ fun ChargingSessions(
 @Composable
 fun ChargingSessionDetails(
     session: ChargingSession,
+    viewModel: TripDetailsViewModel,
     onCollapseClick: () -> Unit
 ) {
+
+    val endSoc = viewModel.tripDetailsState.drivingSession?.drivingPoints?.find {
+        it.driving_point_epoch_time >= session.end_epoch_time!!
+    }?.state_of_charge?: session.chargingPoints?.last()?.state_of_charge
+    val startSoc = viewModel.tripDetailsState.drivingSession?.drivingPoints?.findLast {
+        it.driving_point_epoch_time <= session.start_epoch_time
+    }?.state_of_charge?: session.chargingPoints?.first()?.state_of_charge
+
+    val socString = if (endSoc != null && startSoc != null) {
+        String.format(
+            "%d%%  →  %d%%",
+            (startSoc * 100f).roundToInt(),
+            (endSoc * 100f).roundToInt(),
+        )
+    } else "SoC unavailable"
+
     val context = LocalContext.current
     val plotPoints = DataConverters.chargePlotLineFromChargingPoints(session.chargingPoints?: listOf())
     var location by remember { mutableStateOf<String?>("Loading location ...") }
@@ -743,7 +795,7 @@ fun ChargingSessionDetails(
         ) {
             TripDataRow(
                 modifier = Modifier.weight(1f),
-                title = StringFormatters.getDateString(Date(session.start_epoch_time)),
+                title = "${StringFormatters.getDateString(Date(session.start_epoch_time))}, $socString",
                 text = location ?: "Location not available"
             )
             Icon(
@@ -757,11 +809,29 @@ fun ChargingSessionDetails(
         }
         Divider(Modifier.padding(horizontal = 24.dp))
         if (session.end_epoch_time != null) {
-            TripDataRow(
-                title = StringFormatters.getEnergyString(session.charged_energy.toFloat()),
-                text = stringResource(R.string.summary_charged_energy),
-                iconResId = R.drawable.ic_energy_large
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TripDataRow(
+                    title = StringFormatters.getEnergyString(session.charged_energy.toFloat()),
+                    text = stringResource(R.string.summary_charged_energy),
+                    iconResId = R.drawable.ic_energy_large
+                )
+                // if ((session.chargingPoints?.filter { it.point_marker_type == 2}?.size?:0) > 1) {
+                    Icon(
+                        modifier = Modifier.padding(horizontal = 24.dp).size(60.dp),
+                        imageVector = Icons.Outlined.Warning,
+                        tint = clubHint,
+                        contentDescription = ""
+                    )
+                    Text(
+                        modifier = Modifier.padding(end = 24.dp),
+                        text = stringResource(R.string.summary_interruption_warning),
+                        color = clubHint,
+                        fontSize = 25.sp
+                    )
+                // }
+            }
             Divider(Modifier.padding(horizontal = 24.dp))
             TripDataRow(
                 title = StringFormatters.getElapsedTimeString(session.end_epoch_time - session.start_epoch_time),

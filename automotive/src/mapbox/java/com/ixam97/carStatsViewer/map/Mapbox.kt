@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -65,6 +66,8 @@ object Mapbox: MapboxInterface {
         chargingMarkerOnClick: ((id: Long) -> Unit)
     ) {
 
+        val context = LocalContext.current
+
         var coordinates = listOf<Point>()
         var updateViewport by remember { mutableStateOf(false) }
 
@@ -84,12 +87,12 @@ object Mapbox: MapboxInterface {
 
         val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
             .withPoints(coordinates)
-            .withLineColor(MaterialTheme.colors.primary.toArgb())
+            .withLineColor(context.getColor(R.color.polestar_orange))
             .withLineWidth(6.0)
 
         val polylineAnnotationOptionsBackground: PolylineAnnotationOptions = PolylineAnnotationOptions()
             .withPoints(coordinates)
-            .withLineColor(MaterialTheme.colors.surface.toArgb())
+            .withLineColor(context.getColor(R.color.polestar_orange_outline))
             .withLineWidth(10.0)
 
         initialCameraListener = View.OnLayoutChangeListener { view, _, _, _, _, _, _, _, _ ->
@@ -138,8 +141,8 @@ object Mapbox: MapboxInterface {
                                             PointAnnotationOptions()
                                                 .withPoint(Point.fromLngLat(chargingSession.lon.toDouble(), chargingSession.lat.toDouble()))
                                                 .withIconImage(chargeMarkerBitmap)
-                                                .withIconAnchor(IconAnchor.BOTTOM)
-                                                .withIconSize(0.75)
+                                                .withIconOffset(listOf(0.0, -27.0))
+                                                .withIconSize(0.7)
                                                 .withData(gson.toJsonTree(chargingSession.charging_session_id))
                                         )
                                     }
@@ -161,15 +164,15 @@ object Mapbox: MapboxInterface {
                                     PointAnnotationOptions()
                                         .withPoint(coordinates.last())
                                         .withIconImage(destinationMarkerBitmap)
-                                        .withIconAnchor(IconAnchor.BOTTOM)
-                                        .withIconSize(0.75)
+                                        .withIconOffset(listOf(0.0, -27.0))
+                                        .withIconSize(0.7)
                                 )
                                 pointAnnotationManager.create(
                                     PointAnnotationOptions()
                                         .withPoint(coordinates.first())
                                         .withIconImage(startMarkerBitmap)
-                                        .withIconAnchor(IconAnchor.BOTTOM)
-                                        .withIconSize(0.75)
+                                        .withIconOffset(listOf(0.0, -27.0))
+                                        .withIconSize(0.7)
                                 )
                             }
                         }

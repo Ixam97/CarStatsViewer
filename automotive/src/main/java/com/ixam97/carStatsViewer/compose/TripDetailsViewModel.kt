@@ -105,6 +105,8 @@ class TripDetailsViewModel: ViewModel() {
 
     fun setTripDistance(index: Int) {
         viewModelScope.launch {
+            _changeDistanceFlow.emit(0f)
+            // delay(50)
             _changeDistanceFlow.emit(
                 when (index) {
                     0 -> 100_000f
