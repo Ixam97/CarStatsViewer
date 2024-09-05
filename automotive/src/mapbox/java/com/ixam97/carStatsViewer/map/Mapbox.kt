@@ -18,21 +18,29 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.ixam97.carStatsViewer.CarStatsViewer
+import com.google.gson.GsonBuilder
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import com.ixam97.carStatsViewer.utils.getBitmapFromVectorDrawable
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxDelicateApi
 import com.mapbox.maps.dsl.cameraOptions
+import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
 import com.mapbox.maps.plugin.attribution.attribution
+import com.mapbox.maps.plugin.compass.compass
+import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.scalebar.scalebar
 
 // this is the real Mapbox class
@@ -47,6 +55,7 @@ object Mapbox: MapboxInterface {
 
     private lateinit var initialCameraListener: View.OnLayoutChangeListener
     private lateinit var polylineAnnotationManager: PolylineAnnotationManager
+    private lateinit var pointAnnotationManager: PointAnnotationManager
 
     @OptIn(MapboxDelicateApi::class)
     @Composable
@@ -90,7 +99,13 @@ object Mapbox: MapboxInterface {
         ) {
             AndroidView(
                 factory = { context ->
+                    val chargeMarkerBitmap = getBitmapFromVectorDrawable(context, R.drawable.ic_trip_charging_location)
+                    val destinationMarkerBitmap = getBitmapFromVectorDrawable(context, R.drawable.ic_trip_destination)
+                    val startMarkerBitmap = getBitmapFromVectorDrawable(context, R.drawable.ic_trip_start)
+
                     MapView(context).apply {
+                        gestures.rotateEnabled = false
+                        compass.enabled = false
                         attribution.getMapAttributionDelegate().telemetry().apply {
                             userTelemetryRequestState = false
                             disableTelemetrySession()
@@ -108,6 +123,44 @@ object Mapbox: MapboxInterface {
                         polylineAnnotationManager = annotations.createPolylineAnnotationManager()
                         polylineAnnotationManager.create(polylineAnnotationOptionsBackground)
                         polylineAnnotationManager.create(polylineAnnotationOptions)
+
+                        pointAnnotationManager = annotations.createPointAnnotationManager()
+                        trip?.let {
+                            val gson = GsonBuilder().create()
+                            if (!it.chargingSessions.isNullOrEmpty()) {
+                                it.chargingSessions!!.forEach { chargingSession ->
+                                    if (chargingSession.lon != null && chargingSession.lat!= null) {
+                                        pointAnnotationManager.create(
+                                            PointAnnotationOptions()
+                                                .withPoint(Point.fromLngLat(chargingSession.lon.toDouble(), chargingSession.lat.toDouble()))
+                                                .withIconImage(chargeMarkerBitmap)
+                                                .withIconAnchor(IconAnchor.BOTTOM)
+                                                .withIconSize(0.75)
+                                                .withData(gson.toJsonTree(chargingSession.charging_session_id))
+                                        )
+                                    }
+                                    pointAnnotationManager.addClickListener(
+                                        OnPointAnnotationClickListener { annotation ->
+                                        println( "Charging Session ID: ${annotation.getData()?.asLong}")
+                                        true
+                                    })
+                                }
+                            }
+                            pointAnnotationManager.create(
+                                PointAnnotationOptions()
+                                    .withPoint(coordinates.last())
+                                    .withIconImage(destinationMarkerBitmap)
+                                    .withIconAnchor(IconAnchor.BOTTOM)
+                                    .withIconSize(0.75)
+                            )
+                            pointAnnotationManager.create(
+                                PointAnnotationOptions()
+                                    .withPoint(coordinates.first())
+                                    .withIconImage(startMarkerBitmap)
+                                    .withIconAnchor(IconAnchor.BOTTOM)
+                                    .withIconSize(0.75)
+                            )
+                        }
 
                         addOnLayoutChangeListener(initialCameraListener)
                     }

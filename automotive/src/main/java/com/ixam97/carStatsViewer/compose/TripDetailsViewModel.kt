@@ -11,9 +11,8 @@ import com.ixam97.carStatsViewer.map.Mapbox
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class TripDetailsViewModel: ViewModel() {
@@ -23,7 +22,11 @@ class TripDetailsViewModel: ViewModel() {
         val selectedSection: Int = 0,
         val startLocation: String? = null,
         val endLocation: String? = null,
+        val selectedSecondaryDimension: Int = 0
     )
+
+    private val _changeDistanceFlow = MutableSharedFlow<Float>()
+    val changeDistanceFlow = _changeDistanceFlow.asSharedFlow()
 
     // private var _tripDetailsState = MutableStateFlow<TripDetailsState>(TripDetailsState())
     // val tripDetailsState = _tripDetailsState.asStateFlow()
@@ -43,7 +46,6 @@ class TripDetailsViewModel: ViewModel() {
 
     fun loadLocationStrings(): Job {
         return viewModelScope.launch(Dispatchers.IO) {
-            delay(2000)
             tripDetailsState.drivingSession?.let { trip ->
                 if (!trip.drivingPoints.isNullOrEmpty()) {
                     val coordinates = trip.drivingPoints!!.filter { it.lat != null }
@@ -83,11 +85,32 @@ class TripDetailsViewModel: ViewModel() {
 
     fun loadDrivingSession(sessionId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            delay(2000)
+            delay(1000)
             tripDetailsState = tripDetailsState.copy(
-                drivingSession = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId)
+                drivingSession = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId),
+                selectedSecondaryDimension = CarStatsViewer.appPreferences.secondaryConsumptionDimension
             )
             loadLocationStrings().join()
         }
+    }
+
+    fun setTripDistance(index: Int) {
+        viewModelScope.launch {
+            _changeDistanceFlow.emit(
+                when (index) {
+                    0 -> 100_000f
+                    1 -> 40_000f
+                    2 -> 20_000f
+                    else -> -1f
+                }
+            )
+        }
+    }
+
+    fun setSecondaryPlotDimension(index: Int) {
+        CarStatsViewer.appPreferences.secondaryConsumptionDimension = index
+        tripDetailsState = tripDetailsState.copy(
+            selectedSecondaryDimension = index
+        )
     }
 }

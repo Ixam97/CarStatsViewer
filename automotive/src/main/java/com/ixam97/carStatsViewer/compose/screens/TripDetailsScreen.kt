@@ -18,12 +18,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
@@ -32,11 +30,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,16 +46,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.TripDetailsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarHeaderWithContent
 import com.ixam97.carStatsViewer.compose.components.CarSegmentedButton
-import com.ixam97.carStatsViewer.compose.theme.CarTheme
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.map.Mapbox
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
@@ -225,12 +219,27 @@ fun TripDetailsPortraitScreen(
                                     Box (
                                         Modifier.weight(1f)
                                     ) {
+                                        var distance by remember {mutableStateOf(trip.driven_distance.toFloat())}
+
                                         ConsumptionPlot(
                                             plotLine = consumptionPlotLine,
                                             plotLinePaint = consumptionPlotLinePaint,
-                                            distance = trip.driven_distance.toFloat(),
-                                            limitedHeight = height < 1000.dp
+                                            distance = distance,
+                                            limitedHeight = height < 1000.dp,
+                                            secondaryDimension = viewModel.tripDetailsState.selectedSecondaryDimension
                                         )
+
+                                        LaunchedEffect(Unit) {
+                                            viewModel.changeDistanceFlow.collect {
+                                                newValue ->
+                                                println("Collected new distance value: $newValue")
+                                                distance = if (newValue == -1f) {
+                                                    trip.driven_distance.toFloat()
+                                                } else {
+                                                    newValue
+                                                }
+                                            }
+                                        }
                                     }
                                     if (height < 1000.dp) {
                                         Box(Modifier
@@ -243,22 +252,37 @@ fun TripDetailsPortraitScreen(
                                 }
                                 Row(
                                     modifier = Modifier
+                                        .height(IntrinsicSize.Min)
                                         .padding(horizontal = 24.dp, vertical = 10.dp),
                                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                                 ) {
                                     CarSegmentedButton(
-                                        modifier = Modifier.weight(1f),
+                                        modifier = Modifier.fillMaxHeight().weight(1f),
                                         options = listOf("100 km", "40 km", "20 km", "Trip"),
-                                        selectedIndex = 0,
-                                        onSelectedIndexChanged = {},
+                                        selectedIndex = null,
+                                        onSelectedIndexChanged = { index ->
+                                            viewModel.setTripDistance(index)
+                                        },
                                         contentPadding = PaddingValues(15.dp)
                                     )
                                     CarSegmentedButton(
-                                        modifier = Modifier.width(IntrinsicSize.Min),
-                                        options = listOf("Speed", "SoC", "Alt"),
-                                        selectedIndex = 0,
-                                        onSelectedIndexChanged = {},
-                                        contentPadding = PaddingValues(15.dp)
+                                        modifier = Modifier.fillMaxHeight().width(IntrinsicSize.Min),
+                                        // options = listOf("Speed", "SoC", "Alt"),
+                                        optionsContent = listOf(
+                                            { SegmentedButtonIcon(R.drawable.ic_speed_large) },
+                                            { SegmentedButtonIcon(R.drawable.ic_battery) },
+                                            { SegmentedButtonIcon(R.drawable.ic_altitude) }
+                                        ),
+                                        selectedIndex = viewModel.tripDetailsState.selectedSecondaryDimension - 1,
+                                        onSelectedIndexChanged = { index ->
+                                            val newValue = if (index == viewModel.tripDetailsState.selectedSecondaryDimension - 1) {
+                                                0
+                                            } else {
+                                                index + 1
+                                            }
+                                            viewModel.setSecondaryPlotDimension(newValue)
+                                        },
+                                        contentPadding = PaddingValues(vertical = 10.dp, horizontal = 15.dp)
                                     )
                                 }
                             }
@@ -346,6 +370,21 @@ fun TripDetails(
     startLocation: String,
     endLocation: String
 ) {
+    var altUp = 0f
+    var altDown = 0f
+    var prevAlt = 0f
+    val altList = trip.drivingPoints?.mapNotNull { it.alt }?: listOf()
+    altList.forEachIndexed { index, alt ->
+        if (index == 0) prevAlt = alt
+        else {
+            when {
+                alt > prevAlt -> altUp += alt - prevAlt
+                alt < prevAlt -> altDown += prevAlt - alt
+            }
+        }
+        prevAlt = alt
+    }
+
     Column {
         Row(
             modifier = Modifier
@@ -367,7 +406,9 @@ fun TripDetails(
             )
             TripDataRow(
                 modifier = Modifier.weight(1f),
-                title = StringFormatters.getDateString(Date(trip.start_epoch_time)),
+                title = if (trip.end_epoch_time != null) {
+                    StringFormatters.getDateString(Date(trip.end_epoch_time))
+                } else "Ongoing trip",
                 text = endLocation
             )
         }
@@ -410,7 +451,7 @@ fun TripDetails(
                 )
                 Divider(Modifier.padding(horizontal = 24.dp))
                 TripDataRow(
-                    title = "Placeholder",
+                    title = StringFormatters.getAltitudeString(altUp, altDown),
                     text = stringResource(R.string.summary_altitude),
                     iconResId = R.drawable.ic_altitude
                 )
@@ -430,7 +471,8 @@ fun ConsumptionPlot(
     plotLine: PlotLine,
     plotLinePaint: PlotLinePaint,
     distance: Float,
-    limitedHeight: Boolean
+    limitedHeight: Boolean,
+    secondaryDimension: Int
 ) {
     val appPreferences = CarStatsViewer.appPreferences
 
@@ -463,7 +505,12 @@ fun ConsumptionPlot(
                 }
 
                 dimension = PlotDimensionX.DISTANCE
-                dimensionYSecondary = PlotDimensionY.STATE_OF_CHARGE
+                dimensionYSecondary = when (secondaryDimension) {
+                    1 -> PlotDimensionY.SPEED
+                    2 -> PlotDimensionY.STATE_OF_CHARGE
+                    4 -> PlotDimensionY.ALTITUDE
+                    else -> null
+                }
                 dimensionRestrictionMin = appPreferences.distanceUnit.asUnit(
                     MainActivity.DISTANCE_TRIP_DIVIDER)
                 dimensionSmoothing = 0.02f
@@ -481,7 +528,24 @@ fun ConsumptionPlot(
             }
         },
         update = { plotView ->
+            plotView.dimensionRestriction = appPreferences.distanceUnit.asUnit(distance).toLong() + 1
+            plotView.dimensionYSecondary = when (secondaryDimension) {
+                1 -> PlotDimensionY.SPEED
+                2 -> PlotDimensionY.STATE_OF_CHARGE
+                4 -> PlotDimensionY.ALTITUDE
+                else -> null
+            }
         }
+    )
+}
+
+@Composable
+fun SegmentedButtonIcon(@DrawableRes resId: Int) {
+    Icon(
+        modifier = Modifier.size(48.dp),
+        painter = painterResource(resId),
+        contentDescription = "",
+        tint = Color.White
     )
 }
 
