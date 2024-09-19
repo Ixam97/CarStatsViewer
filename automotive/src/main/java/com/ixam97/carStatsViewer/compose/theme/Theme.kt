@@ -104,7 +104,7 @@ fun CarTheme(carMake: String? = null, content: @Composable () -> Unit) {
 
     when (carMake) {
         "Polestar" -> {
-            typography = defaultPolestarTypography
+            typography = defaultTypography // defaultPolestarTypography
             colors = polestarColors
             brushes = CarThemeBrushes(
                 Brush.horizontalGradient(listOf(colors.primary, colors.primary)),
