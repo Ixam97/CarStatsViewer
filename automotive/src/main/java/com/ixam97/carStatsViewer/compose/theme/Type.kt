@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.sp
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import java.io.File
 
+/*
 val polestarFont = FontFamily(
         Font(
             File("/product/fonts/PolestarUnica77-Regular.otf"),
@@ -20,7 +21,7 @@ val polestarFont = FontFamily(
             weight = FontWeight.Medium
         )
     )
-
+*/
 
 val defaultTypography = Typography(
     defaultFontFamily = FontFamily.Default,
@@ -49,6 +50,7 @@ val defaultTypography = Typography(
     )
 )
 
+/*
 val defaultPolestarTypography = Typography(
     defaultFontFamily = polestarFont,
     body1 = TextStyle(
@@ -102,3 +104,4 @@ val polestarTypography = Typography(
         color = Color.White
     )
 )
+*/
