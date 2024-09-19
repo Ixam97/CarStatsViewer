@@ -162,7 +162,7 @@ fun PolestarTheme(content: @Composable () -> Unit) {
     val colors = polestarColors
     MaterialTheme(
         colors = colors,
-        typography = polestarTypography,
+        typography = defaultTypography, // polestarTypography,
         shapes = Shapes,
         content = content
     )
