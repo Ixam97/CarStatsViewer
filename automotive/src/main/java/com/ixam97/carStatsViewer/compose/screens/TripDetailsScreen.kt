@@ -145,7 +145,7 @@ fun TripDetailsPortraitScreen(
 
             CarHeaderWithContent(
                 onBackClick = {
-                    if (viewModel.tripDetailsState.showChargingSessionDetails) {
+                    if (viewModel.tripDetailsState.showChargingSessionDetails && tripDetailsState.selectedSection == TripDetailsViewModel.CHARGING_SECTION) {
                         viewModel.closeChargingSessionDetails()
                     } else {
                         (context as Activity).finish()
@@ -161,7 +161,7 @@ fun TripDetailsPortraitScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .clickable { viewModel.setSelectedSection(0) }
+                            .clickable { viewModel.setSelectedSection(TripDetailsViewModel.DETAILS_SECTION) }
                             .padding(horizontal = 20.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -169,13 +169,16 @@ fun TripDetailsPortraitScreen(
                             textAlign = TextAlign.Center,
                             text = "Trip Details",
                             style = MaterialTheme.typography.h1,
-                            color = if (tripDetailsState.selectedSection == 0) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
+                            color = if (tripDetailsState.selectedSection == TripDetailsViewModel.DETAILS_SECTION) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
                         )
                     }
                     Box(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .clickable { viewModel.setSelectedSection(1) }
+                            .clickable {
+                                viewModel.setSelectedSection(TripDetailsViewModel.CHARGING_SECTION)
+                                viewModel.closeChargingSessionDetails()
+                            }
                             .padding(horizontal = 20.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -183,14 +186,14 @@ fun TripDetailsPortraitScreen(
                             textAlign = TextAlign.Center,
                             text = "Charging Sessions",
                             style = MaterialTheme.typography.h1,
-                            color = if (tripDetailsState.selectedSection == 1) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
+                            color = if (tripDetailsState.selectedSection == TripDetailsViewModel.CHARGING_SECTION) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
                         )
                     }
                     if (!splitScreenCondition && !Mapbox.isDummy()) {
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
-                                .clickable { viewModel.setSelectedSection(2) }
+                                .clickable { viewModel.setSelectedSection(TripDetailsViewModel.MAP_SECTION) }
                                 .padding(horizontal = 20.dp),
                             contentAlignment = Alignment.Center
                         ) {
@@ -198,7 +201,7 @@ fun TripDetailsPortraitScreen(
                                 textAlign = TextAlign.Center,
                                 text = "Map",
                                 style = MaterialTheme.typography.h1,
-                                color = if (tripDetailsState.selectedSection == 2) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
+                                color = if (tripDetailsState.selectedSection == TripDetailsViewModel.MAP_SECTION) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
                             )
                         }
                     }
@@ -603,7 +606,7 @@ fun ConsumptionPlot(
             plotView.dimensionYSecondary = when (secondaryDimension) {
                 1 -> PlotDimensionY.SPEED
                 2 -> PlotDimensionY.STATE_OF_CHARGE
-                4 -> PlotDimensionY.ALTITUDE
+                3 -> PlotDimensionY.ALTITUDE
                 else -> null
             }
         }
