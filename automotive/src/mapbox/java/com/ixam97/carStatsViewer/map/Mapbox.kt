@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -30,7 +28,6 @@ import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxDelicateApi
 import com.mapbox.maps.dsl.cameraOptions
-import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
@@ -134,6 +131,37 @@ object Mapbox: MapboxInterface {
                         pointAnnotationManager = annotations.createPointAnnotationManager()
                         trip?.let {
                             val gson = GsonBuilder().create()
+                            it.chargingSessions?.let { chargingSessions ->
+                                val completedChargingSessions = chargingSessions.filter { chargingSession ->
+                                    chargingSession.end_epoch_time != null && chargingSession.end_epoch_time > 0
+                                }
+                                if (completedChargingSessions.isNotEmpty()) {
+                                    completedChargingSessions.forEach { chargingSession ->
+                                        if (chargingSession.lon != null && chargingSession.lat!= null) {
+                                            pointAnnotationManager.create(
+                                                PointAnnotationOptions()
+                                                    .withPoint(Point.fromLngLat(chargingSession.lon.toDouble(), chargingSession.lat.toDouble()))
+                                                    .withIconImage(chargeMarkerBitmap)
+                                                    .withIconOffset(listOf(0.0, -27.0))
+                                                    .withIconSize(0.7)
+                                                    .withData(gson.toJsonTree(chargingSession.charging_session_id))
+                                            )
+                                        }
+                                        pointAnnotationManager.addClickListener(
+                                            OnPointAnnotationClickListener { annotation ->
+                                                if (annotation.getData()?.isJsonNull == false) {
+                                                    println( "Charging Session ID: ${annotation.getData()?.asLong}")
+                                                    annotation.getData()?.asLong?.let { id ->
+                                                        chargingMarkerOnClick(id)
+                                                    }
+                                                }
+                                                true
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                            /*
                             if (!it.chargingSessions.isNullOrEmpty()) {
                                 it.chargingSessions!!.forEach { chargingSession ->
                                     if (chargingSession.lon != null && chargingSession.lat!= null) {
@@ -159,6 +187,7 @@ object Mapbox: MapboxInterface {
                                     )
                                 }
                             }
+                            */
                             if (coordinates.isNotEmpty()) {
                                 pointAnnotationManager.create(
                                     PointAnnotationOptions()

@@ -309,7 +309,9 @@ fun TripDetailsPortraitScreen(
                             }
 
                             TripDetailsViewModel.CHARGING_SECTION -> {
-                                if (trip.chargingSessions?.isNotEmpty() == true) {
+                                if (trip.chargingSessions?.any { chargingSession ->
+                                        chargingSession.end_epoch_time != null && chargingSession.end_epoch_time > 0
+                                    } == true) {
                                     trip.chargingSessions?.let {
                                         ChargingSessions(
                                             viewModel = viewModel,
