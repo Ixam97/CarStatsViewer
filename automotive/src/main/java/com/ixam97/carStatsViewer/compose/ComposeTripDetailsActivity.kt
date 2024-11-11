@@ -10,6 +10,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
@@ -31,7 +32,13 @@ class ComposeTripDetailsActivity: ComponentActivity() {
 
                 val tripDetailsState = viewModel.tripDetailsState
 
-                CarTheme(Build.BRAND) {
+                val brand = when (CarStatsViewer.appPreferences.colorTheme) {
+                    0 -> Build.BRAND
+                    2 -> "Orange"
+                    else -> null
+                }
+
+                CarTheme(brand) {
                     if (tripDetailsState.drivingSession != null) {
                         TripDetailsPortraitScreen(
                             viewModel = viewModel

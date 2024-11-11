@@ -43,7 +43,7 @@ class SettingsViewModel: ViewModel() {
         val secondaryChargePlotColor: Int = 0
     )
 
-    private val _themeSettingState = MutableStateFlow<Int>(0)
+    private val _themeSettingState = MutableStateFlow<Int>(preferences.colorTheme)
     val themeSettingStateFLow = _themeSettingState.asStateFlow()
 
     private val _finishActivityLiveData = MutableLiveData<Event<Boolean>>()
@@ -90,6 +90,7 @@ class SettingsViewModel: ViewModel() {
 
     fun setTheme(themeIndex: Int) {
         _themeSettingState.update { themeIndex }
+        preferences.colorTheme = themeIndex
     }
 
     override fun onCleared() {
