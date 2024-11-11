@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.map.Mapbox
@@ -56,38 +57,27 @@ class TripDetailsViewModel: ViewModel() {
     fun loadLocationStrings(): Job {
         return viewModelScope.launch(Dispatchers.IO) {
             tripDetailsState.drivingSession?.let { trip ->
+
+                var startAddr = CarStatsViewer.appContext.resources.getString(R.string.summary_location_not_available)
+                var destAddr = CarStatsViewer.appContext.resources.getString(R.string.summary_location_not_available)
                 if (!trip.drivingPoints.isNullOrEmpty()) {
                     val coordinates = trip.drivingPoints!!.filter { it.lat != null }
-                    val startAddr = Mapbox.getAddress(
-                        coordinates.first().lon!!.toDouble(),
-                        coordinates.first().lat!!.toDouble()
-                    )
-                    val destAddr = Mapbox.getAddress(
-                        coordinates.last().lon!!.toDouble(),
-                        coordinates.last().lat!!.toDouble()
-                    )
-                    // _tripDetailsState.update {
-                    //     _tripDetailsState.value.copy(
-                    //         startLocation = startAddr,
-                    //         endLocation = destAddr
-                    //     )
-                    // }
-                    tripDetailsState = tripDetailsState.copy(
-                        startLocation = startAddr,
-                        endLocation = destAddr
-                    )
-                } else {
-                    // _tripDetailsState.update {
-                    //     _tripDetailsState.value.copy(
-                    //         startLocation = "Location not available",
-                    //         endLocation = "Location not available"
-                    //     )
-                    // }
-                    tripDetailsState = tripDetailsState.copy(
-                        startLocation = "Location not available",
-                        endLocation = "Location not available"
-                    )
+                    if (coordinates.isNotEmpty()) {
+                        startAddr = Mapbox.getAddress(
+                            coordinates.first().lon!!.toDouble(),
+                            coordinates.first().lat!!.toDouble()
+                        )
+                        destAddr = Mapbox.getAddress(
+                            coordinates.last().lon!!.toDouble(),
+                            coordinates.last().lat!!.toDouble()
+                        )
+                    }
                 }
+
+                tripDetailsState = tripDetailsState.copy(
+                    startLocation = startAddr,
+                    endLocation = destAddr
+                )
             }
         }
     }

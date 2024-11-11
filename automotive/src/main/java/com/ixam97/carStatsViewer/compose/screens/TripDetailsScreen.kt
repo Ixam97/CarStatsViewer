@@ -361,7 +361,7 @@ fun TripDetailsPortraitScreen(
 fun TripDataRow(
     modifier: Modifier = Modifier,
     title: String,
-    text: String,
+    text: String? = null,
     @DrawableRes iconResId: Int? = null
 ) {
     Row(
@@ -384,13 +384,15 @@ fun TripDataRow(
             Text(
                 text = title
             )
-            Spacer(modifier = Modifier.size(10.dp))
-            Text(
-                text = text,
-                fontSize = 25.sp,
-                color = colorResource(id = R.color.secondary_text_color),
-                softWrap = false
-            )
+            if (text != null) {
+                Spacer(modifier = Modifier.size(10.dp))
+                Text(
+                    text = text,
+                    fontSize = 25.sp,
+                    color = colorResource(id = R.color.secondary_text_color),
+                    softWrap = false
+                )
+            }
         }
     }
 }
@@ -444,13 +446,19 @@ fun TripDetails(
                 contentDescription = null,
                 tint = Color.White
             )
-            TripDataRow(
-                modifier = Modifier.weight(1f),
-                title = if (trip.end_epoch_time != null) {
-                    StringFormatters.getDateString(Date(trip.end_epoch_time))
-                } else "Ongoing trip",
-                text = endLocation
-            )
+            if (trip.end_epoch_time == null || trip.end_epoch_time <= 0) {
+                TripDataRow(
+                    modifier = Modifier.weight(1f),
+                    title = stringResource(R.string.summary_ongoing)
+                )
+            } else {
+                TripDataRow(
+                    modifier = Modifier.weight(1f),
+                    title = StringFormatters.getDateString(Date(trip.end_epoch_time)),
+                    text = endLocation
+                )
+            }
+
             Icon(
                 modifier = Modifier
                     .padding(end = 24.dp)

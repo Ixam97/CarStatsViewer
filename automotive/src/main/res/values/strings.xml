@@ -229,6 +229,8 @@
     <string name="summary_interruption_warning">Recording of charging session has been interrupted. This value is probably incorrect.</string>
     <string name="summary_altitude">Altitude change</string>
     <string name="summary_speed">Average speed</string>
+    <string name="summary_location_not_available">Location not available</string>
+    <string name="summary_ongoing">Ongoing trip</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>

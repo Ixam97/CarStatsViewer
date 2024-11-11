@@ -147,6 +147,8 @@
     <string name="summary_interruption_warning">Aufzeichnung der Ladekurve unterbrochen. Dieser Wert ist vermutlich nicht korrekt.</string>
     <string name="summary_altitude">Höhenunterschied</string>
     <string name="summary_speed">Durchschnittsgeschwindigkeit</string>
+    <string name="summary_location_not_available">Standort nicht verfügbar</string>
+    <string name="summary_ongoing">Laufender Trip</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
