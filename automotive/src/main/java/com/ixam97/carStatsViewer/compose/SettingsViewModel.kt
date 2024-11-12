@@ -21,8 +21,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SettingsViewModel: ViewModel() {
-
+class SettingsViewModel:
+    ViewModel()
+{
 
     private val preferences = CarStatsViewer.appPreferences
 

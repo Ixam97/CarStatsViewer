@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -54,9 +55,10 @@ fun SideTabLayout(
     tabs: List<SideTab>,
     topLevelBackAction: () -> Unit,
     topLevelTitle: String,
-    tabsColumnBackground: Color = MaterialTheme.colors.surface
+    tabsColumnBackground: Color = MaterialTheme.colors.surface,
+    navController: NavHostController = rememberNavController()
 ) {
-    val navController = rememberNavController()
+    // val navController = rememberNavController()
 
     var size by remember {
         mutableStateOf(IntSize.Zero)

@@ -13,12 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.compose.AbrpSettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
 
 @Composable
 fun ABRPSettings() {
+    val abrpSettingsViewModel: AbrpSettingsViewModel = viewModel()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -33,22 +37,28 @@ fun ABRPSettings() {
             customContent = {
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = "",
-                    onValueChange = { newValue -> },
+                    value = abrpSettingsViewModel.abrpSettingsState.token,
+                    onValueChange = { newValue ->
+                        abrpSettingsViewModel.setToken(newValue)
+                    },
                 )
             }
         )
         Divider(Modifier.padding(horizontal = 20.dp))
         CarSwitchRow(
-            switchState = false,
-            onClick = { }
+            switchState = abrpSettingsViewModel.abrpSettingsState.enabled,
+            onClick = { newState ->
+                abrpSettingsViewModel.setEnabled(newState)
+            }
         ) {
             Text(stringResource(R.string.settings_apis_use))
         }
         Divider(Modifier.padding(horizontal = 20.dp))
         CarSwitchRow(
-            switchState = false,
-            onClick = { }
+            switchState = abrpSettingsViewModel.abrpSettingsState.useLocation,
+            onClick = { newState ->
+                abrpSettingsViewModel.setUseLocation(newState)
+            }
         ) {
             Text(stringResource(R.string.settings_use_location))
         }

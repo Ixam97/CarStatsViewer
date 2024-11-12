@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.Info
@@ -13,7 +12,6 @@ import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.ixam97.carStatsViewer.R
@@ -126,7 +124,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
         SideTabLayout(
             tabs = tabsList,
             topLevelTitle = stringResource(id = R.string.settings_title),
-            topLevelBackAction = {viewModel.finishActivity()}
+            topLevelBackAction = {viewModel.finishActivity()},
         ) //, tabsColumnBackground = Color.Black)
     }
 
