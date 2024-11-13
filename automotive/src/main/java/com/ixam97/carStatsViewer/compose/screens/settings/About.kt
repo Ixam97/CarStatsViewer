@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.compose.screens.settings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
@@ -55,15 +56,17 @@ fun About(
     CarRow(
         title = "Version",
         onClick = { viewModel.versionClick(context) },
-        text = "${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
+        // text = "${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})",
+        customContent = {
+            Text("${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})")
+            CarGradientButton(
+                modifier = Modifier.padding(top = 15.dp).wrapContentSize(),
+                onClick = { navController.navigate(SettingsScreens.ABOUT_CHANGELOG) }
+            ) {
+                Text(text = "Changelog")
+            }
+        }
     )
-
-    CarGradientButton(
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
-        onClick = { navController.navigate(SettingsScreens.ABOUT_CHANGELOG) }
-    ) {
-        Text(text = "Changelog")
-    }
     Divider(modifier = Modifier.padding(horizontal = 24.dp))
     CarRow(
         title = "Copyright",
@@ -72,10 +75,10 @@ fun About(
     Divider(modifier = Modifier.padding(horizontal = 24.dp))
     CarRow(
         title = stringResource(id = R.string.about_support),
-        text = stringResource(id = R.string.about_supporters_message),
+        text = "${stringResource(id = R.string.about_supporters_message)} ${stringResource(R.string.about_support_description)}",
         browsable = true,
         external = true,
-        onClick = { }
+        onClick = { viewModel.openGitHubLink(context) }
     )
     Divider(modifier = Modifier.padding(horizontal = 24.dp))
     CarRow(
@@ -92,11 +95,19 @@ fun About(
     )
     Divider(modifier = Modifier.padding(horizontal = 24.dp))
     CarRow(
+        title = "GitHub Issues",
+        text = stringResource(id = R.string.about_github_issues_description),
+        browsable = true,
+        external = true,
+        onClick = { viewModel.openGitHubIssuesLink(context) }
+    )
+    Divider(modifier = Modifier.padding(horizontal = 24.dp))
+    CarRow(
         title = "Polestar Club",
         text = stringResource(id = R.string.about_polestar_fans_description),
         browsable = true,
         external = true,
-        onClick = { }
+        onClick = { viewModel.openClubLink(context) }
     )
     Divider(modifier = Modifier.padding(horizontal = 24.dp))
     CarRow(
@@ -104,7 +115,7 @@ fun About(
         text = stringResource(id = R.string.about_polestar_forum_description),
         browsable = true,
         external = true,
-        onClick = { }
+        onClick = { viewModel.openForumsLink(context) }
     )
     Divider(modifier = Modifier.padding(horizontal = 24.dp))
     Text(
@@ -118,13 +129,13 @@ fun About(
     CarRow(
         title = stringResource(id = R.string.about_third_party_licenses),
         browsable = true,
-        onClick = {  }
+        onClick = { navController.navigate(SettingsScreens.ABOUT_LICENSES) }
     )
     Divider(modifier = Modifier.padding(horizontal = 24.dp))
     CarRow(
         title = "Privacy Policy",
         browsable = true,
         external = true,
-        onClick = {  }
+        onClick = { viewModel.openPrivacyLink(context) }
     )
 }

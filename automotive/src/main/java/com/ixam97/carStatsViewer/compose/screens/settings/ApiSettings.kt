@@ -24,6 +24,7 @@ import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
 import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
+import com.ixam97.carStatsViewer.compose.theme.disabledTextColor
 
 @Composable
 fun ApiSettings(
@@ -84,16 +85,22 @@ fun ApiSettings(
         )
         Divider(Modifier.padding(horizontal = 24.dp))
         CarSwitchRow(
+            enabled = false,
             switchState = false,
             onClick = { },
-        ) {
-            Text("Enable trip export")
+        ) { enabled ->
+            Text(
+                text = "Enable trip export",
+                color = if (enabled) MaterialTheme.colors.onSurface else disabledTextColor
+            )
         }
         Divider(Modifier.padding(horizontal = 20.dp))
         CarRow(
+            enabled = false,
             title = "Trip export Email address",
             customContent = {
                 TextField(
+                    enabled = false,
                     modifier = Modifier.fillMaxWidth(),
                     value = "",
                     onValueChange = { newValue -> },

@@ -17,8 +17,7 @@ kotlinx = "1.7.3"
 serialization = "1.7.0"
 composeBom = "2024.09.00"
 jakara-mail = "2.0.0"
-aboutlibraries = "10.6.1"
-aboutlibraries-plugin = "10.9.2"
+aboutlibraries = "11.2.2"
 paris = "2.0.0"
 leakcanary = "2.8.1"
 google-services = "4.4.2"
@@ -52,7 +51,8 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-coroutines-play-services = {group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "kotlinx"}
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 jakarta-mail = { group = "org.eclipse.angus", name = "jakarta.mail", version.ref = "jakara-mail"}
-aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutlibraries"}
+aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutlibraries" }
+aboutlibraries-compose = { group = "com.mikepenz", name = "aboutlibraries-compose", version.ref = "aboutlibraries" }
 airbnb-paris = { group = "com.airbnb.android", name = "paris", version.ref = "paris"}
 github-egm96 = { group = "com.github.matthiaszimmermann", name = "EGM96", version = "master-SNAPSHOT"}
 
@@ -63,7 +63,7 @@ androidApplication = { id = "com.android.application", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinKapt = { id = "org.jetbrains.kotlin.kapt", version.ref= "kotlin" }
 kotlinSerialization = {id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries-plugin"}
+aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries"}
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "google-services"}
 firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics"}

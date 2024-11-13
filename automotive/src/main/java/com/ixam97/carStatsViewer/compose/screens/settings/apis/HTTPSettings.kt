@@ -105,7 +105,7 @@ fun HTTPSettings() {
                             modifier = Modifier.size(50.dp),
                             imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                             contentDescription = null,
-                            tint = MaterialTheme.colors.onSurface
+                            tint = if (passwordVisible) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface
                         )
                     }
                 }

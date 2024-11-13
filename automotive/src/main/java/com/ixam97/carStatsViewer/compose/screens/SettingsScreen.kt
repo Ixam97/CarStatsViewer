@@ -24,6 +24,7 @@ import com.ixam97.carStatsViewer.compose.screens.settings.AppearanceSettings
 import com.ixam97.carStatsViewer.compose.screens.settings.Changelog
 import com.ixam97.carStatsViewer.compose.screens.settings.DevSettings
 import com.ixam97.carStatsViewer.compose.screens.settings.GeneralSettings
+import com.ixam97.carStatsViewer.compose.screens.settings.Licenses
 import com.ixam97.carStatsViewer.compose.screens.settings.PrivacySettings
 import com.ixam97.carStatsViewer.compose.screens.settings.apis.ABRPSettings
 import com.ixam97.carStatsViewer.compose.screens.settings.apis.HTTPSettings
@@ -39,6 +40,7 @@ object SettingsScreens {
     const val ABOUT_CHANGELOG = "About_Changelog"
     const val DEV = "Dev"
     const val MAPBOX_TEST = "MapboxTest"
+    const val ABOUT_LICENSES = "About_Licenses"
 }
 
 @Composable
@@ -107,11 +109,17 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             enabled = viewModel.isDevEnabled
         ),
         SideTab(
-            tabTitle = "Mapbox Test",
-            route = SettingsScreens.MAPBOX_TEST,
-            type = SideTab.Type.Tab,
-            content = { MapboxScreen() }
-        )
+            tabTitle = "Licenses",
+            route = SettingsScreens.ABOUT_LICENSES,
+            type = SideTab.Type.Detail,
+            content = { Licenses() }
+        ),
+        // SideTab(
+        //     tabTitle = "Mapbox Test",
+        //     route = SettingsScreens.MAPBOX_TEST,
+        //     type = SideTab.Type.Tab,
+        //     content = { MapboxScreen() }
+        // )
     )
     
     Column(

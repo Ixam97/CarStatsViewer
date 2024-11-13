@@ -1,6 +1,8 @@
 package com.ixam97.carStatsViewer.compose
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,6 +14,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.app
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.ui.activities.LibsActivity
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.Dispatchers
@@ -161,6 +165,49 @@ class SettingsViewModel:
     fun setAnalytics(value: Boolean) {
         settingsState = settingsState.copy(analytics = value)
         Firebase.app.setDataCollectionDefaultEnabled(value)
+    }
+
+    fun openGitHubLink(context: Context) {
+        val url = context.getString(R.string.readme_link)
+        openLink(context, url)
+    }
+
+    fun openGitHubIssuesLink(context: Context) {
+        val url = context.getString(R.string.github_issues_link)
+        openLink(context, url)
+    }
+
+    fun openClubLink(context: Context) {
+        val url = context.getString(R.string.polestar_fans_link)
+        openLink(context, url)
+    }
+
+    fun openForumsLink(context: Context) {
+        val url = context.getString(R.string.polestar_forum_link)
+        openLink(context, url)
+    }
+
+    fun openPrivacyLink(context: Context) {
+        val url = context.getString(R.string.privacy_policy_link)
+        openLink(context, url)
+    }
+
+    fun showLicenses(context: Context) {
+        context.startActivity(
+            Intent(
+                context,
+                LibsActivity::class.java
+            )
+        )
+    }
+
+    private fun openLink(context: Context, url: String) {
+        context.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(url)
+            )
+        )
     }
 
 }

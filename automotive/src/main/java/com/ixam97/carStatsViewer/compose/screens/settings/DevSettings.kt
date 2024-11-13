@@ -73,17 +73,20 @@ fun DevSettings() {
         Divider(Modifier.padding(horizontal = 20.dp))
         CarRow(
             title = "Log actions:",
-            trailingContent = {
+            customContent = {
                 Row {
                     CarGradientButton(
+                        modifier = Modifier.weight(1f),
                         onClick = {}
                     ) { Text("Submit log") }
                     Spacer(Modifier.size(20.dp))
                     CarGradientButton(
+                        modifier = Modifier.weight(1f),
                         onClick = {}
                     ) { Text("Delete log") }
                     Spacer(Modifier.size(20.dp))
                     CarGradientButton(
+                        modifier = Modifier.weight(1f),
                         onClick = {}
                     ) { Text("Show Log") }
                 }

@@ -114,6 +114,11 @@ object Mapbox: MapboxInterface {
             modifier = modifier
                 .fillMaxSize()
         ) {
+            val defaultCameraOptions = CameraOptions.Builder()
+                .center(gothenburgLocation)
+                .zoom(13.0)
+                .build()
+
             AndroidView(
                 factory = { context ->
                     val chargeMarkerBitmap = getBitmapFromVectorDrawable(context, R.drawable.ic_trip_charging_location)
@@ -132,10 +137,7 @@ object Mapbox: MapboxInterface {
                         mapboxMap.loadStyle("mapbox://styles/ixam97/clfekq5z500hu01mx8s0g54gu")
                         // mapboxMap.loadStyle(style = Style.DARK)
 
-                        val defaultCameraOptions = CameraOptions.Builder()
-                            .center(gothenburgLocation)
-                            .zoom(13.0)
-                            .build()
+
                         mapboxMap.setCamera(defaultCameraOptions)
 
                         polylineAnnotationManager = annotations.createPolylineAnnotationManager()
@@ -208,13 +210,17 @@ object Mapbox: MapboxInterface {
 
                     Log.d("MAP VIEW", "update")
                     if (updateViewport) {
-                        val newCameraOptions = mapView.mapboxMap.cameraForCoordinates(
-                            coordinates = coordinates,
-                            camera = cameraOptions { },
-                            coordinatesPadding = EdgeInsets(50.0,50.0,50.0,50.0),
-                            maxZoom = 14.0,
-                            offset = null
-                        )
+                        val newCameraOptions = if (coordinates.isNotEmpty()) {
+                            mapView.mapboxMap.cameraForCoordinates(
+                                coordinates = coordinates,
+                                camera = cameraOptions { },
+                                coordinatesPadding = EdgeInsets(50.0, 50.0, 50.0, 50.0),
+                                maxZoom = 14.0,
+                                offset = null
+                            )
+                        } else {
+                            defaultCameraOptions
+                        }
                         if (firstLoad) {
                             mapView.mapboxMap.setCamera(newCameraOptions)
                             firstLoad = false

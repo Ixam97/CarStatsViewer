@@ -3,12 +3,9 @@ package com.ixam97.carStatsViewer.compose.theme
 import androidx.compose.material.Typography
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.ixam97.carStatsViewer.utils.InAppLogger
-import java.io.File
 
 /*
 val polestarFont = FontFamily(
@@ -31,6 +28,12 @@ val defaultTypography = Typography(
         fontSize = 30.sp,
         color = Color.White
     ),
+    body2 = TextStyle(
+        // fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 28.sp,
+        color = Color.White
+    ),
     button = TextStyle(
         // fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
@@ -43,6 +46,12 @@ val defaultTypography = Typography(
         color = Color.White
     ),
     h2 = TextStyle(
+        // fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = 32.sp,
+        color = Color.White
+    ),
+    h6 = TextStyle(
         // fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = 32.sp,

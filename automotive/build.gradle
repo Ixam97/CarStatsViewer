@@ -21,8 +21,8 @@ android {
     defaultConfig {
         minSdkVersion 29
         targetSdkVersion 34
-        versionCode 275
-        versionName "0.28.0.0008"
+        versionCode 276
+        versionName "0.28.0.0009"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -130,6 +130,7 @@ dependencies {
     implementation libs.kotlinx.coroutines.play.services
     implementation libs.jakarta.mail
     implementation libs.aboutlibraries.core
+    implementation libs.aboutlibraries.compose
     implementation libs.airbnb.paris
     implementation libs.github.egm96
 

@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,18 +18,19 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CarSwitchRow(
+    enabled: Boolean = true,
     switchState: Boolean,
     onClick: (newState: Boolean) -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable (enabled: Boolean) -> Unit
 ) {
     Row(
         modifier = Modifier
             .heightIn(min = 100.dp)
-            .clickable { onClick(!switchState) }
+            .clickable(enabled = enabled) { onClick(!switchState) }
             .padding(horizontal = 30.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        content()
+        content(enabled)
         Spacer(modifier = Modifier.weight(1f).widthIn(min = 20.dp))
         Box(
             modifier = Modifier.size(80.dp),
@@ -44,7 +44,8 @@ fun CarSwitchRow(
                         scaleX = 2f,
                         scaleY = 2f),
                 checked = switchState,
-                onCheckedChange = null
+                onCheckedChange = null,
+                enabled = enabled
             )
         }
     }
