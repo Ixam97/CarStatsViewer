@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -46,7 +47,8 @@ import com.mikepenz.aboutlibraries.util.withContext
 
 internal data class DialogLibrary(
     val name: String,
-    val content: List<String>
+    val content: List<String>,
+    val urls: Boolean
 )
 
 @Composable
@@ -54,42 +56,39 @@ fun Licenses() {
 
     val libraries = Libs.Builder().withContext(LocalContext.current).build().libraries
 
-
-
     var dialogLibrary by remember { mutableStateOf<DialogLibrary?>(null)}
 
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        val context = LocalContext.current
-        // LibrariesContainer(
-        //     libraries = libraries,
-        //     modifier = Modifier.padding(horizontal = 24.dp),
-        // )
         LazyColumn {
 
             items(libraries) { library ->
                 LibraryRow(
                     library = library,
-                    onLibraryClick = { library ->
+                    onLibraryClick = { clickLibrary ->
                         val dialogContent = mutableListOf<String>()
-                        library.licenses.forEachIndexed { index, license ->
+                        val dialogUrls = mutableListOf<String>()
+                        clickLibrary.licenses.forEach { license ->
                             license.licenseContent?.let {
                                 if (it.isNotBlank()) dialogContent.add(it)
+                            }
+                            license.url?.let {
+                                if (it.isNotBlank()) dialogUrls.add(it)
                             }
                         }
                         if (dialogContent.isNotEmpty()) {
                             dialogLibrary = DialogLibrary(
-                                name = library.name,
-                                content = dialogContent
+                                name = clickLibrary.name,
+                                content = dialogContent,
+                                urls = false
                             )
                         } else {
-                            context.startActivity(
-                                Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(library.licenses.first().url)
-                                )
+                            dialogLibrary = DialogLibrary(
+                                name = clickLibrary.name,
+                                content = dialogUrls,
+                                urls = true
                             )
                         }
                     }
@@ -112,7 +111,7 @@ internal fun LibraryDialog(
             .clickable(enabled = false) {  }
             .background(Color.Black.copy(alpha = 0.6f))
             .padding(50.dp)
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -148,9 +147,22 @@ internal fun LibraryDialog(
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
+                val context = LocalContext.current
                 library.content.forEach { licenseContent ->
                     Text(
-                        modifier = Modifier.padding(15.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(
+                                enabled = library.urls
+                            ) {
+                                if (library.urls) {
+                                    context.startActivity(Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse(licenseContent)
+                                    ))
+                                }
+                            }
+                            .padding(15.dp),
                         text = licenseContent,
                         fontFamily = FontFamily.Monospace,
                         fontSize = 20.sp
