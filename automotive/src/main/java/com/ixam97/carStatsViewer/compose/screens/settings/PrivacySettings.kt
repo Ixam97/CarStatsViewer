@@ -9,6 +9,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.R
@@ -20,6 +21,7 @@ import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
 fun PrivacySettings(
     viewModel: SettingsViewModel
 ) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -37,10 +39,17 @@ fun PrivacySettings(
                 switchState = viewModel.settingsState.analytics,
                 onClick = { viewModel.setAnalytics(it) }
             ) {
-                Text(text = "Enable crash reports and analytics")
+                Text(text = stringResource(R.string.settings_analytics))
             }
         } else {
-            CarRow(title = "Google Firebase is not included in this build.")
+            CarRow(title = stringResource(R.string.settings_firebase_note))
         }
+        Divider(modifier = Modifier.padding(horizontal = 24.dp))
+        CarRow(
+            title = stringResource(R.string.settings_privacy),
+            browsable = true,
+            external = true,
+            onClick = { viewModel.openPrivacyLink(context) }
+        )
     }
 }

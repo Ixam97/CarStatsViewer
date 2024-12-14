@@ -167,7 +167,7 @@ fun TripDetailsPortraitScreen(
                     ) {
                         Text(
                             textAlign = TextAlign.Center,
-                            text = "Trip Details",
+                            text = stringResource(R.string.summary_tab_trip_details),
                             style = MaterialTheme.typography.h1,
                             color = if (tripDetailsState.selectedSection == TripDetailsViewModel.DETAILS_SECTION) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
                         )
@@ -184,7 +184,7 @@ fun TripDetailsPortraitScreen(
                     ) {
                         Text(
                             textAlign = TextAlign.Center,
-                            text = "Charging Sessions",
+                            text = stringResource(R.string.summary_tab_charging_sessions),
                             style = MaterialTheme.typography.h1,
                             color = if (tripDetailsState.selectedSection == TripDetailsViewModel.CHARGING_SECTION) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
                         )
@@ -199,7 +199,7 @@ fun TripDetailsPortraitScreen(
                         ) {
                             Text(
                                 textAlign = TextAlign.Center,
-                                text = "Map",
+                                text = stringResource(R.string.summary_tab_map),
                                 style = MaterialTheme.typography.h1,
                                 color = if (tripDetailsState.selectedSection == TripDetailsViewModel.MAP_SECTION) MaterialTheme.colors.primary else MaterialTheme.colors.onBackground
                             )
@@ -213,7 +213,7 @@ fun TripDetailsPortraitScreen(
                         .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No data available")
+                    Text(stringResource(R.string.summary_no_data))
                 }
             } else {
                 Row {
@@ -233,8 +233,8 @@ fun TripDetailsPortraitScreen(
                             0 -> {
                                 TripDetails(
                                     trip = trip,
-                                    startLocation = tripDetailsState.startLocation?:"Loading location...",
-                                    endLocation = tripDetailsState.endLocation?:"Loading location..."
+                                    startLocation = tripDetailsState.startLocation?: stringResource(R.string.summary_loading_location),
+                                    endLocation = tripDetailsState.endLocation?: stringResource(R.string.summary_loading_location)
                                 )
                                 Divider(Modifier.padding(horizontal = 24.dp))
                                 Row(
@@ -254,9 +254,7 @@ fun TripDetailsPortraitScreen(
                                         )
 
                                         LaunchedEffect(Unit) {
-                                            viewModel.changeDistanceFlow.collect {
-                                                newValue ->
-                                                println("Collected new distance value: $newValue")
+                                            viewModel.changeDistanceFlow.collect { newValue ->
                                                 distance = if (newValue == -1f) {
                                                     trip.driven_distance.toFloat()
                                                 } else {
@@ -280,9 +278,10 @@ fun TripDetailsPortraitScreen(
                                         .padding(horizontal = 24.dp, vertical = 10.dp),
                                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                                 ) {
+                                    val distanceUnit = CarStatsViewer.appPreferences.distanceUnit.unit()
                                     CarSegmentedButton(
                                         modifier = Modifier.fillMaxHeight().weight(1f),
-                                        options = listOf("100 km", "40 km", "20 km", "Trip"),
+                                        options = listOf("100 $distanceUnit", "40 $distanceUnit", "20 $distanceUnit", "Trip"),
                                         selectedIndex = null,
                                         onSelectedIndexChanged = { index ->
                                             viewModel.setTripDistance(index)
@@ -326,7 +325,7 @@ fun TripDetailsPortraitScreen(
                                         .fillMaxSize(),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text("No charging sessions available in this trip.")
+                                    Text(stringResource(R.string.summary_no_charging_sessions))
                                 }
                             }
 
@@ -341,7 +340,6 @@ fun TripDetailsPortraitScreen(
                             }
                         }
                     }
-                    println("Width: $width")
                     if (splitScreenCondition) {
                         Box(
                             modifier = Modifier
@@ -429,7 +427,7 @@ fun TripDetails(
         var visibleDetails by remember { mutableStateOf(true) }
         Text(modifier = Modifier
             .padding(vertical = 15.dp, horizontal = 24.dp),
-            text = "Trip type: ${tripTypes[trip.session_type]}"
+            text = "${stringResource(R.string.summary_trip_type)}: ${tripTypes[trip.session_type]}"
         )
         Row(
             modifier = Modifier
@@ -692,7 +690,7 @@ fun ChargingSessions(
                         (startSoc * 100f).roundToInt(),
                         (endSoc * 100f).roundToInt(),
                     )
-                } else "SoC unavailable"
+                } else stringResource(R.string.summary_soc_unavailable)
 
                 Column (
                     modifier = Modifier.fillMaxWidth()
@@ -700,10 +698,11 @@ fun ChargingSessions(
                             viewModel.selectChargingSession(session.charging_session_id)
                         }
                 ) {
-                    var location by remember { mutableStateOf<String?>("Loading location ...") }
+                    val defaultLocationText = stringResource(R.string.summary_loading_location)
+                    var location by remember { mutableStateOf<String?>(defaultLocationText) }
                     TripDataRow(
                         title = "${StringFormatters.getDateString(Date(session.start_epoch_time))}, $socString",
-                        text = location?: "Location not available"
+                        text = location?: stringResource(R.string.summary_location_unavailable)
                     )
                     Divider(Modifier.padding(horizontal = 24.dp))
 
@@ -754,11 +753,12 @@ fun ChargingSessionDetails(
             (startSoc * 100f).roundToInt(),
             (endSoc * 100f).roundToInt(),
         )
-    } else "SoC unavailable"
+    } else stringResource(R.string.summary_soc_unavailable)
 
     val context = LocalContext.current
     val plotPoints = DataConverters.chargePlotLineFromChargingPoints(session.chargingPoints?: listOf())
-    var location by remember { mutableStateOf<String?>("Loading location ...") }
+    val defaultLocationText = stringResource(R.string.summary_loading_location)
+    var location by remember { mutableStateOf<String?>(defaultLocationText) }
 
     val chargePlotPaint =PlotLinePaint(
         PlotPaint.byColor(
@@ -802,7 +802,7 @@ fun ChargingSessionDetails(
             TripDataRow(
                 modifier = Modifier.weight(1f),
                 title = "${StringFormatters.getDateString(Date(session.start_epoch_time))}, $socString",
-                text = location ?: "Location not available"
+                text = location ?: stringResource(R.string.summary_location_unavailable)
             )
             Icon(
                 modifier = Modifier
@@ -854,7 +854,7 @@ fun ChargingSessionDetails(
         } else {
             Text(
                 modifier = Modifier.padding(24.dp),
-                text = "Ongoing charging session ..."
+                text = stringResource(R.string.summary_ongoing_charging_session)
             )
         }
 
@@ -873,7 +873,7 @@ fun SegmentedButtonIcon(@DrawableRes resId: Int) {
     Icon(
         modifier = Modifier.size(48.dp),
         painter = painterResource(resId),
-        contentDescription = "",
+        contentDescription = null,
         tint = Color.White
     )
 }

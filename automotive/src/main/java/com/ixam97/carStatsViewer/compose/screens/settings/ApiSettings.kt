@@ -42,7 +42,7 @@ fun ApiSettings(
                 .padding(horizontal = 24.dp)
                 .padding(top = 24.dp, bottom = 10.dp),
             color = MaterialTheme.colors.primary,
-            text = "External APIs"
+            text = stringResource(R.string.settings_external_apis)
         )
         Divider(modifier = Modifier.padding(horizontal = 24.dp))
         CarRow(
@@ -77,11 +77,11 @@ fun ApiSettings(
                 .padding(horizontal = 24.dp)
                 .padding(top = 24.dp, bottom = 10.dp),
             color = MaterialTheme.colors.primary,
-            text = "Trip export"
+            text = stringResource(R.string.settings_trip_export)
         )
         Divider(Modifier.padding(horizontal = 24.dp))
         CarRow(
-            title = "Trip exports send a request to the developer's server containing your trip data. This data will then be sent to your specified address as a CSV file. The trip data is then immediately deleted from the developer's server."
+            title = stringResource(R.string.settings_trip_export_hint)
         )
         Divider(Modifier.padding(horizontal = 24.dp))
         CarSwitchRow(
@@ -90,14 +90,14 @@ fun ApiSettings(
             onClick = { },
         ) { enabled ->
             Text(
-                text = "Enable trip export",
+                text = stringResource(R.string.settings_trip_export_enable),
                 color = if (enabled) MaterialTheme.colors.onSurface else disabledTextColor
             )
         }
         Divider(Modifier.padding(horizontal = 20.dp))
         CarRow(
             enabled = false,
-            title = "Trip export Email address",
+            title = stringResource(R.string.settings_trip_export_mail),
             customContent = {
                 TextField(
                     enabled = false,

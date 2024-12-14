@@ -229,8 +229,17 @@
     <string name="summary_interruption_warning">Recording of charging session has been interrupted. This value is probably incorrect.</string>
     <string name="summary_altitude">Altitude change</string>
     <string name="summary_speed">Average speed</string>
-    <string name="summary_location_not_available">Location not available</string>
     <string name="summary_ongoing">Ongoing trip</string>
+    <string name="summary_tab_trip_details">Trip Details</string>
+    <string name="summary_tab_charging_sessions">Charging Sessions</string>
+    <string name="summary_tab_map">Map</string>
+    <string name="summary_no_data">No data available</string>
+    <string name="summary_loading_location">Loading location...</string>
+    <string name="summary_location_unavailable">Location not available</string>
+    <string name="summary_no_charging_sessions">No charging sessions available in this trip.</string>
+    <string name="summary_trip_type">Trip type</string>
+    <string name="summary_soc_unavailable">State of charge unavailable</string>
+    <string name="summary_ongoing_charging_session">Ongoing charging session ...</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
@@ -267,6 +276,21 @@
     <string name="settings_apis_smtp">SMTP Login</string>
     <string name="settings_apis_use">Use API</string>
     <string name="settings_apis_connection_selector">Connectivity icon in main view:</string>
+
+    <!-- Compose Settings -->
+    <string name="settings_general">General</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_privacy_location">Privacy and location</string>
+    <string name="settings_changelog">Changelog</string>
+    <string name="settings_privacy">Privacy Policy</string>
+    <string name="settings_dev_settings">Developer settings</string>
+    <string name="settings_analytics">Enable crash reports and analytics</string>
+    <string name="settings_firebase_note">Google Firebase is not included in this build.</string>
+    <string name="settings_external_apis">External APIs</string>
+    <string name="settings_trip_export">Trip export</string>
+    <string name="settings_trip_export_hint">"Trip exports send a request to the developer's server containing your trip data. This data will then be sent to your specified address as a CSV file. The trip data is then immediately deleted from the developer's server."</string>
+    <string name="settings_trip_export_enable">Enable trip export</string>
+    <string name="settings_trip_export_mail">Trip export Email address</string>
 
     <!-- ABRP -->
     <string name="abrp_description">Enter an ABRP generic token to transmit over-the-air live data to the ABRP servers. This includes location data if not disabled.</string>

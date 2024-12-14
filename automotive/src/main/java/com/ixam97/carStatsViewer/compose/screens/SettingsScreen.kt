@@ -48,21 +48,21 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
 
     val tabsList = mutableListOf(
         SideTab(
-            tabTitle = "General",
+            tabTitle = stringResource(R.string.settings_general),
             tabIcon = Icons.Outlined.Settings,
             route = SettingsScreens.GENERAL,
             type = SideTab.Type.Tab,
             content = { GeneralSettings(viewModel = viewModel) }
         ),
         SideTab(
-            tabTitle = "Appearance",
+            tabTitle = stringResource(R.string.settings_appearance),
             route = SettingsScreens.APPEARANCE,
             tabIcon = Icons.Outlined.Create,
             type = SideTab.Type.Tab,
             content = { AppearanceSettings(viewModel = viewModel) }
         ),
         SideTab(
-            tabTitle = "Privacy and location",
+            tabTitle = stringResource(R.string.settings_privacy_location),
             route = SettingsScreens.PRIVACY,
             tabIcon = Icons.Outlined.LocationOn,
             type = SideTab.Type.Tab,
@@ -76,14 +76,14 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             content = { navController -> ApiSettings(viewModel = viewModel, navController = navController) }
         ),
         SideTab(
-            tabTitle = "About Car Stats Viewer",
+            tabTitle = stringResource(R.string.about_title),
             tabIcon = Icons.Outlined.Info,
             route = SettingsScreens.ABOUT,
             type = SideTab.Type.Tab,
             content = { navController -> About(navController = navController, viewModel) }
         ),
         SideTab(
-            tabTitle = "Changelog",
+            tabTitle = stringResource(R.string.settings_changelog),
             route = SettingsScreens.ABOUT_CHANGELOG,
             type = SideTab.Type.Detail,
             content = { Changelog() }
@@ -101,7 +101,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             content = { HTTPSettings() }
         ),
         SideTab(
-            tabTitle = "Developer settings",
+            tabTitle = stringResource(R.string.settings_dev_settings),
             tabIcon = Icons.Outlined.Build,
             route = SettingsScreens.DEV,
             type = SideTab.Type.Tab,
@@ -109,7 +109,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             enabled = viewModel.isDevEnabled
         ),
         SideTab(
-            tabTitle = "Licenses",
+            tabTitle = stringResource(R.string.about_third_party_licenses),
             route = SettingsScreens.ABOUT_LICENSES,
             type = SideTab.Type.Detail,
             content = { Licenses() }

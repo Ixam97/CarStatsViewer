@@ -58,8 +58,8 @@ class TripDetailsViewModel: ViewModel() {
         return viewModelScope.launch(Dispatchers.IO) {
             tripDetailsState.drivingSession?.let { trip ->
 
-                var startAddr = CarStatsViewer.appContext.resources.getString(R.string.summary_location_not_available)
-                var destAddr = CarStatsViewer.appContext.resources.getString(R.string.summary_location_not_available)
+                var startAddr = CarStatsViewer.appContext.resources.getString(R.string.summary_location_unavailable)
+                var destAddr = CarStatsViewer.appContext.resources.getString(R.string.summary_location_unavailable)
                 if (!trip.drivingPoints.isNullOrEmpty()) {
                     val coordinates = trip.drivingPoints!!.filter { it.lat != null }
                     if (coordinates.isNotEmpty()) {

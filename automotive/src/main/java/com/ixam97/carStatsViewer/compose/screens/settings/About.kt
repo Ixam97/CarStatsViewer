@@ -63,7 +63,7 @@ fun About(
                 modifier = Modifier.padding(top = 15.dp).wrapContentSize(),
                 onClick = { navController.navigate(SettingsScreens.ABOUT_CHANGELOG) }
             ) {
-                Text(text = "Changelog")
+                Text(text = stringResource(R.string.settings_changelog))
             }
         }
     )
@@ -133,7 +133,7 @@ fun About(
     )
     Divider(modifier = Modifier.padding(horizontal = 24.dp))
     CarRow(
-        title = "Privacy Policy",
+        title = stringResource(R.string.settings_privacy),
         browsable = true,
         external = true,
         onClick = { viewModel.openPrivacyLink(context) }

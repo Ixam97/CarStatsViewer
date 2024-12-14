@@ -43,7 +43,7 @@ fun AppearanceSettings(viewModel: SettingsViewModel) {
             customContent = {
                 CarSegmentedButton(
                     // modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
-                    options = listOf("OEM", "Club", "Simple"),
+                    options = listOf("OEM", "Club"),// "Simple"),
                     selectedIndex = themeSetting.value,
                     onSelectedIndexChanged = { index ->
                         viewModel.setTheme(index)

@@ -147,8 +147,17 @@
     <string name="summary_interruption_warning">Aufzeichnung der Ladekurve unterbrochen. Dieser Wert ist vermutlich nicht korrekt.</string>
     <string name="summary_altitude">Höhenunterschied</string>
     <string name="summary_speed">Durchschnittsgeschwindigkeit</string>
-    <string name="summary_location_not_available">Standort nicht verfügbar</string>
     <string name="summary_ongoing">Laufender Trip</string>
+    <string name="summary_tab_trip_details">Trip-Details</string>
+    <string name="summary_tab_charging_sessions">Ladevorgänge</string>
+    <string name="summary_tab_map">Karte</string>
+    <string name="summary_no_data">Keine Daten verfügbar</string>
+    <string name="summary_loading_location">Lade Standort...</string>
+    <string name="summary_location_unavailable">Standort nicht verfügbar</string>
+    <string name="summary_no_charging_sessions">Keine Ladevorgänge für diesen Trip verfügbar.</string>
+    <string name="summary_trip_type">Trip-Typ</string>
+    <string name="summary_soc_unavailable">Ladestand nicht verfügbar</string>
+    <string name="summary_ongoing_charging_session">Laufender Ladevorgang ...</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
@@ -184,6 +193,21 @@
     <string name="settings_apis_smtp">SMTP-Logindaten</string>
     <string name="settings_apis_use">API nutzen</string>
     <string name="settings_apis_connection_selector">Verbindungssymbol in Hauptansicht:</string>
+
+    <!-- Compose Settings -->
+    <string name="settings_general">Allgemein</string>
+    <string name="settings_appearance">Erscheinungsbild</string>
+    <string name="settings_privacy_location">Privatsphäre und Standort</string>
+    <string name="settings_changelog">Änderungsverlauf</string>
+    <string name="settings_privacy">Datenschutzbestimmungen</string>
+    <string name="settings_dev_settings">Entwickleroptionen</string>
+    <string name="settings_analytics">Aktiviere Absturzberichte und Analysedaten</string>
+    <string name="settings_firebase_note">Google Firebase ist in dieser version nicht enthalten.</string>
+    <string name="settings_external_apis">Externe APIs</string>
+    <string name="settings_trip_export">Trip-Export</string>
+    <string name="settings_trip_export_hint">Trip-Exporte senden eine Anfrage an den Server des Enwicklers, die deine Trip-Daten enthält. Diese Daten werden anschließend als CSV-Datei an die angegebene E-Mail-Adresse weitergeleitet. Die Trip-Daten werden unmittelbar danach vom Server gelöscht.</string>
+    <string name="settings_trip_export_enable">Trip-Export aktivieren</string>
+    <string name="settings_trip_export_mail">E-Mail-Adresse für den Export</string>
 
     <!-- ABRP -->
     <string name="abrp_description">ABRP Generic Token eingeben, um Over-the-Air Live-Daten an die ABRP-Server zu senden. Dies beinhaltet Standortdaten, falls nicht deaktiviert.</string>
