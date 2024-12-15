@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.compose.screens.settings
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,27 +15,52 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.CarSegmentedButton
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
+import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
+import com.ixam97.carStatsViewer.ui.activities.DebugActivity
+import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 
 @Composable
-fun DevSettings() {
+fun DevSettings(
+    navController: NavController,
+    viewModel: SettingsViewModel
+) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
+        val legacyDevSettingsIntent = Intent(context, DebugActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        CarRow(
+            title = "legacy Dev Settings",
+            browsable = true,
+            onClick = {
+                context.startActivity(legacyDevSettingsIntent)
+            }
+        )
+        Divider(Modifier.padding(horizontal = 20.dp))
         CarSwitchRow(
-            switchState = false,
-            onClick = {}
+            switchState = (viewModel.devSettingsState.distanceUnit == DistanceUnitEnum.MILES),
+            onClick = { newState ->
+                viewModel.setDistanceUnit(newState)
+            }
         ) { Text("Miles as Distance unit") }
         Divider(Modifier.padding(horizontal = 20.dp))
         CarSwitchRow(
-            switchState = false,
-            onClick = {}
+            switchState = viewModel.devSettingsState.showScreenshotButton,
+            onClick = { newState ->
+                viewModel.setShowScreenshotButton(newState)
+            }
         ) { Text("Show screenshot button") }
         Divider(Modifier.padding(horizontal = 20.dp))
         Text(
@@ -51,9 +77,11 @@ fun DevSettings() {
                 CarSegmentedButton(
                     // modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
                     options = listOf("Verbose", "Debug", "Info", "Warning", "Error"),
-                    selectedIndex = 0,
+                    selectedIndex = viewModel.devSettingsState.loggingLevel,
                     contentPadding = PaddingValues(20.dp),
-                    onSelectedIndexChanged = { index -> }
+                    onSelectedIndexChanged = { index ->
+                        viewModel.setLoggingLevel(index)
+                    }
                 )
             }
         )
@@ -63,10 +91,12 @@ fun DevSettings() {
             customContent = {
                 CarSegmentedButton(
                     // modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
-                    options = listOf("all", "1.000", "5.000", "10.000"),
-                    selectedIndex = 0,
+                    options = listOf("all", "500", "1.000", "2.000", "5.000", "10.000"),
+                    selectedIndex = viewModel.devSettingsState.logLength,
                     contentPadding = PaddingValues(20.dp),
-                    onSelectedIndexChanged = { index -> }
+                    onSelectedIndexChanged = { index ->
+                        viewModel.setLogLength(index)
+                    }
                 )
             }
         )
@@ -77,17 +107,25 @@ fun DevSettings() {
                 Row {
                     CarGradientButton(
                         modifier = Modifier.weight(1f),
-                        onClick = {}
+                        enabled = false,
+                        onClick = {
+                            // ToDo
+                        }
                     ) { Text("Submit log") }
                     Spacer(Modifier.size(20.dp))
                     CarGradientButton(
                         modifier = Modifier.weight(1f),
-                        onClick = {}
+                        onClick = {
+                            viewModel.clearLog()
+                        }
                     ) { Text("Delete log") }
                     Spacer(Modifier.size(20.dp))
                     CarGradientButton(
                         modifier = Modifier.weight(1f),
-                        onClick = {}
+                        onClick = {
+                            viewModel.loadLog()
+                            navController.navigate(SettingsScreens.DEV_LOG)
+                        }
                     ) { Text("Show Log") }
                 }
             }

@@ -15,9 +15,13 @@ import com.google.firebase.app
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.database.log.LogEntry
 import com.ixam97.carStatsViewer.ui.activities.LibsActivity
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
+import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.logLength
+import com.ixam97.carStatsViewer.utils.logLevel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,6 +32,9 @@ import kotlinx.coroutines.withContext
 class SettingsViewModel:
     ViewModel()
 {
+    companion object {
+        val logLengths = arrayOf(0, 500, 1000, 2000, 5000, 10_000)
+    }
 
     private val preferences = CarStatsViewer.appPreferences
 
@@ -48,6 +55,13 @@ class SettingsViewModel:
         val secondaryChargePlotColor: Int = 0
     )
 
+    data class DevSettingsState(
+        val distanceUnit: DistanceUnitEnum = DistanceUnitEnum.KM,
+        val showScreenshotButton: Boolean = false,
+        val loggingLevel: Int = 0,
+        val logLength: Int = 0
+    )
+
     private val _themeSettingState = MutableStateFlow<Int>(preferences.colorTheme)
     val themeSettingStateFLow = _themeSettingState.asStateFlow()
 
@@ -60,9 +74,15 @@ class SettingsViewModel:
     var settingsState by mutableStateOf(SettingsState())
         private set
 
+    var devSettingsState by mutableStateOf(DevSettingsState())
+        private set
+
+    var log by mutableStateOf<List<LogEntry>?>(null)
+        private set
+
     private var versionClickedNum: Int = 0
 
-    init {
+    fun initStates() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 settingsState = settingsState.copy(
@@ -80,6 +100,12 @@ class SettingsViewModel:
                     secondaryConsumptionPlotColor = if (preferences.consumptionPlotSecondaryColor) 1 else 0,
                     secondaryChargePlotColor = if (preferences.chargePlotSecondaryColor) 1 else 0
                 )
+                devSettingsState = devSettingsState.copy(
+                    distanceUnit = preferences.distanceUnit,
+                    showScreenshotButton = preferences.showScreenshotButton,
+                    loggingLevel = preferences.logLevel,
+                    logLength = preferences.logLength
+                )
                 try {
                     settingsState = settingsState.copy(
                         analytics = Firebase.app.isDataCollectionDefaultEnabled
@@ -89,6 +115,10 @@ class SettingsViewModel:
                 }
             }
         }
+    }
+
+    init {
+        initStates()
     }
 
     fun finishActivity() = _finishActivityLiveData.postValue(Event(true))
@@ -112,7 +142,6 @@ class SettingsViewModel:
                 .show()
         }
     }
-
 
     fun setDetailedNotifications(value: Boolean) {
         settingsState = settingsState.copy(detailedNotifications = value)
@@ -192,15 +221,6 @@ class SettingsViewModel:
         openLink(context, url)
     }
 
-    fun showLicenses(context: Context) {
-        context.startActivity(
-            Intent(
-                context,
-                LibsActivity::class.java
-            )
-        )
-    }
-
     private fun openLink(context: Context, url: String) {
         context.startActivity(
             Intent(
@@ -208,6 +228,57 @@ class SettingsViewModel:
                 Uri.parse(url)
             )
         )
+    }
+
+    fun setDistanceUnit(newState: Boolean) {
+        preferences.distanceUnit = when (newState) {
+            true -> DistanceUnitEnum.MILES
+            else -> DistanceUnitEnum.KM
+        }
+        devSettingsState = devSettingsState.copy(
+            distanceUnit = preferences.distanceUnit
+        )
+    }
+
+    fun setShowScreenshotButton(newState: Boolean) {
+        preferences.showScreenshotButton = newState
+        devSettingsState = devSettingsState.copy(
+            showScreenshotButton = preferences.showScreenshotButton
+        )
+    }
+
+    fun setLoggingLevel(index: Int) {
+        preferences.logLevel = index
+        devSettingsState = devSettingsState.copy(
+            loggingLevel = preferences.logLevel
+        )
+    }
+
+    fun setLogLength(index: Int) {
+        preferences.logLength = index
+        devSettingsState = devSettingsState.copy(
+            logLength = preferences.logLength
+        )
+    }
+
+    fun loadLog() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                log = null
+                log = InAppLogger.getLogEntries(
+                    logLevel = preferences.logLevel + 2, // add 2 to align with log level definitions
+                    logLength = logLengths[preferences.logLength]
+                )
+            }
+        }
+    }
+
+    fun clearLog() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                InAppLogger.resetLog()
+            }
+        }
     }
 
 }

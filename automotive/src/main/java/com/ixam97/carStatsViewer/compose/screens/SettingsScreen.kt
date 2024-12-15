@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Create
+import androidx.compose.material.icons.outlined.DataObject
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Settings
@@ -25,6 +25,7 @@ import com.ixam97.carStatsViewer.compose.screens.settings.Changelog
 import com.ixam97.carStatsViewer.compose.screens.settings.DevSettings
 import com.ixam97.carStatsViewer.compose.screens.settings.GeneralSettings
 import com.ixam97.carStatsViewer.compose.screens.settings.Licenses
+import com.ixam97.carStatsViewer.compose.screens.settings.LogScreen
 import com.ixam97.carStatsViewer.compose.screens.settings.PrivacySettings
 import com.ixam97.carStatsViewer.compose.screens.settings.apis.ABRPSettings
 import com.ixam97.carStatsViewer.compose.screens.settings.apis.HTTPSettings
@@ -39,6 +40,7 @@ object SettingsScreens {
     const val ABOUT = "About"
     const val ABOUT_CHANGELOG = "About_Changelog"
     const val DEV = "Dev"
+    const val DEV_LOG = "Dev_Log"
     const val MAPBOX_TEST = "MapboxTest"
     const val ABOUT_LICENSES = "About_Licenses"
 }
@@ -102,11 +104,17 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
         ),
         SideTab(
             tabTitle = stringResource(R.string.settings_dev_settings),
-            tabIcon = Icons.Outlined.Build,
+            tabIcon = Icons.Outlined.DataObject,
             route = SettingsScreens.DEV,
             type = SideTab.Type.Tab,
-            content = { DevSettings() },
+            content = { navController -> DevSettings(navController, viewModel) },
             enabled = viewModel.isDevEnabled
+        ),
+        SideTab(
+          tabTitle = "Log",
+            route = SettingsScreens.DEV_LOG,
+            type = SideTab.Type.Detail,
+            content = { LogScreen(viewModel) }
         ),
         SideTab(
             tabTitle = stringResource(R.string.about_third_party_licenses),
