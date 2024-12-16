@@ -103,6 +103,14 @@ fun CarTheme(carMake: String? = null, content: @Composable () -> Unit) {
     val brushes: CarThemeBrushes
 
     when (carMake) {
+        "Polestar 2" -> {
+            typography = defaultPolestarTypography
+            colors = polestarColors
+            brushes = CarThemeBrushes(
+                Brush.horizontalGradient(listOf(colors.primary, colors.primary)),
+                Brush.horizontalGradient(listOf(colors.primary, colors.primary))
+            )
+        }
         "Polestar" -> {
             typography = defaultTypography // defaultPolestarTypography
             colors = polestarColors
@@ -110,7 +118,6 @@ fun CarTheme(carMake: String? = null, content: @Composable () -> Unit) {
                 Brush.horizontalGradient(listOf(colors.primary, colors.primary)),
                 Brush.horizontalGradient(listOf(colors.primary, colors.primary))
             )
-
         }
         "VolvoCars" -> {
             colors = volvoColors

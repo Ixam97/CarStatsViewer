@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -89,7 +90,8 @@ import kotlin.math.roundToInt
 
 @Composable
 fun TripDetailsPortraitScreen(
-    viewModel: TripDetailsViewModel
+    viewModel: TripDetailsViewModel,
+    sessionId: Long
 ) {
 
     BoxWithConstraints(
@@ -112,37 +114,6 @@ fun TripDetailsPortraitScreen(
 
             val context = LocalContext.current
 
-            val consumptionPlotLinePaint = PlotLinePaint(
-                PlotPaint.byColor(
-                    getColorFromAttribute(context, R.attr.primary_plot_color),
-                    CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)
-                ),
-                PlotPaint.byColor(
-                    getColorFromAttribute(context, R.attr.secondary_plot_color),
-                    CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)
-                ),
-                PlotPaint.byColor(
-                    getColorFromAttribute(context, R.attr.tertiary_plot_color),
-                    CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)
-                )
-            ) { CarStatsViewer.appPreferences.consumptionPlotSecondaryColor }
-
-            val consumptionPlotLine = PlotLine(
-                PlotLineConfiguration(
-                    PlotRange(-200f, 600f, -200f, 600f, 100f, 0f),
-                    PlotLineLabelFormat.NUMBER,
-                    PlotHighlightMethod.AVG_BY_DISTANCE,
-                    "Wh/km"
-                ),
-            )
-
-            trip?.drivingPoints?.let { drivingPoints ->
-                val plotPoints = DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints)
-                val plotMarkers = DataConverters.plotMarkersFromSession(trip)
-
-                consumptionPlotLine.addDataPoints(plotPoints)
-            }
-
             CarHeaderWithContent(
                 onBackClick = {
                     if (viewModel.tripDetailsState.showChargingSessionDetails && tripDetailsState.selectedSection == TripDetailsViewModel.CHARGING_SECTION) {
@@ -152,6 +123,21 @@ fun TripDetailsPortraitScreen(
                     }
                 }
             ) {
+                if (viewModel.tripDetailsState.drivingSession == null) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 20.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        // horizontalArrangement = Arrangement.spacedBy(40.dp)
+                    ) {
+                        Text(
+                            textAlign = TextAlign.Center,
+                            text = stringResource(R.string.summary_loading_trip),
+                            style = MaterialTheme.typography.h1
+                        )
+                    }
+                }
                 Row(
                     modifier = Modifier
                         .fillMaxSize(),
@@ -207,151 +193,197 @@ fun TripDetailsPortraitScreen(
                     }
                 }
             }
-            if (trip == null) {
+
+            if (viewModel.tripDetailsState.drivingSession == null) {
+                viewModel.loadDrivingSession(sessionId)
                 Box(
                     modifier = Modifier
                         .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(stringResource(R.string.summary_no_data))
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(160.dp),
+                        strokeWidth = 10.dp
+                    )
                 }
             } else {
-                Row {
-                    Column(
+                val consumptionPlotLinePaint = PlotLinePaint(
+                    PlotPaint.byColor(
+                        getColorFromAttribute(context, R.attr.primary_plot_color),
+                        CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)
+                    ),
+                    PlotPaint.byColor(
+                        getColorFromAttribute(context, R.attr.secondary_plot_color),
+                        CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)
+                    ),
+                    PlotPaint.byColor(
+                        getColorFromAttribute(context, R.attr.tertiary_plot_color),
+                        CarStatsViewer.appContext.resources.getDimension(R.dimen.reduced_font_size)
+                    )
+                ) { CarStatsViewer.appPreferences.consumptionPlotSecondaryColor }
+
+                val consumptionPlotLine = PlotLine(
+                    PlotLineConfiguration(
+                        PlotRange(-200f, 600f, -200f, 600f, 100f, 0f),
+                        PlotLineLabelFormat.NUMBER,
+                        PlotHighlightMethod.AVG_BY_DISTANCE,
+                        "Wh/km"
+                    ),
+                )
+
+                trip?.drivingPoints?.let { drivingPoints ->
+                    val plotPoints = DataConverters.consumptionPlotLineFromDrivingPoints(drivingPoints)
+                    val plotMarkers = DataConverters.plotMarkersFromSession(trip)
+
+                    consumptionPlotLine.addDataPoints(plotPoints)
+                }
+
+                if (trip == null) {
+                    Box(
                         modifier = Modifier
-                            // .then(
-                            //     if (height < 1000.dp) {
-                            //         Modifier.verticalScroll(rememberScrollState())
-                            //     } else {
-                            //         Modifier
-                            //     }
-                            // )
-                            .weight(1f)
-                            .fillMaxHeight(),
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        when (tripDetailsState.selectedSection) {
-                            0 -> {
-                                TripDetails(
-                                    trip = trip,
-                                    startLocation = tripDetailsState.startLocation?: stringResource(R.string.summary_loading_location),
-                                    endLocation = tripDetailsState.endLocation?: stringResource(R.string.summary_loading_location)
-                                )
-                                Divider(Modifier.padding(horizontal = 24.dp))
-                                Row(
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Box (
-                                        Modifier.weight(1f)
+                        Text(stringResource(R.string.summary_no_data))
+                    }
+                } else {
+                    Row {
+                        Column(
+                            modifier = Modifier
+                                // .then(
+                                //     if (height < 1000.dp) {
+                                //         Modifier.verticalScroll(rememberScrollState())
+                                //     } else {
+                                //         Modifier
+                                //     }
+                                // )
+                                .weight(1f)
+                                .fillMaxHeight(),
+                        ) {
+                            when (tripDetailsState.selectedSection) {
+                                0 -> {
+                                    TripDetails(
+                                        trip = trip,
+                                        startLocation = tripDetailsState.startLocation?: stringResource(R.string.summary_loading_location),
+                                        endLocation = tripDetailsState.endLocation?: stringResource(R.string.summary_loading_location)
+                                    )
+                                    Divider(Modifier.padding(horizontal = 24.dp))
+                                    Row(
+                                        modifier = Modifier.weight(1f)
                                     ) {
-                                        var distance by remember {mutableStateOf(trip.driven_distance.toFloat())}
+                                        Box (
+                                            Modifier.weight(1f)
+                                        ) {
+                                            var distance by remember {mutableStateOf(trip.driven_distance.toFloat())}
 
-                                        ConsumptionPlot(
-                                            plotLine = consumptionPlotLine,
-                                            plotLinePaint = consumptionPlotLinePaint,
-                                            distance = distance,
-                                            limitedHeight = height < 1000.dp,
-                                            secondaryDimension = viewModel.tripDetailsState.selectedSecondaryDimension
-                                        )
+                                            ConsumptionPlot(
+                                                plotLine = consumptionPlotLine,
+                                                plotLinePaint = consumptionPlotLinePaint,
+                                                distance = distance,
+                                                limitedHeight = height < 1000.dp,
+                                                secondaryDimension = viewModel.tripDetailsState.selectedSecondaryDimension
+                                            )
 
-                                        LaunchedEffect(Unit) {
-                                            viewModel.changeDistanceFlow.collect { newValue ->
-                                                distance = if (newValue == -1f) {
-                                                    trip.driven_distance.toFloat()
-                                                } else {
-                                                    newValue
+                                            LaunchedEffect(Unit) {
+                                                viewModel.changeDistanceFlow.collect { newValue ->
+                                                    distance = if (newValue == -1f) {
+                                                        trip.driven_distance.toFloat()
+                                                    } else {
+                                                        newValue
+                                                    }
                                                 }
                                             }
                                         }
+                                        if (height < 1000.dp) {
+                                            Box(Modifier
+                                                .background(MaterialTheme.colors.surface)
+                                                .height(500.dp)
+                                                .width(100.dp)
+                                                .padding(10.dp)
+                                            )
+                                        }
                                     }
-                                    if (height < 1000.dp) {
-                                        Box(Modifier
-                                            .background(MaterialTheme.colors.surface)
-                                            .height(500.dp)
-                                            .width(100.dp)
-                                            .padding(10.dp)
+                                    Row(
+                                        modifier = Modifier
+                                            .height(IntrinsicSize.Min)
+                                            .padding(horizontal = 24.dp, vertical = 10.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(20.dp)
+                                    ) {
+                                        val distanceUnit = CarStatsViewer.appPreferences.distanceUnit.unit()
+                                        CarSegmentedButton(
+                                            modifier = Modifier.fillMaxHeight().weight(1f),
+                                            options = listOf("100 $distanceUnit", "40 $distanceUnit", "20 $distanceUnit", "Trip"),
+                                            selectedIndex = null,
+                                            onSelectedIndexChanged = { index ->
+                                                viewModel.setTripDistance(index)
+                                            },
+                                            contentPadding = PaddingValues(15.dp)
+                                        )
+                                        CarSegmentedButton(
+                                            modifier = Modifier.fillMaxHeight().width(IntrinsicSize.Min),
+                                            // options = listOf("Speed", "SoC", "Alt"),
+                                            optionsContent = listOf(
+                                                { SegmentedButtonIcon(R.drawable.ic_speed_large) },
+                                                { SegmentedButtonIcon(R.drawable.ic_battery) },
+                                                { SegmentedButtonIcon(R.drawable.ic_altitude) }
+                                            ),
+                                            selectedIndex = viewModel.tripDetailsState.selectedSecondaryDimension - 1,
+                                            onSelectedIndexChanged = { index ->
+                                                val newValue = if (index == viewModel.tripDetailsState.selectedSecondaryDimension - 1) {
+                                                    0
+                                                } else {
+                                                    index + 1
+                                                }
+                                                viewModel.setSecondaryPlotDimension(newValue)
+                                            },
+                                            contentPadding = PaddingValues(vertical = 10.dp, horizontal = 15.dp)
                                         )
                                     }
                                 }
-                                Row(
-                                    modifier = Modifier
-                                        .height(IntrinsicSize.Min)
-                                        .padding(horizontal = 24.dp, vertical = 10.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(20.dp)
-                                ) {
-                                    val distanceUnit = CarStatsViewer.appPreferences.distanceUnit.unit()
-                                    CarSegmentedButton(
-                                        modifier = Modifier.fillMaxHeight().weight(1f),
-                                        options = listOf("100 $distanceUnit", "40 $distanceUnit", "20 $distanceUnit", "Trip"),
-                                        selectedIndex = null,
-                                        onSelectedIndexChanged = { index ->
-                                            viewModel.setTripDistance(index)
-                                        },
-                                        contentPadding = PaddingValues(15.dp)
-                                    )
-                                    CarSegmentedButton(
-                                        modifier = Modifier.fillMaxHeight().width(IntrinsicSize.Min),
-                                        // options = listOf("Speed", "SoC", "Alt"),
-                                        optionsContent = listOf(
-                                            { SegmentedButtonIcon(R.drawable.ic_speed_large) },
-                                            { SegmentedButtonIcon(R.drawable.ic_battery) },
-                                            { SegmentedButtonIcon(R.drawable.ic_altitude) }
-                                        ),
-                                        selectedIndex = viewModel.tripDetailsState.selectedSecondaryDimension - 1,
-                                        onSelectedIndexChanged = { index ->
-                                            val newValue = if (index == viewModel.tripDetailsState.selectedSecondaryDimension - 1) {
-                                                0
-                                            } else {
-                                                index + 1
-                                            }
-                                            viewModel.setSecondaryPlotDimension(newValue)
-                                        },
-                                        contentPadding = PaddingValues(vertical = 10.dp, horizontal = 15.dp)
-                                    )
-                                }
-                            }
 
-                            TripDetailsViewModel.CHARGING_SECTION -> {
-                                if (trip.chargingSessions?.any { chargingSession ->
-                                        chargingSession.end_epoch_time != null && chargingSession.end_epoch_time > 0
-                                    } == true) {
-                                    trip.chargingSessions?.let {
-                                        ChargingSessions(
-                                            viewModel = viewModel,
-                                            chargingSessions = it
-                                        )
+                                TripDetailsViewModel.CHARGING_SECTION -> {
+                                    if (trip.chargingSessions?.any { chargingSession ->
+                                            chargingSession.end_epoch_time != null && chargingSession.end_epoch_time > 0
+                                        } == true) {
+                                        trip.chargingSessions?.let {
+                                            ChargingSessions(
+                                                viewModel = viewModel,
+                                                chargingSessions = it
+                                            )
+                                        }
+                                    } else Box(
+                                        modifier = Modifier
+                                            .fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(stringResource(R.string.summary_no_charging_sessions))
                                     }
-                                } else Box(
-                                    modifier = Modifier
-                                        .fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(stringResource(R.string.summary_no_charging_sessions))
+                                }
+
+                                2 -> {
+                                    Mapbox.MapBoxContainer(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(1f),
+                                        trip = trip,
+                                        chargingMarkerOnClick = {id -> viewModel.selectChargingSession(id)}
+                                    )
                                 }
                             }
+                        }
+                        if (splitScreenCondition) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                            ) {
 
-                            2 -> {
                                 Mapbox.MapBoxContainer(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(1f),
+                                    modifier = Modifier,
                                     trip = trip,
                                     chargingMarkerOnClick = {id -> viewModel.selectChargingSession(id)}
                                 )
                             }
-                        }
-                    }
-                    if (splitScreenCondition) {
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
-                        ) {
-
-                            Mapbox.MapBoxContainer(
-                                modifier = Modifier,
-                                trip = trip,
-                                chargingMarkerOnClick = {id -> viewModel.selectChargingSession(id)}
-                            )
                         }
                     }
                 }

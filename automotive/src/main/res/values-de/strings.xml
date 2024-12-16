@@ -152,6 +152,7 @@
     <string name="summary_tab_charging_sessions">Ladevorgänge</string>
     <string name="summary_tab_map">Karte</string>
     <string name="summary_no_data">Keine Daten verfügbar</string>
+    <string name="summary_loading_trip">Lade Tripdaten...</string>
     <string name="summary_loading_location">Lade Standort...</string>
     <string name="summary_location_unavailable">Standort nicht verfügbar</string>
     <string name="summary_no_charging_sessions">Keine Ladevorgänge für diesen Trip verfügbar.</string>

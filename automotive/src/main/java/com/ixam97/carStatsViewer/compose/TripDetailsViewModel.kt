@@ -35,6 +35,8 @@ class TripDetailsViewModel: ViewModel() {
         val chargingSession: ChargingSession? = null
     )
 
+    val preferences = CarStatsViewer.appPreferences
+
     private val _changeDistanceFlow = MutableSharedFlow<Float>()
     val changeDistanceFlow = _changeDistanceFlow.asSharedFlow()
 
@@ -84,7 +86,9 @@ class TripDetailsViewModel: ViewModel() {
 
     fun loadDrivingSession(sessionId: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            delay(1000)
+            // delay for testing UI
+            if (preferences.debugDelays) delay(1000)
+
             tripDetailsState = tripDetailsState.copy(
                 drivingSession = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId),
                 selectedSecondaryDimension = CarStatsViewer.appPreferences.secondaryConsumptionDimension

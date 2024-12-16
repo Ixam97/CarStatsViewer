@@ -236,6 +236,7 @@
     <string name="summary_tab_charging_sessions">Charging Sessions</string>
     <string name="summary_tab_map">Map</string>
     <string name="summary_no_data">No data available</string>
+    <string name="summary_loading_trip">Loading trip data...</string>
     <string name="summary_loading_location">Loading location...</string>
     <string name="summary_location_unavailable">Location not available</string>
     <string name="summary_no_charging_sessions">No charging sessions available in this trip.</string>

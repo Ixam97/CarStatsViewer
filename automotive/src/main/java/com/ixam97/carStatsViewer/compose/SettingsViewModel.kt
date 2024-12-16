@@ -59,7 +59,8 @@ class SettingsViewModel:
         val distanceUnit: DistanceUnitEnum = DistanceUnitEnum.KM,
         val showScreenshotButton: Boolean = false,
         val loggingLevel: Int = 0,
-        val logLength: Int = 0
+        val logLength: Int = 0,
+        val debugDelays: Boolean = false
     )
 
     private val _themeSettingState = MutableStateFlow<Int>(preferences.colorTheme)
@@ -104,7 +105,8 @@ class SettingsViewModel:
                     distanceUnit = preferences.distanceUnit,
                     showScreenshotButton = preferences.showScreenshotButton,
                     loggingLevel = preferences.logLevel,
-                    logLength = preferences.logLength
+                    logLength = preferences.logLength,
+                    debugDelays = preferences.debugDelays
                 )
                 try {
                     settingsState = settingsState.copy(
@@ -227,6 +229,13 @@ class SettingsViewModel:
                 Intent.ACTION_VIEW,
                 Uri.parse(url)
             )
+        )
+    }
+
+    fun setDebugDelays(newState: Boolean) {
+        preferences.debugDelays = newState
+        devSettingsState = devSettingsState.copy(
+            debugDelays = preferences.debugDelays
         )
     }
 

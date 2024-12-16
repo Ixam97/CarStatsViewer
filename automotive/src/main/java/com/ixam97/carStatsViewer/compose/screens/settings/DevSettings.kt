@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.compose.screens.settings
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,7 +14,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
@@ -24,7 +23,7 @@ import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.CarSegmentedButton
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
 import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
-import com.ixam97.carStatsViewer.ui.activities.DebugActivity
+import com.ixam97.carStatsViewer.compose.theme.badRed
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 
 @Composable
@@ -32,22 +31,17 @@ fun DevSettings(
     navController: NavController,
     viewModel: SettingsViewModel
 ) {
-    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        val legacyDevSettingsIntent = Intent(context, DebugActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        CarRow(
-            title = "legacy Dev Settings",
-            browsable = true,
-            onClick = {
-                context.startActivity(legacyDevSettingsIntent)
+        CarSwitchRow(
+            switchState = viewModel.devSettingsState.debugDelays,
+            onClick = { newState ->
+                viewModel.setDebugDelays(newState)
             }
-        )
+        ) { Text("Enable debug loading delays") }
         Divider(Modifier.padding(horizontal = 20.dp))
         CarSwitchRow(
             switchState = (viewModel.devSettingsState.distanceUnit == DistanceUnitEnum.MILES),
@@ -117,7 +111,9 @@ fun DevSettings(
                         modifier = Modifier.weight(1f),
                         onClick = {
                             viewModel.clearLog()
-                        }
+                        },
+                        active = true,
+                        gradient = Brush.horizontalGradient(listOf(badRed, badRed))
                     ) { Text("Delete log") }
                     Spacer(Modifier.size(20.dp))
                     CarGradientButton(

@@ -30,7 +30,7 @@ class ComposeTripDetailsActivity: ComponentActivity() {
             setContent {
                 val viewModel: TripDetailsViewModel = viewModel()
 
-                val tripDetailsState = viewModel.tripDetailsState
+                // val tripDetailsState = viewModel.tripDetailsState
 
                 val brand = when (CarStatsViewer.appPreferences.colorTheme) {
                     0 -> Build.BRAND
@@ -39,6 +39,11 @@ class ComposeTripDetailsActivity: ComponentActivity() {
                 }
 
                 CarTheme(brand) {
+                    TripDetailsPortraitScreen(
+                        viewModel = viewModel,
+                        sessionId = sessionId
+                    )
+                    /*
                     if (tripDetailsState.drivingSession != null) {
                         TripDetailsPortraitScreen(
                             viewModel = viewModel
@@ -53,6 +58,8 @@ class ComposeTripDetailsActivity: ComponentActivity() {
                             CircularProgressIndicator()
                         }
                     }
+
+                     */
                 }
             }
         }

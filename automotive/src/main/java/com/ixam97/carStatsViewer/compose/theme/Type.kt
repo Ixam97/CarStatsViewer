@@ -3,22 +3,25 @@ package com.ixam97.carStatsViewer.compose.theme
 import androidx.compose.material.Typography
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import java.io.File
 
-/*
+
 val polestarFont = FontFamily(
         Font(
             File("/product/fonts/PolestarUnica77-Regular.otf"),
+            // volvosansgloballight1
             weight = FontWeight.Normal
         ),
         Font(
             File("/product/fonts/PolestarUnica77-Medium.otf"),
+            // volvosansglobalmedium1
             weight = FontWeight.Medium
         )
     )
-*/
 
 val defaultTypography = Typography(
     defaultFontFamily = FontFamily.Default,
@@ -59,7 +62,7 @@ val defaultTypography = Typography(
     )
 )
 
-/*
+
 val defaultPolestarTypography = Typography(
     defaultFontFamily = polestarFont,
     body1 = TextStyle(
@@ -113,4 +116,3 @@ val polestarTypography = Typography(
         color = Color.White
     )
 )
-*/

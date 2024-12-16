@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.screens.SettingsScreen
 import com.ixam97.carStatsViewer.compose.theme.CarTheme
+import com.ixam97.carStatsViewer.utils.InAppLogger
 
 class ComposeSettingsActivity: ComponentActivity() {
 
@@ -28,8 +29,10 @@ class ComposeSettingsActivity: ComponentActivity() {
                 if (it.consume() == true) finish()
             }
 
+            InAppLogger.i("Device Info: Brand: ${Build.BRAND}, model: ${Build.MODEL}, device: ${Build.DEVICE}")
+
             val brand = when (themeSetting.value) {
-                0 -> Build.BRAND
+                0 -> if (Build.MODEL == "Polestar 2") Build.MODEL else Build.BRAND
                 2 -> "Orange"
                 else -> null
             }
