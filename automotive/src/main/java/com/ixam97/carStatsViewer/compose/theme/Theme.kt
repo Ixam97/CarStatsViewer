@@ -9,7 +9,6 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Brush
@@ -93,6 +92,13 @@ object CarTheme {
 
 }
 
+object ColorTheme {
+    const val OEM = 0
+    const val CLUB = 1
+    const val ORANGE = 2
+    const val BLUE = 3
+}
+
 internal val LocalBrushes = staticCompositionLocalOf { CarThemeBrushes() }
 
 @Composable
@@ -119,7 +125,7 @@ fun CarTheme(carMake: String? = null, content: @Composable () -> Unit) {
                 Brush.horizontalGradient(listOf(colors.primary, colors.primary))
             )
         }
-        "VolvoCars" -> {
+        "VolvoCars", "Blue" -> {
             colors = volvoColors
             typography = defaultTypography
             brushes = CarThemeBrushes(

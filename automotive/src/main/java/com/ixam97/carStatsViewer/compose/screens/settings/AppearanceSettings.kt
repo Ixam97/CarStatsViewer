@@ -35,15 +35,16 @@ fun AppearanceSettings(viewModel: SettingsViewModel) {
                 .padding(horizontal = 24.dp)
                 .padding(top = 24.dp, bottom = 10.dp),
             color = MaterialTheme.colors.primary,
-            text = "General"
+            text = "${stringResource(R.string.settings_general)}:"
         )
         Divider(Modifier.padding(horizontal = 20.dp))
         CarRow(
-            title = "Theme",
+            title = stringResource(R.string.settings_theme),
             customContent = {
                 CarSegmentedButton(
                     // modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
-                    options = listOf("OEM", "Club"),// "Simple"),
+                    options = if (CarStatsViewer.appPreferences.debugColors) listOf("OEM", "Club", "Orange", "Blue")
+                        else listOf("OEM", "Club"),// "Simple"),
                     selectedIndex = themeSetting.value,
                     onSelectedIndexChanged = { index ->
                         viewModel.setTheme(index)

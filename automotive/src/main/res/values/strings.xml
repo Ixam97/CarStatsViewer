@@ -153,6 +153,7 @@
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
+        <item>PLEASE NOTE: Polestar 3, Polestar 4 and Volvo EX30 do not provide any power values. Not all app features will work until this is fixed by the OEMs!</item>
         <item>Added a map to trip details (depending on release track implementation).</item>
         <item>Completely overhauled the UI of settings and trip details. This makes use of landscape screens like in the Polestar 4.</item>
         <item>(Play Edition) Re-Added trip history, but with limited information for now.</item>
@@ -294,6 +295,7 @@
     <string name="settings_trip_export_hint">"Trip exports send a request to the developer's server containing your trip data. This data will then be sent to your specified address as a CSV file. The trip data is then immediately deleted from the developer's server."</string>
     <string name="settings_trip_export_enable">Enable trip export</string>
     <string name="settings_trip_export_mail">Trip export Email address</string>
+    <string name="settings_theme">Design theme</string>
 
     <!-- ABRP -->
     <string name="abrp_description">Enter an ABRP generic token to transmit over-the-air live data to the ABRP servers. This includes location data if not disabled.</string>

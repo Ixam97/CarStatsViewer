@@ -7,7 +7,9 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.MarqueeSpacing
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -422,6 +424,12 @@ fun TripDataRow(
             if (text != null) {
                 Spacer(modifier = Modifier.size(10.dp))
                 Text(
+                    modifier = Modifier
+                        .basicMarquee(
+                            iterations = Int.MAX_VALUE,
+                            repeatDelayMillis = 5000,
+                            spacing = MarqueeSpacing(50.dp)
+                        ),
                     text = text,
                     fontSize = 25.sp,
                     color = colorResource(id = R.color.secondary_text_color),

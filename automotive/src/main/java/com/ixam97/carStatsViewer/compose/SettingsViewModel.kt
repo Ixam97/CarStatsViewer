@@ -16,7 +16,6 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.log.LogEntry
-import com.ixam97.carStatsViewer.ui.activities.LibsActivity
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -60,7 +59,8 @@ class SettingsViewModel:
         val showScreenshotButton: Boolean = false,
         val loggingLevel: Int = 0,
         val logLength: Int = 0,
-        val debugDelays: Boolean = false
+        val debugDelays: Boolean = false,
+        val debugColors: Boolean = false,
     )
 
     private val _themeSettingState = MutableStateFlow<Int>(preferences.colorTheme)
@@ -106,7 +106,8 @@ class SettingsViewModel:
                     showScreenshotButton = preferences.showScreenshotButton,
                     loggingLevel = preferences.logLevel,
                     logLength = preferences.logLength,
-                    debugDelays = preferences.debugDelays
+                    debugDelays = preferences.debugDelays,
+                    debugColors = preferences.debugColors
                 )
                 try {
                     settingsState = settingsState.copy(
@@ -236,6 +237,13 @@ class SettingsViewModel:
         preferences.debugDelays = newState
         devSettingsState = devSettingsState.copy(
             debugDelays = preferences.debugDelays
+        )
+    }
+
+    fun setDebugColors(newState: Boolean) {
+        preferences.debugColors = newState
+        devSettingsState = devSettingsState.copy(
+            debugColors = preferences.debugColors
         )
     }
 

@@ -44,6 +44,13 @@ fun DevSettings(
         ) { Text("Enable debug loading delays") }
         Divider(Modifier.padding(horizontal = 20.dp))
         CarSwitchRow(
+            switchState = viewModel.devSettingsState.debugColors,
+            onClick = { newState ->
+                viewModel.setDebugColors(newState)
+            }
+        ) { Text("Enable additional color themes") }
+        Divider(Modifier.padding(horizontal = 20.dp))
+        CarSwitchRow(
             switchState = (viewModel.devSettingsState.distanceUnit == DistanceUnitEnum.MILES),
             onClick = { newState ->
                 viewModel.setDistanceUnit(newState)

@@ -209,6 +209,7 @@
     <string name="settings_trip_export_hint">Trip-Exporte senden eine Anfrage an den Server des Enwicklers, die deine Trip-Daten enthält. Diese Daten werden anschließend als CSV-Datei an die angegebene E-Mail-Adresse weitergeleitet. Die Trip-Daten werden unmittelbar danach vom Server gelöscht.</string>
     <string name="settings_trip_export_enable">Trip-Export aktivieren</string>
     <string name="settings_trip_export_mail">E-Mail-Adresse für den Export</string>
+    <string name="settings_theme">Designthema</string>
 
     <!-- ABRP -->
     <string name="abrp_description">ABRP Generic Token eingeben, um Over-the-Air Live-Daten an die ABRP-Server zu senden. Dies beinhaltet Standortdaten, falls nicht deaktiviert.</string>
