@@ -608,6 +608,17 @@
 
         </LinearLayout>
     </RelativeLayout>
+
+    <com.jetradarmobile.snowfall.SnowfallView
+        android:id="@+id/snowflakes"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:snowflakeAlphaMax="150"
+        app:snowflakeAlphaMin="100"
+        app:snowflakeSpeedMin="1"
+        app:snowflakeSpeedMax="3"/>
+
     <FrameLayout
         android:id="@+id/main_fragment_container"
         android:layout_width="match_parent"

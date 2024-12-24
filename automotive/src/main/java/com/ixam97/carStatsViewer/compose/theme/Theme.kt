@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.compose.theme
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
@@ -14,6 +15,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.ixam97.carStatsViewer.R
 
 val themedBrands = listOf(
     "Polestar",
@@ -87,7 +89,8 @@ object CarTheme {
         @ReadOnlyComposable
         get() = LocalBrushes.current
 
-    val buttonCornerRadius = 20.dp
+    var buttonCornerRadius = 20.dp
+    @DrawableRes var backButtonResId: Int = R.drawable.ic_arrow_back
     val buttonPaddingValues = PaddingValues(horizontal = 40.dp, vertical = 20.dp)
 
 }
@@ -116,6 +119,8 @@ fun CarTheme(carMake: String? = null, content: @Composable () -> Unit) {
                 Brush.horizontalGradient(listOf(colors.primary, colors.primary)),
                 Brush.horizontalGradient(listOf(colors.primary, colors.primary))
             )
+            CarTheme.buttonCornerRadius = 0.dp
+            CarTheme.backButtonResId = R.drawable.ic_arrow_back
         }
         "Polestar" -> {
             typography = defaultTypography // defaultPolestarTypography
@@ -124,6 +129,8 @@ fun CarTheme(carMake: String? = null, content: @Composable () -> Unit) {
                 Brush.horizontalGradient(listOf(colors.primary, colors.primary)),
                 Brush.horizontalGradient(listOf(colors.primary, colors.primary))
             )
+            CarTheme.buttonCornerRadius = 0.dp
+            CarTheme.backButtonResId = R.drawable.ic_arrow_back
         }
         "VolvoCars", "Blue" -> {
             colors = volvoColors
@@ -132,6 +139,8 @@ fun CarTheme(carMake: String? = null, content: @Composable () -> Unit) {
                 Brush.horizontalGradient(listOf(colors.primary, colors.primary)),
                 Brush.horizontalGradient(listOf(colors.primary, colors.primary))
             )
+            CarTheme.buttonCornerRadius = 20.dp
+            CarTheme.backButtonResId = R.drawable.ic_chevron_back
         }
         "Orange" -> {
             colors = polestarColors
@@ -140,6 +149,8 @@ fun CarTheme(carMake: String? = null, content: @Composable () -> Unit) {
                 Brush.horizontalGradient(listOf(colors.primary, colors.primary)),
                 Brush.horizontalGradient(listOf(colors.primary, colors.primary))
             )
+            CarTheme.buttonCornerRadius = 0.dp
+            CarTheme.backButtonResId = R.drawable.ic_arrow_back
         }
         else -> {
             colors = clubColorsDark
@@ -148,6 +159,8 @@ fun CarTheme(carMake: String? = null, content: @Composable () -> Unit) {
                 Brush.horizontalGradient(listOf(clubBlue, clubViolet)),
                 Brush.horizontalGradient(listOf(clubVioletDark, clubViolet, clubBlue, clubBlueDark))
             )
+            CarTheme.buttonCornerRadius = 20.dp
+            CarTheme.backButtonResId = R.drawable.ic_arrow_back
         }
     }
 

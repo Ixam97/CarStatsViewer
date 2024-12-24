@@ -21,8 +21,8 @@ android {
     defaultConfig {
         minSdkVersion 29
         targetSdkVersion 35
-        versionCode 280
-        versionName "0.28.0.0013"
+        versionCode 282
+        versionName "0.28.0.0015"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -133,6 +133,8 @@ dependencies {
     implementation libs.aboutlibraries.compose
     implementation libs.airbnb.paris
     implementation libs.github.egm96
+    implementation libs.retrofit
+    implementation libs.retrofit.converter.gson
 
     implementation libs.androidx.car.app
     implementation libs.androidx.car.app.automotive
@@ -158,6 +160,8 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
 
     debugImplementation libs.squareup.leakcanary
+
+    implementation 'com.github.jetradarmobile:android-snowfall:1.2.1'
 
     // to fix unresolved references to android.car
     // def sdkDir = project.android.sdkDirectory.canonicalPath

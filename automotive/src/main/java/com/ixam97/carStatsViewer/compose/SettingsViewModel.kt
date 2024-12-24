@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.compose
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,10 +13,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.app
+import com.google.gson.Gson
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.log.LogEntry
+import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitBody
+import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitRepository
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -276,6 +280,24 @@ class SettingsViewModel:
         devSettingsState = devSettingsState.copy(
             logLength = preferences.logLength
         )
+    }
+
+    fun submitLog() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
+
+                val submitMap = mutableMapOf<Long, String>()
+
+                InAppLogger.getLogEntries(
+                    logLevel = preferences.logLevel + 2,
+                    logLength = logLengths[preferences.logLength]
+                ).forEach { logEntry ->
+                    submitMap[logEntry.epochTime] = "${InAppLogger.typeSymbol(logEntry.type)}: ${logEntry.message}"
+                }
+                Log.d("Log submit debug", Gson().toJson(LogSubmitBody(submitMap)))
+                // LogSubmitRepository.submitLog(LogSubmitBody(submitMap))
+            }
+        }
     }
 
     fun loadLog() {

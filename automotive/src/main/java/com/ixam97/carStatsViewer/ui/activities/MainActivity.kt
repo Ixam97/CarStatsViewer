@@ -51,11 +51,15 @@ import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.Ticker
 import com.ixam97.carStatsViewer.utils.WatchdogState
 import com.ixam97.carStatsViewer.utils.getColorFromAttribute
+import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
+import java.util.Calendar
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -160,6 +164,8 @@ class MainActivity : FragmentActivity() {
             getColorFromAttribute(this, R.attr.secondary_plot_color).toDrawable()
         }
 
+        setSnow(moving)
+
     }
 
     private lateinit var binding: ActivityMainBinding
@@ -224,6 +230,7 @@ class MainActivity : FragmentActivity() {
                             }
 
                             if (it.speed > .1 && !moving) {
+                                setSnow(true)
                                 moving = true
                                 val summaryFragment =
                                     supportFragmentManager.findFragmentByTag("SummaryFragment")
@@ -250,6 +257,7 @@ class MainActivity : FragmentActivity() {
                                     PorterDuff.Mode.SRC_IN
                                 )
                             } else if (it.speed <= .1 && moving) {
+                                setSnow(false)
                                 moving = false
                                 // main_button_summary.isEnabled = true
                                 mainImageButtonSummary.isEnabled = true
@@ -949,5 +957,17 @@ class MainActivity : FragmentActivity() {
                     fromView.isVisible = false
                 }
             })
+    }
+
+    private fun setSnow(override: Boolean = false) {
+        val calendar = Calendar.getInstance()
+        if (calendar.get(Calendar.MONTH) == Calendar.DECEMBER && !override) {
+            when (calendar.get(Calendar.DAY_OF_MONTH)) {
+                22, 23, 24, 25, 26 -> binding.snowflakes?.apply { visibility = View.VISIBLE }
+                else -> binding.snowflakes?.apply { visibility = View.GONE }
+            }
+        } else {
+            binding.snowflakes?.apply { visibility = View.GONE }
+        }
     }
 }

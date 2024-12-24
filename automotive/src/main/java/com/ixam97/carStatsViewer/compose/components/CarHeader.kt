@@ -38,7 +38,7 @@ fun CarHeader(
             if (onBackClick != null) {
                 CarIconButton(
                     onClick = onBackClick,
-                    iconResId = R.drawable.ic_arrow_back,
+                    iconResId = CarTheme.backButtonResId, // R.drawable.ic_arrow_back,
                     tint = if (!minimal) MaterialTheme.colors.secondary else MaterialTheme.colors.onBackground
                 )
                 Spacer(modifier = Modifier.width(10.dp))

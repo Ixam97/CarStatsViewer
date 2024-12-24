@@ -82,7 +82,7 @@ fun AppearanceSettings(viewModel: SettingsViewModel) {
             customContent = {
                 CarSegmentedButton(
                     // modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
-                    options = listOf("Green", "White"),
+                    options = listOf(stringResource(R.string.settings_plot_green), stringResource(R.string.settings_plot_white)),
                     selectedIndex = viewModel.settingsState.secondaryConsumptionPlotColor,
                     onSelectedIndexChanged = { index ->
                         viewModel.setSecondaryConsumptionPlotColor(index)
@@ -113,7 +113,7 @@ fun AppearanceSettings(viewModel: SettingsViewModel) {
             customContent = {
                 CarSegmentedButton(
                     // modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
-                    options = listOf("Green", "White"),
+                    options = listOf(stringResource(R.string.settings_plot_green), stringResource(R.string.settings_plot_white)),
                     selectedIndex = viewModel.settingsState.secondaryChargePlotColor,
                     onSelectedIndexChanged = { index ->
                         viewModel.setSecondaryChargePlotColor(index)

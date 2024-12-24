@@ -110,7 +110,7 @@ fun DevSettings(
                         modifier = Modifier.weight(1f),
                         enabled = false,
                         onClick = {
-                            // ToDo
+                            viewModel.submitLog()
                         }
                     ) { Text("Submit log") }
                     Spacer(Modifier.size(20.dp))
