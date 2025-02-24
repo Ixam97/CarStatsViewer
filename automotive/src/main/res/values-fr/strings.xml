@@ -137,6 +137,7 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
     <string name="smtp_description">Entrez vos informations d\'identification fournies par votre fournisseur de messagerie SMTP. Les statistiques et journaux de débogage seront envoyés à une adresse spécifiée par l\'utilisateur.</string>
     <string name="smtp_address">Adresse courriel</string>
     <string name="smtp_password">Mot de passe du serveur SMTP</string>
+    <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">Nom du serveur SMTP</string>
     <string name="smtp_port">Port du serveur SMTP</string>
     <string name="smtp_use_STARTTLS">Utiliser STARTTLS</string>
@@ -164,6 +165,7 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
         <item>Mois</item>
     </string-array>
     <string name="dialog_reset_confirm">Réinitialiser</string>
+    <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
     <string name="dialog_apply">Appliquer</string>
     <!-- Trip history -->
     <string name="history_title">Historique de trajets</string>
@@ -172,6 +174,7 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
     <string name="history_current_trips">Trajets courants:</string>
     <string name="history_dialog_filters_title">Filtres de trajets</string>
     <string name="history_dialog_filters_manual">Afficher trajets manuels</string>
+    <!--Is this "trips since charge"?-->
     <string name="history_dialog_filters_charge">Afficher trajets depuis la recharge</string>
     <string name="history_dialog_filters_auto">Afficher les trajets automatiques</string>
     <string name="history_dialog_filters_month">Afficher trajets mensuels</string>
@@ -254,9 +257,73 @@ Cette opération peut prendre du temps, dépendament du volume de données. Veui
         <item>Simplification du sélecteur d\'axe secondaire.</item>
         <item>Ajout d\'une palette de couleurs expérimentale.</item>
         <item>[V](0.26.0)</item>
+        <item>Correctif pour Android 12 (P3.0)</item>
+        <!-- taping or tapping? -->
+        <!--taping or tapping?-->
+        <item>[V](0.26.1)</item>
+        <item>Correction de certains problèmes de mise en page sur l\'infotainement Volvo</item>
+        <item>Correction de la mise en page après la mise à jour Polestar OTA P3.0.3</item>
+        <item>Contrôles graphiques améliorés dans le résumé du trajet</item>
+        <item>[V](0.26.2)</item>
+        <item>Correction de la palette de couleurs expérimental qui ne fonctionne pas.</item>
+        <item>Les journaux de débogage sont supprimés après 28 jours, une fois par jour.</item>
+        <item>Réduction des accès à la base de données en limitant le logging dans les paramètres de débogage.</item>
+        <item>Le Webhook renseigne désormais le champ \"charged_soc\" à la fin de la session de recharge.</item>
+        <item>La base de données téléversée contient désormais des courbes de charge.</item>
+        <item>Le téléversement de la base de données crée désormais un service distinct. Vous n\'avez plus besoin de rester sur l\'écran de l\'historique des trajets pendant le téléchargement. Une notification sera publiée dans le centre de notifications pour afficher la progression.</item>
+        <item>La courbe de charge ne se coupe plus au-dessus de 160 kW dans le résumé de trajet.</item>
+        <item>Méthode de création du journal des modifications révisée.</item>
+        <item>Mise en place de Firebase Crashlytics. Peut être désactivé dans les paramètres.</item>
+        <item>Implémentation de Automotive App Host pour une potentielle version publique sur le Play Store (non contenue dans les versions héritées).</item>
+        <item>[V](0.27.0)</item>
+        <item>Rapport de plantage amélioré</item>
+        <item>Correction des plantages causés par l\'enregistrement des données de voyage.</item>
+        <item>(Play Edition) Correction d\'un problème où les interactions de notification faisaient planter l\'application.</item>
+        <item>(Play Edition) Détection des plantages lors de la création du journal des modifications.</item>
+        <item>(Play Edition) Le tableau de bord Legacy et l\'historique des voyages ont été temporairement désactivés en raison des limitations imposées par les directives de Google.</item>
+        <item>[V](0.27.1)</item>
+        <item>Ajout de la gestion des erreurs et de la journalisation des modifications de voyage.</item>
+        <item>[V](0.27.2)</item>
+        <item>ATTENTION : Actuellement, l\'EX30 ne transmet aucune valeur de puissance à l\'application. Par conséquent, aucune statistique énergétique ne sera disponible. On ne sait pas encore si et quand ce problème sera résolu par Volvo.</item>
+        <item>Ajout de conditions supplémentaires du démarrage de conduite (par exemple pour le Volvo EX30)</item>
+        <item>[V](0.27.3)</item>
     </string-array>
+    <string name="dialog_changes_title_updated">Mise à jour installée!</string>
+    <string name="dialog_changes_title_changelog">Journal des modifications</string>
+    <string name="dialog_changes_message">%1$s a été mis à jour à la version %2$s</string>
+    <!-- Car App -->
+    <string name="car_app_trip_data">Donnée du trajet</string>
+    <string name="car_app_strip_selection">Sélection du trajet</string>
+    <string name="car_app_dashboard">Tableau de bord</string>
+    <string name="car_app_legacy_dashboard">Tableau de bord legacy</string>
     <string name="car_app_menu">Divers</string>
+    <string name="car_app_status">Statut de l\'API</string>
+    <string name="car_app_toast_reset_confirmation">Le trajet manuel a été réinitialisé.</string>
+    <string name="car_app_toast_reset_hint">Appuyez à nouveau pour réinitialiser le voyage manuel.</string>
+    <string name="car_app_unknown">Inconnu</string>
+    <string name="car_app_permissions_message">Car Stats Viewer a besoin d\'accéder aux autorisations de localisation et aux données du véhicule pour fonctionner. Veuillez accorder ces autorisations.
+
+Le suivi de localisation peut être activé ou désactivé dans les paramètres de l\'application. Aucune donnée n\'est envoyée à aucun serveur par défaut.</string>
+    <string name="car_app_permissions_grant">Autorisations</string>
+    <string name="car_app_permissions_deny">Refuser et quitter</string>
+    <string name="car_app_dev_notice_message">Car Stats Viewer est encore en cours de développement! Soyez conscient que les fonctionnalités peuvent changer, être ajoutée ou supprimée sans préavis et qu\'une perte de donnée peut survenir!
+
+Si vous trouvez des bugs ou souhaitez donner votre avis, veuillez visiter le dépôt GitHub de l\'application ou le fil de discussion sur ce sujet dans le forum Polestar Club. Un lien peut être trouvé dans les paramètres de l\'application → À propos de Car Stats Viewer.</string>
+    <string name="car_app_dev_notice_confirm">Compris</string>
+    <string name="car_app_show_real_time_data_title">Afficher les données en temps réel</string>
+    <string name="car_app_show_real_time_data_hint">Si cette option est activée, l\'interface utilisateur pourrait réagir avec un retard notable en raison de la fréquence élevée des mises à jour de l\'interface utilisateur émises par les données en temps réel.</string>
+    <string name="car_app_legacy_dashboard_desc">Ouvre le tableau de bord connu de la version legacy de Car Stats Viewer. Contient également la courbe de charge en temps réel pendant la charge. Non disponible pendant la conduite !</string>
+    <string name="car_app_legacy_history_desc">Affiche une liste de tous les trajets passés et permet de consulter des statistiques détaillées pour chaque trajet. Non disponible pendant la conduite !</string>
     <string name="car_app_advanced_settings">Paramètres avancés</string>
+    <string name="car_app_quick_settings">Paramètres rapides</string>
+    <string name="car_app_menu_other_views">Autres vues</string>
+    <string name="car_app_show_real_time_data_subtitle">Puissance, consommation instantanée et altitude dans l\'onglet Trajet.</string>
+    <string name="history_dialog_upload_message_2">Vous êtes sur le point de charger l\'intégralité de la base de données locale sur le point de terminaison spécifié dans l\'API Webhook !
+
+Assurez-vous qu\'il n\'y a pas de données en double sur le serveur pour éviter les valeurs invraisemblables.
+
+Cette action peut prendre un certain temps en fonction de la quantité de données. Une notification de progression sera ajoutée au centre de notifications. Le système peut être utilisé normalement.</string>
     <string name="snackbar_ok">OK</string>
     <string name="screenshot_taken">Capture d\'écran prise (total de %s)</string>
+    <string name="settings_plot_secondary_color_2">Couleur secondaire du tracé</string>
 </resources>

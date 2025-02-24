@@ -131,6 +131,7 @@
     <string name="smtp_description">Voer uw SMTP-gegevens in die u van uw e-mailprovider heeft gekregen. Dit wordt gebruikt om opgeslagen statistieken en debug-logs naar een door de gebruiker opgegeven doeladres te sturen.</string>
     <string name="smtp_address">E-mailadres</string>
     <string name="smtp_password">E-mail (SMTP) wachtwoord</string>
+    <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">SMTP-server-hostnaam</string>
     <string name="smtp_port">SMTP-serverpoort</string>
     <string name="smtp_use_STARTTLS">Gebruik STARTTLS</string>
@@ -158,6 +159,7 @@
         <item>Maand</item>
     </string-array>
     <string name="dialog_reset_confirm">Resetten</string>
+    <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
     <string name="dialog_apply">Toepassen</string>
     <!-- Trip history -->
     <string name="history_title">Rithistoriek</string>
@@ -166,6 +168,7 @@
     <string name="history_current_trips">Huidige ritten:</string>
     <string name="history_dialog_filters_title">Ritfilters</string>
     <string name="history_dialog_filters_manual">Toon handmatige ritten</string>
+    <!--Is this "trips since charge"?-->
     <string name="history_dialog_filters_charge">Toon ritten sinds laadbeurt</string>
     <string name="history_dialog_filters_auto">Toon automatische ritten</string>
     <string name="history_dialog_filters_month">Toon maandelijkse ritten</string>
@@ -278,6 +281,12 @@ Deze actie kan enige tijd duren, afhankelijk van de hoeveelheid gegevens. Blijf 
         <item>LET OP: Momenteel rapporteert de EX30 geen vermogenswaarden aan de app. Daarom zijn er geen energiestatistieken beschikbaar. Het is momenteel onduidelijk of en wanneer dit door Volvo wordt opgelost.</item>
         <item>Extra startvoorwaarden toegevoegd (bijvoorbeeld voor de Volvo EX30)</item>
         <item>[V] (0.27.3)</item>
+        <item>Bekende problemen: De grafiek op het hoofdscherm toont mogelijk geen up-to-date gegevens. Dit wordt opgelost zodra dit deel van de gebruikersinterface in een toekomstige update wordt vernieuwd. De grafieken in het reisoverzicht worden niet beïnvloed.</item>
+        <item>LET OP: Polestar 3, Polestar 4 en Volvo EX30 geven geen vermogenswaarden. Niet alle app-functies werken totdat dit door de OEM\'s is opgelost!</item>
+        <item>Er is een kaart met reisdetails toegevoegd (afhankelijk van de implementatie van het release-track).</item>
+        <item>De gebruikersinterface van instellingen en reisinformatie volledig herzien. Dit maakt gebruik van horizontale schermen zoals in de Polestar 4.</item>
+        <item>(Play Edition) Reisgeschiedenis opnieuw toegevoegd, maar voorlopig met beperkte informatie.</item>
+        <item>[V](0.28.0)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Update geïnstalleerd!</string>
     <string name="dialog_changes_title_changelog">Overzicht wijzigingen</string>
@@ -316,4 +325,34 @@ Zorg ervoor dat er geen dubbele gegevens op de server staan om onwaarschijnlijke
 Deze actie kan enige tijd duren, afhankelijk van de hoeveelheid gegevens. Er wordt een voortgangsmelding toegevoegd aan het Meldingencentrum. Het systeem kan gewoon worden gebruikt.</string>
     <string name="snackbar_ok">OK</string>
     <string name="screenshot_taken">Screenshot gemaakt (totaal van %s ).</string>
+    <string name="settings_plot_secondary_color_2">Secundaire plotkleur</string>
+    <string name="summary_ongoing">Huidige rit</string>
+    <string name="summary_tab_trip_details">Ritdetails</string>
+    <string name="summary_tab_charging_sessions">Laadsessies</string>
+    <string name="summary_tab_map">Kaart</string>
+    <string name="summary_no_data">Geen gegevens beschikbaar</string>
+    <string name="summary_loading_location">Locatie laden...</string>
+    <string name="summary_location_unavailable">Locatie niet beschikbaar</string>
+    <string name="summary_no_charging_sessions">Geen laadsessies beschikbaar in deze reis.</string>
+    <string name="summary_trip_type">Rittype</string>
+    <string name="summary_soc_unavailable">Laadstatus niet beschikbaar</string>
+    <string name="summary_ongoing_charging_session">Lopende laadsessie ...</string>
+    <!-- Compose Settings -->
+    <string name="settings_general">Algemeen</string>
+    <string name="settings_appearance">Uiterlijk</string>
+    <string name="settings_privacy_location">Privacy en locatie</string>
+    <string name="settings_changelog">Wijzigingen</string>
+    <string name="settings_privacy">Privacybeleid</string>
+    <string name="settings_dev_settings">Instellingen voor ontwikkelaars</string>
+    <string name="settings_analytics">Crashrapporten en analyses inschakelen</string>
+    <string name="settings_firebase_note">Google Firebase is niet opgenomen in deze build.</string>
+    <string name="settings_external_apis">Externe API\'s</string>
+    <string name="settings_trip_export">Ritexport</string>
+    <string name="settings_trip_export_hint">"Ritexporten sturen een verzoek naar de server van de ontwikkelaar met uw reisgegevens. Deze gegevens worden vervolgens als CSV-bestand naar het door u opgegeven adres verzonden. De ritgegevens worden dan onmiddellijk van de server van de ontwikkelaar verwijderd."</string>
+    <string name="settings_trip_export_enable">Ritexport inschakelen</string>
+    <string name="settings_trip_export_mail">E-mailadres voor het exporteren van ritten</string>
+    <string name="summary_loading_trip">Ritgegevens laden...</string>
+    <string name="settings_theme">Ontwerp thema</string>
+    <string name="settings_plot_green">Groen</string>
+    <string name="settings_plot_white">Wit</string>
 </resources>

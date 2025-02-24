@@ -131,6 +131,7 @@
     <string name="smtp_description">Ange dina SMTP-uppgifter från din e-postleverantör. Detta används för att skicka sparad statistik och felsökningsloggar till en e-postadress som anges av användaren.</string>
     <string name="smtp_address">E-postadress</string>
     <string name="smtp_password">Lösenord för SMTP</string>
+    <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">SMTP server</string>
     <string name="smtp_port">SMTP server port</string>
     <string name="smtp_use_STARTTLS">Använd STARTTLS</string>
@@ -158,6 +159,7 @@
         <item>Månad</item>
     </string-array>
     <string name="dialog_reset_confirm">Återställ statistik</string>
+    <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
     <string name="dialog_apply">Tillämpa</string>
     <!-- Trip history -->
     <string name="history_title">Resehistorik</string>
@@ -166,6 +168,7 @@
     <string name="history_current_trips">Aktuella resor:</string>
     <string name="history_dialog_filters_title">Resefilter</string>
     <string name="history_dialog_filters_manual">Visa manuella resor</string>
+    <!--Is this "trips since charge"?-->
     <string name="history_dialog_filters_charge">Visa resor sedan laddning</string>
     <string name="history_dialog_filters_auto">Visa automatiska resor</string>
     <string name="history_dialog_filters_month">Visa månatliga resor</string>
@@ -316,4 +319,11 @@ Se till att det inte finns några duplicerade data på servern för att förhind
 Den här åtgärden kan ta lite tid beroende på mängden data. Ett förloppsmeddelande läggs till i Notification Center. Systemet kan användas som vanligt.</string>
     <string name="snackbar_ok">OK</string>
     <string name="screenshot_taken">Skärmdump tagen (totalt %s ).</string>
+    <string name="settings_plot_secondary_color_2">Sekundär plotfärg</string>
+    <string name="summary_ongoing">Pågående resa</string>
+    <string name="summary_tab_map">Karta</string>
+    <string name="summary_no_data">Inga data tillgängliga</string>
+    <string name="summary_location_unavailable">Plats ej tillgänglig</string>
+    <string name="settings_plot_green">Grön</string>
+    <string name="settings_plot_white">Vit</string>
 </resources>
