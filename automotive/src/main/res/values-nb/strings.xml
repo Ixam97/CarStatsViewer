@@ -131,6 +131,7 @@
     <string name="smtp_description">Legg inn dine SMTP legitimasjon fra din Epostleverandør. Den er brukt for å sende lagrede statistikker og feilllogger til måladressen gitt av brukeren.</string>
     <string name="smtp_address">Epostadresse</string>
     <string name="smtp_password">Epostpassord</string>
+    <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">SMTP server-hostname</string>
     <string name="smtp_port">SMPT server-port</string>
     <string name="smtp_use_STARTTLS">Bruk STARTTLS</string>
@@ -158,6 +159,7 @@
         <item>Måned</item>
     </string-array>
     <string name="dialog_reset_confirm">Resett</string>
+    <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
     <string name="dialog_apply">Bruk</string>
     <!-- Trip history -->
     <string name="history_title">Turhistorie</string>
@@ -166,6 +168,7 @@
     <string name="history_current_trips">Nåværende turer:</string>
     <string name="history_dialog_filters_title">Tur filtre</string>
     <string name="history_dialog_filters_manual">Vis manuelle turer</string>
+    <!--Is this "trips since charge"?-->
     <string name="history_dialog_filters_charge">Vis turer av denne type siden siste lading.</string>
     <string name="history_dialog_filters_auto">Vis automatiske turer</string>
     <string name="history_dialog_filters_month">Vis månedlige turer</string>
@@ -278,6 +281,12 @@ Pass på at det ikke er noen duplisertee data på serveren for å forhindre usan
         <item>MERK: For øyeblikket rapporterer ikke EX30 noen strømverdier til appen. Derfor vil ingen energistatistikk være tilgjengelig. Det er foreløpig uklart om og når dette vil bli fikset av Volvo.</item>
         <item>Lagt til ekstra kjørestartbetingelser (for eksempel for Volvo EX30)</item>
         <item>[V](0.27.3)</item>
+        <item>Kjente problemer: Grafen på hovedskjermen viser kanskje ikke oppdaterte data. Dette vil bli løst når denne delen av brukergrensesnittet er fornyet i en fremtidig oppdatering. Grafene i tursammendraget er upåvirket.</item>
+        <item>MERK: Polestar 3, Polestar 4 og Volvo EX30 rapporterer ikke noen strømverdier. Alle appegenskaper vil ikke virke før dette er fikset av OEMs!</item>
+        <item>Lagt til et kart for turdetaljer (avhengig av implementering av utgivelsesspor).</item>
+        <item>Fullstendig overhalt brukergrensesnittet av innstillinger og turdetaljer. Dette gjør bruk av landskapsskjermer som i Polestar 4.</item>
+        <item>(Play Edition) Lagt til turhistorikk på nytt, men med begrenset informasjon foreløpig.</item>
+        <item>[V](0.24.0)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Oppdatering installert!</string>
     <string name="dialog_changes_title_changelog">Endringslogg</string>
@@ -316,4 +325,34 @@ Sørg for at det ikke er noen dupliserte data på serveren for å forhindre usan
 Denne handlingen kan ta litt tid avhengig av datamengden. Et fremdriftsvarsel vil bli lagt til varslingssenteret. Systemet kan brukes som vanlig.</string>
     <string name="snackbar_ok">OK</string>
     <string name="screenshot_taken">Screenshot tatt (av totalt %s).</string>
+    <string name="settings_plot_secondary_color_2">Sekundær plot-farge</string>
+    <string name="summary_ongoing">Pågående tur</string>
+    <string name="summary_tab_trip_details">Turdetaljer</string>
+    <string name="summary_tab_charging_sessions">Ladesesjoner</string>
+    <string name="summary_tab_map">Kart</string>
+    <string name="summary_no_data">Ingen data tilgjengelig</string>
+    <string name="summary_loading_location">Laster inn plassering ...</string>
+    <string name="summary_location_unavailable">Plassering er ikke tilgjengelig</string>
+    <string name="summary_no_charging_sessions">Ingen ladeøkter tilgjengelig i denne turen.</string>
+    <string name="summary_trip_type">Turtype</string>
+    <string name="summary_soc_unavailable">Ladetilstand er utilgjengelig</string>
+    <string name="summary_ongoing_charging_session">Pågående ladeøkt...</string>
+    <!-- Compose Settings -->
+    <string name="settings_general">Generelt</string>
+    <string name="settings_appearance">Utseende</string>
+    <string name="settings_privacy_location">Personvern og plassering</string>
+    <string name="settings_changelog">Endringslogg</string>
+    <string name="settings_privacy">Personvernerklæring</string>
+    <string name="settings_dev_settings">Utviklerinnstillinger</string>
+    <string name="settings_analytics">Aktiver krasjrapporter og analyser</string>
+    <string name="settings_firebase_note">Google Firebase er ikke inkludert i denne versjonen.</string>
+    <string name="settings_external_apis">Eksterne API-er</string>
+    <string name="settings_trip_export">Tureksport</string>
+    <string name="settings_trip_export_hint">"Tureksporter sender en forespørsel til utviklerens server som inneholder dine turdata. Disse dataene vil da bli sendt til din spesifiserte adresse som en CSV-fil. Turdataene blir deretter umiddelbart slettet fra utviklerens server."</string>
+    <string name="settings_trip_export_enable">Slå på tureksport</string>
+    <string name="settings_trip_export_mail">Tureksport E-postadresse</string>
+    <string name="summary_loading_trip">Laster turdata...</string>
+    <string name="settings_theme">Designtema</string>
+    <string name="settings_plot_green">Grønn</string>
+    <string name="settings_plot_white">Hvit</string>
 </resources>

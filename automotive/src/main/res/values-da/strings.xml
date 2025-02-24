@@ -131,6 +131,7 @@
     <string name="smtp_description">Indtast dine SMTP-legitimationsoplysninger givet af din e-mail-udbyder. Dette bruges til at sende gemte statistikker og fejlretningslogfiler til en email adresse angivet af brugeren.</string>
     <string name="smtp_address">Email adresse</string>
     <string name="smtp_password">SMTP adgangskode</string>
+    <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">SMTP-server værtsnavn</string>
     <string name="smtp_port">SMTP serverport</string>
     <string name="smtp_use_STARTTLS">Brug STARTTLS</string>
@@ -158,6 +159,7 @@
         <item>Måned</item>
     </string-array>
     <string name="dialog_reset_confirm">Nulstil</string>
+    <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
     <string name="dialog_apply">Anvend</string>
     <!-- Trip history -->
     <string name="history_title">Rejsehistorik</string>
@@ -166,6 +168,7 @@
     <string name="history_current_trips">Aktuelle rejser:</string>
     <string name="history_dialog_filters_title">Turfiltre</string>
     <string name="history_dialog_filters_manual">Vis manuelle ture</string>
+    <!--Is this "trips since charge"?-->
     <string name="history_dialog_filters_charge">Vis siden ladeture</string>
     <string name="history_dialog_filters_auto">Vis automatiske ture</string>
     <string name="history_dialog_filters_month">Vis månedlige rejser</string>
@@ -278,6 +281,12 @@ Denne handling kan tage en del tid afhængig af datamængden. Bliv på denne sid
         <item>BEMÆRK: I øjeblikket rapporterer EX30 ikke nogen strømværdier til appen. Derfor vil der ikke være nogen energistatistik tilgængelig. Det er i øjeblikket uklart, om og hvornår dette vil blive rettet af Volvo.</item>
         <item>Tilføjet yderligere betingelser for start af kørsel (f.eks. for Volvo EX30)</item>
         <item>[V](0.27.3)</item>
+        <item>Kendte problemer: Grafen på hovedskærmen viser muligvis ikke opdaterede data. Dette vil blive løst, når denne del af brugergrænsefladen er opdateret i en fremtidig opdatering. Graferne i rejseoversigten er upåvirkede.</item>
+        <item>BEMÆRK: Polestar 3 og 4 samt Volvo EX30 udstiller ikke effektværdier. Nogle features virker ikke før dette er håndteret i OEM\'erne</item>
+        <item>Tilføjet et kort til rejsedetaljer (afhængigt af udgivelsessporets implementering).</item>
+        <item>Fuldstændig gennemgang af brugergrænseflade for indstillinger og rejsedetaljer. Dette gør brug af landskabsskærme som i Polestar 4</item>
+        <item>(Play Udgave) Genindførte rejsehistorik, men med begrænset information indtil videre.</item>
+        <item>[V](0.28.0)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Opdatering installeret!</string>
     <string name="dialog_changes_title_changelog">Ændringslog</string>
@@ -316,4 +325,34 @@ Sørg for, at der ikke er duplikerede data på serveren for at forhindre usandsy
 Denne handling kan tage noget tid afhængigt af mængden af data. En statusmeddelelse vil blive tilføjet til Notifikationscenteret. Systemet kan bruges som normalt.</string>
     <string name="snackbar_ok">Okay</string>
     <string name="screenshot_taken">Skærmbillede taget (totalt %s).</string>
+    <string name="settings_plot_secondary_color_2">Sekundær plots farve</string>
+    <string name="summary_ongoing">Igangværende rejse</string>
+    <string name="summary_tab_trip_details">Rejsedetaljer</string>
+    <string name="summary_tab_charging_sessions">Opladningssessioner</string>
+    <string name="summary_tab_map">Kort</string>
+    <string name="summary_no_data">Ingen tilgængelige data</string>
+    <string name="summary_loading_location">Indlæser placering...</string>
+    <string name="summary_location_unavailable">Placering ikke tilgængelig</string>
+    <string name="summary_no_charging_sessions">Ingen tilgængelige opladningssessioner for denne rejse.</string>
+    <string name="summary_trip_type">Rejsens art</string>
+    <string name="summary_soc_unavailable">Ladetilstand ikke tilgængelig</string>
+    <string name="summary_ongoing_charging_session">Igangværende opladningssession</string>
+    <!-- Compose Settings -->
+    <string name="settings_general">Generelt</string>
+    <string name="settings_appearance">Udseende</string>
+    <string name="settings_privacy_location">Privatliv og placering</string>
+    <string name="settings_changelog">Ændringslog</string>
+    <string name="settings_privacy">Privatlivspolitik</string>
+    <string name="settings_dev_settings">Udviklingsindstillinger</string>
+    <string name="settings_analytics">Aktiver nedbrudsrapporter og -analyser</string>
+    <string name="settings_firebase_note">Google Firebase er ikke indeholdt i denne build.</string>
+    <string name="settings_external_apis">Eksterne API\'er</string>
+    <string name="settings_trip_export">Eksporter rejsedata</string>
+    <string name="settings_trip_export_hint">Eksporter Rejsehistorik sender en anmodning via udviklerens server med dine rejsedata. Disse data sendes til den opgivne adresse som en CSV fil. Rejsedata slettes umiddelbart efter fra udviklerens server.</string>
+    <string name="settings_trip_export_enable">Aktivér eksport af rejsedata</string>
+    <string name="settings_trip_export_mail">E-mail-adresse til rejseeksport</string>
+    <string name="summary_loading_trip">Indlæser rejsedata...</string>
+    <string name="settings_theme">Designtema</string>
+    <string name="settings_plot_green">Grøn</string>
+    <string name="settings_plot_white">Hvid</string>
 </resources>

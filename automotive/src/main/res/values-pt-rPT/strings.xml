@@ -131,6 +131,7 @@
     <string name="smtp_description">Introduza as suas credenciais SMTP dadas pelo seu fornecedor de E-Mail. Isto é utilizado para enviar estatísticas guardadas e registos de depuração para um endereço de destino especificado pelo utilizador.</string>
     <string name="smtp_address">Endereço de e-mail</string>
     <string name="smtp_password">Palavra-passe e-mail</string>
+    <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">Nome do host do servidor SMTP</string>
     <string name="smtp_port">Porta do servidor SMTP</string>
     <string name="smtp_use_STARTTLS">Utilizar STARTTLS</string>
@@ -158,6 +159,7 @@
         <item>Mês</item>
     </string-array>
     <string name="dialog_reset_confirm">Repor</string>
+    <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
     <string name="dialog_apply">Aplicar</string>
     <!-- Trip history -->
     <string name="history_title">Histórico da viagem</string>
@@ -166,6 +168,7 @@
     <string name="history_current_trips">Viagens atuais:</string>
     <string name="history_dialog_filters_title">Filtros de viagem</string>
     <string name="history_dialog_filters_manual">Mostrar viagens manuais</string>
+    <!--Is this "trips since charge"?-->
     <string name="history_dialog_filters_charge">Mostrar viagens desde o carregamento</string>
     <string name="history_dialog_filters_auto">Mostrar viagens automáticas</string>
     <string name="history_dialog_filters_month">Mostrar viagens mensais</string>
