@@ -131,6 +131,8 @@
     <string name="smtp_description">Insira suas credenciais SMTP fornecidas pelo seu provedor de e-mail. Isso é usado para enviar estatísticas salvas e logs de depuração para um endereço de destino especificado pelo usuário.</string>
     <string name="smtp_address">Endereço de e-mail</string>
     <string name="smtp_password">Senha do e-mail</string>
+    <!-- Is this really a URL or a plain hostname? -->
+    <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">URL do servidor SMTP</string>
     <string name="smtp_port">Porta do servidor SMTP</string>
     <string name="smtp_use_STARTTLS">Usar STARTTLS</string>
@@ -158,6 +160,8 @@
         <item>Mês</item>
     </string-array>
     <string name="dialog_reset_confirm">Redefinir</string>
+    <!-- Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning. -->
+    <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
     <string name="dialog_apply">Aplicar</string>
     <!-- Trip history -->
     <string name="history_title">Histórico de viagem</string>
@@ -166,6 +170,8 @@
     <string name="history_current_trips">Viagens recentes:</string>
     <string name="history_dialog_filters_title">Filtros de viagem</string>
     <string name="history_dialog_filters_manual">Mostrar viagens manuais</string>
+    <!-- Is this "trips since charge"? -->
+    <!--Is this "trips since charge"?-->
     <string name="history_dialog_filters_charge">Mostrar viagens desde a carga</string>
     <string name="history_dialog_filters_auto">Mostrar viagens automáticas</string>
     <string name="history_dialog_filters_month">Mostrar viagens mensais</string>
@@ -278,6 +284,12 @@
         <item>ATENÇÃO: Atualmente o EX30 não relata nenhum valor de potência para o aplicativo. Portanto, nenhuma estatística de energia estará disponível. Atualmente, não está claro se e quando isso será corrigido pela Volvo.</item>
         <item>Foram adicionadas condições adicionais de início do acionamento (por exemplo, para o Volvo EX30)</item>
         <item>[V](0.27.3)</item>
+        <item>Problemas conhecidos: O gráfico na tela principal pode não mostrar dados atualizados. Isso será resolvido quando essa parte da IU for reformulada em uma atualização futura. Os gráficos no resumo da viagem não são afetados.</item>
+        <item>ATENÇÃO: Atualmente o EX30, Polestar 3 e 4 não relatam nenhum valor de potência para o aplicativo. Portanto, nenhuma estatística de energia estará disponível. Atualmente, não está claro se e quando isso será corrigido pela Volvo.</item>
+        <item>Adicionado um mapa aos detalhes da viagem (dependendo da implementação do rastreamento de lançamento).</item>
+        <item>Reformulou completamente a IU de configurações e detalhes de viagem. Isso faz uso de telas de paisagem como no Polestar 4.</item>
+        <item>(Play Edition) Histórico de viagens adicionado novamente, mas com informações limitadas por enquanto.</item>
+        <item>[V](0.28.0)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Atualização instalada!</string>
     <string name="dialog_changes_title_changelog">Lista de alterações</string>
@@ -316,4 +328,34 @@ Se você encontrar bugs ou quiser fazer comentários, visite o repositório GitH
  Esta ação pode levar algum tempo dependendo da quantidade de dados. Por favor, permaneça nesta página até que uma notificação de sucesso seja exibida!</string>
     <string name="snackbar_ok">OK</string>
     <string name="screenshot_taken">Captura de tela feita (total de %s).</string>
+    <string name="settings_plot_secondary_color_2">Cor secundária do gráfico</string>
+    <string name="summary_ongoing">Viagem em andamento</string>
+    <string name="summary_tab_trip_details">Detalhes da viagem</string>
+    <string name="summary_tab_charging_sessions">Sessões de Carregamento</string>
+    <string name="summary_tab_map">Mapa</string>
+    <string name="summary_no_data">Não há dados disponíveis</string>
+    <string name="summary_loading_location">Carregando localização...</string>
+    <string name="summary_location_unavailable">Localização não disponível</string>
+    <string name="summary_no_charging_sessions">Não há sessões de carregamento disponíveis nesta viagem.</string>
+    <string name="summary_trip_type">Tipo de viagem</string>
+    <string name="summary_soc_unavailable">Estado de carga indisponível</string>
+    <string name="summary_ongoing_charging_session">Sessão de carregamento em andamento...</string>
+    <!-- Compose Settings -->
+    <string name="settings_general">Geral</string>
+    <string name="settings_appearance">Aparência</string>
+    <string name="settings_privacy_location">Privacidade e localização</string>
+    <string name="settings_changelog">Registro de alterações</string>
+    <string name="settings_privacy">Política de privacidade</string>
+    <string name="settings_dev_settings">Configurações de desenvolvedor</string>
+    <string name="settings_analytics">Habilitar relatórios de falhas e análises</string>
+    <string name="settings_firebase_note">O Google Firebase não está incluído nesta compilação.</string>
+    <string name="settings_external_apis">APIs externas</string>
+    <string name="settings_trip_export">Exportação de viagem</string>
+    <string name="settings_trip_export_hint">"As exportações de viagem enviam uma solicitação ao servidor do desenvolvedor contendo os dados da sua viagem. Esses dados serão então enviados ao seu endereço especificado como um arquivo CSV. Os dados da viagem são então imediatamente excluídos do servidor do desenvolvedor."</string>
+    <string name="settings_trip_export_enable">Ativar a exportação de viagens</string>
+    <string name="settings_trip_export_mail">Endereço de e-mail para exportação da viagem</string>
+    <string name="summary_loading_trip">Carregando dados da viagem...</string>
+    <string name="settings_theme">Tema do design</string>
+    <string name="settings_plot_green">Verde</string>
+    <string name="settings_plot_white">Branco</string>
 </resources>

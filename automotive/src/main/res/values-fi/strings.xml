@@ -131,6 +131,8 @@
     <string name="smtp_description">Anna sähköpostipalveluntarjoajaltasi saadut SMTP-tunnistetietosi. Tätä käytetään tallennettujen tilastojen ja virheenkorjauslokien lähettämiseen käyttäjän määrittelemälle vastaanottajalle.</string>
     <string name="smtp_address">Sähköpostiosoite</string>
     <string name="smtp_password">SMTP-salasana</string>
+    <!-- Is this really a URL or a plain hostname? -->
+    <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">SMTP-palvelimen isäntänimi</string>
     <string name="smtp_port">SMTP-palvelimen portti</string>
     <string name="smtp_use_STARTTLS">Käytä STARTTLS:ää</string>
@@ -158,6 +160,8 @@
         <item>Kuukausi</item>
     </string-array>
     <string name="dialog_reset_confirm">Nollaa</string>
+    <!-- Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning. -->
+    <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
     <string name="dialog_apply">Aseta</string>
     <!-- Trip history -->
     <string name="history_title">Matkahistoria</string>
@@ -166,6 +170,8 @@
     <string name="history_current_trips">Nykyiset matkat:</string>
     <string name="history_dialog_filters_title">Matkasuodattimet</string>
     <string name="history_dialog_filters_manual">Näytä manuaaliset matkat</string>
+    <!-- Is this "trips since charge"? -->
+    <!--Is this "trips since charge"?-->
     <string name="history_dialog_filters_charge">Näytä matkat latauksen jälkeen</string>
     <string name="history_dialog_filters_auto">Näytä automaattiset matkat</string>
     <string name="history_dialog_filters_month">Näytä kuukausittaiset matkat</string>
@@ -278,6 +284,12 @@ Tämä toiminto kestää jonkin aikaa riippuen siirrettävästä tiedon määrä
         <item>HUOMAUTUS: EX30 ei tällä hetkellä raportoi sovellukseen mitään tehoarvoja. Siksi energiatilastoja ei ole saatavilla. Tällä hetkellä on epäselvää, korjaako Volvo tämän ja milloin.</item>
         <item>Lisätty ajon käynnistystä koskevia lisäehtoja (esimerkiksi Volvo EX30:ssä)</item>
         <item>[V](0.27.3)</item>
+        <item>Tunnettu ongelma: Päänäytön kaavio ei ehkä näytä ajantasaista tietoa. Tämä korjataan tulevassa päivityksessä, jossa uudistetaan käyttöliittymän tätä osaa. Tämä ei vaikuta kuvaajiin matkan yhteenvedossa.</item>
+        <item>HUOMAUTUS: Polestar 3, Polestar 4 ja Volvo EX30 eivät välitä tehoarvoja. Jotkin sovelluksen ominaisuudet eivät toimi, ennen kuin autovalmistajat korjaavat tämän puutteen.</item>
+        <item>Lisätty kartta matkatietoihin (riippuu julkaisukanavan toteutuksesta).</item>
+        <item>Asetusten ja matkatietojen käyttöliittymä uudistettu täysin. Tämä hyödyntää vaakasuuntaisia näyttöjä, kuten Polestar 4:ssä.</item>
+        <item>(Play-versio) Matkahistoria lisätty uudelleen, toistaiseksi rajoitetuilla tiedoilla.</item>
+        <item>[V](0.28.0)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Päivitys asennettu!</string>
     <string name="dialog_changes_title_changelog">Muutosloki</string>
@@ -316,4 +328,34 @@ Varmista ettei palvelimella ole päällekkäistä tietoa estääksesi epäuskott
 Tämä toiminto kestää jonkin aikaa riippuen siirrettävästä tiedon määrästä. Ilmoituskeskukseen lisätään edistymisilmoitus. Järjestelmää voidaan käyttää normaalisti.</string>
     <string name="snackbar_ok">OK</string>
     <string name="screenshot_taken">Kuvakaappaus otettu (yhteensä %s ).</string>
+    <string name="settings_plot_secondary_color_2">Toissijaisen kaavion väri</string>
+    <string name="summary_ongoing">Meneillään oleva matka</string>
+    <string name="summary_tab_trip_details">Matkatiedot</string>
+    <string name="summary_tab_charging_sessions">Latausistunnot</string>
+    <string name="summary_tab_map">Kartta</string>
+    <string name="summary_no_data">Tietoja ei saatavilla</string>
+    <string name="summary_loading_location">Ladataan sijaintia...</string>
+    <string name="summary_location_unavailable">Sijainti ei saatavilla</string>
+    <string name="summary_no_charging_sessions">Ei latausistuntoja tälle matkalla.</string>
+    <string name="summary_trip_type">Matkan tyyppi</string>
+    <string name="summary_soc_unavailable">Varaustaso ei saatavilla</string>
+    <string name="summary_ongoing_charging_session">Käynnissä oleva latausistunto ...</string>
+    <!-- Compose Settings -->
+    <string name="settings_general">Yleiset</string>
+    <string name="settings_appearance">Ulkonäkö</string>
+    <string name="settings_privacy_location">Yksityisyys ja sijainti</string>
+    <string name="settings_changelog">Muutosloki</string>
+    <string name="settings_privacy">Tietosuojakäytäntö</string>
+    <string name="settings_dev_settings">Kehittäjän asetukset</string>
+    <string name="settings_analytics">Ota virheraportit ja analytiikka käyttöön</string>
+    <string name="settings_firebase_note">Google Firebase ei sisälly tähän koontiversioon.</string>
+    <string name="settings_external_apis">Ulkoiset API:t</string>
+    <string name="settings_trip_export">Matkan vienti</string>
+    <string name="settings_trip_export_hint">"Matkan vienti lähettää kehittäjän palvelimelle matkatiedon sisältävän pyynnön. Nämä tiedot lähetetään CSV-tiedostona määritettyyn sähköpostiosoitteeseen. Tämän jälkeen matkatiedot poistetaan välittömästi kehittäjän palvelimelta."</string>
+    <string name="settings_trip_export_enable">Ota matkan vienti käyttöön</string>
+    <string name="settings_trip_export_mail">Sähköpostiosoite matkan vientiin</string>
+    <string name="summary_loading_trip">Ladataan matkatietoja...</string>
+    <string name="settings_theme">Design-teema</string>
+    <string name="settings_plot_green">Vihreä</string>
+    <string name="settings_plot_white">Valkoinen</string>
 </resources>
