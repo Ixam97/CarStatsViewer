@@ -131,6 +131,7 @@
     <string name="smtp_description">Ange dina SMTP-uppgifter från din e-postleverantör. Detta används för att skicka sparad statistik och felsökningsloggar till en e-postadress som anges av användaren.</string>
     <string name="smtp_address">E-postadress</string>
     <string name="smtp_password">Lösenord för SMTP</string>
+    <!-- Is this really a URL or a plain hostname? -->
     <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">SMTP server</string>
     <string name="smtp_port">SMTP server port</string>
@@ -159,6 +160,7 @@
         <item>Månad</item>
     </string-array>
     <string name="dialog_reset_confirm">Återställ statistik</string>
+    <!-- Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning. -->
     <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
     <string name="dialog_apply">Tillämpa</string>
     <!-- Trip history -->
@@ -168,6 +170,7 @@
     <string name="history_current_trips">Aktuella resor:</string>
     <string name="history_dialog_filters_title">Resefilter</string>
     <string name="history_dialog_filters_manual">Visa manuella resor</string>
+    <!-- Is this "trips since charge"? -->
     <!--Is this "trips since charge"?-->
     <string name="history_dialog_filters_charge">Visa resor sedan laddning</string>
     <string name="history_dialog_filters_auto">Visa automatiska resor</string>
