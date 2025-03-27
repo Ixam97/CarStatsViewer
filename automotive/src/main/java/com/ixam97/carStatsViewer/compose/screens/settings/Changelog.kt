@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.compose.components.CarRow
+import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 import com.ixam97.carStatsViewer.utils.ChangeLogCreator
 
 @Composable
@@ -17,7 +18,7 @@ fun Changelog() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScrollWithScrollbar(rememberScrollState())
     ) {
         val changelogMap = ChangeLogCreator.createChangelog(LocalContext.current)
 

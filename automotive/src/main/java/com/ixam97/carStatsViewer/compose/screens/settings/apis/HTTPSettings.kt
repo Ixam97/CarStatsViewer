@@ -37,6 +37,7 @@ import com.ixam97.carStatsViewer.compose.WebhookSettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.CarSegmentedButton
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
+import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 
 @Composable
 fun HTTPSettings() {
@@ -47,7 +48,7 @@ fun HTTPSettings() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScrollWithScrollbar(rememberScrollState())
     ) {
         CarRow(
             title = stringResource(R.string.http_description)

@@ -18,6 +18,7 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.AbrpSettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
+import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 
 @Composable
 fun ABRPSettings() {
@@ -26,7 +27,7 @@ fun ABRPSettings() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScrollWithScrollbar(rememberScrollState())
     ) {
         CarRow(
             title = stringResource(R.string.abrp_description)

@@ -19,6 +19,7 @@ import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.CarSegmentedButton
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
+import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 
 @Composable
 fun AppearanceSettings(viewModel: SettingsViewModel) {
@@ -28,7 +29,7 @@ fun AppearanceSettings(viewModel: SettingsViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScrollWithScrollbar(rememberScrollState())
     ) {
         Text(
             modifier = Modifier

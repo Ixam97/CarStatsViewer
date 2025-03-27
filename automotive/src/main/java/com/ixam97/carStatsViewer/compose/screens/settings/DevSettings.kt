@@ -24,6 +24,7 @@ import com.ixam97.carStatsViewer.compose.components.CarSegmentedButton
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
 import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
 import com.ixam97.carStatsViewer.compose.theme.badRed
+import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 
 @Composable
@@ -34,7 +35,7 @@ fun DevSettings(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScrollWithScrollbar(rememberScrollState())
     ) {
         CarSwitchRow(
             switchState = viewModel.devSettingsState.debugDelays,

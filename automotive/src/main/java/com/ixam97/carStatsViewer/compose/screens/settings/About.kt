@@ -22,6 +22,7 @@ import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
+import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 
 @Composable
 fun About(
@@ -30,7 +31,7 @@ fun About(
 ) = Column (
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScrollWithScrollbar(rememberScrollState())
     ) {
 
     val context = LocalContext.current

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.components.CarRow
+import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.ui.compose.util.author
@@ -58,11 +60,13 @@ fun Licenses() {
 
     var dialogLibrary by remember { mutableStateOf<DialogLibrary?>(null)}
 
+    val lazyListState = rememberLazyListState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        LazyColumn {
+        LazyColumn(state = lazyListState){
 
             items(libraries) { library ->
                 LibraryRow(
@@ -145,7 +149,7 @@ internal fun LibraryDialog(
             }
             Divider(modifier = Modifier.height(2.dp))
             Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
+                modifier = Modifier.verticalScrollWithScrollbar(rememberScrollState())
             ) {
                 val context = LocalContext.current
                 library.content.forEach { licenseContent ->

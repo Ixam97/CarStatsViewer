@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
+import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 
 @Composable
 fun GeneralSettings(
@@ -22,7 +23,7 @@ fun GeneralSettings(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScrollWithScrollbar(rememberScrollState())
     ) {
         CarSwitchRow(
             switchState = viewModel.settingsState.autoAppStart,

@@ -31,6 +31,7 @@ import com.ixam97.carStatsViewer.compose.theme.conError
 import com.ixam97.carStatsViewer.compose.theme.conLimited
 import com.ixam97.carStatsViewer.compose.theme.conUnused
 import com.ixam97.carStatsViewer.compose.theme.disabledTextColor
+import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 
 @Composable
@@ -42,7 +43,7 @@ fun ApiSettings(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScrollWithScrollbar(rememberScrollState())
     ) {
         Text(
             modifier = Modifier

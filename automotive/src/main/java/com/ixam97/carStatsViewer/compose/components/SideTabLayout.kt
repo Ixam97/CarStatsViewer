@@ -48,6 +48,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ixam97.carStatsViewer.compose.theme.CarTheme
 import com.ixam97.carStatsViewer.compose.theme.LocalBrushes
+import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 
 @Composable
 fun SideTabLayout(
@@ -136,7 +137,7 @@ fun SideTabLayout(
                         onBackClick = topLevelBackAction
                     )
                     Column(
-                        modifier = Modifier.verticalScroll(rememberScrollState())
+                        modifier = Modifier.verticalScrollWithScrollbar(rememberScrollState())
                     ) {
 
                         Spacer(modifier = Modifier.size(30.dp))

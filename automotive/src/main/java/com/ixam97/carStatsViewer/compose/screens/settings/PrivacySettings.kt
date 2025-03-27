@@ -16,6 +16,7 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
+import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 
 @Composable
 fun PrivacySettings(
@@ -25,7 +26,7 @@ fun PrivacySettings(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScrollWithScrollbar(rememberScrollState())
     ) {
         CarSwitchRow(
             switchState = viewModel.settingsState.locationTracking,
