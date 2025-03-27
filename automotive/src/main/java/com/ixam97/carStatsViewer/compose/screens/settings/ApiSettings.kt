@@ -92,42 +92,44 @@ fun ApiSettings(
                 )
             }
         )
-        Divider(Modifier.padding(horizontal = 24.dp))
-        Text(
-            modifier = Modifier
-                .padding(horizontal = 24.dp)
-                .padding(top = 24.dp, bottom = 10.dp),
-            color = MaterialTheme.colors.primary,
-            text = stringResource(R.string.settings_trip_export)
-        )
-        Divider(Modifier.padding(horizontal = 24.dp))
-        CarRow(
-            title = stringResource(R.string.settings_trip_export_hint)
-        )
-        Divider(Modifier.padding(horizontal = 24.dp))
-        CarSwitchRow(
-            enabled = false,
-            switchState = false,
-            onClick = { },
-        ) { enabled ->
+        if (viewModel.isDevEnabled) {
+            Divider(Modifier.padding(horizontal = 24.dp))
             Text(
-                text = stringResource(R.string.settings_trip_export_enable),
-                color = if (enabled) MaterialTheme.colors.onSurface else disabledTextColor
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .padding(top = 24.dp, bottom = 10.dp),
+                color = MaterialTheme.colors.primary,
+                text = stringResource(R.string.settings_trip_export)
             )
-        }
-        Divider(Modifier.padding(horizontal = 20.dp))
-        CarRow(
-            enabled = false,
-            title = stringResource(R.string.settings_trip_export_mail),
-            customContent = {
-                TextField(
-                    enabled = false,
-                    modifier = Modifier.fillMaxWidth(),
-                    value = "",
-                    onValueChange = { newValue -> },
+            Divider(Modifier.padding(horizontal = 24.dp))
+            CarRow(
+                title = stringResource(R.string.settings_trip_export_hint)
+            )
+            Divider(Modifier.padding(horizontal = 24.dp))
+            CarSwitchRow(
+                enabled = false,
+                switchState = false,
+                onClick = { },
+            ) { enabled ->
+                Text(
+                    text = stringResource(R.string.settings_trip_export_enable),
+                    color = if (enabled) MaterialTheme.colors.onSurface else disabledTextColor
                 )
             }
-        )
+            Divider(Modifier.padding(horizontal = 20.dp))
+            CarRow(
+                enabled = false,
+                title = stringResource(R.string.settings_trip_export_mail),
+                customContent = {
+                    TextField(
+                        enabled = false,
+                        modifier = Modifier.fillMaxWidth(),
+                        value = "",
+                        onValueChange = { newValue -> },
+                    )
+                }
+            )
+        }
     }
 }
 
