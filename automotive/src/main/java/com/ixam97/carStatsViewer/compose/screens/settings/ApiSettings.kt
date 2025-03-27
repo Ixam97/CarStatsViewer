@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -24,7 +26,12 @@ import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
 import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
+import com.ixam97.carStatsViewer.compose.theme.conConnected
+import com.ixam97.carStatsViewer.compose.theme.conError
+import com.ixam97.carStatsViewer.compose.theme.conLimited
+import com.ixam97.carStatsViewer.compose.theme.conUnused
 import com.ixam97.carStatsViewer.compose.theme.disabledTextColor
+import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 
 @Composable
 fun ApiSettings(
@@ -60,6 +67,13 @@ fun ApiSettings(
                     painter = painterResource(R.mipmap.ic_abrp),
                     contentDescription = null
                 )
+            },
+            trailingContent = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_connected),
+                    contentDescription = null,
+                    tint = tintFromStatus(viewModel.apiSettingsState.abrpStatus)
+                )
             }
         )
         Divider(Modifier.padding(horizontal = 20.dp))
@@ -69,6 +83,13 @@ fun ApiSettings(
             browsable = true,
             onClick = {
                 navController.navigate(SettingsScreens.APIS_HTTP)
+            },
+            trailingContent = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_connected),
+                    contentDescription = null,
+                    tint = tintFromStatus(viewModel.apiSettingsState.httpStatus)
+                )
             }
         )
         Divider(Modifier.padding(horizontal = 24.dp))
@@ -107,5 +128,14 @@ fun ApiSettings(
                 )
             }
         )
+    }
+}
+
+private fun tintFromStatus(status: ConnectionStatus): Color {
+    return when (status) {
+        ConnectionStatus.CONNECTED -> conConnected
+        ConnectionStatus.ERROR -> conError
+        ConnectionStatus.LIMITED -> conLimited
+        ConnectionStatus.UNUSED -> conUnused
     }
 }

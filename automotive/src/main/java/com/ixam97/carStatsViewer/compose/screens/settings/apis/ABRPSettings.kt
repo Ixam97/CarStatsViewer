@@ -62,5 +62,14 @@ fun ABRPSettings() {
         ) {
             Text(stringResource(R.string.settings_use_location))
         }
+        Divider(Modifier.padding(horizontal = 20.dp))
+        CarSwitchRow(
+            switchState = abrpSettingsViewModel.abrpSettingsState.showIcon,
+            onClick = { newState ->
+                if (newState) abrpSettingsViewModel.setShowIcon()
+            }
+        ) {
+            Text(stringResource(R.string.settings_apis_show_status_icon))
+        }
     }
 }

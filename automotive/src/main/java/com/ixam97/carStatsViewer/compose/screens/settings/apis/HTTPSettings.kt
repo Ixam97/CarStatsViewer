@@ -152,5 +152,14 @@ fun HTTPSettings() {
                 )
             }
         )
+        Divider(Modifier.padding(horizontal = 20.dp))
+        CarSwitchRow(
+            switchState = webhookSettingsViewModel.webhookSettingsState.showIcon,
+            onClick = { newState ->
+                if (newState) webhookSettingsViewModel.setShowIcon()
+            }
+        ) {
+            Text(stringResource(R.string.settings_apis_show_status_icon))
+        }
     }
 }
