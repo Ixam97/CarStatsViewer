@@ -1,14 +1,11 @@
 package com.ixam97.carStatsViewer.compose.screens.settings
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -17,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.ixam97.carStatsViewer.compose.DefaultColumnScrollbar
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.compose.components.CarRow
@@ -24,7 +22,6 @@ import com.ixam97.carStatsViewer.compose.components.CarSegmentedButton
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
 import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
 import com.ixam97.carStatsViewer.compose.theme.badRed
-import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 
 @Composable
@@ -32,10 +29,9 @@ fun DevSettings(
     navController: NavController,
     viewModel: SettingsViewModel
 ) {
-    Column(
+    DefaultColumnScrollbar(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScrollWithScrollbar(rememberScrollState())
     ) {
         CarSwitchRow(
             switchState = viewModel.devSettingsState.debugDelays,

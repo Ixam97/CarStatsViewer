@@ -13,12 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -40,8 +37,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.compose.DefaultColumnScrollbar
+import com.ixam97.carStatsViewer.compose.DefaultLazyListScrollbar
 import com.ixam97.carStatsViewer.compose.components.CarRow
-import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.ui.compose.util.author
@@ -66,7 +64,7 @@ fun Licenses() {
         modifier = Modifier
             .fillMaxSize()
     ) {
-        LazyColumn(state = lazyListState){
+        DefaultLazyListScrollbar(state = lazyListState){
 
             items(libraries) { library ->
                 LibraryRow(
@@ -148,9 +146,7 @@ internal fun LibraryDialog(
                 }
             }
             Divider(modifier = Modifier.height(2.dp))
-            Column(
-                modifier = Modifier.verticalScrollWithScrollbar(rememberScrollState())
-            ) {
+            DefaultColumnScrollbar {
                 val context = LocalContext.current
                 library.content.forEach { licenseContent ->
                     Text(

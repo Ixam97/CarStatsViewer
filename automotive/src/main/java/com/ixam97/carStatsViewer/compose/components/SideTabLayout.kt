@@ -19,9 +19,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -46,9 +44,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ixam97.carStatsViewer.compose.DefaultColumnScrollbar
 import com.ixam97.carStatsViewer.compose.theme.CarTheme
 import com.ixam97.carStatsViewer.compose.theme.LocalBrushes
-import com.ixam97.carStatsViewer.compose.verticalScrollWithScrollbar
 
 @Composable
 fun SideTabLayout(
@@ -136,9 +134,7 @@ fun SideTabLayout(
                         title = topLevelTitle,
                         onBackClick = topLevelBackAction
                     )
-                    Column(
-                        modifier = Modifier.verticalScrollWithScrollbar(rememberScrollState())
-                    ) {
+                    DefaultColumnScrollbar {
 
                         Spacer(modifier = Modifier.size(30.dp))
                         tabs.filter{it.type == SideTab.Type.Tab}.forEachIndexed { index, tab ->
