@@ -33,3 +33,8 @@ val clubHint = Color(0xfff7ea48)
 val badRed = Color(0xffEB1717)
 
 val slideUpBackground = Color(0xff090909)
+
+val conConnected = Color(0xFF2595FF)
+val conLimited = Color(0xFFFFBF00)
+val conError = badRed
+val conUnused = disabledTextColor

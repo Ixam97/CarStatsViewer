@@ -131,6 +131,7 @@
     <string name="smtp_description">Legg inn dine SMTP legitimasjon fra din Epostleverandør. Den er brukt for å sende lagrede statistikker og feilllogger til måladressen gitt av brukeren.</string>
     <string name="smtp_address">Epostadresse</string>
     <string name="smtp_password">Epostpassord</string>
+    <!-- Is this really a URL or a plain hostname? -->
     <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">SMTP server-hostname</string>
     <string name="smtp_port">SMPT server-port</string>
@@ -159,6 +160,7 @@
         <item>Måned</item>
     </string-array>
     <string name="dialog_reset_confirm">Resett</string>
+    <!-- Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning. -->
     <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
     <string name="dialog_apply">Bruk</string>
     <!-- Trip history -->
@@ -168,6 +170,7 @@
     <string name="history_current_trips">Nåværende turer:</string>
     <string name="history_dialog_filters_title">Tur filtre</string>
     <string name="history_dialog_filters_manual">Vis manuelle turer</string>
+    <!-- Is this "trips since charge"? -->
     <!--Is this "trips since charge"?-->
     <string name="history_dialog_filters_charge">Vis turer av denne type siden siste lading.</string>
     <string name="history_dialog_filters_auto">Vis automatiske turer</string>

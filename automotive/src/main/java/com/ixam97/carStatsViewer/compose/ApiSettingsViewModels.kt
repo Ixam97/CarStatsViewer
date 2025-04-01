@@ -24,13 +24,15 @@ class AbrpSettingsViewModel: ViewModel() {
     data class AbrpSettingsState(
         val token: String = "",
         val enabled: Boolean = false,
-        val useLocation: Boolean = false
+        val useLocation: Boolean = false,
+        val showIcon: Boolean = false
     )
 
     var abrpSettingsState by mutableStateOf(AbrpSettingsState(
         token = preferences.abrpGenericToken,
         enabled = preferences.abrpUseApi,
-        useLocation = preferences.abrpUseLocation
+        useLocation = preferences.abrpUseLocation,
+        showIcon = preferences.mainViewConnectionApi == 0
     ))
         private set
 
@@ -53,6 +55,13 @@ class AbrpSettingsViewModel: ViewModel() {
             useLocation = newValue
         )
         valuesChanged = true
+    }
+
+    fun setShowIcon() {
+        preferences.mainViewConnectionApi = 0
+        abrpSettingsState = abrpSettingsState.copy(
+            showIcon = true
+        )
     }
 
     override fun onCleared() {
@@ -81,7 +90,8 @@ class WebhookSettingsViewModel: ViewModel() {
         val enabled: Boolean = false,
         val useLocation: Boolean = false,
         val debugAbrp: Boolean = false,
-        val telemetryType: Int = 0
+        val telemetryType: Int = 0,
+        val showIcon: Boolean = false
     )
 
     var webhookSettingsState by mutableStateOf(WebhookSettingsState(
@@ -91,7 +101,8 @@ class WebhookSettingsViewModel: ViewModel() {
         enabled = preferences.httpLiveDataEnabled,
         useLocation = preferences.httpLiveDataLocation,
         debugAbrp = preferences.httpLiveDataSendABRPDataset,
-        telemetryType = preferences.httpApiTelemetryType
+        telemetryType = preferences.httpApiTelemetryType,
+        showIcon = preferences.mainViewConnectionApi == 1
     ))
         private set
 
@@ -142,6 +153,13 @@ class WebhookSettingsViewModel: ViewModel() {
             telemetryType = newValue
         )
         valuesChanged = true
+    }
+
+    fun setShowIcon() {
+        preferences.mainViewConnectionApi = 1
+        webhookSettingsState = webhookSettingsState.copy(
+            showIcon = true
+        )
     }
 
     override fun onCleared() {

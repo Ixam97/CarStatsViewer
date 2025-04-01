@@ -159,11 +159,13 @@
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
+        <!--
         <item>PLEASE NOTE: Polestar 3, Polestar 4 and Volvo EX30 do not provide any power values. Not all app features will work until this is fixed by the OEMs!</item>
         <item>Added a map to trip details (depending on release track implementation).</item>
         <item>Completely overhauled the UI of settings and trip details. This makes use of landscape screens like in the Polestar 4.</item>
         <item>(Play Edition) Re-Added trip history, but with limited information for now.</item>
         <item>[V](0.28.0)</item>
+        -->
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
@@ -288,6 +290,7 @@
     <string name="settings_apis_smtp">SMTP Login</string>
     <string name="settings_apis_use">Use API</string>
     <string name="settings_apis_connection_selector">Connectivity icon in main view:</string>
+    <string name="settings_apis_show_status_icon">Show status icon on main screen</string>
 
     <!-- Compose Settings -->
     <string name="settings_general">General</string>

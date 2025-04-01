@@ -1,15 +1,12 @@
 package com.ixam97.carStatsViewer.compose.screens.settings.apis
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -33,6 +30,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.compose.DefaultColumnScrollbar
 import com.ixam97.carStatsViewer.compose.WebhookSettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.CarSegmentedButton
@@ -44,10 +42,9 @@ fun HTTPSettings() {
 
     var passwordVisible by remember { mutableStateOf(false) }
 
-    Column(
+    DefaultColumnScrollbar(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
     ) {
         CarRow(
             title = stringResource(R.string.http_description)
@@ -152,5 +149,14 @@ fun HTTPSettings() {
                 )
             }
         )
+        Divider(Modifier.padding(horizontal = 20.dp))
+        CarSwitchRow(
+            switchState = webhookSettingsViewModel.webhookSettingsState.showIcon,
+            onClick = { newState ->
+                if (newState) webhookSettingsViewModel.setShowIcon()
+            }
+        ) {
+            Text(stringResource(R.string.settings_apis_show_status_icon))
+        }
     }
 }

@@ -59,6 +59,7 @@ aboutlibraries-core = { group = "com.mikepenz", name = "aboutlibraries-core", ve
 aboutlibraries-compose = { group = "com.mikepenz", name = "aboutlibraries-compose", version.ref = "aboutlibraries" }
 airbnb-paris = { group = "com.airbnb.android", name = "paris", version.ref = "paris"}
 github-egm96 = { group = "com.github.matthiaszimmermann", name = "EGM96", version = "master-SNAPSHOT"}
+github-scrollbar = {group = "com.github.nanihadesuka", name = "LazyColumnScrollbar", version = "2.2.0"}
 
 squareup-leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary"}
 

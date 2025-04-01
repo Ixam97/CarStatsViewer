@@ -133,6 +133,7 @@ dependencies {
     implementation libs.aboutlibraries.compose
     implementation libs.airbnb.paris
     implementation libs.github.egm96
+    implementation libs.github.scrollbar
     implementation libs.retrofit
     implementation libs.retrofit.converter.gson
 

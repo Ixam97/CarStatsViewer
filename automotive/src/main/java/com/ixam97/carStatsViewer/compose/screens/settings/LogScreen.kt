@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ixam97.carStatsViewer.compose.DefaultLazyListScrollbar
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.theme.polestarOrange
 import com.ixam97.carStatsViewer.database.log.LogEntry
@@ -47,7 +48,7 @@ fun LogScreen(viewModel: SettingsViewModel) {
             }
         }
         else {
-            LazyColumn(
+            DefaultLazyListScrollbar(
                 reverseLayout = true
             ) {
                 items(logRows.reversed()) { logRow ->

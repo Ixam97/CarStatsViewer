@@ -18,8 +18,8 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.log.LogEntry
+import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitBody
-import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitRepository
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -67,6 +67,11 @@ class SettingsViewModel:
         val debugColors: Boolean = false,
     )
 
+    data class ApiSettingsState(
+        val abrpStatus: ConnectionStatus = ConnectionStatus.UNUSED,
+        val httpStatus: ConnectionStatus = ConnectionStatus.UNUSED
+    )
+
     private val _themeSettingState = MutableStateFlow<Int>(preferences.colorTheme)
     val themeSettingStateFLow = _themeSettingState.asStateFlow()
 
@@ -83,6 +88,9 @@ class SettingsViewModel:
         private set
 
     var log by mutableStateOf<List<LogEntry>?>(null)
+        private set
+
+    var apiSettingsState by mutableStateOf(ApiSettingsState())
         private set
 
     private var versionClickedNum: Int = 0
@@ -126,6 +134,16 @@ class SettingsViewModel:
 
     init {
         initStates()
+
+        viewModelScope.launch {
+            CarStatsViewer.watchdog.watchdogStateFlow.collect {
+                apiSettingsState = apiSettingsState.copy(
+                    abrpStatus = ConnectionStatus.fromInt(it.apiState[CarStatsViewer.liveDataApis[0].apiIdentifier]?:0),
+                    httpStatus = ConnectionStatus.fromInt(it.apiState[CarStatsViewer.liveDataApis[1].apiIdentifier]?:0),
+                )
+            }
+        }
+
     }
 
     fun finishActivity() = _finishActivityLiveData.postValue(Event(true))

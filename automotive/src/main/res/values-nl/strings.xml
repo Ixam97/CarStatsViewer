@@ -131,6 +131,7 @@
     <string name="smtp_description">Voer uw SMTP-gegevens in die u van uw e-mailprovider heeft gekregen. Dit wordt gebruikt om opgeslagen statistieken en debug-logs naar een door de gebruiker opgegeven doeladres te sturen.</string>
     <string name="smtp_address">E-mailadres</string>
     <string name="smtp_password">E-mail (SMTP) wachtwoord</string>
+    <!-- Is this really a URL or a plain hostname? -->
     <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">SMTP-server-hostnaam</string>
     <string name="smtp_port">SMTP-serverpoort</string>
@@ -159,6 +160,7 @@
         <item>Maand</item>
     </string-array>
     <string name="dialog_reset_confirm">Resetten</string>
+    <!-- Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning. -->
     <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
     <string name="dialog_apply">Toepassen</string>
     <!-- Trip history -->
@@ -168,6 +170,7 @@
     <string name="history_current_trips">Huidige ritten:</string>
     <string name="history_dialog_filters_title">Ritfilters</string>
     <string name="history_dialog_filters_manual">Toon handmatige ritten</string>
+    <!-- Is this "trips since charge"? -->
     <!--Is this "trips since charge"?-->
     <string name="history_dialog_filters_charge">Toon ritten sinds laadbeurt</string>
     <string name="history_dialog_filters_auto">Toon automatische ritten</string>

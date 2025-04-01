@@ -131,6 +131,7 @@
     <string name="smtp_description">Anna sähköpostipalveluntarjoajaltasi saadut SMTP-tunnistetietosi. Tätä käytetään tallennettujen tilastojen ja virheenkorjauslokien lähettämiseen käyttäjän määrittelemälle vastaanottajalle.</string>
     <string name="smtp_address">Sähköpostiosoite</string>
     <string name="smtp_password">SMTP-salasana</string>
+    <!-- Is this really a URL or a plain hostname? -->
     <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">SMTP-palvelimen isäntänimi</string>
     <string name="smtp_port">SMTP-palvelimen portti</string>
@@ -159,6 +160,7 @@
         <item>Kuukausi</item>
     </string-array>
     <string name="dialog_reset_confirm">Nollaa</string>
+    <!-- Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning. -->
     <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
     <string name="dialog_apply">Aseta</string>
     <!-- Trip history -->
@@ -168,6 +170,7 @@
     <string name="history_current_trips">Nykyiset matkat:</string>
     <string name="history_dialog_filters_title">Matkasuodattimet</string>
     <string name="history_dialog_filters_manual">Näytä manuaaliset matkat</string>
+    <!-- Is this "trips since charge"? -->
     <!--Is this "trips since charge"?-->
     <string name="history_dialog_filters_charge">Näytä matkat latauksen jälkeen</string>
     <string name="history_dialog_filters_auto">Näytä automaattiset matkat</string>

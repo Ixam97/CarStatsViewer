@@ -137,6 +137,7 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
     <string name="smtp_description">Entrez vos informations d\'identification fournies par votre fournisseur de messagerie SMTP. Les statistiques et journaux de débogage seront envoyés à une adresse spécifiée par l\'utilisateur.</string>
     <string name="smtp_address">Adresse courriel</string>
     <string name="smtp_password">Mot de passe du serveur SMTP</string>
+    <!-- Is this really a URL or a plain hostname? -->
     <!--Is this really a URL or a plain hostname?-->
     <string name="smtp_server">Nom du serveur SMTP</string>
     <string name="smtp_port">Port du serveur SMTP</string>
@@ -165,6 +166,7 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
         <item>Mois</item>
     </string-array>
     <string name="dialog_reset_confirm">Réinitialiser</string>
+    <!-- Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning. -->
     <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
     <string name="dialog_apply">Appliquer</string>
     <!-- Trip history -->
@@ -174,6 +176,7 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
     <string name="history_current_trips">Trajets courants:</string>
     <string name="history_dialog_filters_title">Filtres de trajets</string>
     <string name="history_dialog_filters_manual">Afficher trajets manuels</string>
+    <!-- Is this "trips since charge"? -->
     <!--Is this "trips since charge"?-->
     <string name="history_dialog_filters_charge">Afficher trajets depuis la recharge</string>
     <string name="history_dialog_filters_auto">Afficher les trajets automatiques</string>
