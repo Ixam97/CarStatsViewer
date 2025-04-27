@@ -7,20 +7,21 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.ixam97.carStatsViewer.utils.InAppLogger
 import java.io.File
+
 
 val polestarFont = FontFamily(
         Font(
             File("/product/fonts/PolestarUnica77-Regular.otf"),
+            // volvosansgloballight1
             weight = FontWeight.Normal
         ),
         Font(
             File("/product/fonts/PolestarUnica77-Medium.otf"),
+            // volvosansglobalmedium1
             weight = FontWeight.Medium
         )
     )
-
 
 val defaultTypography = Typography(
     defaultFontFamily = FontFamily.Default,
@@ -28,6 +29,12 @@ val defaultTypography = Typography(
         // fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 30.sp,
+        color = Color.White
+    ),
+    body2 = TextStyle(
+        // fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 28.sp,
         color = Color.White
     ),
     button = TextStyle(
@@ -44,10 +51,17 @@ val defaultTypography = Typography(
     h2 = TextStyle(
         // fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
-        fontSize = 35.sp,
+        fontSize = 32.sp,
+        color = Color.White
+    ),
+    h6 = TextStyle(
+        // fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = 32.sp,
         color = Color.White
     )
 )
+
 
 val defaultPolestarTypography = Typography(
     defaultFontFamily = polestarFont,

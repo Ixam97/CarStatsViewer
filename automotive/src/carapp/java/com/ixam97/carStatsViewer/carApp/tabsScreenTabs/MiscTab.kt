@@ -3,7 +3,6 @@ package com.ixam97.carStatsViewer.carApp.tabsScreenTabs
 import android.content.Intent
 import androidx.annotation.OptIn
 import androidx.car.app.annotations.ExperimentalCarApi
-import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
@@ -15,13 +14,14 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carApp.TabsScreen
 import com.ixam97.carStatsViewer.carApp.RealTimeDataScreen
+import com.ixam97.carStatsViewer.carApp.TripHistoryScreen
 import com.ixam97.carStatsViewer.ui.activities.DebugActivity
 import com.ixam97.carStatsViewer.ui.activities.HistoryActivity
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
 
 import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
+import com.ixam97.carStatsViewer.compose.ComposeTripDetailsActivity
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
-import com.ixam97.carStatsViewer.ui.activities.SettingsActivity
 
 @OptIn(ExperimentalCarApi::class)
 internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
@@ -55,7 +55,8 @@ internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
             setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_history)).build())
             setBrowsable(true)
             setOnClickListener(ParkedOnlyOnClickListener.create {
-                carContext.startActivity(historyActivityIntent)
+                // carContext.startActivity(historyActivityIntent)
+                screenManager.push(TripHistoryScreen(carContext))
             })
         }.build())
     }.build()

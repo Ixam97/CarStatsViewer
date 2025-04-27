@@ -12,6 +12,7 @@ import androidx.car.app.model.SectionedItemList
 import androidx.core.graphics.drawable.IconCompat
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carApp.TabsScreen
+import com.ixam97.carStatsViewer.carApp.TripHistoryScreen
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 import com.ixam97.carStatsViewer.ui.activities.SettingsApisActivity
 
@@ -31,6 +32,21 @@ internal fun TabsScreen.apiStatusList() = ListTemplate.Builder().apply {
         }.build(),
         "Real time data"
     )) */
+    addSectionedList(SectionedItemList.create(
+        ItemList.Builder().apply {
+            addItem(Row.Builder().apply{
+                setTitle(carContext.getString(R.string.history_title))
+                addText(carContext.getString(R.string.car_app_legacy_history_desc))
+                setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_history)).build())
+                setBrowsable(true)
+                setOnClickListener(ParkedOnlyOnClickListener.create {
+                    // carContext.startActivity(historyActivityIntent)
+                    screenManager.push(TripHistoryScreen(carContext))
+                })
+            }.build())
+        }.build(),
+        carContext.getString(R.string.history_title)
+    ))
     addSectionedList(SectionedItemList.create(
         ItemList.Builder().apply {
 

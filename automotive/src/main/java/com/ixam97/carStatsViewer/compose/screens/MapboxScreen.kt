@@ -28,7 +28,8 @@ fun MapboxScreen() {
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            trip = trip
+            trip = trip,
+            chargingMarkerOnClick = {}
         )
         Text(
             modifier = Modifier.padding(vertical = 10.dp, horizontal = 25.dp),

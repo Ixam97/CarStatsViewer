@@ -18,6 +18,7 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.adapters.TripHistoryAdapter
+import com.ixam97.carStatsViewer.compose.ComposeTripDetailsActivity
 import com.ixam97.carStatsViewer.database.tripData.ChargingPoint
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.databinding.ActivityHistoryBinding
@@ -140,6 +141,12 @@ class HistoryActivity  : FragmentActivity() {
 
     private fun openSummary(sessionId: Long) {
 
+         val summaryIntent =
+             Intent(this, ComposeTripDetailsActivity::class.java)
+         summaryIntent.putExtra("SessionId", sessionId)
+         startActivity(summaryIntent)
+
+        /*
         CoroutineScope(Dispatchers.IO).launch {
             val session = CarStatsViewer.tripDataSource.getDrivingSession(sessionId) ?: return@launch
             if ((appPreferences.mainViewTrip + 1) != session.session_type && (session.end_epoch_time?:0) <= 0) {
@@ -159,6 +166,7 @@ class HistoryActivity  : FragmentActivity() {
                 }
             }
         }
+        */
     }
 
     private fun startMultiSelectMode(sessionId: Long, widget: TripHistoryRowWidget) {

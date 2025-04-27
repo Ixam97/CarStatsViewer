@@ -19,6 +19,8 @@ class AppPreferences(
     private val VersionString = AppPreference<String>(context.getString(R.string.preference_version_key),"", sharedPref)
 
     private val Debug = AppPreference<Boolean>(context.getString(R.string.preference_debug_key), false, sharedPref)
+    private val DebugDelays = AppPreference<Boolean>("preference_debug_delays", false, sharedPref)
+    private val DebugColors = AppPreference<Boolean>("preference_debug_colors", false, sharedPref)
     private val Notification = AppPreference<Boolean>(context.getString(R.string.preference_notifications_key), false, sharedPref)
     private val ConsumptionUnit = AppPreference<Boolean>(context.getString(R.string.preference_consumption_unit_key), false, sharedPref)
     // private //val ExperimentalLayout = AppPreference<Boolean>(context.getString(R.string.preferences_notifications_key), false, sharedPref)
@@ -68,6 +70,8 @@ class AppPreferences(
     var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
     var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
+    var debugDelays: Boolean get() = DebugDelays.value; set(value) {DebugDelays.value = value}
+    var debugColors: Boolean get() = DebugColors.value; set(value) {DebugColors.value = value}
     var notifications: Boolean get() = Notification.value; set(value) {Notification.value = value}
     var consumptionUnit: Boolean get() = ConsumptionUnit.value; set(value) {ConsumptionUnit.value = value}
     var plotSpeed: Boolean get() = PlotSpeed.value; set(value) {PlotSpeed.value = value}

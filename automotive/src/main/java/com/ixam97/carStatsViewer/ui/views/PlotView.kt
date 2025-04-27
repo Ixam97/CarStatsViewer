@@ -10,6 +10,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.Shader
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
@@ -48,7 +49,10 @@ import kotlin.math.roundToInt
 
 class PlotView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    attrs: AttributeSet? = null,
+    textSize: Float? = null,
+    xMargin: Int? = null,
+    yMargin: Int? = null
 ) : View(context, attrs) {
     // companion object {
     //     var textSize = 26f
@@ -56,9 +60,9 @@ class PlotView @JvmOverloads constructor(
     //     var yMargin = 0
     // }
 
-    var textSize: Float
-    var xMargin: Int
-    var yMargin: Int
+    var mTextSize: Float
+    var mXMargin: Int
+    var mYMargin: Int
 
     /*var xMargin: Int = 100
         set(value) {
@@ -151,15 +155,15 @@ class PlotView @JvmOverloads constructor(
     private var dimensionHighlightAt : Float? = null
         set(value) {
             val coerce = value
-                ?.coerceAtLeast(xMargin.toFloat())
-                ?.coerceAtMost((width - xMargin).toFloat())
+                ?.coerceAtLeast(mXMargin.toFloat())
+                ?.coerceAtMost((width - mXMargin).toFloat())
 
             val diff = coerce != field
             field = coerce
             if (diff) {
                 dimensionHighlightAtPercentage = when (coerce) {
                     null -> null
-                    else -> (1f / (width.toFloat() - 2 * xMargin) * (coerce - xMargin))
+                    else -> (1f / (width.toFloat() - 2 * mXMargin) * (coerce - mXMargin))
                         .coerceAtLeast(0f)
                         .coerceAtMost(1f)
                 }
@@ -201,12 +205,17 @@ class PlotView @JvmOverloads constructor(
     init {
         val attributes = context.obtainStyledAttributes(attrs, R.styleable.PlotView)
         try {
-            textSize = attributes.getDimension(R.styleable.PlotView_baseTextSize, 26f)
-            xMargin = attributes.getDimension(R.styleable.PlotView_xMargin, 0f).toInt()
-            yMargin = attributes.getDimension(R.styleable.PlotView_yMargin, 0f).toInt()
+            mTextSize = attributes.getDimension(R.styleable.PlotView_baseTextSize, 26f)
+            mXMargin = attributes.getDimension(R.styleable.PlotView_xMargin, 0f).toInt()
+            mYMargin = attributes.getDimension(R.styleable.PlotView_yMargin, 0f).toInt()
         } finally {
             attributes.recycle()
         }
+
+        if (textSize != null) { mTextSize = textSize }
+        if (xMargin != null) { mXMargin = xMargin }
+        if (yMargin != null) { mYMargin = yMargin }
+
         setupPaint()
         appPreferences = AppPreferences(context)
 
@@ -219,7 +228,7 @@ class PlotView @JvmOverloads constructor(
         val typedValue = TypedValue()
         context.theme.resolveAttribute(android.R.attr.colorControlActivated, typedValue, true)
 
-        val basePaint = PlotPaint.basePaint(textSize)
+        val basePaint = PlotPaint.basePaint(mTextSize)
 
         labelLinePaint = Paint(basePaint)
         labelLinePaint.color = getColor(context, R.color.grid_line_color)
@@ -244,11 +253,11 @@ class PlotView @JvmOverloads constructor(
         for (type in PlotMarkerType.values()) {
             when (type) {
                 PlotMarkerType.CHARGE -> {
-                    markerPaint[type] = PlotMarkerPaint.byColor(getColor(context, R.color.charge_marker), textSize)
+                    markerPaint[type] = PlotMarkerPaint.byColor(getColor(context, R.color.charge_marker), mTextSize)
                     markerIcon[type] = getVectorBitmap(context, R.drawable.ic_marker_charge)
                 }
                 PlotMarkerType.PARK -> {
-                    markerPaint[type] = PlotMarkerPaint.byColor(getColor(context, R.color.park_marker), textSize)
+                    markerPaint[type] = PlotMarkerPaint.byColor(getColor(context, R.color.park_marker), mTextSize)
                     markerIcon[type] = getVectorBitmap(context, R.drawable.ic_marker_park)
                 }
             }
@@ -272,7 +281,7 @@ class PlotView @JvmOverloads constructor(
                 drawable.setBounds(0, 0, canvas.width, canvas.height)
                 drawable.draw(canvas)
 
-                val factor = textSize / canvas.width
+                val factor = mTextSize / canvas.width
 
                 return Bitmap.createScaledBitmap(
                     bitmap,
@@ -339,7 +348,7 @@ class PlotView @JvmOverloads constructor(
     private fun x(value: Float?, maxX: Float): Float? {
         return when (value) {
             null -> null
-            else -> xMargin + (maxX - (2 * xMargin)) * value
+            else -> mXMargin + (maxX - (2 * mXMargin)) * value
         }
     }
 
@@ -351,8 +360,8 @@ class PlotView @JvmOverloads constructor(
         return when (value) {
             null -> null
             else -> {
-                val px = maxY - (2 * yMargin)
-                yMargin + px - px * value
+                val px = maxY - (2 * mYMargin)
+                mYMargin + px - px * value
             }
         }
     }
@@ -545,7 +554,7 @@ class PlotView @JvmOverloads constructor(
         val maxX = mWidth.toFloat()
         val maxY = mHeight.toFloat()
 
-        canvas.drawRect(xMargin.toFloat(), yMargin.toFloat(), maxX - xMargin, maxY - yMargin, backgroundPaint)
+        canvas.drawRect(mXMargin.toFloat(), mYMargin.toFloat(), maxX - mXMargin, maxY - mYMargin, backgroundPaint)
     }
 
     private fun drawXLines(canvas: Canvas) {
@@ -581,7 +590,7 @@ class PlotView @JvmOverloads constructor(
             if (xPos < 0f || xPos > distanceDimension) continue
 
             val cordX = x(xPos, 0f, distanceDimension, maxX)!!
-            val cordY = maxY - yMargin
+            val cordY = maxY - mYMargin
 
             drawXLine(canvas, cordX, maxY, labelLinePaint)
 
@@ -599,7 +608,7 @@ class PlotView @JvmOverloads constructor(
                 canvas.drawText(
                     label,
                     cordX - bounds.width() / 2,
-                    cordY + yMargin / 2 + bounds.height() / 2,
+                    cordY + mYMargin / 2 + bounds.height() / 2,
                     labelPaint
                 )
             }
@@ -617,8 +626,8 @@ class PlotView @JvmOverloads constructor(
     private fun drawXLine(canvas: Canvas, cord: Float?, maxY: Float, paint: Paint?) {
         if (cord == null) return
         val path = Path()
-        path.moveTo(cord, yMargin.toFloat())
-        path.lineTo(cord, maxY - yMargin)
+        path.moveTo(cord, mYMargin.toFloat())
+        path.lineTo(cord, maxY - mYMargin)
         canvas.drawPath(path, paint ?: labelLinePaint)
     }
 
@@ -680,7 +689,7 @@ class PlotView @JvmOverloads constructor(
                         else -> when (configuration.DimensionSmoothingType ?: dimensionSmoothingType) {
                             PlotDimensionSmoothingType.VALUE -> configuration.DimensionSmoothing ?: dimensionSmoothingByConfig
                             PlotDimensionSmoothingType.PERCENTAGE -> minMaxDimension * dimensionSmoothingByConfig
-                            PlotDimensionSmoothingType.PIXEL -> minMaxDimension * (1f / (maxX - (2 * xMargin)) * dimensionSmoothingByConfig)
+                            PlotDimensionSmoothingType.PIXEL -> minMaxDimension * (1f / (maxX - (2 * mXMargin)) * dimensionSmoothingByConfig)
                             else -> null
                         }
                     }
@@ -887,7 +896,7 @@ class PlotView @JvmOverloads constructor(
             val startX = markerGroup.value.mapNotNull { x(it.startByDimension(dimension), minDimension, maxDimension, maxX) }.minOfOrNull { it } ?: continue
             val endX = markerGroup.value.mapNotNull { x(it.endByDimension(dimension), minDimension, maxDimension, maxX) }.maxOfOrNull { it }
 
-            if (startX < xMargin) continue
+            if (startX < mXMargin) continue
 
             if (markerXLimit == 0f) {
                 markerXLimit = startX
@@ -933,12 +942,12 @@ class PlotView @JvmOverloads constructor(
         canvas.drawBitmap(
             icon,
             xLimit - (labelPaint.textSize / 2f),
-            (yMargin / 3f),
+            (mYMargin / 3f),
             paint
         )
 
         var yStart = when (labels.size) {
-            1 -> yMargin - labelPaint.textSize + padding
+            1 -> mYMargin - labelPaint.textSize + padding
             else -> labelPaint.textSize + padding / 2
         }
 
@@ -965,8 +974,8 @@ class PlotView @JvmOverloads constructor(
 
         val center = x.roundToInt().toFloat() + multiplier
 
-        val top = yMargin.toFloat() + borderLinePaint.strokeWidth
-        val bottom = canvas.height - yMargin.toFloat() - borderLinePaint.strokeWidth - 1
+        val top = mYMargin.toFloat() + borderLinePaint.strokeWidth
+        val bottom = canvas.height - mYMargin.toFloat() - borderLinePaint.strokeWidth - 1
 
         val points = arrayOf(
             PointF(center, top + 15f),
@@ -1052,7 +1061,7 @@ class PlotView @JvmOverloads constructor(
 
                     val labelCordX = when (labelPosition) {
                         PlotLabelPosition.LEFT -> 0f // textSize
-                        PlotLabelPosition.RIGHT -> maxX - xMargin + textSize / 2
+                        PlotLabelPosition.RIGHT -> maxX - mXMargin + mTextSize / 2
                         else -> null
                     }
 
@@ -1062,7 +1071,7 @@ class PlotView @JvmOverloads constructor(
                         if (labelPosition !== PlotLabelPosition.NONE && labelCordX != null) {
                             if (configuration.Unit.isNotEmpty()) {
                                 canvas.drawText(configuration.Unit, labelCordX + labelUnitXOffset,
-                                    yMargin - (yMargin / 3f), labelPaint)
+                                    mYMargin - (mYMargin / 3f), labelPaint)
                             }
 
                             for (i in 0 until yLineCount) {
@@ -1074,7 +1083,7 @@ class PlotView @JvmOverloads constructor(
                             }
                         }
 
-                        if (highlightCordY != null && highlightCordY in yMargin.toFloat() .. maxY - yMargin) {
+                        if (highlightCordY != null && highlightCordY in mYMargin.toFloat() .. maxY - mYMargin) {
                             when (highlightMethod) {
                                 PlotHighlightMethod.AVG_BY_DIMENSION,
                                 PlotHighlightMethod.AVG_BY_INDEX,
@@ -1094,11 +1103,11 @@ class PlotView @JvmOverloads constructor(
                     } else {
                         if (labelCordX != null && highlightCordY != null) {
                             val highlightCordYLimited = highlightCordY
-                                .coerceAtLeast(yMargin.toFloat())
-                                .coerceAtMost(maxY - yMargin)
+                                .coerceAtLeast(mYMargin.toFloat())
+                                .coerceAtMost(maxY - mYMargin)
 
                             val label = label((highlight!! - valueCorrectionY) / configuration.Divider, configuration.LabelFormat, highlightMethod)
-                            paint.HighlightLabel.textSize = textSize * 1.25f
+                            paint.HighlightLabel.textSize = mTextSize * 1.25f
                             val labelWidth = paint.HighlightLabel.measureText(label)
                             val labelHeight = paint.HighlightLabel.textSize
                             val textBoxMargin = paint.HighlightLabel.textSize / 3.5f
@@ -1106,18 +1115,18 @@ class PlotView @JvmOverloads constructor(
 
 
                             val adjustX = if (labelPosition == PlotLabelPosition.RIGHT) {
-                                if (labelWidth + 2 * textBoxMargin > xMargin + paint.Plot.strokeWidth * 4) {
+                                if (labelWidth + 2 * textBoxMargin > mXMargin + paint.Plot.strokeWidth * 4) {
                                     maxX - (labelWidth + textBoxMargin + paint.Plot.strokeWidth * 2)
                                 } else {
-                                    maxX - xMargin - textBoxMargin - paint.Plot.strokeWidth * 2
+                                    maxX - mXMargin - textBoxMargin - paint.Plot.strokeWidth * 2
                                 }
                                 //labelCordX + xMargin - (labelWidth + paint.Plot.strokeWidth * 4 - labelUnitXOffset)//  + labelUnitXOffset
 
                             } else {
-                                if (labelWidth + 2 * textBoxMargin > xMargin + paint.Plot.strokeWidth * 4) {
+                                if (labelWidth + 2 * textBoxMargin > mXMargin + paint.Plot.strokeWidth * 4) {
                                     labelCordX + textBoxMargin + paint.Plot.strokeWidth * 2
                                 } else {
-                                    xMargin - labelWidth + textBoxMargin + paint.Plot.strokeWidth * 2
+                                    mXMargin - labelWidth + textBoxMargin + paint.Plot.strokeWidth * 2
                                 }
                             }
 
@@ -1147,7 +1156,7 @@ class PlotView @JvmOverloads constructor(
 
     private fun drawYLine(canvas: Canvas, cord: Float?, maxX: Float, paint: Paint?) {
         if (cord == null) return
-        drawLine(canvas, xMargin.toFloat(), cord, maxX - xMargin, cord, paint ?: labelLinePaint)
+        drawLine(canvas, mXMargin.toFloat(), cord, maxX - mXMargin, cord, paint ?: labelLinePaint)
     }
 
     private fun drawLine(canvas: Canvas, x1: Float, y1: Float, x2: Float, y2: Float, paint: Paint) {
@@ -1160,15 +1169,16 @@ class PlotView @JvmOverloads constructor(
     private fun restrictCanvas(canvas: Canvas, maxX: Float, maxY: Float, xArea: Boolean = true, yArea: Boolean = true) {
         // restrict canvas drawing region
         canvas.save()
-        if (yArea) {
-            canvas.clipOutRect(0f, 0f, maxX, yMargin.toFloat()) // TOP
-            canvas.clipOutRect(0f, maxY - yMargin, maxX, maxY)  // BOTTOM
-        }
+        // if (yArea) {
+        //     canvas.clipOutRect(0f, 0f, maxX, mYMargin.toFloat()) // TOP
+        //     canvas.clipOutRect(0f, maxY - mYMargin, maxX, maxY)  // BOTTOM
+        // }
+        // if (xArea) {
+        //     canvas.clipOutRect(0f, 0f, mXMargin.toFloat(), maxY) // LEFT
+        //     canvas.clipOutRect(maxX - mXMargin, 0f, maxX, maxY)  // RIGHT
+        // }
 
-        if (xArea) {
-            canvas.clipOutRect(0f, 0f, xMargin.toFloat(), maxY) // LEFT
-            canvas.clipOutRect(maxX - xMargin, 0f, maxX, maxY)  // RIGHT
-        }
+        canvas.clipRect(RectF(0f, 0f + mYMargin, maxX, maxY - mYMargin))
     }
 
     private fun timeLabel(time: Long): String {

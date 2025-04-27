@@ -11,15 +11,4 @@ import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 // This is a dummy class
 object Mapbox: MapboxInterface {
     override fun isDummy() = true
-
-    @Composable
-    override fun MapBoxContainer(modifier: Modifier, trip: DrivingSession?) {
-        Box (
-            modifier = modifier,
-            contentAlignment = Alignment.Center
-        ) {
-            Text("No Mapbox API configured!")
-        }
-
-    }
 }

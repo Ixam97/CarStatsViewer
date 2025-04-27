@@ -1,67 +1,133 @@
 package com.ixam97.carStatsViewer.compose.screens
 
-import android.view.WindowInsets.Side
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Create
+import androidx.compose.material.icons.outlined.DataObject
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.SideTab
 import com.ixam97.carStatsViewer.compose.components.SideTabLayout
-import com.ixam97.carStatsViewer.compose.screens.settingsScreens.AboutScreen
-import com.ixam97.carStatsViewer.compose.screens.settingsScreens.AppearanceScreen
-import com.ixam97.carStatsViewer.compose.screens.settingsScreens.ChangelogScreen
-import com.ixam97.carStatsViewer.compose.screens.settingsScreens.GeneralSettingsScreen
+import com.ixam97.carStatsViewer.compose.screens.settings.About
+import com.ixam97.carStatsViewer.compose.screens.settings.ApiSettings
+import com.ixam97.carStatsViewer.compose.screens.settings.AppearanceSettings
+import com.ixam97.carStatsViewer.compose.screens.settings.Changelog
+import com.ixam97.carStatsViewer.compose.screens.settings.DevSettings
+import com.ixam97.carStatsViewer.compose.screens.settings.GeneralSettings
+import com.ixam97.carStatsViewer.compose.screens.settings.Licenses
+import com.ixam97.carStatsViewer.compose.screens.settings.LogScreen
+import com.ixam97.carStatsViewer.compose.screens.settings.PrivacySettings
+import com.ixam97.carStatsViewer.compose.screens.settings.apis.ABRPSettings
+import com.ixam97.carStatsViewer.compose.screens.settings.apis.HTTPSettings
 
 object SettingsScreens {
     const val GENERAL = "General"
     const val APPEARANCE = "Appearance"
+    const val PRIVACY = "Privacy"
+    const val APIS = "APIs"
+    const val APIS_ABRP = "APIs_ABRP"
+    const val APIS_HTTP = "APIs_HTTP"
     const val ABOUT = "About"
     const val ABOUT_CHANGELOG = "About_Changelog"
+    const val DEV = "Dev"
+    const val DEV_LOG = "Dev_Log"
     const val MAPBOX_TEST = "MapboxTest"
+    const val ABOUT_LICENSES = "About_Licenses"
 }
 
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel) {
 
-    val settingsState = viewModel.settingsStateFlow.collectAsState()
-
-    val tabsList = listOf(
+    val tabsList = mutableListOf(
         SideTab(
-            tabTitle = "General",
+            tabTitle = stringResource(R.string.settings_general),
+            tabIcon = Icons.Outlined.Settings,
             route = SettingsScreens.GENERAL,
             type = SideTab.Type.Tab,
-            content = { GeneralSettingsScreen(settingsState = settingsState.value, viewModel = viewModel) }
+            content = { GeneralSettings(viewModel = viewModel) }
         ),
         SideTab(
-            tabTitle = "Appearance",
+            tabTitle = stringResource(R.string.settings_appearance),
             route = SettingsScreens.APPEARANCE,
+            tabIcon = Icons.Outlined.Create,
             type = SideTab.Type.Tab,
-            content = { AppearanceScreen(viewModel = viewModel) }
+            content = { AppearanceSettings(viewModel = viewModel) }
         ),
         SideTab(
-            tabTitle = "About Car Stats Viewer",
+            tabTitle = stringResource(R.string.settings_privacy_location),
+            route = SettingsScreens.PRIVACY,
+            tabIcon = Icons.Outlined.LocationOn,
+            type = SideTab.Type.Tab,
+            content = { PrivacySettings(viewModel = viewModel) }
+        ),
+        SideTab(
+            tabTitle = stringResource(R.string.settings_apis_title),
+            route = SettingsScreens.APIS,
+            tabIcon = Icons.Outlined.Share,
+            type = SideTab.Type.Tab,
+            content = { navController -> ApiSettings(viewModel = viewModel, navController = navController) }
+        ),
+        SideTab(
+            tabTitle = stringResource(R.string.about_title),
+            tabIcon = Icons.Outlined.Info,
             route = SettingsScreens.ABOUT,
             type = SideTab.Type.Tab,
-            content = { navController -> AboutScreen(navController = navController) }
+            content = { navController -> About(navController = navController, viewModel) }
         ),
         SideTab(
-            tabTitle = "Changelog",
+            tabTitle = stringResource(R.string.settings_changelog),
             route = SettingsScreens.ABOUT_CHANGELOG,
             type = SideTab.Type.Detail,
-            content = { navController -> ChangelogScreen(navController = navController) }
+            content = { Changelog() }
         ),
         SideTab(
-            tabTitle = "Mapbox Test",
-            route = SettingsScreens.MAPBOX_TEST,
+            tabTitle = stringResource(R.string.settings_apis_abrp),
+            route = SettingsScreens.APIS_ABRP,
+            type = SideTab.Type.Detail,
+            content = { ABRPSettings() }
+        ),
+        SideTab(
+            tabTitle = stringResource(R.string.settings_apis_http),
+            route = SettingsScreens.APIS_HTTP,
+            type = SideTab.Type.Detail,
+            content = { HTTPSettings() }
+        ),
+        SideTab(
+            tabTitle = stringResource(R.string.settings_dev_settings),
+            tabIcon = Icons.Outlined.DataObject,
+            route = SettingsScreens.DEV,
             type = SideTab.Type.Tab,
-            content = { MapboxScreen() }
-        )
+            content = { navController -> DevSettings(navController, viewModel) },
+            enabled = viewModel.isDevEnabled
+        ),
+        SideTab(
+          tabTitle = "Log",
+            route = SettingsScreens.DEV_LOG,
+            type = SideTab.Type.Detail,
+            content = { LogScreen(viewModel) }
+        ),
+        SideTab(
+            tabTitle = stringResource(R.string.about_third_party_licenses),
+            route = SettingsScreens.ABOUT_LICENSES,
+            type = SideTab.Type.Detail,
+            content = { Licenses() }
+        ),
+        // SideTab(
+        //     tabTitle = "Mapbox Test",
+        //     route = SettingsScreens.MAPBOX_TEST,
+        //     type = SideTab.Type.Tab,
+        //     content = { MapboxScreen() }
+        // )
     )
     
     Column(
@@ -74,7 +140,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
         SideTabLayout(
             tabs = tabsList,
             topLevelTitle = stringResource(id = R.string.settings_title),
-            topLevelBackAction = {viewModel.finishActivity()}
+            topLevelBackAction = {viewModel.finishActivity()},
         ) //, tabsColumnBackground = Color.Black)
     }
 

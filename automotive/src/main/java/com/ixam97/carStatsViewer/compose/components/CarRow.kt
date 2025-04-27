@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -33,12 +34,13 @@ import com.ixam97.carStatsViewer.compose.theme.disabledTextColor
 @Composable
 fun CarRow(
     modifier: Modifier = Modifier,
-    title: String,
+    title: String? = null,
     text: String? = null,
     customContent: ( @Composable () -> Unit)? = null,
     leadingContent: ( @Composable () -> Unit)? = null,
     trailingContent: ( @Composable () -> Unit)? = null,
     @DrawableRes iconResId:  Int? = null,
+    iconImageVector: ImageVector? = null,
     browsable: Boolean = false,
     external: Boolean = false,
     onClick: (() -> Unit)? = null,
@@ -62,12 +64,26 @@ fun CarRow(
             // .then(modifier),
         // verticalAlignment = Alignment.CenterVertically
     ) {
+        if (leadingContent != null) {
+            leadingContent()
+            Spacer(modifier = Modifier.size(24.dp))
+        }
         if (iconResId != null) {
             Icon(
                 modifier = Modifier
                     .height(minHeight.coerceAtLeast(80.dp))
                     .width(80.dp),
                 painter = painterResource(id = iconResId),
+                contentDescription = null,
+                tint = if (enabled) Color.White else disabledTextColor
+            )
+            Spacer(modifier = Modifier.size(24.dp))
+        } else if (iconImageVector != null) {
+            Icon(
+                modifier = Modifier
+                    .height(minHeight.coerceAtLeast(50.dp))
+                    .width(50.dp),
+                imageVector = iconImageVector,
                 contentDescription = null,
                 tint = if (enabled) Color.White else disabledTextColor
             )
@@ -86,7 +102,8 @@ fun CarRow(
                     .padding(top = 21.dp, bottom = 15.dp),
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(text = title, color = MaterialTheme.colors.onBackground.copy(alpha = if (enabled) 1f else 0.46f))
+                if (title != null)
+                    Text(text = title, color = MaterialTheme.colors.onBackground.copy(alpha = if (enabled) 1f else 0.46f))
                 if (text != null && customContent == null) {
                     Spacer(modifier = Modifier.size(15.dp))
                     Text(
@@ -98,6 +115,12 @@ fun CarRow(
                     customContent()
                 }
             }
+
+            if (trailingContent != null) {
+                Spacer(modifier = Modifier.size(20.dp))
+                trailingContent()
+            }
+
             if (onClick != null && browsable) {
                 Spacer(modifier = Modifier.size(20.dp))
                 Icon(
@@ -109,11 +132,6 @@ fun CarRow(
                     contentDescription = null,
                     tint = if (enabled) Color.White else disabledTextColor
                 )
-            }
-
-            if (trailingContent != null) {
-                Spacer(modifier = Modifier.size(20.dp))
-                trailingContent()
             }
         }
     }

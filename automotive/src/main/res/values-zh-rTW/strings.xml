@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <!-- PermissionsActivity -->
+    <string name="permissions_dialog_title">使用需求權限</string>
+    <string name="permissions_dialog_text">此應用程式需要取得權限才能使用，如無所需權限則應用程式無法從車內讀取任何資料。</string>
+    <string name="permissions_dialog_quit">退出Car Stats Viewer</string>
+    <string name="permissions_dialog_grant">給予權限</string>
+    <!-- MainActivity -->
+    <string name="main_port_connected">充電埠已連接:</string>
+    <string name="main_current_power">當前能耗:</string>
+    <string name="main_used_energy">已使用電量:</string>
+    <string name="main_current_speed">當前速度:</string>
+    <string name="main_traveled_distance">行駛距離:</string>
+    <string name="main_inst_consumption">瞬時能耗:</string>
+    <string name="main_average_consumption">平均能耗:</string>
+    <string name="main_button_reset_stats">重置統計數據</string>
+    <string name="main_consumption">過去3公里能耗:</string>
+    <string name="main_speed">速度</string>
+    <string name="main_gage_speed">速度</string>
+    <string name="main_gage_power">功率</string>
+    <string name="main_gage_charging_power">充電功率</string>
+    <string name="main_gage_SoC">充電狀態</string>
+    <string name="main_gage_consumption">瞬時能耗</string>
+    <string name="main_dismiss_charge_plot">關閉充電圖表</string>
+    <string name="main_button_reset_charge_plot">重置充電圖表</string>
+    <string name="main_button_trip_summary">行程概要</string>
+    <string name="main_button_hide_speed">隱藏速度</string>
+    <string name="main_button_show_speed">顯示速度</string>
+    <string name="main_secondary_axis">副坐標軸:%s</string>
+    <!-- SummaryActivity -->
+    <string name="summary_title">行程概要</string>
+    <string name="summary_button_reset_trip">重置行程</string>
+    <string name="summary_parked_warning">僅可在靜止狀態下檢視</string>
+    <string name="summary_trip_history">歷史行程</string>
+    <string name="summary_charging_sessions">充電期程</string>
+    <string name="summary_trip_start_date">行程開始於:%s</string>
+    <string name="summary_used_energy">已使用電量</string>
+    <string name="summary_traveled_distance">已行駛距離</string>
+    <string name="summary_average_consumption">平均能耗</string>
+    <string name="summary_travel_time">行駛時間</string>
+    <string name="summary_charged_energy">充入電量</string>
+    <string name="summary_charge_time">充電時間</string>
+    <string name="summary_charge_ambient_temp">環境溫度</string>
+    <string name="summary_interruption_warning">充電紀錄期程已被中斷，數值可能不正確</string>
+    <!-- SettingsActivity -->
+    <string name="settings_title">設定</string>
+    <string name="settings_button_back">退回</string>
+    <string name="settings_button_quit">退出應用程式</string>
+    <string name="settings_notifications">詳細通知</string>
+    <string name="settings_consumption_unit">瓦小時/%s能耗單位</string>
+    <string name="settings_debug">偵錯資訊</string>
+    <string name="settings_experimental_layout">顯示實驗性布局</string>
+    <string name="settings_consumption_plot">顯示能耗:</string>
+    <string name="settings_charge_plot">顯示充電:</string>
+    <string name="settings_about">關於 Car Stats Viewer</string>
+    <string name="settings_plot_secondary_color">灰色為次要圖表顏色</string>
+    <string name="settings_plot_state_of_charge_dimension">實驗性充電狀態軸</string>
+    <string name="settings_consumption_plot_single_motor">單馬達型號</string>
+    <string name="settings_visible_gages">顯示電力容量</string>
+    <string name="settings_consumption_plot_speed">顯示速度圖表</string>
+    <string name="settings_sub_title_settings">設定:</string>
+    <string name="settings_sub_title_current_cons_plot">當前能耗圖表:</string>
+    <string name="settings_sub_title_last_charge_plot">上次充電曲線:</string>
+    <!-- AboutActivity -->
+    <string name="about_title">關於Car Stats Viewer</string>
+    <string name="about_section_about">關於Car Stats Viewer:</string>
+    <string name="about_support">支持開發工作</string>
+    <string name="about_support_description">查看GitHub版本庫以了解如何支持應用程式開發工作</string>
+    <string name="about_contributors">貢獻者</string>
+    <string name="about_section_feedback">反饋:</string>
+    <string name="about_section_misc">其他:</string>
+    <string name="about_github_issues_description">請於這邊回報錯誤或許願新功能。請在建立前先閱讀目前已知問題。</string>
+    <string name="about_polestar_forum_description">於國際板論壇討論Car Stats Viewer</string>
+    <string name="about_polestar_fans_description">於德國版論壇討論Car Stats Viewer</string>
+    <string name="about_third_party_licenses">憑證</string>
+    <string name="about_supporters">支持者</string>
+    <string name="about_thank_you">感謝!</string>
+    <string name="about_supporters_message">非常感謝所有協助開發Car Stats Viewer的支持者們!</string>
+    <!-- Quit Dialog -->
+    <string name="quit_dialog_title">離開應用程式?</string>
+    <string name="quit_dialog_message">日誌將被複製到剪貼簿。</string>
+    <string name="dialog_close">關閉</string>
+    <string name="dialog_reset_title">重製行程資料?</string>
+    <!-- This message has changed. Please make sure you adjust the translation accordingly! -->
+    <!--This message has changed. Please make sure you adjust the translation accordingly!-->
+    <string name="dialog_reset_message">當前手動行程將會被重置，同時將會儲存至歷史行程。</string>
+    <string name="dialog_reset_do_save">儲存</string>
+    <string name="dialog_reset_no_save">"不儲存"</string>
+    <string name="dialog_reset_cancel">取消</string>
+    <string name="dialog_confirm">是</string>
+    <string name="dialog_dismiss">否</string>
+    <!-- LogActivity -->
+    <string name="log_title">偵錯</string>
+    <!-- Notifications -->
+    <string name="notification_title">當前狀態:</string>
+    <string name="foreground_service_info">追蹤統計數據服務運作中</string>
+    <string name="toast_file_read_error">讀取行程文件時發生錯誤</string>
+    <string name="settings_select_trip">主畫面行程:</string>
+    <string name="CurrentTripData">手動行程</string>
+    <string name="SinceChargeData">自上一次充電</string>
+    <string name="AutoTripData">自動行程</string>
+    <string name="CurrentMonthData">本月</string>
+    <string name="main_changelog_dialog_title">版本中的變更%s:</string>
+    <string name="settings_apis_title">API設定</string>
+    <!-- Restart Dialog -->
+    <string name="restart_notification_title" formatted="false">%s已在%s之後啟動。</string>
+    <string name="restart_notification_reason_crash">崩潰</string>
+    <string name="restart_notification_reason_reboot">重啟</string>
+    <string name="restart_notification_reason_update">更新</string>
+    <string name="restart_notification_message">請重新啟動服務已進行統計數據追蹤</string>
+    <string name="restart_notification_dismiss">關閉</string>
+    <string name="restart_notification_app">啟動應用程式</string>
+    <string name="restart_notification_service">啟動服務</string>
+    <string name="restart_toast_background">於背景啟動追蹤統計數據服務</string>
+    <string name="settings_title_generic">一般設定:</string>
+    <string name="settings_title_misc">其他設定:</string>
+    <string name="settings_main_view">主畫面</string>
+    <string name="settings_apis_abrp">ABRP及時數據</string>
+    <string name="settings_apis_http">HTTP Webhook</string>
+    <string name="settings_apis_smtp">簡易郵件傳輸通訊協定(SMTP)登入</string>
+    <string name="settings_apis_use">使用API</string>
+    <!-- ABRP -->
+    <string name="abrp_description">輸入 ABRP 通用token以將OTA及時數據傳輸到 ABRP 伺服器。如果未禁用，將包括位置資訊。</string>
+    <string name="abrp_generic_token">通用token</string>
+    <!-- HTTP -->
+    <string name="http_description">輸入 HTTPS URL 和（可選）基本驗證憑證，以將即時資料傳輸到指定的 URL。使用帶有 JSON 內容的 POST 請求。如果未停用，這包括位置資訊。</string>
+    <string name="http_username">基本驗證用戶名稱</string>
+    <string name="http_password">基本驗證密碼</string>
+    <string name="http_invalid_url">無效URL!</string>
+    <!-- SMTP -->
+    <string name="smtp_description">輸入您的E-mail服務提供的簡易郵件傳輸通訊協定 (SMTP) 憑證。這用於將保存的統計資訊和偵錯日誌傳送到使用者指定的目標位址。</string>
+    <string name="smtp_address">E-mail位址</string>
+    <string name="smtp_password">E-Mail密碼</string>
+    <!-- Is this really a URL or a plain hostname? -->
+    <!--Is this really a URL or a plain hostname?-->
+    <string name="smtp_server">簡易郵件傳輸通訊協定 (SMTP) 伺服器 URL</string>
+    <string name="smtp_port">簡易郵件傳輸通訊協定 (SMTP) 伺服器連接埠</string>
+    <string name="smtp_use_STARTTLS">使用 STARTTLS通訊協定</string>
+    <!-- Vehicle Setup -->
+    <string name="vehicle_title">車輛設定</string>
+    <string name="vehicle_my">車型年份</string>
+    <string name="vehicle_drivetrain">動力系統</string>
+    <string name="vehicle_plus">附加套件</string>
+    <string name="vehicle_performance">性能套件升級</string>
+    <string name="vehicle_bst">BST版本</string>
+    <string name="vehicle_launch">首發版本</string>
+    <string name="settings_use_location">位置追蹤</string>
+    <string name="settings_autostart">應用程式自動開啟</string>
+    <string name="plot_dimensionY_SPEED">速度</string>
+    <string name="plot_dimensionY_ALTITUDE">海拔高度</string>
+    <string name="summary_altitude">海拔變化</string>
+    <string name="about_translators">翻譯人員</string>
+    <string name="restart_notification_reason_unknown">%s因未知原因已重新啟動。</string>
+    <string name="summary_speed">平均速度</string>
+    <string-array name="trip_type_names">
+        <item>未知行程類型</item>
+        <item>手動行程</item>
+        <item>上次充電</item>
+        <item>自動行程</item>
+        <item>月份</item>
+    </string-array>
+    <string name="dialog_reset_confirm">重置</string>
+    <!-- Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning. -->
+    <!--Is apply here meaning apply changes or to apply for something? Norwegian translation is dependent af the meaning.-->
+    <string name="dialog_apply">使用</string>
+    <!-- Trip history -->
+    <string name="history_title">歷史行程</string>
+    <string name="history_selected">已選擇:</string>
+    <string name="history_past_trips">過去行程:</string>
+    <string name="history_current_trips">當前行程:</string>
+    <string name="history_dialog_filters_title">行程篩選</string>
+    <string name="history_dialog_filters_manual">顯示手動行程</string>
+    <!-- Is this "trips since charge"? -->
+    <!--Is this "trips since charge"?-->
+    <string name="history_dialog_filters_charge">顯示自上次充電行程</string>
+    <string name="history_dialog_filters_auto">顯示自動行程</string>
+    <string name="history_dialog_filters_month">顯示月行程</string>
+    <string name="history_dialog_filters_date">最早開始日期</string>
+    <string name="history_dialog_filters_note">注意：無論應用了哪些過濾條件，當前行程始終會顯示。</string>
+    <string name="history_dialog_delete_title">刪除行程?</string>
+    <string name="history_dialog_delete_message">該行程將會永久被刪除</string>
+    <string name="history_dialog_delete_confirm">刪除行程</string>
+    <string name="history_dialog_multi_delete_title">刪除複數行程?</string>
+    <string name="history_dialog_multi_delete_message">你將刪除%s行程，這些行程將會永久移除。</string>
+    <string name="history_dialog_multi_delete_delete">刪除%s行程</string>
+    <string name="history_dialog_multi_delete_deselect">取消全選</string>
+    <string name="settings_distance_unit">英里為距離單位</string>
+    <string name="settings_apis_connection_selector">主畫面中的連接圖示:</string>
+    <string name="CurrentTripData_short">手動</string>
+    <string name="SinceChargeData_short">上次充電</string>
+    <string name="AutoTripData_short">自動</string>
+    <string name="CurrentMonthData_short">月份</string>
+    <string name="settings_phone_reminder">手機提醒</string>
+    <string name="notification_phone">你攜帶手機了嗎?</string>
+    <string name="notification_valuables">不要將任何貴重物品留在車內顯眼的地方。</string>
+    <string name="settings_experimental_colors">實驗配色主題</string>
+    <string name="history_dialog_upload_title">將資料庫上傳到API</string>
+    <string name="history_dialog_upload_message">您即將將整個本地數據庫上傳到 Webhook API 中指定的終端點！
+請確保伺服器上沒有重複數據，以防止出現不合理的數值。
+根據數據量的多少，此流程可能需要一些時間。請留在此頁面上，直到顯示成功為止！</string>
+    <string name="history_dialog_upload_upload_button">上傳</string>
+    <string-array name="changes">
+        <item>複數錯誤修正和穩定性改進</item>
+        <item>最佳化駕駛分心</item>
+        <item>穩定當App暫停時的充電曲線行為</item>
+        <item>偵錯日誌可以透過 SMTP 發送（實驗性的!）</item>
+        <item>雙擊可以強化顯示圖表中的特定值</item>
+        <item>圖表視覺改進</item>
+        <item>新增同時可進行之複數行程追蹤器 (手動行程、自上次充電行程、自動行程、當前月份)</item>
+        <item>增加\"About Car Stats Viewer\" (包括大修ReadMe，其中增加支援以及貢獻資訊)</item>
+        <item>新增了丹麥語翻譯</item>
+        <item>重整資料結構以提高穩定性和可擴展性</item>
+        <item>[V](0.23.0)</item>
+        <item>一般錯誤修復和穩定性改進</item>
+        <item>修正了主畫面單位不更新的問題</item>
+        <item>重建設定清單</item>
+        <item>新增了車輛設置</item>
+        <item>新增了重啟、更新或應用程式崩潰後的重新啟動通知</item>
+        <item>新增了位置追蹤和海拔歷史記錄</item>
+        <item>新增了多個即時資料 API：
+ - ABRP OTA 即時資料 
+- 帶有基本驗證 的 HTTP Webhook</item>
+        <item>[V](0.24.0)</item>
+        <item>改變能耗追蹤條件（實驗）</item>
+        <item>改善重啟通知條件</item>
+        <item>修正了摘要中充電期程的錯誤日期</item>
+        <item>修正了摘要圖表中的錯誤單位</item>
+        <item>行程摘要中新增了海拔變化（實驗性）</item>
+        <item>[V](0.24.1)</item>
+        <item>一般錯誤修復和穩定性改進。</item>
+        <item>將 HTTP webhook 資料集調整為新的資料結構。</item>
+        <item>現在可以從主畫面重置手動行程。</item>
+        <item>新增選擇應在主畫面中顯示哪些 API 連線狀態的設定。</item>
+        <item>新增了代表所選行程類型的圖示。點選行程統計資料可在 4 種行程類型之間循環。</item>
+        <item>在行程摘要中新增了 20、40 和 100 公里的快捷鍵。</item>
+        <item>新增行程歷史記錄，可查看過去的行程。</item>
+        <item>充電期程在中斷5分鐘之內皆不會開啟新的期程，就算車輛有移動過。</item>
+        <item>實作本地資料庫，以更可靠、更有效率地保存行程資料。</item>
+        <item>[V](0.25.0)</item>
+        <item>小錯誤修復。</item>
+        <item>現在可以為每個 API 單獨配置當前位置的共用。</item>
+        <item>新增了 MY24 的車輛配置。</item>
+        <item>UI調整，尤其是行程摘要。</item>
+        <item>[V](0.25.1)</item>
+        <item>修復了導致應用程式不使用英里作為距離單位的問題。</item>
+        <item>修正了行程摘要有時會顯示錯誤充電期程的問題。</item>
+        <item>優化繪圖渲染和載入效能。</item>
+        <item>新增了下車時手機提醒的選項。</item>
+        <item>擴充了 Webhook API 功能。</item>
+        <item>[V](0.25.2)</item>
+        <item>將資料庫上傳分成區塊，以防止遺漏並顯示進度。</item>
+        <item>簡化副座標軸選擇器。</item>
+        <item>新增了實驗性主題。</item>
+        <item>[V](0.26.0)</item>
+        <item>修復Android 12 (P3.0)</item>
+        <!-- taping or tapping? -->
+        <!--taping or tapping?-->
+        <item>[V](0.26.1)</item>
+        <item>修復Volvo資訊系統版面問題</item>
+        <item>修復了 Polestar OTA P3.0.3 之後故障的版面</item>
+        <item>調整過的摘要圖表控制</item>
+        <item>[V](0.26.2)</item>
+        <item>修復了實驗配色主題無效的問題。</item>
+        <item>偵錯日誌將於28天後自動刪除。</item>
+        <item>通過限制偵錯設置中的日誌記錄，減少了資料庫讀取。</item>
+        <item>Webhook 現在會在充電期程結束時填入\"charged_soc\"</item>
+        <item>上傳的資料庫現在包含充電曲線。</item>
+        <item>資料庫上傳現在會創建一個單獨的服務。您在上傳過程中不再需要停留在行程歷史頁面上。系統會在通知中心發布一則通知來顯示進度。</item>
+        <item>在行程摘要中，充電曲線不再於160 kW 以上被截斷。</item>
+        <item>大修變更日誌建立模式。</item>
+        <item>執行 Firebase Crashlytics。可以在設定中停用。</item>
+        <item>為潛在的公開Play Store版本（不包含在舊版本中）執行Automotive App Host。</item>
+        <item>[V](0.27.0)</item>
+        <item>改進崩潰報告。</item>
+        <item>修正因保存行程資料而導致的崩潰。</item>
+        <item>（Play版本）修正了通知互動會使應用程式崩潰的問題。</item>
+        <item>（Play版本）擷取更改日誌創建時的崩潰。</item>
+        <item>（Play版本）由於 Google 準則的限制，暫時停用了傳統圖表和歷史行程的功能。</item>
+        <item>[V](0.27.1)</item>
+        <item>為行程變更添加了錯誤處理和日誌記錄</item>
+        <item>[V](0.27.2)</item>
+        <item>請注意：目前 EX30 不會向應用程式回報任何功耗，因此將無法獲得能源統計數據。目前尚不清楚Volvo是否會修復此問題，以及何時修復。</item>
+        <item>增加額外的行車啟動條件（例如 Volvo EX30）</item>
+        <item>[V](0.27.3)</item>
+        <item>Known issues: The graph on the main screen might not show up-to-date data. This will be resolved once this part of the UI is revamped in a future update. The graphs in the trip summary are unaffected.</item>
+        <item>PLEASE NOTE: Polestar 3, Polestar 4 and Volvo EX30 do not provide any power values. Not all app features will work until this is fixed by the OEMs!</item>
+        <item>Added a map to trip details (depending on release track implementation).</item>
+        <item>Completely overhauled the UI of settings and trip details. This makes use of landscape screens like in the Polestar 4.</item>
+        <item>(Play Edition) Re-Added trip history, but with limited information for now.</item>
+        <item>[V](0.28.0)</item>
+    </string-array>
+    <string name="dialog_changes_title_updated">更新已安裝!</string>
+    <string name="dialog_changes_title_changelog">變更日誌</string>
+    <string name="dialog_changes_message">%1$s已更新至版本%2$s!</string>
+    <!-- Car App -->
+    <string name="car_app_trip_data">行程資料</string>
+    <string name="car_app_strip_selection">行程選擇</string>
+    <string name="car_app_dashboard">圖表</string>
+    <string name="car_app_legacy_dashboard">舊版圖表</string>
+    <string name="car_app_menu">其他</string>
+    <string name="car_app_status">API狀態</string>
+    <string name="car_app_toast_reset_confirmation">手動行程已被重置。</string>
+    <string name="car_app_toast_reset_hint">再按一次可重設手動行程。</string>
+    <string name="car_app_unknown">未知</string>
+    <string name="car_app_permissions_message">Car Stats Viewer需要位置權限以及車輛資訊授權才能運作，請授予這些權限。
+位置追蹤可以在應用程式中設定，預設情況下任何資料將不會回傳至任何伺服器中。</string>
+    <string name="car_app_permissions_grant">授予權限</string>
+    <string name="car_app_permissions_deny">拒絕並退出</string>
+    <string name="car_app_dev_notice_message">Car Stats Viewers依然在開發中! 請注意各項功能可能會在未經通知下進行更改、新增或移除，且資料可能會遺失。
+如果你發現錯誤或想要提供反饋，請至應用程式的GitHub或至Polestar Club論壇的討論串。聯結將可以在應用程式設置→關於Car Stats Viewer找到。</string>
+    <string name="car_app_dev_notice_confirm">了解</string>
+    <string name="car_app_show_real_time_data_title">顯示即時數據</string>
+    <string name="car_app_show_real_time_data_hint">如果啟用此選項，由於即時資料發出的 UI 更新頻率較高，UI 的反應可能會出現明顯的延遲。</string>
+    <string name="car_app_legacy_dashboard_desc">開啟舊版本Car Stats Viewer中已知的圖表。還包含充電時的即時充電曲線。行駛狀態時不可用！</string>
+    <string name="car_app_legacy_history_desc">顯示所有過去行程的列表，並允許查看每次行程的詳細統計資料。行駛狀態時不可用！</string>
+    <string name="car_app_advanced_settings">進階設定</string>
+    <string name="car_app_quick_settings">快速設定</string>
+    <string name="car_app_menu_other_views">其他顯示</string>
+    <string name="car_app_show_real_time_data_subtitle">於旅程介面的電力、瞬時能耗以及海拔高度</string>
+    <string name="history_dialog_upload_message_2">您即將將整個本地數據庫上傳到 Webhook API 中指定的終端點！
+請確保伺服器上沒有重複數據，以防止出現不合理的值。
+根據數據量的多少，此流程可能需要一些時間。進度通知將添加到通知中心。系統可照常使用。</string>
+    <string name="snackbar_ok">OK</string>
+    <string name="screenshot_taken">已截取的螢幕截圖（共%s個）。</string>
+    <string name="settings_plot_secondary_color_2">次要顏色</string>
+</resources>

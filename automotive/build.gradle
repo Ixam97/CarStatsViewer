@@ -16,13 +16,13 @@ if (firebase) {
 }
 
 android {
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         minSdkVersion 29
-        targetSdkVersion 34
-        versionCode 266
-        versionName "0.27.3.0001"
+        targetSdkVersion 35
+        versionCode 284
+        versionName "0.28.0.0017"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -130,8 +130,12 @@ dependencies {
     implementation libs.kotlinx.coroutines.play.services
     implementation libs.jakarta.mail
     implementation libs.aboutlibraries.core
+    implementation libs.aboutlibraries.compose
     implementation libs.airbnb.paris
     implementation libs.github.egm96
+    implementation libs.github.scrollbar
+    implementation libs.retrofit
+    implementation libs.retrofit.converter.gson
 
     implementation libs.androidx.car.app
     implementation libs.androidx.car.app.automotive
@@ -141,8 +145,10 @@ dependencies {
     }
 
     implementation libs.androidx.activity.compose
+    implementation(platform(libs.androidx.compose.bom))
     implementation libs.androidx.compose.ui
     implementation libs.androidx.compose.material
+    implementation libs.androidx.compose.material.icons.extended
     implementation libs.androidx.lifecycle.viewmodel.compose
     implementation libs.androidx.navigation.compose
     implementation libs.kotlinx.serialization.json
@@ -155,6 +161,8 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
 
     debugImplementation libs.squareup.leakcanary
+
+    implementation 'com.github.jetradarmobile:android-snowfall:1.2.1'
 
     // to fix unresolved references to android.car
     // def sdkDir = project.android.sdkDirectory.canonicalPath

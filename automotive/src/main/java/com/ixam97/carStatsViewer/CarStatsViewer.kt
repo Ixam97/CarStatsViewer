@@ -222,7 +222,7 @@ class CarStatsViewer : Application() {
         }
 
         InAppLogger.i("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
-
+        InAppLogger.i("Device Info: Brand: ${Build.BRAND}, model: ${Build.MODEL}, device: ${Build.DEVICE}")
         InAppLogger.d("Screen width: ${resources.configuration.screenWidthDp}dp")
 /*
         CoroutineScope(Dispatchers.IO).launch {

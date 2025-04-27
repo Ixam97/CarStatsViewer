@@ -1,21 +1,15 @@
 package com.ixam97.carStatsViewer.compose.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -32,16 +26,17 @@ import com.ixam97.carStatsViewer.compose.theme.CarTheme
 @Composable
 fun CarSegmentedButton(
     modifier: Modifier = Modifier,
-    options: List<String>,
-    selectedIndex: Int,
+    options: List<String>? = null,
+    optionsContent: List<@Composable () -> Unit>? = null,
+    selectedIndex: Int?,
     onSelectedIndexChanged: (index: Int) -> Unit,
     enabled: Boolean = true,
-    gradient: Brush = CarTheme.activeElementBrush,
+    gradient: Brush = CarTheme.brushes.activeElementBrush,
     contentPadding: PaddingValues = CarTheme.buttonPaddingValues,
     shape: Shape = RoundedCornerShape(CarTheme.buttonCornerRadius),
 ) {
     Box(modifier = Modifier
-        .height(IntrinsicSize.Max)
+        // .height(IntrinsicSize.Max)
         .clip(shape)
         .then(modifier)
     ) {
@@ -52,34 +47,71 @@ fun CarSegmentedButton(
         )
         Row(
             modifier = Modifier
+                .fillMaxSize()
                 .clip(shape),
                 // .border(3.dp, MaterialTheme.colors.primary, shape),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            options.forEachIndexed { index, option ->
-                 if (index > 0) Box(
-                    modifier = Modifier
-                        .width(4.dp)
-                        .fillMaxHeight()
-                        .background(Color.Transparent)
-                )
+            if (options != null) {
+                options.forEachIndexed { index, option ->
+                    if (index > 0) Box(
+                        modifier = Modifier
+                            .width(4.dp)
+                            .fillMaxHeight()
+                            .background(Color.Transparent)
+                    )
 
-                val textModifier = if (index == selectedIndex) {
-                    Modifier.background(gradient)
-                } else {
-                    Modifier.background(MaterialTheme.colors.surface)
+                    val textModifier = if (index == selectedIndex) {
+                        Modifier.background(gradient)
+                    } else {
+                        Modifier.background(MaterialTheme.colors.surface)
+                    }
+
+                    Box(
+                        modifier = textModifier
+                            .fillMaxHeight()
+                            .clickable {
+                                onSelectedIndexChanged(index)
+                            }
+                            .weight(1f)
+                            .padding(paddingValues = contentPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = option,
+                            softWrap = false,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
+            } else if (optionsContent != null) {
+                optionsContent.forEachIndexed { index, content ->
+                    if (index > 0) Box(
+                        modifier = Modifier
+                            .width(4.dp)
+                            .fillMaxHeight()
+                            .background(Color.Transparent)
+                    )
 
-                Text(
-                    modifier = textModifier
-                        .clickable {
-                            onSelectedIndexChanged(index)
-                        }
-                        .weight(1f)
-                        .padding(paddingValues = contentPadding),
-                    text = option,
-                    textAlign = TextAlign.Center
-                )
+                    val contentModifier = if (index == selectedIndex) {
+                        Modifier.background(gradient)
+                    } else {
+                        Modifier.background(MaterialTheme.colors.surface)
+                    }
+
+                    Box(
+                        modifier = contentModifier
+                            .fillMaxHeight()
+                            .clickable {
+                                onSelectedIndexChanged(index)
+                            }
+                            .weight(1f)
+                            .padding(paddingValues = contentPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        content()
+                    }
+                }
             }
         }
     }
