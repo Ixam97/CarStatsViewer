@@ -290,6 +290,12 @@ Cette opération peut prendre du temps, dépendament du volume de données. Veui
         <item>ATTENTION : Actuellement, l\'EX30 ne transmet aucune valeur de puissance à l\'application. Par conséquent, aucune statistique énergétique ne sera disponible. On ne sait pas encore si et quand ce problème sera résolu par Volvo.</item>
         <item>Ajout de conditions supplémentaires du démarrage de conduite (par exemple pour le Volvo EX30)</item>
         <item>[V](0.27.3)</item>
+        <item>Known issues: The graph on the main screen might not show up-to-date data. This will be resolved once this part of the UI is revamped in a future update. The graphs in the trip summary are unaffected.</item>
+        <item>PLEASE NOTE: Polestar 3, Polestar 4 and Volvo EX30 do not provide any power values. Not all app features will work until this is fixed by the OEMs!</item>
+        <item>Added a map to trip details (depending on release track implementation).</item>
+        <item>Completely overhauled the UI of settings and trip details. This makes use of landscape screens like in the Polestar 4.</item>
+        <item>(Play Edition) Re-Added trip history, but with limited information for now.</item>
+        <item>[V](0.28.0)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Mise à jour installée!</string>
     <string name="dialog_changes_title_changelog">Journal des modifications</string>
