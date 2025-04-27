@@ -289,7 +289,7 @@ Pass på at det ikke er noen duplisertee data på serveren for å forhindre usan
         <item>Lagt til et kart for turdetaljer (avhengig av implementering av utgivelsesspor).</item>
         <item>Fullstendig overhalt brukergrensesnittet av innstillinger og turdetaljer. Dette gjør bruk av landskapsskjermer som i Polestar 4.</item>
         <item>(Play Edition) Lagt til turhistorikk på nytt, men med begrenset informasjon foreløpig.</item>
-        <item>[V](0.28.0)</item>
+        <item>[V](0.24.0)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Oppdatering installert!</string>
     <string name="dialog_changes_title_changelog">Endringslogg</string>
