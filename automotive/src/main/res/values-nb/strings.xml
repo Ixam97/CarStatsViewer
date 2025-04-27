@@ -358,4 +358,5 @@ Denne handlingen kan ta litt tid avhengig av datamengden. Et fremdriftsvarsel vi
     <string name="settings_theme">Designtema</string>
     <string name="settings_plot_green">Grønn</string>
     <string name="settings_plot_white">Hvit</string>
+    <string name="settings_apis_show_status_icon">Viser tilkoblingsikon på hovedskjerm</string>
 </resources>
