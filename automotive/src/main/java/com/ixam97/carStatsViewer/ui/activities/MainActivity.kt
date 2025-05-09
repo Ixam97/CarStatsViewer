@@ -51,15 +51,12 @@ import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.Ticker
 import com.ixam97.carStatsViewer.utils.WatchdogState
 import com.ixam97.carStatsViewer.utils.getColorFromAttribute
-import com.mapbox.maps.extension.style.layers.properties.generated.Visibility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
 import java.util.Calendar
-import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
