@@ -73,7 +73,7 @@ fun SideTabLayout(
         val width = with(LocalDensity.current){ size.width.toDp() }
         Log.d("WINDOW SIZE", "$width dp")
 
-        if (width < 1300.dp) {
+        if (width < 1400.dp) {
             // Nested navigation for slim displays
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -123,8 +123,10 @@ fun SideTabLayout(
             Row {
                 Column(
                     modifier = Modifier
-                        .width(IntrinsicSize.Max)
-                        .defaultMinSize(minWidth = 500.dp)
+                        .width(550.dp)
+                        // TODO: This crashes the app when opening settings menu on wide displays. Will have to find a solution for this. Hotfix for now...
+                        // .width(IntrinsicSize.Max)
+                        // .defaultMinSize(minWidth = 500.dp)
                         .fillMaxHeight()
                         .background(tabsColumnBackground)
                         // .padding(top = 10.dp),
