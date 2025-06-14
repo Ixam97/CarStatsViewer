@@ -123,7 +123,7 @@ fun SideTabLayout(
             Row {
                 Column(
                     modifier = Modifier
-                        .width(500.dp)
+                        .width(550.dp)
                         // TODO: This crashes the app when opening settings menu on wide displays. Will have to find a solution for this. Hotfix for now...
                         // .width(IntrinsicSize.Max)
                         // .defaultMinSize(minWidth = 500.dp)
