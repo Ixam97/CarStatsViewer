@@ -129,6 +129,30 @@ class DataCollector: Service() {
 
         InAppLogger.i("Brand: ${emulatorCarMake()}")
 
+        var availabilityCheckDone = false
+
+        CoroutineScope(Dispatchers.IO).launch {
+            var propertiesUnavailable = false;
+            while (true) {
+                CarProperties.usedProperties.forEach {
+                    if (!carPropertiesClient.checkPropertyAvailability(it, 0)) {
+                        propertiesUnavailable = true
+                        InAppLogger.w("Car Property is unavailable: $it")
+                    }
+                }
+                if (!propertiesUnavailable) {
+                    break
+                }
+                delay(500)
+            }
+            availabilityCheckDone = true
+        }
+
+        while (!availabilityCheckDone) {
+            // Wait for check
+        }
+        InAppLogger.i("All relevant Car Properties are available!")
+
         dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
             batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
             vehicleMake =  emulatorCarMake(),

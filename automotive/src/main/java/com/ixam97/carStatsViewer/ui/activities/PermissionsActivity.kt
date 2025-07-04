@@ -22,7 +22,8 @@ class PermissionsActivity: Activity() {
             Car.PERMISSION_ENERGY,
             Car.PERMISSION_SPEED,
             android.Manifest.permission.ACCESS_FINE_LOCATION,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION
+            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
         )
     }
 
@@ -42,9 +43,15 @@ class PermissionsActivity: Activity() {
                 // Wait for Fonts to be loaded
             }
             runOnUiThread {
-                    if (checkPermissions()){
-                    finish()
-                    startActivity(Intent(applicationContext, MainActivity::class.java))
+                if (checkPermissions()){
+                    if (checkSelfPermission(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        showBackgroundLocationPermissionDialog()
+                    } else {
+                        finish()
+                        startActivity(Intent(applicationContext, MainActivity::class.java))
+                    }
+                } else {
+                    showBasicPermissionsDialog()
                 }
             }
         }
@@ -58,23 +65,13 @@ class PermissionsActivity: Activity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         InAppLogger.d("onRequestPermissionResult")
 
-        if (unGrantedPermissions().isEmpty()) {
+        if (unGrantedPermissions().isEmpty() && checkSelfPermission(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             finish()
             startActivity(Intent(applicationContext, MainActivity::class.java))
+        } else if (checkSelfPermission(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            showBackgroundLocationPermissionDialog()
         } else {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle(getString(R.string.permissions_dialog_title))
-                .setMessage(getString(R.string.permissions_dialog_text))
-                .setCancelable(false)
-                .setPositiveButton(getString(R.string.permissions_dialog_grant)) { dialog, id ->
-                    finish()
-                    startActivity(intent)
-                }
-                .setNegativeButton(getString(R.string.permissions_dialog_quit)) { dialog, id ->
-                    exitProcess(0)
-                }
-            val alert = builder.create()
-            alert.show()
+            showBasicPermissionsDialog()
         }
     }
 
@@ -83,15 +80,54 @@ class PermissionsActivity: Activity() {
         val unGrantedPermissions = unGrantedPermissions()
         if (unGrantedPermissions.isNotEmpty()) {
             InAppLogger.i("Requesting missing Permissions...")
-            requestPermissions(unGrantedPermissions.toTypedArray(), 0)
             return false
         }
+        // if (checkSelfPermission(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        //     requestPermissions(arrayOf(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION), 0)
+        //     return false
+        // }
         InAppLogger.i("Permissions already granted.")
         return true
     }
 
     private fun unGrantedPermissions(): List<String> {
-        return PERMISSIONS.filter { checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }
+        return PERMISSIONS.filter {
+            checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED
+                    && it != android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        }
+    }
+
+    private fun showBasicPermissionsDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.permissions_dialog_title))
+            .setMessage(getString(R.string.permissions_dialog_text))
+            .setCancelable(false)
+            .setPositiveButton(getString(R.string.permissions_dialog_grant)) { dialog, id ->
+                val unGrantedPermissions = unGrantedPermissions()
+                requestPermissions(unGrantedPermissions.toTypedArray(), 0)
+
+            }
+            .setNegativeButton(getString(R.string.permissions_dialog_quit)) { dialog, id ->
+                exitProcess(0)
+            }
+        val alert = builder.create()
+        alert.show()
+    }
+
+    private fun showBackgroundLocationPermissionDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.permissions_dialog_title))
+            .setMessage("Background location permission request placeholder")
+            .setCancelable(false)
+            .setPositiveButton(getString(R.string.permissions_dialog_grant)) { dialog, id ->
+                requestPermissions(arrayOf(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION), 0)
+            }
+            .setNegativeButton("Continue anyways placeholder") { dialog, id ->
+                finish()
+                startActivity(Intent(applicationContext, MainActivity::class.java))
+            }
+        val alert = builder.create()
+        alert.show()
     }
 }
 

@@ -23,6 +23,10 @@ class CarPropertiesClient(
         propertiesProcessor(propertyId)
     }
 
+    fun checkPropertyAvailability(propertyId: Int, areaId: Int): Boolean {
+        return carPropertyManager.isPropertyAvailable(propertyId, areaId)
+    }
+
     fun getIntProperty(propertyId: Int, areaId: Int = 0) = carPropertyManager.getIntProperty(propertyId,areaId)
     fun getFloatProperty(propertyId: Int, areaId: Int = 0) = carPropertyManager.getFloatProperty(propertyId,areaId)
     fun getBooleanProperty(propertyId: Int, areaId: Int = 0) = carPropertyManager.getBooleanProperty(propertyId,areaId)
