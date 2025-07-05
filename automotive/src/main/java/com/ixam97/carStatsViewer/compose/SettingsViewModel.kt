@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.compose
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class SettingsViewModel:
     ViewModel()
@@ -162,7 +164,9 @@ class SettingsViewModel:
         versionClickedNum++
         if (versionClickedNum >= 7 && !isDevEnabled) {
             isDevEnabled = true
+            versionClickedNum = 0
             SnackbarWidget.Builder(context, "Developer Settings enabled!")
+                .setStartDrawable(R.drawable.ic_debug)
                 .setDuration(3_000L)
                 .show()
         }
@@ -301,7 +305,9 @@ class SettingsViewModel:
     }
 
     fun submitLog(context: Context) {
-        var snackbar = SnackbarWidget.Builder(context, "Submitting log ...").show()
+        var snackbar = SnackbarWidget.Builder(context, "Submitting log ...")
+            .setStartDrawable(R.drawable.ic_upload)
+            .show()
         viewModelScope.launch {
             withContext(Dispatchers.IO){
                 val submitMap = mutableMapOf<Long, String>()
@@ -330,6 +336,7 @@ class SettingsViewModel:
                 withContext(Dispatchers.Main) {
                     if (resultmsg == null)
                     {
+                        snackbar.updateStartDrawable(R.drawable.ic_checkmark)
                         snackbar.updateMessage("Log was submitted successfully.")
                     } else {
                         snackbar.setToError()
@@ -357,15 +364,55 @@ class SettingsViewModel:
     }
 
     fun clearLog(context: Context) {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                InAppLogger.resetLog()
+        AlertDialog.Builder(context).apply {
+            setTitle("Delete log")
+            setMessage("Are you sure you want to delete the debug log?")
+            setPositiveButton("Confirm") {_,_ ->
+                viewModelScope.launch {
+                    withContext(Dispatchers.IO) {
+                        InAppLogger.resetLog()
+                    }
+                    withContext(Dispatchers.Main) {
+                        SnackbarWidget.Builder(context, "Log has been deleted")
+                            .setStartDrawable(R.drawable.ic_checkmark)
+                            .setDuration(3000)
+                            .show()
+                    }
+                }
             }
-        }
-        SnackbarWidget.Builder(context, "Log has been deleted")
-            .setDuration(3000)
-            .show()
-
+            setNegativeButton("Cancel") { dialog, _ ->
+                dialog.cancel()
+            }
+            create()
+        }.show()
     }
 
+    fun debugCrash() {
+        CarStatsViewer.debugCrash()
+    }
+
+    fun scanAvailableFonts() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                File("/product/fonts").apply {
+                    if (exists() && isDirectory) {
+                        var fontsList = "Found product fonts:\n\r"
+                        this.listFiles()?.forEach { file ->
+                            fontsList += "    ${file.name}\n\r"
+                        }
+                        InAppLogger.d(fontsList)
+                    }
+                }
+                File("/system/fonts").apply {
+                    if (exists() && isDirectory) {
+                        var fontsList = "Found system fonts:\n\r"
+                        this.listFiles()?.forEach { file ->
+                            fontsList += "    ${file.name}\n\r"
+                        }
+                        InAppLogger.d(fontsList)
+                    }
+                }
+            }
+        }
+    }
 }

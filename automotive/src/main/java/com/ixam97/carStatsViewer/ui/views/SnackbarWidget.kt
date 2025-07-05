@@ -32,7 +32,7 @@ class SnackbarWidget private constructor(
     private data class SnackbarParameters(
         var message: String,
         val buttonText: String? = null,
-        val drawableId: Int? = null,
+        var drawableId: Int? = null,
         val startHidden: Boolean = false,
         var duration: Long = 0,
         val listener: SnackbarInterface? = null,
@@ -102,6 +102,13 @@ class SnackbarWidget private constructor(
     fun updateMessage(message: String) {
         snackbarParameters.message = message
         messageText.text = snackbarParameters.message
+    }
+
+    fun updateStartDrawable(@DrawableRes newResId: Int) {
+        snackbarParameters.drawableId = newResId
+        snackbarParameters.drawableId?.let { resId ->
+            startIcon.setImageResource(resId)
+        }
     }
 
     fun setProgressBarPercent(percent: Int) {
@@ -186,8 +193,8 @@ class SnackbarWidget private constructor(
             setToError()
         }
 
-        snackbarParameters.drawableId?.let {
-            startIcon.setImageResource(snackbarParameters.drawableId)
+        snackbarParameters.drawableId?.let { resId ->
+            startIcon.setImageResource(resId)
         }
 
         val anim = AnimationUtils.loadAnimation(context, R.anim.snackbar_up)

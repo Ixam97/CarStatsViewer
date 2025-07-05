@@ -120,7 +120,7 @@ class CarStatsViewer : Application() {
                                 pendingIntent
                             )
                         } else {
-                            Log.d("ALARM", "CANNOT SETUP EXACT ALARMS!")
+                            Log.w("ALARM", "CANNOT SETUP EXACT ALARMS!")
                             alarmManager.set(
                                 AlarmManager.RTC,
                                 System.currentTimeMillis() + delay,
@@ -142,7 +142,7 @@ class CarStatsViewer : Application() {
                         pendingIntent
                     )
                 }
-                InAppLogger.i("[ASR] Setup single shot alarm")
+                InAppLogger.v("[ASR] Setup single shot alarm")
             } else {
                 alarmManager.setRepeating(
                     AlarmManager.RTC,
@@ -150,7 +150,7 @@ class CarStatsViewer : Application() {
                     delay,
                     pendingIntent
                 )
-                if (extendedLogging) InAppLogger.i("[ASR] Setup repeating alarm")
+                if (extendedLogging) InAppLogger.v("[ASR] Setup repeating alarm")
             }
         }
 

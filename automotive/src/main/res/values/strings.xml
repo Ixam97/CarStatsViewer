@@ -166,6 +166,9 @@
         <item>(Play Edition) Re-Added trip history, but with limited information for now.</item>
         <item>[V](0.28.0)</item>
         -->
+        <item>Improved debugging and logging.</item>
+        <item>Improved Autostart behaviour.</item>
+        <item>[V](0.28.1)</item>
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>

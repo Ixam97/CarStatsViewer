@@ -71,13 +71,19 @@ fun DevSettings(
             customContent = {
                 Row {
                     CarGradientButton(
-                        onClick = {
-                            CarStatsViewer.debugCrash()
-                        },
+                        modifier = Modifier.weight(1f),
+                        onClick = { viewModel.debugCrash() },
                         active = true,
                         gradient = Brush.horizontalGradient(listOf(badRed, badRed))
                     ) {
                         Text("Debug Crash")
+                    }
+                    Spacer(Modifier.size(20.dp))
+                    CarGradientButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = { viewModel.scanAvailableFonts() },
+                    ) {
+                        Text("Scan Fonts")
                     }
                 }
             }

@@ -218,7 +218,7 @@ class DataCollector: Service() {
 
         serviceScope.launch {
             CarStatsViewer.watchdog.watchdogTriggerFlow.collect {
-                InAppLogger.d("[Watchdog] Watchdog triggered")
+                InAppLogger.v("[Watchdog] Watchdog triggered")
 
                 /** Check if location client has crashed or needs to be stopped or started */
                 var locationState = WatchdogState.DISABLED

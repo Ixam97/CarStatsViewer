@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
@@ -135,7 +136,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             .fillMaxSize()
             // .padding(10.dp)
             // .clip(RoundedCornerShape(25.dp))
-            .background(MaterialTheme.colors.background)
+            .background(Color.Transparent)
     ){
         SideTabLayout(
             tabs = tabsList,
