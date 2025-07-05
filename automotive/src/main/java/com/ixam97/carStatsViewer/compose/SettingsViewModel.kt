@@ -3,7 +3,7 @@ package com.ixam97.carStatsViewer.compose
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
+import android.os.Build
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,13 +13,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.app
-import com.google.gson.Gson
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.log.LogEntry
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitBody
+import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitRepository
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -300,10 +300,10 @@ class SettingsViewModel:
         )
     }
 
-    fun submitLog() {
+    fun submitLog(context: Context) {
+        var snackbar = SnackbarWidget.Builder(context, "Submitting log ...").show()
         viewModelScope.launch {
             withContext(Dispatchers.IO){
-
                 val submitMap = mutableMapOf<Long, String>()
 
                 InAppLogger.getLogEntries(
@@ -312,8 +312,34 @@ class SettingsViewModel:
                 ).forEach { logEntry ->
                     submitMap[logEntry.epochTime] = "${InAppLogger.typeSymbol(logEntry.type)}: ${logEntry.message}"
                 }
-                Log.d("Log submit debug", Gson().toJson(LogSubmitBody(submitMap)))
-                // LogSubmitRepository.submitLog(LogSubmitBody(submitMap))
+                // Log.d("Log submit debug", Gson().toJson(LogSubmitBody(submitMap)))
+                var resultmsg: String? = null
+                try {
+                    resultmsg = LogSubmitRepository.submitLog(LogSubmitBody(
+                        log = submitMap,
+                        metadata = LogSubmitBody.LogMetadata(
+                            timestamp = System.currentTimeMillis(),
+                            brand = Build.BRAND,
+                            model = Build.MODEL,
+                            device = Build.DEVICE
+                        )
+                    ))
+                } catch (e: Exception) {
+                    InAppLogger.e("Failed: ${e.message}")
+                }
+                withContext(Dispatchers.Main) {
+                    if (resultmsg == null)
+                    {
+                        snackbar.updateMessage("Log was submitted successfully.")
+                    } else {
+                        snackbar.setToError()
+                        snackbar.updateMessage("Failed to submit log!\n$resultmsg")
+                    }
+                    snackbar.startDuration(3000)
+                }
+
+
+                // InAppLogger.d("[DEV] API Auth Check Success: ${LogSubmitRepository.authCheck()}")
             }
         }
     }
@@ -330,12 +356,16 @@ class SettingsViewModel:
         }
     }
 
-    fun clearLog() {
+    fun clearLog(context: Context) {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 InAppLogger.resetLog()
             }
         }
+        SnackbarWidget.Builder(context, "Log has been deleted")
+            .setDuration(3000)
+            .show()
+
     }
 
 }

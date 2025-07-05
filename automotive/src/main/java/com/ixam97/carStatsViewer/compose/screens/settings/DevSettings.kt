@@ -12,8 +12,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.compose.DefaultColumnScrollbar
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
@@ -29,6 +31,9 @@ fun DevSettings(
     navController: NavController,
     viewModel: SettingsViewModel
 ) {
+
+    val context = LocalContext.current
+
     DefaultColumnScrollbar(
         modifier = Modifier
             .fillMaxSize()
@@ -60,6 +65,23 @@ fun DevSettings(
                 viewModel.setShowScreenshotButton(newState)
             }
         ) { Text("Show screenshot button") }
+        Divider(Modifier.padding(horizontal = 20.dp))
+        CarRow(
+            title = "Debug actions:",
+            customContent = {
+                Row {
+                    CarGradientButton(
+                        onClick = {
+                            CarStatsViewer.debugCrash()
+                        },
+                        active = true,
+                        gradient = Brush.horizontalGradient(listOf(badRed, badRed))
+                    ) {
+                        Text("Debug Crash")
+                    }
+                }
+            }
+        )
         Divider(Modifier.padding(horizontal = 20.dp))
         Text(
             modifier = Modifier
@@ -105,16 +127,16 @@ fun DevSettings(
                 Row {
                     CarGradientButton(
                         modifier = Modifier.weight(1f),
-                        enabled = false,
+                        enabled = true,
                         onClick = {
-                            viewModel.submitLog()
+                            viewModel.submitLog(context)
                         }
                     ) { Text("Submit log") }
                     Spacer(Modifier.size(20.dp))
                     CarGradientButton(
                         modifier = Modifier.weight(1f),
                         onClick = {
-                            viewModel.clearLog()
+                            viewModel.clearLog(context)
                         },
                         active = true,
                         gradient = Brush.horizontalGradient(listOf(badRed, badRed))

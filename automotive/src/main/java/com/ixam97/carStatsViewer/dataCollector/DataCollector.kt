@@ -285,7 +285,7 @@ class DataCollector: Service() {
                         CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10,
                         foregroundServiceNotification.build()
                     )
-                    InAppLogger.v("Updating notification")
+                    // InAppLogger.v("Updating notification")
                 }
             }
         }

@@ -9,10 +9,15 @@ import retrofit2.http.POST
 interface LogSubmitApi {
 
     @Headers("content-type: application/json")
-    @POST("")
+    @POST("/CSVBackend/submitLog")
     suspend fun submitLog(
-        @Header("Authorization") auth: String,
+        @Header("x-api-key") apiKey: String,
         @Body body: LogSubmitBody
     ): Response<LogSubmitStatus>
+
+    @POST("/CSVBackend/authCheck")
+    suspend fun checkAuth(
+        @Header("x-api-key") apiKey: String
+    ): Response<AuthResponse>
 
 }

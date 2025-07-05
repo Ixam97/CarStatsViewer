@@ -21,6 +21,8 @@ import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.airbnb.paris.extensions.style
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
 import com.ixam97.carStatsViewer.database.log.LogDao
@@ -30,6 +32,7 @@ import com.ixam97.carStatsViewer.database.tripData.TripDataDatabase
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
+import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitRepository
 import com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
 import com.ixam97.carStatsViewer.utils.ChangeLogCreator.createChangelog
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -90,6 +93,9 @@ class CarStatsViewer : Application() {
 
         val appContextIsInitialized: Boolean get() = this::appContext.isInitialized
 
+        fun debugCrash() {
+            throw RuntimeException("Debug Crash")
+        }
 
         fun setupRestartAlarm(context: Context, reason: String, delay: Long, cancel: Boolean = false, extendedLogging: Boolean = false) {
             val serviceIntent = Intent(context, AutoStartReceiver::class.java)
@@ -223,6 +229,8 @@ class CarStatsViewer : Application() {
 
         InAppLogger.i("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
         InAppLogger.i("Device Info: Brand: ${Build.BRAND}, model: ${Build.MODEL}, device: ${Build.DEVICE}")
+        Firebase.crashlytics.log("Device Info: Brand: ${Build.BRAND}, model: ${Build.MODEL}, device: ${Build.DEVICE}")
+
         InAppLogger.d("Screen width: ${resources.configuration.screenWidthDp}dp")
 /*
         CoroutineScope(Dispatchers.IO).launch {
@@ -318,6 +326,10 @@ class CarStatsViewer : Application() {
         val abrpApiKey = if (resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName) != 0) {
             getString(resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName))
         } else ""
+
+        if (resources.getIdentifier("csv_api_key", "string", applicationContext.packageName) != 0) {
+            LogSubmitRepository.setApiKey(getString(resources.getIdentifier("csv_api_key", "string", applicationContext.packageName)))
+        }
 
         liveDataApis = arrayListOf(
             AbrpLiveData(abrpApiKey),
