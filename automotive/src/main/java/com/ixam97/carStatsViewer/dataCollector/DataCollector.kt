@@ -43,6 +43,7 @@ class DataCollector: Service() {
 
     companion object {
         const val LIVE_DATA_TASK_INTERVAL = 5_000
+        private const val PROPERTY_INIT_MAX_ATTEMPTS = 10
     }
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -102,18 +103,10 @@ class DataCollector: Service() {
         startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
         InAppLogger.i("[NEO] Foreground service started in onCreate()")
 
-        if (CarStatsViewer.appPreferences.useLocation) { startLocationClient(5_000) }
-
         serviceScope.launch {
             withContext(Dispatchers.IO) { dataProcessor.checkTrips() }
             readStaticCarProperties()
             setupDynamicCarProperties()
-
-            InAppLogger.i("Brand: ${emulatorCarMake()}")
-
-            dataProcessor.staticVehicleData.apply {
-                InAppLogger.i("[NEO] Make: ${vehicleMake}, model: ${modelName}, battery capacity: ${(batteryCapacity?:0f)/1000} kWh, distance unit: ${distanceUnit?.name}")
-            }
 
             /** detect if system is an emulator and show a toast */
             withContext(Dispatchers.Main) {
@@ -152,6 +145,8 @@ class DataCollector: Service() {
 
         if (CarStatsViewer.appPreferences.autostart)
             CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 9_500, extendedLogging = true)
+
+        if (CarStatsViewer.appPreferences.useLocation) { startLocationClient(5_000) }
 
         /** Check if location client has crashed or needs to be stopped or started after settings changed. */
         serviceScope.launch {
@@ -277,10 +272,15 @@ class DataCollector: Service() {
                 }
             )
             attemptCounter++
-            if (attemptCounter > 10) {
+            if (attemptCounter > PROPERTY_INIT_MAX_ATTEMPTS) {
                 InAppLogger.e("[NEO] Service init failed: Not all required Car Properties are available!")
                 throw Exception("Service init failed: Not all required Car Properties are available!")
             }
+        }
+        InAppLogger.i("[NEO] Static Car Properties read successfully.")
+        InAppLogger.i("Brand: ${emulatorCarMake()}")
+        dataProcessor.staticVehicleData.apply {
+            InAppLogger.i("[NEO] Make: ${vehicleMake}, model: ${modelName}, battery capacity: ${(batteryCapacity?:0f)/1000} kWh, distance unit: ${distanceUnit?.name}")
         }
     }
 
@@ -294,19 +294,17 @@ class DataCollector: Service() {
             if (attemptCounter > 0) {
                 delay(500)
             }
-            allPropertiesAvailable = true;
+            allPropertiesAvailable = true
             CarProperties.usedProperties.forEach { propertyId ->
                 if (!carPropertiesClient.getCaPropertyUpdates(propertyId)) {
                     allPropertiesAvailable = false
                     val warnMsg = "[NEO] Property with ID $propertyId is currently not available!"
                     InAppLogger.w(warnMsg)
                     Firebase.crashlytics.log(warnMsg)
-                } else {
-                    InAppLogger.i("[NEO] Property with ID $propertyId successfully registered.")
                 }
             }
             attemptCounter++
-            if (attemptCounter > 10) {
+            if (attemptCounter > PROPERTY_INIT_MAX_ATTEMPTS) {
                 InAppLogger.e("[NEO] Service init failed: Not all required Car Properties are available!")
                 throw Exception("Service init failed: Not all required Car Properties are available!")
             }
@@ -315,6 +313,8 @@ class DataCollector: Service() {
         CarProperties.usedProperties.forEach {
             carPropertiesClient.updateProperty(it)
         }
+
+        InAppLogger.i("[NEO] Dynamic Car Properties have ben registered successfully.")
     }
 
     /**

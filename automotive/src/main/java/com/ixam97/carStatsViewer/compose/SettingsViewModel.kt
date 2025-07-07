@@ -195,6 +195,12 @@ class SettingsViewModel:
     fun setAutoAppStart(value: Boolean) {
         settingsState = settingsState.copy(autoAppStart = value)
         preferences.autostart = value
+        CarStatsViewer.setupRestartAlarm(
+            context = CarStatsViewer.appContext,
+            reason = "termination",
+            delay = 9_500,
+            cancel = !preferences.autostart,
+            extendedLogging = true)
     }
     fun setPhoneNotification(value: Boolean) {
         settingsState = settingsState.copy(phoneNotification = value)
