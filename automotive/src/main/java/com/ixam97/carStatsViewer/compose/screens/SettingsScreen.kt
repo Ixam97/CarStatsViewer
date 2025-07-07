@@ -112,7 +112,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             enabled = viewModel.isDevEnabled
         ),
         SideTab(
-          tabTitle = "Log",
+            tabTitle = "Log",
             route = SettingsScreens.DEV_LOG,
             type = SideTab.Type.Detail,
             content = { LogScreen(viewModel) }

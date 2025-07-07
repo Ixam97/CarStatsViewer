@@ -94,7 +94,7 @@ class CarStatsViewer : Application() {
         val appContextIsInitialized: Boolean get() = this::appContext.isInitialized
 
         fun debugCrash() {
-            throw RuntimeException("Debug Crash")
+            throw Exception("Debug Crash")
         }
 
         fun setupRestartAlarm(context: Context, reason: String, delay: Long, cancel: Boolean = false, extendedLogging: Boolean = false) {
@@ -208,23 +208,17 @@ class CarStatsViewer : Application() {
         ).build()
         logDao = logDatabase.logDao()
 
-        if(getString(R.string.useFirebase) != "true") {
-            Thread.setDefaultUncaughtExceptionHandler { t, e ->
+        val mDefaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
 
-                try {
-                    setupRestartAlarm(applicationContext, "crash", 2_000, extendedLogging = true)
-                    InAppLogger.i("setup crash alarm")
-                } catch (e: Exception) {
-                    InAppLogger.e(e.stackTraceToString())
-                }
-
-                InAppLogger.e("[NEO] Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
-                val crashTime = System.nanoTime()
-                while (System.nanoTime() < crashTime + 500_000_000) {
-                    // Give the logger some time
-                }
-                exitProcess(1)
+        Thread.setDefaultUncaughtExceptionHandler { t, e ->
+            try {
+                setupRestartAlarm(applicationContext, "crash", 2_000, extendedLogging = true)
+                InAppLogger.i("Setup crash alarm.")
+            } catch (e: Exception) {
+                InAppLogger.w("Failed to setup crash alarm.")
             }
+            InAppLogger.e("[NEO] Car Stats Viewer has crashed!\r\n ${e.stackTraceToString()}")
+            mDefaultUncaughtExceptionHandler?.uncaughtException(t, e)
         }
 
         InAppLogger.i("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
