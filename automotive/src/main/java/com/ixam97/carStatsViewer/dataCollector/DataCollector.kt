@@ -10,8 +10,6 @@ import android.os.Build
 import android.os.IBinder
 import android.widget.Toast
 import androidx.car.app.activity.CarAppActivity
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import com.ixam97.carStatsViewer.BuildConfig
@@ -60,6 +58,7 @@ class DataCollector: Service() {
     private var watchdogLocation: Location? = null
 
     private var carPropertiesInitialized = false
+    private var simpleNotification = false
 
     init {
         InAppLogger.i("[NEO] Neo DataCollector is initializing...")
@@ -84,107 +83,39 @@ class DataCollector: Service() {
         return START_STICKY
     }
 
+    /**
+     * Setup the necessary Car Properties and clients when starting the service. Make sure the code
+     * is not blocking to prevent ANRs.
+     */
     override fun onCreate() {
         super.onCreate()
 
-        foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.FOREGROUND_CHANNEL_ID)
-            // .setContentTitle(getString(R.string.app_name))
-            // .setContentTitle(getString(R.string.foreground_service_info))
-            .setContentTitle("Car Properties are initializing...")
-            .setSmallIcon(R.mipmap.ic_launcher_notification)
-            .setOngoing(true)
-
-        foregroundServiceNotification.setContentIntent(
-            PendingIntent.getActivity(
-                applicationContext,
-                0,
-                Intent(applicationContext, if (BuildConfig.FLAVOR_aaos != "carapp") MainActivity::class.java else CarAppActivity::class.java),
-                PendingIntent.FLAG_IMMUTABLE
-            )
-        )
-
-        startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
-        InAppLogger.i("[NEO] Foreground service started in onCreate()")
-
-        // Thread.setDefaultUncaughtExceptionHandler { t, e ->
-        //     InAppLogger.e("[NEO] Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
-        //     exitProcess(0)
-        // }
-
         dataProcessor = CarStatsViewer.dataProcessor
-
-        CoroutineScope(Dispatchers.IO).launch {
-            dataProcessor.checkTrips()
-        }
-
+        locationClient = DefaultLocationClient()
         carPropertiesClient = CarPropertiesClient(
             context = applicationContext,
             propertiesProcessor = dataProcessor::processProperty,
             carPropertiesData = dataProcessor.carPropertiesData
         )
 
-        fun emulatorCarMake(): String {
-            val propertyMake = carPropertiesClient.getStringProperty(CarProperties.INFO_MAKE)?: "Unknown"
-            if (propertyMake == "Toy Vehicle") {
-                if (File("/product/fonts/PolestarUnica77-Regular.otf").exists())
-                    return "Polestar"
-                else return Build.BRAND
-            }
-            return propertyMake
-        }
+        setupServiceNotification()
+        startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
+        InAppLogger.i("[NEO] Foreground service started in onCreate()")
+
+        if (CarStatsViewer.appPreferences.useLocation) { startLocationClient(5_000) }
 
         serviceScope.launch {
-            var allPropertiesAvailable = false
-
-            // Check availability of all Car Properties and try to register Callbacks.
-            var attemptCounter = 0
-            while (!allPropertiesAvailable) {
-                if (attemptCounter > 0) {
-                    delay(500)
-                }
-                allPropertiesAvailable = true;
-                CarProperties.usedProperties.forEach { propertyId ->
-                    if (!carPropertiesClient.getCaPropertyUpdates(propertyId)) {
-                        allPropertiesAvailable = false
-                        val warnMsg = "[NEO] Property with ID $propertyId is currently not available!"
-                        InAppLogger.w(warnMsg)
-                        Firebase.crashlytics.log(warnMsg)
-                    } else {
-                        InAppLogger.i("[NEO] Property with ID $propertyId successfully registered.")
-                    }
-                }
-                // CarProperties.usedStaticProperties.forEach { propertyId ->
-                //     if (carPropertiesClient.checkPropertyAvailability(propertyId, 0)) {
-                //         allPropertiesAvailable = false
-                //         InAppLogger.w("[NEO] Property with ID $propertyId is currently not available!")
-                //     }
-                // }
-
-                attemptCounter++
-
-                if (attemptCounter > 10) {
-                    InAppLogger.e("[NEO] Service init failed: Not all required Car Properties are available!")
-                    throw Exception("Service init failed: Not all required Car Properties are available!")
-                }
-            }
+            withContext(Dispatchers.IO) { dataProcessor.checkTrips() }
+            readStaticCarProperties()
+            setupDynamicCarProperties()
 
             InAppLogger.i("Brand: ${emulatorCarMake()}")
 
-            dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
-                batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
-                vehicleMake =  emulatorCarMake(),
-                modelName = carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL),
-                distanceUnit = when (carPropertiesClient.getIntProperty(CarProperties.DISTANCE_DISPLAY_UNITS)) {
-                    VehicleUnit.MILE -> DistanceUnitEnum.MILES
-                    VehicleUnit.KILOMETER -> DistanceUnitEnum.KM
-                    else -> null
-                }
-            )
-
-            dataProcessor.staticVehicleData.let {
-                InAppLogger.i("[NEO] Make: ${it.vehicleMake}, model: ${it.modelName}, battery capacity: ${(it.batteryCapacity?:0f)/1000} kWh, distance unit: ${it.distanceUnit?.name}")
+            dataProcessor.staticVehicleData.apply {
+                InAppLogger.i("[NEO] Make: ${vehicleMake}, model: ${modelName}, battery capacity: ${(batteryCapacity?:0f)/1000} kWh, distance unit: ${distanceUnit?.name}")
             }
 
+            /** detect if system is an emulator and show a toast */
             withContext(Dispatchers.Main) {
                 if (dataProcessor.staticVehicleData.modelName == "Speedy Model") {
                     Toast.makeText(applicationContext, "Emulator Mode", Toast.LENGTH_LONG).show()
@@ -192,33 +123,16 @@ class DataCollector: Service() {
                 }
             }
 
+            /** Show km in the emulator by default. Can be changed to miles in dev settings in the app. */
             CarStatsViewer.appPreferences.distanceUnit =
-                if (!emulatorMode)
-                    dataProcessor.staticVehicleData.distanceUnit?:DistanceUnitEnum.KM
-                else
-                    DistanceUnitEnum.KM
-
-            CarProperties.usedProperties.forEach {
-                carPropertiesClient.updateProperty(it)
-            }
+                if (!emulatorMode) dataProcessor.staticVehicleData.distanceUnit?:DistanceUnitEnum.KM
+                else DistanceUnitEnum.KM
 
             carPropertiesInitialized = true
         }
 
-        InAppLogger.i("[NEO] Google API availability: ${GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS}")
-
-        serviceScope.launch {
-            locationClient = DefaultLocationClient(
-                //CarStatsViewer.appContext,
-                //LocationServices.getFusedLocationProviderClient(this)
-            )
-
-            // startLocationClient(5_000)
-
-            if (CarStatsViewer.appPreferences.useLocation) {
-                startLocationClient(5_000)
-            }
-        }
+        /** Setup the live data APIs */
+        // TODO: Migrate these to Retrofit and move them to the repository package
 
         CarStatsViewer.liveDataApis[0]
             .requestFlow(
@@ -239,11 +153,9 @@ class DataCollector: Service() {
         if (CarStatsViewer.appPreferences.autostart)
             CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 9_500, extendedLogging = true)
 
+        /** Check if location client has crashed or needs to be stopped or started after settings changed. */
         serviceScope.launch {
             CarStatsViewer.watchdog.watchdogTriggerFlow.collect {
-                InAppLogger.v("[Watchdog] Watchdog triggered")
-
-                /** Check if location client has crashed or needs to be stopped or started */
                 var locationState = WatchdogState.DISABLED
                 if (CarStatsViewer.appPreferences.useLocation) {
                     locationState = if (watchdogLocation == lastLocation || locationClientJob == null || lastLocation == null) {
@@ -273,47 +185,11 @@ class DataCollector: Service() {
             }
         }
 
-        // serviceScope.launch {
-        //     while (true) {
-        //         CarStatsViewer.dataProcessor.updateTripDataValuesByTick()
-        //         delay(2_000)
-        //     }
-        // }
-
         serviceScope.launch {
             // Notification updater
-            var simpleNotification = false
             while (true) {
                 delay(2_500)
-                if (!carPropertiesInitialized) {
-                    foregroundServiceNotification
-                        .setContentTitle("Car Properties are initializing...")
-                        .setContentText("")
-                } else if (!CarStatsViewer.appPreferences.notifications) {
-                    foregroundServiceNotification
-                        // .setSmallIcon(R.mipmap.ic_launcher_notification)
-                        .setContentTitle(getString(R.string.foreground_service_info))
-                        .setContentText("")
-                } else {
-                    foregroundServiceNotification
-                        .setContentTitle(getString(R.string.notification_title) + " " + resources.getStringArray(R.array.trip_type_names)[CarStatsViewer.appPreferences.mainViewTrip + 1])
-                        // .setSmallIcon(R.drawable.ic_notification_diagram)
-                        .setContentText(String.format(
-                            "Dist.: %s, Cons.: %s, Speed: %s",
-                            StringFormatters.getTraveledDistanceString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f),
-                            StringFormatters.getAvgConsumptionString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.used_energy?.toFloat()?:0f, CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f),
-                            StringFormatters.getAvgSpeedString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f, CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.drive_time?:0)
-                        ))
-                    simpleNotification = false
-                }
-                if (!simpleNotification) {
-                    simpleNotification = !CarStatsViewer.appPreferences.notifications
-                    CarStatsViewer.notificationManager.notify(
-                        CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10,
-                        foregroundServiceNotification.build()
-                    )
-                    // InAppLogger.v("Updating notification")
-                }
+                updateServiceNotification()
             }
         }
 
@@ -325,8 +201,10 @@ class DataCollector: Service() {
         carPropertiesClient.disconnect()
     }
 
+    /**
+     * Stop the location client if disabled by settings.
+     */
     private fun stopLocationClient() {
-
         locationClient?.let {
             InAppLogger.i("[NEO] Location client is being canceled")
 
@@ -338,6 +216,9 @@ class DataCollector: Service() {
         }
     }
 
+    /**
+     * Start the location client and get location updates in a fixed interval.
+     */
     private fun startLocationClient(interval: Long) {
         locationClient?.let {
             InAppLogger.i("[NEO] Location client is being started")
@@ -362,4 +243,128 @@ class DataCollector: Service() {
         }
     }
 
+    /**
+     * Vehicle Make in Emulator does not always match the actual emulator Make. This returns the
+     * make based on various criteria.
+     */
+    private fun emulatorCarMake(): String {
+        val propertyMake = carPropertiesClient.getStringProperty(CarProperties.INFO_MAKE)?: "Unknown"
+        if (propertyMake == "Toy Vehicle") {
+            if (File("/product/fonts/PolestarUnica77-Regular.otf").exists())
+                return "Polestar"
+            else return Build.BRAND
+        }
+        return propertyMake
+    }
+
+    /**
+     * Read static Car Properties
+     */
+    private suspend fun readStaticCarProperties() {
+        var attemptCounter = 0
+        while(!dataProcessor.staticVehicleData.isInitialized()) {
+            if (attemptCounter > 0) {
+                delay(500)
+            }
+            dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
+                batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
+                vehicleMake =  emulatorCarMake(),
+                modelName = carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL),
+                distanceUnit = when (carPropertiesClient.getIntProperty(CarProperties.DISTANCE_DISPLAY_UNITS)) {
+                    VehicleUnit.MILE -> DistanceUnitEnum.MILES
+                    VehicleUnit.KILOMETER -> DistanceUnitEnum.KM
+                    else -> null
+                }
+            )
+            attemptCounter++
+            if (attemptCounter > 10) {
+                InAppLogger.e("[NEO] Service init failed: Not all required Car Properties are available!")
+                throw Exception("Service init failed: Not all required Car Properties are available!")
+            }
+        }
+    }
+
+    /**
+     * Check availability of all Car Properties and try to register Callbacks.
+     */
+    private suspend fun setupDynamicCarProperties() {
+        var allPropertiesAvailable = false
+        var attemptCounter = 0
+        while (!allPropertiesAvailable) {
+            if (attemptCounter > 0) {
+                delay(500)
+            }
+            allPropertiesAvailable = true;
+            CarProperties.usedProperties.forEach { propertyId ->
+                if (!carPropertiesClient.getCaPropertyUpdates(propertyId)) {
+                    allPropertiesAvailable = false
+                    val warnMsg = "[NEO] Property with ID $propertyId is currently not available!"
+                    InAppLogger.w(warnMsg)
+                    Firebase.crashlytics.log(warnMsg)
+                } else {
+                    InAppLogger.i("[NEO] Property with ID $propertyId successfully registered.")
+                }
+            }
+            attemptCounter++
+            if (attemptCounter > 10) {
+                InAppLogger.e("[NEO] Service init failed: Not all required Car Properties are available!")
+                throw Exception("Service init failed: Not all required Car Properties are available!")
+            }
+        }
+
+        CarProperties.usedProperties.forEach {
+            carPropertiesClient.updateProperty(it)
+        }
+    }
+
+    /**
+     * Initial setup of the notification needed for a foreground service.
+     */
+    private fun setupServiceNotification() {
+        foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.FOREGROUND_CHANNEL_ID)
+            .setContentTitle("Car Properties are initializing...")
+            .setSmallIcon(R.mipmap.ic_launcher_notification)
+            .setOngoing(true)
+
+        foregroundServiceNotification.setContentIntent(
+            PendingIntent.getActivity(
+                applicationContext,
+                0,
+                Intent(applicationContext, if (BuildConfig.FLAVOR_aaos != "carapp") MainActivity::class.java else CarAppActivity::class.java),
+                PendingIntent.FLAG_IMMUTABLE
+            )
+        )
+    }
+
+    /**
+     * Updates the foreground service notification depending on the current settings and state.
+     */
+    private fun updateServiceNotification() {
+        if (!carPropertiesInitialized || !dataProcessor.staticVehicleData.isInitialized()) {
+            foregroundServiceNotification
+                .setContentTitle("Car Properties are initializing...")
+                .setContentText("")
+        } else if (!CarStatsViewer.appPreferences.notifications) {
+            foregroundServiceNotification
+                .setContentTitle(getString(R.string.foreground_service_info))
+                .setContentText("")
+        } else {
+            foregroundServiceNotification
+                .setContentTitle(getString(R.string.notification_title) + " " + resources.getStringArray(R.array.trip_type_names)[CarStatsViewer.appPreferences.mainViewTrip + 1])
+                .setContentText(String.format(
+                    "Dist.: %s, Cons.: %s, Speed: %s",
+                    StringFormatters.getTraveledDistanceString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f),
+                    StringFormatters.getAvgConsumptionString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.used_energy?.toFloat()?:0f, CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f),
+                    StringFormatters.getAvgSpeedString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f, CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.drive_time?:0)
+                ))
+            simpleNotification = false
+        }
+        if (!simpleNotification) {
+            simpleNotification = !CarStatsViewer.appPreferences.notifications
+            CarStatsViewer.notificationManager.notify(
+                CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10,
+                foregroundServiceNotification.build()
+            )
+        }
+    }
 }
