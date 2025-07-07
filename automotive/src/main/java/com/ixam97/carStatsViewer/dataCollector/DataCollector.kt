@@ -176,12 +176,13 @@ class DataCollector: Service() {
                 modelName = carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL),
                 distanceUnit = when (carPropertiesClient.getIntProperty(CarProperties.DISTANCE_DISPLAY_UNITS)) {
                     VehicleUnit.MILE -> DistanceUnitEnum.MILES
-                    else -> DistanceUnitEnum.KM
+                    VehicleUnit.KILOMETER -> DistanceUnitEnum.KM
+                    else -> null
                 }
             )
 
             dataProcessor.staticVehicleData.let {
-                InAppLogger.i("[NEO] Make: ${it.vehicleMake}, model: ${it.modelName}, battery capacity: ${(it.batteryCapacity?:0f)/1000} kWh, distance unit: ${it.distanceUnit.name}")
+                InAppLogger.i("[NEO] Make: ${it.vehicleMake}, model: ${it.modelName}, battery capacity: ${(it.batteryCapacity?:0f)/1000} kWh, distance unit: ${it.distanceUnit?.name}")
             }
 
             withContext(Dispatchers.Main) {
@@ -191,7 +192,11 @@ class DataCollector: Service() {
                 }
             }
 
-            CarStatsViewer.appPreferences.distanceUnit = if (!emulatorMode) dataProcessor.staticVehicleData.distanceUnit else DistanceUnitEnum.KM
+            CarStatsViewer.appPreferences.distanceUnit =
+                if (!emulatorMode)
+                    dataProcessor.staticVehicleData.distanceUnit?:DistanceUnitEnum.KM
+                else
+                    DistanceUnitEnum.KM
 
             CarProperties.usedProperties.forEach {
                 carPropertiesClient.updateProperty(it)

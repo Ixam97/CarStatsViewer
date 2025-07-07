@@ -1,6 +1,7 @@
 package com.ixam97.carStatsViewer.carPropertiesClient
 
 import android.car.Car
+import android.car.VehicleUnit
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
 import android.car.hardware.property.PropertyNotAvailableErrorCode
@@ -8,6 +9,9 @@ import android.car.hardware.property.PropertyNotAvailableException
 import android.content.Context
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
+import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.emulatorMode
+import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
 
 class CarPropertiesClient(
@@ -18,6 +22,29 @@ class CarPropertiesClient(
 
     private val carPropertyListener = object : CarPropertyManager.CarPropertyEventCallback {
         override fun onChangeEvent(carPropertyValue: CarPropertyValue<*>) {
+
+            if (!CarStatsViewer.dataProcessor.staticVehicleData.isInitialized()) {
+                CarStatsViewer.dataProcessor.staticVehicleData = CarStatsViewer.dataProcessor.staticVehicleData.copy(
+                    batteryCapacity = getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
+                    vehicleMake =  getStringProperty(CarProperties.INFO_MAKE),
+                    modelName = getStringProperty(CarProperties.INFO_MODEL),
+                    distanceUnit = when (getIntProperty(CarProperties.DISTANCE_DISPLAY_UNITS)) {
+                        VehicleUnit.MILE -> DistanceUnitEnum.MILES
+                        VehicleUnit.KILOMETER -> DistanceUnitEnum.KM
+                        else -> null
+                    }
+                )
+                CarStatsViewer.appPreferences.distanceUnit =
+                    if (!emulatorMode)
+                        CarStatsViewer.dataProcessor.staticVehicleData.distanceUnit?:DistanceUnitEnum.KM
+                    else
+                        DistanceUnitEnum.KM
+
+                CarStatsViewer.dataProcessor.staticVehicleData.let {
+                    InAppLogger.i("[CarPropertiesClient] Make: ${it.vehicleMake}, model: ${it.modelName}, battery capacity: ${(it.batteryCapacity?:0f)/1000} kWh, distance unit: ${it.distanceUnit?.name}")
+                }
+            }
+
             carPropertiesData.update(carPropertyValue)
             propertiesProcessor(carPropertyValue.propertyId)
         }
@@ -39,12 +66,21 @@ class CarPropertiesClient(
             }
             return propertyValue.value
         } catch (e: Exception) {
-            if (e is PropertyNotAvailableException) {
-                val errorMsg = "[CarPropertiesClient] Property is not available: ${PropertyNotAvailableErrorCode.toString(e.detailedErrorCode)}"
-                InAppLogger.e(errorMsg)
-                Firebase.crashlytics.log(errorMsg)
-            } else {
-                throw e
+            val errorMsg = "[CarPropertiesClient] Failed to get Property $propertyId.\n\r${e.stackTraceToString()}"
+            InAppLogger.e(errorMsg)
+            Firebase.crashlytics.log(errorMsg)
+            try {
+                if (e is PropertyNotAvailableException) {
+                    val errorMsg = "[CarPropertiesClient] Property is not available: ${PropertyNotAvailableErrorCode.toString(e.detailedErrorCode)}.\n\r${e.stackTraceToString()}"
+                    InAppLogger.e(errorMsg)
+                    Firebase.crashlytics.log(errorMsg)
+                } else {
+                    val errorMsg = "[CarPropertiesClient] Failed to get Property $propertyId.\n\r${e.stackTraceToString()}"
+                    InAppLogger.e(errorMsg)
+                    Firebase.crashlytics.log(errorMsg)
+                }
+            } catch (ee: Throwable) {
+                InAppLogger.e("[CarPropertiesClient] Something went horribly wrong!\n\r    ${ee.message}")
             }
         }
         return null
@@ -91,20 +127,7 @@ class CarPropertiesClient(
             (CarProperties.sensorRateMap[propertyId])?:0f
         )
     }
-/*
-    fun getCarPropertiesUpdates(
-        carPropertyIdsList: List<Int> = CarProperties.usedProperties
-    ) {
 
-        for (propertyId in carPropertyIdsList) {
-            carPropertyManager.registerCallback(
-                carPropertyListener,
-                propertyId,
-                (CarProperties.sensorRateMap[propertyId])?:0f
-            )
-        }
-    }
-*/
     fun disconnect() {
         car.disconnect()
     }
