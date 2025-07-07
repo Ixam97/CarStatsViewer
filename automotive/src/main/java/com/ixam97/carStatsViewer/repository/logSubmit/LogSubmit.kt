@@ -12,7 +12,8 @@ data class LogSubmitBody(
         val timestamp: Long,
         val brand: String,
         val model: String,
-        val device: String
+        val device: String,
+        val appInfo: String
     )
 }
 

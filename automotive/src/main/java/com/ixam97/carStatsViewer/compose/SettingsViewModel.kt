@@ -327,7 +327,8 @@ class SettingsViewModel:
                             timestamp = System.currentTimeMillis(),
                             brand = Build.BRAND,
                             model = Build.MODEL,
-                            device = Build.DEVICE
+                            device = Build.DEVICE,
+                            appInfo = "${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
                         )
                     ))
                 } catch (e: Exception) {
