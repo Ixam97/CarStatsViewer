@@ -29,6 +29,13 @@ object CarProperties {
         VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE,
     )
 
+    val usedStaticProperties = listOf(
+        INFO_MODEL,
+        INFO_MAKE,
+        INFO_MODEL_YEAR,
+        DISTANCE_DISPLAY_UNITS
+    )
+
     val sensorRateMap = mapOf(
         VehiclePropertyIds.PERF_VEHICLE_SPEED to 0f,
         VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE to CarPropertyManager.SENSOR_RATE_FAST,

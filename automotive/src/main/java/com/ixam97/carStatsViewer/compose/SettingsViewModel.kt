@@ -331,7 +331,8 @@ class SettingsViewModel:
                         )
                     ))
                 } catch (e: Exception) {
-                    InAppLogger.e("Failed: ${e.message}")
+                    InAppLogger.e("Failed: ${e.message}\n\r${e.stackTraceToString()}")
+                    resultmsg = e.message
                 }
                 withContext(Dispatchers.Main) {
                     if (resultmsg == null)
@@ -344,9 +345,6 @@ class SettingsViewModel:
                     }
                     snackbar.startDuration(3000)
                 }
-
-
-                // InAppLogger.d("[DEV] API Auth Check Success: ${LogSubmitRepository.authCheck()}")
             }
         }
     }

@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.car.app.activity.CarAppActivity
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
@@ -36,6 +38,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class DataCollector: Service() {
@@ -55,6 +58,8 @@ class DataCollector: Service() {
 
     private var lastLocation: Location? = null
     private var watchdogLocation: Location? = null
+
+    private var carPropertiesInitialized = false
 
     init {
         InAppLogger.i("[NEO] Neo DataCollector is initializing...")
@@ -84,7 +89,8 @@ class DataCollector: Service() {
 
         foregroundServiceNotification = Notification.Builder(applicationContext, CarStatsViewer.FOREGROUND_CHANNEL_ID)
             // .setContentTitle(getString(R.string.app_name))
-            .setContentTitle(getString(R.string.foreground_service_info))
+            // .setContentTitle(getString(R.string.foreground_service_info))
+            .setContentTitle("Car Properties are initializing...")
             .setSmallIcon(R.mipmap.ic_launcher_notification)
             .setOngoing(true)
 
@@ -118,7 +124,7 @@ class DataCollector: Service() {
         )
 
         fun emulatorCarMake(): String {
-            val propertyMake = carPropertiesClient.getStringProperty(CarProperties.INFO_MAKE)
+            val propertyMake = carPropertiesClient.getStringProperty(CarProperties.INFO_MAKE)?: "Unknown"
             if (propertyMake == "Toy Vehicle") {
                 if (File("/product/fonts/PolestarUnica77-Regular.otf").exists())
                     return "Polestar"
@@ -127,54 +133,72 @@ class DataCollector: Service() {
             return propertyMake
         }
 
-        InAppLogger.i("Brand: ${emulatorCarMake()}")
+        serviceScope.launch {
+            var allPropertiesAvailable = false
 
-        var availabilityCheckDone = false
-
-        CoroutineScope(Dispatchers.IO).launch {
-            var propertiesUnavailable = false;
-            while (true) {
-                CarProperties.usedProperties.forEach {
-                    if (!carPropertiesClient.checkPropertyAvailability(it, 0)) {
-                        propertiesUnavailable = true
-                        InAppLogger.w("Car Property is unavailable: $it")
+            // Check availability of all Car Properties and try to register Callbacks.
+            var attemptCounter = 0
+            while (!allPropertiesAvailable) {
+                if (attemptCounter > 0) {
+                    delay(500)
+                }
+                allPropertiesAvailable = true;
+                CarProperties.usedProperties.forEach { propertyId ->
+                    if (!carPropertiesClient.getCaPropertyUpdates(propertyId)) {
+                        allPropertiesAvailable = false
+                        val warnMsg = "[NEO] Property with ID $propertyId is currently not available!"
+                        InAppLogger.w(warnMsg)
+                        Firebase.crashlytics.log(warnMsg)
+                    } else {
+                        InAppLogger.i("[NEO] Property with ID $propertyId successfully registered.")
                     }
                 }
-                if (!propertiesUnavailable) {
-                    break
+                // CarProperties.usedStaticProperties.forEach { propertyId ->
+                //     if (carPropertiesClient.checkPropertyAvailability(propertyId, 0)) {
+                //         allPropertiesAvailable = false
+                //         InAppLogger.w("[NEO] Property with ID $propertyId is currently not available!")
+                //     }
+                // }
+
+                attemptCounter++
+
+                if (attemptCounter > 10) {
+                    InAppLogger.e("[NEO] Service init failed: Not all required Car Properties are available!")
+                    throw Exception("Service init failed: Not all required Car Properties are available!")
                 }
-                delay(500)
             }
-            availabilityCheckDone = true
-        }
 
-        while (!availabilityCheckDone) {
-            // Wait for check
-        }
-        InAppLogger.i("All relevant Car Properties are available!")
+            InAppLogger.i("Brand: ${emulatorCarMake()}")
 
-        dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
-            batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
-            vehicleMake =  emulatorCarMake(),
-            modelName = carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL),
-            distanceUnit = when (carPropertiesClient.getIntProperty(CarProperties.DISTANCE_DISPLAY_UNITS)) {
-                VehicleUnit.MILE -> DistanceUnitEnum.MILES
-                else -> DistanceUnitEnum.KM
+            dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
+                batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
+                vehicleMake =  emulatorCarMake(),
+                modelName = carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL),
+                distanceUnit = when (carPropertiesClient.getIntProperty(CarProperties.DISTANCE_DISPLAY_UNITS)) {
+                    VehicleUnit.MILE -> DistanceUnitEnum.MILES
+                    else -> DistanceUnitEnum.KM
+                }
+            )
+
+            dataProcessor.staticVehicleData.let {
+                InAppLogger.i("[NEO] Make: ${it.vehicleMake}, model: ${it.modelName}, battery capacity: ${(it.batteryCapacity?:0f)/1000} kWh, distance unit: ${it.distanceUnit.name}")
             }
-        )
 
+            withContext(Dispatchers.Main) {
+                if (dataProcessor.staticVehicleData.modelName == "Speedy Model") {
+                    Toast.makeText(applicationContext, "Emulator Mode", Toast.LENGTH_LONG).show()
+                    emulatorMode = true
+                }
+            }
 
+            CarStatsViewer.appPreferences.distanceUnit = if (!emulatorMode) dataProcessor.staticVehicleData.distanceUnit else DistanceUnitEnum.KM
 
-        dataProcessor.staticVehicleData.let {
-            InAppLogger.i("[NEO] Make: ${it.vehicleMake}, model: ${it.modelName}, battery capacity: ${(it.batteryCapacity?:0f)/1000} kWh")
+            CarProperties.usedProperties.forEach {
+                carPropertiesClient.updateProperty(it)
+            }
+
+            carPropertiesInitialized = true
         }
-
-        if (dataProcessor.staticVehicleData.modelName == "Speedy Model") {
-            Toast.makeText(this, "Emulator Mode", Toast.LENGTH_LONG).show()
-            emulatorMode = true
-        }
-
-        CarStatsViewer.appPreferences.distanceUnit = if (!emulatorMode) dataProcessor.staticVehicleData.distanceUnit else DistanceUnitEnum.KM
 
         InAppLogger.i("[NEO] Google API availability: ${GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS}")
 
@@ -206,12 +230,6 @@ class DataCollector: Service() {
                 LIVE_DATA_TASK_INTERVAL
             ).catch { e -> InAppLogger.e("[NEO] requestFlow: ${e.message}") }
             .launchIn(serviceScope)
-
-        carPropertiesClient.getCarPropertiesUpdates()
-
-        CarProperties.usedProperties.forEach {
-            carPropertiesClient.updateProperty(it)
-        }
 
         if (CarStatsViewer.appPreferences.autostart)
             CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 9_500, extendedLogging = true)
@@ -262,7 +280,11 @@ class DataCollector: Service() {
             var simpleNotification = false
             while (true) {
                 delay(2_500)
-                if (!CarStatsViewer.appPreferences.notifications) {
+                if (!carPropertiesInitialized) {
+                    foregroundServiceNotification
+                        .setContentTitle("Car Properties are initializing...")
+                        .setContentText("")
+                } else if (!CarStatsViewer.appPreferences.notifications) {
                     foregroundServiceNotification
                         // .setSmallIcon(R.mipmap.ic_launcher_notification)
                         .setContentTitle(getString(R.string.foreground_service_info))
