@@ -15,7 +15,6 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -228,19 +227,6 @@ class MainActivity : FragmentActivity() {
                             if (it.speed > .1 && !moving) {
                                 setSnow(true)
                                 moving = true
-                                val summaryFragment =
-                                    supportFragmentManager.findFragmentByTag("SummaryFragment")
-                                if (summaryFragment != null) {
-                                    supportFragmentManager.commit {
-                                        setCustomAnimations(
-                                            R.anim.slide_in_up,
-                                            R.anim.slide_out_down,
-                                            R.anim.stay_still,
-                                            R.anim.slide_out_down
-                                        )
-                                        remove(summaryFragment)
-                                    }
-                                }
                                 // main_button_summary.isEnabled = false
                                 mainImageButtonSummary.isEnabled = false
                                 mainButtonHistory.isEnabled = false
