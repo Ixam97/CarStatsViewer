@@ -9,9 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.CheckBox
 import android.widget.DatePicker
-import android.widget.FrameLayout
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ixam97.carStatsViewer.BuildConfig
@@ -19,24 +17,17 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.adapters.TripHistoryAdapter
 import com.ixam97.carStatsViewer.compose.ComposeTripDetailsActivity
-import com.ixam97.carStatsViewer.database.tripData.ChargingPoint
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.databinding.ActivityHistoryBinding
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
-import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
 import com.ixam97.carStatsViewer.liveDataApi.uploadService.UploadService
-import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.ui.views.TripHistoryRowWidget
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
-import kotlin.math.ceil
-import kotlin.math.min
-import kotlin.math.roundToInt
 
 class HistoryActivity  : FragmentActivity() {
 
@@ -145,28 +136,6 @@ class HistoryActivity  : FragmentActivity() {
              Intent(this, ComposeTripDetailsActivity::class.java)
          summaryIntent.putExtra("SessionId", sessionId)
          startActivity(summaryIntent)
-
-        /*
-        CoroutineScope(Dispatchers.IO).launch {
-            val session = CarStatsViewer.tripDataSource.getDrivingSession(sessionId) ?: return@launch
-            if ((appPreferences.mainViewTrip + 1) != session.session_type && (session.end_epoch_time?:0) <= 0) {
-                appPreferences.mainViewTrip = session.session_type - 1
-                CarStatsViewer.dataProcessor.changeSelectedTrip(session.session_type)
-            }
-            runOnUiThread {
-                binding.historyFragmentContainer.visibility = View.VISIBLE
-                supportFragmentManager.commit {
-                    setCustomAnimations(
-                        R.anim.slide_in_up,
-                        R.anim.stay_still,
-                        R.anim.stay_still,
-                        R.anim.slide_out_down
-                    )
-                    add(R.id.history_fragment_container, SummaryFragment(session))
-                }
-            }
-        }
-        */
     }
 
     private fun startMultiSelectMode(sessionId: Long, widget: TripHistoryRowWidget) {

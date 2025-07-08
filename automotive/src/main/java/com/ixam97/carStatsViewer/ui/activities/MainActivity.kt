@@ -31,7 +31,6 @@ import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.databinding.ActivityMainBinding
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.emulatorPowerSign
-import com.ixam97.carStatsViewer.ui.fragments.SummaryFragment
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionSmoothingType
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionY
@@ -872,26 +871,6 @@ class MainActivity : FragmentActivity() {
             val newTripType = if (appPreferences.mainViewTrip >= 3) 0 else appPreferences.mainViewTrip + 1
             CarStatsViewer.dataProcessor.changeSelectedTrip(newTripType + 1)
             appPreferences.mainViewTrip = newTripType
-        }
-    }
-
-    private fun openSummaryFragment() = with(binding) {
-        CoroutineScope(Dispatchers.IO).launch {
-            CarStatsViewer.tripDataSource.getActiveDrivingSessionsIdsMap()[appPreferences.mainViewTrip + 1]?.let {
-                val session = CarStatsViewer.dataProcessor.selectedSessionDataFlow.value // CarStatsViewer.tripDataSource.getFullDrivingSession(it)
-                if (session != null) runOnUiThread {
-                    mainFragmentContainer.visibility = View.VISIBLE
-                    supportFragmentManager.commit {
-                        setCustomAnimations(
-                            R.anim.slide_in_up,
-                            R.anim.stay_still,
-                            R.anim.stay_still,
-                            R.anim.slide_out_down
-                        )
-                        add(R.id.main_fragment_container, SummaryFragment(session), "SummaryFragment")
-                    }
-                }
-            }
         }
     }
 
