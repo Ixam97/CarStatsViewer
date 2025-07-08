@@ -104,6 +104,9 @@
     <string name="permissions_dialog_text">Diese App benötigt Berechtigungen, um genuzt zu werden. Ohne die angeforderten Berechtigungen können keine Daten des Fahrzugs erfasst werden.</string>
     <string name="permissions_dialog_quit">Car Stats Viewer beenden</string>
     <string name="permissions_dialog_grant">Berechtigungen erteilen</string>
+    <string name="permissions_dialog_grant_singular">Berechtigung erteilen</string>
+    <string name="permissions_dialog_deny">Trotzdem fortfahren</string>
+    <string name="permissions_dialog_background_location_text">Für einen zuverlässigen Betrieb der App ist Zugriff auf den Standort aus dem Hintergrund notwendig. Bitte \"Immer zulassen\" für den Standortzugriff auswählen.\n\nDie Standort-Berechtigung ist erforderlich, um auch auf andere Fahrzeugdaten außer dem GPS-Standort zuzugreifen.\n\nStandardmäßig ist die Standorterfassung in der App deaktiviert und kann innerhalb der App-Einstellungen aktiviert werden. Dies kann auch für die jweils ferfügbaren Live-Daten-APIs einzeln festgelegt werden.</string>
 
     <string name="plot_dimensionY_SPEED">Geschwindigkeit</string>
     <string name="plot_dimensionY_ALTITUDE">Höhe</string>

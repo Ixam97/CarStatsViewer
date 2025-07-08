@@ -117,12 +117,12 @@ class PermissionsActivity: Activity() {
     private fun showBackgroundLocationPermissionDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.permissions_dialog_title))
-            .setMessage("Background location permission request placeholder")
+            .setMessage(getString(R.string.permissions_dialog_background_location_text))
             .setCancelable(false)
-            .setPositiveButton(getString(R.string.permissions_dialog_grant)) { dialog, id ->
+            .setPositiveButton(getString(R.string.permissions_dialog_grant_singular)) { dialog, id ->
                 requestPermissions(arrayOf(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION), 0)
             }
-            .setNegativeButton("Continue anyways placeholder") { dialog, id ->
+            .setNegativeButton(getString(R.string.permissions_dialog_deny)) { dialog, id ->
                 finish()
                 startActivity(Intent(applicationContext, MainActivity::class.java))
             }
