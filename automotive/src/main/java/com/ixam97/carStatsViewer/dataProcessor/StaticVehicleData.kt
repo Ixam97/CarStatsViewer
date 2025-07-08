@@ -8,5 +8,14 @@ data class StaticVehicleData(
     val modelName: String? = null,
     val distanceUnit: DistanceUnitEnum? = null
 ) {
-    fun isInitialized(): Boolean = batteryCapacity != null && vehicleMake != null && modelName != null && distanceUnit != null
+    fun isInitialized(): Boolean =
+        isEssentialInitialized() && isOptionalInitialized()
+
+    fun isEssentialInitialized(): Boolean =
+        batteryCapacity != null
+
+    fun isOptionalInitialized(): Boolean =
+        vehicleMake != null
+                && modelName != null
+                && distanceUnit != null
 }

@@ -191,7 +191,7 @@ class MainActivity : FragmentActivity() {
 
                     // InAppLogger.v("Real time data: $it")
 
-                    if (it.isInitialized()) {
+                    if (it.isEssentialInitialized()) {
                         neoChargePortConnected = it.chargePortConnected!!
 
                         val instCons = it.instConsumption

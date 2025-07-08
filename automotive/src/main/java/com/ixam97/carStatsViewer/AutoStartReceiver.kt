@@ -45,11 +45,12 @@ class AutoStartReceiver: BroadcastReceiver() {
                     || (intent?.action?: "") == Intent.ACTION_MY_PACKAGE_REPLACED)
             && !isServiceRunning(DataCollector::class.java.name)) {
             try {
-                InAppLogger.v("[ASR] Attempting to start Service on Boot")
+                InAppLogger.i("[ASR] Attempting to start Service on ${intent?.action}")
                 startForegroundService(CarStatsViewer.appContext, Intent(CarStatsViewer.appContext, DataCollector::class.java))
 
             } catch (e: Exception) {
-                InAppLogger.e("Failed to directly start foreground service! Probably missing background location permission or not supported by OS version!")
+                InAppLogger.e("[ASR] Failed to directly start foreground service! Probably missing background location permission or not supported by OS version!")
+                InAppLogger.e(e.stackTraceToString())
             }
         }
 

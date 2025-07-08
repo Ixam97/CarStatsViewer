@@ -222,7 +222,7 @@ class HttpLiveData (
                 }
             }
 
-            if (!realTimeData.isInitialized()) {
+            if (!realTimeData.isEssentialInitialized()) {
                 InAppLogger.w("Real time data is not entirely initialized: ${realTimeData}")
                 connectionStatus = ConnectionStatus.ERROR
                 return null

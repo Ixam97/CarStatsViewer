@@ -187,7 +187,7 @@ class DataProcessor {
         //    chargePortConnected = (carPropertiesData.ChargePortConnected.value as Boolean?)?: false
         //)
 
-        if (!staticVehicleData.isInitialized()) {
+        if (!staticVehicleData.isEssentialInitialized()) {
             InAppLogger.w("[NEO] Static vehicle Data not yet available!")
             return
         }
@@ -209,7 +209,7 @@ class DataProcessor {
         }
 
 
-        if (!realTimeData.isInitialized() || !staticVehicleData.isInitialized()) {
+        if (!realTimeData.isEssentialInitialized() || !staticVehicleData.isEssentialInitialized()) {
             if (dataInitialized != false) {
                 dataInitialized = false
                 InAppLogger.i("[NEO] Waiting for car properties to be initialized...")
@@ -219,7 +219,7 @@ class DataProcessor {
 
         if (dataInitialized == false) {
             dataInitialized = true
-            InAppLogger.i("[NEO] Car properties initialization complete.")
+            InAppLogger.i("[NEO] Essential Car Properties initialization complete.")
         }
 
         when (carProperty) {

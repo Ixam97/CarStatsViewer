@@ -21,6 +21,14 @@ data class RealTimeData(
     val optimizeDistraction: Boolean get() = speed != null && speed > 0.0
 
     fun isInitialized(): Boolean {
+        return isEssentialInitialized() && isOptionalInitialized()
+    }
+
+    fun isOptionalInitialized(): Boolean {
+        return ambientTemperature != null
+    }
+
+    fun isEssentialInitialized(): Boolean {
         return speed != null
                 && power != null
                 && selectedGear != null
@@ -28,7 +36,6 @@ data class RealTimeData(
                 && chargePortConnected != null
                 && batteryLevel != null
                 && stateOfCharge != null
-                && ambientTemperature  != null
     }
 
     private fun getDriveState(): Int {

@@ -103,23 +103,16 @@ class DataCollector: Service() {
         startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
         InAppLogger.i("[NEO] Foreground service started in onCreate()")
 
+        /** detect if system is an emulator and show a toast */
+        if (BuildConfig.DEBUG) {
+            Toast.makeText(applicationContext, "Emulator Mode", Toast.LENGTH_LONG).show()
+            emulatorMode = true
+        }
+
         serviceScope.launch {
             withContext(Dispatchers.IO) { dataProcessor.checkTrips() }
-            readStaticCarProperties()
+            readInitialStaticProperties()
             setupDynamicCarProperties()
-
-            /** detect if system is an emulator and show a toast */
-            withContext(Dispatchers.Main) {
-                if (dataProcessor.staticVehicleData.modelName == "Speedy Model") {
-                    Toast.makeText(applicationContext, "Emulator Mode", Toast.LENGTH_LONG).show()
-                    emulatorMode = true
-                }
-            }
-
-            /** Show km in the emulator by default. Can be changed to miles in dev settings in the app. */
-            CarStatsViewer.appPreferences.distanceUnit =
-                if (!emulatorMode) dataProcessor.staticVehicleData.distanceUnit?:DistanceUnitEnum.KM
-                else DistanceUnitEnum.KM
 
             carPropertiesInitialized = true
         }
@@ -185,9 +178,16 @@ class DataCollector: Service() {
             while (true) {
                 delay(2_500)
                 updateServiceNotification()
+                if (!dataProcessor.realTimeData.isOptionalInitialized()) {
+                    InAppLogger.d("[NEO] Attempting to init missing optional dynamic Properties...")
+                    setupOptionalDynamicProperties()
+                }
+                if (!dataProcessor.staticVehicleData.isOptionalInitialized()) {
+                    InAppLogger.d("[NEO] Attempting to init missing optional static Properties...")
+                    readStaticProperties()
+                }
             }
         }
-
     }
 
     override fun onDestroy() {
@@ -255,33 +255,42 @@ class DataCollector: Service() {
     /**
      * Read static Car Properties
      */
-    private suspend fun readStaticCarProperties() {
+    private suspend fun readInitialStaticProperties() {
         var attemptCounter = 0
-        while(!dataProcessor.staticVehicleData.isInitialized()) {
+        while(!dataProcessor.staticVehicleData.isEssentialInitialized()) {
             if (attemptCounter > 0) {
                 delay(500)
             }
-            dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
-                batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
-                vehicleMake =  emulatorCarMake(),
-                modelName = carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL),
-                distanceUnit = when (carPropertiesClient.getIntProperty(CarProperties.DISTANCE_DISPLAY_UNITS)) {
-                    VehicleUnit.MILE -> DistanceUnitEnum.MILES
-                    VehicleUnit.KILOMETER -> DistanceUnitEnum.KM
-                    else -> null
-                }
-            )
+
+            readStaticProperties()
+
             attemptCounter++
             if (attemptCounter > PROPERTY_INIT_MAX_ATTEMPTS) {
                 InAppLogger.e("[NEO] Service init failed: Not all required Car Properties are available!")
                 throw Exception("Service init failed: Not all required Car Properties are available!")
             }
         }
-        InAppLogger.i("[NEO] Static Car Properties read successfully.")
+
+        InAppLogger.i("[NEO] Static Car Properties read.")
         InAppLogger.i("Brand: ${emulatorCarMake()}")
         dataProcessor.staticVehicleData.apply {
             InAppLogger.i("[NEO] Make: ${vehicleMake}, model: ${modelName}, battery capacity: ${(batteryCapacity?:0f)/1000} kWh, distance unit: ${distanceUnit?.name}")
         }
+    }
+
+    fun readStaticProperties() {
+        dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
+            batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
+            vehicleMake =  emulatorCarMake(),
+            modelName = carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL),
+            distanceUnit = when (carPropertiesClient.getIntProperty(CarProperties.DISTANCE_DISPLAY_UNITS)) {
+                VehicleUnit.MILE -> DistanceUnitEnum.MILES
+                VehicleUnit.KILOMETER -> DistanceUnitEnum.KM
+                else -> null
+            }
+        )
+        /** Show km in the emulator by default. Can be changed to miles in dev settings in the app. */
+        setDistanceUnitPreference()
     }
 
     /**
@@ -295,12 +304,16 @@ class DataCollector: Service() {
                 delay(500)
             }
             allPropertiesAvailable = true
-            CarProperties.usedProperties.forEach { propertyId ->
-                if (!carPropertiesClient.getCaPropertyUpdates(propertyId)) {
-                    allPropertiesAvailable = false
-                    val warnMsg = "[NEO] Property with ID $propertyId is currently not available!"
-                    InAppLogger.w(warnMsg)
-                    Firebase.crashlytics.log(warnMsg)
+            CarProperties.essentialDynamicProperties.forEach { propertyId ->
+                if (!carPropertiesClient.registeredProperties.contains(propertyId)) {
+                    if (!carPropertiesClient.getCarPropertyUpdates(propertyId)) {
+                        allPropertiesAvailable = false
+                        val warnMsg = "[NEO] Essential Property ${CarProperties.getNameById(propertyId)} ($propertyId) is currently not available!"
+                        InAppLogger.w(warnMsg)
+                        Firebase.crashlytics.log(warnMsg)
+                    } else {
+                        InAppLogger.d("[NEO] Essential Property ${CarProperties.getNameById(propertyId)} ($propertyId) registered.")
+                    }
                 }
             }
             attemptCounter++
@@ -310,11 +323,27 @@ class DataCollector: Service() {
             }
         }
 
+        setupOptionalDynamicProperties()
+
         CarProperties.usedProperties.forEach {
             carPropertiesClient.updateProperty(it)
         }
 
-        InAppLogger.i("[NEO] Dynamic Car Properties have ben registered successfully.")
+        InAppLogger.i("[NEO] Dynamic Car Properties have been registered successfully.")
+    }
+
+    private fun setupOptionalDynamicProperties() {
+        CarProperties.optionalDynamicProperties.forEach { propertyId ->
+            if (!carPropertiesClient.registeredProperties.contains(propertyId)) {
+                if (!carPropertiesClient.getCarPropertyUpdates(propertyId)) {
+                    val warnMsg = "[NEO] Optional Property ${CarProperties.getNameById(propertyId)} ($propertyId) is currently not available!"
+                    InAppLogger.w(warnMsg)
+                    Firebase.crashlytics.log(warnMsg)
+                } else {
+                    InAppLogger.d("[NEO] Optional Property ${CarProperties.getNameById(propertyId)} ($propertyId) registered.")
+                }
+            }
+        }
     }
 
     /**
@@ -366,5 +395,13 @@ class DataCollector: Service() {
                 foregroundServiceNotification.build()
             )
         }
+    }
+
+    private fun setDistanceUnitPreference() {
+        val distanceUnit = dataProcessor.staticVehicleData.distanceUnit?:DistanceUnitEnum.KM
+        InAppLogger.d("[NEO] Setting distance unit preference to ${distanceUnit.unit()}")
+        CarStatsViewer.appPreferences.distanceUnit =
+            if (!emulatorMode) distanceUnit
+            else DistanceUnitEnum.KM
     }
 }
