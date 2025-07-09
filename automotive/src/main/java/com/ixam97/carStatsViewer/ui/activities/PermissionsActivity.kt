@@ -23,7 +23,8 @@ class PermissionsActivity: Activity() {
             Car.PERMISSION_SPEED,
             android.Manifest.permission.ACCESS_FINE_LOCATION,
             android.Manifest.permission.ACCESS_COARSE_LOCATION,
-            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+            android.Manifest.permission.POST_NOTIFICATIONS
         )
     }
 

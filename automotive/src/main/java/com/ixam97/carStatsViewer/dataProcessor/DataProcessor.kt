@@ -61,7 +61,7 @@ class DataProcessor {
 
     private var localSessionsAccess: Boolean = true
 
-    var dataInitialized: Boolean? = null
+    var dataInitialized: Boolean = false
 
     /**
      * List of local copies of the current trips. Used for storing sum values and saving them to

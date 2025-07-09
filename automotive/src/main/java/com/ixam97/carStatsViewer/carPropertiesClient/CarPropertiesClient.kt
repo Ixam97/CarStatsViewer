@@ -17,8 +17,8 @@ class CarPropertiesClient(
     private val carPropertiesData: CarPropertiesData
 ) {
 
-    private var debugTemperatureAttempt = 0
-    private var debugDistanceUnitAttempt = 0
+    // private var debugTemperatureAttempt = 0
+    // private var debugDistanceUnitAttempt = 0
 
     private val _registeredProperties = mutableListOf<Int>()
     val registeredProperties: List<Int>
@@ -46,10 +46,10 @@ class CarPropertiesClient(
         try {
             val propertyValue = carPropertyManager.getProperty<T>(propertyId, areaId)
             // propertyValue.propertyStatus crashes Polestar 2 emulator
-            if (propertyValue.status != CarPropertyValue.STATUS_AVAILABLE || (propertyId == CarProperties.DISTANCE_DISPLAY_UNITS && emulatorMode && debugDistanceUnitAttempt < 5)) {
+            if (propertyValue.status != CarPropertyValue.STATUS_AVAILABLE /* || (propertyId == CarProperties.DISTANCE_DISPLAY_UNITS && emulatorMode && debugDistanceUnitAttempt < 5) */) {
                 InAppLogger.w("[CarPropertiesClient.getProperty] Property ${CarProperties.getNameById(propertyId)} (${propertyId}) is currently not available. Status: ${propertyValue.status}.")
-                if (emulatorMode && propertyId == CarProperties.DISTANCE_DISPLAY_UNITS)
-                    debugDistanceUnitAttempt++
+                // if (emulatorMode && propertyId == CarProperties.DISTANCE_DISPLAY_UNITS)
+                //     debugDistanceUnitAttempt++
                 return null
             }
             return propertyValue.value
@@ -71,7 +71,7 @@ class CarPropertiesClient(
     }
 
     fun updateProperty(propertyId: Int) {
-        if (emulatorMode && propertyId == CarProperties.ENV_OUTSIDE_TEMPERATURE && debugTemperatureAttempt < 2) return
+        // if (emulatorMode && propertyId == CarProperties.ENV_OUTSIDE_TEMPERATURE && debugTemperatureAttempt < 2) return
         carPropertyManager.getProperty<Any>(propertyId, 0)?.let {
             carPropertiesData.update(it, allowInvalidTimestamps = true)
         }
@@ -98,10 +98,10 @@ class CarPropertiesClient(
         if (_registeredProperties.contains(propertyId)) return true
 
         // Debug condition to emulate Polestar 4
-        if (emulatorMode && debugTemperatureAttempt < 2 && propertyId == CarProperties.ENV_OUTSIDE_TEMPERATURE) {
-            debugTemperatureAttempt++
-            return false
-        }
+        // if (emulatorMode && debugTemperatureAttempt < 2 && propertyId == CarProperties.ENV_OUTSIDE_TEMPERATURE) {
+        //     debugTemperatureAttempt++
+        //     return false
+        // }
 
         if (!checkPropertyAvailability(propertyId, 0)) { return false }
 
@@ -118,6 +118,7 @@ class CarPropertiesClient(
             (CarProperties.sensorRateMap[propertyId])?:0f
         )) {
             _registeredProperties.add(propertyId)
+            InAppLogger.d("[CarPropertiesClient] $propertyId registered")
             return true
         }
 

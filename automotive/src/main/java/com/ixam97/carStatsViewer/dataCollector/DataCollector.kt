@@ -179,11 +179,9 @@ class DataCollector: Service() {
                 delay(2_500)
                 updateServiceNotification()
                 if (!dataProcessor.realTimeData.isOptionalInitialized()) {
-                    InAppLogger.d("[NEO] Attempting to init missing optional dynamic Properties...")
                     setupOptionalDynamicProperties()
                 }
                 if (!dataProcessor.staticVehicleData.isOptionalInitialized()) {
-                    InAppLogger.d("[NEO] Attempting to init missing optional static Properties...")
                     readStaticProperties()
                 }
             }
@@ -279,6 +277,7 @@ class DataCollector: Service() {
     }
 
     fun readStaticProperties() {
+        InAppLogger.d("[NEO] Attempting to read static Properties...")
         dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
             batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
             vehicleMake =  emulatorCarMake(),
@@ -299,6 +298,7 @@ class DataCollector: Service() {
     private suspend fun setupDynamicCarProperties() {
         var allPropertiesAvailable = false
         var attemptCounter = 0
+        InAppLogger.d("[NEO] Attempting to init essential dynamic Properties...")
         while (!allPropertiesAvailable) {
             if (attemptCounter > 0) {
                 delay(500)
@@ -312,7 +312,7 @@ class DataCollector: Service() {
                         InAppLogger.w(warnMsg)
                         Firebase.crashlytics.log(warnMsg)
                     } else {
-                        InAppLogger.d("[NEO] Essential Property ${CarProperties.getNameById(propertyId)} ($propertyId) registered.")
+                        InAppLogger.i("[NEO] Essential Property ${CarProperties.getNameById(propertyId)} ($propertyId) registered.")
                     }
                 }
             }
@@ -333,6 +333,7 @@ class DataCollector: Service() {
     }
 
     private fun setupOptionalDynamicProperties() {
+        InAppLogger.d("[NEO] Attempting to init optional dynamic Properties...")
         CarProperties.optionalDynamicProperties.forEach { propertyId ->
             if (!carPropertiesClient.registeredProperties.contains(propertyId)) {
                 if (!carPropertiesClient.getCarPropertyUpdates(propertyId)) {
@@ -340,7 +341,7 @@ class DataCollector: Service() {
                     InAppLogger.w(warnMsg)
                     Firebase.crashlytics.log(warnMsg)
                 } else {
-                    InAppLogger.d("[NEO] Optional Property ${CarProperties.getNameById(propertyId)} ($propertyId) registered.")
+                    InAppLogger.i("[NEO] Optional Property ${CarProperties.getNameById(propertyId)} ($propertyId) registered.")
                 }
             }
         }
