@@ -158,7 +158,7 @@ fun DevSettings(
         ) {
             CarGradientButton(
                 modifier = Modifier
-                    .width(400.dp),
+                    .width(350.dp),
                 active = viewModel.devSettingsState.isScreenshotServiceRunning,
                 onClick = {
                     if (viewModel.devSettingsState.isScreenshotServiceRunning) {

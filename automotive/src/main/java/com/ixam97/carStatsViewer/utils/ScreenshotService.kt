@@ -18,10 +18,8 @@ import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.IBinder
 import android.os.Parcelable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.core.content.getSystemService
+import androidx.window.layout.WindowMetricsCalculator
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import kotlinx.coroutines.CoroutineScope
@@ -111,7 +109,7 @@ class ScreenshotService: Service() {
                     isServiceRunning = true
                 )
 
-                val (width, height) = getWindowSize(applicationContext)
+                val (width, height) = getWindowSize()
                 if (imageReader == null) {
                     imageReader = ImageReader.newInstance(
                         width, height,
@@ -155,7 +153,7 @@ class ScreenshotService: Service() {
     }
 
     private fun startScreenshotService(intent: Intent) {
-        val (width, height) = getWindowSize(applicationContext)
+        val (width, height) = getWindowSize()
         val config = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(
                 KEY_SCREENSHOT_CONFIG,
@@ -202,8 +200,10 @@ class ScreenshotService: Service() {
         mediaProjection = null
     }
 
-    private fun getWindowSize(context: Context): Pair<Int, Int> {
-        return context.resources.displayMetrics.widthPixels to context.resources.displayMetrics.heightPixels
+    private fun getWindowSize(): Pair<Int, Int> {
+        val calculator = WindowMetricsCalculator.getOrCreate()
+        val metrics = calculator.computeMaximumWindowMetrics(applicationContext)
+        return metrics.bounds.width() to metrics.bounds.height()
     }
 
     private fun createScreenshotNotification(context: Context): Notification {
