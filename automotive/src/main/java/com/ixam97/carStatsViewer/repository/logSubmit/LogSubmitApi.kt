@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.repository.logSubmit
 
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header
@@ -15,9 +16,10 @@ interface LogSubmitApi {
         @Body body: LogSubmitBody
     ): Response<LogSubmitStatus>
 
-    @POST("/CSVBackend/authCheck")
-    suspend fun checkAuth(
-        @Header("x-api-key") apiKey: String
-    ): Response<AuthResponse>
+    @POST("/CSVBackend/imageUpload")
+    suspend fun uploadImage(
+        @Header("x-api-key") apiKey: String,
+        @Body body: MultipartBody
+    ): Response<LogSubmitStatus>
 
 }

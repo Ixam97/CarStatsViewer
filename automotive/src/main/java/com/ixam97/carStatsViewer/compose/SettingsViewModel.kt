@@ -311,7 +311,7 @@ class SettingsViewModel:
     }
 
     fun submitLog(context: Context) {
-        var snackbar = SnackbarWidget.Builder(context, "Submitting log ...")
+        val snackbar = SnackbarWidget.Builder(context, "Submitting log ...")
             .setStartDrawable(R.drawable.ic_upload)
             .show()
         viewModelScope.launch {
@@ -416,6 +416,43 @@ class SettingsViewModel:
                         }
                         InAppLogger.d(fontsList)
                     }
+                }
+            }
+        }
+    }
+
+    fun submitScreenshots(context: Context) {
+        if (CarStatsViewer.screenshotBitmap.isEmpty()) {
+            SnackbarWidget.Builder(context, "No Screenshots available.")
+                .setIsError(true)
+                .setDuration(2000)
+                .show()
+            return
+        }
+        val snackbar = SnackbarWidget.Builder(context, "Submitting screenshots ...")
+            .setStartDrawable(R.drawable.ic_upload)
+            .show()
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                var resultmsg: String? = null
+                try {
+                    resultmsg = LogSubmitRepository.uploadImage(
+                        bitmaps = CarStatsViewer.screenshotBitmap
+                    )
+                } catch (e: Exception) {
+                    InAppLogger.e("Failed: ${e.message}\n\r${e.stackTraceToString()}")
+                    resultmsg = e.message
+                }
+                withContext(Dispatchers.Main) {
+                    if (resultmsg == null) {
+                        snackbar.updateStartDrawable(R.drawable.ic_checkmark)
+                        snackbar.updateMessage("${CarStatsViewer.screenshotBitmap.size} screenshots submitted successfully.")
+                        CarStatsViewer.screenshotBitmap.clear()
+                    } else {
+                        snackbar.setToError()
+                        snackbar.updateMessage(resultmsg)
+                    }
+                    snackbar.startDuration(3000)
                 }
             }
         }

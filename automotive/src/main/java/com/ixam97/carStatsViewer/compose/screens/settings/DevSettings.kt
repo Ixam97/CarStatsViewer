@@ -85,6 +85,16 @@ fun DevSettings(
                     ) {
                         Text("Scan Fonts")
                     }
+                    if (viewModel.devSettingsState.showScreenshotButton) {
+                        Spacer(Modifier.size(20.dp))
+                        CarGradientButton(
+                            modifier = Modifier
+                                .weight(1f),
+                            onClick = { viewModel.submitScreenshots(context) },
+                        ) {
+                            Text("Submit Screenshots")
+                        }
+                    }
                 }
             }
         )
