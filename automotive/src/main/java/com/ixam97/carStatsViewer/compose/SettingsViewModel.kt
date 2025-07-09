@@ -24,6 +24,7 @@ import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitRepository
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.ScreenshotService
 import com.ixam97.carStatsViewer.utils.logLength
 import com.ixam97.carStatsViewer.utils.logLevel
 import kotlinx.coroutines.Dispatchers
@@ -67,6 +68,8 @@ class SettingsViewModel:
         val logLength: Int = 0,
         val debugDelays: Boolean = false,
         val debugColors: Boolean = false,
+        val isScreenshotServiceRunning: Boolean = false,
+        val numberOfScreenshots: Int = 0
     )
 
     data class ApiSettingsState(
@@ -121,7 +124,9 @@ class SettingsViewModel:
                     loggingLevel = preferences.logLevel,
                     logLength = preferences.logLength,
                     debugDelays = preferences.debugDelays,
-                    debugColors = preferences.debugColors
+                    debugColors = preferences.debugColors,
+                    isScreenshotServiceRunning = ScreenshotService.screenshotServiceState.value.isServiceRunning,
+                    numberOfScreenshots = ScreenshotService.screenshotServiceState.value.numberOfScreenshots
                 )
                 try {
                     settingsState = settingsState.copy(
@@ -142,6 +147,15 @@ class SettingsViewModel:
                 apiSettingsState = apiSettingsState.copy(
                     abrpStatus = ConnectionStatus.fromInt(it.apiState[CarStatsViewer.liveDataApis[0].apiIdentifier]?:0),
                     httpStatus = ConnectionStatus.fromInt(it.apiState[CarStatsViewer.liveDataApis[1].apiIdentifier]?:0),
+                )
+            }
+        }
+
+        viewModelScope.launch {
+            ScreenshotService.screenshotServiceState.collect {
+                devSettingsState = devSettingsState.copy(
+                    isScreenshotServiceRunning = it.isServiceRunning,
+                    numberOfScreenshots = it.numberOfScreenshots
                 )
             }
         }
@@ -422,7 +436,7 @@ class SettingsViewModel:
     }
 
     fun submitScreenshots(context: Context) {
-        if (CarStatsViewer.screenshotBitmap.isEmpty()) {
+        if (devSettingsState.numberOfScreenshots == 0) {
             SnackbarWidget.Builder(context, "No Screenshots available.")
                 .setIsError(true)
                 .setDuration(2000)
@@ -437,7 +451,7 @@ class SettingsViewModel:
                 var resultmsg: String? = null
                 try {
                     resultmsg = LogSubmitRepository.uploadImage(
-                        bitmaps = CarStatsViewer.screenshotBitmap
+                        bitmaps = ScreenshotService.screenshotsList
                     )
                 } catch (e: Exception) {
                     InAppLogger.e("Failed: ${e.message}\n\r${e.stackTraceToString()}")
@@ -446,8 +460,8 @@ class SettingsViewModel:
                 withContext(Dispatchers.Main) {
                     if (resultmsg == null) {
                         snackbar.updateStartDrawable(R.drawable.ic_checkmark)
-                        snackbar.updateMessage("${CarStatsViewer.screenshotBitmap.size} screenshots submitted successfully.")
-                        CarStatsViewer.screenshotBitmap.clear()
+                        snackbar.updateMessage("${devSettingsState.numberOfScreenshots} screenshots submitted successfully.")
+                        ScreenshotService.clearScreenshots()
                     } else {
                         snackbar.setToError()
                         snackbar.updateMessage(resultmsg)

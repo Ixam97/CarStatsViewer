@@ -47,6 +47,10 @@
         <service android:name=".liveDataApi.uploadService.UploadService"
             android:enabled="true"
             android:exported="true"/>
+        <service android:name=".utils.ScreenshotService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="mediaProjection"/>
     </application>
 
 </manifest>

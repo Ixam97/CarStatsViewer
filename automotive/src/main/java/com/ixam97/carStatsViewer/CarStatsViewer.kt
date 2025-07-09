@@ -63,6 +63,8 @@ class CarStatsViewer : Application() {
         const val FOREGROUND_NOTIFICATION_ID = 2
         const val UPLOAD_CHANNEL_ID = "UploadChannel"
         const val UPLOAD_NOTIFICATION_ID = 3
+        const val SCREENSHOT_CHANNEL_ID = "Screenshot"
+        const val SCREENSHOT_NOTIFICATION_ID = 4
 
         var screenshotBitmap = arrayListOf<Bitmap>()
 

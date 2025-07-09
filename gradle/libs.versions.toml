@@ -68,3 +68,4 @@ aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "abo
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "google-services"}
 firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics"}
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize",  version.ref = "kotlin"  }

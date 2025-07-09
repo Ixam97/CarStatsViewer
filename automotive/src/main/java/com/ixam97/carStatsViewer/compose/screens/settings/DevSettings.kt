@@ -1,30 +1,42 @@
 package com.ixam97.carStatsViewer.compose.screens.settings
 
+import android.content.Intent
+import android.media.projection.MediaProjectionManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.getSystemService
 import androidx.navigation.NavController
-import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.DefaultColumnScrollbar
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
+import com.ixam97.carStatsViewer.compose.components.CarIconButton
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.CarSegmentedButton
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
 import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
 import com.ixam97.carStatsViewer.compose.theme.badRed
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
+import com.ixam97.carStatsViewer.utils.ScreenshotService
+import com.ixam97.carStatsViewer.utils.ScreenshotServiceConfig
 
 @Composable
 fun DevSettings(
@@ -34,38 +46,59 @@ fun DevSettings(
 
     val context = LocalContext.current
 
+    val mediaProjectionManager by lazy {
+        context.getSystemService<MediaProjectionManager>()!!
+    }
+
+    val screenshotServiceLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val intent = result.data?:return@rememberLauncherForActivityResult
+        val config = ScreenshotServiceConfig(
+            resultCode = result.resultCode,
+            data = intent
+        )
+
+        val serviceIntent = Intent(context, ScreenshotService::class.java).apply {
+            action = ScreenshotService.START_SCREENSHOT_SERVICE
+            putExtra(ScreenshotService.KEY_SCREENSHOT_CONFIG, config)
+        }
+        context.startForegroundService(serviceIntent)
+    }
+
     DefaultColumnScrollbar(
         modifier = Modifier
             .fillMaxSize()
     ) {
+        Text(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .padding(top = 24.dp, bottom = 10.dp),
+            color = MaterialTheme.colors.primary,
+            text = "General Debugging:"
+        )
+        Divider(Modifier.padding(horizontal = 24.dp))
         CarSwitchRow(
             switchState = viewModel.devSettingsState.debugDelays,
             onClick = { newState ->
                 viewModel.setDebugDelays(newState)
             }
         ) { Text("Enable debug loading delays") }
-        Divider(Modifier.padding(horizontal = 20.dp))
+        Divider(Modifier.padding(horizontal = 24.dp))
         CarSwitchRow(
             switchState = viewModel.devSettingsState.debugColors,
             onClick = { newState ->
                 viewModel.setDebugColors(newState)
             }
         ) { Text("Enable additional color themes") }
-        Divider(Modifier.padding(horizontal = 20.dp))
+        Divider(Modifier.padding(horizontal = 24.dp))
         CarSwitchRow(
             switchState = (viewModel.devSettingsState.distanceUnit == DistanceUnitEnum.MILES),
             onClick = { newState ->
                 viewModel.setDistanceUnit(newState)
             }
         ) { Text("Miles as Distance unit") }
-        Divider(Modifier.padding(horizontal = 20.dp))
-        CarSwitchRow(
-            switchState = viewModel.devSettingsState.showScreenshotButton,
-            onClick = { newState ->
-                viewModel.setShowScreenshotButton(newState)
-            }
-        ) { Text("Show screenshot button") }
-        Divider(Modifier.padding(horizontal = 20.dp))
+        Divider(Modifier.padding(horizontal = 24.dp))
         CarRow(
             title = "Debug actions:",
             customContent = {
@@ -85,20 +118,77 @@ fun DevSettings(
                     ) {
                         Text("Scan Fonts")
                     }
-                    if (viewModel.devSettingsState.showScreenshotButton) {
-                        Spacer(Modifier.size(20.dp))
-                        CarGradientButton(
-                            modifier = Modifier
-                                .weight(1f),
-                            onClick = { viewModel.submitScreenshots(context) },
-                        ) {
-                            Text("Submit Screenshots")
-                        }
-                    }
                 }
             }
         )
-        Divider(Modifier.padding(horizontal = 20.dp))
+        Divider(Modifier.padding(horizontal = 24.dp))
+        Text(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .padding(top = 24.dp, bottom = 10.dp),
+            color = MaterialTheme.colors.primary,
+            text = "Screenshots:"
+        )
+        Divider(Modifier.padding(horizontal = 24.dp))
+        CarRow(
+            title = "Screenshot Service",
+            text =  "This launches a screen capture as foreground service. The service does not " +
+                    "stream or record your vehicle\'s display, but provides a virtual display CSV " +
+                    "is able to see and take screenshots of. Pull down the notification center " +
+                    "anywhere and press \"Take Screenshot\" to capture the current screen."
+        )
+        /*
+        Divider(Modifier.padding(horizontal = 24.dp))
+        CarRow(
+            title = "Secondary receiver Email address:",
+            customContent = {
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = "",
+                    onValueChange = { newValue -> },
+                )
+            }
+        )
+         */
+        Divider(Modifier.padding(horizontal = 24.dp))
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 24.dp, vertical = 15.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CarGradientButton(
+                modifier = Modifier
+                    .width(400.dp),
+                active = viewModel.devSettingsState.isScreenshotServiceRunning,
+                onClick = {
+                    if (viewModel.devSettingsState.isScreenshotServiceRunning) {
+                        Intent(context, ScreenshotService::class.java).also {
+                            it.action = ScreenshotService.STOP_SCREENSHOT_SERVICE
+                            context.startForegroundService(it)
+                        }
+                    } else {
+                        screenshotServiceLauncher.launch(
+                            mediaProjectionManager.createScreenCaptureIntent()
+                        )
+                    }
+                },
+            ) {
+                if (viewModel.devSettingsState.isScreenshotServiceRunning) {
+                    Text("Stop Screenshot Service")
+                } else {
+                    Text("Start Screenshot Service")
+                }
+            }
+            Spacer(modifier = Modifier.size(40.dp))
+            Text("Screenshots taken: ${viewModel.devSettingsState.numberOfScreenshots}")
+            Spacer(modifier =  Modifier.weight(1f))
+            CarIconButton(
+                onClick = { viewModel.submitScreenshots(context) },
+                iconResId = R.drawable.ic_send,
+                enabled = (viewModel.devSettingsState.numberOfScreenshots > 0)
+            )
+        }
+        Divider(Modifier.padding(horizontal = 24.dp))
         Text(
             modifier = Modifier
                 .padding(horizontal = 24.dp)
@@ -106,7 +196,7 @@ fun DevSettings(
             color = MaterialTheme.colors.primary,
             text = "Logging:"
         )
-        Divider(Modifier.padding(horizontal = 20.dp))
+        Divider(Modifier.padding(horizontal = 24.dp))
         CarRow(
             title = "Logging level:",
             customContent = {
@@ -121,7 +211,7 @@ fun DevSettings(
                 )
             }
         )
-        Divider(Modifier.padding(horizontal = 20.dp))
+        Divider(Modifier.padding(horizontal = 24.dp))
         CarRow(
             title = "Max log length:",
             customContent = {
@@ -136,7 +226,7 @@ fun DevSettings(
                 )
             }
         )
-        Divider(Modifier.padding(horizontal = 20.dp))
+        Divider(Modifier.padding(horizontal = 24.dp))
         CarRow(
             title = "Log actions:",
             customContent = {

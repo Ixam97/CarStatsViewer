@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.kotlinKapt)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 def firebase = useFirbase.toBoolean()
