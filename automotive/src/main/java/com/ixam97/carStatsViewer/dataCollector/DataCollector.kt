@@ -14,6 +14,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.CarStatsViewer.Companion.SCREENSHOT_CHANNEL_ID
+import com.ixam97.carStatsViewer.CarStatsViewer.Companion.notificationManager
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carPropertiesClient.CarProperties
 import com.ixam97.carStatsViewer.carPropertiesClient.CarPropertiesClient
@@ -24,6 +26,7 @@ import com.ixam97.carStatsViewer.locationClient.LocationClient
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.ScreenshotService
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.WatchdogState
 import kotlinx.coroutines.CoroutineScope
@@ -183,6 +186,9 @@ class DataCollector: Service() {
                 }
                 if (!dataProcessor.staticVehicleData.isOptionalInitialized()) {
                     readStaticProperties()
+                }
+                if (!ScreenshotService.screenshotServiceState.value.isServiceRunning) {
+                    notificationManager.deleteNotificationChannel(SCREENSHOT_CHANNEL_ID)
                 }
             }
         }

@@ -37,6 +37,7 @@ import com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
 import com.ixam97.carStatsViewer.utils.ChangeLogCreator.createChangelog
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.ScreenshotButton
+import com.ixam97.carStatsViewer.utils.ScreenshotService
 import com.ixam97.carStatsViewer.utils.Watchdog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -345,6 +346,10 @@ class CarStatsViewer : Application() {
             override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
             override fun onActivityDestroyed(activity: Activity) = Unit
         })
+
+        if (!ScreenshotService.screenshotServiceState.value.isServiceRunning) {
+            notificationManager.deleteNotificationChannel(SCREENSHOT_CHANNEL_ID)
+        }
 
     }
 
