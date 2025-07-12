@@ -34,6 +34,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.text.SimpleDateFormat
+import kotlin.collections.forEach
 
 class SettingsViewModel:
     ViewModel()
@@ -336,7 +338,12 @@ class SettingsViewModel:
                     logLevel = preferences.logLevel + 2,
                     logLength = logLengths[preferences.logLength]
                 ).forEach { logEntry ->
-                    submitMap[logEntry.epochTime] = "${InAppLogger.typeSymbol(logEntry.type)}: ${logEntry.message}"
+                    val logTimestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(logEntry.epochTime)
+                    val logType = InAppLogger.typeSymbol(logEntry.type)
+                    val logMessage = logEntry.message
+                    logEntry.id?.let {
+                        submitMap[it.toLong()] = "$logTimestamp | $logType: $logMessage"
+                    }
                 }
                 // Log.d("Log submit debug", Gson().toJson(LogSubmitBody(submitMap)))
                 var resultmsg: String? = null
