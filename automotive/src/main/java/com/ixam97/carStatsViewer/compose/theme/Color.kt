@@ -16,6 +16,8 @@ val primaryButtonGray = Color(0xFF3E4146)
 val primaryGray = Color(0xFF7B858A)
 val secondaryGray = Color(0xFFA3B1B8)
 
+val newPolestarBackground = Color(0xFF141516)
+
 val clubBlueLight = Color(0xff60bcd5)
 val clubBlue = Color(0xff447ea6)
 val clubBlueDeep = Color(0xff0c4b5d)
