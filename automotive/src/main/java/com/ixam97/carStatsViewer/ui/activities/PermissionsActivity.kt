@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.car.Car
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
@@ -18,12 +19,13 @@ import kotlin.system.exitProcess
 
 class PermissionsActivity: Activity() {
     companion object {
-        val PERMISSIONS = arrayOf(
-            Car.PERMISSION_ENERGY,
-            Car.PERMISSION_SPEED,
-            android.Manifest.permission.ACCESS_FINE_LOCATION,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        val PERMISSIONS_BY_SDK = arrayOf<Pair<Int, String>>(
+            Build.VERSION_CODES.BASE to Car.PERMISSION_ENERGY,
+            Build.VERSION_CODES.BASE to Car.PERMISSION_SPEED,
+            Build.VERSION_CODES.BASE to android.Manifest.permission.ACCESS_FINE_LOCATION,
+            Build.VERSION_CODES.BASE to android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            Build.VERSION_CODES.BASE to android.Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+            Build.VERSION_CODES.TIRAMISU to android.Manifest.permission.POST_NOTIFICATIONS
         )
     }
 
@@ -91,10 +93,11 @@ class PermissionsActivity: Activity() {
     }
 
     private fun unGrantedPermissions(): List<String> {
-        return PERMISSIONS.filter {
-            checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED
-                    && it != android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
-        }
+        return PERMISSIONS_BY_SDK.filter {
+            it.first <= Build.VERSION.SDK_INT
+                    && checkSelfPermission(it.second) != PackageManager.PERMISSION_GRANTED
+                    && it.second != android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        }.map { it.second }
     }
 
     private fun showBasicPermissionsDialog() {
