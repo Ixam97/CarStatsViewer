@@ -212,9 +212,9 @@ class MainActivity : FragmentActivity() {
                                 mainConsumptionGage.setValue(null as Float?)
                             }
 
-                            mainPowerGage.setValue(it.power!! / 1_000_000f)
+                            mainPowerGage.setValue((it.power?:0f) / 1_000_000f)
 
-                            mainChargeGage.setValue(it.power / -1_000_000f)
+                            mainChargeGage.setValue((it.power?:0f) / -1_000_000f)
                             mainSoCGage.setValue((it.stateOfCharge!! * 100f).roundToInt())
 
                             mainSpeedGage.setValue(

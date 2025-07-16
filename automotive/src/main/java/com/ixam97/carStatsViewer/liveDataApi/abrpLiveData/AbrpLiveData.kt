@@ -141,14 +141,14 @@ class AbrpLiveData (
         if (realTimeData.isInitialized()) {
             connectionStatus = send(AbrpDataSet(
                 stateOfCharge = (realTimeData.stateOfCharge!! * 100f).roundToInt(),
-                power = realTimeData.power!!,
-                speed = realTimeData.speed!!,
-                isCharging = realTimeData.chargePortConnected!!,
+                power = realTimeData.power?:0f,
+                speed = realTimeData.speed?:0f,
+                isCharging = realTimeData.chargePortConnected?:false,
                 isParked = (realTimeData.drivingState == DrivingState.PARKED || realTimeData.drivingState == DrivingState.CHARGE),
                 lat = realTimeData.lat?.toDouble(),
                 lon = realTimeData.lon?.toDouble(),
                 alt = realTimeData.alt?.toDouble(),
-                temp = realTimeData.ambientTemperature!!
+                temp = realTimeData.ambientTemperature?:0f
             ))
         }
     }
