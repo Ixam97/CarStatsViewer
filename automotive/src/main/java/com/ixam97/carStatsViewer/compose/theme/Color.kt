@@ -3,7 +3,7 @@ package com.ixam97.carStatsViewer.compose.theme
 import androidx.compose.ui.graphics.Color
 
 val polestarOrange = Color(0xFFD96C00)
-val polestarSurface = Color(0xff1f1f1f)// Color(0xff090909)
+val polestarSurface = Color(0xff242526)// Color(0xff090909)
 val volvoBlue = Color(0xFF2F6093)
 
 val disabledTextColor = Color(0xFF757575)

@@ -4,22 +4,29 @@ import android.content.Intent
 import android.media.projection.MediaProjectionManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
@@ -132,24 +139,62 @@ fun DevSettings(
         Divider(Modifier.padding(horizontal = 24.dp))
         CarRow(
             title = "Screenshot Service",
-            text =  "This launches a screen capture as foreground service. The service does not " +
-                    "stream or record your vehicle\'s display, but provides a virtual display CSV " +
-                    "is able to see and take screenshots of. Pull down the notification center " +
-                    "anywhere and press \"Take Screenshot\" to capture the current screen."
+            text =  "This launches a screen capture as foreground service and allows CSV to take " +
+                    "screenshots of the infotainment system. Pull down the notification center " +
+                    "anywhere and press \"Take Screenshot\" to capture the current screen.\n\n" +
+                    "If you want to receive the screenshots yourself, add an additional Email " +
+                    "address below. Otherwise, screenshots will be sent to the developer directly " +
+                    "as this is mainly a debugging tool."
         )
-        /*
         Divider(Modifier.padding(horizontal = 24.dp))
         CarRow(
-            title = "Secondary receiver Email address:",
+            title = "Additional Email address:",
             customContent = {
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = "",
-                    onValueChange = { newValue -> },
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(15.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextField(
+                        modifier = Modifier.weight(1f),
+                        value = viewModel.devSettingsState.screenshotReceiver,
+                        onValueChange = { viewModel.setScreenshotReceiver(it) },
+                        isError = (viewModel.devSettingsState.validReceiverAddress == false),
+                        trailingIcon = {
+                            if (viewModel.devSettingsState.validReceiverAddress == true) {
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(horizontal = 10.dp)
+                                        .size(40.dp),
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = null,
+                                    tint = Color.Green
+                                )
+                            } else if (viewModel.devSettingsState.validReceiverAddress == false) {
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(horizontal = 10.dp)
+                                        .size(40.dp),
+                                    imageVector = Icons.Default.ErrorOutline,
+                                    contentDescription = null,
+                                    tint = badRed
+                                )
+                            }
+                        }
+                    )
+                    IconButton(
+                        modifier = Modifier.size(60.dp),
+                        onClick = {viewModel.setScreenshotReceiver("")}
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(50.dp),
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.onSurface
+                        )
+                    }
+                }
             }
         )
-         */
         Divider(Modifier.padding(horizontal = 24.dp))
         Row(
             modifier = Modifier

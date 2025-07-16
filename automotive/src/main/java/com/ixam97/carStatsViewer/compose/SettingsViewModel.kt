@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -71,7 +72,9 @@ class SettingsViewModel:
         val debugDelays: Boolean = false,
         val debugColors: Boolean = false,
         val isScreenshotServiceRunning: Boolean = false,
-        val numberOfScreenshots: Int = 0
+        val numberOfScreenshots: Int = 0,
+        val screenshotReceiver: String = "",
+        val validReceiverAddress: Boolean? = null
     )
 
     data class ApiSettingsState(
@@ -128,7 +131,9 @@ class SettingsViewModel:
                     debugDelays = preferences.debugDelays,
                     debugColors = preferences.debugColors,
                     isScreenshotServiceRunning = ScreenshotService.screenshotServiceState.value.isServiceRunning,
-                    numberOfScreenshots = ScreenshotService.screenshotServiceState.value.numberOfScreenshots
+                    numberOfScreenshots = ScreenshotService.screenshotServiceState.value.numberOfScreenshots,
+                    screenshotReceiver = preferences.debugScreenshotReceiver,
+                    validReceiverAddress = validateEmailAddress(preferences.debugScreenshotReceiver)
                 )
                 try {
                     settingsState = settingsState.copy(
@@ -442,6 +447,22 @@ class SettingsViewModel:
         }
     }
 
+    private fun validateEmailAddress(address: String): Boolean? {
+        if (address.isEmpty()) return null
+        return Patterns.EMAIL_ADDRESS.matcher(address).matches()
+    }
+
+    fun setScreenshotReceiver(receiverAddress: String) {
+        val valid = validateEmailAddress(receiverAddress)
+        if (valid != false) {
+            preferences.debugScreenshotReceiver = receiverAddress
+        }
+        devSettingsState = devSettingsState.copy(
+            screenshotReceiver = receiverAddress,
+            validReceiverAddress = valid
+        )
+    }
+
     fun submitScreenshots(context: Context) {
         if (devSettingsState.numberOfScreenshots == 0) {
             SnackbarWidget.Builder(context, "No Screenshots available.")
@@ -458,7 +479,8 @@ class SettingsViewModel:
                 var resultmsg: String? = null
                 try {
                     resultmsg = LogSubmitRepository.uploadImage(
-                        bitmaps = ScreenshotService.screenshotsList
+                        bitmaps = ScreenshotService.screenshotsList,
+                        additionalAddress = preferences.debugScreenshotReceiver.ifBlank { null }
                     )
                 } catch (e: Exception) {
                     InAppLogger.e("Failed: ${e.message}\n\r${e.stackTraceToString()}")
