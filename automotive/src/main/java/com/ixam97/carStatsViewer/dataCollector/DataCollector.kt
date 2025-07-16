@@ -270,8 +270,13 @@ class DataCollector: Service() {
 
             attemptCounter++
             if (attemptCounter > PROPERTY_INIT_MAX_ATTEMPTS) {
-                InAppLogger.e("[NEO] Service init failed: Not all required Car Properties are available!")
-                throw Exception("Service init failed: Not all required Car Properties are available!")
+                val msg = "Service init failed: Not all required static Car Properties are available!"
+                InAppLogger.e("[NEO] $msg")
+                // throw Exception(msg)
+                CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(
+                    appErrorState = WatchdogState.Companion.AppErrorState("$msg\nCSV will not work as intended.  Please contact the developer for debugging.")
+                ))
+                break
             }
         }
 
@@ -324,8 +329,13 @@ class DataCollector: Service() {
             }
             attemptCounter++
             if (attemptCounter > PROPERTY_INIT_MAX_ATTEMPTS) {
-                InAppLogger.e("[NEO] Service init failed: Not all required Car Properties are available!")
-                throw Exception("Service init failed: Not all required Car Properties are available!")
+                val msg = "Service init failed: Not all required dynamic Car Properties are available!"
+                InAppLogger.e("[NEO] $msg")
+                // throw Exception(msg)
+                CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(
+                    appErrorState = WatchdogState.Companion.AppErrorState("$msg\nCSV will not work as intended. Please contact the developer for debugging.")
+                ))
+                break
             }
         }
 
@@ -335,7 +345,10 @@ class DataCollector: Service() {
             carPropertiesClient.updateProperty(it)
         }
 
-        InAppLogger.i("[NEO] Dynamic Car Properties have been registered successfully.")
+        if (allPropertiesAvailable)
+            InAppLogger.i("[NEO] Dynamic Car Properties have been registered successfully.")
+        else
+            InAppLogger.w("[NEO] Unable to register all dynamic Car Properties. App functionality limited")
     }
 
     private fun setupOptionalDynamicProperties() {

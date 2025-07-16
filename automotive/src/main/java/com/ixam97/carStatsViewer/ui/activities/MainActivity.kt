@@ -329,6 +329,7 @@ class MainActivity : FragmentActivity() {
                     InAppLogger.d("[Watchdog] State changed: $it}")
                     updateLocationStatusIcon(it.locationState)
                     updateConnectionStatusIcon(it.apiState)
+                    updateErrorMessage(it.appErrorState)
                 }
             }
         }
@@ -676,6 +677,15 @@ class MainActivity : FragmentActivity() {
                 mainIconLocationStatus.setImageDrawable(getDrawable(R.drawable.ic_location_error))
                 mainIconLocationStatus.visibility = View.VISIBLE
             }
+        }
+    }
+
+    private fun updateErrorMessage(appErrorState: WatchdogState.Companion.AppErrorState) = with(binding) {
+        if (!appErrorState.errorMessage.isNullOrBlank()) {
+            mainErrorMessage.visibility = View.VISIBLE
+            mainErrorMessage.text = appErrorState.errorMessage
+        } else {
+            mainErrorMessage.visibility = View.GONE
         }
     }
 

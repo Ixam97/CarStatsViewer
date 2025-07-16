@@ -14,8 +14,22 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+
+        <TextView
+            android:id="@+id/main_error_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="25dp"
+            android:text="Test Error Message"
+            android:textColor="@android:color/black"
+            android:background="@color/bad_red">
+
+        </TextView>
     <LinearLayout
         android:id="@+id/main_action_bar"
+        android:layout_below="@id/main_error_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/black"

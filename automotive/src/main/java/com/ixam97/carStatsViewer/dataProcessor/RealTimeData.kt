@@ -2,6 +2,7 @@ package com.ixam97.carStatsViewer.dataProcessor
 
 import android.car.VehicleGear
 import android.car.VehicleIgnitionState
+import android.os.Build
 
 data class RealTimeData(
     val speed: Float? = null,
@@ -30,7 +31,7 @@ data class RealTimeData(
 
     fun isEssentialInitialized(): Boolean {
         return speed != null
-                && power != null
+                && (power != null || Build.DEVICE == "moose" || Build.DEVICE == "ihu_emulator")
                 && selectedGear != null
                 && ignitionState != null
                 && chargePortConnected != null
