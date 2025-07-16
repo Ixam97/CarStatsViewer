@@ -29,6 +29,7 @@ import com.ixam97.carStatsViewer.utils.ScreenshotService
 import com.ixam97.carStatsViewer.utils.logLength
 import com.ixam97.carStatsViewer.utils.logLevel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -367,6 +368,7 @@ class SettingsViewModel:
                     InAppLogger.e("Failed: ${e.message}\n\r${e.stackTraceToString()}")
                     resultmsg = e.message
                 }
+                delay(500)
                 withContext(Dispatchers.Main) {
                     if (resultmsg == null)
                     {
@@ -486,6 +488,7 @@ class SettingsViewModel:
                     InAppLogger.e("Failed: ${e.message}\n\r${e.stackTraceToString()}")
                     resultmsg = e.message
                 }
+                delay(500)
                 withContext(Dispatchers.Main) {
                     if (resultmsg == null) {
                         snackbar.updateStartDrawable(R.drawable.ic_checkmark)

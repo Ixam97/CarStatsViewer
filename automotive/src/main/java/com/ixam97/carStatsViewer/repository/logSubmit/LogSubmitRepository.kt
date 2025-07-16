@@ -38,7 +38,7 @@ object LogSubmitRepository {
             }
         }
         if (apiKey == null) {
-            return "No API Key available."
+            return "No API Key available, contact track maintainer to acquire it from the developer."
         }
         return "Unhandled error"
     }
@@ -67,7 +67,7 @@ object LogSubmitRepository {
             }
         }
         if (apiKey == null) {
-            return "No API Key available."
+            return "No API Key available, contact track maintainer to acquire it from the developer."
         }
         return "Unhandled error"
     }
