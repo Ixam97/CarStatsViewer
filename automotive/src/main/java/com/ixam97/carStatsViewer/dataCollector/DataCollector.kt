@@ -94,6 +94,10 @@ class DataCollector: Service() {
     override fun onCreate() {
         super.onCreate()
 
+        setupServiceNotification()
+        startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
+        InAppLogger.i("[NEO] Foreground service started in onCreate()")
+
         dataProcessor = CarStatsViewer.dataProcessor
         locationClient = DefaultLocationClient()
         carPropertiesClient = CarPropertiesClient(
@@ -101,10 +105,6 @@ class DataCollector: Service() {
             propertiesProcessor = dataProcessor::processProperty,
             carPropertiesData = dataProcessor.carPropertiesData
         )
-
-        setupServiceNotification()
-        startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
-        InAppLogger.i("[NEO] Foreground service started in onCreate()")
 
         /** detect if system is an emulator and show a toast */
         if (BuildConfig.DEBUG) {

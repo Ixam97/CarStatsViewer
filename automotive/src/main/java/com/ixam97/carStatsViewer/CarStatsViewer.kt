@@ -43,7 +43,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
-import kotlin.system.exitProcess
 
 var emulatorMode = false
 var emulatorPowerSign = -1
@@ -348,7 +347,14 @@ class CarStatsViewer : Application() {
         })
 
         if (!ScreenshotService.screenshotServiceState.value.isServiceRunning) {
-            notificationManager.deleteNotificationChannel(SCREENSHOT_CHANNEL_ID)
+            try {
+                notificationManager.deleteNotificationChannel(SCREENSHOT_CHANNEL_ID)
+            } catch (e: Throwable) {
+                InAppLogger.w("Unable to remove notification channel, but it's state is set to not running!")
+                e.message?.let {
+                    InAppLogger.w(it)
+                }
+            }
         }
 
     }
