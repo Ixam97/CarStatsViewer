@@ -75,7 +75,8 @@ class SettingsViewModel:
         val isScreenshotServiceRunning: Boolean = false,
         val numberOfScreenshots: Int = 0,
         val screenshotReceiver: String = "",
-        val validReceiverAddress: Boolean? = null
+        val validReceiverAddress: Boolean? = null,
+        val userID: String = "Anonymous"
     )
 
     data class ApiSettingsState(
@@ -134,7 +135,8 @@ class SettingsViewModel:
                     isScreenshotServiceRunning = ScreenshotService.screenshotServiceState.value.isServiceRunning,
                     numberOfScreenshots = ScreenshotService.screenshotServiceState.value.numberOfScreenshots,
                     screenshotReceiver = preferences.debugScreenshotReceiver,
-                    validReceiverAddress = validateEmailAddress(preferences.debugScreenshotReceiver)
+                    validReceiverAddress = validateEmailAddress(preferences.debugScreenshotReceiver),
+                    userID = preferences.debugUserID
                 )
                 try {
                     settingsState = settingsState.copy(
@@ -354,14 +356,20 @@ class SettingsViewModel:
                 // Log.d("Log submit debug", Gson().toJson(LogSubmitBody(submitMap)))
                 var resultmsg: String? = null
                 try {
+                    val cpuInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                        "${Build.SOC_MANUFACTURER} ${Build.SOC_MODEL}"
+                    else
+                        "Unknown"
                     resultmsg = LogSubmitRepository.submitLog(LogSubmitBody(
                         log = submitMap,
+                        userID = preferences.debugUserID,
                         metadata = LogSubmitBody.LogMetadata(
                             timestamp = System.currentTimeMillis(),
                             brand = Build.BRAND,
                             model = Build.MODEL,
                             device = Build.DEVICE,
-                            appInfo = "${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
+                            appInfo = "${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})",
+                            cpuInfo = cpuInfo
                         )
                     ))
                 } catch (e: Exception) {
@@ -462,6 +470,13 @@ class SettingsViewModel:
         devSettingsState = devSettingsState.copy(
             screenshotReceiver = receiverAddress,
             validReceiverAddress = valid
+        )
+    }
+
+    fun setUserID(userID: String) {
+        preferences.debugUserID = userID
+        devSettingsState = devSettingsState.copy(
+            userID = preferences.debugUserID
         )
     }
 

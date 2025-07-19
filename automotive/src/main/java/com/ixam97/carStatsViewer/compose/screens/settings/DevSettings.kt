@@ -5,6 +5,7 @@ import android.media.projection.MediaProjectionManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
 import androidx.navigation.NavController
@@ -124,6 +126,40 @@ fun DevSettings(
                         onClick = { viewModel.scanAvailableFonts() },
                     ) {
                         Text("Scan Fonts")
+                    }
+                }
+            }
+        )
+        Divider(Modifier.padding(horizontal = 24.dp))
+        CarRow(
+            title = "User ID",
+            customContent = {
+                Column {
+                    Text(
+                        text = "This ID is used to identify the user when sending logs or screenshots.",
+                        color = colorResource(id = R.color.secondary_text_color)
+                    )
+                    Spacer(modifier = Modifier.size(15.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(15.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TextField(
+                            modifier = Modifier.weight(1f),
+                            value = viewModel.devSettingsState.userID,
+                            onValueChange = { viewModel.setUserID(it) },
+                        )
+                        IconButton(
+                            modifier = Modifier.size(60.dp),
+                            onClick = { viewModel.setUserID("Anonymous") }
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(50.dp),
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.onSurface
+                            )
+                        }
                     }
                 }
             }

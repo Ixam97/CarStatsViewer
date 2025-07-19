@@ -1,6 +1,9 @@
 package com.ixam97.carStatsViewer.repository.logSubmit
 
 import android.graphics.Bitmap
+import android.os.Build
+import com.ixam97.carStatsViewer.BuildConfig
+import com.ixam97.carStatsViewer.CarStatsViewer
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -57,6 +60,16 @@ object LogSubmitRepository {
                 additionalAddress?.let {
                     body.addFormDataPart("address", it)
                 }
+                body.addFormDataPart("userID", CarStatsViewer.appPreferences.debugUserID)
+                body.addFormDataPart("appInfo", "${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID}")
+                body.addFormDataPart("brand", "${Build.BRAND}")
+                body.addFormDataPart("model", "${Build.MODEL}")
+                body.addFormDataPart("device", "${Build.DEVICE}")
+                val cpuInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    "${Build.SOC_MANUFACTURER} ${Build.SOC_MODEL}"
+                else
+                    "Unknown"
+                body.addFormDataPart("cpuInfo", cpuInfo)
             }
             logSubmitApi.run {
                 val response = uploadImage(

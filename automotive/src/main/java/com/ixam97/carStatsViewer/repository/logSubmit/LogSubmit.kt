@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LogSubmitBody(
     val log: Map<Long, String>,
+    val userID: String,
     val metadata: LogMetadata
 ) {
     @Serializable
@@ -13,7 +14,8 @@ data class LogSubmitBody(
         val brand: String,
         val model: String,
         val device: String,
-        val appInfo: String
+        val appInfo: String,
+        val cpuInfo: String
     )
 }
 
