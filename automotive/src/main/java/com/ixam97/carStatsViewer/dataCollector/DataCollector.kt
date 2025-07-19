@@ -390,22 +390,29 @@ class DataCollector: Service() {
      */
     private fun updateServiceNotification() {
         if (!carPropertiesInitialized || !dataProcessor.staticVehicleData.isInitialized()) {
-            foregroundServiceNotification
-                .setContentTitle("Car Properties are initializing...")
-                .setContentText("")
+            foregroundServiceNotification.apply {
+                setContentTitle("Car Properties are initializing...")
+                if (BuildConfig.FLAVOR_version == "dev") setContentText("DEV BUILD: ${BuildConfig.VERSION_NAME}")
+                else setContentText("")
+            }
         } else if (!CarStatsViewer.appPreferences.notifications) {
-            foregroundServiceNotification
-                .setContentTitle(getString(R.string.foreground_service_info))
-                .setContentText("")
+            foregroundServiceNotification.apply {
+                setContentTitle(getString(R.string.foreground_service_info))
+                if (BuildConfig.FLAVOR_version == "dev") setContentText("DEV BUILD: ${BuildConfig.VERSION_NAME}")
+                else setContentText("")
+            }
         } else {
-            foregroundServiceNotification
-                .setContentTitle(getString(R.string.notification_title) + " " + resources.getStringArray(R.array.trip_type_names)[CarStatsViewer.appPreferences.mainViewTrip + 1])
-                .setContentText(String.format(
+            foregroundServiceNotification.apply{
+                var detailsString = String.format(
                     "Dist.: %s, Cons.: %s, Speed: %s",
                     StringFormatters.getTraveledDistanceString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f),
                     StringFormatters.getAvgConsumptionString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.used_energy?.toFloat()?:0f, CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f),
                     StringFormatters.getAvgSpeedString(CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.driven_distance?.toFloat()?:0f, CarStatsViewer.dataProcessor.selectedSessionDataFlow.value?.drive_time?:0)
-                ))
+                )
+                if (BuildConfig.FLAVOR_version == "dev") detailsString += "\nDEV BUILD: ${BuildConfig.VERSION_NAME}"
+                setContentTitle(getString(R.string.notification_title) + " " + resources.getStringArray(R.array.trip_type_names)[CarStatsViewer.appPreferences.mainViewTrip + 1])
+                setContentText(detailsString)
+            }
             simpleNotification = false
         }
         if (!simpleNotification) {
