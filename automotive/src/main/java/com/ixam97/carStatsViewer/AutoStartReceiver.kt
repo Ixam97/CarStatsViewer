@@ -36,6 +36,11 @@ class AutoStartReceiver: BroadcastReceiver() {
 
         Log.d("ASR", "Action: ${intent?.action}")
 
+        if (!CarStatsViewer.appPreferences.autostart) {
+            InAppLogger.i("[ASR] Autostart disabled, canceling ASR.")
+            return
+        }
+
         if ((intent?.action?: "") == "com.ixam97.carStatsViewer.NOTIFICATION_DELETE") {
             CarStatsViewer.restartNotificationDismissed = true
             return
@@ -64,7 +69,6 @@ class AutoStartReceiver: BroadcastReceiver() {
 
         InAppLogger.v("[ASR] Conditions: Service started: ${isServiceRunning(DataCollector::class.java.name)}, dismissed: ${CarStatsViewer.restartNotificationDismissed}")
 
-        if (!CarStatsViewer.appPreferences.autostart) return
         if (CarStatsViewer.restartNotificationDismissed) return
 
         CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 9_500, extendedLogging = true)
