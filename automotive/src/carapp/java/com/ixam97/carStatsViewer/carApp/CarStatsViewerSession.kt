@@ -48,14 +48,13 @@ class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
             CarStatsViewer.appPreferences.versionString = BuildConfig.VERSION_NAME
         }
 
-        var neededPermissions = permissions.filter { carContext.checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }
+        if (carContext.checkSelfPermission(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            screens.add(BackgroundLocationPermissionScreen(carContext, this))
+        }
+
+        val neededPermissions = permissions.filter { carContext.checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }
         if (neededPermissions.isNotEmpty()) {
             screens.add(PermissionScreen(carContext, this))
-            // carContext.requestPermissions(permissions) {granted,_ ->
-            //     if (granted.containsAll(permissions)) {
-            //         startService()
-            //     }
-            // }
         } else {
             startService()
         }
