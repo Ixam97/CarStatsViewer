@@ -3,7 +3,6 @@ package com.ixam97.carStatsViewer.compose.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.DataObject
@@ -42,12 +41,11 @@ object SettingsScreens {
     const val ABOUT_CHANGELOG = "About_Changelog"
     const val DEV = "Dev"
     const val DEV_LOG = "Dev_Log"
-    const val MAPBOX_TEST = "MapboxTest"
     const val ABOUT_LICENSES = "About_Licenses"
 }
 
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel) {
+fun SettingsScreen(viewModel: SettingsViewModel, targetRoute: String? = null) {
 
     val tabsList = mutableListOf(
         SideTab(
@@ -142,6 +140,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             tabs = tabsList,
             topLevelTitle = stringResource(id = R.string.settings_title),
             topLevelBackAction = {viewModel.finishActivity()},
+            initialRoute = targetRoute
         ) //, tabsColumnBackground = Color.Black)
     }
 

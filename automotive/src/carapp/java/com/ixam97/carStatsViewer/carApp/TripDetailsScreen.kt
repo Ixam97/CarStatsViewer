@@ -99,9 +99,12 @@ class TripDetailsScreen(carContext: CarContext, private val pTrip: DrivingSessio
                 addEndHeaderAction(Action.Builder().apply {
                     setIcon(carContext.carIconFromRes(R.drawable.ic_upload))
                     setOnClickListener {
-                        CarToast.makeText(carContext, "Exporting trip", CarToast.LENGTH_SHORT)
+                        // CarToast.makeText(carContext, "Exporting trip", CarToast.LENGTH_SHORT)
+                        //     .show()
+                        CarToast.makeText(carContext, "Exporting not yet implemented", CarToast.LENGTH_SHORT)
                             .show()
                     }
+                    setEnabled(false)
                 }.build())
                 if ((pTrip.end_epoch_time ?: 0) > 0) {
                     addEndHeaderAction(Action.Builder().apply {
