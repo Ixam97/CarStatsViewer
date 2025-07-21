@@ -359,4 +359,11 @@ Denne handlingen kan ta litt tid avhengig av datamengden. Et fremdriftsvarsel vi
     <string name="settings_plot_green">Grønn</string>
     <string name="settings_plot_white">Hvit</string>
     <string name="settings_apis_show_status_icon">Viser tilkoblingsikon på hovedskjerm</string>
+    <string name="permissions_dialog_grant_singular">Gi tillatelser</string>
+    <string name="permissions_dialog_deny">Fortsett likevel</string>
+    <string name="permissions_dialog_background_location_text">For pålitelig drift av appen kreves tilgang til bakgrunnstillatelse for posisjonering. Velg «Tillat hele tiden» for posisjonstillatelse. 
+ 
+ Posisjonstillatelse er nødvendig for å få tilgang til andre kjøretøydata enn den faktiske GPS-posisjonen. 
+ 
+ Som standard er posisjonssporing deaktivert og kan aktiveres i appens innstillinger. Det kan også konfigureres uavhengig for hvert støttede Live Data API.</string>
 </resources>

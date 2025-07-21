@@ -358,4 +358,5 @@ Se você encontrar bugs ou quiser fazer comentários, visite o repositório GitH
     <string name="settings_theme">Tema do design</string>
     <string name="settings_plot_green">Verde</string>
     <string name="settings_plot_white">Branco</string>
+    <string name="settings_apis_show_status_icon">Mostrar ícone de status na tela principal</string>
 </resources>
