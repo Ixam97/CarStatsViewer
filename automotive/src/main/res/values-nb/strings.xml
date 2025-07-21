@@ -290,6 +290,10 @@ Pass på at det ikke er noen duplisertee data på serveren for å forhindre usan
         <item>Fullstendig overhalt brukergrensesnittet av innstillinger og turdetaljer. Dette gjør bruk av landskapsskjermer som i Polestar 4.</item>
         <item>(Play Edition) Lagt til turhistorikk på nytt, men med begrenset informasjon foreløpig.</item>
         <item>[V](0.28.0)</item>
+        <item>Improved debugging and logging.</item>
+        <item>Improved autostart behaviour.</item>
+        <item>Starting with OTA P4.2.4, Polestar 4 is now fully compatible with Car Stats Viewer.</item>
+        <item>[V](0.28.1)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Oppdatering installert!</string>
     <string name="dialog_changes_title_changelog">Endringslogg</string>

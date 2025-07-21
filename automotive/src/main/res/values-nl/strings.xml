@@ -290,6 +290,10 @@ Deze actie kan enige tijd duren, afhankelijk van de hoeveelheid gegevens. Blijf 
         <item>De gebruikersinterface van instellingen en reisinformatie volledig herzien. Dit maakt gebruik van horizontale schermen zoals in de Polestar 4.</item>
         <item>(Play Edition) Reisgeschiedenis opnieuw toegevoegd, maar voorlopig met beperkte informatie.</item>
         <item>[V](0.28.0)</item>
+        <item>Improved debugging and logging.</item>
+        <item>Improved autostart behaviour.</item>
+        <item>Starting with OTA P4.2.4, Polestar 4 is now fully compatible with Car Stats Viewer.</item>
+        <item>[V](0.28.1)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Update geïnstalleerd!</string>
     <string name="dialog_changes_title_changelog">Overzicht wijzigingen</string>

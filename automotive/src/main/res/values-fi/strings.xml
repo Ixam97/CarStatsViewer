@@ -290,6 +290,10 @@ Tämä toiminto kestää jonkin aikaa riippuen siirrettävästä tiedon määrä
         <item>Asetusten ja matkatietojen käyttöliittymä uudistettu täysin. Tämä hyödyntää vaakasuuntaisia näyttöjä, kuten Polestar 4:ssä.</item>
         <item>(Play-versio) Matkahistoria lisätty uudelleen, toistaiseksi rajoitetuilla tiedoilla.</item>
         <item>[V](0.28.0)</item>
+        <item>Improved debugging and logging.</item>
+        <item>Improved autostart behaviour.</item>
+        <item>Starting with OTA P4.2.4, Polestar 4 is now fully compatible with Car Stats Viewer.</item>
+        <item>[V](0.28.1)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Päivitys asennettu!</string>
     <string name="dialog_changes_title_changelog">Muutosloki</string>

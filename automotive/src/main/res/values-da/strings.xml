@@ -290,6 +290,10 @@ Denne handling kan tage en del tid afhængig af datamængden. Bliv på denne sid
         <item>Fuldstændig gennemgang af brugergrænseflade for indstillinger og rejsedetaljer. Dette gør brug af landskabsskærme som i Polestar 4</item>
         <item>(Play Udgave) Genindførte rejsehistorik, men med begrænset information indtil videre.</item>
         <item>[V](0.28.0)</item>
+        <item>Improved debugging and logging.</item>
+        <item>Improved autostart behaviour.</item>
+        <item>Starting with OTA P4.2.4, Polestar 4 is now fully compatible with Car Stats Viewer.</item>
+        <item>[V](0.28.1)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Opdatering installeret!</string>
     <string name="dialog_changes_title_changelog">Ændringslog</string>

@@ -156,6 +156,10 @@
         <item>Completely overhauled the UI of settings and trip details. This makes use of landscape screens like in the Polestar 4.</item>
         <item>(Play Edition) Re-Added trip history, but with limited information for now.</item>
         <item>[V](0.28.0)</item>
+        <item>Improved debugging and logging.</item>
+        <item>Improved autostart behaviour.</item>
+        <item>Starting with OTA P4.2.4, Polestar 4 is now fully compatible with Car Stats Viewer.</item>
+        <item>[V](0.28.1)</item>
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
@@ -166,10 +170,6 @@
         <item>(Play Edition) Re-Added trip history, but with limited information for now.</item>
         <item>[V](0.28.0)</item>
         -->
-        <item>Improved debugging and logging.</item>
-        <item>Improved Autostart behaviour.</item>
-        <item>Starting with OTA P4.2.4, Polestar 4 is now fully compatible with Car Stats Viewer.</item>
-        <item>[V](0.28.1)</item>
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
