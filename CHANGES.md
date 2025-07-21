@@ -1,5 +1,17 @@
 # Changelog [DE]:
 
+## 0.28.1
+ - Beginnend mit OTA P4.2.4 ist der Polestar 4 vollständig mit Car Stats Viewer kompatibel.
+ - Das Autostart-Verhalten wurde verbessert.
+ - Debugging- und Logging-Funktionen verbessert.
+
+## 0.28.0
+ - (Play Edition) Tripverlauf wieder eingefügt, allerdings mit begrenztem Informationsinhalt.
+ - Komplette überarbeitung des User Interface für die Einstellungen und Trip Details. Diese nutzen nun horizontale Displays wie im Polestar 4 besser aus.
+ - Kartenansicht zu den Trip-Details hinzugefügt (abhängig von der Implementierung im jeweiligen Track).
+ - BITTE BEACHTEN: Polestar 3, Polestar 4 und Volvo EX30 liefern keine Leistungsdaten. Nicht alle App-Funktionen funktionieren wie gewohnt, bis dies von den Herstelletn behoben wurde!
+ - Bekannte Fehler: Das Diagram in der Hauptansicht zeigt unter Umständen keine aktuellen Daten an. Dies wird mit der Überarbeitung dieser Ansicht in einem zukünftigen Update behoben. Die Diagramme in der Tripzusammenfassung sind davon nicht betroffen.
+
 ## 0.27.3
 - Zusätzliche Fartbeginn-Bedingungen hinzugefügt (z.B. für den Volvo EX30).
 
