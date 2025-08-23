@@ -177,16 +177,16 @@ class CarStatsViewer : Application() {
                         style(R.style.changes_text)
                     })
 
-                changesList.forEach { change ->
+                // changesList.forEach { change ->
                     container.addView(TextView(context).apply {
-                        text = change.key
+                        text = changesList.keys.first()
                         style(R.style.title_text_style)
                     })
                     container.addView(TextView(context).apply {
-                        text = change.value
+                        text = changesList.values.first()
                         style(R.style.changes_text)
                     })
-                }
+                // }
                 setView(layout)
                 setCancelable(true)
                 create()

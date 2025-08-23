@@ -7,7 +7,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="25dp"
-        android:paddingBottom="50dp"
         android:orientation="vertical">
         <!--<TextView
             android:id="@+id/changes_0_26_2_title"
