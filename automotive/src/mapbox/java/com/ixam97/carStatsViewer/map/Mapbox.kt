@@ -2,6 +2,7 @@ package com.ixam97.carStatsViewer.map
 
 import android.util.Log
 import android.view.View
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Remove
@@ -19,10 +21,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.google.gson.GsonBuilder
@@ -31,6 +35,7 @@ import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.compose.theme.CarTheme
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.utils.getBitmapFromVectorDrawable
+import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.EdgeInsets
@@ -72,6 +77,22 @@ object Mapbox: MapboxInterface {
         trip: DrivingSession?,
         chargingMarkerOnClick: ((id: Long) -> Unit)
     ) {
+
+        if (MapboxOptions.accessToken.isBlank()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(100.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = "No Mapbox Access Token provided!\n\nPlease contact the maintainer of the App to fix this."
+                )
+            }
+            return
+        }
 
         val context = LocalContext.current
 
