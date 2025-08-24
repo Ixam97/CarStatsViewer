@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
 }
 
-def firebase = useFirbase.toBoolean()
+def firebase = useFirebase.toBoolean()
 def mapbox = useMapbox.toBoolean()
 
 if (firebase) {
