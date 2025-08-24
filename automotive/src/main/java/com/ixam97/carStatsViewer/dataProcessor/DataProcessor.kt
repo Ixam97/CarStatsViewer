@@ -1,12 +1,6 @@
 package com.ixam97.carStatsViewer.dataProcessor
 
-// import com.ixam97.carStatsViewer.utils.TimestampSynchronizer
 import android.app.Notification
-import android.util.Log
-import androidx.car.app.model.CarIcon
-import androidx.core.graphics.drawable.IconCompat
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.Defines
 import com.ixam97.carStatsViewer.R
@@ -61,7 +55,7 @@ class DataProcessor {
 
     private var localSessionsAccess: Boolean = true
 
-    var dataInitialized: Boolean? = null
+    var dataInitialized: Boolean = false
 
     /**
      * List of local copies of the current trips. Used for storing sum values and saving them to
@@ -187,18 +181,29 @@ class DataProcessor {
         //    chargePortConnected = (carPropertiesData.ChargePortConnected.value as Boolean?)?: false
         //)
 
-        realTimeData = realTimeData.copy(
-            speed = if (carPropertiesData.CurrentSpeed.value == null) null else ((carPropertiesData.CurrentSpeed.value as Float?)?: 0f).absoluteValue,
-            power = if (carPropertiesData.CurrentPower.value == null) null else emulatorPowerSign * ((carPropertiesData.CurrentPower.value as Float?)?: 0f),
-            batteryLevel = if (carPropertiesData.BatteryLevel.value == null) null else (carPropertiesData.BatteryLevel.value as Float?)?: 0f,
-            stateOfCharge = if (carPropertiesData.BatteryLevel.value == null) null else ((carPropertiesData.BatteryLevel.value as Float?)?: 0f) / staticVehicleData.batteryCapacity!!,
-            ambientTemperature = if (carPropertiesData.CurrentAmbientTemperature.value == null) null else (carPropertiesData.CurrentAmbientTemperature.value as Float?)?: 0f,
-            selectedGear = if (carPropertiesData.CurrentGear.value == null) null else (carPropertiesData.CurrentGear.value as Int?)?: 0,
-            ignitionState = if (carPropertiesData.CurrentIgnitionState.value == null) null else (carPropertiesData.CurrentIgnitionState.value as Int?)?: 0,
-            chargePortConnected = if (carPropertiesData.ChargePortConnected.value == null) null else (carPropertiesData.ChargePortConnected.value as Boolean?)?: false
-        )
+        if (!staticVehicleData.isEssentialInitialized()) {
+            InAppLogger.w("[NEO] Static vehicle Data not yet available!")
+            return
+        }
 
-        if (!realTimeData.isInitialized() || !staticVehicleData.isInitialized()) {
+        try {
+            realTimeData = realTimeData.copy(
+                speed = if (carPropertiesData.CurrentSpeed.value == null) null else ((carPropertiesData.CurrentSpeed.value as Float?)?: 0f).absoluteValue,
+                power = if (carPropertiesData.CurrentPower.value == null) null else emulatorPowerSign * ((carPropertiesData.CurrentPower.value as Float?)?: 0f),
+                batteryLevel = if (carPropertiesData.BatteryLevel.value == null) null else (carPropertiesData.BatteryLevel.value as Float?)?: 0f,
+                stateOfCharge = if (carPropertiesData.BatteryLevel.value == null) null else ((carPropertiesData.BatteryLevel.value as Float?)?: 0f) / staticVehicleData.batteryCapacity!!,
+                ambientTemperature = if (carPropertiesData.CurrentAmbientTemperature.value == null) null else (carPropertiesData.CurrentAmbientTemperature.value as Float?)?: 0f,
+                selectedGear = if (carPropertiesData.CurrentGear.value == null) null else (carPropertiesData.CurrentGear.value as Int?)?: 0,
+                ignitionState = if (carPropertiesData.CurrentIgnitionState.value == null) null else (carPropertiesData.CurrentIgnitionState.value as Int?)?: 0,
+                chargePortConnected = if (carPropertiesData.ChargePortConnected.value == null) null else (carPropertiesData.ChargePortConnected.value as Boolean?)?: false
+            )
+        } catch (e: Throwable) {
+            InAppLogger.e("[NEO] Failed to update real time data!\n\r${e.stackTraceToString()}")
+            return
+        }
+
+
+        if (!realTimeData.isEssentialInitialized() || !staticVehicleData.isEssentialInitialized()) {
             if (dataInitialized != false) {
                 dataInitialized = false
                 InAppLogger.i("[NEO] Waiting for car properties to be initialized...")
@@ -208,7 +213,7 @@ class DataProcessor {
 
         if (dataInitialized == false) {
             dataInitialized = true
-            InAppLogger.i("[NEO] Car properties initialization complete.")
+            InAppLogger.i("[NEO] Essential Car Properties initialization complete.")
         }
 
         when (carProperty) {
@@ -589,11 +594,7 @@ class DataProcessor {
                 CarStatsViewer.tripDataSource.updateDrivingSession(localSession)
             }
         } catch (e: Exception) {
-            InAppLogger.e("FATAL ERROR! Writing trips was not successful: ${e.stackTraceToString()}")
-            if (CarStatsViewer.appContext.getString(R.string.useFirebase) == "true") {
-                Firebase.crashlytics.log("FATAL ERROR! Writing trips was not successful")
-                Firebase.crashlytics.recordException(e)
-            }
+            InAppLogger.logThrowableWithFirebase("FATAL ERROR! Writing trips was not successful", e)
         }
     }
 
@@ -710,13 +711,7 @@ class DataProcessor {
                     TripType.MANUAL, TripType.MONTH, TripType.AUTO, TripType.SINCE_CHARGE -> TripType.tripTypesNameMap[tripType]
                     else -> "Unknown Trip Type!"
                 }
-                if (CarStatsViewer.appContext.getString(R.string.useFirebase) == "true") {
-                    Firebase.crashlytics.log("Error switching trip type! It appears there is no \"$type\".\n${e.message}")
-                    Firebase.crashlytics.recordException(e)
-                } else {
-                    InAppLogger.e("Error switching trip type! It appears there is no \"$type\".\n${e.message}")
-                    InAppLogger.e(e.stackTraceToString())
-                }
+                InAppLogger.logThrowableWithFirebase("Error switching trip type! It appears there is no \"$type\".\n${e.message}", e)
             }
         }
     }
@@ -836,12 +831,12 @@ class DataProcessor {
                         }
                     }
 
-                    chargingSession = chargingSession!!.copy(charged_soc = chargedSoc)
-                    chargingSession!!.chargingPoints = it.chargingPoints
-                    chargingSession!!.chargeTime = it.chargeTime
+                    chargingSession = chargingSession.copy(charged_soc = chargedSoc)
+                    chargingSession.chargingPoints = it.chargingPoints
+                    chargingSession.chargeTime = it.chargeTime
                 }
 
-                (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(realTimeData, chargingSessions = if (chargingSession == null) null else listOf(chargingSession!!))
+                (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(realTimeData, chargingSessions = if (chargingSession == null) null else listOf(chargingSession))
             }
             InAppLogger.i("[NEO] Charging session with ID ${localChargingSession?.charging_session_id} ended")
         }

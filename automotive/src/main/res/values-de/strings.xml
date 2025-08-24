@@ -85,6 +85,10 @@
         <item>Komplette überarbeitung des User Interface für die Einstellungen und Trip Details. Diese nutzen nun horizontale Displays wie im Polestar 4 besser aus.</item>
         <item>(Play Edition) Tripverlauf wieder eingefügt, allerdings mit begrenztem Informationsinhalt.</item>
         <item>[V](0.28.0)</item>
+        <item>Debugging- und Logging-Funktionen verbessert.</item>
+        <item>Das Autostart-Verhalten wurde verbessert.</item>
+        <item>Beginnend mit OTA P4.2.4 ist der Polestar 4 vollständig mit Car Stats Viewer kompatibel.</item>
+        <item>[V](0.28.1)</item>
     </string-array>
 
     <!-- Restart Dialog -->
@@ -104,6 +108,9 @@
     <string name="permissions_dialog_text">Diese App benötigt Berechtigungen, um genuzt zu werden. Ohne die angeforderten Berechtigungen können keine Daten des Fahrzugs erfasst werden.</string>
     <string name="permissions_dialog_quit">Car Stats Viewer beenden</string>
     <string name="permissions_dialog_grant">Berechtigungen erteilen</string>
+    <string name="permissions_dialog_grant_singular">Berechtigung erteilen</string>
+    <string name="permissions_dialog_deny">Trotzdem fortfahren</string>
+    <string name="permissions_dialog_background_location_text">Für einen zuverlässigen Betrieb der App ist Zugriff auf den Standort aus dem Hintergrund notwendig. Bitte \"Immer zulassen\" für den Standortzugriff auswählen.\n\nDie Standort-Berechtigung ist erforderlich, um auch auf andere Fahrzeugdaten außer dem GPS-Standort zuzugreifen.\n\nStandardmäßig ist die Standorterfassung in der App deaktiviert und kann innerhalb der App-Einstellungen aktiviert werden. Dies kann auch für die jweils ferfügbaren Live-Daten-APIs einzeln festgelegt werden.</string>
 
     <string name="plot_dimensionY_SPEED">Geschwindigkeit</string>
     <string name="plot_dimensionY_ALTITUDE">Höhe</string>
@@ -203,6 +210,7 @@
     <string name="settings_apis_smtp">SMTP-Logindaten</string>
     <string name="settings_apis_use">API nutzen</string>
     <string name="settings_apis_connection_selector">Verbindungssymbol in Hauptansicht:</string>
+    <string name="settings_apis_show_status_icon">Zeige Status-Icon in Hauptansicht</string>
 
     <!-- Compose Settings -->
     <string name="settings_general">Allgemein</string>

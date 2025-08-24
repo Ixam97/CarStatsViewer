@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import java.util.Locale
 
 interface MapboxInterface {
@@ -30,16 +31,24 @@ interface MapboxInterface {
 
     // Using the built in Android Geocoder
     suspend fun getAddress(lon: Double, lat: Double): String {
-        if (!Geocoder.isPresent()) return ("$lat, $lon")
+        if (!Geocoder.isPresent()) return ("%.6f, %.6f".format(lat, lon))
 
         val geocoder = Geocoder(CarStatsViewer.appContext, Locale.getDefault())
-        // Deprecated with API level 33, but not available in lower API levels. Therefore suspend fun.
-        val result = geocoder.getFromLocation(lat, lon, 1)
+        val result =
+            try {
+                // Deprecated with API level 33, but not available in lower API levels.
+                // Therefore suspend fun. TODO: Implement new function for API 33+
+                geocoder.getFromLocation(lat, lon, 1)
+            } catch (e: Throwable) {
+                InAppLogger.e("[Geo] Unable to get address from geocoder:")
+                InAppLogger.e(e.stackTraceToString())
+                null
+            }
 
-        if (!result.isNullOrEmpty()) {
-            return result[0].getAddressLine(0)
+        return if (!result.isNullOrEmpty()) {
+            result[0].getAddressLine(0)
         } else {
-            return ("$lat, $lon")
+            ("%.6f, %.6f".format(lat, lon))
         }
     }
 }

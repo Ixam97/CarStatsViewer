@@ -13,14 +13,16 @@ import androidx.core.graphics.drawable.IconCompat
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carApp.TabsScreen
 import com.ixam97.carStatsViewer.carApp.TripHistoryScreen
+import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
+import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
-import com.ixam97.carStatsViewer.ui.activities.SettingsApisActivity
 
 @OptIn(ExperimentalCarApi::class)
 internal fun TabsScreen.apiStatusList() = ListTemplate.Builder().apply {
 
-    val settingsApisActivityIntent = Intent(carContext, SettingsApisActivity::class.java).apply {
+    val settingsApisActivityIntent = Intent(carContext, ComposeSettingsActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        putExtra("TargetRoute", SettingsScreens.APIS)
     }
 
     /* addSectionedList(SectionedItemList.create(

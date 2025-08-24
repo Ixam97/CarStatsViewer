@@ -14,6 +14,7 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,12 @@ fun ApiSettings(
     navController: NavController
 ) {
 
+    val abrpApiKeyAvailable = LocalContext.current.resources.getIdentifier(
+        "abrp_api_key",
+        "string",
+        LocalContext.current.packageName
+    ) != 0
+
     DefaultColumnScrollbar(
         modifier = Modifier
             .fillMaxSize()
@@ -50,9 +57,14 @@ fun ApiSettings(
         )
         Divider(modifier = Modifier.padding(horizontal = 24.dp))
         CarRow(
-            title = stringResource(R.string.settings_apis_abrp),
+            title = if (abrpApiKeyAvailable) {
+                stringResource(R.string.settings_apis_abrp)
+            } else {
+                stringResource(R.string.settings_apis_abrp) + " (API key unavailable!)"
+            },
             // iconResId = R.mipmap.ic_abrp,
             browsable = true,
+            enabled = abrpApiKeyAvailable,
             onClick = {
                 navController.navigate(SettingsScreens.APIS_ABRP)
             },

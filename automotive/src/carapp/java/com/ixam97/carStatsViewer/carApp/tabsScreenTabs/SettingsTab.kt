@@ -7,24 +7,17 @@ import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
-import androidx.car.app.model.ParkedOnlyOnClickListener
 import androidx.car.app.model.Row
 import androidx.car.app.model.SectionedItemList
 import androidx.car.app.model.Toggle
 import androidx.core.graphics.drawable.IconCompat
-import com.ixam97.carStatsViewer.BuildConfig
-import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carApp.TabsScreen
 import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
-import com.ixam97.carStatsViewer.ui.activities.SettingsActivity
 
 @OptIn(ExperimentalCarApi::class)
 internal fun TabsScreen.settingsList() = ListTemplate.Builder().apply {
 
-    val settingsActivityIntent = Intent(carContext, SettingsActivity::class.java).apply {
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-    }
     val composeSettingsActivityIntent = Intent(carContext, ComposeSettingsActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
@@ -66,19 +59,9 @@ internal fun TabsScreen.settingsList() = ListTemplate.Builder().apply {
             setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_settings)).build())
             setBrowsable(true)
             setOnClickListener {
-                carContext.startActivity(settingsActivityIntent)
+                carContext.startActivity(composeSettingsActivityIntent)
             }
         }.build())
-        if (BuildConfig.FLAVOR_version == "dev") {
-            addItem(Row.Builder().apply {
-                setTitle("Compose Settings")
-                setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).build())
-                setBrowsable(true)
-                setOnClickListener(ParkedOnlyOnClickListener.create {
-                    carContext.startActivity(composeSettingsActivityIntent)
-                })
-            }.build())
-        }
     }.build()
 
     addSectionedList(SectionedItemList.create(

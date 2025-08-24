@@ -290,6 +290,10 @@ Pass på at det ikke er noen duplisertee data på serveren for å forhindre usan
         <item>Fullstendig overhalt brukergrensesnittet av innstillinger og turdetaljer. Dette gjør bruk av landskapsskjermer som i Polestar 4.</item>
         <item>(Play Edition) Lagt til turhistorikk på nytt, men med begrenset informasjon foreløpig.</item>
         <item>[V](0.28.0)</item>
+        <item>Forbedret feilsøking og logging.</item>
+        <item>Forbedret autostart-oppførsel.</item>
+        <item>Fra og med OTA P4.2.4 er Polestar 4 nå fullt kompatibel med Car Stats Viewer.</item>
+        <item>[V](0.28.1)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Oppdatering installert!</string>
     <string name="dialog_changes_title_changelog">Endringslogg</string>
@@ -359,4 +363,11 @@ Denne handlingen kan ta litt tid avhengig av datamengden. Et fremdriftsvarsel vi
     <string name="settings_plot_green">Grønn</string>
     <string name="settings_plot_white">Hvit</string>
     <string name="settings_apis_show_status_icon">Viser tilkoblingsikon på hovedskjerm</string>
+    <string name="permissions_dialog_grant_singular">Gi tillatelser</string>
+    <string name="permissions_dialog_deny">Fortsett likevel</string>
+    <string name="permissions_dialog_background_location_text">For pålitelig drift av appen kreves tilgang til bakgrunnstillatelse for posisjonering. Velg «Tillat hele tiden» for posisjonstillatelse. 
+ 
+ Posisjonstillatelse er nødvendig for å få tilgang til andre kjøretøydata enn den faktiske GPS-posisjonen. 
+ 
+ Som standard er posisjonssporing deaktivert og kan aktiveres i appens innstillinger. Det kan også konfigureres uavhengig for hvert støttede Live Data API.</string>
 </resources>

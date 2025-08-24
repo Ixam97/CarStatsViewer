@@ -65,19 +65,12 @@
 
         <activity android:name=".ui.activities.PermissionsActivity" android:exported="false" />
         <!--<activity android:name=".ui.activities.MainActivity" android:exported="true" />-->
-        <activity android:name=".ui.activities.SettingsActivity" android:exported="true">
+        <!--<activity android:name=".ui.activities.HistoryActivity" android:exported="true" />-->
+        <activity android:name=".compose.ComposeSettingsActivity" android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.APPLICATION_PREFERENCES"/>
             </intent-filter>
         </activity>
-        <!--<activity android:name=".ui.activities.HistoryActivity" android:exported="true" />-->
-        <activity android:name=".ui.activities.SettingsMainViewActivity" android:exported="false"/>
-        <!--<activity android:name=".ui.activities.SettingsVehicleActivity" android:exported="false"/>-->
-        <activity android:name=".ui.activities.LibsActivity" android:exported="false" />
-        <activity android:name=".ui.activities.AboutActivity" android:exported="false" />
-        <activity android:name=".ui.activities.SettingsApisActivity" android:exported="false" />
-        <activity android:name=".ui.activities.DebugActivity" android:exported="false" />
-        <activity android:name=".compose.ComposeSettingsActivity" android:exported="false" />
 
         <meta-data android:name="com.android.automotive"
             android:resource="@xml/automotive_app_desc"/>
@@ -90,7 +83,11 @@
             android:exported="true"/>
         <service android:name=".liveDataApi.uploadService.UploadService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
+        <service android:name=".utils.ScreenshotService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection"/>
     </application>
 
 </manifest>

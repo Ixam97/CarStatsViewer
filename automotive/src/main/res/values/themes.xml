@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="AppTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar">
         <!--<item name="android:colorControlActivated">@color/club_blue</item>
         <item name="android:buttonStyle">@style/testButton</item>-->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
         <item name="android:colorControlActivated">@color/polestar_orange</item>
         <item name="action_bar_line"> @style/AppTheme.action_bar_line</item>
         <item name="menu_standard_switch_style">@style/AppTheme.menu_standard_switch_style</item>
@@ -15,6 +16,7 @@
         <item name="tertiary_plot_color">@color/secondary_plot_color_alt</item>
     </style>
     <style name="ColorTestTheme" parent="AppTheme">
+        <item name="android:windowOptOutEdgeToEdgeEnforcement" tools:targetApi="35">true</item>
         <item name="android:colorControlActivated">@color/club_blue</item>
         <item name="colorAccent">@color/club_blue</item>
         <item name="android:buttonStyle">@style/testButton</item>

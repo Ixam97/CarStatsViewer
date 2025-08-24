@@ -290,6 +290,10 @@ Deze actie kan enige tijd duren, afhankelijk van de hoeveelheid gegevens. Blijf 
         <item>De gebruikersinterface van instellingen en reisinformatie volledig herzien. Dit maakt gebruik van horizontale schermen zoals in de Polestar 4.</item>
         <item>(Play Edition) Reisgeschiedenis opnieuw toegevoegd, maar voorlopig met beperkte informatie.</item>
         <item>[V](0.28.0)</item>
+        <item>Verbeterde debugging en logging.</item>
+        <item>Verbeterd autostartgedrag.</item>
+        <item>Vanaf OTA P4.2.4 is de Polestar 4 nu volledig compatibel met Car Stats Viewer.</item>
+        <item>[V](0.28.1)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Update geïnstalleerd!</string>
     <string name="dialog_changes_title_changelog">Overzicht wijzigingen</string>
@@ -358,4 +362,12 @@ Deze actie kan enige tijd duren, afhankelijk van de hoeveelheid gegevens. Er wor
     <string name="settings_theme">Ontwerp thema</string>
     <string name="settings_plot_green">Groen</string>
     <string name="settings_plot_white">Wit</string>
+    <string name="settings_apis_show_status_icon">Toon statuspictogram op het hoofdscherm</string>
+    <string name="permissions_dialog_grant_singular">Toestemming verlenen</string>
+    <string name="permissions_dialog_deny">Ga toch door</string>
+    <string name="permissions_dialog_background_location_text">Voor een betrouwbare werking van de app is toegang tot de locatietoestemming op de achtergrond vereist. Selecteer \'Altijd toestaan\' voor de locatietoestemming. 
+ 
+De locatietoestemming is nodig om toegang te krijgen tot andere voertuiggegevens dan de huidige gps-locatie. 
+ 
+Locatietracking is standaard uitgeschakeld en kan worden ingeschakeld in de app-instellingen. Het kan ook afzonderlijk worden geconfigureerd voor elke ondersteunde Live Data API.</string>
 </resources>

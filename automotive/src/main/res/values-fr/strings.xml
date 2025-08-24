@@ -296,6 +296,10 @@ Cette opération peut prendre du temps, dépendament du volume de données. Veui
         <item>Completely overhauled the UI of settings and trip details. This makes use of landscape screens like in the Polestar 4.</item>
         <item>(Play Edition) Re-Added trip history, but with limited information for now.</item>
         <item>[V](0.28.0)</item>
+        <item>Improved debugging and logging.</item>
+        <item>Improved autostart behaviour.</item>
+        <item>Starting with OTA P4.2.4, Polestar 4 is now fully compatible with Car Stats Viewer.</item>
+        <item>[V](0.28.1)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Mise à jour installée!</string>
     <string name="dialog_changes_title_changelog">Journal des modifications</string>

@@ -132,42 +132,6 @@ class AbrpLiveData (
         return ConnectionStatus.ERROR
     }
 
-    override fun showSettingsDialog(context: Context) {
-        super.showSettingsDialog(context)
-        val tokenDialog = AlertDialog.Builder(context).apply {
-            val layout = LayoutInflater.from(context).inflate(R.layout.dialog_abrp_token, null)
-            val abrp_token = layout.findViewById<EditText>(R.id.abrp_token)
-            val abrp_use_api = layout.findViewById<FixedSwitchWidget>(R.id.abrp_use_api)
-            val abrp_use_location = layout.findViewById<FixedSwitchWidget>(R.id.abrp_use_location)
-
-            abrp_use_api.isChecked = AppPreferences(context).abrpUseApi
-            abrp_use_location.isChecked = AppPreferences(context).abrpUseLocation
-
-            abrp_use_api.setSwitchClickListener() {
-                AppPreferences(context).abrpUseApi = abrp_use_api.isChecked
-                if(!abrp_use_api.isChecked) connectionStatus = ConnectionStatus.UNUSED
-                updateWatchdog()
-            }
-
-            abrp_use_location.setSwitchClickListener() {
-                AppPreferences(context).abrpUseLocation = abrp_use_location.isChecked
-            }
-
-            abrp_token.setText(AppPreferences(context).abrpGenericToken)
-
-            setView(layout)
-
-            setPositiveButton("OK") { dialog, _ ->
-                AppPreferences(context).abrpGenericToken = abrp_token.text.toString()
-            }
-            setTitle(context.getString(R.string.settings_apis_abrp))
-            setMessage(context.getString(R.string.abrp_description))
-            setCancelable(true)
-            create()
-        }
-        tokenDialog.show()
-    }
-
     override suspend fun sendNow(realTimeData: RealTimeData) {
         if (!AppPreferences(CarStatsViewer.appContext).abrpUseApi) {
             connectionStatus = ConnectionStatus.UNUSED
@@ -177,14 +141,14 @@ class AbrpLiveData (
         if (realTimeData.isInitialized()) {
             connectionStatus = send(AbrpDataSet(
                 stateOfCharge = (realTimeData.stateOfCharge!! * 100f).roundToInt(),
-                power = realTimeData.power!!,
-                speed = realTimeData.speed!!,
-                isCharging = realTimeData.chargePortConnected!!,
+                power = realTimeData.power?:0f,
+                speed = realTimeData.speed?:0f,
+                isCharging = realTimeData.chargePortConnected?:false,
                 isParked = (realTimeData.drivingState == DrivingState.PARKED || realTimeData.drivingState == DrivingState.CHARGE),
                 lat = realTimeData.lat?.toDouble(),
                 lon = realTimeData.lon?.toDouble(),
                 alt = realTimeData.alt?.toDouble(),
-                temp = realTimeData.ambientTemperature!!
+                temp = realTimeData.ambientTemperature?:0f
             ))
         }
     }

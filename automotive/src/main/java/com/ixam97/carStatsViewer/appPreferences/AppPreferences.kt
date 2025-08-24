@@ -21,6 +21,8 @@ class AppPreferences(
     private val Debug = AppPreference<Boolean>(context.getString(R.string.preference_debug_key), false, sharedPref)
     private val DebugDelays = AppPreference<Boolean>("preference_debug_delays", false, sharedPref)
     private val DebugColors = AppPreference<Boolean>("preference_debug_colors", false, sharedPref)
+    private val DebugScreenshotReceiver = AppPreference<String>("preference_debug_screenshot_receiver", "", sharedPref)
+    private val DebugUserID = AppPreference<String>("preference_debug_user_id", "Anonymous", sharedPref)
     private val Notification = AppPreference<Boolean>(context.getString(R.string.preference_notifications_key), false, sharedPref)
     private val ConsumptionUnit = AppPreference<Boolean>(context.getString(R.string.preference_consumption_unit_key), false, sharedPref)
     // private //val ExperimentalLayout = AppPreference<Boolean>(context.getString(R.string.preferences_notifications_key), false, sharedPref)
@@ -72,6 +74,8 @@ class AppPreferences(
     var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
     var debugDelays: Boolean get() = DebugDelays.value; set(value) {DebugDelays.value = value}
     var debugColors: Boolean get() = DebugColors.value; set(value) {DebugColors.value = value}
+    var debugScreenshotReceiver: String get() = DebugScreenshotReceiver.value; set(value) {DebugScreenshotReceiver.value = value}
+    var debugUserID: String get() = DebugUserID.value; set(value) {DebugUserID.value = value}
     var notifications: Boolean get() = Notification.value; set(value) {Notification.value = value}
     var consumptionUnit: Boolean get() = ConsumptionUnit.value; set(value) {ConsumptionUnit.value = value}
     var plotSpeed: Boolean get() = PlotSpeed.value; set(value) {PlotSpeed.value = value}

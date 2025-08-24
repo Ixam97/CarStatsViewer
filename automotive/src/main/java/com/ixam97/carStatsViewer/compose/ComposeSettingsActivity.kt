@@ -17,6 +17,12 @@ class ComposeSettingsActivity: ComponentActivity() {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
 
+        val targetScreen: String? = if (intent.hasExtra("TargetRoute")) {
+            intent.getStringExtra("TargetRoute")
+        } else {
+            null
+        }
+
         setContent {
             val settingsViewModel: SettingsViewModel = viewModel()
             val themeSetting = settingsViewModel.themeSettingStateFLow.collectAsState()
@@ -30,7 +36,7 @@ class ComposeSettingsActivity: ComponentActivity() {
             val brand = brandSelector(themeSetting.value)
 
             CarTheme(brand) {
-                SettingsScreen(viewModel = settingsViewModel)
+                SettingsScreen(viewModel = settingsViewModel, targetRoute = targetScreen)
             }
         }
     }

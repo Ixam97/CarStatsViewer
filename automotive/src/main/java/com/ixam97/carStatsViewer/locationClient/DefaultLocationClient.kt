@@ -56,8 +56,6 @@ class DefaultLocationClient(): LocationClient {
                     doLocationUpdates = false
                     break
                 }
-                // var result = client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).await()
-
                 var result = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
 
                 if (result != null && result.altitude.absoluteValue > 0) {
@@ -69,9 +67,6 @@ class DefaultLocationClient(): LocationClient {
                     InAppLogger.e("[LOC] GPS Altitude is 0m!")
                 }
 
-                // if (result != null)
-                //     // InAppLogger.v("[LOC] lat: %.5f lon: %.5f  alt: %.0fm time: %d".format(result.latitude, result.longitude, result.altitude, result.time))
-                // else
                 if (result == null) InAppLogger.w("[LOC] Location is null!")
 
                 emit(result)

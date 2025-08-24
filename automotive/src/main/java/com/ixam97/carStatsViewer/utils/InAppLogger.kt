@@ -1,8 +1,11 @@
 package com.ixam97.carStatsViewer.utils
 
 import android.util.Log
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.appPreferences.AppPreference
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.database.log.LogEntry
@@ -83,6 +86,30 @@ object InAppLogger {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun logWithFirebase(message: String, type: Int = Log.INFO) {
+        if (CarStatsViewer.appContext.getString(R.string.useFirebase) == "true") {
+            try {
+                Firebase.crashlytics.log(message)
+            } catch (_: Throwable) {
+                e("Firebase was configured enabled but failed to init!")
+            }
+        }
+        log(message, type)
+    }
+
+    fun logThrowableWithFirebase(message: String, e: Throwable) {
+        if (CarStatsViewer.appContext.getString(R.string.useFirebase) == "true") {
+            try {
+                Firebase.crashlytics.log(message)
+                Firebase.crashlytics.recordException(e)
+            } catch (_: Throwable) {
+                e("Firebase was configured enabled but failed to init!")
+            }
+        }
+        e(message)
+        e(e.stackTraceToString())
     }
 
     suspend fun getLogString(logLevel: Int = Log.VERBOSE, logLength: Int = 0): String {

@@ -8,10 +8,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +23,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,6 +53,7 @@ fun SideTabLayout(
     tabs: List<SideTab>,
     topLevelBackAction: () -> Unit,
     topLevelTitle: String,
+    initialRoute: String? = null,
     tabsColumnBackground: Color = MaterialTheme.colors.surface,
     navController: NavHostController = rememberNavController()
 ) {
@@ -116,6 +116,11 @@ fun SideTabLayout(
                             }
                         }
                     }
+                }
+            }
+            LaunchedEffect(initialRoute) {
+                initialRoute?.let {
+                    navController.navigate(it)
                 }
             }
         } else {
@@ -192,7 +197,7 @@ fun SideTabLayout(
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = tabs.filter { it.type == SideTab.Type.Tab }[0].route,
+                        startDestination = initialRoute?:tabs.filter { it.type == SideTab.Type.Tab }[0].route,
                         enterTransition = { fadeIn() },
                         exitTransition = { fadeOut() },
                         popEnterTransition = { fadeIn() },
@@ -219,6 +224,11 @@ fun SideTabLayout(
                             }
                         }
                     }
+                }
+            }
+            LaunchedEffect(initialRoute) {
+                initialRoute?.let { route ->
+                    selectedIndex = tabs.indexOfFirst { it.route == route }.coerceAtLeast(0)
                 }
             }
         }

@@ -78,98 +78,6 @@ class HttpLiveData (
         return android.util.Patterns.WEB_URL.matcher(possibleURL).matches()
     }
 
-    override fun showSettingsDialog(context: Context) {
-        super.showSettingsDialog(context)
-        val layout = LayoutInflater.from(context).inflate(R.layout.dialog_http_live_data, null)
-        val url = layout.findViewById<EditText>(R.id.http_live_data_url)
-        val username = layout.findViewById<EditText>(R.id.http_live_data_username)
-        val password = layout.findViewById<EditText>(R.id.http_live_data_password)
-        val httpLiveDataEnabled = layout.findViewById<FixedSwitchWidget>(R.id.http_live_data_enabled)
-        val httpLiveDataLocation = layout.findViewById<FixedSwitchWidget>(R.id.http_live_data_location)
-        val abrpDebug = layout.findViewById<FixedSwitchWidget>(R.id.http_live_data_abrp)
-        val apiTypeMultiButton = layout.findViewById<MultiButtonWidget>(R.id.http_live_data_type)
-        // val confirmButton = layout.findViewById<Button>(R.id.http_live_data_confirm)
-
-        val httpLiveDataSettingsDialog = AlertDialog.Builder(context).apply {
-            setTitle(R.string.settings_apis_title)
-            // setMessage(R.string.http_description)
-            setPositiveButton("OK") {dialog, _ ->
-                AppPreferences(context).httpLiveDataURL = url.text.toString()
-                AppPreferences(context).httpLiveDataUsername = username.text.toString()
-                AppPreferences(context).httpLiveDataPassword = password.text.toString()
-                dialog.cancel()
-            }
-            setView(layout)
-
-            /*
-            setPositiveButton("OK") { _, _ ->
-                AppPreferences(context).httpLiveDataURL = url.text.toString()
-                AppPreferences(context).httpLiveDataUsername = username.text.toString()
-                AppPreferences(context).httpLiveDataPassword = password.text.toString()
-            }
-
-            setTitle(context.getString(R.string.settings_apis_http))
-            setMessage(context.getString(R.string.http_description))
-            */
-            setCancelable(true)
-            create()
-        }
-
-        val dialog = httpLiveDataSettingsDialog.show()
-
-        httpLiveDataEnabled.isChecked = AppPreferences(context).httpLiveDataEnabled
-        httpLiveDataLocation.isChecked = AppPreferences(context).httpLiveDataLocation
-        abrpDebug.isChecked = AppPreferences(context).httpLiveDataSendABRPDataset
-        apiTypeMultiButton.selectedIndex = AppPreferences(context).httpApiTelemetryType
-
-        /*
-        confirmButton.isSelected = true
-
-        confirmButton.setOnClickListener {
-            AppPreferences(context).httpLiveDataURL = url.text.toString()
-            AppPreferences(context).httpLiveDataUsername = username.text.toString()
-            AppPreferences(context).httpLiveDataPassword = password.text.toString()
-            dialog.cancel()
-        }
-         */
-
-        httpLiveDataEnabled.setSwitchClickListener {
-            AppPreferences(context).httpLiveDataEnabled = httpLiveDataEnabled.isChecked
-            if (!httpLiveDataEnabled.isChecked) connectionStatus = ConnectionStatus.UNUSED
-            updateWatchdog()
-        }
-        httpLiveDataLocation.setSwitchClickListener {
-            AppPreferences(context).httpLiveDataLocation = httpLiveDataLocation.isChecked
-        }
-        abrpDebug.setSwitchClickListener {
-            AppPreferences(context).httpLiveDataSendABRPDataset = abrpDebug.isChecked
-        }
-        apiTypeMultiButton.setOnIndexChangedListener {
-            AppPreferences(context).httpApiTelemetryType = apiTypeMultiButton.selectedIndex
-        }
-
-        url.setText(AppPreferences(context).httpLiveDataURL)
-        username.setText(AppPreferences(context).httpLiveDataUsername)
-        password.setText(AppPreferences(context).httpLiveDataPassword)
-
-        // Enable the Ok button initially only in case the user already entered a valid URL
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = isValidURL(url.text.toString())
-
-        url.addTextChangedListener(object : TextValidator(url) {
-            override fun validate(textView: TextView?, text: String?) {
-                if (text == null || textView == null) {
-                    return
-                }
-                if (!isValidURL(text) && text.isNotEmpty()) {
-                    textView.error = context.getString(R.string.http_invalid_url)
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
-                    return
-                }
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
-            }
-        })
-    }
-
     suspend fun sendWithDrivingPoint(
         realTimeData: RealTimeData,
         drivingPoints: List<DrivingPoint>? = null,
@@ -222,7 +130,7 @@ class HttpLiveData (
                 }
             }
 
-            if (!realTimeData.isInitialized()) {
+            if (!realTimeData.isEssentialInitialized()) {
                 InAppLogger.w("Real time data is not entirely initialized: ${realTimeData}")
                 connectionStatus = ConnectionStatus.ERROR
                 return null

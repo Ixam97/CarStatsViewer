@@ -112,7 +112,7 @@ fun CarTheme(carMake: String? = null, content: @Composable () -> Unit) {
     val brushes: CarThemeBrushes
 
     when (carMake) {
-        "Polestar 2" -> {
+        "Polestar 2", "Polestar 4" -> {
             typography = defaultPolestarTypography
             colors = polestarColors
             brushes = CarThemeBrushes(

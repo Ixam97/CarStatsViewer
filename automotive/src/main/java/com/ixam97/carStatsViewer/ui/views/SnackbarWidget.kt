@@ -32,9 +32,9 @@ class SnackbarWidget private constructor(
     private data class SnackbarParameters(
         var message: String,
         val buttonText: String? = null,
-        val drawableId: Int? = null,
+        var drawableId: Int? = null,
         val startHidden: Boolean = false,
-        val duration: Long = 0,
+        var duration: Long = 0,
         val listener: SnackbarInterface? = null,
         val isError: Boolean = false
     )
@@ -44,7 +44,9 @@ class SnackbarWidget private constructor(
     }
 
     class Builder(val context: Context, val message: String) {
-        private var snackbarParameters = SnackbarParameters(message)
+        private var snackbarParameters = SnackbarParameters(
+            message
+        )
 
         fun setButton(buttonText: String, listener: SnackbarInterface? = null): Builder {
             snackbarParameters = snackbarParameters.copy(
@@ -75,11 +77,13 @@ class SnackbarWidget private constructor(
             return this
         }
 
-        fun show() {
+        fun show(): SnackbarWidget {
+            val snackbar = build()
             if (context is Activity) {
                 snackbarParameters = snackbarParameters.copy(startHidden = true)
-                context.window.findViewById<FrameLayout>(android.R.id.content).addView(build())
+                context.window.findViewById<FrameLayout>(android.R.id.content).addView(snackbar)
             }
+            return snackbar
         }
 
         fun build(): SnackbarWidget {
@@ -100,6 +104,13 @@ class SnackbarWidget private constructor(
         messageText.text = snackbarParameters.message
     }
 
+    fun updateStartDrawable(@DrawableRes newResId: Int) {
+        snackbarParameters.drawableId = newResId
+        snackbarParameters.drawableId?.let { resId ->
+            startIcon.setImageResource(resId)
+        }
+    }
+
     fun setProgressBarPercent(percent: Int) {
         val maxWidth = this@SnackbarWidget.measuredWidth
         val onePercent = maxWidth.toFloat() / 100
@@ -108,6 +119,37 @@ class SnackbarWidget private constructor(
         val layoutParams = findViewById<View>(R.id.progress_bar).layoutParams
         layoutParams.width = newWidth.roundToInt()
         progressBar.layoutParams = layoutParams
+    }
+
+    fun startDuration(duration: Long) {
+        snackbarParameters.duration = duration
+        startHideAnimation()
+    }
+
+    fun setToError() {
+        (progressBar.parent as ViewGroup).setBackgroundColor(context.getColor(R.color.bad_red_dark))
+        messageText.setTextColor(context.getColor(android.R.color.white))
+        progressBar.setBackgroundColor(context.getColor(R.color.bad_red))
+        startIcon.setImageResource(R.drawable.ic_error)
+        startIcon.setColorFilter(context.getColor(android.R.color.white))
+    }
+
+    private fun startHideAnimation() {
+
+        if (snackbarParameters.duration > 0) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                removeSelf()
+            }, snackbarParameters.duration)
+        }
+        val widthAnimator = ValueAnimator.ofInt(1, this@SnackbarWidget.measuredWidth)
+        widthAnimator.duration = snackbarParameters.duration
+        widthAnimator.interpolator = LinearInterpolator()
+        widthAnimator.addUpdateListener { barAnimation ->
+            val layoutParams = findViewById<View>(R.id.progress_bar).layoutParams
+            layoutParams.width = barAnimation.animatedValue as Int
+            progressBar.layoutParams = layoutParams
+        }
+        widthAnimator.start()
     }
 
     private fun removeSelf() {
@@ -148,15 +190,11 @@ class SnackbarWidget private constructor(
         }
 
         if (snackbarParameters.isError) {
-            (progressBar.parent as ViewGroup).setBackgroundColor(context.getColor(R.color.bad_red_dark))
-            messageText.setTextColor(context.getColor(android.R.color.white))
-            progressBar.setBackgroundColor(context.getColor(R.color.bad_red))
-            startIcon.setImageResource(R.drawable.ic_error)
-            startIcon.setColorFilter(context.getColor(android.R.color.white))
+            setToError()
         }
 
-        snackbarParameters.drawableId?.let {
-            startIcon.setImageResource(snackbarParameters.drawableId)
+        snackbarParameters.drawableId?.let { resId ->
+            startIcon.setImageResource(resId)
         }
 
         val anim = AnimationUtils.loadAnimation(context, R.anim.snackbar_up)
@@ -165,26 +203,13 @@ class SnackbarWidget private constructor(
             anim.setAnimationListener(object : AnimationListener {
                 override fun onAnimationStart(animation: Animation?) {}
                 override fun onAnimationEnd(animation: Animation?) {
-                    if (snackbarParameters.duration > 0) {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            removeSelf()
-                        }, snackbarParameters.duration)
-                    }
-                    val widthAnimator = ValueAnimator.ofInt(1, this@SnackbarWidget.measuredWidth)
-                    widthAnimator.duration = snackbarParameters.duration
-                    widthAnimator.interpolator = LinearInterpolator()
-                    widthAnimator.addUpdateListener { barAnimation ->
-                        val layoutParams = findViewById<View>(R.id.progress_bar).layoutParams
-                        layoutParams.width = barAnimation.animatedValue as Int
-                        progressBar.layoutParams = layoutParams
-                    }
-                    widthAnimator.start()
+                    startHideAnimation()
                 }
 
                 override fun onAnimationRepeat(animation: Animation?) {}
 
             })
-            this.startAnimation(anim)
         }
+        this.startAnimation(anim)
     }
 }

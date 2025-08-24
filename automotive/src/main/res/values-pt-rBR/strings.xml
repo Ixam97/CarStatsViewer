@@ -290,6 +290,10 @@
         <item>Reformulou completamente a IU de configurações e detalhes de viagem. Isso faz uso de telas de paisagem como no Polestar 4.</item>
         <item>(Play Edition) Histórico de viagens adicionado novamente, mas com informações limitadas por enquanto.</item>
         <item>[V](0.28.0)</item>
+        <item>Improved debugging and logging.</item>
+        <item>Improved autostart behaviour.</item>
+        <item>Starting with OTA P4.2.4, Polestar 4 is now fully compatible with Car Stats Viewer.</item>
+        <item>[V](0.28.1)</item>
     </string-array>
     <string name="dialog_changes_title_updated">Atualização instalada!</string>
     <string name="dialog_changes_title_changelog">Lista de alterações</string>
@@ -358,4 +362,5 @@ Se você encontrar bugs ou quiser fazer comentários, visite o repositório GitH
     <string name="settings_theme">Tema do design</string>
     <string name="settings_plot_green">Verde</string>
     <string name="settings_plot_white">Branco</string>
+    <string name="settings_apis_show_status_icon">Mostrar ícone de status na tela principal</string>
 </resources>

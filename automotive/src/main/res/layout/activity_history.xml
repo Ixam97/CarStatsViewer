@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="?activity_background"
     tools:ignore="UseSwitchCompatOrMaterialXml, UseAppTint, UseCompatTextViewDrawableXml"
-    tools:context=".ui.activities.SettingsActivity">
+    tools:context=".ui.activities.HistoryActivity">
 
 
     <ProgressBar

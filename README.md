@@ -151,6 +151,6 @@ Please also be aware that I will not just include everything. It has to fit into
 
 Original impulse cam from here: [CarGearViewerKotlin](https://github.com/android/car-samples/tree/main/car-lib/CarGearViewerKotlin)
 
-Discussion in the german Polestar forums: [Polestar Club](https://polestar.fans/t/car-stats-viewer-0-22-x/14653)
+Discussion in the german Polestar forums: [Polestar Club](https://polestar.fans/t/carstatsviewer-informationen/15027)
 
 Discussion in the international Polestar forums: [Polestar Forum](https://www.polestar-forum.com/threads/car-stats-viewer-a-better-range-assistant.10261/)

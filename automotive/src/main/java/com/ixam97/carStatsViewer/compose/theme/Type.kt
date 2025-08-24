@@ -10,7 +10,8 @@ import androidx.compose.ui.unit.sp
 import java.io.File
 
 
-val polestarFont = FontFamily(
+val polestarFont = if (File("/product/fonts/PolestarUnica77-Regular.otf").exists())  {
+    FontFamily(
         Font(
             File("/product/fonts/PolestarUnica77-Regular.otf"),
             // volvosansgloballight1
@@ -22,6 +23,15 @@ val polestarFont = FontFamily(
             weight = FontWeight.Medium
         )
     )
+} else if (File("/product/fonts/Unica77PolestarTT-Regular.ttf").exists()) {
+    FontFamily(
+        Font(
+            File("/product/fonts/Unica77PolestarTT-Regular.ttf")
+        )
+    )
+} else {
+    FontFamily.Default
+}
 
 val defaultTypography = Typography(
     defaultFontFamily = FontFamily.Default,
@@ -68,13 +78,13 @@ val defaultPolestarTypography = Typography(
     body1 = TextStyle(
         // fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 30.sp,
+        fontSize = 28.sp,
         color = Color.White
     ),
     button = TextStyle(
         // fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 30.sp
+        fontSize = 28.sp
     ),
     h1 = TextStyle(
         // fontFamily = FontFamily.Default,

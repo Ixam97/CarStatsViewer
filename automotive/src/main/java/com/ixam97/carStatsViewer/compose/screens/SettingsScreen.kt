@@ -3,7 +3,6 @@ package com.ixam97.carStatsViewer.compose.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.DataObject
@@ -13,6 +12,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
@@ -41,12 +41,11 @@ object SettingsScreens {
     const val ABOUT_CHANGELOG = "About_Changelog"
     const val DEV = "Dev"
     const val DEV_LOG = "Dev_Log"
-    const val MAPBOX_TEST = "MapboxTest"
     const val ABOUT_LICENSES = "About_Licenses"
 }
 
 @Composable
-fun SettingsScreen(viewModel: SettingsViewModel) {
+fun SettingsScreen(viewModel: SettingsViewModel, targetRoute: String? = null) {
 
     val tabsList = mutableListOf(
         SideTab(
@@ -111,7 +110,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             enabled = viewModel.isDevEnabled
         ),
         SideTab(
-          tabTitle = "Log",
+            tabTitle = "Log",
             route = SettingsScreens.DEV_LOG,
             type = SideTab.Type.Detail,
             content = { LogScreen(viewModel) }
@@ -135,12 +134,13 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
             .fillMaxSize()
             // .padding(10.dp)
             // .clip(RoundedCornerShape(25.dp))
-            .background(MaterialTheme.colors.background)
+            .background(Color.Transparent)
     ){
         SideTabLayout(
             tabs = tabsList,
             topLevelTitle = stringResource(id = R.string.settings_title),
             topLevelBackAction = {viewModel.finishActivity()},
+            initialRoute = targetRoute
         ) //, tabsColumnBackground = Color.Black)
     }
 

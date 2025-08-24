@@ -30,16 +30,17 @@ import com.ixam97.carStatsViewer.database.tripData.TripDataDatabase
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
+import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitRepository
 import com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
 import com.ixam97.carStatsViewer.utils.ChangeLogCreator.createChangelog
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.ScreenshotButton
+import com.ixam97.carStatsViewer.utils.ScreenshotService
 import com.ixam97.carStatsViewer.utils.Watchdog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
-import kotlin.system.exitProcess
 
 var emulatorMode = false
 var emulatorPowerSign = -1
@@ -60,6 +61,8 @@ class CarStatsViewer : Application() {
         const val FOREGROUND_NOTIFICATION_ID = 2
         const val UPLOAD_CHANNEL_ID = "UploadChannel"
         const val UPLOAD_NOTIFICATION_ID = 3
+        const val SCREENSHOT_CHANNEL_ID = "Screenshot"
+        const val SCREENSHOT_NOTIFICATION_ID = 4
 
         var screenshotBitmap = arrayListOf<Bitmap>()
 
@@ -84,12 +87,11 @@ class CarStatsViewer : Application() {
 
         lateinit var logDao: LogDao
 
-        // var typefaceRegular: Typeface? = null
-        // var typefaceMedium: Typeface? = null
-        // var isPolestarTypeface = false
-
         val appContextIsInitialized: Boolean get() = this::appContext.isInitialized
 
+        fun debugCrash() {
+            throw Exception("Debug Crash")
+        }
 
         fun setupRestartAlarm(context: Context, reason: String, delay: Long, cancel: Boolean = false, extendedLogging: Boolean = false) {
             val serviceIntent = Intent(context, AutoStartReceiver::class.java)
@@ -114,7 +116,7 @@ class CarStatsViewer : Application() {
                                 pendingIntent
                             )
                         } else {
-                            Log.d("ALARM", "CANNOT SETUP EXACT ALARMS!")
+                            Log.w("ALARM", "CANNOT SETUP EXACT ALARMS!")
                             alarmManager.set(
                                 AlarmManager.RTC,
                                 System.currentTimeMillis() + delay,
@@ -136,7 +138,7 @@ class CarStatsViewer : Application() {
                         pendingIntent
                     )
                 }
-                InAppLogger.i("[ASR] Setup single shot alarm")
+                InAppLogger.v("[ASR] Setup single shot alarm")
             } else {
                 alarmManager.setRepeating(
                     AlarmManager.RTC,
@@ -144,7 +146,7 @@ class CarStatsViewer : Application() {
                     delay,
                     pendingIntent
                 )
-                if (extendedLogging) InAppLogger.i("[ASR] Setup repeating alarm")
+                if (extendedLogging) InAppLogger.v("[ASR] Setup repeating alarm")
             }
         }
 
@@ -169,16 +171,16 @@ class CarStatsViewer : Application() {
                         style(R.style.changes_text)
                     })
 
-                changesList.forEach { change ->
+                // changesList.forEach { change ->
                     container.addView(TextView(context).apply {
-                        text = change.key
+                        text = changesList.keys.first()
                         style(R.style.title_text_style)
                     })
                     container.addView(TextView(context).apply {
-                        text = change.value
+                        text = changesList.values.first()
                         style(R.style.changes_text)
                     })
-                }
+                // }
                 setView(layout)
                 setCancelable(true)
                 create()
@@ -202,27 +204,22 @@ class CarStatsViewer : Application() {
         ).build()
         logDao = logDatabase.logDao()
 
-        if(getString(R.string.useFirebase) != "true") {
-            Thread.setDefaultUncaughtExceptionHandler { t, e ->
+        val mDefaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
 
-                try {
-                    setupRestartAlarm(applicationContext, "crash", 2_000, extendedLogging = true)
-                    InAppLogger.i("setup crash alarm")
-                } catch (e: Exception) {
-                    InAppLogger.e(e.stackTraceToString())
-                }
-
-                InAppLogger.e("[NEO] Car Stats Viewer has crashed!\n ${e.stackTraceToString()}")
-                val crashTime = System.nanoTime()
-                while (System.nanoTime() < crashTime + 500_000_000) {
-                    // Give the logger some time
-                }
-                exitProcess(1)
+        Thread.setDefaultUncaughtExceptionHandler { t, e ->
+            try {
+                setupRestartAlarm(applicationContext, "crash", 2_000, extendedLogging = true)
+                InAppLogger.i("Setup crash alarm.")
+            } catch (_: Throwable) {
+                InAppLogger.w("Failed to setup crash alarm.")
             }
+            InAppLogger.e("[NEO] Car Stats Viewer has crashed!\r\n ${e.stackTraceToString()}")
+            mDefaultUncaughtExceptionHandler?.uncaughtException(t, e)
         }
 
         InAppLogger.i("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
-        InAppLogger.i("Device Info: Brand: ${Build.BRAND}, model: ${Build.MODEL}, device: ${Build.DEVICE}")
+        InAppLogger.logWithFirebase("Device Info: Brand: ${Build.BRAND}, model: ${Build.MODEL}, device: ${Build.DEVICE}")
+
         InAppLogger.d("Screen width: ${resources.configuration.screenWidthDp}dp")
 /*
         CoroutineScope(Dispatchers.IO).launch {
@@ -276,8 +273,8 @@ class CarStatsViewer : Application() {
 
 
         val MIGRATION_5_6 = object: Migration(5, 6) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE DrivingSession ADD COLUMN last_edited_epoch_time INTEGER NOT NULL DEFAULT 0")
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE DrivingSession ADD COLUMN last_edited_epoch_time INTEGER NOT NULL DEFAULT 0")
             }
         }
 
@@ -319,6 +316,10 @@ class CarStatsViewer : Application() {
             getString(resources.getIdentifier("abrp_api_key", "string", applicationContext.packageName))
         } else ""
 
+        if (resources.getIdentifier("csv_api_key", "string", applicationContext.packageName) != 0) {
+            LogSubmitRepository.setApiKey(getString(resources.getIdentifier("csv_api_key", "string", applicationContext.packageName)))
+        }
+
         liveDataApis = arrayListOf(
             AbrpLiveData(abrpApiKey),
             HttpLiveData()
@@ -338,10 +339,21 @@ class CarStatsViewer : Application() {
             override fun onActivityDestroyed(activity: Activity) = Unit
         })
 
+        if (!ScreenshotService.screenshotServiceState.value.isServiceRunning) {
+            try {
+                notificationManager.deleteNotificationChannel(SCREENSHOT_CHANNEL_ID)
+            } catch (e: Throwable) {
+                InAppLogger.w("Unable to remove notification channel, but it's state is set to not running!")
+                e.message?.let {
+                    InAppLogger.w(it)
+                }
+            }
+        }
+
     }
 
     private fun createNotificationManager(): NotificationManager {
-        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager: NotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val restartChannel = NotificationChannel(
             RESTART_CHANNEL_ID,
             RESTART_CHANNEL_ID,

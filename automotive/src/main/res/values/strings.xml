@@ -156,6 +156,10 @@
         <item>Completely overhauled the UI of settings and trip details. This makes use of landscape screens like in the Polestar 4.</item>
         <item>(Play Edition) Re-Added trip history, but with limited information for now.</item>
         <item>[V](0.28.0)</item>
+        <item>Improved debugging and logging.</item>
+        <item>Improved autostart behaviour.</item>
+        <item>Starting with OTA P4.2.4, Polestar 4 is now fully compatible with Car Stats Viewer.</item>
+        <item>[V](0.28.1)</item>
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
@@ -187,6 +191,9 @@
     <string name="permissions_dialog_text">This app requires Permissions to be used. Without the required permissions the app cannot read any data from the car.</string>
     <string name="permissions_dialog_quit">Quit Car Stats Viewer</string>
     <string name="permissions_dialog_grant">Grant permissions</string>
+    <string name="permissions_dialog_grant_singular">Grant permission</string>
+    <string name="permissions_dialog_deny">Continue anyways</string>
+    <string name="permissions_dialog_background_location_text">For a reliable operation of the app, access to the background location permission is required. Please select \"Allow all the time\" for the location permission.\n\nThe location permission is needed to access vehicle data other than the actual GPS location.\n\nBy default, location tracking is disabled and can be enabled in the app\'s settings. It can also be configured for each supported Live Data API independently.</string>
 
     <!-- Global -->
     <string name="plot_dimensionY_CONSUMPTION" translatable="false">-</string>

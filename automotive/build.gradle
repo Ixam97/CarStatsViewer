@@ -5,9 +5,10 @@ plugins {
     alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.kotlinKapt)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
-def firebase = useFirbase.toBoolean()
+def firebase = useFirebase.toBoolean()
 def mapbox = useMapbox.toBoolean()
 
 if (firebase) {
@@ -21,8 +22,8 @@ android {
     defaultConfig {
         minSdkVersion 29
         targetSdkVersion 35
-        versionCode 286
-        versionName "0.28.0.0020"
+        versionCode 308
+        versionName "0.28.1.0019"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -72,25 +73,6 @@ android {
         buildConfig true
     }
 
-    packagingOptions {
-        pickFirst 'META-INF/LICENSE.md' // picks the Angus Mail license file
-        pickFirst 'META-INF/NOTICE.md' // picks the Angus Mail notice file
-    }
-
-    lintOptions {
-        // Returns whether lint should be quiet (for example, not write informational messages such as paths to report files written)
-        quiet true
-
-        // Whether lint should set the exit code of the process if errors are found
-        abortOnError false
-
-        // Returns whether lint will only check for errors (ignoring warnings)
-        ignoreWarnings true
-
-        // Returns whether lint should check for fatal errors during release builds. Default is true.
-        // If issues with severity "fatal" are found, the release build is aborted.
-        checkReleaseBuilds false
-    }
 
     // android.car exists since Android 10 (API level 29) Revision 5.
     useLibrary 'android.car'
@@ -104,9 +86,20 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+        ignoreWarnings true
+        quiet true
+    }
 
     buildFeatures {
         compose true
+    }
+    packagingOptions {
+        resources {
+            pickFirsts += ['META-INF/LICENSE.md', 'META-INF/NOTICE.md']
+        }
     }
 }
 
@@ -120,20 +113,20 @@ dependencies {
     implementation libs.kotlin.stdlib
     implementation libs.androidx.ktx
     implementation libs.androidx.activity
-    implementation libs.androidx.fragment
     implementation libs.androidx.recyclerview
     implementation libs.androidx.appcompat
     implementation libs.androidx.constraintlayout
+    implementation libs.androidx.window
     implementation libs.google.gson
     implementation libs.google.gms.location
     implementation libs.kotlinx.coroutines.android
     implementation libs.kotlinx.coroutines.play.services
-    implementation libs.jakarta.mail
     implementation libs.aboutlibraries.core
     implementation libs.aboutlibraries.compose
     implementation libs.airbnb.paris
     implementation libs.github.egm96
     implementation libs.github.scrollbar
+    implementation libs.okhttp3
     implementation libs.retrofit
     implementation libs.retrofit.converter.gson
 

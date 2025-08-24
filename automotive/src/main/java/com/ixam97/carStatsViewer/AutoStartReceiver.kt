@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.car.app.activity.CarAppActivity
+import androidx.core.content.ContextCompat.startForegroundService
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.ui.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.utils.InAppLogger
@@ -35,9 +36,27 @@ class AutoStartReceiver: BroadcastReceiver() {
 
         Log.d("ASR", "Action: ${intent?.action}")
 
+        if (!CarStatsViewer.appPreferences.autostart) {
+            InAppLogger.i("[ASR] Autostart disabled, canceling ASR.")
+            return
+        }
+
         if ((intent?.action?: "") == "com.ixam97.carStatsViewer.NOTIFICATION_DELETE") {
             CarStatsViewer.restartNotificationDismissed = true
             return
+        }
+
+        if (((intent?.action?: "") == Intent.ACTION_BOOT_COMPLETED
+                    || (intent?.action?: "") == Intent.ACTION_MY_PACKAGE_REPLACED)
+            && !isServiceRunning(DataCollector::class.java.name)) {
+            try {
+                InAppLogger.i("[ASR] Attempting to start Service on ${intent?.action}")
+                startForegroundService(CarStatsViewer.appContext, Intent(CarStatsViewer.appContext, DataCollector::class.java))
+
+            } catch (e: Exception) {
+                InAppLogger.e("[ASR] Failed to directly start foreground service! Probably missing background location permission or not supported by OS version!")
+                InAppLogger.e(e.stackTraceToString())
+            }
         }
 
         val reasonMap = mapOf(
@@ -50,7 +69,6 @@ class AutoStartReceiver: BroadcastReceiver() {
 
         InAppLogger.v("[ASR] Conditions: Service started: ${isServiceRunning(DataCollector::class.java.name)}, dismissed: ${CarStatsViewer.restartNotificationDismissed}")
 
-        if (!CarStatsViewer.appPreferences.autostart) return
         if (CarStatsViewer.restartNotificationDismissed) return
 
         CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 9_500, extendedLogging = true)
