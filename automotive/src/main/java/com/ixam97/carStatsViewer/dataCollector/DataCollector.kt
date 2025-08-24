@@ -8,10 +8,9 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.widget.Toast
 import androidx.car.app.activity.CarAppActivity
-import com.google.firebase.Firebase
-import com.google.firebase.crashlytics.crashlytics
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.CarStatsViewer.Companion.SCREENSHOT_CHANNEL_ID
@@ -320,8 +319,7 @@ class DataCollector: Service() {
                     if (!carPropertiesClient.getCarPropertyUpdates(propertyId)) {
                         allPropertiesAvailable = false
                         val warnMsg = "[NEO] Essential Property ${CarProperties.getNameById(propertyId)} ($propertyId) is currently not available!"
-                        InAppLogger.w(warnMsg)
-                        Firebase.crashlytics.log(warnMsg)
+                        InAppLogger.logWithFirebase(warnMsg, Log.WARN)
                     } else {
                         InAppLogger.i("[NEO] Essential Property ${CarProperties.getNameById(propertyId)} ($propertyId) registered.")
                     }
@@ -357,8 +355,7 @@ class DataCollector: Service() {
             if (!carPropertiesClient.registeredProperties.contains(propertyId)) {
                 if (!carPropertiesClient.getCarPropertyUpdates(propertyId)) {
                     val warnMsg = "[NEO] Optional Property ${CarProperties.getNameById(propertyId)} ($propertyId) is currently not available!"
-                    InAppLogger.w(warnMsg)
-                    Firebase.crashlytics.log(warnMsg)
+                    InAppLogger.logWithFirebase(warnMsg, Log.WARN)
                 } else {
                     InAppLogger.i("[NEO] Optional Property ${CarProperties.getNameById(propertyId)} ($propertyId) registered.")
                 }

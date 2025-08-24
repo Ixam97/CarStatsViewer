@@ -142,8 +142,8 @@ class SettingsViewModel:
                     settingsState = settingsState.copy(
                         analytics = Firebase.app.isDataCollectionDefaultEnabled
                     )
-                } catch (e: Exception) {
-                    InAppLogger.i("Firebase is disabled")
+                } catch (_: Throwable) {
+                    InAppLogger.w("Firebase is disabled")
                 }
             }
         }
@@ -252,7 +252,11 @@ class SettingsViewModel:
     }
     fun setAnalytics(value: Boolean) {
         settingsState = settingsState.copy(analytics = value)
-        Firebase.app.setDataCollectionDefaultEnabled(value)
+        try {
+            Firebase.app.setDataCollectionDefaultEnabled(value)
+        } catch (_: Throwable) {
+            InAppLogger.w("Firebase is disabled")
+        }
     }
 
     fun openGitHubLink(context: Context) {
@@ -313,13 +317,6 @@ class SettingsViewModel:
         )
     }
 
-    fun setShowScreenshotButton(newState: Boolean) {
-        preferences.showScreenshotButton = newState
-        devSettingsState = devSettingsState.copy(
-            showScreenshotButton = preferences.showScreenshotButton
-        )
-    }
-
     fun setLoggingLevel(index: Int) {
         preferences.logLevel = index
         devSettingsState = devSettingsState.copy(
@@ -354,7 +351,7 @@ class SettingsViewModel:
                     }
                 }
                 // Log.d("Log submit debug", Gson().toJson(LogSubmitBody(submitMap)))
-                var resultmsg: String? = null
+                var resultmsg: String?
                 try {
                     val cpuInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                         "${Build.SOC_MANUFACTURER} ${Build.SOC_MODEL}"
@@ -493,7 +490,7 @@ class SettingsViewModel:
             .show()
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                var resultmsg: String? = null
+                var resultmsg: String?
                 try {
                     resultmsg = LogSubmitRepository.uploadImage(
                         bitmaps = ScreenshotService.screenshotsList,

@@ -6,9 +6,7 @@ import android.car.hardware.property.CarPropertyManager
 import android.car.hardware.property.PropertyNotAvailableErrorCode
 import android.car.hardware.property.PropertyNotAvailableException
 import android.content.Context
-import com.google.firebase.Firebase
-import com.google.firebase.crashlytics.crashlytics
-import com.ixam97.carStatsViewer.emulatorMode
+import android.util.Log
 import com.ixam97.carStatsViewer.utils.InAppLogger
 
 class CarPropertiesClient(
@@ -57,14 +55,12 @@ class CarPropertiesClient(
             try {
                 if (e is PropertyNotAvailableException) {
                     val errorMsg = "[CarPropertiesClient.getProperty] Property is not available: ${PropertyNotAvailableErrorCode.toString(e.detailedErrorCode)}.\n\r${e.stackTraceToString()}"
-                    InAppLogger.e(errorMsg)
-                    Firebase.crashlytics.log(errorMsg)
+                    InAppLogger.logWithFirebase(errorMsg, Log.ERROR)
                 } else { throw e }
             } catch (ee: Throwable) {
                 InAppLogger.e(ee.stackTraceToString())
                 val errorMsg = "[CarPropertiesClient.getProperty] Failed to get Property ${CarProperties.getNameById(propertyId)} ($propertyId).\n\r${e.stackTraceToString()}"
-                InAppLogger.e(errorMsg)
-                Firebase.crashlytics.log(errorMsg)
+                InAppLogger.logWithFirebase(errorMsg, Log.ERROR)
             }
         }
         return null

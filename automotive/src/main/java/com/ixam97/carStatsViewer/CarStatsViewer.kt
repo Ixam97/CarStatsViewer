@@ -21,8 +21,6 @@ import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.airbnb.paris.extensions.style
-import com.google.firebase.Firebase
-import com.google.firebase.crashlytics.crashlytics
 import com.ixam97.carStatsViewer.appPreferences.AppPreferences
 import com.ixam97.carStatsViewer.dataProcessor.DataProcessor
 import com.ixam97.carStatsViewer.database.log.LogDao
@@ -88,10 +86,6 @@ class CarStatsViewer : Application() {
         lateinit var watchdog: Watchdog
 
         lateinit var logDao: LogDao
-
-        // var typefaceRegular: Typeface? = null
-        // var typefaceMedium: Typeface? = null
-        // var isPolestarTypeface = false
 
         val appContextIsInitialized: Boolean get() = this::appContext.isInitialized
 
@@ -216,7 +210,7 @@ class CarStatsViewer : Application() {
             try {
                 setupRestartAlarm(applicationContext, "crash", 2_000, extendedLogging = true)
                 InAppLogger.i("Setup crash alarm.")
-            } catch (e: Exception) {
+            } catch (_: Throwable) {
                 InAppLogger.w("Failed to setup crash alarm.")
             }
             InAppLogger.e("[NEO] Car Stats Viewer has crashed!\r\n ${e.stackTraceToString()}")
@@ -224,8 +218,7 @@ class CarStatsViewer : Application() {
         }
 
         InAppLogger.i("${appContext.getString(R.string.app_name)} v${BuildConfig.VERSION_NAME} started")
-        InAppLogger.i("Device Info: Brand: ${Build.BRAND}, model: ${Build.MODEL}, device: ${Build.DEVICE}")
-        Firebase.crashlytics.log("Device Info: Brand: ${Build.BRAND}, model: ${Build.MODEL}, device: ${Build.DEVICE}")
+        InAppLogger.logWithFirebase("Device Info: Brand: ${Build.BRAND}, model: ${Build.MODEL}, device: ${Build.DEVICE}")
 
         InAppLogger.d("Screen width: ${resources.configuration.screenWidthDp}dp")
 /*
@@ -280,8 +273,8 @@ class CarStatsViewer : Application() {
 
 
         val MIGRATION_5_6 = object: Migration(5, 6) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE DrivingSession ADD COLUMN last_edited_epoch_time INTEGER NOT NULL DEFAULT 0")
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE DrivingSession ADD COLUMN last_edited_epoch_time INTEGER NOT NULL DEFAULT 0")
             }
         }
 
@@ -360,7 +353,7 @@ class CarStatsViewer : Application() {
     }
 
     private fun createNotificationManager(): NotificationManager {
-        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager: NotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val restartChannel = NotificationChannel(
             RESTART_CHANNEL_ID,
             RESTART_CHANNEL_ID,

@@ -1,12 +1,6 @@
 package com.ixam97.carStatsViewer.dataProcessor
 
-// import com.ixam97.carStatsViewer.utils.TimestampSynchronizer
 import android.app.Notification
-import android.util.Log
-import androidx.car.app.model.CarIcon
-import androidx.core.graphics.drawable.IconCompat
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.Defines
 import com.ixam97.carStatsViewer.R
@@ -600,11 +594,7 @@ class DataProcessor {
                 CarStatsViewer.tripDataSource.updateDrivingSession(localSession)
             }
         } catch (e: Exception) {
-            InAppLogger.e("FATAL ERROR! Writing trips was not successful: ${e.stackTraceToString()}")
-            if (CarStatsViewer.appContext.getString(R.string.useFirebase) == "true") {
-                Firebase.crashlytics.log("FATAL ERROR! Writing trips was not successful")
-                Firebase.crashlytics.recordException(e)
-            }
+            InAppLogger.logThrowableWithFirebase("FATAL ERROR! Writing trips was not successful", e)
         }
     }
 
@@ -721,13 +711,7 @@ class DataProcessor {
                     TripType.MANUAL, TripType.MONTH, TripType.AUTO, TripType.SINCE_CHARGE -> TripType.tripTypesNameMap[tripType]
                     else -> "Unknown Trip Type!"
                 }
-                if (CarStatsViewer.appContext.getString(R.string.useFirebase) == "true") {
-                    Firebase.crashlytics.log("Error switching trip type! It appears there is no \"$type\".\n${e.message}")
-                    Firebase.crashlytics.recordException(e)
-                } else {
-                    InAppLogger.e("Error switching trip type! It appears there is no \"$type\".\n${e.message}")
-                    InAppLogger.e(e.stackTraceToString())
-                }
+                InAppLogger.logThrowableWithFirebase("Error switching trip type! It appears there is no \"$type\".\n${e.message}", e)
             }
         }
     }
@@ -847,12 +831,12 @@ class DataProcessor {
                         }
                     }
 
-                    chargingSession = chargingSession!!.copy(charged_soc = chargedSoc)
-                    chargingSession!!.chargingPoints = it.chargingPoints
-                    chargingSession!!.chargeTime = it.chargeTime
+                    chargingSession = chargingSession.copy(charged_soc = chargedSoc)
+                    chargingSession.chargingPoints = it.chargingPoints
+                    chargingSession.chargeTime = it.chargeTime
                 }
 
-                (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(realTimeData, chargingSessions = if (chargingSession == null) null else listOf(chargingSession!!))
+                (CarStatsViewer.liveDataApis[1] as HttpLiveData).sendWithDrivingPoint(realTimeData, chargingSessions = if (chargingSession == null) null else listOf(chargingSession))
             }
             InAppLogger.i("[NEO] Charging session with ID ${localChargingSession?.charging_session_id} ended")
         }
