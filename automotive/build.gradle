@@ -22,8 +22,8 @@ android {
     defaultConfig {
         minSdkVersion 29
         targetSdkVersion 35
-        versionCode 308
-        versionName "0.28.1.0019"
+        versionCode 313
+        versionName "0.29.0.0004"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -141,6 +141,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation libs.androidx.compose.ui
     implementation libs.androidx.compose.material
+    implementation libs.androidx.compose.material3
     implementation libs.androidx.compose.material.icons.extended
     implementation libs.androidx.lifecycle.viewmodel.compose
     implementation libs.androidx.navigation.compose
@@ -156,6 +157,8 @@ dependencies {
     debugImplementation libs.squareup.leakcanary
 
     implementation 'com.github.jetradarmobile:android-snowfall:1.2.1'
+
+    implementation libs.github.carcompose
 
     // to fix unresolved references to android.car
     // def sdkDir = project.android.sdkDirectory.canonicalPath

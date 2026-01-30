@@ -39,6 +39,9 @@
         <activity android:name=".ui.activities.HistoryActivity" android:exported="false" />
         <activity android:name=".compose.ComposeSettingsActivity" android:exported="false" />
         <activity android:name=".compose.ComposeTripDetailsActivity" android:exported="false" />
+        <activity android:name=".carcompose.CarComposeActivity" android:exported="true">
+            <meta-data android:name="distractionOptimized" android:value="true"/>
+        </activity>
 
         <service android:name=".dataCollector.DataCollector"
             android:foregroundServiceType="location"

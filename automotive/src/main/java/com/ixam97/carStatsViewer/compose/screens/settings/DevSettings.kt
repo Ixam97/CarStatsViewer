@@ -30,10 +30,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
 import androidx.navigation.NavController
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carcompose.CarComposeActivity
 import com.ixam97.carStatsViewer.compose.DefaultColumnScrollbar
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
@@ -85,6 +87,14 @@ fun DevSettings(
                 .padding(top = 24.dp, bottom = 10.dp),
             color = MaterialTheme.colors.primary,
             text = "General Debugging:"
+        )
+        Divider(modifier = Modifier.padding(horizontal = 24.dp))
+        CarRow(
+            title = "Car Compose Preview",
+            text = "Preview at the coming Car Compose UI framework.",
+            browsable = true,
+            external = false,
+            onClick = { context.startActivity(Intent(context, CarComposeActivity::class.java)) }
         )
         Divider(Modifier.padding(horizontal = 24.dp))
         CarSwitchRow(
