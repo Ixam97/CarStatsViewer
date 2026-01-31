@@ -170,6 +170,7 @@
         <item>(Play Edition) Re-Added trip history, but with limited information for now.</item>
         <item>[V](0.28.0)</item>
         -->
+        <item>Implemented Email export of charging sessions, formatted as csv file.</item>
         <item>Added Car Compose Demo to developer settings.</item>
         <item>[V](0.29.0)</item>
     </string-array>

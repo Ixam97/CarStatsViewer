@@ -1,17 +1,26 @@
 package com.ixam97.carStatsViewer.compose.screens.settings
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -25,6 +34,7 @@ import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.ixam97.carStatsViewer.compose.components.CarSwitchRow
 import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
+import com.ixam97.carStatsViewer.compose.theme.badRed
 import com.ixam97.carStatsViewer.compose.theme.conConnected
 import com.ixam97.carStatsViewer.compose.theme.conError
 import com.ixam97.carStatsViewer.compose.theme.conLimited
@@ -112,32 +122,69 @@ fun ApiSettings(
             )
             Divider(Modifier.padding(horizontal = 24.dp))
             CarRow(
-                title = stringResource(R.string.settings_trip_export_hint)
+                title = stringResource(R.string.settings_trip_export_hint),
+                text = "Currently only charging session export is implemented!"
+            )
+            Divider(Modifier.padding(horizontal = 20.dp))
+            CarRow(
+                title = "Data export Email address:",
+                customContent = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(15.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TextField(
+                            modifier = Modifier.weight(1f),
+                            value = viewModel.apiSettingsState.exportMailAddress,
+                            onValueChange = { viewModel.setExportMailAddress(it) },
+                            isError = (viewModel.apiSettingsState.validExportMailAddress == false),
+                            trailingIcon = {
+                                if (viewModel.apiSettingsState.validExportMailAddress == true) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(horizontal = 10.dp)
+                                            .size(40.dp),
+                                        imageVector = Icons.Default.Check,
+                                        contentDescription = null,
+                                        tint = Color.Green
+                                    )
+                                } else if (viewModel.apiSettingsState.validExportMailAddress == false) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(horizontal = 10.dp)
+                                            .size(40.dp),
+                                        imageVector = Icons.Default.ErrorOutline,
+                                        contentDescription = null,
+                                        tint = badRed
+                                    )
+                                }
+                            }
+                        )
+                        IconButton(
+                            modifier = Modifier.size(60.dp),
+                            onClick = {viewModel.setExportMailAddress("")}
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(50.dp),
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.onSurface
+                            )
+                        }
+                    }
+                }
             )
             Divider(Modifier.padding(horizontal = 24.dp))
             CarSwitchRow(
-                enabled = false,
-                switchState = false,
-                onClick = { },
+                enabled = (viewModel.apiSettingsState.validExportMailAddress == true),
+                switchState = viewModel.apiSettingsState.enableDataExport,
+                onClick = { viewModel.setEnableDataExport(it) },
             ) { enabled ->
                 Text(
                     text = stringResource(R.string.settings_trip_export_enable),
                     color = if (enabled) MaterialTheme.colors.onSurface else disabledTextColor
                 )
             }
-            Divider(Modifier.padding(horizontal = 20.dp))
-            CarRow(
-                enabled = false,
-                title = stringResource(R.string.settings_trip_export_mail),
-                customContent = {
-                    TextField(
-                        enabled = false,
-                        modifier = Modifier.fillMaxWidth(),
-                        value = "",
-                        onValueChange = { newValue -> },
-                    )
-                }
-            )
         }
     }
 }

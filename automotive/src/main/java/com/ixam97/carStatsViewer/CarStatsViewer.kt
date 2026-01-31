@@ -30,6 +30,7 @@ import com.ixam97.carStatsViewer.database.tripData.TripDataDatabase
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
+import com.ixam97.carStatsViewer.repository.dataExport.DataExportRepository
 import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitRepository
 import com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
 import com.ixam97.carStatsViewer.utils.ChangeLogCreator.createChangelog
@@ -318,6 +319,7 @@ class CarStatsViewer : Application() {
 
         if (resources.getIdentifier("csv_api_key", "string", applicationContext.packageName) != 0) {
             LogSubmitRepository.setApiKey(getString(resources.getIdentifier("csv_api_key", "string", applicationContext.packageName)))
+            DataExportRepository.setApiKey(getString(resources.getIdentifier("csv_api_key", "string", applicationContext.packageName)))
         }
 
         liveDataApis = arrayListOf(

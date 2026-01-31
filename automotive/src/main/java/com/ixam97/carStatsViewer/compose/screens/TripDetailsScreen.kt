@@ -39,6 +39,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRightAlt
 import androidx.compose.material.icons.filled.UnfoldLess
 import androidx.compose.material.icons.filled.UnfoldMore
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -85,6 +86,7 @@ import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.DataConverters
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.getColorFromAttribute
+import com.mapbox.maps.extension.style.image.image
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Date
@@ -838,10 +840,7 @@ fun ChargingSessionDetails(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    onCollapseClick()
-                },
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             TripDataRow(
@@ -849,10 +848,26 @@ fun ChargingSessionDetails(
                 title = "${StringFormatters.getDateString(Date(session.start_epoch_time))}, $socString",
                 text = location ?: stringResource(R.string.summary_location_unavailable)
             )
+            if (viewModel.preferences.dataExportEnabled) {
+                Icon(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .size(60.dp)
+                        .clickable {
+                            viewModel.uploadChargingSession(context, session.charging_session_id);
+                        },
+                    imageVector = Icons.Default.Upload,
+                    contentDescription = null,
+                    tint = Color.White
+                )
+            }
             Icon(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
-                    .size(60.dp),
+                    .size(60.dp)
+                    .clickable {
+                        onCollapseClick()
+                    },
                 imageVector = Icons.Default.UnfoldLess,
                 contentDescription = null,
                 tint = Color.White

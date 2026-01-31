@@ -81,7 +81,10 @@ class SettingsViewModel:
 
     data class ApiSettingsState(
         val abrpStatus: ConnectionStatus = ConnectionStatus.UNUSED,
-        val httpStatus: ConnectionStatus = ConnectionStatus.UNUSED
+        val httpStatus: ConnectionStatus = ConnectionStatus.UNUSED,
+        val exportMailAddress: String = "",
+        val validExportMailAddress: Boolean? = null,
+        val enableDataExport: Boolean = false
     )
 
     private val _themeSettingState = MutableStateFlow<Int>(preferences.colorTheme)
@@ -137,6 +140,15 @@ class SettingsViewModel:
                     screenshotReceiver = preferences.debugScreenshotReceiver,
                     validReceiverAddress = validateEmailAddress(preferences.debugScreenshotReceiver),
                     userID = preferences.debugUserID
+                )
+
+                val exportAddressValid = preferences.dataExportEnabled && (validateEmailAddress(preferences.dataExportAddress) == true)
+                preferences.dataExportEnabled = exportAddressValid
+
+                apiSettingsState = apiSettingsState.copy(
+                    exportMailAddress = preferences.dataExportAddress,
+                    validExportMailAddress = exportAddressValid,
+                    enableDataExport = preferences.dataExportEnabled
                 )
                 try {
                     settingsState = settingsState.copy(
@@ -257,6 +269,29 @@ class SettingsViewModel:
         } catch (_: Throwable) {
             InAppLogger.w("Firebase is disabled")
         }
+    }
+
+    fun setExportMailAddress(exportAddress: String) {
+        val valid = validateEmailAddress(exportAddress)
+        apiSettingsState = apiSettingsState.copy(
+            exportMailAddress = exportAddress,
+            validExportMailAddress = valid
+        )
+        if (valid != false) {
+            preferences.dataExportAddress = exportAddress
+        }
+        if (valid != true) {
+            preferences.dataExportEnabled = false
+            apiSettingsState = apiSettingsState.copy(
+                enableDataExport = false
+            )
+        }
+    }
+    fun setEnableDataExport(enabled: Boolean) {
+        preferences.dataExportEnabled = enabled
+        apiSettingsState = apiSettingsState.copy(
+            enableDataExport = enabled
+        )
     }
 
     fun openGitHubLink(context: Context) {

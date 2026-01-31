@@ -69,6 +69,9 @@ class AppPreferences(
     private val CarAppSelectedRealTimeData = AppPreference<Int>("preference_car_app_selected_real_time_data", 1, sharedPref)
     private val CarAppRealTimeData = AppPreference<Boolean>("preference_car_app_real_time_data", false, sharedPref)
 
+    private val DataExportAddress = AppPreference<String>("preference_data_export_address", "", sharedPref)
+    private val DataExportEnabled = AppPreference<Boolean>("preference_data_export_enabled", false, sharedPref)
+
     var versionString: String get() = VersionString.value; set(value) {VersionString.value = value}
 
     var debug: Boolean get() = Debug.value; set(value) {Debug.value = value}
@@ -118,6 +121,9 @@ class AppPreferences(
 
     // var carAppSelectedRealTimeData: Int get() = CarAppSelectedRealTimeData.value; set(value) {CarAppSelectedRealTimeData.value = value}
     var carAppRealTimeData: Boolean get() = CarAppRealTimeData.value; set(value) {CarAppRealTimeData.value = value}
+
+    var dataExportAddress: String get() = DataExportAddress.value; set(value) {DataExportAddress.value = value}
+    var dataExportEnabled: Boolean get() = DataExportEnabled.value; set(value) {DataExportEnabled.value = value}
 
     // Preferences not saved permanently:
     val exclusionStrategy = AppPreferences.exclusionStrategy
