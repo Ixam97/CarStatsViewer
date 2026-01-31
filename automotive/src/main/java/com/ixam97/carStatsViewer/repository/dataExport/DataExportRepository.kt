@@ -38,7 +38,7 @@ object DataExportRepository {
         sessionCsvData += "# Charging duration: ${StringFormatters.getElapsedTimeString((chargingSession.end_epoch_time?:chargingSession.start_epoch_time) - chargingSession.start_epoch_time)}\n"
         sessionCsvData += "# Charged energy: ${StringFormatters.getEnergyString(chargingSession.charged_energy.toFloat())}\n"
         if (chargingSession.lon != null && chargingSession.lat != null) {
-            sessionCsvData += "# Location: ${chargingSession.lon}, ${chargingSession.lat}\n"
+            sessionCsvData += "# Location: ${chargingSession.lat}, ${chargingSession.lon}\n"
         }
         sessionCsvData += "# Outside temperature: ${"%.1f".format(chargingSession.outside_temp)} degC\n"
 

@@ -142,8 +142,8 @@ class SettingsViewModel:
                     userID = preferences.debugUserID
                 )
 
-                val exportAddressValid = preferences.dataExportEnabled && (validateEmailAddress(preferences.dataExportAddress) == true)
-                preferences.dataExportEnabled = exportAddressValid
+                val exportAddressValid = if (preferences.dataExportAddress.isBlank()) null else preferences.dataExportEnabled && (validateEmailAddress(preferences.dataExportAddress) == true)
+                preferences.dataExportEnabled = exportAddressValid == true
 
                 apiSettingsState = apiSettingsState.copy(
                     exportMailAddress = preferences.dataExportAddress,
