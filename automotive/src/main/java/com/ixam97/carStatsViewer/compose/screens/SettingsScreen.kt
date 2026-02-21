@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material.icons.outlined.DataObject
 import androidx.compose.material.icons.outlined.Info
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carcompose.screen.main.TabHistory
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.SideTab
 import com.ixam97.carStatsViewer.compose.components.SideTabLayout
@@ -42,6 +44,7 @@ object SettingsScreens {
     const val DEV = "Dev"
     const val DEV_LOG = "Dev_Log"
     const val ABOUT_LICENSES = "About_Licenses"
+    const val DATA = "Data_Management"
 }
 
 @Composable
@@ -68,6 +71,13 @@ fun SettingsScreen(viewModel: SettingsViewModel, targetRoute: String? = null) {
             tabIcon = Icons.Outlined.LocationOn,
             type = SideTab.Type.Tab,
             content = { PrivacySettings(viewModel = viewModel) }
+        ),
+        SideTab(
+            tabTitle = "Data Management",
+            route = SettingsScreens.DATA,
+            tabIcon = Icons.Default.Storage,
+            type = SideTab.Type.Tab,
+            content = { TabHistory() }
         ),
         SideTab(
             tabTitle = stringResource(R.string.settings_apis_title),

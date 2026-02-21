@@ -18,7 +18,8 @@ interface MapboxInterface {
     fun MapBoxContainer(
         modifier: Modifier,
         trip: DrivingSession?,
-        chargingMarkerOnClick: ((id: Long) -> Unit)
+        chargingMarkerOnClick: ((id: Long) -> Unit),
+        useCarCompose: Boolean = false
     ) {
         Box (
             modifier = modifier,

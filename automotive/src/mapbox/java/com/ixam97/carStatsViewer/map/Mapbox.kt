@@ -2,6 +2,8 @@ package com.ixam97.carStatsViewer.map
 
 import android.util.Log
 import android.view.View
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.runtime.Composable
@@ -23,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -55,6 +60,7 @@ import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.scalebar.scalebar
+import de.ixam97.carcompose.components.controls.CarButtonDefaults
 
 // this is the real Mapbox class
 object Mapbox: MapboxInterface {
@@ -75,7 +81,8 @@ object Mapbox: MapboxInterface {
     override fun MapBoxContainer(
         modifier: Modifier,
         trip: DrivingSession?,
-        chargingMarkerOnClick: ((id: Long) -> Unit)
+        chargingMarkerOnClick: ((id: Long) -> Unit),
+        useCarCompose: Boolean
     ) {
 
         if (MapboxOptions.accessToken.isBlank()) {
@@ -266,57 +273,115 @@ object Mapbox: MapboxInterface {
                 modifier = Modifier
                     .padding(15.dp)
             ) {
-                CarGradientButton (
-                    modifier = Modifier.size(65.dp),
-                    contentPadding = PaddingValues(0.dp),
-                    onClick = {
-                        updateViewport = true
+
+                if (useCarCompose){
+
+                    Box(
+                        modifier = Modifier
+                            .clip(CarButtonDefaults.shape)
+                            .background(CarButtonDefaults.colors.backgroundBrush)
+                            .clickable { updateViewport = true }
+                            .padding(10.dp)
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(50.dp),
+                            painter = painterResource(R.drawable.ic_distance),
+                            contentDescription = null,
+                            tint = CarButtonDefaults.colors.textColor
+                        )
                     }
-                ) {
-                    Icon(
-                        painterResource(id = R.drawable.ic_distance),
-                        tint = Color.White,
-                        contentDescription = null,
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
-                Spacer(Modifier.size(15.dp))
-                CarGradientButton (
-                    modifier = Modifier.size(65.dp),
-                    contentPadding = PaddingValues(0.dp),
-                    shape = RoundedCornerShape(
-                        topStart = CarTheme.buttonCornerRadius,
-                        topEnd = CarTheme.buttonCornerRadius
-                    ),
-                    onClick = {
-                        zoomIn = true
+                    Spacer(Modifier.size(15.dp))
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(
+                                topStartPercent = de.ixam97.carcompose.theme.CarTheme.carDimensions.buttonRadiusPercent,
+                                topEndPercent = de.ixam97.carcompose.theme.CarTheme.carDimensions.buttonRadiusPercent,
+                            ))
+                            .background(CarButtonDefaults.colors.backgroundBrush)
+                            .clickable { zoomIn = true }
+                            .padding(10.dp)
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(50.dp),
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            tint = CarButtonDefaults.colors.textColor
+                        )
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Add,
-                        tint = Color.White,
-                        contentDescription = null,
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
-                Spacer(Modifier.size(4.dp))
-                CarGradientButton (
-                    modifier = Modifier.size(65.dp),
-                    contentPadding = PaddingValues(0.dp),
-                    shape = RoundedCornerShape(
-                        bottomStart = CarTheme.buttonCornerRadius,
-                        bottomEnd = CarTheme.buttonCornerRadius
-                    ),
-                    onClick = {
-                        zoomOut = true
+                    Spacer(Modifier.size(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(
+                                bottomStartPercent = de.ixam97.carcompose.theme.CarTheme.carDimensions.buttonRadiusPercent,
+                                bottomEndPercent = de.ixam97.carcompose.theme.CarTheme.carDimensions.buttonRadiusPercent,
+                            ))
+                            .background(CarButtonDefaults.colors.backgroundBrush)
+                            .clickable { zoomOut = true }
+                            .padding(10.dp)
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(50.dp),
+                            imageVector = Icons.Default.Remove,
+                            contentDescription = null,
+                            tint = CarButtonDefaults.colors.textColor
+                        )
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Remove,
-                        tint = Color.White,
-                        contentDescription = null,
-                        modifier = Modifier.size(40.dp)
-                    )
+                } else {
+                    CarGradientButton (
+                        modifier = Modifier.size(65.dp),
+                        contentPadding = PaddingValues(0.dp),
+                        onClick = {
+                            updateViewport = true
+                        }
+                    ) {
+                        Icon(
+                            painterResource(id = R.drawable.ic_distance),
+                            tint = Color.White,
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
+                    Spacer(Modifier.size(15.dp))
+                    CarGradientButton (
+                        modifier = Modifier.size(65.dp),
+                        contentPadding = PaddingValues(0.dp),
+                        shape = RoundedCornerShape(
+                            topStart = CarTheme.buttonCornerRadius,
+                            topEnd = CarTheme.buttonCornerRadius
+                        ),
+                        onClick = {
+                            zoomIn = true
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Add,
+                            tint = Color.White,
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
+                    Spacer(Modifier.size(4.dp))
+                    CarGradientButton (
+                        modifier = Modifier.size(65.dp),
+                        contentPadding = PaddingValues(0.dp),
+                        shape = RoundedCornerShape(
+                            bottomStart = CarTheme.buttonCornerRadius,
+                            bottomEnd = CarTheme.buttonCornerRadius
+                        ),
+                        onClick = {
+                            zoomOut = true
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Remove,
+                            tint = Color.White,
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
                 }
             }
         }

@@ -86,7 +86,6 @@ import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.DataConverters
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.getColorFromAttribute
-import com.mapbox.maps.extension.style.image.image
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.Date

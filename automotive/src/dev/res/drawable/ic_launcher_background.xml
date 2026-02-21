@@ -4,5 +4,9 @@
     <!--<gradient
         android:endColor="@color/club_blue"
         android:startColor="@color/club_violet"/>-->
-    <solid android:color="#274060"/>
+    <!--<gradient
+        android:angle="-45"
+        android:endColor="#434343"
+        android:startColor="#9E9E9E"/>-->
+    <solid android:color="#572626"/>
 </shape>

@@ -8,29 +8,29 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.utils.InAppLogger
-import de.ixam97.carcompose.components.layout.CarTabLayout
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
-object TabOrientation {
-    const val VERTICAL = 0
-    const val HORIZONTAL = 1
+enum class MainScreenTab {
+    Dashboard,
+    History,
+    Settings;
 }
 
-object TabIndexes {
-    const val TRIP = 0
-    const val PERFORMANCE = 1
-    const val HISTORY = 2
+enum class VehicleModel {
+    Polestar2,
+    Polestar3,
+    Polestar4,
+    Other
 }
 
 class CarComposeViewModel: ViewModel() {
 
     data class CarComposeState(
         val uiTypeIndex: Int,
-        val tabLayoutOrientation: CarTabLayout.Orientation = CarTabLayout.Orientation.Vertical,
+        val vehicleModel: VehicleModel = VehicleModel.Other,
         val isLoading: Boolean = false,
-        val selectedTab: Int = TabIndexes.TRIP
-
+        val selectedMainScreenTab: MainScreenTab = MainScreenTab.Dashboard
     )
 
     var movingState by mutableStateOf(false)
@@ -40,20 +40,20 @@ class CarComposeViewModel: ViewModel() {
         value = when {
             Build.MODEL == "PS4" || Build.DEVICE == "lemon_x86_64" -> {
                 CarComposeState(
-                    tabLayoutOrientation = CarTabLayout.Orientation.Vertical,
-                    uiTypeIndex = 1
+                    uiTypeIndex = 1,
+                    vehicleModel = VehicleModel.Polestar4
                 )
             }
             Build.MODEL == "Polestar" && Build.DEVICE == "moose" -> {
                 CarComposeState(
-                    tabLayoutOrientation = CarTabLayout.Orientation.Horizontal,
-                    uiTypeIndex = 1
+                    uiTypeIndex = 1,
+                    vehicleModel = VehicleModel.Polestar3
                 )
             }
             ((Build.MODEL == "Polestar" && Build.DEVICE == "ihu_abl_car") || Build.MODEL == "Polestar 2") -> {
                 CarComposeState(
-                    tabLayoutOrientation = CarTabLayout.Orientation.Horizontal,
-                    uiTypeIndex = 2
+                    uiTypeIndex = 2,
+                    vehicleModel = VehicleModel.Polestar2
                 )
             }
             else -> CarComposeState(
@@ -67,16 +67,17 @@ class CarComposeViewModel: ViewModel() {
         viewModelScope.launch {
             CarStatsViewer.dataProcessor.realTimeDataFlow.collect { realTimeData ->
                 movingState = (realTimeData.speed != null && realTimeData.speed.absoluteValue > 0)
-                if (movingState && carComposeState.selectedTab > 1) {
-                    carComposeState = carComposeState.copy(selectedTab = 0)
+                if (movingState && carComposeState.selectedMainScreenTab != MainScreenTab.Dashboard) {
+                    carComposeState = carComposeState.copy(selectedMainScreenTab = MainScreenTab.Dashboard)
                 }
             }
         }
     }
 
     fun setUiTypeIndex(index: Int) {
+        val newIndex = if (index > 3) 3 else index
         carComposeState = carComposeState.copy(
-            uiTypeIndex = index
+            uiTypeIndex = newIndex
         )
     }
 
@@ -87,19 +88,11 @@ class CarComposeViewModel: ViewModel() {
         InAppLogger.v("Setting Loading state to $isLoading")
     }
 
-    fun setSelectedTab(tabIndex: Int) {
+    fun setSelectedMainScreenTabIndex(tabIndex: Int) {
+        if (MainScreenTab.entries.size - 1 < tabIndex)
+            throw RuntimeException("Invalid MainScreenTab with index $tabIndex!")
         carComposeState = carComposeState.copy(
-            selectedTab = tabIndex
-        )
-    }
-
-    fun setTabOrientationIndex(tabOrientationIndex: Int) {
-        carComposeState = carComposeState.copy(
-            tabLayoutOrientation = if (tabOrientationIndex == TabOrientation.VERTICAL) {
-                CarTabLayout.Orientation.Vertical
-            } else {
-                CarTabLayout.Orientation.Horizontal
-            }
+            selectedMainScreenTab = MainScreenTab.entries[tabIndex]
         )
     }
 }

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,7 +30,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carcompose.CarComposeViewModel
 import com.ixam97.carStatsViewer.compose.ComposeTripDetailsActivity
-import com.ixam97.carStatsViewer.compose.theme.badRed
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.utils.StringFormatters
@@ -52,11 +50,11 @@ import kotlin.collections.listOf
 
 @Composable
 fun TabHistory(
-    globalViewModel: CarComposeViewModel
+    globalViewModel: CarComposeViewModel? = null
 ) {
     val historyViewModel: TripHistoryViewModel = viewModel()
 
-    globalViewModel.setLoading(historyViewModel.tripHistoryState.isLoadingPastTrips || historyViewModel.tripHistoryState.isLoadingCurrentTrips)
+    globalViewModel?.setLoading(historyViewModel.tripHistoryState.isLoadingPastTrips || historyViewModel.tripHistoryState.isLoadingCurrentTrips)
 
     val context = LocalContext.current
 
