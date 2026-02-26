@@ -39,7 +39,9 @@
         <activity android:name=".ui.activities.HistoryActivity" android:exported="false" />
         <activity android:name=".compose.ComposeSettingsActivity" android:exported="false" />
         <activity android:name=".compose.ComposeTripDetailsActivity" android:exported="false" />
-        <activity android:name=".carcompose.CarComposeActivity" android:exported="true">
+        <activity android:name=".carCompose.CarComposeActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true" >
             <meta-data android:name="distractionOptimized" android:value="true"/>
         </activity>
 

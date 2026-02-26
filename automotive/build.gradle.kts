@@ -26,8 +26,8 @@ android {
     defaultConfig {
         minSdk = 29
         targetSdk = 35
-        versionCode = 315
-        versionName = "0.29.0.0007"
+        versionCode = 317
+        versionName = "0.29.0.0008"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -157,6 +157,7 @@ dependencies {
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
 

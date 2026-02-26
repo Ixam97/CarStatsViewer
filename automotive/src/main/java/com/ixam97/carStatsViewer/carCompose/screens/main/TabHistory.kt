@@ -1,6 +1,5 @@
-package com.ixam97.carStatsViewer.carcompose.screen.main
+package com.ixam97.carStatsViewer.carCompose.screens.main
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -27,9 +26,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.carcompose.CarComposeViewModel
-import com.ixam97.carStatsViewer.compose.ComposeTripDetailsActivity
+import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
+import com.ixam97.carStatsViewer.carCompose.screens.tripDetails.TripDetailsScreenNavKey
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.utils.StringFormatters
@@ -50,7 +51,8 @@ import kotlin.collections.listOf
 
 @Composable
 fun TabHistory(
-    globalViewModel: CarComposeViewModel? = null
+    globalViewModel: CarComposeGlobalViewModel? = null,
+    backStack: NavBackStack<NavKey>
 ) {
     val historyViewModel: TripHistoryViewModel = viewModel()
 
@@ -60,10 +62,10 @@ fun TabHistory(
 
     val currentTripsList = historyViewModel.currentTripsList
         .sortedBy { it.session_type }
-        .toBrowsableCarRow(historyViewModel)
+        .toBrowsableCarRow(historyViewModel, backStack)
     val pastTripsList = historyViewModel.pastTripsList
         .sortedByDescending { it.start_epoch_time }
-        .toBrowsableCarRow(historyViewModel)
+        .toBrowsableCarRow(historyViewModel, backStack)
 
     Row(
         modifier = Modifier
@@ -153,7 +155,10 @@ fun TabHistory(
     }
 }
 
-private fun List<DrivingSession>.toBrowsableCarRow(viewModel: TripHistoryViewModel) : List<CarListItem> {
+private fun List<DrivingSession>.toBrowsableCarRow(
+    viewModel: TripHistoryViewModel,
+    backStack: NavBackStack<NavKey>
+) : List<CarListItem> {
     return this.filter {
         viewModel.selectedTripFilters[it.session_type] == true || (it.end_epoch_time?:0) <= 0
     }.map { drivingSession ->
@@ -165,15 +170,16 @@ private fun List<DrivingSession>.toBrowsableCarRow(viewModel: TripHistoryViewMod
                 browsable = !viewModel.tripHistoryState.deleteMode,
                 enabled = !(viewModel.tripHistoryState.deleteMode && (drivingSession.end_epoch_time?:0) <= 0),
                 onBrowse = {
-                    context.startActivity(
-                        Intent(
-                            context,
-                            ComposeTripDetailsActivity::class.java
-                        ).putExtra(
-                            "SessionId",
-                            drivingSession.driving_session_id
-                        )
-                    )
+                    backStack.add(TripDetailsScreenNavKey(drivingSession.driving_session_id))
+//                    context.startActivity(
+//                        Intent(
+//                            context,
+//                            ComposeTripDetailsActivity::class.java
+//                        ).putExtra(
+//                            "SessionId",
+//                            drivingSession.driving_session_id
+//                        )
+//                    )
                 },
                 leadingContent = {
                     Icon(
@@ -278,37 +284,41 @@ private fun List<DrivingSession>.toBrowsableCarRow(viewModel: TripHistoryViewMod
 
 @Composable
 private fun LoadingIndicatorRow() {
-    CarRow {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(50.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            CircularProgressIndicator()
+    CarRow(
+        content = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(50.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator()
+            }
         }
-    }
+    )
 }
 
 @Composable
 private fun ColumnScope.HistoryFilters(
     historyViewModel: TripHistoryViewModel
 ) {
-    CarRow {
-        Column {
-            Text(
-                text = stringResource(R.string.history_dialog_filters_title),
-                style = CarTheme.carTypography.rowTitle,
-                color = CarTheme.carColors.accent
-            )
-            Spacer(Modifier.size(CarTheme.carDimensions.rowTextSpacing))
-            Text(
-                text = stringResource(R.string.history_dialog_filters_note),
-                style = CarTheme.carTypography.rowContent,
-                color = CarTheme.carColors.onBackground.copy(alpha = 0.7f)
-            )
+    CarRow(
+        content = {
+            Column {
+                Text(
+                    text = stringResource(R.string.history_dialog_filters_title),
+                    style = CarTheme.carTypography.rowTitle,
+                    color = CarTheme.carColors.accent
+                )
+                Spacer(Modifier.size(CarTheme.carDimensions.rowTextSpacing))
+                Text(
+                    text = stringResource(R.string.history_dialog_filters_note),
+                    style = CarTheme.carTypography.rowContent,
+                    color = CarTheme.carColors.onBackground.copy(alpha = 0.7f)
+                )
+            }
         }
-    }
+    )
     CarListDivider()
     CarListSection(
         listItems = listOf(

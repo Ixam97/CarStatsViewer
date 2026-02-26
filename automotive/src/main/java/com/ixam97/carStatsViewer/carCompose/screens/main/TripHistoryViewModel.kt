@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.carcompose.screen.main
+package com.ixam97.carStatsViewer.carCompose.screens.main
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

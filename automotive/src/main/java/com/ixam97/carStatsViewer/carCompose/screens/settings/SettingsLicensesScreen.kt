@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.carcompose.screen.settings
+package com.ixam97.carStatsViewer.carCompose.screens.settings
 
 import android.content.Intent
 import android.net.Uri
@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.LocalContentColor
@@ -34,9 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.carcompose.CarComposeViewModel
-import com.ixam97.carStatsViewer.carcompose.VehicleModel
-import com.ixam97.carStatsViewer.carcompose.theme.polestar4ContentPadding
+import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
+import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
+import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.ui.compose.util.author
@@ -47,8 +47,11 @@ import de.ixam97.carcompose.components.controls.CarRowBrowsableType
 import de.ixam97.carcompose.components.layout.CarColumn
 import de.ixam97.carcompose.components.layout.CarLazyColumn
 import de.ixam97.carcompose.components.layout.CarListDivider
+import de.ixam97.carcompose.components.layout.CarListItem
 import de.ixam97.carcompose.components.layout.CarPaneLayout
+import de.ixam97.carcompose.components.layout.carListSection
 import de.ixam97.carcompose.theme.CarTheme
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -62,7 +65,7 @@ internal data class DialogLibrary(
 
 @Composable
 fun CarComposeLicensesScreen(
-    globalViewModel: CarComposeViewModel,
+    globalViewModel: CarComposeGlobalViewModel,
     backStack: NavBackStack<NavKey>,
 ) {
     CarPaneLayout(
@@ -76,7 +79,7 @@ fun CarComposeLicensesScreen(
         }
     ) {
         CarComposeLicensesContent(
-            modifier = Modifier.padding(start = if (globalViewModel.carComposeState.vehicleModel == VehicleModel.Polestar4) polestar4ContentPadding else 0.dp) ,
+            modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp) ,
             globalViewModel = globalViewModel,
             backStack = backStack
         )
@@ -86,7 +89,7 @@ fun CarComposeLicensesScreen(
 @Composable
 fun CarComposeLicensesContent(
     modifier: Modifier = Modifier,
-    globalViewModel: CarComposeViewModel,
+    globalViewModel: CarComposeGlobalViewModel,
     backStack: NavBackStack<NavKey>
 ) {
     val libraries = Libs.Builder().withContext(LocalContext.current).build().libraries
@@ -101,18 +104,12 @@ fun CarComposeLicensesContent(
                 .fillMaxSize()
         ) {
             if (constraintsScope.maxWidth > 1700.dp) {
-                CarLazyColumn(
-                    modifier = Modifier.width(constraintsScope.maxWidth / 2f)
-                ) {
-                    itemsIndexed(items = libraries) { index, lib ->
-                        LibRow(
-                            lib = lib,
-                            setDialogLibrary = { dialogLibrary = it }
-                        )
-                        if (index < libraries.size - 1)
-                            CarListDivider()
-                    }
-                }
+                LibrariesColumn(
+                    modifier = Modifier.width(constraintsScope.maxWidth / 2f),
+                    libraries = libraries,
+                    setDialogLibrary = { dialogLibrary = it },
+                    constraintsScope = constraintsScope
+                )
                 dialogLibrary?.let {
                     LicenseContent(
                         modifier = Modifier.weight(1f),
@@ -121,16 +118,11 @@ fun CarComposeLicensesContent(
                 }
             } else {
                 Box() {
-                    CarLazyColumn() {
-                        itemsIndexed(items = libraries) { index, lib ->
-                            LibRow(
-                                lib = lib,
-                                setDialogLibrary = { dialogLibrary = it }
-                            )
-                            if (index < libraries.size - 1)
-                                CarListDivider()
-                        }
-                    }
+                    LibrariesColumn(
+                        libraries = libraries,
+                        setDialogLibrary = { dialogLibrary = it },
+                        constraintsScope = constraintsScope
+                    )
                     dialogLibrary?.let {
                         Box(
                             modifier = Modifier
@@ -156,6 +148,27 @@ fun CarComposeLicensesContent(
     }
 
 
+}
+
+@Composable
+internal fun LibrariesColumn(
+    modifier: Modifier = Modifier,
+    libraries: ImmutableList<Library>,
+    setDialogLibrary: (DialogLibrary) -> Unit,
+    constraintsScope: BoxWithConstraintsScope
+) {
+    CarLazyColumn(modifier) {
+        carListSection(
+            listItems = libraries.map { lib ->
+                CarListItem {
+                    LibRow(
+                        lib = lib,
+                        setDialogLibrary = setDialogLibrary
+                    )
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -202,10 +215,12 @@ private fun LicenseContent(
                             enabled = dialogLibrary.urls
                         ) {
                             if (dialogLibrary.urls) {
-                                context.startActivity(Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(licenseContent)
-                                ))
+                                context.startActivity(
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse(licenseContent)
+                                    )
+                                )
                             }
                         }
                         .padding(

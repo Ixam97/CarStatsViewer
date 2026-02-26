@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.carcompose.screen.tripDetails
+package com.ixam97.carStatsViewer.carCompose.screens.tripDetails
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.carcompose.theme
+package com.ixam97.carStatsViewer.carCompose.theme
 
 import android.os.Build
 import androidx.annotation.DrawableRes

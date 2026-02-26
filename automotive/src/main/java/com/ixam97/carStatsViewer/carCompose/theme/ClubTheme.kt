@@ -1,15 +1,15 @@
-package com.ixam97.carStatsViewer.carcompose.theme
+package com.ixam97.carStatsViewer.carCompose.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import com.ixam97.carStatsViewer.R
 import de.ixam97.carcompose.theme.CarColors
+import de.ixam97.carcompose.theme.CarThemeConfig
 import de.ixam97.carcompose.theme.GenericCarColors
 import de.ixam97.carcompose.theme.GenericCarDimensions
 import de.ixam97.carcompose.theme.GenericCarTypography
 import de.ixam97.carcompose.theme.GenericCarUiProperties
-import de.ixam97.carcompose.theme.UiTheme
 
 val clubColors: CarColors
 @Composable get() = GenericCarColors.copy(
@@ -35,16 +35,10 @@ val clubDimensions = GenericCarDimensions.copy(
     buttonRadiusPercent = 25
 )
 
-object ClubCarTheme : UiTheme {
-    @Composable
-    override fun CarTheme(content: @Composable (() -> Unit)) {
-        de.ixam97.carcompose.theme.CarTheme(
-            carTypography = GenericCarTypography,
-            carDimensions = clubDimensions,
-            carUiProperties = GenericCarUiProperties,
-            carColors = clubColors,
-            content = content
-        )
-    }
-
-}
+val ClubThemeConfig: CarThemeConfig
+    @Composable get()= CarThemeConfig(
+        carTypography = GenericCarTypography,
+        carDimensions = clubDimensions,
+        carUiProperties = GenericCarUiProperties,
+        carDarkColors = clubColors,
+    )

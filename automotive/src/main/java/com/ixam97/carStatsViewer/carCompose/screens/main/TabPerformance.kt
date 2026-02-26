@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.carcompose.screen.main
+package com.ixam97.carStatsViewer.carCompose.screens.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ixam97.carStatsViewer.utils.StringFormatters
 import de.ixam97.carcompose.theme.CarTheme
 import kotlin.math.absoluteValue
 

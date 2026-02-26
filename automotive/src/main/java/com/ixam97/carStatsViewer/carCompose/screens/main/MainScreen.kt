@@ -1,27 +1,25 @@
-package com.ixam97.carStatsViewer.carcompose.screen
+package com.ixam97.carStatsViewer.carCompose.screens.main
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowDpSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.carcompose.CarComposeViewModel
-import com.ixam97.carStatsViewer.carcompose.MainScreenTab
-import com.ixam97.carStatsViewer.carcompose.screen.settings.CarComposeSettingsContent
-import com.ixam97.carStatsViewer.carcompose.screen.settings.SettingsScreenNavKey
-import com.ixam97.carStatsViewer.carcompose.theme.adaptiveIconPainterResource
+import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
+import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
+import com.ixam97.carStatsViewer.carCompose.screens.CarComposeMainScreenViewModel
+import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.theme.adaptiveIconPainterResource
 import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.layout.CarPaneLayout
 import de.ixam97.carcompose.components.layout.CarTabLayout
@@ -29,22 +27,32 @@ import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.serialization.Serializable
 
 @Serializable
-object MainScreenNavKey: NavKey
+data class MainScreenNavKey(
+    val selectedTabKey: MainScreenTabKeys? = null
+): NavKey
+
+@Serializable
+enum class MainScreenTabKeys {
+    Dashboard, History, Settings
+}
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun CarComposeMainScreen(
-    globalViewModel: CarComposeViewModel,
+    initialTabKey: MainScreenTabKeys? = null,
+    viewModel: CarComposeMainScreenViewModel = viewModel {
+        CarComposeMainScreenViewModel(initialTabKey)
+    },
+    globalViewModel: CarComposeGlobalViewModel,
     backStack: NavBackStack<NavKey>,
-    debugOnClose: (() -> Unit)? = null
+    debugOnClose: (() -> Unit)? = null,
 ) {
-    val windowWith = currentWindowDpSize().width
-
-    if (windowWith > 1300.dp) {
+    if (deviceIsWideScreen()) {
         CarComposeMainScreenWide(
             globalViewModel = globalViewModel,
             backStack = backStack,
-            debugOnClose = debugOnClose
+            debugOnClose = debugOnClose,
+            viewModel = viewModel
         )
     } else {
         CarComposeMainScreenSlim(
@@ -57,26 +65,30 @@ fun CarComposeMainScreen(
 
 @Composable
 private fun CarComposeMainScreenWide(
-    globalViewModel: CarComposeViewModel,
+    globalViewModel: CarComposeGlobalViewModel,
     backStack: NavBackStack<NavKey>,
-    debugOnClose: (() -> Unit)?
+    debugOnClose: (() -> Unit)?,
+    viewModel: CarComposeMainScreenViewModel
 ) {
 
     val tabsList = listOf(
         CarTabLayout.Tab(
             title = stringResource(R.string.car_app_dashboard),
             icon = painterResource(R.drawable.ic_grid_48),
-            iconActive = painterResource(R.drawable.ic_grid_filled_48)
+            iconActive = painterResource(R.drawable.ic_grid_filled_48),
+            key = MainScreenTabKeys.Dashboard
         ),
         CarTabLayout.Tab(
             title = stringResource(R.string.history_title),
             icon = painterResource(R.drawable.ic_carcompose_history),
-            enabled = !globalViewModel.movingState
+            enabled = !globalViewModel.movingState,
+            key = MainScreenTabKeys.History
         ),
         CarTabLayout.Tab(
             title = stringResource(R.string.settings_title),
             icon = painterResource(R.drawable.ic_carcompose_settings),
-            enabled = !globalViewModel.movingState
+            enabled = !globalViewModel.movingState,
+            key = MainScreenTabKeys.Settings
         )
     )
 
@@ -84,31 +96,29 @@ private fun CarComposeMainScreenWide(
         headerTitle = stringResource(R.string.app_name),
         headerStartContent = { MainScreenAppIcon(debugOnClose) },
         tabs = tabsList,
-        tabSelectedIndex = globalViewModel.carComposeState.selectedMainScreenTab.ordinal,
-        tabOnIndexChanged = { globalViewModel.setSelectedMainScreenTabIndex(it) }
-    ) {
+        selectedKey = viewModel.selectedTabKey?:tabsList.first().key,
+        onTabSelected = {
+            if (it == MainScreenTabKeys.Settings)
+                    backStack.add(SettingsScreenNavKey)
+            else
+                viewModel.setTabKey(it)
+        }
+    ) { key ->
         AnimatedVisibility(
-            visible =globalViewModel.carComposeState.selectedMainScreenTab == MainScreenTab.Dashboard,
+            visible = key == MainScreenTabKeys.Dashboard,
             enter = fadeIn(),
             exit = fadeOut()
         ) {
 
         }
         AnimatedVisibility(
-            visible =globalViewModel.carComposeState.selectedMainScreenTab == MainScreenTab.History,
+            visible = key == MainScreenTabKeys.History,
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-
-        }
-        AnimatedVisibility(
-            visible = globalViewModel.carComposeState.selectedMainScreenTab == MainScreenTab.Settings,
-            enter = fadeIn(animationSpec = spring(stiffness = 3000f)),
-            exit = fadeOut(animationSpec = spring(stiffness = 3000f))
-        ) {
-            CarComposeSettingsContent(
-                globalViewModel = globalViewModel,
-                backStack = backStack
+            TabHistory(
+                globalViewModel,
+                backStack
             )
         }
     }
@@ -116,7 +126,7 @@ private fun CarComposeMainScreenWide(
 
 @Composable
 private fun CarComposeMainScreenSlim(
-    globalViewModel: CarComposeViewModel,
+    globalViewModel: CarComposeGlobalViewModel,
     backStack: NavBackStack<NavKey>,
     debugOnClose: (() -> Unit)?
 ) {

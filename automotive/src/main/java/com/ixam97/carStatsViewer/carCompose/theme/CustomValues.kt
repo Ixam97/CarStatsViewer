@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.carcompose.theme
+package com.ixam97.carStatsViewer.carCompose.theme
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp

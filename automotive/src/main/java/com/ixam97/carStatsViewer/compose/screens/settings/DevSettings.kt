@@ -30,12 +30,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
 import androidx.navigation.NavController
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.carcompose.CarComposeActivity
+import com.ixam97.carStatsViewer.carCompose.CarComposeActivity
 import com.ixam97.carStatsViewer.compose.DefaultColumnScrollbar
 import com.ixam97.carStatsViewer.compose.SettingsViewModel
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton

@@ -1,4 +1,4 @@
-package com.ixam97.carStatsViewer.carcompose.screen.settings
+package com.ixam97.carStatsViewer.carCompose.screens.settings
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -11,9 +11,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.carcompose.CarComposeViewModel
-import com.ixam97.carStatsViewer.carcompose.VehicleModel
-import com.ixam97.carStatsViewer.carcompose.theme.polestar4ContentPadding
+import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
+import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
+import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
 import com.ixam97.carStatsViewer.utils.ChangeLogCreator
 import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.controls.CarRow
@@ -23,11 +23,11 @@ import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.serialization.Serializable
 
 @Serializable
-object ChangelogScreenNavKey: NavKey
+object SettingsChangelogScreenNavKey: NavKey
 
 @Composable
-fun CarComposeChangelogScreen(
-    globalViewModel: CarComposeViewModel,
+fun SettingsChangelogScreen(
+    globalViewModel: CarComposeGlobalViewModel,
     backStack: NavBackStack<NavKey>
 ) {
     CarPaneLayout(
@@ -40,8 +40,8 @@ fun CarComposeChangelogScreen(
             )
         }
     ) {
-        CarComposeChangelogContent(
-            modifier = Modifier.padding(start = if (globalViewModel.carComposeState.vehicleModel == VehicleModel.Polestar4) polestar4ContentPadding else 0.dp) ,
+        SettingsChangelogContent(
+            modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp) ,
             globalViewModel = globalViewModel,
             backStack = backStack
         )
@@ -49,9 +49,9 @@ fun CarComposeChangelogScreen(
 }
 
 @Composable
-fun CarComposeChangelogContent(
+fun SettingsChangelogContent(
     modifier: Modifier = Modifier,
-    globalViewModel: CarComposeViewModel,
+    globalViewModel: CarComposeGlobalViewModel,
     backStack: NavBackStack<NavKey>
 ) {
     val changelogMap = ChangeLogCreator.createChangelog(LocalContext.current).toList()

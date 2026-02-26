@@ -118,7 +118,7 @@ class SettingsViewModel:
                     detailedNotifications = preferences.notifications,
                     altConsumptionUnit = preferences.consumptionUnit,
                     showChargingGages = preferences.chargePlotVisibleGages,
-                    showConsumptionGages = preferences.chargePlotVisibleGages,
+                    showConsumptionGages = preferences.consumptionPlotVisibleGages,
                     locationTracking = preferences.useLocation,
                     autoAppStart = preferences.autostart,
                     phoneNotification = preferences.phoneNotification,
@@ -218,11 +218,11 @@ class SettingsViewModel:
     }
     fun setShowChargingGages(value: Boolean) {
         settingsState = settingsState.copy(showChargingGages = value)
-        preferences.consumptionPlotVisibleGages = value
+        preferences.chargePlotVisibleGages = value
     }
     fun setShowConsumptionGages(value: Boolean) {
         settingsState = settingsState.copy(showConsumptionGages = value)
-        preferences.chargePlotVisibleGages = value
+        preferences.consumptionPlotVisibleGages = value
     }
     fun setLocationTracking(value: Boolean) {
         settingsState = settingsState.copy(locationTracking = value)
