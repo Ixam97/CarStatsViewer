@@ -25,10 +25,10 @@ import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SettingsGeneralScreenNavKey: NavKey
+object SettingsGeneralScreenNavKey: MainSettingsNavKey
 
 @Composable
-fun CarComposeSettingsGeneralScreen(
+fun SettingsGeneralScreen(
     backStack: NavBackStack<NavKey>,
     globalViewModel: CarComposeGlobalViewModel,
     viewModel: SettingsViewModel = viewModel()
@@ -43,7 +43,7 @@ fun CarComposeSettingsGeneralScreen(
             )
         }
     ) {
-        CarComposeSettingsGeneralContent(
+        SettingsGeneralContent(
             modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp) ,
             globalViewModel = globalViewModel,
             backStack = backStack,
@@ -53,7 +53,7 @@ fun CarComposeSettingsGeneralScreen(
 }
 
 @Composable
-fun CarComposeSettingsGeneralContent(
+fun SettingsGeneralContent(
     modifier: Modifier = Modifier,
     backStack: NavBackStack<NavKey>,
     globalViewModel: CarComposeGlobalViewModel,
@@ -69,21 +69,21 @@ fun CarComposeSettingsGeneralContent(
                 CarListItem {
                     CarRowSwitch(
                         title = stringResource(R.string.settings_autostart),
-                        state = settingsGeneralState.autoAppStartEnabled,
+                        state = settingsGeneralState.autoAppStart,
                         onStateChange = { viewModel.setAutoAppStartEnabled(it) }
                     )
                 },
                 CarListItem {
                     CarRowSwitch(
                         title = stringResource(R.string.settings_phone_reminder),
-                        state = settingsGeneralState.phoneReminderEnabled,
+                        state = settingsGeneralState.phoneReminder,
                         onStateChange = { viewModel.setPhoneReminderEnabled(it) }
                     )
                 },
                 CarListItem {
                     CarRowSwitch(
                         title = stringResource(R.string.settings_notifications),
-                        state = settingsGeneralState.detailedNotificationEnabled,
+                        state = settingsGeneralState.detailedNotification,
                         onStateChange = { viewModel.setDetailedNotificationEnabled(it) }
                     )
                 },

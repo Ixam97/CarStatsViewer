@@ -36,7 +36,7 @@ import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SettingsAppearanceScreenNavKey: NavKey
+object SettingsAppearanceScreenNavKey: MainSettingsNavKey
 
 enum class PlotColorSegmentKeys {
     Green, White

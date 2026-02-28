@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -11,6 +12,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,10 +23,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carCompose.theme.badRed
+import com.ixam97.carStatsViewer.carCompose.theme.connectedBlue
+import com.ixam97.carStatsViewer.carCompose.theme.limitedYellow
 import com.ixam97.carStatsViewer.compose.theme.ColorTheme
 import com.ixam97.carStatsViewer.compose.theme.polestarOrange
+import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
+import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -130,4 +139,22 @@ fun DefaultColumnScrollbar(
             content = content
         )
     }
+}
+
+@Composable
+fun ConnectionStatusIcon(
+    status: ConnectionStatus,
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        modifier = modifier.size(CarTheme.carDimensions.iconButtonSize),
+        painter = painterResource(R.drawable.ic_connected),
+        contentDescription = null,
+        tint = when (status) {
+            ConnectionStatus.CONNECTED -> connectedBlue
+            ConnectionStatus.ERROR -> badRed
+            ConnectionStatus.LIMITED -> limitedYellow
+            ConnectionStatus.UNUSED -> Color.Transparent
+        }
+    )
 }

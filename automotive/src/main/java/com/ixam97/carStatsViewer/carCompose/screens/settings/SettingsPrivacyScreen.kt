@@ -2,10 +2,13 @@ package com.ixam97.carStatsViewer.carCompose.screens.settings
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ixam97.carStatsViewer.R
@@ -24,12 +27,13 @@ import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SettingsLocationScreenNavKey: NavKey
+object SettingsLocationScreenNavKey: MainSettingsNavKey
 
 @Composable
-fun CarComposeSettingsLocationScreen(
-    globalViewModel: CarComposeGlobalViewModel,
+fun SettingsPrivacyScreen(
     backStack: NavBackStack<NavKey>,
+    globalViewModel: CarComposeGlobalViewModel,
+    viewModel: SettingsViewModel = viewModel()
 ) {
     CarPaneLayout(
         headerTitle = stringResource(R.string.settings_privacy_location),
@@ -41,20 +45,24 @@ fun CarComposeSettingsLocationScreen(
             )
         }
     ) {
-        CarComposeSettingsLocationContent(
+        SettingsPrivacyContent(
             modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp) ,
+            backStack = backStack,
             globalViewModel = globalViewModel,
-            backStack = backStack
+            viewModel = viewModel
         )
     }
 }
 
 @Composable
-fun CarComposeSettingsLocationContent(
+fun SettingsPrivacyContent(
     modifier: Modifier = Modifier,
-    globalViewModel: CarComposeGlobalViewModel,
     backStack: NavBackStack<NavKey>,
+    globalViewModel: CarComposeGlobalViewModel,
+    viewModel: SettingsViewModel
 ) {
+    val settingsPrivacyState by viewModel.settingsPrivacyState.collectAsState()
+
     CarColumn(
         modifier = modifier
     ) {
@@ -63,16 +71,22 @@ fun CarComposeSettingsLocationContent(
                 CarListItem {
                     CarRowSwitch(
                         title = stringResource(R.string.settings_use_location),
-                        state = false,
-                        onStateChange = { }
+                        state = settingsPrivacyState.locationTracking,
+                        onStateChange = { viewModel.setLocationTracking(it) }
                     )
                 },
                 CarListItem {
-                    CarRowSwitch(
-                        title = stringResource(R.string.settings_analytics),
-                        state = false,
-                        onStateChange = { }
-                    )
+                    settingsPrivacyState.analytics?.let { analytics ->
+                        CarRowSwitch(
+                            title = stringResource(R.string.settings_analytics),
+                            state = analytics,
+                            onStateChange = { viewModel.setAnalytics(it) }
+                        )
+                    }
+                    if (settingsPrivacyState.analytics == null)
+                        CarRow(
+                            title = stringResource(R.string.settings_firebase_note)
+                        )
                 },
                 CarListItem {
                     CarRow(

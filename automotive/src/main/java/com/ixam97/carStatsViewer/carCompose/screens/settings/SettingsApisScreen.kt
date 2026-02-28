@@ -27,6 +27,7 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.adaptiveIconPainterResource
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
+import com.ixam97.carStatsViewer.compose.ConnectionStatusIcon
 import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.controls.CarRow
 import de.ixam97.carcompose.components.controls.CarRowSwitch
@@ -39,7 +40,7 @@ import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SettingsApisNavKey: NavKey
+object SettingsApisNavKey: MainSettingsNavKey
 
 @Composable
 fun SettingsApisScreen(
@@ -90,11 +91,7 @@ fun SettingsApisContent(
                             )
                         },
                         trailingContent = {
-                            Icon(
-                                modifier = Modifier.size(CarTheme.carDimensions.iconButtonSize),
-                                painter = painterResource(R.drawable.ic_connected),
-                                contentDescription = null
-                            )
+                            ConnectionStatusIcon(settingsApisState.abrpConnectionStatus)
                         },
                         browsable = true
                     )
@@ -110,11 +107,7 @@ fun SettingsApisContent(
                             )
                         },
                         trailingContent = {
-                            Icon(
-                                modifier = Modifier.size(CarTheme.carDimensions.iconButtonSize),
-                                painter = painterResource(R.drawable.ic_connected),
-                                contentDescription = null
-                            )
+                            ConnectionStatusIcon(settingsApisState.restConnectionStatus)
                         },
                         browsable = true
                     )

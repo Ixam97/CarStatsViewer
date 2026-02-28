@@ -112,7 +112,7 @@ fun SettingsScreen(
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                CarComposeSettingsGeneralContent(Modifier, backStack, globalViewModel, viewModel)
+                SettingsGeneralContent(Modifier, backStack, globalViewModel, viewModel)
             }
             AnimatedVisibility(
                 visible = key == SettingsTabKeys.Appearance,
@@ -126,7 +126,7 @@ fun SettingsScreen(
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                CarComposeSettingsLocationContent(Modifier, globalViewModel, backStack)
+                SettingsPrivacyContent(Modifier, backStack, globalViewModel, viewModel)
             }
             AnimatedVisibility(
                 visible = key == SettingsTabKeys.Apis,
@@ -141,6 +141,13 @@ fun SettingsScreen(
                 exit = fadeOut()
             ) {
                 SettingsAboutContent(Modifier, backStack, globalViewModel)
+            }
+            AnimatedVisibility(
+                visible = key == SettingsTabKeys.Dev,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                SettingsDevContent(Modifier, backStack, globalViewModel, viewModel)
             }
         }
     } else {
@@ -212,7 +219,7 @@ fun CarComposeSettingsContent(
                     leadingContent = { CarComposeIcon(Icons.Outlined.Info) },
                     title = stringResource(R.string.settings_about),
                     browsable = true,
-                    onBrowse = { backStack.add(AboutScreenNavKey) },
+                    onBrowse = { backStack.add(SettingsAboutScreenNavKey) },
                 )
             }
         )
@@ -222,7 +229,7 @@ fun CarComposeSettingsContent(
                 leadingContent = { CarComposeIcon(Icons.Outlined.DataObject) },
                 title = stringResource(R.string.settings_dev_settings),
                 browsable = true,
-                onBrowse = { }
+                onBrowse = { backStack.add(SettingsDevScreenNavKey) }
             )
         })
 

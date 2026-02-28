@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
 import com.mikepenz.aboutlibraries.Libs
@@ -55,7 +54,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.serialization.Serializable
 
 @Serializable
-object LicensesScreenNavKey: NavKey
+object SettingsLicensesScreenNavKey: NavKey
 
 internal data class DialogLibrary(
     val name: String,
@@ -64,8 +63,7 @@ internal data class DialogLibrary(
 )
 
 @Composable
-fun CarComposeLicensesScreen(
-    globalViewModel: CarComposeGlobalViewModel,
+fun SettingsLicensesScreen(
     backStack: NavBackStack<NavKey>,
 ) {
     CarPaneLayout(
@@ -78,19 +76,15 @@ fun CarComposeLicensesScreen(
             )
         }
     ) {
-        CarComposeLicensesContent(
-            modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp) ,
-            globalViewModel = globalViewModel,
-            backStack = backStack
+        SettingsLicensesContent(
+            modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp)
         )
     }
 }
 
 @Composable
-fun CarComposeLicensesContent(
-    modifier: Modifier = Modifier,
-    globalViewModel: CarComposeGlobalViewModel,
-    backStack: NavBackStack<NavKey>
+fun SettingsLicensesContent(
+    modifier: Modifier = Modifier
 ) {
     val libraries = Libs.Builder().withContext(LocalContext.current).build().libraries
     var dialogLibrary by remember { mutableStateOf<DialogLibrary?>(null)}

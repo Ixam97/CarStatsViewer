@@ -1,5 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+val firebase: Boolean = providers.gradleProperty("useFirebase").get().toBoolean()
+val mapbox: Boolean = providers.gradleProperty("useMapbox").get().toBoolean()
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
@@ -8,16 +11,11 @@ plugins {
     alias(libs.plugins.kotlinKapt)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlin.parcelize)
+
 }
-
-val firebase: Boolean = providers.gradleProperty("useFirebase").get().toBoolean()
-val mapbox: Boolean = providers.gradleProperty("useMapbox").get().toBoolean()
-// def firebase = useFirebase.toBoolean()
-// def mapbox = useMapbox.toBoolean()
-
 if (firebase) {
-    apply("com.google.gms.google-services")
-    apply("com.google.firebase.crashlytics")
+    apply<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsPlugin>()
+    apply<com.google.gms.googleservices.GoogleServicesPlugin>()
 }
 
 android {

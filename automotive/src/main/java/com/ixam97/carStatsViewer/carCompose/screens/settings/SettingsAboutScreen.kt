@@ -34,7 +34,7 @@ import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.serialization.Serializable
 
 @Serializable
-object AboutScreenNavKey: NavKey
+object SettingsAboutScreenNavKey: MainSettingsNavKey
 
 @Composable
 fun SettingsAboutScreen(
@@ -162,7 +162,7 @@ fun SettingsAboutContent(
                     CarRow(
                         title = stringResource(R.string.about_third_party_licenses),
                         browsable = true,
-                        onBrowse = { backStack.add(LicensesScreenNavKey) }
+                        onBrowse = { backStack.add(SettingsLicensesScreenNavKey) }
                     )
                 },
                 CarListItem {
