@@ -1,44 +1,50 @@
 package com.ixam97.carStatsViewer.carCompose.screens.tripDetails
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class TripDetailsViewModelFactory(private val sessionId: Long) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return TripDetailsViewModel(sessionId) as T
-    }
-}
+data class TripDetailsState(
+    val isLoading: Boolean,
+    val selectedTab: TripDetailsTabKeys = TripDetailsTabKeys.Consumption,
+    val drivingSession: DrivingSession? = null
+)
+
+data class TripDataState(
+    val distance: Float? = null
+)
 
 class TripDetailsViewModel(sessionId: Long): ViewModel() {
 
-    data class TripDetailsState(
-        val isLoading: Boolean = false
-    )
-
-    data class TripDataState(
-        val distance: Float? = null
-    )
-
-    var tripDetailsState by mutableStateOf(TripDetailsState())
-        private set
+    private val _tripDetailsState = MutableStateFlow(TripDetailsState(isLoading = true))
+    val tripDetailsState = _tripDetailsState.asStateFlow()
 
     init {
-
-        tripDetailsState = tripDetailsState.copy(
-            isLoading = true
-        )
-
         viewModelScope.launch {
-            delay(5000)
-            tripDetailsState = tripDetailsState.copy(
-                isLoading = false
-            )
+            withContext(Dispatchers.IO) {
+                if (CarStatsViewer.appPreferences.debugDelays) delay(5000)
+                val session = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId)
+                _tripDetailsState.update {
+                    it.copy(
+                        isLoading = false,
+                        drivingSession = session
+                    )
+                }
+            }
+        }
+    }
+
+    fun setSelectedTab(tab: TripDetailsTabKeys) {
+        _tripDetailsState.update {
+            it.copy(selectedTab = tab)
         }
     }
 }

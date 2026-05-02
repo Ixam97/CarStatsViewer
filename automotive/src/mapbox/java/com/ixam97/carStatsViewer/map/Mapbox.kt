@@ -295,8 +295,7 @@ object Mapbox: MapboxInterface {
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(
-                                topStartPercent = de.ixam97.carcompose.theme.CarTheme.carDimensions.buttonRadiusPercent,
-                                topEndPercent = de.ixam97.carcompose.theme.CarTheme.carDimensions.buttonRadiusPercent,
+                                corner = de.ixam97.carcompose.theme.CarTheme.carShapes.defaultOuterCornerSize
                             ))
                             .background(CarButtonDefaults.colors.backgroundBrush)
                             .clickable { zoomIn = true }
@@ -314,8 +313,7 @@ object Mapbox: MapboxInterface {
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(
-                                bottomStartPercent = de.ixam97.carcompose.theme.CarTheme.carDimensions.buttonRadiusPercent,
-                                bottomEndPercent = de.ixam97.carcompose.theme.CarTheme.carDimensions.buttonRadiusPercent,
+                                corner = de.ixam97.carcompose.theme.CarTheme.carShapes.defaultOuterCornerSize
                             ))
                             .background(CarButtonDefaults.colors.backgroundBrush)
                             .clickable { zoomOut = true }

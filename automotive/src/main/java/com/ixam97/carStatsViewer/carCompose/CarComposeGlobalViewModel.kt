@@ -19,6 +19,7 @@ enum class VehicleModel {
     Polestar2,
     Polestar3,
     Polestar4,
+    Volvo,
     Other
 }
 
@@ -35,7 +36,15 @@ internal fun getVehicleModel(): VehicleModel {
         Build.MODEL == "PS4" || Build.DEVICE == "lemon_x86_64" -> VehicleModel.Polestar4
         Build.MODEL == "Polestar" && Build.DEVICE == "moose" -> VehicleModel.Polestar3
         ((Build.MODEL == "Polestar" && Build.DEVICE == "ihu_abl_car") || Build.MODEL == "Polestar 2") -> VehicleModel.Polestar2
+        Build.BRAND == "VolvoCars" -> VehicleModel.Volvo
         else -> VehicleModel.Other
+    }
+}
+
+internal fun getDefaultBrightnessMode(): UiBrightnessMode {
+    return when {
+        Build.BRAND == "VolvoCars" && (Build.DEVICE == "ihu_abl_car" || Build.DEVICE == "ihu_emulator") -> UiBrightnessMode.Dark
+        else -> UiBrightnessMode.Auto
     }
 }
 
@@ -43,6 +52,7 @@ val vehicleUiTypeMap = mapOf(
     VehicleModel.Polestar4 to UiType.Modern,
     VehicleModel.Polestar3 to UiType.Modern,
     VehicleModel.Polestar2 to UiType.Classic,
+    VehicleModel.Volvo to UiType.Volvo,
 ).withDefault { UiType.Generic }
 
 data class GlobalState(
@@ -51,7 +61,7 @@ data class GlobalState(
     val devModeEnabled: Boolean = BuildConfig.FLAVOR_version == "dev",
     val isLoading: Boolean = false,
     val uiSupportsBrightMode: Boolean = false,
-    val uiBrightnessMode: UiBrightnessMode = UiBrightnessMode.Auto
+    val uiBrightnessMode: UiBrightnessMode = getDefaultBrightnessMode()
 )
 
 class CarComposeGlobalViewModel: ViewModel() {

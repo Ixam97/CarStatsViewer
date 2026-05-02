@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavBackStack
@@ -65,16 +64,11 @@ internal data class DialogLibrary(
 @Composable
 fun SettingsLicensesScreen(
     backStack: NavBackStack<NavKey>,
+    onBack: () -> Unit,
 ) {
     CarPaneLayout(
         headerTitle = stringResource(R.string.about_third_party_licenses),
-        headerStartContent = {
-            CarIconButton(
-                painter = painterResource(R.drawable.ic_arrow_backwards_48),
-                tint = CarTheme.carColors.accent,
-                onClick = { backStack.removeAt(backStack.lastIndex) }
-            )
-        }
+        onBackAction = onBack
     ) {
         SettingsLicensesContent(
             modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp)
@@ -127,7 +121,7 @@ fun SettingsLicensesContent(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .background(CarTheme.carColors.secondarySurface.first())
+                                    .background(CarTheme.carColors.secondarySurface)
                             ) {
                                 LicenseContent(
                                     dialogLibrary = it,

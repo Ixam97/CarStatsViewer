@@ -7,12 +7,13 @@ import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 
 fun EntryProviderScope<NavKey>.tripDetailsNavEntryBuilder(
     backStack: NavBackStack<NavKey>,
+    onBack: () -> Unit,
     globalViewModel: CarComposeGlobalViewModel
 ) {
     entry<TripDetailsScreenNavKey> { key ->
         TripDetailsPortraitScreen(
             globalViewModel = globalViewModel,
-            onBackClick = { backStack.removeLastOrNull() },
+            onBackClick = onBack,
             sessionId = key.sessionId
         )
     }

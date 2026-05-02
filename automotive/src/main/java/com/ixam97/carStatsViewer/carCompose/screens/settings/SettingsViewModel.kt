@@ -1,5 +1,7 @@
 package com.ixam97.carStatsViewer.carCompose.screens.settings
 
+import android.app.AlertDialog
+import android.content.Context
 import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,15 +10,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.app
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
+import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitRepository
+import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.ScreenshotService
+import com.ixam97.carStatsViewer.utils.logLength
+import com.ixam97.carStatsViewer.utils.logLevel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class SettingsGeneralState(
     val autoAppStart: Boolean = CarStatsViewer.appPreferences.autostart,
@@ -45,19 +56,32 @@ data class SettingsApisState(
 data class SettingsDevState(
     val loadingDelays: Boolean = CarStatsViewer.appPreferences.debugDelays,
     val additionalColorSchemes: Boolean = CarStatsViewer.appPreferences.debugColors,
-    val milesAsDistanceUnit: DistanceUnitEnum = CarStatsViewer.appPreferences.distanceUnit,
+    val distanceUnit: DistanceUnitEnum = CarStatsViewer.appPreferences.distanceUnit,
     val userId: String = CarStatsViewer.appPreferences.debugUserID,
     val userMail: String = CarStatsViewer.appPreferences.debugScreenshotReceiver,
     val userMailValid: Boolean? = validateEmailAddress(userMail),
     val numberOfScreenshots: Int = ScreenshotService.screenshotServiceState.value.numberOfScreenshots,
-    val screenshotServiceRunning: Boolean = ScreenshotService.screenshotServiceState.value.isServiceRunning
+    val screenshotServiceRunning: Boolean = ScreenshotService.screenshotServiceState.value.isServiceRunning,
+    val logLevelKey: LogLevelKey = LogLevelKey.entries[CarStatsViewer.appPreferences.logLevel],
+    val logLengthKey: LogLengthKey = LogLengthKey.entries[CarStatsViewer.appPreferences.logLength]
 )
+
+enum class LogLevelKey {
+    Verbose, Debug, Info, Warning, Error
+}
+
+enum class LogLengthKey {
+    All, L500, L1000, L2000, L5000, L10000
+}
 
 class SettingsViewModel: ViewModel() {
 
     val appPreferences = CarStatsViewer.appPreferences
 
-    var selectedSettingsTabKey: SettingsTabKeys by mutableStateOf(SettingsTabKeys.General)
+    var selectedSettingsTabKey: SettingsTabKeys by mutableStateOf(
+        if (BuildConfig.FLAVOR_aaos == "carapp") SettingsTabKeys.TripHistory
+        else SettingsTabKeys.General
+    )
         private set
 
     fun setSettingsTabKey(key: SettingsTabKeys) {
@@ -175,6 +199,82 @@ class SettingsViewModel: ViewModel() {
     //region Developer Settings
     private var _settingsDevState = MutableStateFlow(SettingsDevState())
     val settingsDevState = _settingsDevState.asStateFlow()
+
+    fun setLoadingDelays(value: Boolean) {
+        appPreferences.debugDelays = value
+        _settingsDevState.update { it.copy(loadingDelays = appPreferences.debugDelays) }
+    }
+
+    fun setAdditionalColorSchemes(value: Boolean) {
+        appPreferences.debugColors = value
+        _settingsDevState.update { it.copy(additionalColorSchemes = appPreferences.debugColors) }
+    }
+
+    fun setDistanceUnit(value: DistanceUnitEnum) {
+        appPreferences.distanceUnit = value
+        _settingsDevState.update { it.copy(distanceUnit = appPreferences.distanceUnit) }
+    }
+
+    fun debugCrash(context: Context) {
+        AlertDialog.Builder(context).apply {
+            setTitle("Debug Crash")
+            setMessage("This action will deliberately crash the App. Use for debugging purposes only!")
+            setPositiveButton("Confirm") {_,_ ->
+                CarStatsViewer.debugCrash()
+            }
+            setNegativeButton("Cancel") { dialog, _ ->
+                dialog.cancel()
+            }
+            create()
+        }.show()
+    }
+
+    fun clearLog(context: Context) {
+        AlertDialog.Builder(context).apply {
+            setTitle("Delete log")
+            setMessage("Are you sure you want to delete the debug log?")
+            setPositiveButton("Confirm") {_,_ ->
+                viewModelScope.launch {
+                    withContext(Dispatchers.IO) {
+                        InAppLogger.resetLog()
+                    }
+                    withContext(Dispatchers.Main) {
+                        SnackbarWidget.Builder(context, "Log has been deleted")
+                            .setStartDrawable(R.drawable.ic_checkmark)
+                            .setDuration(3000)
+                            .show()
+                    }
+                }
+            }
+            setNegativeButton("Cancel") { dialog, _ ->
+                dialog.cancel()
+            }
+            create()
+        }.show()
+    }
+
+    fun submitLog(context: Context) {
+        val snackBar = SnackbarWidget.Builder(context, "Submitting log ...")
+            .setStartDrawable(R.drawable.ic_upload)
+            .show()
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
+                val resultMessage = LogSubmitRepository.submitLog()
+                delay(500)
+                withContext(Dispatchers.Main) {
+                    if (resultMessage == null) {
+                        snackBar.updateStartDrawable(R.drawable.ic_checkmark)
+                        snackBar.updateMessage("Log was submitted successfully.")
+                    } else {
+                        snackBar.setToError()
+                        snackBar.updateMessage("Failed to submit log!\n$resultMessage")
+                    }
+                    snackBar.startDuration(3000)
+                }
+            }
+        }
+    }
+
     //endregion
 
     init {

@@ -22,35 +22,43 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
+import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryContent
+import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.theme.CarComposeIcon
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
-import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.controls.CarRow
 import de.ixam97.carcompose.components.layout.CarColumn
 import de.ixam97.carcompose.components.layout.CarListItem
 import de.ixam97.carcompose.components.layout.CarListSection
 import de.ixam97.carcompose.components.layout.CarPaneLayout
 import de.ixam97.carcompose.components.layout.CarTabLayout
-import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.serialization.Serializable
 
 @Serializable
 object SettingsScreenNavKey: NavKey
 
 enum class SettingsTabKeys {
-    General, Appearance, Privacy, Apis, About, Dev, Data
+    General, Appearance, Privacy, Apis, About, Dev, TripHistory
 }
 
 @Composable
 fun SettingsScreen(
     backStack: NavBackStack<NavKey>,
+    onBack: () -> Unit,
     globalViewModel: CarComposeGlobalViewModel,
     viewModel: SettingsViewModel = viewModel()
 ) {
     val globalState by globalViewModel.globalState.collectAsState()
+
+    val tripHistoryTab = CarTabLayout.Tab(
+        title = stringResource(R.string.history_title),
+        icon = painterResource(R.drawable.ic_carcompose_history),
+        key = SettingsTabKeys.TripHistory
+    )
 
     val generalTab = CarTabLayout.Tab(
         title = stringResource(R.string.settings_general),
@@ -87,6 +95,10 @@ fun SettingsScreen(
         generalTab, appearanceTab, privacyTab, apisTab, aboutTab
     )
 
+    if (BuildConfig.FLAVOR_aaos == "carapp") {
+        settingsTabs.add(0, tripHistoryTab)
+    }
+
     if (globalState.devModeEnabled) {
         settingsTabs.add(devTab)
     }
@@ -94,13 +106,7 @@ fun SettingsScreen(
     if (deviceIsWideScreen()) {
         CarTabLayout(
             headerTitle = stringResource(R.string.settings_title),
-            headerStartContent = {
-                CarIconButton(
-                    painter = painterResource(R.drawable.ic_arrow_backwards_48),
-                    tint = CarTheme.carColors.accent,
-                    onClick = { backStack.removeAt(backStack.lastIndex) }
-                )
-            },
+            onBackAction = onBack,
             tabOrientation = CarTabLayout.Orientation.VerticalCompact,
             tabs = settingsTabs,
             maxTabs = settingsTabs.size.coerceAtMost(7),
@@ -149,17 +155,18 @@ fun SettingsScreen(
             ) {
                 SettingsDevContent(Modifier, backStack, globalViewModel, viewModel)
             }
+            AnimatedVisibility(
+                visible = key == SettingsTabKeys.TripHistory,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                TripHistoryContent(backStack = backStack, viewModel = viewModel())
+            }
         }
     } else {
         CarPaneLayout(
             headerTitle = stringResource(R.string.settings_title),
-            headerStartContent = {
-                CarIconButton(
-                    painter = painterResource(R.drawable.ic_arrow_backwards_48),
-                    tint = CarTheme.carColors.accent,
-                    onClick = { backStack.removeAt(backStack.lastIndex) }
-                )
-            }
+            onBackAction = onBack
         ) {
             CarComposeSettingsContent(
                 modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp) ,
@@ -232,6 +239,20 @@ fun CarComposeSettingsContent(
                 onBrowse = { backStack.add(SettingsDevScreenNavKey) }
             )
         })
+
+        if (BuildConfig.FLAVOR_aaos == "carapp") {
+            settingsListItems.add(
+                index = 0,
+                element = CarListItem {
+                    CarRow(
+                        leadingContent = { CarComposeIcon(R.drawable.ic_carcompose_history) },
+                        title = stringResource(R.string.history_title),
+                        browsable = true,
+                        onBrowse = { backStack.add(TripHistoryScreenNavKey) }
+                    )
+                }
+            )
+        }
 
         CarListSection(
             listItems = settingsListItems

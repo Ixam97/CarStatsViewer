@@ -13,16 +13,28 @@ import androidx.core.graphics.drawable.IconCompat
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carApp.TabsScreen
 import com.ixam97.carStatsViewer.carApp.TripHistoryScreen
-import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
-import com.ixam97.carStatsViewer.compose.screens.SettingsScreens
+import com.ixam97.carStatsViewer.carCompose.CarComposeActivity
+import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsApisNavKey
+import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.toContentKey
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 
 @OptIn(ExperimentalCarApi::class)
 internal fun TabsScreen.apiStatusList() = ListTemplate.Builder().apply {
 
-    val settingsApisActivityIntent = Intent(carContext, ComposeSettingsActivity::class.java).apply {
+//    val settingsApisActivityIntent = Intent(carContext, ComposeSettingsActivity::class.java).apply {
+//        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//        putExtra("TargetRoute", SettingsScreens.APIS)
+//    }
+
+    val tripHistoryIntent = Intent(carContext, CarComposeActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        putExtra("TargetRoute", SettingsScreens.APIS)
+        putExtra("NavKey", TripHistoryScreenNavKey.toContentKey())
+    }
+
+    val apiSettingsIntent = Intent(carContext, CarComposeActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        putExtra("NavKey", SettingsApisNavKey.toContentKey())
     }
 
     /* addSectionedList(SectionedItemList.create(
@@ -42,8 +54,8 @@ internal fun TabsScreen.apiStatusList() = ListTemplate.Builder().apply {
                 setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_history)).build())
                 setBrowsable(true)
                 setOnClickListener(ParkedOnlyOnClickListener.create {
-                    // carContext.startActivity(historyActivityIntent)
-                    screenManager.push(TripHistoryScreen(carContext))
+                    carContext.startActivity(tripHistoryIntent)
+                    // screenManager.push(TripHistoryScreen(carContext))
                 })
             }.build())
         }.build(),
@@ -76,7 +88,7 @@ internal fun TabsScreen.apiStatusList() = ListTemplate.Builder().apply {
                 setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_api)).build())
                 setBrowsable(true)
                 setOnClickListener(ParkedOnlyOnClickListener.create {
-                    carContext.startActivity(settingsApisActivityIntent)
+                    carContext.startActivity(apiSettingsIntent)
                 })
             }.build())
 

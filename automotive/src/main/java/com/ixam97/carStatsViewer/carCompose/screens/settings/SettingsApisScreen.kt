@@ -45,17 +45,12 @@ object SettingsApisNavKey: MainSettingsNavKey
 @Composable
 fun SettingsApisScreen(
     backStack: NavBackStack<NavKey>,
+    onBack: () -> Unit,
     viewModel: SettingsViewModel = viewModel()
 ) {
     CarPaneLayout(
         headerTitle = stringResource(R.string.settings_apis_title),
-        headerStartContent = {
-            CarIconButton(
-                painter = painterResource(R.drawable.ic_arrow_backwards_48),
-                tint = CarTheme.carColors.accent,
-                onClick = { backStack.removeAt(backStack.lastIndex) }
-            )
-        }
+        onBackAction = onBack
     ) {
         SettingsApisContent(
             modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp),

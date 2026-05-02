@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,7 +23,6 @@ import com.ixam97.carStatsViewer.carCompose.UiBrightnessMode
 import com.ixam97.carStatsViewer.carCompose.UiType
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
-import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.controls.CarRow
 import de.ixam97.carcompose.components.controls.CarRowSwitch
 import de.ixam97.carcompose.components.controls.CarSegmentedButton
@@ -45,18 +43,13 @@ enum class PlotColorSegmentKeys {
 @Composable
 fun SettingsAppearanceScreen(
     backStack: NavBackStack<NavKey>,
+    onBack: () -> Unit,
     globalViewModel: CarComposeGlobalViewModel,
     viewModel: SettingsViewModel = viewModel()
 ) {
     CarPaneLayout(
         headerTitle = stringResource(R.string.settings_appearance),
-        headerStartContent = {
-            CarIconButton(
-                painter = painterResource(R.drawable.ic_arrow_backwards_48),
-                tint = CarTheme.carColors.accent,
-                onClick = { backStack.removeAt(backStack.lastIndex) }
-            )
-        }
+        onBackAction = onBack
     ) {
         SettingsAppearanceContent(
             modifier = Modifier.padding( if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp),
@@ -86,10 +79,10 @@ fun SettingsAppearanceContent(
             content = { Text("PS Modern") },
             key = UiType.Modern
         ),
-        CarSegmentedButton.Segment(
-            content = { Text("Club") },
-            key = UiType.Club
-        ),
+//        CarSegmentedButton.Segment(
+//            content = { Text("Club") },
+//            key = UiType.Club
+//        ),
         CarSegmentedButton.Segment(
             content = { Text("Volvo") },
             key = UiType.Volvo

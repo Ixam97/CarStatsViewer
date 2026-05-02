@@ -19,6 +19,8 @@ import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.screens.CarComposeMainScreenViewModel
 import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryContent
+import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.theme.adaptiveIconPainterResource
 import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.layout.CarPaneLayout
@@ -116,9 +118,13 @@ private fun CarComposeMainScreenWide(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            TabHistory(
-                globalViewModel,
-                backStack
+//            TabHistory(
+//                globalViewModel,
+//                backStack
+//            )
+            TripHistoryContent(
+                backStack = backStack,
+                viewModel = viewModel(),
             )
         }
     }
@@ -139,7 +145,7 @@ private fun CarComposeMainScreenSlim(
         },
         {
             CarIconButton(
-                onClick = {},
+                onClick = { backStack.add(TripHistoryScreenNavKey) },
                 painter = painterResource(R.drawable.ic_carcompose_history)
             )
         },

@@ -23,8 +23,8 @@ firebase-crashlytics = "3.0.4"
 retrofit = "3.0.0"
 okhttp3 = "5.3.2"
 window = "1.5.1"
-nav3Core = "1.0.1"
-carcompose = "ce589ba"
+nav3Core = "1.1.1"
+carcompose = "8bb133d"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }

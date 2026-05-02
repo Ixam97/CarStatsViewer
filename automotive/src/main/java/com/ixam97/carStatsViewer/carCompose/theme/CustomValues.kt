@@ -8,4 +8,4 @@ val polestar4ContentPadding: Dp = 180.dp
 
 val connectedBlue = Color(0xFF2595FF)
 val limitedYellow = Color(0xFFFFBF00)
-val badRed = Color(0xFFEB1717)
+val badRed = Color(0xFFAF1515)

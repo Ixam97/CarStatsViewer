@@ -9,15 +9,16 @@ interface MainSettingsNavKey: NavKey
 
 fun EntryProviderScope<NavKey>.settingsEntryBuilder(
     backStack: NavBackStack<NavKey>,
+    onBack: () -> Unit,
     globalViewModel: CarComposeGlobalViewModel
 ) {
-    entry<SettingsScreenNavKey> { SettingsScreen(backStack, globalViewModel) }
-    entry<SettingsGeneralScreenNavKey> { SettingsGeneralScreen(backStack, globalViewModel) }
-    entry<SettingsAppearanceScreenNavKey> { SettingsAppearanceScreen(backStack, globalViewModel) }
-    entry<SettingsLocationScreenNavKey> { SettingsPrivacyScreen(backStack, globalViewModel) }
-    entry<SettingsApisNavKey> { SettingsApisScreen(backStack) }
-    entry<SettingsAboutScreenNavKey> { SettingsAboutScreen(backStack, globalViewModel) }
-    entry<SettingsChangelogScreenNavKey> { SettingsChangelogScreen(backStack) }
-    entry<SettingsLicensesScreenNavKey> { SettingsLicensesScreen(backStack) }
-    entry<SettingsDevScreenNavKey> { SettingsDevScreen(backStack, globalViewModel) }
+    entry<SettingsScreenNavKey> { SettingsScreen(backStack, onBack, globalViewModel) }
+    entry<SettingsGeneralScreenNavKey> { SettingsGeneralScreen(backStack, onBack, globalViewModel) }
+    entry<SettingsAppearanceScreenNavKey> { SettingsAppearanceScreen(backStack, onBack, globalViewModel) }
+    entry<SettingsLocationScreenNavKey> { SettingsPrivacyScreen(backStack,onBack, globalViewModel) }
+    entry<SettingsApisNavKey> { SettingsApisScreen(backStack, onBack) }
+    entry<SettingsAboutScreenNavKey> { SettingsAboutScreen(backStack, onBack, globalViewModel) }
+    entry<SettingsChangelogScreenNavKey> { SettingsChangelogScreen(backStack, onBack) }
+    entry<SettingsLicensesScreenNavKey> { SettingsLicensesScreen(backStack, onBack) }
+    entry<SettingsDevScreenNavKey> { SettingsDevScreen(backStack, onBack, globalViewModel) }
 }

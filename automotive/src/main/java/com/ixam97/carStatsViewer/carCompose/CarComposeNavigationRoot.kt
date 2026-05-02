@@ -23,6 +23,7 @@ import com.ixam97.carStatsViewer.carCompose.screens.main.CarComposeMainScreen
 import com.ixam97.carStatsViewer.carCompose.screens.main.MainScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.settings.settingsEntryBuilder
 import com.ixam97.carStatsViewer.carCompose.screens.tripDetails.tripDetailsNavEntryBuilder
+import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.tripHistoryNavEntryBuilder
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.coroutines.delay
@@ -32,6 +33,7 @@ import kotlinx.serialization.Serializable
 fun CarComposeNavigationRoot(
     globalViewModel: CarComposeGlobalViewModel,
     backStack: NavBackStack<NavKey>,
+    onBack: () -> Unit,
     debugOnClose: (() -> Unit)? = null
 ) {
 
@@ -41,9 +43,11 @@ fun CarComposeNavigationRoot(
 
     NavDisplay(
         backStack = backStack,
+        onBack = onBack,
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator { true },
+            rememberSharedViewModelStoreNavEntryDecorator(),
         ),
         entryProvider = entryProvider {
             entry<ProxyScreenNavKey>(
@@ -63,8 +67,9 @@ fun CarComposeNavigationRoot(
                 )
             }
 
-            settingsEntryBuilder(backStack, globalViewModel)
-            tripDetailsNavEntryBuilder(backStack, globalViewModel)
+            settingsEntryBuilder(backStack, onBack, globalViewModel)
+            tripDetailsNavEntryBuilder(backStack, onBack, globalViewModel)
+            tripHistoryNavEntryBuilder(backStack, onBack, globalViewModel)
         },
         transitionSpec = {
             // Slide in from right when navigating forward

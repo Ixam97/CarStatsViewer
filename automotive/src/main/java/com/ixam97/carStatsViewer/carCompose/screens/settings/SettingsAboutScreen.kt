@@ -11,7 +11,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -23,7 +22,6 @@ import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
 import de.ixam97.carcompose.components.controls.CarButton
-import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.controls.CarRow
 import de.ixam97.carcompose.components.controls.CarRowBrowsableType
 import de.ixam97.carcompose.components.layout.CarColumn
@@ -39,17 +37,12 @@ object SettingsAboutScreenNavKey: MainSettingsNavKey
 @Composable
 fun SettingsAboutScreen(
     backStack: NavBackStack<NavKey>,
+    onBack: () -> Unit,
     globalViewModel: CarComposeGlobalViewModel
 ) {
     CarPaneLayout(
         headerTitle = stringResource(R.string.about_title),
-        headerStartContent = {
-            CarIconButton(
-                painter = painterResource(R.drawable.ic_arrow_backwards_48),
-                tint = CarTheme.carColors.accent,
-                onClick = { backStack.removeAt(backStack.lastIndex) }
-            )
-        }
+        onBackAction = onBack
     ) {
         SettingsAboutContent(
             modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp),

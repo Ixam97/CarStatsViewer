@@ -54,7 +54,7 @@ private fun RowScope.RealTimeDataBar(
             .weight(1f)
             .fillMaxHeight()
             .padding(CarTheme.carDimensions.defaultHorizontalPadding)
-            .background(CarTheme.carColors.secondaryDivider.first())
+            .background(CarTheme.carColors.secondaryDivider)
             .padding(2.dp)
             .background(CarTheme.carColors.background),
         contentAlignment = Alignment.BottomEnd
@@ -82,7 +82,7 @@ private fun RowScope.RealTimeDataBar(
                         if (fraction > 0) maxHeight * fraction
                         else 0.dp
                     )
-                    .background(CarTheme.carColors.accentContainer.first())
+                    .background(CarTheme.carColors.accentContainer)
             )
         }
 
