@@ -11,7 +11,7 @@ fun EntryProviderScope<NavKey>.tripDetailsNavEntryBuilder(
     globalViewModel: CarComposeGlobalViewModel
 ) {
     entry<TripDetailsScreenNavKey> { key ->
-        TripDetailsPortraitScreen(
+        TripDetailsScreen(
             globalViewModel = globalViewModel,
             onBackClick = onBack,
             sessionId = key.sessionId

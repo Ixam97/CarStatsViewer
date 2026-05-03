@@ -65,6 +65,35 @@ class TripHistoryViewModel: ViewModel() {
         }
     }
 
+    fun reloadTrips() {
+        _tripHistoryState.update { it.copy(
+            isLoadingCurrentTrips = true,
+            isLoadingPastTrips = true
+        ) }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            if (CarStatsViewer.appPreferences.debugDelays) delay(2000L)
+            delay(500L)
+            _tripHistoryState.update {
+                it.copy(
+                    pastTrips = CarStatsViewer.tripDataSource.getPastDrivingSessions(),
+                    isLoadingPastTrips = false
+                )
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            if (CarStatsViewer.appPreferences.debugDelays) delay(5000L)
+            delay(500L)
+            _tripHistoryState.update {
+                it.copy(
+                    currentTrips = CarStatsViewer.tripDataSource.getActiveDrivingSessions(),
+                    isLoadingCurrentTrips = false
+                )
+            }
+        }
+    }
+
     fun setTripFilter(tripType: Int, filter: Boolean) {
         if (_tripHistoryState.value.selectedFilters.contains(tripType)) {
             when(tripType) {

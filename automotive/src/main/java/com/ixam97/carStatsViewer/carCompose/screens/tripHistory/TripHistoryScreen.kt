@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.onVisibilityChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -264,6 +265,8 @@ internal fun TripHistoryList(
 
     CarLazyColumn(
         modifier = modifier
+            .onVisibilityChanged { if (it) viewModel.reloadTrips() }
+        // TODO: Make sure the list updates if a trip reset appears while on this screen
     ) {
         carListSection(
             sectionTitle = currentTripsTitle,
@@ -394,7 +397,7 @@ internal fun DrivingSessionRow(
                     .padding(end = iconSpacing),
                 style = CarTheme.carTypography.rowContent,
                 color = descriptionColor,
-                text = StringFormatters.getElapsedTimeString(drivingSession.drive_time)
+                text = StringFormatters.getElapsedTimeString(drivingSession.drive_time, true)
             )
         }
     }
