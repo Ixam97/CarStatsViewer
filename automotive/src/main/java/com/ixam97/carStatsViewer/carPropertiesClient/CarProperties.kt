@@ -53,7 +53,7 @@ object CarProperties {
 
     val sensorRateMap = mapOf(
         PERF_VEHICLE_SPEED to 0f,
-        EV_BATTERY_INSTANTANEOUS_CHARGE_RATE to CarPropertyManager.SENSOR_RATE_FAST,
+        EV_BATTERY_INSTANTANEOUS_CHARGE_RATE to 0f,
         GEAR_SELECTION to 0f,
         EV_CHARGE_PORT_CONNECTED to 0f,
         EV_BATTERY_LEVEL to 0f,

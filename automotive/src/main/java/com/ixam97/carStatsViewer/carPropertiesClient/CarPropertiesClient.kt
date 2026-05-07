@@ -28,6 +28,11 @@ class CarPropertiesClient(
                 InAppLogger.w("[CarPropertiesClient.carPropertyListener] Property ${CarProperties.getNameById(carPropertyValue.propertyId)} (${carPropertyValue.propertyId}) is currently not available. Status: ${carPropertyValue.status}.")
                 return
             }
+            // TODO: Remove this "Spam Logging". Meant to take a closer look at changed behaviour of Polestar 2 after OTA 5.0.10.
+            InAppLogger.v("[CarPropertiesClient.carPropertyListener] Property ${CarProperties.getNameById(carPropertyValue.propertyId)} value: ${carPropertyValue.value}")
+            if (carPropertyValue.propertyId == CarProperties.PERF_VEHICLE_SPEED) {
+                updateProperty(CarProperties.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE)
+            }
             carPropertiesData.update(carPropertyValue)
             propertiesProcessor(carPropertyValue.propertyId)
         }
@@ -69,6 +74,7 @@ class CarPropertiesClient(
     fun updateProperty(propertyId: Int) {
         // if (emulatorMode && propertyId == CarProperties.ENV_OUTSIDE_TEMPERATURE && debugTemperatureAttempt < 2) return
         carPropertyManager.getProperty<Any>(propertyId, 0)?.let {
+            InAppLogger.v("[CarPropertiesClient.updateProperty] Manual power read: ${it.value}")
             carPropertiesData.update(it, allowInvalidTimestamps = true)
         }
         propertiesProcessor(propertyId)
