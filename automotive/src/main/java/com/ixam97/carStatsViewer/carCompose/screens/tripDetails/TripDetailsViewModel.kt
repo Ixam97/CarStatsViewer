@@ -6,11 +6,15 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.map.Mapbox
+import com.ixam97.carStatsViewer.map.MapboxInterface
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,14 +27,13 @@ data class TripDetailsState(
     val destinationLocation: String? = null
 )
 
-data class TripDataState(
-    val distance: Float? = null
-)
-
 class TripDetailsViewModel(sessionId: Long): ViewModel() {
 
     private val _tripDetailsState = MutableStateFlow(TripDetailsState(isLoading = true))
     val tripDetailsState = _tripDetailsState.asStateFlow()
+
+    private val _mapAction = Channel<MapboxInterface.ZoomCoordinates?>()
+    val mapAction = _mapAction.receiveAsFlow()
 
     init {
         viewModelScope.launch {
@@ -45,6 +48,13 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
                 }
                 loadLocationStrings().join()
             }
+        }
+    }
+
+    fun setLocation() {
+        viewModelScope.launch {
+            InAppLogger.d("Sending Map Action!")
+            _mapAction.send(MapboxInterface.ZoomCoordinates(13.848338959636092, 55.42557254430007, 14.5))
         }
     }
 

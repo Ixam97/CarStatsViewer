@@ -8,6 +8,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,14 +53,14 @@ fun CarComposeMainScreen(
     debugOnClose: (() -> Unit)? = null,
 ) {
     if (deviceIsWideScreen()) {
-        CarComposeMainScreenWide(
+        CarComposeMainScreenLandscape(
             globalViewModel = globalViewModel,
             backStack = backStack,
             debugOnClose = debugOnClose,
             viewModel = viewModel
         )
     } else {
-        CarComposeMainScreenSlim(
+        CarComposeMainScreenPortrait(
             globalViewModel = globalViewModel,
             backStack = backStack,
             debugOnClose = debugOnClose
@@ -66,12 +69,14 @@ fun CarComposeMainScreen(
 }
 
 @Composable
-private fun CarComposeMainScreenWide(
+private fun CarComposeMainScreenLandscape(
     globalViewModel: CarComposeGlobalViewModel,
     backStack: NavBackStack<NavKey>,
     debugOnClose: (() -> Unit)?,
     viewModel: CarComposeMainScreenViewModel
 ) {
+
+    val globalState by globalViewModel.globalState.collectAsState()
 
     val tabsList = listOf(
         CarTabLayout.Tab(
@@ -97,6 +102,7 @@ private fun CarComposeMainScreenWide(
     CarTabLayout(
         headerTitle = stringResource(R.string.app_name),
         headerStartContent = { MainScreenAppIcon(debugOnClose) },
+        isLoading = globalState.isLoading,
         tabs = tabsList,
         selectedKey = viewModel.selectedTabKey?:tabsList.first().key,
         onTabSelected = {
@@ -106,6 +112,9 @@ private fun CarComposeMainScreenWide(
                 viewModel.setTabKey(it)
         }
     ) { key ->
+        LaunchedEffect(key) {
+            globalViewModel.setLoading(false)
+        }
         AnimatedVisibility(
             visible = key == MainScreenTabKeys.Dashboard,
             enter = fadeIn(),
@@ -125,17 +134,19 @@ private fun CarComposeMainScreenWide(
             TripHistoryContent(
                 backStack = backStack,
                 viewModel = viewModel(),
+                globalViewModel = globalViewModel
             )
         }
     }
 }
 
 @Composable
-private fun CarComposeMainScreenSlim(
+private fun CarComposeMainScreenPortrait(
     globalViewModel: CarComposeGlobalViewModel,
     backStack: NavBackStack<NavKey>,
     debugOnClose: (() -> Unit)?
 ) {
+    val globalState by globalViewModel.globalState.collectAsState()
     val headerButtonsList = mutableListOf<@Composable (() -> Unit)>(
         {
             CarIconButton(
@@ -153,6 +164,7 @@ private fun CarComposeMainScreenSlim(
     CarPaneLayout(
         headerStartContent = { MainScreenAppIcon(debugOnClose) },
         headerTitle = stringResource(R.string.app_name),
+        isLoading = globalState.isLoading,
         headerIconButtons = headerButtonsList
     ) {
     }

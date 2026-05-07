@@ -310,3 +310,8 @@ internal fun validateEmailAddress(address: String): Boolean? {
     if (address.isBlank()) return null
     return Patterns.EMAIL_ADDRESS.matcher(address).matches()
 }
+
+internal fun validateUrlAddress(url: String): Boolean? {
+    if (url.isBlank()) return null
+    return Patterns.WEB_URL.matcher(url).matches()
+}

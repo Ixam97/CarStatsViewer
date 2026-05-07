@@ -88,7 +88,8 @@ fun SettingsApisContent(
                         trailingContent = {
                             ConnectionStatusIcon(settingsApisState.abrpConnectionStatus)
                         },
-                        browsable = true
+                        browsable = true,
+                        onBrowse = { backStack.add(SettingsApisAbrpScreenNavKey) }
                     )
                 },
                 CarListItem {
@@ -104,7 +105,8 @@ fun SettingsApisContent(
                         trailingContent = {
                             ConnectionStatusIcon(settingsApisState.restConnectionStatus)
                         },
-                        browsable = true
+                        browsable = true,
+                        onBrowse = { backStack.add(SettingsApisWebhookScreenNavKey) }
                     )
                 },
             )
@@ -131,17 +133,7 @@ fun SettingsApisContent(
                                     singleLine = true,
                                     modifier = Modifier.weight(1f),
                                     trailingIcon = {
-                                        val valid = settingsApisState.validExportMailAddress
-                                        if (valid != null) {
-                                            Icon(
-                                                modifier = Modifier.size(40.dp),
-                                                imageVector = if (valid) Icons.Default.Check else Icons.Default.ErrorOutline,
-                                                tint = if (valid) Color.Green else Color.Red,
-                                                contentDescription = null
-                                            )
-                                        } else {
-                                            Box(Modifier.size(40.dp))
-                                        }
+                                        TextBoxCheckmark(settingsApisState.validExportMailAddress)
                                     }
                                 )
                                 Spacer(Modifier.size(CarTheme.carDimensions.defaultHorizontalPadding / 2f))
@@ -160,5 +152,19 @@ fun SettingsApisContent(
                 },
             )
         )
+    }
+}
+
+@Composable
+internal fun TextBoxCheckmark(valid: Boolean?) {
+    if (valid != null) {
+        Icon(
+            modifier = Modifier.size(40.dp),
+            imageVector = if (valid) Icons.Default.Check else Icons.Default.ErrorOutline,
+            tint = if (valid) Color.Green else Color.Red,
+            contentDescription = null
+        )
+    } else {
+        Box(Modifier.size(40.dp))
     }
 }

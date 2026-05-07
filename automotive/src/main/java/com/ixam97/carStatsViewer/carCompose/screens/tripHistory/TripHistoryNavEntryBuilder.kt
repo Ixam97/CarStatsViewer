@@ -16,7 +16,7 @@ fun EntryProviderScope<NavKey>.tripHistoryNavEntryBuilder(
 ) {
     entry<TripHistoryScreenNavKey>(
         clazzContentKey = { key -> key.toContentKey()}
-    ) { TripHistoryScreen(backStack, onBack) }
+    ) { TripHistoryScreen(backStack, onBack, globalViewModel) }
     entry<TripHistoryFiltersScreenNavKey>(
         metadata = SharedViewModelStoreNavEntryDecorator.parent(TripHistoryScreenNavKey.toContentKey())
     ) {

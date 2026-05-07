@@ -106,6 +106,7 @@ fun SettingsScreen(
     if (deviceIsWideScreen()) {
         CarTabLayout(
             headerTitle = stringResource(R.string.settings_title),
+            isLoading = globalState.isLoading,
             onBackAction = onBack,
             tabOrientation = CarTabLayout.Orientation.VerticalCompact,
             tabs = settingsTabs,
@@ -160,12 +161,13 @@ fun SettingsScreen(
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                TripHistoryContent(backStack = backStack, viewModel = viewModel())
+                TripHistoryContent(backStack = backStack, viewModel = viewModel(), globalViewModel = globalViewModel)
             }
         }
     } else {
         CarPaneLayout(
             headerTitle = stringResource(R.string.settings_title),
+            isLoading = globalState.isLoading,
             onBackAction = onBack
         ) {
             CarComposeSettingsContent(

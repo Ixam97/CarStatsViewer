@@ -9,9 +9,17 @@ import androidx.compose.ui.Modifier
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import kotlinx.coroutines.flow.Flow
 import java.util.Locale
 
 interface MapboxInterface {
+
+    data class ZoomCoordinates(
+        val lon: Double,
+        val lat: Double,
+        val zoom: Double,
+    )
+
     fun isDummy(): Boolean
 
     @Composable
@@ -19,6 +27,7 @@ interface MapboxInterface {
         modifier: Modifier,
         trip: DrivingSession?,
         chargingMarkerOnClick: ((id: Long) -> Unit),
+        zoomCoordinatesFlow: Flow<ZoomCoordinates?>? = null,
         useCarCompose: Boolean = false
     ) {
         Box (

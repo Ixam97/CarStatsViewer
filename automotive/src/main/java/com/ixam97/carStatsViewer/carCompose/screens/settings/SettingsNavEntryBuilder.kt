@@ -17,6 +17,8 @@ fun EntryProviderScope<NavKey>.settingsEntryBuilder(
     entry<SettingsAppearanceScreenNavKey> { SettingsAppearanceScreen(backStack, onBack, globalViewModel) }
     entry<SettingsLocationScreenNavKey> { SettingsPrivacyScreen(backStack,onBack, globalViewModel) }
     entry<SettingsApisNavKey> { SettingsApisScreen(backStack, onBack) }
+    entry<SettingsApisWebhookScreenNavKey> { SettingsApisWebhookScreen(backStack, onBack, globalViewModel) }
+    entry<SettingsApisAbrpScreenNavKey> { SettingsApisAbrpScreen(backStack, onBack, globalViewModel) }
     entry<SettingsAboutScreenNavKey> { SettingsAboutScreen(backStack, onBack, globalViewModel) }
     entry<SettingsChangelogScreenNavKey> { SettingsChangelogScreen(backStack, onBack) }
     entry<SettingsLicensesScreenNavKey> { SettingsLicensesScreen(backStack, onBack) }

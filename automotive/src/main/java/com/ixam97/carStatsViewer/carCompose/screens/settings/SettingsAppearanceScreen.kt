@@ -79,10 +79,10 @@ fun SettingsAppearanceContent(
             content = { Text("PS Modern") },
             key = UiType.Modern
         ),
-//        CarSegmentedButton.Segment(
-//            content = { Text("Club") },
-//            key = UiType.Club
-//        ),
+        CarSegmentedButton.Segment(
+            content = { Text("Club") },
+            key = UiType.Club
+        ),
         CarSegmentedButton.Segment(
             content = { Text("Volvo") },
             key = UiType.Volvo

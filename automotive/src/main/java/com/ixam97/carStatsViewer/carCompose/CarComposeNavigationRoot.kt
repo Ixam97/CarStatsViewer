@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -24,7 +24,6 @@ import com.ixam97.carStatsViewer.carCompose.screens.main.MainScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.settings.settingsEntryBuilder
 import com.ixam97.carStatsViewer.carCompose.screens.tripDetails.tripDetailsNavEntryBuilder
 import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.tripHistoryNavEntryBuilder
-import com.ixam97.carStatsViewer.utils.InAppLogger
 import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
@@ -36,11 +35,6 @@ fun CarComposeNavigationRoot(
     onBack: () -> Unit,
     debugOnClose: (() -> Unit)? = null
 ) {
-
-    val globalState by globalViewModel.globalState.collectAsState()
-
-    InAppLogger.w("Recomposition of navigation root!")
-
     NavDisplay(
         backStack = backStack,
         onBack = onBack,
@@ -48,6 +42,7 @@ fun CarComposeNavigationRoot(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator { true },
             rememberSharedViewModelStoreNavEntryDecorator(),
+            rememberResetLoadingStateEntryDecorator(globalViewModel)
         ),
         entryProvider = entryProvider {
             entry<ProxyScreenNavKey>(
@@ -108,3 +103,16 @@ fun ProxyScreen(
         backStack.addAll(proxyNavKeys)
     }
 }
+
+@Composable
+fun <T: Any>rememberResetLoadingStateEntryDecorator(viewModel: CarComposeGlobalViewModel) : ResetLoadingStateEntryDecorator<T> {
+    return remember { ResetLoadingStateEntryDecorator(viewModel) }
+}
+
+class ResetLoadingStateEntryDecorator<T: Any>(viewModel: CarComposeGlobalViewModel): NavEntryDecorator<T>(
+    onPop = { },
+    decorate = { entry ->
+        viewModel.setLoading(false)
+        entry.Content()
+    }
+)

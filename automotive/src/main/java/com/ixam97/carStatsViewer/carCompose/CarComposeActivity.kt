@@ -13,11 +13,15 @@ import com.ixam97.carStatsViewer.carCompose.screens.main.MainScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsApisNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.theme.ClubThemeConfig
 import de.ixam97.carcompose.theme.CarTheme
 import de.ixam97.carcompose.theme.GenericCarThemeConfig
+import de.ixam97.carcompose.theme.GenericCarTypography
+import de.ixam97.carcompose.theme.themes.PolestarCarTypography
 import de.ixam97.carcompose.theme.themes.PolestarClassicThemeConfig
 import de.ixam97.carcompose.theme.themes.PolestarModernThemeConfig
 import de.ixam97.carcompose.theme.themes.VolvoCarUxThemeConfig
+import de.ixam97.carcompose.theme.themes.VolvoTypograph
 
 class CarComposeActivity: ComponentActivity() {
 
@@ -42,7 +46,13 @@ class CarComposeActivity: ComponentActivity() {
             val globalState by viewModel.globalState.collectAsState()
 
             val carThemeConfig = when (globalState.uiType) {
-                // UiType.Club -> ClubThemeConfig
+                UiType.Club -> ClubThemeConfig.copy(
+                    carTypography = when(globalState.vehicleModel) {
+                        VehicleModel.Polestar2, VehicleModel.Polestar3, VehicleModel.Polestar4 -> PolestarCarTypography
+                        VehicleModel.Volvo -> VolvoTypograph
+                        else -> GenericCarTypography
+                    }
+                )
                 UiType.Modern -> PolestarModernThemeConfig
                 UiType.Classic -> PolestarClassicThemeConfig
                 UiType.Volvo -> VolvoCarUxThemeConfig

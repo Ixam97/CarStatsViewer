@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -33,12 +34,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.screens.tripDetails.TripDetailsScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.theme.badRed
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import de.ixam97.carcompose.components.controls.CarButton
 import de.ixam97.carcompose.components.controls.CarButtonDefaults
@@ -63,10 +66,12 @@ object TripHistoryScreenNavKey: NavKey
 fun TripHistoryScreen(
     backStack: NavBackStack<NavKey>,
     onBack: () -> Unit,
+    globalViewModel: CarComposeGlobalViewModel
 ) {
 
     val viewModel: TripHistoryViewModel = viewModel()
     val tripHistoryState by viewModel.tripHistoryState.collectAsState()
+    val globalState by globalViewModel.globalState.collectAsState()
     val context = LocalContext.current
 
     val headerIconsList = listOf(
@@ -101,6 +106,7 @@ fun TripHistoryScreen(
     CarPaneLayout(
         headerTitle = if (tripHistoryState.deleteMode) "Delete Trips" else stringResource(R.string.history_title),
         onBackAction = if (tripHistoryState.deleteMode) null else onBack,
+        isLoading = globalState.isLoading,
 //        headerStartContent = if (!tripHistoryState.deleteMode) null else {
 //            {
 //                CarButton(
@@ -117,6 +123,7 @@ fun TripHistoryScreen(
         TripHistoryContent(
             modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp),
             backStack = backStack,
+            globalViewModel = globalViewModel,
             viewModel = viewModel
         )
 
@@ -127,11 +134,17 @@ fun TripHistoryScreen(
 fun TripHistoryContent(
     modifier: Modifier = Modifier,
     backStack: NavBackStack<NavKey>,
+    globalViewModel: CarComposeGlobalViewModel,
     viewModel: TripHistoryViewModel
 ) {
 
     val tripHistoryState by viewModel.tripHistoryState.collectAsState()
     val context = LocalContext.current
+
+    LaunchedEffect(tripHistoryState.isLoadingPastTrips, tripHistoryState.isLoadingCurrentTrips) {
+        InAppLogger.d("Loading State: ${tripHistoryState.isLoadingPastTrips || tripHistoryState.isLoadingCurrentTrips}")
+        globalViewModel.setLoading(tripHistoryState.isLoadingPastTrips || tripHistoryState.isLoadingCurrentTrips)
+    }
 
     Row(
         modifier = modifier
@@ -221,7 +234,7 @@ internal fun TripHistoryList(
     val context = LocalContext.current
 
     val currentTripsListItems = when {
-        tripHistoryState.isLoadingCurrentTrips -> listOf(CarListItem { LoadingRow() })
+        tripHistoryState.isLoadingCurrentTrips && tripHistoryState.currentTrips.isEmpty() -> listOf(CarListItem { LoadingRow() })
         tripHistoryState.currentTrips.isNotEmpty() -> tripHistoryState.currentTrips
             .sortedBy { it.session_type }
             .map { drivingSession ->
@@ -242,7 +255,7 @@ internal fun TripHistoryList(
     }
 
     val pastTripsListItems = when {
-        tripHistoryState.isLoadingPastTrips -> listOf(CarListItem { LoadingRow() })
+        tripHistoryState.isLoadingPastTrips && tripHistoryState.pastTrips.isEmpty() -> listOf(CarListItem { LoadingRow() })
         tripHistoryState.pastTrips.any { tripHistoryState.selectedFilters[it.session_type] == true } -> tripHistoryState.pastTrips
             .sortedBy { it.start_epoch_time }
             .reversed()
