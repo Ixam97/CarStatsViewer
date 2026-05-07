@@ -74,7 +74,8 @@ class CarPropertiesClient(
     fun updateProperty(propertyId: Int) {
         // if (emulatorMode && propertyId == CarProperties.ENV_OUTSIDE_TEMPERATURE && debugTemperatureAttempt < 2) return
         carPropertyManager.getProperty<Any>(propertyId, 0)?.let {
-            InAppLogger.v("[CarPropertiesClient.updateProperty] Manual power read: ${it.value}")
+            // TODO: Also Logging to remove after testing:
+            InAppLogger.v("[CarPropertiesClient.carPropertyListener] Property ${CarProperties.getNameById(it.propertyId)} (manual Update) value: ${it.value}")
             carPropertiesData.update(it, allowInvalidTimestamps = true)
         }
         propertiesProcessor(propertyId)
