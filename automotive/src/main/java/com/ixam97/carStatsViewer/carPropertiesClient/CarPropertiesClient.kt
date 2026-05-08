@@ -28,8 +28,9 @@ class CarPropertiesClient(
                 InAppLogger.w("[CarPropertiesClient.carPropertyListener] Property ${CarProperties.getNameById(carPropertyValue.propertyId)} (${carPropertyValue.propertyId}) is currently not available. Status: ${carPropertyValue.status}.")
                 return
             }
-            // TODO: Remove this "Spam Logging". Meant to take a closer look at changed behaviour of Polestar 2 after OTA 5.0.10.
-            InAppLogger.v("[CarPropertiesClient.carPropertyListener] Property ${CarProperties.getNameById(carPropertyValue.propertyId)} value: ${carPropertyValue.value}")
+            // With OTA 5.0.10, Polestar 2 reports power in a very slow interval, while speed is
+            // still updated quickly. Manually reading the power property delivers up-to-date
+            // values, though. So this is a workaround to have accurate data.
             if (carPropertyValue.propertyId == CarProperties.PERF_VEHICLE_SPEED) {
                 updateProperty(CarProperties.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE)
             }
@@ -74,8 +75,6 @@ class CarPropertiesClient(
     fun updateProperty(propertyId: Int) {
         // if (emulatorMode && propertyId == CarProperties.ENV_OUTSIDE_TEMPERATURE && debugTemperatureAttempt < 2) return
         carPropertyManager.getProperty<Any>(propertyId, 0)?.let {
-            // TODO: Also Logging to remove after testing:
-            InAppLogger.v("[CarPropertiesClient.carPropertyListener] Property ${CarProperties.getNameById(it.propertyId)} (manual Update) value: ${it.value}")
             carPropertiesData.update(it, allowInvalidTimestamps = true)
         }
         propertiesProcessor(propertyId)
