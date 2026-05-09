@@ -14,11 +14,16 @@ import java.util.Locale
 
 interface MapboxInterface {
 
-    data class ZoomCoordinates(
+    data class MapboxLocation(
         val lon: Double,
         val lat: Double,
         val zoom: Double,
     )
+
+    sealed class MapboxAction {
+        data class ZoomToLocation(val location: MapboxLocation): MapboxAction()
+        data object Reset: MapboxAction()
+    }
 
     fun isDummy(): Boolean
 
@@ -27,7 +32,7 @@ interface MapboxInterface {
         modifier: Modifier,
         trip: DrivingSession?,
         chargingMarkerOnClick: ((id: Long) -> Unit),
-        zoomCoordinatesFlow: Flow<ZoomCoordinates?>? = null,
+        actionFlow: Flow<MapboxAction>? = null,
         useCarCompose: Boolean = false
     ) {
         Box (

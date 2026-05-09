@@ -41,6 +41,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.gson.GsonBuilder
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.compose.theme.CarTheme
@@ -54,7 +55,6 @@ import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxDelicateApi
 import com.mapbox.maps.dsl.cameraOptions
-import com.mapbox.maps.extension.style.expressions.dsl.generated.zoom
 import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.easeTo
 import com.mapbox.maps.plugin.annotation.annotations
@@ -107,7 +107,7 @@ object Mapbox: MapboxInterface {
         modifier: Modifier,
         trip: DrivingSession?,
         chargingMarkerOnClick: (id: Long) -> Unit,
-        zoomCoordinatesFlow: Flow<MapboxInterface.ZoomCoordinates?>?,
+        actionFlow: Flow<MapboxInterface.MapboxAction>?,
         useCarCompose: Boolean
     ) {
 
@@ -127,8 +127,6 @@ object Mapbox: MapboxInterface {
             return
         }
 
-        val context = LocalContext.current
-
         var coordinates = listOf<Point>()
         var firstLoad = true
         var updateViewport by remember { mutableStateOf(false) }
@@ -138,18 +136,19 @@ object Mapbox: MapboxInterface {
         var dynamicCameraOptions by remember { mutableStateOf<CameraOptions?>(null) }
 
         val lifecycleOwner = LocalLifecycleOwner.current
-        LaunchedEffect(lifecycleOwner.lifecycle, zoomCoordinatesFlow) {
+        LaunchedEffect(lifecycleOwner.lifecycle, actionFlow) {
             lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 withContext(Dispatchers.Main.immediate) {
-                    zoomCoordinatesFlow?.collect { zoomCoordinates ->
+                    actionFlow?.collect { action ->
                         InAppLogger.d("Collecting Map Action!")
-                        InAppLogger.d("ZoomCoordinates: ${zoomCoordinates?.lat}, ${zoomCoordinates?.lon}")
-                        dynamicCameraOptions = if (zoomCoordinates != null) {
-                            CameraOptions.Builder()
-                                .center(Point.fromLngLat(zoomCoordinates.lon, zoomCoordinates.lat))
-                                .zoom(zoomCoordinates.zoom)
+
+                        dynamicCameraOptions = when (action) {
+                            MapboxInterface.MapboxAction.Reset -> null
+                            is MapboxInterface.MapboxAction.ZoomToLocation -> CameraOptions.Builder()
+                                .center(Point.fromLngLat(action.location.lon, action.location.lat))
+                                .zoom(action.location.zoom)
                                 .build()
-                        } else null
+                        }
                         updateViewport = true
                     }
                 }
@@ -172,12 +171,12 @@ object Mapbox: MapboxInterface {
 
         val polylineAnnotationOptions: PolylineAnnotationOptions = PolylineAnnotationOptions()
             .withPoints(coordinates)
-            .withLineColor(context.getColor(R.color.polestar_orange))
+            .withLineColor(CarStatsViewer.appContext.getColor(R.color.polestar_orange))
             .withLineWidth(6.0)
 
         val polylineAnnotationOptionsBackground: PolylineAnnotationOptions = PolylineAnnotationOptions()
             .withPoints(coordinates)
-            .withLineColor(context.getColor(R.color.polestar_orange_outline))
+            .withLineColor(CarStatsViewer.appContext.getColor(R.color.polestar_orange_outline))
             .withLineWidth(10.0)
 
         initialCameraListener = View.OnLayoutChangeListener { view, _, _, _, _, _, _, _, _ ->
@@ -342,12 +341,22 @@ object Mapbox: MapboxInterface {
                     }
                 )
             } else {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column (
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(
                         modifier = Modifier
                             .background(Color.DarkGray)
                             .padding(50.dp),
                         text = "Open GL 3.0 not supported!",
+                        color = Color.White,
+                        fontSize = 30.sp
+                    )
+                    Text(
+                        modifier = Modifier.padding(15.dp),
+                        text = "${dynamicCameraOptions?.center?.coordinates()}",
                         color = Color.White,
                         fontSize = 30.sp
                     )
@@ -379,6 +388,26 @@ object Mapbox: MapboxInterface {
                             tint = CarButtonDefaults.colors.textColor
                         )
                     }
+//                    Spacer(Modifier.size(15.dp))
+//                    Box(
+//                            modifier = Modifier
+//                                .clip(CarButtonDefaults.shape)
+//                                .background(CarButtonDefaults.colors.backgroundBrush)
+//                                .clickable {
+//                                    if (trip?.chargingSessions?.getOrNull(0) != null) {
+//                                        chargingMarkerOnClick(trip.chargingSessions!![0].charging_session_id)
+//                                    } else chargingMarkerOnClick(0)
+//                                }
+//                                .padding(10.dp)
+//                            ) {
+//                        Icon(
+//                            modifier = Modifier
+//                                .size(50.dp),
+//                            painter = painterResource(R.drawable.ic_debug),
+//                            contentDescription = null,
+//                            tint = CarButtonDefaults.colors.textColor
+//                        )
+//                    }
                     Spacer(Modifier.size(15.dp))
                     Box(
                         modifier = Modifier

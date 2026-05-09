@@ -3,15 +3,15 @@ package com.ixam97.carStatsViewer.carCompose.screens.tripDetails
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import de.ixam97.carcompose.components.controls.CarButton
+import com.ixam97.carStatsViewer.map.MapboxInterface
+import de.ixam97.carcompose.components.controls.CarRow
+import de.ixam97.carcompose.components.layout.CarColumn
+import de.ixam97.carcompose.components.layout.CarListItem
+import de.ixam97.carcompose.components.layout.CarListSection
 import de.ixam97.carcompose.components.layout.CarPaneLayout
-import de.ixam97.carcompose.theme.CarTheme
 
 @Composable
 fun TripDetailsChargingDetailsOverlay(
@@ -30,13 +30,32 @@ fun TripDetailsChargingDetailsOverlay(
             headerTitle = "Charging Details",
             onBackAction = { viewModel.closeChargingDetails() }
         ) {
-            CarButton(
-                modifier = Modifier.padding(
-                    horizontal = CarTheme.carDimensions.defaultHorizontalPadding,
-                    vertical = CarTheme.carDimensions.defaultVerticalPadding
-                ),
-                onClick = { viewModel.setLocation() }
-            ) { Text("Debug Location Trigger") }
+            tripDetailsState.chargingSessionsDetails.firstOrNull { it.chargingSession.charging_session_id == tripDetailsState.selectedChargingSessionDetailsId }?.let { chargingSessionDetails ->
+                CarColumn() {
+                    CarListSection(
+                        listItems = listOf(
+                            CarListItem {
+                                CarRow(
+                                    title = chargingSessionDetails.chargingLocation,
+                                    description = "Location",
+                                    browsable = true,
+                                    onBrowse = {
+                                        if (chargingSessionDetails.chargingSession.lon != null && chargingSessionDetails.chargingSession.lat != null) {
+                                            viewModel.setMapLocation(
+                                                MapboxInterface.MapboxLocation(
+                                                    lon = chargingSessionDetails.chargingSession.lon.toDouble(),
+                                                    lat = chargingSessionDetails.chargingSession.lat.toDouble(),
+                                                    zoom = 14.5
+                                                )
+                                            )
+                                        }
+                                    }
+                                )
+                            }
+                        )
+                    )
+                }
+            }
         }
     }
 }

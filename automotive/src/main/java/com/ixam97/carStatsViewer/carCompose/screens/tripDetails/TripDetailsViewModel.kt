@@ -8,7 +8,6 @@ import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.map.Mapbox
 import com.ixam97.carStatsViewer.map.MapboxInterface
-import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -27,6 +26,7 @@ data class ChargingSessionDetails(
 
 data class TripDetailsState(
     val isLoading: Boolean,
+    val isSideBySideLayout: Boolean = false,
     val selectedTab: TripDetailsTabKeys = TripDetailsTabKeys.Consumption,
     val prevSelectedTab: TripDetailsTabKeys? = null,
     val drivingSession: DrivingSession? = null,
@@ -34,7 +34,8 @@ data class TripDetailsState(
     val destinationLocation: String? = null,
     val chargingSessionsDetails: List<ChargingSessionDetails> = listOf(),
     val selectedChargingSessionDetailsId: Long? = null,
-    val showChargingDetails: Boolean = false
+    val showChargingDetails: Boolean = false,
+    val debugLandscapeOverride: Boolean = false
 )
 
 class TripDetailsViewModel(sessionId: Long): ViewModel() {
@@ -42,7 +43,7 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
     private val _tripDetailsState = MutableStateFlow(TripDetailsState(isLoading = true))
     val tripDetailsState = _tripDetailsState.asStateFlow()
 
-    private val _mapAction = Channel<MapboxInterface.ZoomCoordinates?>()
+    private val _mapAction = Channel<MapboxInterface.MapboxAction>()
     val mapAction = _mapAction.receiveAsFlow()
 
     init {
@@ -69,11 +70,34 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
         }
     }
 
-    fun setLocation() {
-        viewModelScope.launch {
-            InAppLogger.d("Sending Map Action!")
-            _mapAction.send(MapboxInterface.ZoomCoordinates(13.848338959636092, 55.42557254430007, 14.5))
+    fun setSideBySideLayout(value: Boolean) {
+        _tripDetailsState.update { it.copy(
+            isSideBySideLayout = value
+        ) }
+    }
+
+    fun setMapLocation(location: MapboxInterface.MapboxLocation) {
+        if (!_tripDetailsState.value.isSideBySideLayout) {
+            _tripDetailsState.update { it.copy(
+                showChargingDetails = false,
+                selectedTab = TripDetailsTabKeys.Map
+            ) }
         }
+        viewModelScope.launch {
+            _mapAction.send(MapboxInterface.MapboxAction.ZoomToLocation(location))
+        }
+    }
+
+    fun resetMapLocation() {
+        viewModelScope.launch {
+            _mapAction.send(MapboxInterface.MapboxAction.Reset)
+        }
+    }
+
+    fun setDebugOverride() {
+        _tripDetailsState.update { it.copy(
+            debugLandscapeOverride = true
+        ) }
     }
 
     fun setSelectedTab(tab: TripDetailsTabKeys) {
@@ -87,6 +111,7 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
     }
 
     fun closeChargingDetails() {
+        resetMapLocation()
         _tripDetailsState.update {
             it.copy(showChargingDetails = false)
         }
@@ -97,6 +122,19 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
             selectedChargingSessionDetailsId = chargingSessionId,
             showChargingDetails = true
         ) }
+        if (_tripDetailsState.value.isSideBySideLayout) {
+            viewModelScope.launch {
+                _tripDetailsState.value.chargingSessionsDetails.firstOrNull { it.chargingSession.charging_session_id == chargingSessionId }.let {
+                    _mapAction.send(MapboxInterface.MapboxAction.ZoomToLocation(
+                        if (it != null && it.chargingSession.lat != null && it.chargingSession.lon != null) {
+                            MapboxInterface.MapboxLocation(it.chargingSession.lon.toDouble(), it.chargingSession.lat.toDouble(), 14.5)
+                        } else {
+                            MapboxInterface.MapboxLocation(13.848338959636092, 55.42557254430007, 14.5)
+                        }
+                    ))
+                }
+            }
+        }
     }
 
     private fun loadLocationStrings(): Job {

@@ -6,12 +6,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.StringFormatters
-import de.ixam97.carcompose.components.controls.CarButton
 import de.ixam97.carcompose.components.controls.CarRow
 import de.ixam97.carcompose.components.layout.CarLazyColumn
 import de.ixam97.carcompose.components.layout.CarListItem
 import de.ixam97.carcompose.components.layout.carListSection
+import de.ixam97.carcompose.theme.CarTheme
 import java.util.Date
 
 @Composable
@@ -25,15 +27,10 @@ fun TripDetailsChargingSection(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-//                Text(
-//                    text = stringResource(R.string.summary_no_charging_sessions),
-//                    style = CarTheme.carTypography.rowTitle
-//                )
-                CarButton(
-                    onClick = { viewModel.setSelectedChargingDetails(0) }
-                ) {
-                    Text("Debug Charging Overlay")
-                }
+                Text(
+                    text = stringResource(R.string.summary_no_charging_sessions),
+                    style = CarTheme.carTypography.rowTitle
+                )
             }
         } else {
             CarLazyColumn() {
