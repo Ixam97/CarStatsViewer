@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,7 +34,6 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.map.Mapbox
-import de.ixam97.carcompose.components.controls.CarButton
 import de.ixam97.carcompose.components.layout.CarPaneLayout
 import de.ixam97.carcompose.components.layout.CarTabLayout
 import de.ixam97.carcompose.theme.CarTheme
@@ -94,56 +96,77 @@ private fun TripDetailsPortraitScreen(
     val tripDetailsState by viewModel.tripDetailsState.collectAsState()
     val globalState by globalViewModel.globalState.collectAsState()
 
-    CarPaneLayout(
-        isLoading = globalState.isLoading,
-        headerStartContent = {
-            Row(
-                // modifier = Modifier.offset(x = CarTheme.carDimensions.headerContentHorizontalPadding * -1)
-            ) {
-                HeaderTabButton(
-                    title = stringResource(R.string.summary_tab_trip_details),
-                    active = tripDetailsState.selectedTab == TripDetailsTabKeys.Consumption
-                ) { viewModel.setSelectedTab(TripDetailsTabKeys.Consumption) }
-
-                HeaderTabButton(
-                    title = stringResource(R.string.summary_tab_charging_sessions),
-                    active = tripDetailsState.selectedTab == TripDetailsTabKeys.Charging
-                ) { viewModel.setSelectedTab(TripDetailsTabKeys.Charging) }
-
-                HeaderTabButton(
-                    title = stringResource(R.string.summary_tab_map),
-                    active = tripDetailsState.selectedTab == TripDetailsTabKeys.Map
-                ) { viewModel.setSelectedTab(TripDetailsTabKeys.Map) }
-            }
-        },
-        onBackAction = onBackClick
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomEnd
     ) {
         AnimatedVisibility(
-            visible = tripDetailsState.selectedTab == TripDetailsTabKeys.Consumption,
-            enter = fadeIn(),
-            exit = fadeOut()
+            visible = !tripDetailsState.showChargingDetails,
+            enter = slideInHorizontally(initialOffsetX = { -it }),
+            exit = slideOutHorizontally(targetOffsetX = { -it })
         ) {
-            TripDetailsConsumptionSection(
-                viewModel = viewModel,
-                drivingSession = tripDetailsState.drivingSession
-            )
+            CarPaneLayout(
+                isLoading = globalState.isLoading,
+                headerStartContent = {
+                    Row(
+                        // modifier = Modifier.offset(x = CarTheme.carDimensions.headerContentHorizontalPadding * -1)
+                    ) {
+                        HeaderTabButton(
+                            title = stringResource(R.string.summary_tab_trip_details),
+                            active = tripDetailsState.selectedTab == TripDetailsTabKeys.Consumption
+                        ) { viewModel.setSelectedTab(TripDetailsTabKeys.Consumption) }
+
+                        HeaderTabButton(
+                            title = stringResource(R.string.summary_tab_charging_sessions),
+                            active = tripDetailsState.selectedTab == TripDetailsTabKeys.Charging
+                        ) { viewModel.setSelectedTab(TripDetailsTabKeys.Charging) }
+
+                        HeaderTabButton(
+                            title = stringResource(R.string.summary_tab_map),
+                            active = tripDetailsState.selectedTab == TripDetailsTabKeys.Map
+                        ) { viewModel.setSelectedTab(TripDetailsTabKeys.Map) }
+                    }
+                },
+                onBackAction = onBackClick
+            ) {
+                Box() {
+                    AnimatedVisibility(
+                        visible = tripDetailsState.selectedTab == TripDetailsTabKeys.Consumption,
+                        enter = slideInHorizontally(initialOffsetX = { -it }),
+                        exit = slideOutHorizontally(targetOffsetX = { -it })
+                    ) {
+                        TripDetailsConsumptionSection(
+                            viewModel = viewModel,
+                            drivingSession = tripDetailsState.drivingSession
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        visible = tripDetailsState.selectedTab == TripDetailsTabKeys.Charging,
+                        enter = slideInHorizontally(initialOffsetX = { if (tripDetailsState.prevSelectedTab == TripDetailsTabKeys.Map) -it else it }),
+                        exit = slideOutHorizontally(targetOffsetX = { if (tripDetailsState.selectedTab == TripDetailsTabKeys.Map) -it else it })
+                    ) {
+                        TripDetailsChargingSection(
+                            viewModel,
+                            tripDetailsState.chargingSessionsDetails
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        visible = tripDetailsState.selectedTab == TripDetailsTabKeys.Map,
+                        enter = slideInHorizontally(initialOffsetX = { it }),
+                        exit = slideOutHorizontally(targetOffsetX = { it })
+                    ) {
+                        TripDetailsMapSection(tripDetailsState, viewModel)
+                    }
+                }
+            }
         }
 
-        AnimatedVisibility(
-            visible = tripDetailsState.selectedTab == TripDetailsTabKeys.Charging,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-
-        }
-
-        AnimatedVisibility(
-            visible = tripDetailsState.selectedTab == TripDetailsTabKeys.Map,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            TripDetailsMapSection(tripDetailsState, viewModel)
-        }
+        TripDetailsChargingDetailsOverlay(
+            visible = tripDetailsState.showChargingDetails,
+            viewModel = viewModel
+        )
     }
 }
 
@@ -173,42 +196,45 @@ private fun TripDetailsLandscapeScreen(
         Box(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxHeight()
+                .fillMaxHeight(),
+            contentAlignment = Alignment.BottomEnd
         ) {
-            CarTabLayout(
-                isLoading = globalState.isLoading,
-                tabOrientation = CarTabLayout.Orientation.Vertical,
-                selectedKey = tripDetailsState.selectedTab,
-                tabs = tabs,
-                onTabSelected = { viewModel.setSelectedTab(it) },
-                headerTitle = stringResource(R.string.summary_title),
-                onBackAction = onBackClick
-            ) { selectedKey ->
-                this@Row.AnimatedVisibility(
-                    visible = selectedKey == TripDetailsTabKeys.Consumption,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    TripDetailsConsumptionSection(
-                        viewModel = viewModel,
-                        drivingSession = tripDetailsState.drivingSession
-                    )
-                }
+            this@Row.AnimatedVisibility(
+                visible = !tripDetailsState.showChargingDetails,
+                enter = slideInHorizontally(initialOffsetX = { -it }),
+                exit = slideOutHorizontally(targetOffsetX = { -it })
+            ) {
+                CarTabLayout(
+                    isLoading = globalState.isLoading,
+                    tabOrientation = CarTabLayout.Orientation.Vertical,
+                    selectedKey = tripDetailsState.selectedTab,
+                    tabs = tabs,
+                    onTabSelected = { viewModel.setSelectedTab(it) },
+                    headerTitle = stringResource(R.string.summary_title),
+                    onBackAction = onBackClick
+                ) { selectedKey ->
+                    this@Row.AnimatedVisibility(
+                        visible = selectedKey == TripDetailsTabKeys.Consumption,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) { TripDetailsConsumptionSection(viewModel, tripDetailsState.drivingSession) }
 
-                this@Row.AnimatedVisibility(
-                    visible = selectedKey == TripDetailsTabKeys.Charging,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    CarButton(
-                        modifier = Modifier.padding(
-                            horizontal = CarTheme.carDimensions.defaultHorizontalPadding,
-                            vertical = CarTheme.carDimensions.defaultVerticalPadding
-                        ),
-                        onClick = {viewModel.setLocation()}
-                    ) { Text("Set Location") }
+                    this@Row.AnimatedVisibility(
+                        visible = selectedKey == TripDetailsTabKeys.Charging,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        TripDetailsChargingSection(
+                            viewModel,
+                            tripDetailsState.chargingSessionsDetails
+                        )
+                    }
                 }
             }
+            TripDetailsChargingDetailsOverlay(
+                visible = tripDetailsState.showChargingDetails,
+                viewModel = viewModel
+            )
         }
         Box(
             modifier = Modifier

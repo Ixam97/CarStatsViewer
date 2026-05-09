@@ -41,7 +41,6 @@ import com.ixam97.carStatsViewer.carCompose.theme.badRed
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
-import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import de.ixam97.carcompose.components.controls.CarButton
 import de.ixam97.carcompose.components.controls.CarButtonDefaults
@@ -142,7 +141,6 @@ fun TripHistoryContent(
     val context = LocalContext.current
 
     LaunchedEffect(tripHistoryState.isLoadingPastTrips, tripHistoryState.isLoadingCurrentTrips) {
-        InAppLogger.d("Loading State: ${tripHistoryState.isLoadingPastTrips || tripHistoryState.isLoadingCurrentTrips}")
         globalViewModel.setLoading(tripHistoryState.isLoadingPastTrips || tripHistoryState.isLoadingCurrentTrips)
     }
 
