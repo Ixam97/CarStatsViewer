@@ -13,6 +13,7 @@ import androidx.core.graphics.drawable.IconCompat
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carApp.TabsScreen
 import com.ixam97.carStatsViewer.carApp.TripHistoryScreen
+import com.ixam97.carStatsViewer.carApp.utils.launchActivity
 import com.ixam97.carStatsViewer.carCompose.CarComposeActivity
 import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsApisNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryScreenNavKey
@@ -54,7 +55,7 @@ internal fun TabsScreen.apiStatusList() = ListTemplate.Builder().apply {
                 setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_history)).build())
                 setBrowsable(true)
                 setOnClickListener(ParkedOnlyOnClickListener.create {
-                    carContext.startActivity(tripHistoryIntent)
+                    launchActivity(tripHistoryIntent)
                     // screenManager.push(TripHistoryScreen(carContext))
                 })
             }.build())
@@ -88,7 +89,7 @@ internal fun TabsScreen.apiStatusList() = ListTemplate.Builder().apply {
                 setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_api)).build())
                 setBrowsable(true)
                 setOnClickListener(ParkedOnlyOnClickListener.create {
-                    carContext.startActivity(apiSettingsIntent)
+                    launchActivity(apiSettingsIntent)
                 })
             }.build())
 

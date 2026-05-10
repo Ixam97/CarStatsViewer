@@ -13,6 +13,7 @@ import androidx.car.app.model.Toggle
 import androidx.core.graphics.drawable.IconCompat
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carApp.TabsScreen
+import com.ixam97.carStatsViewer.carApp.utils.launchActivity
 import com.ixam97.carStatsViewer.carCompose.CarComposeActivity
 import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.toContentKey
@@ -66,7 +67,7 @@ internal fun TabsScreen.settingsList() = ListTemplate.Builder().apply {
             setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_settings)).build())
             setBrowsable(true)
             setOnClickListener {
-                carContext.startActivity(carComposeActivityIntent)
+                launchActivity(carComposeActivityIntent)
             }
         }.build())
     }.build()

@@ -15,6 +15,7 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carApp.TabsScreen
 import com.ixam97.carStatsViewer.carApp.RealTimeDataScreen
 import com.ixam97.carStatsViewer.carApp.TripHistoryScreen
+import com.ixam97.carStatsViewer.carApp.utils.launchActivity
 import com.ixam97.carStatsViewer.ui.activities.HistoryActivity
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
 
@@ -45,7 +46,7 @@ internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
             addText(carContext.getString(R.string.car_app_legacy_dashboard_desc))
             setBrowsable(true)
             setOnClickListener(ParkedOnlyOnClickListener.create {
-                carContext.startActivity(mainActivityIntent)
+                launchActivity(mainActivityIntent)
             })
         }.build())
         addItem(Row.Builder().apply{
@@ -54,7 +55,7 @@ internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
             setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_history)).build())
             setBrowsable(true)
             setOnClickListener(ParkedOnlyOnClickListener.create {
-                // carContext.startActivity(historyActivityIntent)
+                // launchActivity(historyActivityIntent)
                 screenManager.push(TripHistoryScreen(carContext))
             })
         }.build())
@@ -66,7 +67,7 @@ internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
             setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).build())
             setBrowsable(true)
             setOnClickListener(ParkedOnlyOnClickListener.create {
-                carContext.startActivity(composeSettingsActivityIntent)
+                launchActivity(composeSettingsActivityIntent)
             })
         }.build())
         addItem(Row.Builder().apply{
@@ -74,7 +75,7 @@ internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
             setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).build())
             setBrowsable(true)
             setOnClickListener {
-                carContext.startActivity(debugActivityIntent)
+                launchActivity(debugActivityIntent)
             }
         }.build())
         addItem(Row.Builder().apply{

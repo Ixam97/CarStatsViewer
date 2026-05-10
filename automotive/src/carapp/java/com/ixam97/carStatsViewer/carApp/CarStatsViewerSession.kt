@@ -50,7 +50,7 @@ class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
 
 //                if (it.chargePortConnected == true && !isCharging) {
 //                    isCharging = true
-//                    carContext.startActivity(carComposeActivityIntent)
+//                    launchActivity(carComposeActivityIntent)
 //                } else if (it.chargePortConnected != isCharging) {
 //                    isCharging = it.chargePortConnected?:false
 //                }

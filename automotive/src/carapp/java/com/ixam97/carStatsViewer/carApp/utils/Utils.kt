@@ -1,11 +1,13 @@
 package com.ixam97.carStatsViewer.carApp.utils
 
+import android.content.Intent
 import android.graphics.Bitmap
 import androidx.annotation.DrawableRes
 import androidx.car.app.CarContext
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.CarIcon
 import androidx.core.graphics.drawable.IconCompat
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 
 fun Bitmap.asCarIcon(): CarIcon = CarIcon.Builder(IconCompat.createWithBitmap(this)).build()
@@ -26,6 +28,10 @@ fun CarContext.getContentLimit(id: Int) = if (carAppApiLevel >= 2) {
         ConstraintManager.CONTENT_LIMIT_TYPE_ROUTE_LIST -> 3
         else -> throw IllegalArgumentException("unknown limit ID")
     }
+}
+
+fun launchActivity(intent: Intent){
+    CarStatsViewer.appContext.startActivity(intent)
 }
 
 fun manualTripIcon(carContext: CarContext) = CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_hand)).build()
