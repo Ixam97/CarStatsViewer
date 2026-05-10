@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 data class ChargingSessionDetails(
     val chargingSession: ChargingSession,
@@ -47,26 +46,25 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
     val mapAction = _mapAction.receiveAsFlow()
 
     init {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                if (CarStatsViewer.appPreferences.debugDelays) delay(5000)
-                val session = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId)
-                _tripDetailsState.update {
-                    it.copy(
-                        isLoading = false,
-                        drivingSession = session,
-                        chargingSessionsDetails = session.chargingSessions?.map { chargingSession ->
-                            ChargingSessionDetails(
-                                chargingSession = chargingSession,
-                                chargingLocation = if (chargingSession.lat != null)
-                                    CarStatsViewer.appContext.getString(R.string.summary_loading_location)
-                                else CarStatsViewer.appContext.getString(R.string.summary_location_unavailable)
-                            )
-                        }?: listOf()
-                    )
-                }
-                loadLocationStrings().join()
+        viewModelScope.launch(Dispatchers.IO) {
+            if (CarStatsViewer.appPreferences.debugDelays) delay(5000)
+            delay(500)
+            val session = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId)
+            _tripDetailsState.update {
+                it.copy(
+                    isLoading = false,
+                    drivingSession = session,
+                    chargingSessionsDetails = session.chargingSessions?.map { chargingSession ->
+                        ChargingSessionDetails(
+                            chargingSession = chargingSession,
+                            chargingLocation = if (chargingSession.lat != null)
+                                CarStatsViewer.appContext.getString(R.string.summary_loading_location)
+                            else CarStatsViewer.appContext.getString(R.string.summary_location_unavailable)
+                        )
+                    }?: listOf()
+                )
             }
+            loadLocationStrings().join()
         }
     }
 

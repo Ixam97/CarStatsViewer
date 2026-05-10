@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -109,81 +110,107 @@ private fun TripDetailsPortraitScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomEnd
     ) {
-        AnimatedVisibility(
-            visible = !tripDetailsState.showChargingDetails,
-            enter = slideInHorizontally(initialOffsetX = { -it }),
-            exit = slideOutHorizontally(targetOffsetX = { -it })
+//        AnimatedVisibility(
+//            visible = !tripDetailsState.showChargingDetails,
+//            enter = slideInHorizontally(initialOffsetX = { -it }),
+//            exit = slideOutHorizontally(targetOffsetX = { -it })
+//        ) {
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
         ) {
-            val iconButtons = if (BuildConfig.FLAVOR_version == "dev") listOf(@Composable{ CarIconButton(painterResource(R.drawable.ic_debug)) { viewModel.setDebugOverride() } }) else listOf()
-            CarPaneLayout(
-                isLoading = globalState.isLoading,
-                headerIconButtons = iconButtons,
-                headerStartContent = {
-                    Row(
-                        // modifier = Modifier.offset(x = CarTheme.carDimensions.headerContentHorizontalPadding * -1)
-                    ) {
-                        HeaderTabButton(
-                            title = stringResource(R.string.summary_tab_trip_details),
-                            active = tripDetailsState.selectedTab == TripDetailsTabKeys.Consumption
-                        ) { viewModel.setSelectedTab(TripDetailsTabKeys.Consumption) }
-
-                        HeaderTabButton(
-                            title = stringResource(R.string.summary_tab_charging_sessions),
-                            active = tripDetailsState.selectedTab == TripDetailsTabKeys.Charging
-                        ) { viewModel.setSelectedTab(TripDetailsTabKeys.Charging) }
-
-                        HeaderTabButton(
-                            title = stringResource(R.string.summary_tab_map),
-                            active = tripDetailsState.selectedTab == TripDetailsTabKeys.Map
-                        ) { viewModel.setSelectedTab(TripDetailsTabKeys.Map) }
-                    }
-                },
-                onBackAction = onBackClick
+            val offset by animateIntOffsetAsState(
+                targetValue = IntOffset(x = if (!tripDetailsState.showChargingDetails) 0 else constraints.maxWidth * -1, y = 0),
+                animationSpec = spring(
+                    stiffness = Spring.StiffnessMediumLow,
+                    visibilityThreshold = IntOffset.VisibilityThreshold
+                )
+            )
+            Box(
+                modifier = Modifier
+                    .width(maxWidth)
+                    .height(maxHeight)
+                    .offset { offset }
             ) {
-                Box() {
-
-                    BoxWithConstraints(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .offset()
-                    ) {
-                        val offset by animateIntOffsetAsState(
-                            targetValue = IntOffset(x = if (tripDetailsState.selectedTab == TripDetailsTabKeys.Map) 0 else constraints.maxWidth, y = 0),
-                            animationSpec = spring(
-                                stiffness = Spring.StiffnessMediumLow,
-                                visibilityThreshold = IntOffset.VisibilityThreshold
-                            )
-                        )
-                        Box(
-                            modifier = Modifier
-                                .width(maxWidth)
-                                .height(maxHeight)
-                                .offset { offset }
+                val iconButtons = if (BuildConfig.FLAVOR_version == "dev") listOf(@Composable {
+                    CarIconButton(painterResource(R.drawable.ic_debug)) { viewModel.setDebugOverride() }
+                }) else listOf()
+                CarPaneLayout(
+                    isLoading = globalState.isLoading,
+                    headerIconButtons = iconButtons,
+                    headerStartContent = {
+                        Row(
+                            // modifier = Modifier.offset(x = CarTheme.carDimensions.headerContentHorizontalPadding * -1)
                         ) {
-                            TripDetailsMapSection(tripDetailsState, viewModel)
+                            HeaderTabButton(
+                                title = stringResource(R.string.summary_tab_trip_details),
+                                active = tripDetailsState.selectedTab == TripDetailsTabKeys.Consumption
+                            ) { viewModel.setSelectedTab(TripDetailsTabKeys.Consumption) }
+
+                            HeaderTabButton(
+                                title = stringResource(R.string.summary_tab_charging_sessions),
+                                active = tripDetailsState.selectedTab == TripDetailsTabKeys.Charging
+                            ) { viewModel.setSelectedTab(TripDetailsTabKeys.Charging) }
+
+                            HeaderTabButton(
+                                title = stringResource(R.string.summary_tab_map),
+                                active = tripDetailsState.selectedTab == TripDetailsTabKeys.Map
+                            ) { viewModel.setSelectedTab(TripDetailsTabKeys.Map) }
                         }
-                    }
+                    },
+                    onBackAction = onBackClick
+                ) {
+                    Box() {
+                        BoxWithConstraints(
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            val offset by animateIntOffsetAsState(
+                                targetValue = IntOffset(
+                                    x = if (tripDetailsState.selectedTab == TripDetailsTabKeys.Map || tripDetailsState.showChargingDetails) 0 else constraints.maxWidth,
+                                    y = 0
+                                ),
+                                animationSpec = spring(
+                                    stiffness = Spring.StiffnessMediumLow,
+                                    visibilityThreshold = IntOffset.VisibilityThreshold
+                                )
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .width(maxWidth)
+                                    .height(maxHeight)
+                                    .offset { offset }
+                            ) {
+                                TripDetailsMapSection(tripDetailsState, viewModel)
+                            }
+                        }
 
-                    AnimatedVisibility(
-                        visible = tripDetailsState.selectedTab == TripDetailsTabKeys.Consumption,
-                        enter = slideInHorizontally(initialOffsetX = { -it }),
-                        exit = slideOutHorizontally(targetOffsetX = { -it })
-                    ) {
-                        TripDetailsConsumptionSection(
-                            viewModel = viewModel,
-                            drivingSession = tripDetailsState.drivingSession
-                        )
-                    }
+                        AnimatedVisibility(
+                            visible = tripDetailsState.selectedTab == TripDetailsTabKeys.Consumption,
+                            enter = slideInHorizontally(initialOffsetX = { -it }),
+                            exit = slideOutHorizontally(targetOffsetX = { -it })
+                        ) {
+                            TripDetailsConsumptionSection(
+                                viewModel = viewModel,
+                                drivingSession = tripDetailsState.drivingSession
+                            )
+                        }
 
-                    AnimatedVisibility(
-                        visible = tripDetailsState.selectedTab == TripDetailsTabKeys.Charging,
-                        enter = slideInHorizontally(initialOffsetX = { if (tripDetailsState.prevSelectedTab == TripDetailsTabKeys.Map) -it else it }),
-                        exit = slideOutHorizontally(targetOffsetX = { if (tripDetailsState.selectedTab == TripDetailsTabKeys.Map) -it else it })
-                    ) {
-                        TripDetailsChargingSection(
-                            viewModel,
-                            tripDetailsState.chargingSessionsDetails
-                        )
+                        AnimatedVisibility(
+                            visible = tripDetailsState.selectedTab == TripDetailsTabKeys.Charging,
+                            enter = slideInHorizontally(initialOffsetX = { if (tripDetailsState.prevSelectedTab == TripDetailsTabKeys.Map) -it else it }),
+                            exit = slideOutHorizontally(targetOffsetX = { if (tripDetailsState.selectedTab == TripDetailsTabKeys.Map) -it else it })
+                        ) {
+                            Box(
+                                modifier = Modifier.background(CarTheme.carColors.background)
+                                // TODO: Preventing the map to look weird on navigation. Might cause problems on backgrounds with gradients
+                            ) {
+                                TripDetailsChargingSection(
+                                    viewModel,
+                                    tripDetailsState.chargingSessionsDetails
+                                )
+                            }
+                        }
                     }
                 }
             }

@@ -24,8 +24,8 @@ android {
     defaultConfig {
         minSdk = 29
         targetSdk = 35
-        versionCode = 322
-        versionName = "0.29.0.0012"
+        versionCode = 325
+        versionName = "0.29.0.0014"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -145,6 +145,7 @@ dependencies {
 
     if (mapbox) {
         implementation("com.mapbox.maps:android:11.18.2")
+        implementation("com.mapbox.extension:maps-compose-ndk27:11.18.2")
     }
 
     implementation(libs.androidx.activity.compose)
