@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -53,6 +54,7 @@ fun SettingsPrivacyContent(
     globalViewModel: CarComposeGlobalViewModel,
     viewModel: SettingsViewModel
 ) {
+    val context = LocalContext.current
     val settingsPrivacyState by viewModel.settingsPrivacyState.collectAsState()
 
     CarColumn(
@@ -85,7 +87,7 @@ fun SettingsPrivacyContent(
                         title = stringResource(R.string.settings_privacy),
                         browsable = true,
                         browsableType = CarRowBrowsableType.External,
-                        onBrowse = { }
+                        onBrowse = { viewModel.openPrivacyLink(context) }
                     )
                 },
             )

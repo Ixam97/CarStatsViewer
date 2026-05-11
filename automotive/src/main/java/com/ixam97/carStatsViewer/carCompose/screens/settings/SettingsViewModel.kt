@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.app
-import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
@@ -80,10 +79,7 @@ class SettingsViewModel: ViewModel() {
 
     val appPreferences = CarStatsViewer.appPreferences
 
-    var selectedSettingsTabKey: SettingsTabKeys by mutableStateOf(
-        if (BuildConfig.FLAVOR_aaos == "carapp") SettingsTabKeys.TripHistory
-        else SettingsTabKeys.General
-    )
+    var selectedSettingsTabKey: SettingsTabKeys by mutableStateOf(SettingsTabKeys.General)
         private set
 
     fun setSettingsTabKey(key: SettingsTabKeys) {

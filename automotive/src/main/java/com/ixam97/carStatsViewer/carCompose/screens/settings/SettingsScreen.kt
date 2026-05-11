@@ -59,7 +59,6 @@ fun SettingsScreen(
         icon = painterResource(R.drawable.ic_carcompose_history),
         key = SettingsTabKeys.TripHistory
     )
-
     val generalTab = CarTabLayout.Tab(
         title = stringResource(R.string.settings_general),
         icon = rememberVectorPainter(Icons.Outlined.Settings),
@@ -96,7 +95,7 @@ fun SettingsScreen(
     )
 
     if (BuildConfig.FLAVOR_aaos == "carapp") {
-        settingsTabs.add(0, tripHistoryTab)
+        settingsTabs.add(settingsTabs.size, tripHistoryTab)
     }
 
     if (globalState.devModeEnabled) {
