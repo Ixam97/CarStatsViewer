@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carCompose.UiType
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.Exclude
@@ -34,8 +35,8 @@ class AppPreferences(
     private val ConsumptionPlotVisibleGages = AppPreference<Boolean>(context.getString(R.string.preference_consumption_plot_visible_gages_key), true, sharedPref)
     private val ChargePlotSecondaryColor = AppPreference<Boolean>(context.getString(R.string.preference_charge_plot_secondary_color_key), false, sharedPref)
     private val ChargePlotVisibleGages = AppPreference<Boolean>(context.getString(R.string.preference_charge_plot_visible_gages_key), true, sharedPref)
-    private val ChargePlotDimension = AppPreference<PlotDimensionX>(context.getString(R.string.preference_charge_plot_dimension_key), PlotDimensionX.TIME, sharedPref)
-    private val DistanceUnit = AppPreference<DistanceUnitEnum>(context.getString(R.string.preference_distance_unit_key), DistanceUnitEnum.KM, sharedPref)
+    private val ChargePlotDimension = AppPreference<String>(context.getString(R.string.preference_charge_plot_dimension_key), PlotDimensionX.TIME.name, sharedPref)
+    private val DistanceUnit = AppPreference<String>(context.getString(R.string.preference_distance_unit_key), DistanceUnitEnum.KM.name, sharedPref)
     private val SecondaryConsumptionDimension = AppPreference<Int>(context.getString(R.string.preference_secondary_dimension_key), 0, sharedPref)
     private val MainPrimaryDimensionRestriction = AppPreference<Int>("preference_dimension_restriction", 0, sharedPref)
     private val MainViewTrip = AppPreference<Int>(context.getString(R.string.preference_main_view_trip_key), 1, sharedPref)
@@ -65,7 +66,7 @@ class AppPreferences(
 
     private val PhoneNotification = AppPreference<Boolean>("preference_phone_notification", false, sharedPref)
     private val ColorTheme = AppPreference<Int>("preference_color_theme", 0, sharedPref)
-
+    private val CarComposeTheme = AppPreference<String>("preference_car_compose_theme", UiType.Auto.name, sharedPref)
     private val CarAppSelectedRealTimeData = AppPreference<Int>("preference_car_app_selected_real_time_data", 1, sharedPref)
     private val CarAppRealTimeData = AppPreference<Boolean>("preference_car_app_real_time_data", false, sharedPref)
 
@@ -87,8 +88,8 @@ class AppPreferences(
     var consumptionPlotVisibleGages: Boolean get() = ConsumptionPlotVisibleGages.value; set(value) {ConsumptionPlotVisibleGages.value = value}
     var chargePlotSecondaryColor: Boolean get() = ChargePlotSecondaryColor.value; set(value) {ChargePlotSecondaryColor.value = value}
     var chargePlotVisibleGages: Boolean get() = ChargePlotVisibleGages.value; set(value) {ChargePlotVisibleGages.value = value}
-    var chargePlotDimension: PlotDimensionX get() = ChargePlotDimension.value; set(value) {ChargePlotDimension.value = value}
-    var distanceUnit: DistanceUnitEnum get() = DistanceUnit.value; set(value) {DistanceUnit.value = value}
+    var chargePlotDimension: PlotDimensionX get() = PlotDimensionX.valueOf(ChargePlotDimension.value); set(value) {ChargePlotDimension.value = value.name}
+    var distanceUnit: DistanceUnitEnum get() = DistanceUnitEnum.valueOf(DistanceUnit.value); set(value) {DistanceUnit.value = value.name}
     var mainPrimaryDimensionRestriction : Int get() = MainPrimaryDimensionRestriction.value; set(value) {MainPrimaryDimensionRestriction.value = value}
     var secondaryConsumptionDimension: Int get() = SecondaryConsumptionDimension.value; set(value) {SecondaryConsumptionDimension.value = value}
     var mainViewTrip: Int get() = MainViewTrip.value; set(value) {MainViewTrip.value = value}
@@ -118,7 +119,7 @@ class AppPreferences(
 
     var phoneNotification: Boolean get() = PhoneNotification.value; set(value) {PhoneNotification.value = value}
     var colorTheme: Int get() = ColorTheme.value; set(value) {ColorTheme.value = value}
-
+    var carComposeTheme: UiType get() = UiType.valueOf(CarComposeTheme.value); set(value) {CarComposeTheme.value = value.name}
     // var carAppSelectedRealTimeData: Int get() = CarAppSelectedRealTimeData.value; set(value) {CarAppSelectedRealTimeData.value = value}
     var carAppRealTimeData: Boolean get() = CarAppRealTimeData.value; set(value) {CarAppRealTimeData.value = value}
 
