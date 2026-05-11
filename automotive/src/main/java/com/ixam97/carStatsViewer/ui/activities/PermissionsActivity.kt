@@ -2,10 +2,8 @@ package com.ixam97.carStatsViewer.ui.activities
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.car.Car
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
@@ -102,7 +100,7 @@ class PermissionsActivity: Activity() {
     private fun showBackgroundLocationPermissionDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.permissions_dialog_title))
-            .setMessage(getString(R.string.permissions_dialog_background_location_text))
+            .setMessage(getString(R.string.permissions_dialog_background_location_text_0_29))
             .setCancelable(false)
             .setPositiveButton(getString(R.string.permissions_dialog_grant_singular)) { dialog, id ->
                 requestPermissions(arrayOf(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION), 0)

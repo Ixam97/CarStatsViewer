@@ -50,7 +50,7 @@ class BackgroundLocationPermissionScreen(
     val session: CarStatsViewerSession
 ) : Screen(carContext) {
     override fun onGetTemplate(): Template {
-        return LongMessageTemplate.Builder(carContext.getString(R.string.permissions_dialog_background_location_text)).apply {
+        return LongMessageTemplate.Builder(carContext.getString(R.string.permissions_dialog_background_location_text_0_29)).apply {
             setTitle(carContext.getString(R.string.car_app_permissions_title))
             setHeaderAction(Action.APP_ICON)
             addAction(Action.Builder().apply {
