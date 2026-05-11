@@ -12,13 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Remove
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -253,13 +253,14 @@ object Mapbox: MapboxInterface {
                             gestures.rotateEnabled = false
                         }
 
-                        tripCameraPosition = mapView.mapboxMap.awaitCameraForCoordinates(
-                            coordinates = tripPoints,
-                            camera = cameraOptions {  },
-                            coordinatesPadding =  EdgeInsets(50.0, 50.0, 50.0, 50.0),
-                            maxZoom = 14.0
-                        )
-
+                        if (tripPoints.isNotEmpty()) {
+                            tripCameraPosition = mapView.mapboxMap.awaitCameraForCoordinates(
+                                coordinates = tripPoints,
+                                camera = cameraOptions {  },
+                                coordinatesPadding =  EdgeInsets(50.0, 50.0, 50.0, 50.0),
+                                maxZoom = 14.0
+                            )
+                        }
                         mapViewPortState.easeTo(tripCameraPosition)
                     }
 
@@ -277,6 +278,24 @@ object Mapbox: MapboxInterface {
                         DestinationLocationMarker(tripPoints.last())
                     }
                 }
+
+                if (trip != null && tripPoints.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(100.dp)
+                                .background(Color(0xFF141516))
+                                .padding(20.dp),
+                            text = "Trip contains no Location Data!",
+                            color = Color.White,
+                            fontSize = 30.sp
+                        )
+                    }
+                }
+
             } else {
                 Column (
                     modifier = Modifier.fillMaxSize(),

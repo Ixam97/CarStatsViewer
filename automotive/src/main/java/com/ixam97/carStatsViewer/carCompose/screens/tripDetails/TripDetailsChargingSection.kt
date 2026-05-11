@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.carCompose.screens.tripDetails
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -7,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import de.ixam97.carcompose.components.controls.CarRow
@@ -28,6 +30,9 @@ fun TripDetailsChargingSection(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
+                    modifier = Modifier.clickable(
+                        enabled = BuildConfig.FLAVOR_version == "dev"
+                    ) { viewModel.setSelectedChargingDetails(0) },
                     text = stringResource(R.string.summary_no_charging_sessions),
                     style = CarTheme.carTypography.rowTitle
                 )

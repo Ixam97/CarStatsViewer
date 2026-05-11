@@ -31,7 +31,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.CarComposeIcon
+import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
 import com.ixam97.carStatsViewer.map.MapboxInterface
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import de.ixam97.carcompose.components.controls.CarButton
@@ -62,14 +64,23 @@ fun TripDetailsChargingDetailsOverlay(
             tripDetailsState.chargingSessionsDetails.firstOrNull { it.chargingSession.charging_session_id == tripDetailsState.selectedChargingSessionDetailsId }.let { chargingSessionDetails ->
 
                 if (chargingSessionDetails != null) {
-                    TripDetailsChargingDetailsOverlayContent(viewModel, chargingSessionDetails)
+                    TripDetailsChargingDetailsOverlayContent(
+                        modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp),
+                        viewModel = viewModel,
+                        chargingSessionDetails =  chargingSessionDetails
+                    )
                 } else {
                     Box(
-                        modifier = Modifier.fillMaxSize().padding(100.dp),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp)
+                            .padding(CarTheme.carDimensions.defaultHorizontalPadding)
+                            .background(CarTheme.carColors.primarySurface)
+                            .padding(100.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Charging session with ID ${tripDetailsState.selectedChargingSessionDetailsId} could not be found int this trip!",
+                            text = "Charging session with ID ${tripDetailsState.selectedChargingSessionDetailsId} could not be found in this trip!",
                             style = CarTheme.carTypography.rowTitle
                         )
                     }
@@ -81,6 +92,7 @@ fun TripDetailsChargingDetailsOverlay(
 
 @Composable
 private fun TripDetailsChargingDetailsOverlayContent(
+    modifier: Modifier = Modifier,
     viewModel: TripDetailsViewModel,
     chargingSessionDetails: ChargingSessionDetails
 ) {
@@ -104,7 +116,7 @@ private fun TripDetailsChargingDetailsOverlayContent(
     } else stringResource(R.string.summary_soc_unavailable)
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxHeight()
     ) {
         Row(

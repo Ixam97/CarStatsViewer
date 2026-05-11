@@ -1,12 +1,9 @@
 package com.ixam97.carStatsViewer.carCompose.theme
 
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import de.ixam97.carcompose.theme.CarThemeConfig
-import com.ixam97.carStatsViewer.R
 import de.ixam97.carcompose.components.controls.CarRadioButtonColors
 import de.ixam97.carcompose.components.controls.CarSwitchColors
 import de.ixam97.carcompose.theme.CarColors
@@ -27,66 +24,61 @@ val clubViolet = Color(0xFF77347B)
 val clubVioletMedium = Color(0xFF4F1852)
 val clubVioletDark = Color(0xFF2A1037)
 
-val clubAccentContainerBrush
-    @Composable get() = buildGradientBrush(listOf(
-        clubBlueMedium,
-        clubVioletMedium
-    ))
+val clubNightDarker = Color(0xff05080C)
+val clubNight = Color(0xff0a0f14)
+val clubNightVariant = Color(0xff111922)
 
-val clubPassiveAccentContainerBrush
-    @Composable get() = buildGradientBrush(listOf(
-        colorResource(R.color.club_blue_dark),
-        colorResource(R.color.club_violet_dark)
-    ))
+val clubAccentContainerBrush= buildGradientBrush(listOf(
+    clubBlueMedium,
+    clubVioletMedium
+))
 
-val clubPrimaryDividerBrush
-    @Composable get() = buildGradientBrush(listOf(
-        colorResource(R.color.club_violet_dark),
-        colorResource(R.color.club_violet),
-        colorResource(R.color.club_blue),
-        colorResource(R.color.club_blue_dark),
-    ))
+val clubPrimaryDividerBrush = buildGradientBrush(listOf(
+    clubVioletDark,
+    clubViolet,
+    clubBlue,
+    clubBlueDark
+))
 
-val ClubThemeConfig: CarThemeConfig
-    @Composable get() = CarThemeConfig(
-        carTypography = GenericCarTypography,
-        carDimensions = GenericCarDimensions,
-        carUiProperties = GenericCarUiProperties.copy(
-            backButtonIconStyle = CarNavIconStyle.ArrowBackwards,
-            listSectionBackground = true
+val ClubThemeConfig = CarThemeConfig(
+    carTypography = GenericCarTypography,
+    carDimensions = GenericCarDimensions,
+    carUiProperties = GenericCarUiProperties.copy(
+        backButtonIconStyle = CarNavIconStyle.ArrowBackwards,
+        listSectionBackground = true
+    ),
+    carDarkColors = CarColors(
+        accent = clubBlue,
+        accentContainer = clubBlue,
+        accentContainerBrush = clubAccentContainerBrush,
+        background = Color.Black,
+        primarySurface = clubNightVariant,// Color(0xFF2C2C2C),
+        secondarySurface = clubNightVariant, //Color(0xFF3F3F3F),
+        onBackground = Color.White,
+        onSurface = Color.White,
+        onAccentContainer = Color.White,
+        primaryDivider = clubPrimaryDividerBrush,
+        secondaryDivider = buildSolidBrush(Color(0xFF2C2C2C)),
+        listSectionBackground = buildSolidBrush(clubNight.copy(alpha = 0.85f)),
+        switchColors = CarSwitchColors(
+            border = Color.Transparent,
+            track = buildSolidBrush(clubNightVariant),
+            onTrack = Color.White,
+            trackChecked = buildSolidBrush(clubNightVariant),
+            onTrackChecked = Color.White,
+            thumb = clubAccentContainerBrush,
+            onThumb = Color.White
         ),
-        carDarkColors = CarColors(
-            accent = colorResource(R.color.club_blue),
-            accentContainer = colorResource(R.color.club_blue),
-            accentContainerBrush = clubAccentContainerBrush,
-            background = Color.Black,
-            primarySurface = colorResource(R.color.club_night_variant),// Color(0xFF2C2C2C),
-            secondarySurface = colorResource(R.color.club_night_variant), //Color(0xFF3F3F3F),
-            onBackground = Color.White,
-            onSurface = Color.White,
-            onAccentContainer = Color.White,
-            primaryDivider = clubPrimaryDividerBrush,
-            secondaryDivider = buildSolidBrush(Color(0xFF2C2C2C)),
-            listSectionBackground = buildSolidBrush(colorResource(R.color.club_night).copy(alpha = 0.85f)),
-            switchColors = CarSwitchColors(
-                border = Color.Transparent,
-                track = buildSolidBrush(colorResource(R.color.club_night_variant)),
-                onTrack = Color.White,
-                trackChecked = buildSolidBrush(colorResource(R.color.club_night_variant)),
-                onTrackChecked = Color.White,
-                thumb = clubAccentContainerBrush,
-                onThumb = Color.White
-            ),
-            radioButtonColors = CarRadioButtonColors(
-                background = colorResource(R.color.club_night_variant),
-                borderColor = colorResource(R.color.club_night_variant),
-                selectedBorderColor = Color.Transparent,
-                selectedBackground = colorResource(R.color.club_blue),
-                selectorColor = colorResource(R.color.club_night_darker)
-            )
-        ),
-        carShapes = CarShapes(
-            defaultOuterCornerSize = CornerSize(25.dp),
-            defaultInnerCornerSize = CornerSize(5.dp)
+        radioButtonColors = CarRadioButtonColors(
+            background = clubNightVariant,
+            borderColor = clubNightVariant,
+            selectedBorderColor = Color.Transparent,
+            selectedBackground = clubBlue,
+            selectorColor = clubNightDarker
         )
+    ),
+    carShapes = CarShapes(
+        defaultOuterCornerSize = CornerSize(25.dp),
+        defaultInnerCornerSize = CornerSize(5.dp)
     )
+)

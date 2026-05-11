@@ -24,7 +24,7 @@ enum class VehicleModel {
 }
 
 enum class UiType {
-    Classic, Modern, Club, Generic, Volvo
+    Auto, Classic, Modern, Club, Generic, Volvo
 }
 
 enum class UiBrightnessMode {
@@ -57,7 +57,7 @@ val vehicleUiTypeMap = mapOf(
 
 data class GlobalState(
     val vehicleModel: VehicleModel = getVehicleModel(),
-    val uiType: UiType = vehicleUiTypeMap.getValue(vehicleModel),
+    val uiType: UiType = if (CarStatsViewer.appPreferences.carComposeTheme == UiType.Auto) vehicleUiTypeMap.getValue(vehicleModel) else CarStatsViewer.appPreferences.carComposeTheme,
     val devModeEnabled: Boolean = BuildConfig.FLAVOR_version == "dev",
     val isLoading: Boolean = false,
     val uiSupportsBrightMode: Boolean = false,
@@ -84,7 +84,8 @@ class CarComposeGlobalViewModel: ViewModel() {
     }
 
     fun setUiType(uiType: UiType?) {
-        _globalState.update { it.copy(uiType = uiType?:UiType.Generic) }
+        CarStatsViewer.appPreferences.carComposeTheme = uiType?: UiType.Auto
+        _globalState.update { it.copy(uiType = uiType?:vehicleUiTypeMap.getValue(it.vehicleModel)) }
     }
 
     fun setLoading(isLoading: Boolean) {
