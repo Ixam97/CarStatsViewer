@@ -18,9 +18,7 @@ import com.ixam97.carStatsViewer.carApp.TripHistoryScreen
 import com.ixam97.carStatsViewer.carApp.utils.launchActivity
 import com.ixam97.carStatsViewer.ui.activities.HistoryActivity
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
-
 import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
-import com.ixam97.carStatsViewer.compose.ComposeTripDetailsActivity
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 
 @OptIn(ExperimentalCarApi::class)
@@ -74,9 +72,9 @@ internal fun TabsScreen.miscList() = ListTemplate.Builder().apply {
             setTitle("Debug")
             setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_debug)).build())
             setBrowsable(true)
-            setOnClickListener {
+            setOnClickListener (ParkedOnlyOnClickListener.create {
                 launchActivity(debugActivityIntent)
-            }
+            })
         }.build())
         addItem(Row.Builder().apply{
             setTitle("Open dashboard in map view")

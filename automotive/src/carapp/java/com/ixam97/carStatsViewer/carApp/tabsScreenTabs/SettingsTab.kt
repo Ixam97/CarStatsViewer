@@ -7,6 +7,7 @@ import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
+import androidx.car.app.model.ParkedOnlyOnClickListener
 import androidx.car.app.model.Row
 import androidx.car.app.model.SectionedItemList
 import androidx.car.app.model.Toggle
@@ -66,9 +67,9 @@ internal fun TabsScreen.settingsList() = ListTemplate.Builder().apply {
             setTitle(carContext.getString(R.string.car_app_advanced_settings))
             setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_settings)).build())
             setBrowsable(true)
-            setOnClickListener {
+            setOnClickListener(ParkedOnlyOnClickListener.create {
                 launchActivity(carComposeActivityIntent)
-            }
+            })
         }.build())
     }.build()
 

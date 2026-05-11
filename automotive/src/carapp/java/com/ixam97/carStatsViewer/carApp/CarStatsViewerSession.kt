@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.carApp
 
-import android.car.Car
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.annotation.OptIn
@@ -18,19 +17,11 @@ import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKe
 import com.ixam97.carStatsViewer.carCompose.toContentKey
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.utils.throttle
+import com.ixam97.carStatsViewer.utils.unGrantedPermissions
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCarApi::class)
 class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
-
-    val permissions = listOf(
-        Car.PERMISSION_ENERGY,
-        Car.PERMISSION_SPEED,
-        android.Manifest.permission.ACCESS_FINE_LOCATION,
-        android.Manifest.permission.ACCESS_COARSE_LOCATION
-    )
-
-    var isCharging = false
 
     lateinit var carDataSurfaceCallback: CarDataSurfaceCallback
 
@@ -70,7 +61,7 @@ class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
             screens.add(BackgroundLocationPermissionScreen(carContext, this))
         }
 
-        val neededPermissions = permissions.filter { carContext.checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }
+        val neededPermissions = unGrantedPermissions(carContext)
         if (neededPermissions.isNotEmpty()) {
             screens.add(PermissionScreen(carContext, this))
         } else {
