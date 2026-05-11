@@ -12,23 +12,13 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.databinding.ActivityPermissionsBinding
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.unGrantedPermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
 class PermissionsActivity: Activity() {
-    companion object {
-        val PERMISSIONS_BY_SDK = arrayOf<Pair<Int, String>>(
-            Build.VERSION_CODES.BASE to Car.PERMISSION_ENERGY,
-            Build.VERSION_CODES.BASE to Car.PERMISSION_SPEED,
-            Build.VERSION_CODES.BASE to android.Manifest.permission.ACCESS_FINE_LOCATION,
-            Build.VERSION_CODES.BASE to android.Manifest.permission.ACCESS_COARSE_LOCATION,
-            Build.VERSION_CODES.BASE to android.Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-            Build.VERSION_CODES.TIRAMISU to android.Manifest.permission.POST_NOTIFICATIONS
-        )
-    }
-
     private lateinit var binding: ActivityPermissionsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,9 +55,9 @@ class PermissionsActivity: Activity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        InAppLogger.d("onRequestPermissionResult -> ${unGrantedPermissions().toString()}")
+        InAppLogger.d("onRequestPermissionResult -> ${unGrantedPermissions(this).toString()}")
 
-        if (unGrantedPermissions().isEmpty() && checkSelfPermission(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (unGrantedPermissions(this).isEmpty() && checkSelfPermission(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             finish()
             startActivity(Intent(applicationContext, MainActivity::class.java))
         } else if (checkSelfPermission(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -79,7 +69,7 @@ class PermissionsActivity: Activity() {
 
     private fun checkPermissions(): Boolean {
         InAppLogger.i("Checking permissions...")
-        val unGrantedPermissions = unGrantedPermissions()
+        val unGrantedPermissions = unGrantedPermissions(this)
         if (unGrantedPermissions.isNotEmpty()) {
             InAppLogger.i("Requesting missing Permissions...")
             return false
@@ -92,21 +82,13 @@ class PermissionsActivity: Activity() {
         return true
     }
 
-    private fun unGrantedPermissions(): List<String> {
-        return PERMISSIONS_BY_SDK.filter {
-            it.first <= Build.VERSION.SDK_INT
-                    && checkSelfPermission(it.second) != PackageManager.PERMISSION_GRANTED
-                    && it.second != android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
-        }.map { it.second }
-    }
-
     private fun showBasicPermissionsDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.permissions_dialog_title))
             .setMessage(getString(R.string.permissions_dialog_text))
             .setCancelable(false)
             .setPositiveButton(getString(R.string.permissions_dialog_grant)) { dialog, id ->
-                val unGrantedPermissions = unGrantedPermissions()
+                val unGrantedPermissions = unGrantedPermissions(this)
                 requestPermissions(unGrantedPermissions.toTypedArray(), 0)
 
             }
