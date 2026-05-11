@@ -11,9 +11,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ixam97.carStatsViewer.BuildConfig
@@ -38,7 +40,8 @@ object SettingsAboutScreenNavKey: MainSettingsNavKey
 fun SettingsAboutScreen(
     backStack: NavBackStack<NavKey>,
     onBack: () -> Unit,
-    globalViewModel: CarComposeGlobalViewModel
+    globalViewModel: CarComposeGlobalViewModel,
+    viewModel: SettingsViewModel = viewModel()
 ) {
     CarPaneLayout(
         headerTitle = stringResource(R.string.about_title),
@@ -47,7 +50,8 @@ fun SettingsAboutScreen(
         SettingsAboutContent(
             modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp),
             backStack = backStack,
-            globalViewModel = globalViewModel
+            globalViewModel = globalViewModel,
+            viewModel = viewModel,
         )
     }
 }
@@ -56,10 +60,13 @@ fun SettingsAboutScreen(
 fun SettingsAboutContent(
     modifier: Modifier = Modifier,
     backStack: NavBackStack<NavKey>,
-    globalViewModel: CarComposeGlobalViewModel
+    globalViewModel: CarComposeGlobalViewModel,
+    viewModel: SettingsViewModel,
 ) {
     val globalState by globalViewModel.globalState.collectAsState()
     var versionTapCounter by remember { mutableStateOf(0) }
+
+    val context = LocalContext.current
 
     CarColumn(
         modifier = modifier
@@ -105,6 +112,7 @@ fun SettingsAboutContent(
                             )
                         }",
                         browsable = true,
+                        onBrowse = { viewModel.openGitHubLink(context) },
                         browsableType = CarRowBrowsableType.External
                     )
                 },
@@ -126,6 +134,7 @@ fun SettingsAboutContent(
                         title = "GitHub Issues",
                         description = stringResource(R.string.about_github_issues_description),
                         browsable = true,
+                        onBrowse = { viewModel.openGitHubIssuesLink(context) },
                         browsableType = CarRowBrowsableType.External
                     )
                 },
@@ -134,6 +143,7 @@ fun SettingsAboutContent(
                         title = "Polestar Club",
                         description = stringResource(R.string.about_polestar_fans_description),
                         browsable = true,
+                        onBrowse = { viewModel.openClubLink(context) },
                         browsableType = CarRowBrowsableType.External
                     )
                 },
@@ -142,6 +152,7 @@ fun SettingsAboutContent(
                         title = "Polestar Forum",
                         description = stringResource(R.string.about_polestar_forum_description),
                         browsable = true,
+                        onBrowse = { viewModel.openForumsLink(context) },
                         browsableType = CarRowBrowsableType.External
                     )
                 },
@@ -162,6 +173,7 @@ fun SettingsAboutContent(
                     CarRow(
                         title = stringResource(R.string.settings_privacy),
                         browsable = true,
+                        onBrowse = { viewModel.openPrivacyLink(context) },
                         browsableType = CarRowBrowsableType.External
                     )
                 }

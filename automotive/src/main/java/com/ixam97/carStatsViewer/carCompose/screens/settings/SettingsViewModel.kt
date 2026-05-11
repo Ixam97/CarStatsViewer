@@ -2,6 +2,8 @@ package com.ixam97.carStatsViewer.carCompose.screens.settings
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -193,6 +195,42 @@ class SettingsViewModel: ViewModel() {
             validExportMailAddress = validAddress,
             exportEnabled = appPreferences.dataExportEnabled
         ) }
+    }
+    //endregion
+
+    //region About
+    fun openGitHubLink(context: Context) {
+        val url = context.getString(R.string.readme_link)
+        openLink(context, url)
+    }
+
+    fun openGitHubIssuesLink(context: Context) {
+        val url = context.getString(R.string.github_issues_link)
+        openLink(context, url)
+    }
+
+    fun openClubLink(context: Context) {
+        val url = context.getString(R.string.polestar_fans_link)
+        openLink(context, url)
+    }
+
+    fun openForumsLink(context: Context) {
+        val url = context.getString(R.string.polestar_forum_link)
+        openLink(context, url)
+    }
+
+    fun openPrivacyLink(context: Context) {
+        val url = context.getString(R.string.privacy_policy_link)
+        openLink(context, url)
+    }
+
+    private fun openLink(context: Context, url: String) {
+        context.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(url)
+            )
+        )
     }
     //endregion
 

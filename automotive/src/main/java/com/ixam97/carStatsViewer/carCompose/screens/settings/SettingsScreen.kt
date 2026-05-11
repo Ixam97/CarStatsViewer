@@ -147,7 +147,7 @@ fun SettingsScreen(
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                SettingsAboutContent(Modifier, backStack, globalViewModel)
+                SettingsAboutContent(Modifier, backStack, globalViewModel, viewModel)
             }
             AnimatedVisibility(
                 visible = key == SettingsTabKeys.Dev,
@@ -233,18 +233,9 @@ fun CarComposeSettingsContent(
             }
         )
 
-        if (globalState.devModeEnabled) settingsListItems.add(CarListItem {
-            CarRow(
-                leadingContent = { CarComposeIcon(Icons.Outlined.DataObject) },
-                title = stringResource(R.string.settings_dev_settings),
-                browsable = true,
-                onBrowse = { backStack.add(SettingsDevScreenNavKey) }
-            )
-        })
-
         if (BuildConfig.FLAVOR_aaos == "carapp") {
             settingsListItems.add(
-                index = 0,
+                index = settingsListItems.size,
                 element = CarListItem {
                     CarRow(
                         leadingContent = { CarComposeIcon(R.drawable.ic_carcompose_history) },
@@ -255,6 +246,15 @@ fun CarComposeSettingsContent(
                 }
             )
         }
+
+        if (globalState.devModeEnabled) settingsListItems.add(CarListItem {
+            CarRow(
+                leadingContent = { CarComposeIcon(Icons.Outlined.DataObject) },
+                title = stringResource(R.string.settings_dev_settings),
+                browsable = true,
+                onBrowse = { backStack.add(SettingsDevScreenNavKey) }
+            )
+        })
 
         CarListSection(
             listItems = settingsListItems
