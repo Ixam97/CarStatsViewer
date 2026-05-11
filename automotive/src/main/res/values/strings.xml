@@ -171,7 +171,8 @@
         <item>[V](0.28.0)</item>
         -->
         <!--<item>Implemented Email export of charging sessions, formatted as csv file.</item>-->
-        <item>Play Edition: Implemented prototype of new settings Activity.</item>
+        <item>WIP: Export of driving and charging sessions: The necessary groundwork for exporting is being implemented in the background and will be available soon.</item>
+        <item>Play Edition: Migrating to a single activity architecture. This makes the settings UI more flexible and allows for more detailed trip details.</item>
         <item>[V](0.29.0)</item>
     </string-array>
 
