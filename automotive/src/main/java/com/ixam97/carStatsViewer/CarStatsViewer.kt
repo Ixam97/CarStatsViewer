@@ -77,6 +77,7 @@ class CarStatsViewer : Application() {
         var disabledAlpha by Delegates.notNull<Float>()
 
         var foregroundServiceStarted = false
+        var foregroundServicePermissionsFailure = false
         var restartNotificationDismissed = false
         var restartNotificationShown = false
         var restartReason: String? = null

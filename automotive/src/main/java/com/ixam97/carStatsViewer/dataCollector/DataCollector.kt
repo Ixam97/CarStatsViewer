@@ -28,6 +28,7 @@ import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.ScreenshotService
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.WatchdogState
+import com.ixam97.carStatsViewer.utils.hasVehiclePermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -112,11 +113,7 @@ class DataCollector: Service() {
         }
 
         serviceScope.launch {
-            withContext(Dispatchers.IO) { dataProcessor.checkTrips() }
-            readInitialStaticProperties()
-            setupDynamicCarProperties()
-
-            carPropertiesInitialized = true
+            if (!initPropertiesWithPermissionCheck()) { stopSelf() }
         }
 
         /** Setup the live data APIs */
@@ -195,8 +192,26 @@ class DataCollector: Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        InAppLogger.w("[NEO] Service stopped")
         serviceScope.cancel()
         carPropertiesClient.disconnect()
+    }
+
+    /**
+     * Initialize the car properties with a check for required permissions.
+     */
+    private suspend fun initPropertiesWithPermissionCheck(): Boolean {
+        if (hasVehiclePermissions()) {
+            withContext(Dispatchers.IO) { dataProcessor.checkTrips() }
+            readInitialStaticProperties()
+            setupDynamicCarProperties()
+            carPropertiesInitialized = true
+            return true
+        } else {
+            InAppLogger.e("[NEO] Missing Vehicle Data Permissions!")
+            CarStatsViewer.foregroundServicePermissionsFailure = true
+            return false
+        }
     }
 
     /**

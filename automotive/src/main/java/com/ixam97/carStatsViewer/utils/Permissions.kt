@@ -25,3 +25,30 @@ fun unGrantedPermissions(context: Context): List<String> {
                 && it.second != android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
     }.map { it.second }
 }
+
+fun Context.hasLocationPermission(): Boolean {
+    return checkSelfPermission(
+        this,
+        android.Manifest.permission.ACCESS_COARSE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(
+        this,
+        android.Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+}
+
+fun Context.hasVehiclePermissions() : Boolean {
+    return checkSelfPermission(
+        this,
+        Car.PERMISSION_ENERGY
+    ) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(
+        this,
+        Car.PERMISSION_SPEED
+    ) == PackageManager.PERMISSION_GRANTED
+}
+
+fun Context.hasBackgroundLocationPermission() : Boolean {
+    return checkSelfPermission(
+        this,
+        android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+}

@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat.startForegroundService
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.ui.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.hasBackgroundLocationPermission
+import com.ixam97.carStatsViewer.utils.hasVehiclePermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -32,6 +34,20 @@ class AutoStartReceiver: BroadcastReceiver() {
         return false
     }
 
+    private fun launchForegroundService(intent: Intent?): Boolean {
+        try {
+            InAppLogger.i("[ASR] Attempting to start Service on ${intent?.action}")
+            if (!CarStatsViewer.appContext.hasBackgroundLocationPermission()) throw Exception("Background Location Permission missing")
+            if (!CarStatsViewer.appContext.hasVehiclePermissions()) throw Exception("Vehicle Data Permission missing")
+            startForegroundService(CarStatsViewer.appContext, Intent(CarStatsViewer.appContext, DataCollector::class.java))
+            return true
+        } catch (e: Exception) {
+            InAppLogger.e("[ASR] Failed to directly start foreground service! Probably missing background location permission or not supported by OS version!")
+            InAppLogger.e(e.stackTraceToString())
+            return false
+        }
+    }
+
     override fun onReceive(context: Context, intent: Intent?) {
 
         Log.d("ASR", "Action: ${intent?.action}")
@@ -49,14 +65,7 @@ class AutoStartReceiver: BroadcastReceiver() {
         if (((intent?.action?: "") == Intent.ACTION_BOOT_COMPLETED
                     || (intent?.action?: "") == Intent.ACTION_MY_PACKAGE_REPLACED)
             && !isServiceRunning(DataCollector::class.java.name)) {
-            try {
-                InAppLogger.i("[ASR] Attempting to start Service on ${intent?.action}")
-                startForegroundService(CarStatsViewer.appContext, Intent(CarStatsViewer.appContext, DataCollector::class.java))
-
-            } catch (e: Exception) {
-                InAppLogger.e("[ASR] Failed to directly start foreground service! Probably missing background location permission or not supported by OS version!")
-                InAppLogger.e(e.stackTraceToString())
-            }
+            launchForegroundService(intent)
         }
 
         val reasonMap = mapOf(
@@ -71,6 +80,8 @@ class AutoStartReceiver: BroadcastReceiver() {
 
         if (CarStatsViewer.restartNotificationDismissed) return
 
+        if (CarStatsViewer.foregroundServicePermissionsFailure) return
+
         CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 9_500, extendedLogging = true)
 
         // if (CarStatsViewer.foregroundServiceStarted) return
@@ -78,6 +89,8 @@ class AutoStartReceiver: BroadcastReceiver() {
         if (CarStatsViewer.restartNotificationShown) return
 
         InAppLogger.d("[ASR] Auto Star Receiver triggered")
+
+        launchForegroundService(intent)
 
         intent?.let {
             InAppLogger.d("[ASR] ${intent.toString()} ${intent.extras?.keySet().let { key ->
@@ -152,6 +165,28 @@ class AutoStartReceiver: BroadcastReceiver() {
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val missingPermissionsNotificationBuilder = Notification.Builder(
+            context.applicationContext,
+            CarStatsViewer.FOREGROUND_CHANNEL_ID
+        )
+            .setSmallIcon(R.mipmap.ic_launcher_notification)
+            .setContentTitle("Missing required Permissions!")
+            .setContentText("To start recording Trips, open the App and grant the requested permissions.")
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    context.applicationContext,
+                    0,
+                    Intent(
+                        context.applicationContext,
+                        if (BuildConfig.FLAVOR_aaos != "carapp")
+                            PermissionsActivity::class.java
+                        else
+                            CarAppActivity::class.java
+                    ),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+            )
+
         val startupNotificationBuilder = Notification.Builder(
             context.applicationContext,
             CarStatsViewer.RESTART_CHANNEL_ID
@@ -191,22 +226,38 @@ class AutoStartReceiver: BroadcastReceiver() {
              */
         }
 
-        // Notification needs to be of CATEGORY_CALL to be displayed as a heads up notification in AAOS.
-        startupNotificationBuilder.setCategory(Notification.CATEGORY_CALL)
+        val notificationBuilder = if (context.hasVehiclePermissions()) startupNotificationBuilder
+        else missingPermissionsNotificationBuilder
 
-        CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
-        CarStatsViewer.restartNotificationShown = true
+
+        // Notification needs to be of CATEGORY_CALL to be displayed as a heads up notification in AAOS.
+        notificationBuilder.setCategory(Notification.CATEGORY_CALL)
+
         CoroutineScope(Dispatchers.Default).launch {
-        //     while (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed) {
-        //         CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
-        //         delay(5_000)
-        //     }
-            // The heads up notification disappears after 8 seconds and is not visible in the
-            // notification center. Update notification without CATEGORY_CALL to keep it visible.
             delay(8_000)
-            startupNotificationBuilder.setCategory(Notification.CATEGORY_STATUS)
-            if (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed)
-                CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
+            if (!isServiceRunning(DataCollector::class.java.name)) {
+                InAppLogger.i("[ASR] Service was not launched yet. Showing restart notification.")
+                CarStatsViewer.notificationManager.notify(
+                    CarStatsViewer.RESTART_NOTIFICATION_ID,
+                    notificationBuilder.build()
+                )
+                CarStatsViewer.restartNotificationShown = true
+                //     while (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed) {
+                //         CarStatsViewer.notificationManager.notify(CarStatsViewer.RESTART_NOTIFICATION_ID, startupNotificationBuilder.build())
+                //         delay(5_000)
+                //     }
+                // The heads up notification disappears after 8 seconds and is not visible in the
+                // notification center. Update notification without CATEGORY_CALL to keep it visible.
+                delay(8_000)
+                notificationBuilder.setCategory(Notification.CATEGORY_STATUS)
+                if (!CarStatsViewer.foregroundServiceStarted && !CarStatsViewer.restartNotificationDismissed)
+                    CarStatsViewer.notificationManager.notify(
+                        CarStatsViewer.RESTART_NOTIFICATION_ID,
+                        notificationBuilder.build()
+                    )
+            } else {
+                InAppLogger.i("[ASR] Service was launched successfully. Skipping restart Notification.")
+            }
         }
     }
 }
