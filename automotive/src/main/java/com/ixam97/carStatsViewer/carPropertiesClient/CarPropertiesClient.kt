@@ -34,7 +34,7 @@ class CarPropertiesClient(
             if (carPropertyValue.propertyId == CarProperties.PERF_VEHICLE_SPEED) {
                 updateProperty(CarProperties.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE)
             }
-            carPropertiesData.update(carPropertyValue)
+            carPropertiesData.update(carPropertyValue, doLog = true)
             propertiesProcessor(carPropertyValue.propertyId)
         }
         override fun onErrorEvent(propertyId: Int, zone: Int) {
@@ -75,7 +75,7 @@ class CarPropertiesClient(
     fun updateProperty(propertyId: Int) {
         // if (emulatorMode && propertyId == CarProperties.ENV_OUTSIDE_TEMPERATURE && debugTemperatureAttempt < 2) return
         carPropertyManager.getProperty<Any>(propertyId, 0)?.let {
-            carPropertiesData.update(it, allowInvalidTimestamps = true)
+            carPropertiesData.update(it, allowInvalidTimestamps = true, doLog = true)
         }
         propertiesProcessor(propertyId)
     }

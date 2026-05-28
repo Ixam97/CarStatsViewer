@@ -218,7 +218,8 @@ class DataProcessor {
 
         when (carProperty) {
             CarProperties.PERF_VEHICLE_SPEED -> speedUpdate()
-            CarProperties.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE -> powerUpdate()
+            // TODO: This is a test
+            // CarProperties.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE -> powerUpdate()
             CarProperties.IGNITION_STATE, CarProperties.EV_CHARGE_PORT_CONNECTED, CarProperties.GEAR_SELECTION -> stateUpdate()
             CarProperties.EV_BATTERY_LEVEL -> stateOfChargeUpdate()
         }
@@ -226,6 +227,7 @@ class DataProcessor {
 
     /** Actions related to changes in speed */
     private fun speedUpdate() {
+        InAppLogger.v("[NEO] SpeedUpdate")
         if (carPropertiesData.CurrentSpeed.isInitialValue) {
             InAppLogger.w("[NEO] Dropped speed value, flagged as initial")
             return
@@ -251,7 +253,8 @@ class DataProcessor {
             //    updateTripDataValues(DrivingState.DRIVE)
 
             /** only relevant in emulator since power is not updated periodically */
-            if (emulatorMode) {
+            // TODO: This is a test
+            if (emulatorMode || true) {
                 val energyDelta = emulatorPowerSign * (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentSpeed.timeDelta / 3.6E12)
                 pointUsedEnergy += energyDelta
                 valueUsedEnergy += energyDelta
@@ -264,6 +267,7 @@ class DataProcessor {
 
     /** Actions related to changes in power draw */
     private fun powerUpdate() {
+        InAppLogger.v("[NEO] PowerUpdate")
         if (emulatorMode) return /** skip if run in emulator, see speedUpdate() */
         if (carPropertiesData.CurrentPower.isInitialValue) {
             InAppLogger.w("[NEO] Dropped power value, flagged as initial")

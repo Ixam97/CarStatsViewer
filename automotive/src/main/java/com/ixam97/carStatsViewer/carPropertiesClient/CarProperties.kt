@@ -14,6 +14,7 @@ object CarProperties {
     const val IGNITION_STATE = VehiclePropertyIds.IGNITION_STATE
     const val ENV_OUTSIDE_TEMPERATURE = VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE
     const val INFO_EV_BATTERY_CAPACITY = VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY
+    const val EV_BATTERY_AVERAGE_TEMPERATURE = VehiclePropertyIds.EV_BATTERY_AVERAGE_TEMPERATURE
 
     // Static Properties
     const val INFO_MODEL = VehiclePropertyIds.INFO_MODEL
@@ -41,7 +42,8 @@ object CarProperties {
         EV_BATTERY_LEVEL
     )
     val optionalDynamicProperties = listOf(
-        ENV_OUTSIDE_TEMPERATURE
+        ENV_OUTSIDE_TEMPERATURE,
+        EV_BATTERY_AVERAGE_TEMPERATURE
     )
 
     val usedStaticProperties = listOf(
@@ -59,6 +61,7 @@ object CarProperties {
         EV_BATTERY_LEVEL to 0f,
         IGNITION_STATE to 0f,
         ENV_OUTSIDE_TEMPERATURE to 0f,
+        EV_BATTERY_AVERAGE_TEMPERATURE to 0f
     )
     fun getNameById(propertyId: Int) = when (propertyId) {
         PERF_VEHICLE_SPEED -> "Speed"
@@ -72,6 +75,7 @@ object CarProperties {
         INFO_MAKE -> "Make"
         INFO_MODEL_YEAR -> "Model year"
         DISTANCE_DISPLAY_UNITS -> "Distance unit"
+        EV_BATTERY_AVERAGE_TEMPERATURE -> "Battery temperature"
         else -> "unused car property $propertyId"
     }
 }
