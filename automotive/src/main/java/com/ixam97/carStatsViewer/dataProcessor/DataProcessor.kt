@@ -227,7 +227,7 @@ class DataProcessor {
 
     /** Actions related to changes in speed */
     private fun speedUpdate() {
-        InAppLogger.v("[NEO] SpeedUpdate")
+        // InAppLogger.v("[NEO] SpeedUpdate")
         if (carPropertiesData.CurrentSpeed.isInitialValue) {
             InAppLogger.w("[NEO] Dropped speed value, flagged as initial")
             return
@@ -239,29 +239,37 @@ class DataProcessor {
             return
         //}
         }
-        if (carPropertiesData.CurrentSpeed.timeDelta > 0 && (realTimeData.drivingState == DrivingState.DRIVE || (realTimeData.drivingState == DrivingState.CHARGE && emulatorMode))) {
+        if (carPropertiesData.CurrentSpeed.timeDelta > 0 && (realTimeData.drivingState == DrivingState.DRIVE || (realTimeData.drivingState == DrivingState.CHARGE /* && emulatorMode */))) {
             // if (!timestampSynchronizer.isSynced()) timestampSynchronizer.sync(System.currentTimeMillis(), carPropertiesData.CurrentSpeed.timestamp)
             val distanceDelta = (carPropertiesData.CurrentSpeed.value as Float).absoluteValue * (carPropertiesData.CurrentSpeed.timeDelta / 1_000_000_000f)
             pointDrivenDistance += distanceDelta
             valueDrivenDistance += distanceDelta
 
-            if (pointDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL)
+            if (pointDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL && realTimeData.drivingState == DrivingState.DRIVE)
                 //updateDrivingDataPoint(timestamp = timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp))
                 updateDrivingDataPoint()
                 // Put this else here to make sure only one of these functions is executed
             // else if (valueDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL / 2)
             //    updateTripDataValues(DrivingState.DRIVE)
 
-            /** only relevant in emulator since power is not updated periodically */
-            // TODO: This is a test
-            if (emulatorMode || true) {
-                val energyDelta = emulatorPowerSign * (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentSpeed.timeDelta / 3.6E12)
-                pointUsedEnergy += energyDelta
-                valueUsedEnergy += energyDelta
+            // TODO: This is a test to make power tracking in Polestar 4 reliable again by always
+            // updating power together with speed, eliminating the standalone power updater.
+            val energyDelta = emulatorPowerSign * (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentSpeed.timeDelta / 3.6E12)
+            pointUsedEnergy += energyDelta
+            valueUsedEnergy += energyDelta
 
-                if (valueUsedEnergy >= 100)
-                    updateTripDataValues(DrivingState.DRIVE)
-            }
+            if (valueUsedEnergy >= 100 && realTimeData.drivingState == DrivingState.DRIVE)
+                updateTripDataValues(DrivingState.DRIVE)
+
+            /** only relevant in emulator since power is not updated periodically */
+//            if (emulatorMode) {
+//                val energyDelta = emulatorPowerSign * (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentSpeed.timeDelta / 3.6E12)
+//                pointUsedEnergy += energyDelta
+//                valueUsedEnergy += energyDelta
+//
+//                if (valueUsedEnergy >= 100)
+//                    updateTripDataValues(DrivingState.DRIVE)
+//            }
         }
     }
 
