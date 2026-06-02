@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.CarComposeIcon
@@ -40,6 +41,7 @@ import de.ixam97.carcompose.components.controls.CarButton
 import de.ixam97.carcompose.components.controls.CarRow
 import de.ixam97.carcompose.components.layout.CarListDivider
 import de.ixam97.carcompose.components.layout.CarPaneLayout
+import de.ixam97.carcompose.components.layout.LocalCarSnackBarState
 import de.ixam97.carcompose.theme.CarTheme
 import java.util.Date
 import kotlin.math.roundToInt
@@ -171,12 +173,18 @@ private fun TripDetailsChargingDetailsOverlayContent(
                     ),
                 verticalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultVerticalPadding)
             ) {
+                val snackBarHostState = LocalCarSnackBarState.current
                 CarButton(
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(max = 70.dp),
-                    onClick = {  },
-                    enabled = false
+                    onClick = {
+                        viewModel.exportChargingSession(
+                            sessionID = chargingSessionDetails.chargingSession.charging_session_id,
+                            snackBarHostState = snackBarHostState
+                        )
+                    },
+                    enabled = CarStatsViewer.appPreferences.dataExportEnabled
                 ) {
                     Icon(
                         modifier = Modifier.size(40.dp),

@@ -49,6 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.theme.CarComposeIcon
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
@@ -61,6 +62,7 @@ import de.ixam97.carcompose.components.layout.CarColumn
 import de.ixam97.carcompose.components.layout.CarListDivider
 import de.ixam97.carcompose.components.layout.CarListItem
 import de.ixam97.carcompose.components.layout.CarListSection
+import de.ixam97.carcompose.components.layout.LocalCarSnackBarState
 import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -225,7 +227,8 @@ private fun TripDetailsConsumptionSectionContent(
             if (!layoutState.collapsedGraph)
                 CompactDataColumn(
                     modifier = Modifier.weight(1f),
-                    drivingSession = drivingSession
+                    drivingSession = drivingSession,
+                    onClick = { layoutStateViewModel.setCollapsedGraph(true) }
                 )
             else
                 Column(
@@ -237,12 +240,16 @@ private fun TripDetailsConsumptionSectionContent(
                         ),
                     verticalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultVerticalPadding)
                 ) {
+                    val snackBarHostState = LocalCarSnackBarState.current
                     CarButton(
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(max = 70.dp),
-                        onClick = {  },
-                        enabled = false
+                        onClick = { viewModel.exportTrip(
+                            sessionID = drivingSession.driving_session_id,
+                            snackBarHostState = snackBarHostState
+                        ) },
+                        enabled = CarStatsViewer.appPreferences.dataExportEnabled
                     ) {
                         Icon(
                             modifier = Modifier.size(40.dp),
@@ -329,7 +336,7 @@ private fun TripDetailsConsumptionSectionContent(
         }
         Box(
             modifier = Modifier
-                .padding(bottom = 15.dp)
+                .padding(bottom = if (layoutState.collapsedGraph) 24.dp else 15.dp)
                 .fillMaxWidth()
                 .height(2.dp)
         ) {
@@ -348,7 +355,7 @@ private fun TripDetailsConsumptionSectionContent(
                     contentAlignment = Alignment.Center
                 ) {
                     Box(Modifier
-                        .height(20.dp)
+                        .height(if (layoutState.collapsedGraph) 48.dp else 20.dp)
                         .fillMaxWidth()
                         .clip(CarTheme.carShapes.buttonShape)
                         .background(CarTheme.carColors.secondarySurfaceBrush)
@@ -357,7 +364,7 @@ private fun TripDetailsConsumptionSectionContent(
                         modifier = Modifier
                             .padding(horizontal = 20.dp)
                             .rotate(if (layoutState.collapsedGraph) 0f else 180f),
-                        painter = painterResource(R.drawable.ic_chevron_up),
+                        painter = painterResource(if (layoutState.collapsedGraph) R.drawable.ic_diagram else R.drawable.ic_chevron_up),
                         contentDescription = null
                     )
                 }
@@ -544,10 +551,13 @@ private fun StandardDataRow(
 @Composable
 private fun CompactDataColumn(
     modifier: Modifier = Modifier,
-    drivingSession: DrivingSession
+    drivingSession: DrivingSession,
+    onClick: () -> Unit
 ) {
     Column(
-        modifier = modifier.padding(vertical = CarTheme.carDimensions.defaultVerticalPadding),
+        modifier = modifier
+            .clickable(onClick = onClick)
+            .padding(vertical = CarTheme.carDimensions.defaultVerticalPadding),
         verticalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultVerticalPadding)
     ) {
         CompactDataRow(

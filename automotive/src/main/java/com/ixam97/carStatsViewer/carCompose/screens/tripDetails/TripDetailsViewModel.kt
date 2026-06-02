@@ -1,13 +1,19 @@
 package com.ixam97.carStatsViewer.carCompose.screens.tripDetails
 
+import androidx.compose.material3.Text
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import com.ixam97.carStatsViewer.database.tripData.DummyTripData
 import com.ixam97.carStatsViewer.map.Mapbox
 import com.ixam97.carStatsViewer.map.MapboxInterface
+import com.ixam97.carStatsViewer.repository.dataExport.DataExportRepository
+import com.ixam97.carStatsViewer.repository.dataExport.DataExportState
+import de.ixam97.carcompose.components.layout.CarSnackBarConfig
+import de.ixam97.carcompose.components.layout.CarSnackBarHostState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -17,6 +23,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class ChargingSessionDetails(
     val chargingSession: ChargingSession,
@@ -49,7 +56,7 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             if (CarStatsViewer.appPreferences.debugDelays) delay(5000)
             delay(500)
-            val session = CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId)
+            val session = if (sessionId.toInt() == -1) DummyTripData.getDummyDrivingSession() else CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId)
             _tripDetailsState.update {
                 it.copy(
                     isLoading = false,
@@ -130,6 +137,83 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
                             MapboxInterface.MapboxLocation(13.848338959636092, 55.42557254430007, 14.5)
                         }
                     ))
+                }
+            }
+        }
+    }
+
+    fun exportTrip(
+        sessionID: Long,
+        snackBarHostState: CarSnackBarHostState
+    ) {
+        val snackBarIdentifier = "TripUploadSnackBar_$sessionID"
+        snackBarHostState.showSnackBar(CarSnackBarConfig(
+            identifier = snackBarIdentifier,
+            content = { Text("Exporting trip ...") },
+            duration = 0,
+            drawableResId = R.drawable.ic_upload,
+        ))
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _tripDetailsState.value.drivingSession.let { drivingSession ->
+                if (drivingSession != null) {
+                    val response = DataExportRepository.exportTripData(drivingSession)
+                    withContext(Dispatchers.Main) {
+                        snackBarHostState.showSnackBar(
+                            config = if (response.state == DataExportState.Success) CarSnackBarConfig(
+                                identifier = snackBarIdentifier,
+                                content = { Text("Trip exported successfully!") },
+                                drawableResId = R.drawable.ic_checkmark,
+                                duration = 3000
+                            ) else CarSnackBarConfig(
+                                identifier = snackBarIdentifier,
+                                content = { Text("Failed to export trip!\n${response.message}") },
+                                drawableResId = R.drawable.ic_error,
+                                isError = true,
+                                duration = 10000,
+                                actionText = "OK",
+                                onAction = { snackBarHostState.cancelSnackBar(snackBarIdentifier) }
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun exportChargingSession(
+        sessionID: Long,
+        snackBarHostState: CarSnackBarHostState
+    ) {
+        val snackBarIdentifier = "ChargingSessionUploadSnackBar_$sessionID"
+        snackBarHostState.showSnackBar(CarSnackBarConfig(
+            identifier = snackBarIdentifier,
+            content = { Text("Exporting charging session ...") },
+            duration = 0,
+            drawableResId = R.drawable.ic_upload,
+        ))
+        viewModelScope.launch(Dispatchers.IO) {
+            _tripDetailsState.value.chargingSessionsDetails.firstOrNull {it.chargingSession.charging_session_id == sessionID}.let { chargingSessionDetails ->
+                if (chargingSessionDetails != null) {
+                    val response = DataExportRepository.exportChargingSessionData(chargingSessionDetails.chargingSession)
+                    withContext(Dispatchers.Main) {
+                        snackBarHostState.showSnackBar(
+                            config = if (response.state == DataExportState.Success) CarSnackBarConfig(
+                                identifier = snackBarIdentifier,
+                                content = { Text("Charging session exported successfully!") },
+                                drawableResId = R.drawable.ic_checkmark,
+                                duration = 3000
+                            ) else CarSnackBarConfig(
+                                identifier = snackBarIdentifier,
+                                content = { Text("Failed to export charging session!\n${response.message}") },
+                                drawableResId = R.drawable.ic_error,
+                                isError = true,
+                                duration = 10000,
+                                actionText = "OK",
+                                onAction = { snackBarHostState.cancelSnackBar(snackBarIdentifier) }
+                            )
+                        )
+                    }
                 }
             }
         }

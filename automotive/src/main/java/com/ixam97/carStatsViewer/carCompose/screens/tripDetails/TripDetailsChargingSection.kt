@@ -40,7 +40,9 @@ fun TripDetailsChargingSection(
         } else {
             CarLazyColumn() {
                 carListSection(
-                    listItems = chargingSessionsDetails.toCarListItems() { viewModel.setSelectedChargingDetails(it)}
+                    listItems = chargingSessionsDetails
+                        .sortedByDescending { it.chargingSession.start_epoch_time }
+                        .toCarListItems() { viewModel.setSelectedChargingDetails(it) }
                 )
             }
         }

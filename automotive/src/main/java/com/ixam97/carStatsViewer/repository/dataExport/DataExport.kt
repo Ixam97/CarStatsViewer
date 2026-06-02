@@ -13,6 +13,14 @@ data class ChargingSessionDataExportBody(
 )
 
 @Serializable
+data class TripDataExportBody(
+    val receiverMailAddress: String,
+    val startTime: Long,
+    val tripDrivePointsCsvData: String,
+    val chargingSessionsData: List<ChargingSessionDataExportBody>
+)
+
+@Serializable
 data class AuthResponse(
     val authorized: String
 )
