@@ -40,7 +40,9 @@ import com.ixam97.carStatsViewer.carCompose.screens.tripDetails.TripDetailsScree
 import com.ixam97.carStatsViewer.carCompose.theme.badRed
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import com.ixam97.carStatsViewer.database.tripData.DummyTripData
 import com.ixam97.carStatsViewer.database.tripData.TripType
+import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import de.ixam97.carcompose.components.controls.CarButton
 import de.ixam97.carcompose.components.controls.CarButtonDefaults
@@ -231,6 +233,15 @@ internal fun TripHistoryList(
     val tripHistoryState by viewModel.tripHistoryState.collectAsState()
     val context = LocalContext.current
 
+    val debugTripListItems = listOf(
+        CarListItem {
+            DrivingSessionRow(
+                drivingSession = DummyTripData.getDummyDrivingSession(),
+                deleteMode = tripHistoryState.deleteMode
+            ) { backStack.add(TripDetailsScreenNavKey(-1)) }
+        }
+    )
+
     val currentTripsListItems = when {
         tripHistoryState.isLoadingCurrentTrips && tripHistoryState.currentTrips.isEmpty() -> listOf(CarListItem { LoadingRow() })
         tripHistoryState.currentTrips.isNotEmpty() -> tripHistoryState.currentTrips
@@ -279,6 +290,12 @@ internal fun TripHistoryList(
             .onVisibilityChanged { if (it) viewModel.reloadTrips() }
         // TODO: Make sure the list updates if a trip reset appears while on this screen
     ) {
+        if (emulatorMode) {
+            carListSection(
+                sectionTitle = "Debug",
+                listItems = debugTripListItems
+            )
+        }
         carListSection(
             sectionTitle = currentTripsTitle,
             listItems = currentTripsListItems

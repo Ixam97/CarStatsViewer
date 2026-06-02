@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="48px"
-    android:height="48px"
+    android:width="60dp"
+    android:height="60dp"
     android:viewportWidth="960"
     android:viewportHeight="960">
     <group>
@@ -22,6 +22,5 @@
         <path
             android:fillColor="@android:color/white"
             android:pathData="M320,757L320,197L760,477L320,757Z"/>
-
     </group>
 </vector>

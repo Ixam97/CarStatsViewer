@@ -58,7 +58,9 @@ import com.mapbox.maps.extension.compose.annotation.generated.PointAnnotation
 import com.mapbox.maps.extension.compose.annotation.generated.PolylineAnnotationGroup
 import com.mapbox.maps.extension.compose.annotation.rememberIconImage
 import com.mapbox.maps.extension.compose.style.MapStyle
+import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
+import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.gestures.gestures
 import de.ixam97.carcompose.components.controls.CarButtonDefaults
 import kotlinx.coroutines.Dispatchers
@@ -133,7 +135,7 @@ object Mapbox: MapboxInterface {
     ){
         PointAnnotation(point = point) {
             iconImage = marker
-            iconOffset = listOf(0.0, -20.0)
+            iconOffset = listOf(0.0, -21.5)
             interactionsState.onClicked {
                 onClick()
                 true
@@ -213,6 +215,8 @@ object Mapbox: MapboxInterface {
             }
         ) }
 
+        val slowEasingAnimationOptions = mapAnimationOptions { duration(2500) }
+
         val mapViewPortState = rememberMapViewportState { setCameraOptions(tripCameraPosition) }
 
         val lifecycleOwner = LocalLifecycleOwner.current
@@ -220,13 +224,13 @@ object Mapbox: MapboxInterface {
             lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 withContext(Dispatchers.Main.immediate) {
                     actionFlow?.collect { action ->
-                        mapViewPortState.easeTo(when (action) {
+                        mapViewPortState.flyTo(when (action) {
                             MapboxInterface.MapboxAction.Reset -> tripCameraPosition
                             is MapboxInterface.MapboxAction.ZoomToLocation -> cameraOptions {
                                 center(Point.fromLngLat(action.location.lon, action.location.lat))
                                 zoom(action.location.zoom)
                             }
-                        } )
+                        }, slowEasingAnimationOptions )
                     }
                 }
             }
@@ -251,6 +255,20 @@ object Mapbox: MapboxInterface {
                         mapView.apply {
                             gestures.pitchEnabled = false
                             gestures.rotateEnabled = false
+                            try {
+                                attribution.getMapAttributionDelegate().telemetry().apply {
+                                    userTelemetryRequestState = false
+                                    disableTelemetrySession()
+                                }
+                                attribution.getMapAttributionDelegate().geofencingConsent().apply {
+                                    setUserConsent(
+                                        false,
+                                        callback = {}
+                                    )
+                                }
+                            } catch (e: Exception) {
+                                InAppLogger.w("Map Attributions not yet available!\n${e.message}")
+                            }
                         }
 
                         if (tripPoints.isNotEmpty()) {
@@ -261,7 +279,7 @@ object Mapbox: MapboxInterface {
                                 maxZoom = 14.0
                             )
                         }
-                        mapViewPortState.easeTo(tripCameraPosition)
+                        mapViewPortState.flyTo(tripCameraPosition, mapAnimationOptions { duration(0) })
                     }
 
                     if (tripPoints.isNotEmpty()) {
@@ -330,7 +348,7 @@ object Mapbox: MapboxInterface {
                         modifier = Modifier
                             .clip(CarButtonDefaults.shape)
                             .background(CarButtonDefaults.colors.backgroundBrush)
-                            .clickable { mapViewPortState.easeTo(tripCameraPosition) }
+                            .clickable { mapViewPortState.flyTo(tripCameraPosition, slowEasingAnimationOptions) }
                             .padding(10.dp)
                     ) {
                         Icon(
@@ -419,7 +437,7 @@ object Mapbox: MapboxInterface {
                     CarGradientButton (
                         modifier = Modifier.size(65.dp),
                         contentPadding = PaddingValues(0.dp),
-                        onClick = { mapViewPortState.easeTo(tripCameraPosition) }
+                        onClick = { mapViewPortState.flyTo(tripCameraPosition, slowEasingAnimationOptions) }
                     ) {
                         Icon(
                             painterResource(id = R.drawable.ic_distance),
