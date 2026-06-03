@@ -7,6 +7,7 @@ import androidx.navigation3.runtime.NavKey
 import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 import com.ixam97.carStatsViewer.carCompose.LocalSharedViewModelStoreOwner
 import com.ixam97.carStatsViewer.carCompose.SharedViewModelStoreNavEntryDecorator
+import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.toContentKey
 
 fun EntryProviderScope<NavKey>.tripHistoryNavEntryBuilder(
@@ -18,7 +19,10 @@ fun EntryProviderScope<NavKey>.tripHistoryNavEntryBuilder(
         clazzContentKey = { key -> key.toContentKey()}
     ) { TripHistoryScreen(backStack, onBack, globalViewModel) }
     entry<TripHistoryFiltersScreenNavKey>(
-        metadata = SharedViewModelStoreNavEntryDecorator.parent(TripHistoryScreenNavKey.toContentKey())
+        metadata = SharedViewModelStoreNavEntryDecorator.parents(
+            TripHistoryScreenNavKey.toContentKey(),
+            SettingsScreenNavKey.toContentKey()
+        )
     ) {
         val parentViewModel = viewModel(
             modelClass = TripHistoryViewModel::class,

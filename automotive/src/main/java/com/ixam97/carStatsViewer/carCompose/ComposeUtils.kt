@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun deviceIsWideScreen(threshold: Dp = 1300.dp) : Boolean  {
+fun deviceIsWideScreen(threshold: Dp = 1500.dp) : Boolean  {
     val windowDpSize = currentWindowDpSize()
 
     return windowDpSize.width > threshold

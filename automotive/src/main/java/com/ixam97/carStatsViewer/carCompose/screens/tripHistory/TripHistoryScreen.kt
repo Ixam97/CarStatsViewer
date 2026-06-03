@@ -2,7 +2,9 @@ package com.ixam97.carStatsViewer.carCompose.screens.tripHistory
 
 import android.app.AlertDialog
 import android.content.Context
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -141,84 +143,103 @@ fun TripHistoryContent(
 
     val tripHistoryState by viewModel.tripHistoryState.collectAsState()
     val context = LocalContext.current
+    val filtersWidthThreshold = 1500.dp
 
     LaunchedEffect(tripHistoryState.isLoadingPastTrips, tripHistoryState.isLoadingCurrentTrips) {
         globalViewModel.setLoading(tripHistoryState.isLoadingPastTrips || tripHistoryState.isLoadingCurrentTrips)
     }
-
-    Row(
-        modifier = modifier
-    ) {
-        TripHistoryList(
-            modifier = Modifier
-                .width(CarTheme.carDimensions.columnDefaultMaxWidth - 100.dp),
-            backStack =backStack,
-            viewModel = viewModel
-        )
-
-        if (deviceIsWideScreen()) {
-            Spacer(Modifier.weight(1f))
-            Column(
+    BoxWithConstraints() {
+        val availableWidth = maxWidth
+        Row(
+            modifier = modifier
+        ) {
+            TripHistoryList(
                 modifier = Modifier
-                    .widthIn(max = 600.dp)
-                    .fillMaxHeight(),
-                horizontalAlignment = Alignment.End
-            ) {
-                if (!tripHistoryState.deleteMode) {
-                    CarButton(
-                        modifier = Modifier
-                            .padding(
-                                horizontal = CarTheme.carDimensions.defaultHorizontalPadding,
-                                vertical = CarTheme.carDimensions.defaultVerticalPadding
-                            )
-                            .width(400.dp),
-                        onClick = { viewModel.setDeleteMode(true) }
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.ic_carcompose_delete),
-                            null,
-                            Modifier.size(CarTheme.carDimensions.iconButtonSize)
-                        )
-                        Text("Delete Trips")
-                    }
-                } else {
-                    CarButton(
-                        modifier = Modifier
-                            .padding(
-                                horizontal = CarTheme.carDimensions.defaultHorizontalPadding,
-                                vertical = CarTheme.carDimensions.defaultVerticalPadding
-                            )
-                            .width(400.dp),
-                        onClick = { showDeleteDialog(context, tripHistoryState.deleteSelection.size) { viewModel.deleteSelectedTrips() } },
-                        enabled = tripHistoryState.deleteSelection.isNotEmpty(),
-                        colors = CarButtonDefaults.colors.copy(
-                            backgroundBrush = SolidColor(badRed),
-                            textColor = Color.White
-                        )
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.ic_carcompose_delete),
-                            null,
-                            Modifier.size(CarTheme.carDimensions.iconButtonSize)
-                        )
-                        Text(deleteButtonText(tripHistoryState.deleteSelection.size))
-                    }
-                    CarButton(
-                        modifier = Modifier
-                            .padding(
-                                horizontal = CarTheme.carDimensions.defaultHorizontalPadding,
-                            )
-                            .width(400.dp),
-                        onClick = { viewModel.setDeleteMode(false) }
-                    ) { Text(stringResource(R.string.dialog_reset_cancel)) }
-                }
+                    .width(CarTheme.carDimensions.columnDefaultMaxWidth - 100.dp),
+                backStack = backStack,
+                viewModel = viewModel
+            )
+
+            if (deviceIsWideScreen()) {
                 Spacer(Modifier.weight(1f))
-                Column(horizontalAlignment = Alignment.Start) {
-                    TripHistoryFiltersContent(
-                        viewModel = viewModel,
-                        sectionTitle = stringResource(R.string.history_dialog_filters_title) + ":",
-                        showHint = true
-                    )
+                Column(
+                    modifier = Modifier
+                        .widthIn(max = 600.dp)
+                        .fillMaxHeight()
+                        .padding(
+                            horizontal = CarTheme.carDimensions.defaultHorizontalPadding,
+                            vertical = CarTheme.carDimensions.defaultVerticalPadding
+                        ),
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultVerticalPadding)
+                ) {
+                    if (availableWidth < filtersWidthThreshold) {
+                        CarButton(
+                            modifier = Modifier
+                                .width(400.dp),
+                            active = tripHistoryState.filtersModified,
+                            onClick = { backStack.add(TripHistoryFiltersScreenNavKey) }
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.ic_carcompose_filter),
+                                null,
+                                Modifier.size(CarTheme.carDimensions.iconButtonSize)
+                            )
+                            Text(stringResource(R.string.history_dialog_filters_title))
+                        }
+                    }
+                    if (!tripHistoryState.deleteMode) {
+                        CarButton(
+                            modifier = Modifier
+                                .width(400.dp),
+                            onClick = { viewModel.setDeleteMode(true) }
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.ic_carcompose_delete),
+                                null,
+                                Modifier.size(CarTheme.carDimensions.iconButtonSize)
+                            )
+                            Text("Delete Trips")
+                        }
+                    } else {
+                        CarButton(
+                            modifier = Modifier
+                                .width(400.dp),
+                            onClick = {
+                                showDeleteDialog(
+                                    context,
+                                    tripHistoryState.deleteSelection.size
+                                ) { viewModel.deleteSelectedTrips() }
+                            },
+                            enabled = tripHistoryState.deleteSelection.isNotEmpty(),
+                            colors = CarButtonDefaults.colors.copy(
+                                backgroundBrush = SolidColor(badRed),
+                                textColor = Color.White
+                            )
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.ic_carcompose_delete),
+                                null,
+                                Modifier.size(CarTheme.carDimensions.iconButtonSize)
+                            )
+                            Text(deleteButtonText(tripHistoryState.deleteSelection.size))
+                        }
+                        CarButton(
+                            modifier = Modifier
+                                .width(400.dp),
+                            onClick = { viewModel.setDeleteMode(false) }
+                        ) { Text(stringResource(R.string.dialog_reset_cancel)) }
+                    }
+                    Spacer(Modifier.weight(1f))
+                    if (availableWidth >= filtersWidthThreshold) {
+                        Column(horizontalAlignment = Alignment.Start) {
+                            TripHistoryFiltersContent(
+                                viewModel = viewModel,
+                                sectionTitle = stringResource(R.string.history_dialog_filters_title) + ":",
+                                showHint = true
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -30,6 +30,8 @@ import de.ixam97.carcompose.components.layout.CarColumn
 import de.ixam97.carcompose.components.layout.CarListItem
 import de.ixam97.carcompose.components.layout.CarListSection
 import de.ixam97.carcompose.components.layout.CarPaneLayout
+import de.ixam97.carcompose.components.layout.CarSnackBarConfig
+import de.ixam97.carcompose.components.layout.LocalCarSnackBarState
 import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.serialization.Serializable
 
@@ -67,6 +69,7 @@ fun SettingsAboutContent(
     var versionTapCounter by remember { mutableStateOf(0) }
 
     val context = LocalContext.current
+    val snackBarState = LocalCarSnackBarState.current
 
     CarColumn(
         modifier = modifier
@@ -92,7 +95,14 @@ fun SettingsAboutContent(
                         onBrowse = {
                             if (!globalState.devModeEnabled) {
                                 if (versionTapCounter < 7) versionTapCounter++
-                                else globalViewModel.setDevModeEnabled(true)
+                                else {
+                                    globalViewModel.setDevModeEnabled(true)
+                                    snackBarState.showSnackBar(CarSnackBarConfig(
+                                        identifier = "DevModeEnabledSnackBar",
+                                        content = { Text("Developer Options enabled.") },
+                                        drawableResId = R.drawable.ic_debug
+                                    ))
+                                }
                             }
                         }
                     )
@@ -100,7 +110,7 @@ fun SettingsAboutContent(
                 CarListItem {
                     CarRow(
                         title = "Copyright",
-                        description = "©2022-2024 Maximilian Goldschmidt"
+                        description = "©2022-2026 Maximilian Goldschmidt"
                     )
                 },
                 CarListItem {

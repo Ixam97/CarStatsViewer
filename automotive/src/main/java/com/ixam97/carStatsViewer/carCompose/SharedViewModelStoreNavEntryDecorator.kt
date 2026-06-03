@@ -84,6 +84,9 @@ class SharedViewModelStoreNavEntryDecorator<T: Any>(
         fun parent(key: Any) = metadata {
             put(ParentKey, key)
         }
+        fun parents(vararg parents: Any) = metadata {
+            put(ParentKey, parents.toList())
+        }
 
         object ParentKey: NavMetadataKey<Any>
     }
@@ -92,8 +95,13 @@ class SharedViewModelStoreNavEntryDecorator<T: Any>(
 private class EntryViewModel: ViewModel() {
     private val owners = mutableMapOf<Any, ViewModelStore>()
 
-    fun viewModelStoreForKey(key: Any): ViewModelStore = owners.getOrPut(key) {
-        ViewModelStore()
+    fun viewModelStoreForKey(key: Any): ViewModelStore {
+        if (key is List<*>) {
+            key.forEach {
+                if (it != null && owners.contains(it)) return owners.getOrPut(it) { ViewModelStore() }
+            }
+        }
+        return owners.getOrPut(key) { ViewModelStore() }
     }
 
     fun clearViewModelSoreOwnerForKey(key: Any) {
