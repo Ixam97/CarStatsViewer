@@ -19,6 +19,7 @@ import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDateRangePickerState
@@ -73,104 +74,122 @@ fun TripHistoryFiltersScreen(
         onBackAction = onBack
     ) {
         CarColumn() {
-            CarRow(
-                title = stringResource(R.string.history_dialog_filters_note)
-            )
-            TripHistoryFiltersContent(viewModel)
+            TripHistoryFiltersContent(viewModel, showHint = true)
         }
     }
 }
 
 @Composable
 fun ColumnScope.TripHistoryFiltersContent(
-    viewModel: TripHistoryViewModel
+    viewModel: TripHistoryViewModel,
+    sectionTitle: String? = null,
+    showHint: Boolean = false,
 ) {
-
     val tripHistoryState by viewModel.tripHistoryState.collectAsState()
+    val mutableItemsList = mutableListOf(
+        CarListItem {
+            var showDialog by remember { mutableStateOf(false) }
+            CarRow(
+                title = "Date Range",
+                descriptionContent = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultHorizontalPadding)
+                    ) {
+                        CarTextField(
+                            modifier = Modifier.weight(1f).clickable { showDialog = true },
+                            value = dateRangeText(getDateRangeFromValidAndSelectedRanges(
+                                tripHistoryState.selectedDateRange,
+                                tripHistoryState.validDateRange
+                            )),
+                            onValueChange = { },
+                            leadingIcon = { Icon(
+                                painterResource(R.drawable.ic_month),
+                                null,
+                                modifier = Modifier.size(CarTheme.carDimensions.iconButtonSize)
+                            ) }
+                        )
+                        CarIconButton(
+                            painter = painterResource(R.drawable.ic_carcompose_reset),
+                            enabled = tripHistoryState.selectedDateRange != null
+                        ) { viewModel.setFilterDateRange(null) }
+                    }
+                    if (showDialog) {
+                        DateRangePickerDialog(
+                            selectedDateRange = tripHistoryState.selectedDateRange,
+                            validDateRange = tripHistoryState.validDateRange,
+                            onDateRangeSelected = { dateRange ->
+                                showDialog = false
+                                viewModel.setFilterDateRange(dateRange)
+                            },
+                            onCancel = { showDialog = false }
+                        )
+                    }
+                }
+            )
+        },
+        CarListItem {
+            CarRowCheckbox(
+                title = stringResource(R.string.history_dialog_filters_auto),
+                isSelected = tripHistoryState.selectedFilters[TripType.AUTO]?:false,
+                onSelect = {
+                    viewModel.setTripFilter(TripType.AUTO, !(tripHistoryState.selectedFilters[TripType.AUTO]?:false))
+                }
+            )
+        },
+        CarListItem {
+            CarRowCheckbox(
+                title = stringResource(R.string.history_dialog_filters_month),
+                isSelected = tripHistoryState.selectedFilters[TripType.MONTH]?:false,
+                onSelect = {
+                    viewModel.setTripFilter(TripType.MONTH, !(tripHistoryState.selectedFilters[TripType.MONTH]?:false))
+                }
+            )
+        },
+        CarListItem {
+            CarRowCheckbox(
+                title = stringResource(R.string.history_dialog_filters_charge),
+                isSelected = tripHistoryState.selectedFilters[TripType.SINCE_CHARGE]?:false,
+                onSelect = {
+                    viewModel.setTripFilter(TripType.SINCE_CHARGE, !(tripHistoryState.selectedFilters[TripType.SINCE_CHARGE]?:false))
+                }
+            )
+        },
+        CarListItem {
+            CarRowCheckbox(
+                title = stringResource(R.string.history_dialog_filters_manual),
+                isSelected = tripHistoryState.selectedFilters[TripType.MANUAL]?:false,
+                onSelect = {
+                    viewModel.setTripFilter(TripType.MANUAL, !(tripHistoryState.selectedFilters[TripType.MANUAL]?:false))
+                }
+            )
+        }
+    )
+
+    if (showHint) {
+        mutableItemsList.add(
+            0,
+            CarListItem {
+                CarRow(
+                    content = {
+                        Text(
+                            text = stringResource(R.string.history_dialog_filters_note),
+                            style = CarTheme.carTypography.rowContent,
+                            color = LocalContentColor.current.copy(alpha =  0.7f)
+                        )
+                    }
+                )
+            }
+        )
+    }
 
     CarListSection(
-        listItems = listOf(
-            CarListItem {
-                var showDialog by remember { mutableStateOf(false) }
-                CarRow(
-                    title = "Date Range",
-                    descriptionContent = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultHorizontalPadding)
-                        ) {
-                            CarTextField(
-                                modifier = Modifier.weight(1f).clickable { showDialog = true },
-                                value = dateRangeText(getDateRangeFromValidAndSelectedRanges(
-                                    tripHistoryState.selectedDateRange,
-                                    tripHistoryState.validDateRange
-                                )),
-                                onValueChange = { },
-                                trailingIcon = { Icon(
-                                    painterResource(R.drawable.ic_month),
-                                    null,
-                                    modifier = Modifier.size(CarTheme.carDimensions.iconButtonSize)
-                                ) }
-                            )
-                            CarIconButton(
-                                painter = painterResource(R.drawable.ic_carcompose_reset),
-                                enabled = tripHistoryState.selectedDateRange != null
-                            ) { viewModel.setFilterDateRange(null) }
-                        }
-                        if (showDialog) {
-                            DateRangePickerDialog(
-                                selectedDateRange = tripHistoryState.selectedDateRange,
-                                validDateRange = tripHistoryState.validDateRange,
-                                onDateRangeSelected = { dateRange ->
-                                    showDialog = false
-                                    viewModel.setFilterDateRange(dateRange)
-                                },
-                                onCancel = { showDialog = false }
-                            )
-                        }
-                    }
-                )
-            },
-            CarListItem {
-                CarRowCheckbox(
-                    title = stringResource(R.string.history_dialog_filters_auto),
-                    isSelected = tripHistoryState.selectedFilters[TripType.AUTO]?:false,
-                    onSelect = {
-                        viewModel.setTripFilter(TripType.AUTO, !(tripHistoryState.selectedFilters[TripType.AUTO]?:false))
-                    }
-                )
-            },
-            CarListItem {
-                CarRowCheckbox(
-                    title = stringResource(R.string.history_dialog_filters_month),
-                    isSelected = tripHistoryState.selectedFilters[TripType.MONTH]?:false,
-                    onSelect = {
-                        viewModel.setTripFilter(TripType.MONTH, !(tripHistoryState.selectedFilters[TripType.MONTH]?:false))
-                    }
-                )
-            },
-            CarListItem {
-                CarRowCheckbox(
-                    title = stringResource(R.string.history_dialog_filters_charge),
-                    isSelected = tripHistoryState.selectedFilters[TripType.SINCE_CHARGE]?:false,
-                    onSelect = {
-                        viewModel.setTripFilter(TripType.SINCE_CHARGE, !(tripHistoryState.selectedFilters[TripType.SINCE_CHARGE]?:false))
-                    }
-                )
-            },
-            CarListItem {
-                CarRowCheckbox(
-                    title = stringResource(R.string.history_dialog_filters_manual),
-                    isSelected = tripHistoryState.selectedFilters[TripType.MANUAL]?:false,
-                    onSelect = {
-                        viewModel.setTripFilter(TripType.MANUAL, !(tripHistoryState.selectedFilters[TripType.MANUAL]?:false))
-                    }
-                )
-            },
-        )
+        sectionTitle = sectionTitle,
+        listItems = mutableItemsList
     )
 }
 
+/** Compose dialog containing a date range picker to select a range of trip start dates. */
 @Composable
 private fun DateRangePickerDialog(
     selectedDateRange: Pair<Long, Long>?,
@@ -182,10 +201,9 @@ private fun DateRangePickerDialog(
     val dateRangePickerState = rememberDateRangePickerState(
         initialSelectedStartDateMillis = dateRange.first,
         initialSelectedEndDateMillis = dateRange.second,
+        initialDisplayedMonthMillis = dateRange.second,
         selectableDates = object : SelectableDates {
-            override fun isSelectableDate(
-                utcTimeMillis: Long
-            ): Boolean {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
                 if (validDateRange == null) return false
                 return utcTimeMillis in (validDateRange.first)..(validDateRange.second)
             }
@@ -209,7 +227,10 @@ private fun DateRangePickerDialog(
             ) {
                 Text(
                     modifier = Modifier.padding(top = CarTheme.carDimensions.defaultVerticalPadding),
-                    text = dateRangeText(dateRangePickerState.selectedStartDateMillis to dateRangePickerState.selectedEndDateMillis),
+                    text = dateRangeText(
+                        dateRangePickerState.selectedStartDateMillis to dateRangePickerState.selectedEndDateMillis,
+                        "No date range selected"
+                    ),
                     style = CarTheme.carTypography.title
                 )
                 Text(
@@ -222,11 +243,6 @@ private fun DateRangePickerDialog(
                         .fillMaxWidth()
                         .background(CarTheme.carColors.secondaryDivider)
                 )
-//                Text(
-//                    text = dateRangeText(dateRangePickerState.selectedStartDateMillis to dateRangePickerState.selectedEndDateMillis),
-//                    color = CarTheme.carColors.onSurface,
-//                    style = CarTheme.carTypography.rowTitle.copy(fontSize = CarTheme.carTypography.rowTitle.fontSize * 1.2f)
-//                )
                 ScaledDateRangePicker(dateRangePickerState)
                 Row() {
                     CarButton(
@@ -242,7 +258,8 @@ private fun DateRangePickerDialog(
                             else
                                 onDateRangeSelected(dateRangePickerState.selectedStartDateMillis!! to dateRangePickerState.selectedEndDateMillis!!)
                         },
-                        active = true
+                        active = true,
+                        enabled = (dateRangePickerState.selectedStartDateMillis != null && dateRangePickerState.selectedEndDateMillis != null)
                     ) { Text(stringResource(R.string.dialog_apply)) }
                 }
             }
@@ -250,14 +267,16 @@ private fun DateRangePickerDialog(
     }
 }
 
+/** Returns a string formatted in the current locale containing a start and end date */
 @Composable
 private fun dateRangeText(
-    dateRange: Pair<Long?, Long?>
+    dateRange: Pair<Long?, Long?>,
+    defaultText: String = ""
 ): String {
     val dateFormat = DateFormat.getDateFormat(LocalContext.current)
     val startDate = dateRange.first.run {
         if (this != null) dateFormat.format(Date(this))
-        else ""
+        else defaultText
     }
     val endDate = dateRange.second.run {
         if (this != null) " - " + dateFormat.format(Date(this))
@@ -266,6 +285,8 @@ private fun dateRangeText(
     return startDate + endDate
 }
 
+/** Material 3 date range picker wrapped in a car compose scale container for better usability in
+    a car. Relies on Car Compose scaling factor and embedded Color and Typography. */
 @Composable
 private fun ColumnScope.ScaledDateRangePicker(
     dateRangePickerState: DateRangePickerState
@@ -288,6 +309,7 @@ private fun ColumnScope.ScaledDateRangePicker(
     }
 }
 
+/** Returns a date range selected from either the selected range or, if it is null, from the valid range. */
 private fun getDateRangeFromValidAndSelectedRanges(
     selectedDateRange: Pair<Long, Long>?,
     validDateRange: Pair<Long, Long>?

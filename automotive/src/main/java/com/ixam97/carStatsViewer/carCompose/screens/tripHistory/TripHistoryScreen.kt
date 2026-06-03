@@ -213,9 +213,13 @@ fun TripHistoryContent(
                     ) { Text(stringResource(R.string.dialog_reset_cancel)) }
                 }
                 Spacer(Modifier.weight(1f))
-                TripHistoryFiltersContent(
-                    viewModel = viewModel
-                )
+                Column(horizontalAlignment = Alignment.Start) {
+                    TripHistoryFiltersContent(
+                        viewModel = viewModel,
+                        sectionTitle = stringResource(R.string.history_dialog_filters_title) + ":",
+                        showHint = true
+                    )
+                }
             }
         }
     }
@@ -296,7 +300,7 @@ internal fun TripHistoryList(
     ) {
         if (emulatorMode) {
             carListSection(
-                sectionTitle = "Debug",
+                sectionTitle = "Debug:",
                 listItems = debugTripListItems
             )
         }
