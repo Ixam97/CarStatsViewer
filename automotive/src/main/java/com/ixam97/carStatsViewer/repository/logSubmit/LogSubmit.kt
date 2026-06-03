@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class LogSubmitBody(
     val log: Map<Long, String>,
     val userID: String,
+    val address: String? = null,
     val metadata: LogMetadata
 ) {
     @Serializable

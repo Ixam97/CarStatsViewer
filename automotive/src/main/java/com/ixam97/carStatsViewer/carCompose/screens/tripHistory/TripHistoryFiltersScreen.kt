@@ -19,7 +19,6 @@ import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDateRangePickerState
@@ -42,6 +41,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.compose.RowContentText
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import de.ixam97.carcompose.components.controls.CarButton
 import de.ixam97.carcompose.components.controls.CarIconButton
@@ -172,11 +172,7 @@ fun ColumnScope.TripHistoryFiltersContent(
             CarListItem {
                 CarRow(
                     content = {
-                        Text(
-                            text = stringResource(R.string.history_dialog_filters_note),
-                            style = CarTheme.carTypography.rowContent,
-                            color = LocalContentColor.current.copy(alpha =  0.7f)
-                        )
+                        RowContentText(text = stringResource(R.string.history_dialog_filters_note),)
                     }
                 )
             }

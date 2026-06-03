@@ -1,22 +1,13 @@
 package com.ixam97.carStatsViewer.carCompose.screens.settings
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.ErrorOutline
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -28,10 +19,9 @@ import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.adaptiveIconPainterResource
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
 import com.ixam97.carStatsViewer.compose.ConnectionStatusIcon
-import de.ixam97.carcompose.components.controls.CarIconButton
+import com.ixam97.carStatsViewer.compose.TextFieldWithValidation
 import de.ixam97.carcompose.components.controls.CarRow
 import de.ixam97.carcompose.components.controls.CarRowSwitch
-import de.ixam97.carcompose.components.controls.CarTextField
 import de.ixam97.carcompose.components.layout.CarColumn
 import de.ixam97.carcompose.components.layout.CarListItem
 import de.ixam97.carcompose.components.layout.CarListSection
@@ -124,21 +114,11 @@ fun SettingsApisContent(
                     CarRow(
                         title = stringResource(R.string.settings_trip_export_mail),
                         descriptionContent = {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                CarTextField(
-                                    value = settingsApisState.exportMailAddress,
-                                    onValueChange = { viewModel.setExportMailAddress(it) },
-                                    singleLine = true,
-                                    modifier = Modifier.weight(1f),
-                                    trailingIcon = {
-                                        TextBoxCheckmark(settingsApisState.validExportMailAddress)
-                                    }
-                                )
-                                Spacer(Modifier.size(CarTheme.carDimensions.defaultHorizontalPadding / 2f))
-                                CarIconButton(imageVector = Icons.Outlined.Delete) { viewModel.setExportMailAddress("") }
-                            }
+                            TextFieldWithValidation(
+                                value = settingsApisState.exportMailAddress,
+                                onValueChange = { viewModel.setExportMailAddress(it) },
+                                validAddress = settingsApisState.validExportMailAddress
+                            )
                         }
                     )
                 },
@@ -155,16 +135,3 @@ fun SettingsApisContent(
     }
 }
 
-@Composable
-internal fun TextBoxCheckmark(valid: Boolean?) {
-    if (valid != null) {
-        Icon(
-            modifier = Modifier.size(40.dp),
-            imageVector = if (valid) Icons.Default.Check else Icons.Default.ErrorOutline,
-            tint = if (valid) Color.Green else Color.Red,
-            contentDescription = null
-        )
-    } else {
-        Box(Modifier.size(40.dp))
-    }
-}

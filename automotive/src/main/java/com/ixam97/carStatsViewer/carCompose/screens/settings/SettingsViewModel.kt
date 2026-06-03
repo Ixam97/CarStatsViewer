@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Patterns
+import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,12 +17,13 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
 import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitRepository
-import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.ScreenshotService
 import com.ixam97.carStatsViewer.utils.logLength
 import com.ixam97.carStatsViewer.utils.logLevel
+import de.ixam97.carcompose.components.layout.CarSnackBarConfig
+import de.ixam97.carcompose.components.layout.CarSnackBarHostState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +31,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 data class SettingsGeneralState(
     val autoAppStart: Boolean = CarStatsViewer.appPreferences.autostart,
@@ -71,8 +74,8 @@ enum class LogLevelKey {
     Verbose, Debug, Info, Warning, Error
 }
 
-enum class LogLengthKey {
-    All, L500, L1000, L2000, L5000, L10000
+enum class LogLengthKey(val length: Int) {
+    All(0), L500(500), L1000(1000), L2000(2000), L5000(5000), L10000(10000)
 }
 
 class SettingsViewModel: ViewModel() {
@@ -263,6 +266,120 @@ class SettingsViewModel: ViewModel() {
         }.show()
     }
 
+    fun scanAvailableFonts() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                File("/product/fonts").apply {
+                    if (exists() && isDirectory) {
+                        var fontsList = "Found product fonts:\n\r"
+                        this.listFiles()?.forEach { file ->
+                            fontsList += "    ${file.name}\n\r"
+                        }
+                        InAppLogger.d(fontsList)
+                    }
+                }
+                File("/system/fonts").apply {
+                    if (exists() && isDirectory) {
+                        var fontsList = "Found system fonts:\n\r"
+                        this.listFiles()?.forEach { file ->
+                            fontsList += "    ${file.name}\n\r"
+                        }
+                        InAppLogger.d(fontsList)
+                    }
+                }
+            }
+        }
+    }
+
+    fun setDevUserId(userId: String) {
+        appPreferences.debugUserID = userId
+        _settingsDevState.update { it.copy(
+            userId = userId
+        ) }
+    }
+
+    fun setDevUserMail(address: String) {
+        val validAddress = validateEmailAddress(address)
+
+        when (validAddress) {
+            true -> {
+                appPreferences.debugScreenshotReceiver = address
+            }
+            null -> {
+                appPreferences.debugScreenshotReceiver = ""
+            }
+            else -> { } //Invalid address
+        }
+
+        _settingsDevState.update { it.copy(
+            userMail = address,
+            userMailValid = validAddress
+        ) }
+    }
+
+    fun submitScreenshots(
+        snackBarState: CarSnackBarHostState
+    ) {
+        val submittedScreenshots = settingsDevState.value.numberOfScreenshots
+        if (submittedScreenshots == 0) return
+
+        val snackBarIdentifier = "SubmitScreenshotsSnackBar"
+        snackBarState.showSnackBar(CarSnackBarConfig(
+            identifier = snackBarIdentifier,
+            content = { Text("Submitting screenshots...") },
+            drawableResId = R.drawable.ic_camera,
+            duration = 0,
+            continuousLoading = true
+        ))
+
+        viewModelScope.launch(Dispatchers.IO) {
+            var resultMsg: String?
+            try {
+                resultMsg = LogSubmitRepository.uploadImage(
+                    bitmaps = ScreenshotService.screenshotsList,
+                    additionalAddress = appPreferences.debugScreenshotReceiver.ifBlank { null }
+                )
+            } catch (e: Exception) {
+                InAppLogger.e("Failed to submit screenshots: ${e.message}\n\r${e.stackTraceToString()}")
+                resultMsg = e.message
+            }
+            delay(500)
+            withContext(Dispatchers.Main) {
+                if (resultMsg == null) {
+                    snackBarState.showSnackBar(CarSnackBarConfig(
+                        identifier = snackBarIdentifier,
+                        content = {Text("$submittedScreenshots screenshots submitted successfully.") },
+                        duration = 3000,
+                        drawableResId = R.drawable.ic_checkmark
+                    ))
+                    ScreenshotService.clearScreenshots()
+                } else {
+                    snackBarState.showSnackBar(CarSnackBarConfig(
+                        identifier = snackBarIdentifier,
+                        content = { Text(resultMsg) },
+                        isError = true,
+                        duration = 5000,
+                        drawableResId = R.drawable.ic_error
+                    ))
+                }
+            }
+        }
+    }
+
+    fun setLogLevel(levelKey: LogLevelKey?) {
+        appPreferences.logLevel = levelKey?.ordinal?:appPreferences.logLevel
+        _settingsDevState.update { it.copy(
+            logLevelKey = LogLevelKey.entries[appPreferences.logLevel]
+        ) }
+    }
+
+    fun setLogLength(lengthKey: LogLengthKey?) {
+        appPreferences.logLength = lengthKey?.ordinal?:appPreferences.logLength
+        _settingsDevState.update { it.copy(
+            logLengthKey = LogLengthKey.entries[appPreferences.logLength]
+        ) }
+    }
+
     fun clearLog(context: Context) {
         AlertDialog.Builder(context).apply {
             setTitle("Delete log")
@@ -271,12 +388,6 @@ class SettingsViewModel: ViewModel() {
                 viewModelScope.launch {
                     withContext(Dispatchers.IO) {
                         InAppLogger.resetLog()
-                    }
-                    withContext(Dispatchers.Main) {
-                        SnackbarWidget.Builder(context, "Log has been deleted")
-                            .setStartDrawable(R.drawable.ic_checkmark)
-                            .setDuration(3000)
-                            .show()
                     }
                 }
             }
@@ -287,23 +398,37 @@ class SettingsViewModel: ViewModel() {
         }.show()
     }
 
-    fun submitLog(context: Context) {
-        val snackBar = SnackbarWidget.Builder(context, "Submitting log ...")
-            .setStartDrawable(R.drawable.ic_upload)
-            .show()
+    fun submitLog(snackBarState: CarSnackBarHostState) {
+        val snackBarIdentifier = "SubmitLogSnackBar"
+        snackBarState.showSnackBar(CarSnackBarConfig(
+            identifier = snackBarIdentifier,
+            content = { Text("Submitting debug logs...") },
+            drawableResId = R.drawable.ic_debug,
+            duration = 0,
+            continuousLoading = true
+        ))
         viewModelScope.launch {
             withContext(Dispatchers.IO){
-                val resultMessage = LogSubmitRepository.submitLog()
+                val resultMessage = LogSubmitRepository.submitLog(
+                    additionalAddress = appPreferences.debugScreenshotReceiver.ifBlank { null }
+                )
                 delay(500)
                 withContext(Dispatchers.Main) {
                     if (resultMessage == null) {
-                        snackBar.updateStartDrawable(R.drawable.ic_checkmark)
-                        snackBar.updateMessage("Log was submitted successfully.")
+                        snackBarState.showSnackBar(CarSnackBarConfig(
+                            identifier = snackBarIdentifier,
+                            content = { Text("Debug Logs submitted successfully.") },
+                            drawableResId = R.drawable.ic_checkmark,
+                            duration = 3000
+                        ))
                     } else {
-                        snackBar.setToError()
-                        snackBar.updateMessage("Failed to submit log!\n$resultMessage")
+                        snackBarState.showSnackBar(CarSnackBarConfig(
+                            identifier = snackBarIdentifier,
+                            content = { Text("Failed to submit log!\n$resultMessage") },
+                            drawableResId = R.drawable.ic_error,
+                            duration = 5000
+                        ))
                     }
-                    snackBar.startDuration(3000)
                 }
             }
         }
@@ -312,7 +437,6 @@ class SettingsViewModel: ViewModel() {
     //endregion
 
     init {
-
         try {
             val analyticsEnabled = Firebase.app.isDataCollectionDefaultEnabled
             _settingsPrivacyState.update { it.copy(analytics = analyticsEnabled) }

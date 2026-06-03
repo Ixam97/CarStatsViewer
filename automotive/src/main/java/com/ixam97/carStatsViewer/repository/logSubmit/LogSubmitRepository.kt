@@ -35,7 +35,9 @@ object LogSubmitRepository {
             .create(LogSubmitApi::class.java)
     }
 
-    suspend fun submitLog(): String? {
+    suspend fun submitLog(
+        additionalAddress: String? = null
+    ): String? {
         val submitMap = mutableMapOf<Long, String>()
         val preferences = CarStatsViewer.appPreferences
 
@@ -60,6 +62,7 @@ object LogSubmitRepository {
             resultMessage = submitLog(LogSubmitBody(
                 log = submitMap,
                 userID = preferences.debugUserID,
+                address = additionalAddress,
                 metadata = LogSubmitBody.LogMetadata(
                     timestamp = System.currentTimeMillis(),
                     brand = Build.BRAND,

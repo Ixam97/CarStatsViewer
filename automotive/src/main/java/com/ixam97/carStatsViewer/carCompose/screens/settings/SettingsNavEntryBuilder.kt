@@ -23,4 +23,5 @@ fun EntryProviderScope<NavKey>.settingsEntryBuilder(
     entry<SettingsChangelogScreenNavKey> { SettingsChangelogScreen(backStack, onBack) }
     entry<SettingsLicensesScreenNavKey> { SettingsLicensesScreen(backStack, onBack) }
     entry<SettingsDevScreenNavKey> { SettingsDevScreen(backStack, onBack, globalViewModel) }
+    entry<SettingsDevLogScreenNavKey> { SettingsDevLogScreen(onBack) }
 }

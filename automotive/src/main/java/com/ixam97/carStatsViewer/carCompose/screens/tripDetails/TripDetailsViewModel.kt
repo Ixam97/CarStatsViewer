@@ -151,6 +151,7 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
             identifier = snackBarIdentifier,
             content = { Text("Exporting trip ...") },
             duration = 0,
+            continuousLoading = true,
             drawableResId = R.drawable.ic_upload,
         ))
 
@@ -190,6 +191,7 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
             identifier = snackBarIdentifier,
             content = { Text("Exporting charging session ...") },
             duration = 0,
+            continuousLoading = true,
             drawableResId = R.drawable.ic_upload,
         ))
         viewModelScope.launch(Dispatchers.IO) {

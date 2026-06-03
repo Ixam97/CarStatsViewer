@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,6 +34,7 @@ import androidx.navigation3.runtime.NavKey
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
+import com.ixam97.carStatsViewer.compose.RowContentText
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
 import com.mikepenz.aboutlibraries.ui.compose.util.author
@@ -233,11 +233,7 @@ private fun LibRow(
         descriptionContent = {
             Column() {
                 if (lib.author.isNotBlank()) {
-                    Text(
-                        text = lib.author,
-                        style = CarTheme.carTypography.rowContent,
-                        color = LocalContentColor.current.copy(alpha =  0.7f)
-                    )
+                    RowContentText(text = lib.author)
                 }
                 if (lib.licenses.isNotEmpty()) {
                     var licensesString = ""
@@ -245,11 +241,7 @@ private fun LibRow(
                         if (index > 0) licensesString += ", "
                         licensesString += license.name
                     }
-                    Text(
-                        text = licensesString,
-                        style = CarTheme.carTypography.rowContent,
-                        color = LocalContentColor.current.copy(alpha =  0.7f)
-                    )
+                    RowContentText(text = licensesString)
                 }
             }
         },

@@ -24,6 +24,7 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
+import com.ixam97.carStatsViewer.compose.TextBoxCheckmark
 import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.controls.CarRow
 import de.ixam97.carcompose.components.controls.CarRowSwitch

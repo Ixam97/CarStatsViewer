@@ -1,5 +1,9 @@
 package com.ixam97.carStatsViewer.carCompose.screens.settings
 
+import android.content.Intent
+import android.media.projection.MediaProjectionManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -13,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.getSystemService
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
@@ -32,7 +36,11 @@ import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.badRed
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
+import com.ixam97.carStatsViewer.compose.RowContentText
+import com.ixam97.carStatsViewer.compose.TextFieldWithValidation
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
+import com.ixam97.carStatsViewer.utils.ScreenshotService
+import com.ixam97.carStatsViewer.utils.ScreenshotServiceConfig
 import de.ixam97.carcompose.components.controls.CarButton
 import de.ixam97.carcompose.components.controls.CarButtonDefaults
 import de.ixam97.carcompose.components.controls.CarIconButton
@@ -44,6 +52,7 @@ import de.ixam97.carcompose.components.layout.CarColumn
 import de.ixam97.carcompose.components.layout.CarListItem
 import de.ixam97.carcompose.components.layout.CarListSection
 import de.ixam97.carcompose.components.layout.CarPaneLayout
+import de.ixam97.carcompose.components.layout.LocalCarSnackBarState
 import de.ixam97.carcompose.theme.CarTheme
 import de.ixam97.carcompose.utils.buildGradientBrush
 import kotlinx.serialization.Serializable
@@ -79,7 +88,26 @@ fun SettingsDevContent(
     viewModel: SettingsViewModel
 ) {
     val context = LocalContext.current
+    val snackBarState = LocalCarSnackBarState.current
     val settingsDevState by viewModel.settingsDevState.collectAsState()
+    val mediaProjectionManager by lazy {
+        context.getSystemService<MediaProjectionManager>()!!
+    }
+    val screenshotServiceLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val intent = result.data?:return@rememberLauncherForActivityResult
+        val config = ScreenshotServiceConfig(
+            resultCode = result.resultCode,
+            data = intent
+        )
+
+        val serviceIntent = Intent(context, ScreenshotService::class.java).apply {
+            action = ScreenshotService.START_SCREENSHOT_SERVICE
+            putExtra(ScreenshotService.KEY_SCREENSHOT_CONFIG, config)
+        }
+        context.startForegroundService(serviceIntent)
+    }
 
     CarColumn(
         modifier = modifier
@@ -142,7 +170,7 @@ fun SettingsDevContent(
                                 Spacer(Modifier.size(CarTheme.carDimensions.defaultHorizontalPadding))
                                 CarButton(
                                     modifier = Modifier.weight(1f),
-                                    onClick = {}
+                                    onClick = { viewModel.scanAvailableFonts() }
                                 ) { Text("Scan Fonts") }
                             }
                         }
@@ -159,14 +187,11 @@ fun SettingsDevContent(
                     CarRow(
                         title = "User ID",
                         descriptionContent = {
-                            Text("This ID is used to identify the user when sending logs or screenshots.",
-                                style = CarTheme.carTypography.rowContent,
-                                color = LocalContentColor.current.copy(alpha =  0.7f)
-                            )
+                            RowContentText("This ID is used to identify the user when sending logs or screenshots.",)
                             Spacer(Modifier.size(CarTheme.carDimensions.defaultVerticalPadding))
                             CarTextField(
                                 value = settingsDevState.userId,
-                                onValueChange = {}
+                                onValueChange = { viewModel.setDevUserId(it) }
                             )
                         }
                     )
@@ -175,17 +200,12 @@ fun SettingsDevContent(
                     CarRow(
                         title = "User Mail",
                         descriptionContent = {
-                            Text("A copy of submitted debug data and screenshots will be sent to this address.",
-                                style = CarTheme.carTypography.rowContent,
-                                color = LocalContentColor.current.copy(alpha =  0.7f)
-                            )
+                            RowContentText("A copy of submitted debug data and screenshots will be sent to this address.",)
                             Spacer(Modifier.size(CarTheme.carDimensions.defaultVerticalPadding))
-                            CarTextField(
+                            TextFieldWithValidation(
                                 value = settingsDevState.userMail,
-                                onValueChange = {},
-                                trailingIcon = {
-
-                                }
+                                validAddress = settingsDevState.userMailValid,
+                                onValueChange = { viewModel.setDevUserMail(it) }
                             )
                         }
                     )
@@ -200,22 +220,31 @@ fun SettingsDevContent(
                     CarRow(
                         content = {
                             Column() {
-                                Text(
+                                RowContentText(
                                     text = "This launches a screen capture as foreground service and allows CSV to take " +
                                             "screenshots of the infotainment system. Pull down the notification center " +
                                             "anywhere and press \"Take Screenshot\" to capture the current screen.\n\n" +
                                             "If you want to receive the screenshots yourself, add an additional Email " +
                                             "address in the user setup section. Otherwise, screenshots will be sent to " +
                                             "the developer directly as this is mainly a debugging tool.",
-                                    style = CarTheme.carTypography.rowContent,
-                                    color = LocalContentColor.current.copy(alpha =  0.7f)
                                 )
                                 Spacer(Modifier.size(CarTheme.carDimensions.defaultVerticalPadding))
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     CarButton(
-                                        onClick = {},
+                                        onClick = {
+                                            if (settingsDevState.screenshotServiceRunning) {
+                                                Intent(context, ScreenshotService::class.java).also {
+                                                    it.action = ScreenshotService.STOP_SCREENSHOT_SERVICE
+                                                    context.startForegroundService(it)
+                                                }
+                                            } else {
+                                                screenshotServiceLauncher.launch(
+                                                    mediaProjectionManager.createScreenCaptureIntent()
+                                                )
+                                            }
+                                        },
                                         active = settingsDevState.screenshotServiceRunning
                                     ) { Text( "${if (settingsDevState.screenshotServiceRunning) "Stop" else "Start"} Screenshot Service") }
                                     Spacer(Modifier.size(CarTheme.carDimensions.defaultHorizontalPadding))
@@ -226,7 +255,7 @@ fun SettingsDevContent(
                                     CarIconButton(
                                         imageVector = Icons.AutoMirrored.Filled.Send,
                                         enabled = settingsDevState.numberOfScreenshots > 0
-                                    ) { }
+                                    ) { viewModel.submitScreenshots(snackBarState) }
                                 }
                             }
                         }
@@ -269,7 +298,7 @@ fun SettingsDevContent(
                             CarSegmentedButton(
                                 segments = logLevelSegments,
                                 selectedKey = settingsDevState.logLevelKey,
-                                onSegmentChanged = {},
+                                onSegmentChanged = { viewModel.setLogLevel(it) },
                             )
                         }
                     )
@@ -309,7 +338,7 @@ fun SettingsDevContent(
                             CarSegmentedButton(
                                 segments = logLengthSegments,
                                 selectedKey = settingsDevState.logLengthKey,
-                                onSegmentChanged = {  }
+                                onSegmentChanged = { viewModel.setLogLength(it) }
                             )
                         }
                     )
@@ -323,7 +352,7 @@ fun SettingsDevContent(
                             ) {
                                 CarButton(
                                     modifier = Modifier.weight(1f),
-                                    onClick = { viewModel.submitLog(context) }
+                                    onClick = { viewModel.submitLog(snackBarState) }
                                 ) {
                                     Icon(
                                         Icons.AutoMirrored.Filled.Send,
@@ -349,7 +378,7 @@ fun SettingsDevContent(
                                 }
                                 CarButton(
                                     modifier = Modifier.weight(1f),
-                                    onClick = {}
+                                    onClick = { backStack.add(SettingsDevLogScreenNavKey) }
                                 ) { Text("Show Log") }
                             }
                         }
