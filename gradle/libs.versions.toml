@@ -24,7 +24,7 @@ retrofit = "3.0.0"
 okhttp3 = "5.3.2"
 window = "1.5.1"
 nav3Core = "1.1.1"
-carcompose = "de880561"
+carcompose = "2009a7c9"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }

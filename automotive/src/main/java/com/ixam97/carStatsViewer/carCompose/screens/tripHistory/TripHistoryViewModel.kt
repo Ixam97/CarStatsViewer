@@ -23,6 +23,8 @@ data class TripHistoryState(
         TripType.AUTO to CarStatsViewer.appPreferences.tripFilterAuto,
         TripType.MONTH to CarStatsViewer.appPreferences.tripFilterMonth,
     ),
+    val selectedDateRange: Pair<Long, Long>? = null,
+    val validDateRange: Pair<Long, Long>? = null,
     val filtersModified: Boolean = false,
     val currentTrips: List<DrivingSession> = listOf(),
     val pastTrips: List<DrivingSession> = listOf(),
@@ -36,7 +38,7 @@ class TripHistoryViewModel: ViewModel() {
 
     init {
 
-        _tripHistoryState.update { it.copy(filtersModified = filtersModified(it.selectedFilters)) }
+        _tripHistoryState.update { it.copy(filtersModified = filtersModified(it.selectedFilters, it.selectedDateRange)) }
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -55,14 +57,37 @@ class TripHistoryViewModel: ViewModel() {
             withContext(Dispatchers.IO) {
                 if (CarStatsViewer.appPreferences.debugDelays) delay(5000L)
                 delay(500L)
+                val pastTrips = CarStatsViewer.tripDataSource.getPastDrivingSessions().sortedByDescending { it.start_epoch_time }
                 _tripHistoryState.update {
                     it.copy(
-                        pastTrips = CarStatsViewer.tripDataSource.getPastDrivingSessions(),
-                        isLoadingPastTrips = false
+                        pastTrips = pastTrips,
+                        isLoadingPastTrips = false,
+                        validDateRange = calculateValidDateRange(pastTrips),
                     )
                 }
             }
         }
+    }
+
+    private fun calculateValidDateRange(pastTrips: List<DrivingSession>): Pair<Long, Long>? {
+        if (pastTrips.isEmpty()) return null
+        val earliestDateMillis = pastTrips.last().start_epoch_time - 86400000
+        val latestDateMillis = pastTrips.first().start_epoch_time
+        return earliestDateMillis to latestDateMillis
+    }
+
+    fun updateValidDateRange() {
+        _tripHistoryState.value.pastTrips.let { pastTrips ->
+            _tripHistoryState.update {
+                it.copy(
+                    validDateRange = calculateValidDateRange(pastTrips)
+                )
+            }
+        }
+    }
+
+    fun getValidDateRange(): Pair<Long, Long> {
+        return _tripHistoryState.value.validDateRange?:(0L to 0L)
     }
 
     fun reloadTrips() {
@@ -76,10 +101,11 @@ class TripHistoryViewModel: ViewModel() {
             delay(500L)
             _tripHistoryState.update {
                 it.copy(
-                    pastTrips = CarStatsViewer.tripDataSource.getPastDrivingSessions(),
+                    pastTrips = CarStatsViewer.tripDataSource.getPastDrivingSessions().sortedByDescending { it.start_epoch_time },
                     isLoadingPastTrips = false
                 )
             }
+            updateValidDateRange()
         }
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -92,6 +118,14 @@ class TripHistoryViewModel: ViewModel() {
                 )
             }
         }
+    }
+
+    fun setFilterDateRange(dateRange: Pair<Long, Long>?) {
+        _tripHistoryState.update { it.copy(
+            selectedDateRange = dateRange,
+            filtersModified = filtersModified(it.selectedFilters, dateRange)
+        ) }
+        //TODO: Implement Preferences for Date range
     }
 
     fun setTripFilter(tripType: Int, filter: Boolean) {
@@ -107,9 +141,10 @@ class TripHistoryViewModel: ViewModel() {
                 mutableMap[tripType] = filter
                 it.copy(
                     selectedFilters = mutableMap,
-                    filtersModified = filtersModified(mutableMap)
+                    filtersModified = filtersModified(mutableMap, it.selectedDateRange)
                 )
             }
+            updateValidDateRange()
         }
     }
 
@@ -135,6 +170,7 @@ class TripHistoryViewModel: ViewModel() {
                         pastTrips = pastTrips
                     )
                 }
+                updateValidDateRange()
             }
         }
     }
@@ -168,13 +204,15 @@ class TripHistoryViewModel: ViewModel() {
                     deleteMode = false
                 )
             }
+            updateValidDateRange()
         }
     }
 
-    private fun filtersModified(filters: Map<Int, Boolean>): Boolean {
+    private fun filtersModified(filters: Map<Int, Boolean>, dateRange: Pair<Long, Long>?): Boolean {
         return !(filters[TripType.MANUAL] == true &&
                 filters[TripType.MONTH] == true &&
                 filters[TripType.AUTO] == true &&
-                filters[TripType.SINCE_CHARGE] == true)
+                filters[TripType.SINCE_CHARGE] == true &&
+                dateRange == null)
     }
 }

@@ -269,6 +269,10 @@ internal fun TripHistoryList(
             .sortedBy { it.start_epoch_time }
             .reversed()
             .filter { tripHistoryState.selectedFilters[it.session_type] == true }
+            .filter {
+                if (tripHistoryState.selectedDateRange == null) true
+                else it.start_epoch_time in (tripHistoryState.selectedDateRange!!.first)..(tripHistoryState.selectedDateRange!!.second + 86400000)
+            }
             .map { drivingSession ->
                 CarListItem {
                     DrivingSessionRow(

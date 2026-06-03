@@ -24,7 +24,8 @@ val clubViolet = Color(0xFF77347B)
 val clubVioletMedium = Color(0xFF4F1852)
 val clubVioletDark = Color(0xFF2A1037)
 
-val clubNightDarker = Color(0xff05080C)
+val clubNightDarkest = Color(0xff05080C)
+val clubNightDarker = Color(0xff080D11)
 val clubNight = Color(0xff0a0f14)
 val clubNightVariant = Color(0xff111922)
 
@@ -59,7 +60,7 @@ val ClubThemeConfig = CarThemeConfig(
         onAccentContainer = Color.White,
         primaryDivider = clubPrimaryDividerBrush,
         secondaryDivider = buildSolidBrush(Color(0xFF2C2C2C)),
-        listSectionBackground = buildSolidBrush(clubNight.copy(alpha = 0.85f)),
+        listSectionBackground = buildSolidBrush(clubNightDarker),
         switchColors = CarSwitchColors(
             border = Color.Transparent,
             track = buildSolidBrush(clubNightVariant),
@@ -74,7 +75,7 @@ val ClubThemeConfig = CarThemeConfig(
             borderColor = clubNightVariant,
             selectedBorderColor = Color.Transparent,
             selectedBackground = clubBlue,
-            selectorColor = clubNightDarker
+            selectorColor = clubNightDarkest
         )
     ),
     carShapes = CarShapes(
