@@ -10,6 +10,7 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.databinding.ActivityPermissionsBinding
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.isRunningOnAAOS
 import com.ixam97.carStatsViewer.utils.unGrantedPermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -91,7 +92,11 @@ class PermissionsActivity: Activity() {
 
             }
             .setNegativeButton(getString(R.string.permissions_dialog_quit)) { dialog, id ->
-                exitProcess(0)
+                if (isRunningOnAAOS(applicationContext)) { exitProcess(0) }
+                else {
+                    finish()
+                    startActivity(Intent(applicationContext, MainActivity::class.java))
+                }
             }
         val alert = builder.create()
         alert.show()

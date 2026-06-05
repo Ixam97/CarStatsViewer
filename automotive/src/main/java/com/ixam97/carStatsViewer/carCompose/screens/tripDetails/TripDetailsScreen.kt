@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
@@ -82,7 +83,7 @@ fun TripDetailsScreen(
         globalViewModel.setLoading(tripDetailsState.isLoading)
     }
 
-    if (deviceIsWideScreen() || tripDetailsState.debugLandscapeOverride) {
+    if (deviceIsWideScreen(2100.dp) || tripDetailsState.debugLandscapeOverride) {
         TripDetailsLandscapeScreen(
             globalViewModel = globalViewModel,
             onBackClick = onBackClick,

@@ -124,7 +124,7 @@ fun TripHistoryScreen(
         }
     ) {
         TripHistoryContent(
-            modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp),
+            modifier = Modifier.padding(start = if (deviceIsWideScreen(1900.dp)) polestar4ContentPadding else 0.dp),
             backStack = backStack,
             globalViewModel = globalViewModel,
             viewModel = viewModel
@@ -143,7 +143,7 @@ fun TripHistoryContent(
 
     val tripHistoryState by viewModel.tripHistoryState.collectAsState()
     val context = LocalContext.current
-    val filtersWidthThreshold = 1500.dp
+    val filtersWidthThreshold = 1900.dp
 
     LaunchedEffect(tripHistoryState.isLoadingPastTrips, tripHistoryState.isLoadingCurrentTrips) {
         globalViewModel.setLoading(tripHistoryState.isLoadingPastTrips || tripHistoryState.isLoadingCurrentTrips)
@@ -160,7 +160,7 @@ fun TripHistoryContent(
                 viewModel = viewModel
             )
 
-            if (deviceIsWideScreen()) {
+            if (deviceIsWideScreen(1500.dp)) {
                 Spacer(Modifier.weight(1f))
                 Column(
                     modifier = Modifier

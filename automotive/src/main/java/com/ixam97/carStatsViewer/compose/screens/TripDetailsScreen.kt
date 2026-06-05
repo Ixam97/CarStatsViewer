@@ -68,6 +68,8 @@ import com.ixam97.carStatsViewer.compose.theme.clubHint
 import com.ixam97.carStatsViewer.compose.theme.slideUpBackground
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import com.ixam97.carStatsViewer.database.tripData.DummyTripData
+import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.map.Mapbox
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionSmoothingType
@@ -110,7 +112,9 @@ fun TripDetailsPortraitScreen(
         val splitScreenCondition = (width > 1500.dp) && (width > height)
 
         val tripDetailsState = viewModel.tripDetailsState
-        val trip = tripDetailsState.drivingSession
+        val trip =
+            if (emulatorMode) DummyTripData.getDummyDrivingSession()
+            else tripDetailsState.drivingSession
 
         Column(
             modifier = Modifier

@@ -163,15 +163,8 @@
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
-        <!--
-        <item>PLEASE NOTE: Polestar 3, Polestar 4 and Volvo EX30 do not provide any power values. Not all app features will work until this is fixed by the OEMs!</item>
-        <item>Added a map to trip details (depending on release track implementation).</item>
-        <item>Completely overhauled the UI of settings and trip details. This makes use of landscape screens like in the Polestar 4.</item>
-        <item>(Play Edition) Re-Added trip history, but with limited information for now.</item>
-        <item>[V](0.28.0)</item>
-        -->
-        <!--<item>Implemented Email export of charging sessions, formatted as csv file.</item>-->
-        <item>WIP: Export of driving and charging sessions: The necessary groundwork for exporting is being implemented in the background and will be available soon.</item>
+        <item>Data Export (WIP): Trips and Charging Sessions can now be exported via E-Mail as CSV-files. The formatting is still WIP and will change in future updates.</item>
+        <item>Legacy Edition: Complete rewrite of Settings-UI (same as Play Edition). The main Screen will follow at a later stage.</item>
         <item>Play Edition: Migrating to a single activity architecture. This makes the settings UI more flexible and allows for more detailed trip details.</item>
         <item>[V](0.29.0)</item>
     </string-array>

@@ -1,14 +1,29 @@
 package com.ixam97.carStatsViewer.carCompose
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.rememberNavBackStack
+import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.screens.main.MainScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsApisNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
@@ -22,6 +37,7 @@ import de.ixam97.carcompose.theme.themes.PolestarClassicThemeConfig
 import de.ixam97.carcompose.theme.themes.PolestarModernThemeConfig
 import de.ixam97.carcompose.theme.themes.VolvoCarUxThemeConfig
 import de.ixam97.carcompose.theme.themes.VolvoTypograph
+import de.ixam97.carcompose.utils.calculateWindowInsets
 
 class CarComposeActivity: ComponentActivity() {
 
@@ -45,6 +61,11 @@ class CarComposeActivity: ComponentActivity() {
 
             val globalState by viewModel.globalState.collectAsState()
 
+
+            window.decorView.systemUiVisibility =
+                if (globalState.overrideWindowInsets) View.SYSTEM_UI_FLAG_FULLSCREEN
+                else View.SYSTEM_UI_FLAG_VISIBLE
+
             val carThemeConfig = when (globalState.uiType) {
                 UiType.Club -> ClubThemeConfig.copy(
                     carTypography = when(globalState.vehicleModel) {
@@ -61,42 +82,71 @@ class CarComposeActivity: ComponentActivity() {
 
             viewModel.setUiSupportsBrightMode(carThemeConfig.carBrightColors != null)
 
-            CarTheme(
-                carThemeConfig = carThemeConfig,
-                darkTheme = when(globalState.uiBrightnessMode) {
-                    UiBrightnessMode.Dark -> true
-                    UiBrightnessMode.Bright -> false
-                    UiBrightnessMode.Auto -> isSystemInDarkTheme()
-                }
-            ) {
-                CarComposeNavigationRoot(
-                    globalViewModel =  viewModel,
-                    backStack = backStack,
-                    onBack = {
-                        if (backStack.size > 1) backStack.removeLastOrNull()
-                        else finish()
-                    },
-                    debugOnClose = { finish() }
-                )
-                // Polestar4MainScreen(
-                //     viewModel = viewModel,
-                //     onBackClick = { finish() }
-                // )
-                // MainScreenLandscape(
-                //     viewModel = viewModel,
-                //     onBackClick = { finish() }
-                // )
+            val windowInsets =
+                if (globalState.overrideWindowInsets) PaddingValues(top = 64.dp, bottom = 138.dp)
+                else calculateWindowInsets()
 
-                // if (Build.MODEL == "PS4" || Build.DEVICE == "lemon_x86_64")
-                //     Polestar4MainScreen(
-                //         viewModel = viewModel,
-                //         onBackClick = { finish() }
-                //     )
-                // else
-                //     MainScreenLandscape(
-                //         viewModel = viewModel,
-                //         onBackClick = { finish() }
-                //     )
+            Box(modifier = Modifier.fillMaxSize()) {
+                CarTheme(
+                    carThemeConfig = carThemeConfig,
+                    darkTheme = when (globalState.uiBrightnessMode) {
+                        UiBrightnessMode.Dark -> true
+                        UiBrightnessMode.Bright -> false
+                        UiBrightnessMode.Auto -> isSystemInDarkTheme()
+                    },
+                    windowInsets = windowInsets
+                ) {
+                    CarComposeNavigationRoot(
+                        globalViewModel = viewModel,
+                        backStack = backStack,
+                        onBack = {
+                            if (backStack.size > 1) backStack.removeLastOrNull()
+                            else finish()
+                        },
+                        debugOnClose = { finish() }
+                    )
+                    // Polestar4MainScreen(
+                    //     viewModel = viewModel,
+                    //     onBackClick = { finish() }
+                    // )
+                    // MainScreenLandscape(
+                    //     viewModel = viewModel,
+                    //     onBackClick = { finish() }
+                    // )
+
+                    // if (Build.MODEL == "PS4" || Build.DEVICE == "lemon_x86_64")
+                    //     Polestar4MainScreen(
+                    //         viewModel = viewModel,
+                    //         onBackClick = { finish() }
+                    //     )
+                    // else
+                    //     MainScreenLandscape(
+                    //         viewModel = viewModel,
+                    //         onBackClick = { finish() }
+                    //     )
+                }
+                if (globalState.overrideWindowInsets) {
+                    Image(
+                        painter = painterResource(R.drawable.img_p4_top_bar),
+                        modifier = Modifier
+                            .height(64.dp)
+                            .fillMaxWidth()
+                            .background(Color.Black)
+                            .align(Alignment.TopStart),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds
+                    )
+                    Image(
+                        painter = painterResource(R.drawable.img_p4_bottom_bar),
+                        modifier = Modifier
+                            .height(138.dp)
+                            .fillMaxWidth()
+                            .background(Color.Black)
+                            .align(Alignment.BottomStart),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
             }
         }
 

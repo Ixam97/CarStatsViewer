@@ -90,6 +90,7 @@ fun SettingsDevContent(
     val context = LocalContext.current
     val snackBarState = LocalCarSnackBarState.current
     val settingsDevState by viewModel.settingsDevState.collectAsState()
+    val globalState by globalViewModel.globalState.collectAsState()
     val mediaProjectionManager by lazy {
         context.getSystemService<MediaProjectionManager>()!!
     }
@@ -126,7 +127,13 @@ fun SettingsDevContent(
                     CarRowSwitch(
                         title = "Enable additional color schemes",
                         state = settingsDevState.additionalColorSchemes
-                    ) { viewModel.setAdditionalColorSchemes(it)}
+                    ) { viewModel.setAdditionalColorSchemes(it) }
+                },
+                CarListItem {
+                    CarRowSwitch(
+                        title = "Override Window Insets (PS4)",
+                        state = globalState.overrideWindowInsets
+                    ) { globalViewModel.setOverrideWindowInsets(it) }
                 },
                 CarListItem {
                     val distanceUnitSegments = listOf(

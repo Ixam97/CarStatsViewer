@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.isRunningOnAAOS
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -61,7 +62,8 @@ data class GlobalState(
     val devModeEnabled: Boolean = BuildConfig.FLAVOR_version == "dev",
     val isLoading: Boolean = false,
     val uiSupportsBrightMode: Boolean = false,
-    val uiBrightnessMode: UiBrightnessMode = getDefaultBrightnessMode()
+    val uiBrightnessMode: UiBrightnessMode = getDefaultBrightnessMode(),
+    val overrideWindowInsets: Boolean = !isRunningOnAAOS(CarStatsViewer.appContext) && devModeEnabled
 )
 
 class CarComposeGlobalViewModel: ViewModel() {
@@ -103,6 +105,10 @@ class CarComposeGlobalViewModel: ViewModel() {
 
     fun setUiBrightnessMode(value: UiBrightnessMode) {
         _globalState.update { it.copy(uiBrightnessMode = value) }
+    }
+
+    fun setOverrideWindowInsets(override: Boolean) {
+        _globalState.update { it.copy(overrideWindowInsets = override) }
     }
 
 //    fun setSelectedMainScreenTabIndex(tabIndex: Int) {
