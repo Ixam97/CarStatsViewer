@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -52,6 +53,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.theme.CarComposeIcon
+import com.ixam97.carStatsViewer.compose.theme.polestarOrange
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import de.ixam97.carcompose.components.controls.CarButton
@@ -160,9 +162,12 @@ private fun TripDetailsConsumptionSectionContent(
                             .fillMaxHeight(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        val lineColor = CarTheme.carColors.accent
+                        val lineColor = polestarOrange // CarTheme.carColors.accent
                         val pixelOffset = with(LocalDensity.current){ CarTheme.carDimensions.defaultVerticalPadding.toPx() }
-                        CarComposeIcon(R.drawable.ic_location_start)
+                        Image(
+                            painter = painterResource(R.drawable.ic_trip_start),
+                            contentDescription = null
+                        )
                         Canvas(modifier = Modifier
                             .weight(1f)
                             .width(4.dp)
@@ -185,8 +190,9 @@ private fun TripDetailsConsumptionSectionContent(
                 drivingSession.end_epoch_time.let { endTime ->
                     if (endTime != null && endTime > 0) {
                         Row() {
-                            CarComposeIcon(
-                                resID = R.drawable.ic_location_destination,
+                            Image(
+                                painter = painterResource(R.drawable.ic_trip_destination),
+                                contentDescription = null,
                                 modifier = Modifier
                                     .padding(
                                         start = CarTheme.carDimensions.defaultHorizontalPadding,

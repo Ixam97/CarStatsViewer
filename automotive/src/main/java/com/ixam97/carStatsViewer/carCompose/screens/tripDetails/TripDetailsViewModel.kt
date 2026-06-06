@@ -40,8 +40,7 @@ data class TripDetailsState(
     val destinationLocation: String? = null,
     val chargingSessionsDetails: List<ChargingSessionDetails> = listOf(),
     val selectedChargingSessionDetailsId: Long? = null,
-    val showChargingDetails: Boolean = false,
-    val debugLandscapeOverride: Boolean = false
+    val showChargingDetails: Boolean = false
 )
 
 class TripDetailsViewModel(sessionId: Long): ViewModel() {
@@ -97,12 +96,6 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
         viewModelScope.launch {
             _mapAction.send(MapboxInterface.MapboxAction.Reset)
         }
-    }
-
-    fun setDebugOverride() {
-        _tripDetailsState.update { it.copy(
-            debugLandscapeOverride = true
-        ) }
     }
 
     fun setSelectedTab(tab: TripDetailsTabKeys) {

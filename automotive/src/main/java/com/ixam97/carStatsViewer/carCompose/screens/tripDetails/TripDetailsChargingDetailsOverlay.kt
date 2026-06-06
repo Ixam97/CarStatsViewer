@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.carCompose.screens.tripDetails
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
-import com.ixam97.carStatsViewer.carCompose.theme.CarComposeIcon
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
 import com.ixam97.carStatsViewer.map.MapboxInterface
 import com.ixam97.carStatsViewer.utils.StringFormatters
@@ -67,7 +67,7 @@ fun TripDetailsChargingDetailsOverlay(
 
                 if (chargingSessionDetails != null) {
                     TripDetailsChargingDetailsOverlayContent(
-                        modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp),
+                        modifier = Modifier.padding(start = if (deviceIsWideScreen(2000.dp)) polestar4ContentPadding else 0.dp),
                         viewModel = viewModel,
                         chargingSessionDetails =  chargingSessionDetails
                     )
@@ -130,9 +130,9 @@ private fun TripDetailsChargingDetailsOverlayContent(
                     .fillMaxHeight()
             ) {
                 CarRow(
-                    title = "${StringFormatters.getDateString(Date(chargingSessionDetails.chargingSession.start_epoch_time))}, $socString",
+                    title = StringFormatters.getDateString(Date(chargingSessionDetails.chargingSession.start_epoch_time)),
                     description = chargingSessionDetails.chargingLocation,
-                    leadingContent = { CarComposeIcon(resID = R.drawable.ic_location_charge) },
+                    leadingContent = { Image(painterResource(R.drawable.ic_trip_charging_location), null) },
                     browsable = true,
                     onBrowse = {
                         if (chargingSessionDetails.chargingSession.lon != null && chargingSessionDetails.chargingSession.lat != null) {

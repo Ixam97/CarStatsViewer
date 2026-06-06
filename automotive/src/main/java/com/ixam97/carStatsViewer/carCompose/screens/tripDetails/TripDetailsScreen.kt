@@ -36,15 +36,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
-import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.map.Mapbox
-import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.layout.CarPaneLayout
 import de.ixam97.carcompose.components.layout.CarTabLayout
 import de.ixam97.carcompose.theme.CarTheme
@@ -83,7 +80,7 @@ fun TripDetailsScreen(
         globalViewModel.setLoading(tripDetailsState.isLoading)
     }
 
-    if (deviceIsWideScreen(2100.dp) || tripDetailsState.debugLandscapeOverride) {
+    if (deviceIsWideScreen(1500.dp)) {
         TripDetailsLandscapeScreen(
             globalViewModel = globalViewModel,
             onBackClick = onBackClick,
@@ -99,29 +96,95 @@ fun TripDetailsScreen(
 }
 
 @Composable
-private fun TripDetailsPortraitScreen(
+private fun TripDetailsVerticalTabs(
+    modifier: Modifier = Modifier,
     globalViewModel: CarComposeGlobalViewModel,
     onBackClick: () -> Unit,
-    viewModel: TripDetailsViewModel
+    viewModel: TripDetailsViewModel,
+) {
+    val tripDetailsState by viewModel.tripDetailsState.collectAsState()
+    val globalState by globalViewModel.globalState.collectAsState()
+
+    val tabs = mutableListOf(
+        CarTabLayout.Tab(
+            title = stringResource(R.string.summary_tab_trip_details),
+            icon = painterResource(id = R.drawable.ic_distance),
+            key = TripDetailsTabKeys.Consumption
+        ),
+        CarTabLayout.Tab(
+            title = stringResource(R.string.summary_tab_charging_sessions),
+            icon = painterResource(id = R.drawable.ic_charger),
+            key = TripDetailsTabKeys.Charging
+        )
+    )
+
+    Box(
+        modifier = modifier.fillMaxHeight(),
+        contentAlignment = Alignment.BottomEnd
+    ) {
+        AnimatedVisibility(
+            visible = !tripDetailsState.showChargingDetails,
+            enter = slideInHorizontally(initialOffsetX = { -it }),
+            exit = slideOutHorizontally(targetOffsetX = { -it })
+        ) {
+            CarTabLayout(
+                isLoading = globalState.isLoading,
+                tabOrientation = CarTabLayout.Orientation.Vertical,
+                selectedKey = tripDetailsState.selectedTab,
+                tabs = tabs,
+                onTabSelected = { viewModel.setSelectedTab(it) },
+                headerTitle = stringResource(R.string.summary_title),
+                onBackAction = onBackClick
+            ) { selectedKey ->
+                AnimatedVisibility(
+                    visible = selectedKey == TripDetailsTabKeys.Consumption,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) { TripDetailsConsumptionSection(viewModel, tripDetailsState.drivingSession) }
+
+                AnimatedVisibility(
+                    visible = selectedKey == TripDetailsTabKeys.Charging,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    TripDetailsChargingSection(
+                        viewModel,
+                        tripDetailsState.chargingSessionsDetails
+                    )
+                }
+            }
+        }
+        TripDetailsChargingDetailsOverlay(
+            visible = tripDetailsState.showChargingDetails,
+            viewModel = viewModel
+        )
+    }
+}
+
+@Composable
+private fun TripDetailsHorizontalTabs(
+    modifier: Modifier = Modifier,
+    globalViewModel: CarComposeGlobalViewModel,
+    onBackClick: () -> Unit,
+    viewModel: TripDetailsViewModel,
+    showMapTab: Boolean = true,
 ) {
     val tripDetailsState by viewModel.tripDetailsState.collectAsState()
     val globalState by globalViewModel.globalState.collectAsState()
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxHeight(),
         contentAlignment = Alignment.BottomEnd
     ) {
-//        AnimatedVisibility(
-//            visible = !tripDetailsState.showChargingDetails,
-//            enter = slideInHorizontally(initialOffsetX = { -it }),
-//            exit = slideOutHorizontally(targetOffsetX = { -it })
-//        ) {
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
         ) {
             val offset by animateIntOffsetAsState(
-                targetValue = IntOffset(x = if (!tripDetailsState.showChargingDetails) 0 else constraints.maxWidth * -1, y = 0),
+                targetValue = IntOffset(
+                    x = if (!tripDetailsState.showChargingDetails) 0 else constraints.maxWidth * -1,
+                    y = 0
+                ),
                 animationSpec = spring(
                     stiffness = Spring.StiffnessMediumLow,
                     visibilityThreshold = IntOffset.VisibilityThreshold
@@ -133,16 +196,10 @@ private fun TripDetailsPortraitScreen(
                     .height(maxHeight)
                     .offset { offset }
             ) {
-                val iconButtons = if (BuildConfig.FLAVOR_version == "dev") listOf(@Composable {
-                    CarIconButton(painterResource(R.drawable.ic_debug)) { viewModel.setDebugOverride() }
-                }) else listOf()
                 CarPaneLayout(
                     isLoading = globalState.isLoading,
-                    headerIconButtons = iconButtons,
                     headerStartContent = {
-                        Row(
-                            // modifier = Modifier.offset(x = CarTheme.carDimensions.headerContentHorizontalPadding * -1)
-                        ) {
+                        Row() {
                             HeaderTabButton(
                                 title = stringResource(R.string.summary_tab_trip_details),
                                 active = tripDetailsState.selectedTab == TripDetailsTabKeys.Consumption
@@ -153,36 +210,40 @@ private fun TripDetailsPortraitScreen(
                                 active = tripDetailsState.selectedTab == TripDetailsTabKeys.Charging
                             ) { viewModel.setSelectedTab(TripDetailsTabKeys.Charging) }
 
-                            HeaderTabButton(
-                                title = stringResource(R.string.summary_tab_map),
-                                active = tripDetailsState.selectedTab == TripDetailsTabKeys.Map
-                            ) { viewModel.setSelectedTab(TripDetailsTabKeys.Map) }
+                            if (showMapTab) {
+                                HeaderTabButton(
+                                    title = stringResource(R.string.summary_tab_map),
+                                    active = tripDetailsState.selectedTab == TripDetailsTabKeys.Map
+                                ) { viewModel.setSelectedTab(TripDetailsTabKeys.Map) }
+                            }
                         }
                     },
                     onBackAction = onBackClick
                 ) {
                     Box() {
-                        BoxWithConstraints(
-                            modifier = Modifier
-                                .fillMaxSize()
-                        ) {
-                            val offset by animateIntOffsetAsState(
-                                targetValue = IntOffset(
-                                    x = if (tripDetailsState.selectedTab == TripDetailsTabKeys.Map || tripDetailsState.showChargingDetails) 0 else constraints.maxWidth,
-                                    y = 0
-                                ),
-                                animationSpec = spring(
-                                    stiffness = Spring.StiffnessMediumLow,
-                                    visibilityThreshold = IntOffset.VisibilityThreshold
-                                )
-                            )
-                            Box(
+                        if (showMapTab) {
+                            BoxWithConstraints(
                                 modifier = Modifier
-                                    .width(maxWidth)
-                                    .height(maxHeight)
-                                    .offset { offset }
+                                    .fillMaxSize()
                             ) {
-                                TripDetailsMapSection(tripDetailsState, viewModel)
+                                val offset by animateIntOffsetAsState(
+                                    targetValue = IntOffset(
+                                        x = if (tripDetailsState.selectedTab == TripDetailsTabKeys.Map || tripDetailsState.showChargingDetails) 0 else constraints.maxWidth,
+                                        y = 0
+                                    ),
+                                    animationSpec = spring(
+                                        stiffness = Spring.StiffnessMediumLow,
+                                        visibilityThreshold = IntOffset.VisibilityThreshold
+                                    )
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .width(maxWidth)
+                                        .height(maxHeight)
+                                        .offset { offset }
+                                ) {
+                                    TripDetailsMapSection(tripDetailsState, viewModel)
+                                }
                             }
                         }
 
@@ -225,71 +286,44 @@ private fun TripDetailsPortraitScreen(
 }
 
 @Composable
+private fun TripDetailsPortraitScreen(
+    globalViewModel: CarComposeGlobalViewModel,
+    onBackClick: () -> Unit,
+    viewModel: TripDetailsViewModel
+) {
+    TripDetailsHorizontalTabs(
+        modifier = Modifier.fillMaxSize(),
+        globalViewModel = globalViewModel,
+        onBackClick = onBackClick,
+        viewModel = viewModel
+    )
+}
+
+@Composable
 private fun TripDetailsLandscapeScreen(
     globalViewModel: CarComposeGlobalViewModel,
     onBackClick: () -> Unit,
     viewModel: TripDetailsViewModel
 ) {
     val tripDetailsState by viewModel.tripDetailsState.collectAsState()
-    val globalState by globalViewModel.globalState.collectAsState()
 
     if (!tripDetailsState.isSideBySideLayout) viewModel.setSideBySideLayout(true)
 
-    val tabs = mutableListOf(
-        CarTabLayout.Tab(
-            title = stringResource(R.string.summary_tab_trip_details),
-            icon = painterResource(id = R.drawable.ic_distance),
-            key = TripDetailsTabKeys.Consumption
-        ),
-        CarTabLayout.Tab(
-            title = stringResource(R.string.summary_tab_charging_sessions),
-            icon = painterResource(id = R.drawable.ic_charger),
-            key = TripDetailsTabKeys.Charging
-        )
-    )
-
     Row() {
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            this@Row.AnimatedVisibility(
-                visible = !tripDetailsState.showChargingDetails,
-                enter = slideInHorizontally(initialOffsetX = { -it }),
-                exit = slideOutHorizontally(targetOffsetX = { -it })
-            ) {
-                CarTabLayout(
-                    isLoading = globalState.isLoading,
-                    tabOrientation = CarTabLayout.Orientation.Vertical,
-                    selectedKey = tripDetailsState.selectedTab,
-                    tabs = tabs,
-                    onTabSelected = { viewModel.setSelectedTab(it) },
-                    headerTitle = stringResource(R.string.summary_title),
-                    onBackAction = onBackClick
-                ) { selectedKey ->
-                    this@Row.AnimatedVisibility(
-                        visible = selectedKey == TripDetailsTabKeys.Consumption,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) { TripDetailsConsumptionSection(viewModel, tripDetailsState.drivingSession) }
-
-                    this@Row.AnimatedVisibility(
-                        visible = selectedKey == TripDetailsTabKeys.Charging,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        TripDetailsChargingSection(
-                            viewModel,
-                            tripDetailsState.chargingSessionsDetails
-                        )
-                    }
-                }
-            }
-            TripDetailsChargingDetailsOverlay(
-                visible = tripDetailsState.showChargingDetails,
+        if(deviceIsWideScreen(2000.dp)) {
+            TripDetailsVerticalTabs(
+                modifier = Modifier.weight(1f),
+                globalViewModel = globalViewModel,
+                onBackClick = onBackClick,
                 viewModel = viewModel
+            )
+        } else {
+            TripDetailsHorizontalTabs(
+                modifier = Modifier.width(1000.dp),
+                globalViewModel = globalViewModel,
+                onBackClick = onBackClick,
+                viewModel = viewModel,
+                showMapTab = false
             )
         }
         Box(
@@ -321,7 +355,6 @@ private fun HeaderTabButton(
     onClick: () -> Unit
 ) {
     val textColor = if (active) CarTheme.carColors.accent else LocalContentColor.current
-    val maxHeaderFontSize = if (CarTheme.carTypography.title.fontSize > 38.sp) 38.sp else CarTheme.carTypography.title.fontSize
 
     Box(
         modifier = Modifier
@@ -340,7 +373,7 @@ private fun HeaderTabButton(
             Text(
                 text = title,
                 color = textColor,
-                style = CarTheme.carTypography.title.copy(fontSize = maxHeaderFontSize)
+                style = CarTheme.carTypography.title
             )
         }
     }
