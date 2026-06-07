@@ -42,7 +42,6 @@ import com.ixam97.carStatsViewer.compose.DefaultLazyListScrollbar
 import com.ixam97.carStatsViewer.compose.components.CarRow
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
-import com.mikepenz.aboutlibraries.ui.compose.util.author
 import com.mikepenz.aboutlibraries.util.withContext
 
 internal data class DialogLibrary(
@@ -185,9 +184,13 @@ internal fun LibraryRow(
             title = library.name,
             customContent = {
                 Column {
-                    if (library.author.isNotBlank()) {
+                    val libraryAuthor = library.run {
+                        developers.takeIf { it.isNotEmpty() }?.mapNotNull { it.name }?.joinToString(", ")
+                            ?: organization?.name ?: ""
+                    }
+                    if (libraryAuthor.isNotBlank()) {
                         Text(
-                            text = library.author,
+                            text = libraryAuthor,
                             color = colorResource(id = R.color.secondary_text_color)
                         )
                     }

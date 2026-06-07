@@ -37,7 +37,6 @@ import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
 import com.ixam97.carStatsViewer.compose.RowContentText
 import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.entity.Library
-import com.mikepenz.aboutlibraries.ui.compose.util.author
 import com.mikepenz.aboutlibraries.util.withContext
 import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.controls.CarRow
@@ -49,7 +48,6 @@ import de.ixam97.carcompose.components.layout.CarListItem
 import de.ixam97.carcompose.components.layout.CarPaneLayout
 import de.ixam97.carcompose.components.layout.carListSection
 import de.ixam97.carcompose.theme.CarTheme
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -141,7 +139,7 @@ fun SettingsLicensesContent(
 @Composable
 internal fun LibrariesColumn(
     modifier: Modifier = Modifier,
-    libraries: ImmutableList<Library>,
+    libraries: List<Library>,
     setDialogLibrary: (DialogLibrary) -> Unit,
     constraintsScope: BoxWithConstraintsScope
 ) {
@@ -232,8 +230,12 @@ private fun LibRow(
         title = lib.name,
         descriptionContent = {
             Column() {
-                if (lib.author.isNotBlank()) {
-                    RowContentText(text = lib.author)
+                val libraryAuthor = lib.run {
+                    developers.takeIf { it.isNotEmpty() }?.mapNotNull { it.name }?.joinToString(", ")
+                        ?: organization?.name ?: ""
+                }
+                if (libraryAuthor.isNotBlank()) {
+                    RowContentText(text = libraryAuthor)
                 }
                 if (lib.licenses.isNotEmpty()) {
                     var licensesString = ""

@@ -81,8 +81,8 @@ private fun CarComposeMainScreenLandscape(
     val tabsList = listOf(
         CarTabLayout.Tab(
             title = stringResource(R.string.car_app_dashboard),
-            icon = painterResource(R.drawable.ic_grid_48),
-            iconActive = painterResource(R.drawable.ic_grid_filled_48),
+            icon = painterResource(de.ixam97.carcompose.R.drawable.ic_grid_48),
+            iconActive = painterResource(de.ixam97.carcompose.R.drawable.ic_grid_filled_48),
             key = MainScreenTabKeys.Dashboard
         ),
         CarTabLayout.Tab(

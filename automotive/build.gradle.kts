@@ -1,16 +1,13 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 val firebase: Boolean = providers.gradleProperty("useFirebase").get().toBoolean()
 val mapbox: Boolean = providers.gradleProperty("useMapbox").get().toBoolean()
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.aboutlibraries)
-    alias(libs.plugins.kotlinKapt)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.google.ksp)
 
 }
 if (firebase) {
@@ -19,13 +16,13 @@ if (firebase) {
 }
 
 android {
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 29
-        targetSdk = 35
+        targetSdk = 37
         versionCode = 331
-        versionName = "0.29.0.0020"
+        versionName = "0.29.0.0021"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -57,10 +54,8 @@ android {
     }
 
     // use a dummy if mapbox api is not configured
-    sourceSets {
-        getByName("main") {
-            java.srcDir( if (mapbox) "src/mapbox/java" else "src/mapboxdummy/java" )
-        }
+    sourceSets.named("main") {
+        kotlin.directories.add(if (mapbox) "src/mapbox/java" else "src/mapboxdummy/java" )
     }
 
     buildTypes {
@@ -76,8 +71,9 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        resValues = true
+        compose = true
     }
-
 
     // android.car exists since Android 10 (API level 29) Revision 5.
     useLibrary("android.car")
@@ -88,32 +84,18 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.fromTarget("17")
-        }
-    }
-
     lint {
         abortOnError = false
         checkReleaseBuilds = false
-        ignoreWarnings = true
+        ignoreWarnings = false
         quiet = true
     }
 
-    buildFeatures {
-        compose = true
-    }
-    packagingOptions {
+    packaging {
         resources {
             pickFirsts += listOf("META-INF/LICENSE.md", "META-INF/NOTICE.md")
         }
     }
-}
-
-aboutLibraries {
-    configPath = "config"
-    fetchRemoteLicense = true
 }
 
 dependencies {
@@ -132,7 +114,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.aboutlibraries.core)
-    implementation(libs.aboutlibraries.compose)
     implementation(libs.airbnb.paris)
     implementation(libs.github.egm96)
     implementation(libs.github.scrollbar)
@@ -144,8 +125,8 @@ dependencies {
     implementation(libs.androidx.car.app.automotive)
 
     if (mapbox) {
-        implementation("com.mapbox.maps:android:11.18.2")
-        implementation("com.mapbox.extension:maps-compose-ndk27:11.18.2")
+        implementation("com.mapbox.maps:android:11.24.3")
+        implementation("com.mapbox.extension:maps-compose-ndk27:11.24.3")
     }
 
     implementation(libs.androidx.activity.compose)
@@ -161,11 +142,11 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.room)
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
 
-    implementation(platform("com.google.firebase:firebase-bom:34.9.0"))
-    implementation("com.google.firebase:firebase-crashlytics")
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.google.firebase.crashlytics)
+    implementation(libs.google.firebase.analytics)
 
     debugImplementation(libs.squareup.leakcanary)
 
