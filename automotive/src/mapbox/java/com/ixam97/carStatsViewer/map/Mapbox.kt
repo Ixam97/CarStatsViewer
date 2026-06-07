@@ -226,6 +226,19 @@ object Mapbox: MapboxInterface {
 
         val mapViewPortState = rememberMapViewportState { setCameraOptions(tripCameraPosition) }
 
+        fun changeZoom(zoomChange: Double) {
+            mapViewPortState.cameraState?.let { cameraState ->
+                mapViewPortState.easeTo(cameraOptions {
+                    center(cameraState.center)
+                    zoom(cameraState.zoom + zoomChange)
+                })
+            }
+        }
+
+        fun resetZoom() {
+            mapViewPortState.flyTo(tripCameraPosition, slowEasingAnimationOptions)
+        }
+
         val lifecycleOwner = LocalLifecycleOwner.current
         LaunchedEffect(lifecycleOwner.lifecycle, actionFlow) {
             lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -348,124 +361,21 @@ object Mapbox: MapboxInterface {
                 }
             }
 
-            Column (
-                modifier = Modifier
-                    .padding(15.dp)
-            ) {
-
-                if (useCarCompose){
-
-                    Box(
-                        modifier = Modifier
-                            .size(80.dp)
-                            .dropShadow(
-                                shape = CarButtonDefaults.shape,
-                                shadow = Shadow(
-                                    radius = 8.dp,
-                                    spread = 0.dp,
-                                    color = Color(0x65000000)
-                                )
-                            )
-                            .clip(CarButtonDefaults.shape)
-                            .background(CarButtonDefaults.colors.backgroundBrush)
-                            .clickable { mapViewPortState.flyTo(tripCameraPosition, slowEasingAnimationOptions) },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(de.ixam97.carcompose.theme.CarTheme.carDimensions.iconButtonSize),
-                            painter = painterResource(R.drawable.ic_distance),
-                            contentDescription = null,
-                            tint = CarButtonDefaults.colors.textColor
-                        )
-                    }
-//                    Spacer(Modifier.size(15.dp))
-//                    Box(
-//                            modifier = Modifier
-//                                .clip(CarButtonDefaults.shape)
-//                                .background(CarButtonDefaults.colors.backgroundBrush)
-//                                .clickable {
-//                                    if (trip?.chargingSessions?.getOrNull(0) != null) {
-//                                        chargingMarkerOnClick(trip.chargingSessions!![0].charging_session_id)
-//                                    } else chargingMarkerOnClick(0)
-//                                }
-//                                .padding(10.dp)
-//                            ) {
-//                        Icon(
-//                            modifier = Modifier
-//                                .size(50.dp),
-//                            painter = painterResource(R.drawable.ic_debug),
-//                            contentDescription = null,
-//                            tint = CarButtonDefaults.colors.textColor
-//                        )
-//                    }
-                    Spacer(Modifier.size(de.ixam97.carcompose.theme.CarTheme.carDimensions.defaultVerticalPadding))
-
-                    Column(
-                        modifier = Modifier
-                            .width(IntrinsicSize.Min)
-                            .dropShadow(
-                                shape = CarButtonDefaults.shape,
-                                shadow = Shadow(
-                                    radius = 8.dp,
-                                    spread = 0.dp,
-                                    color = Color(0x65000000)
-                                )
-                            )
-                            .clip(CarButtonDefaults.shape)
-                            .background(CarButtonDefaults.colors.backgroundBrush)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(80.dp)
-                                .clickable {
-                                    mapViewPortState.cameraState?.let { cameraState ->
-                                        mapViewPortState.easeTo(cameraOptions {
-                                            center(cameraState.center)
-                                            zoom(cameraState.zoom + 1)
-                                        })
-                                    }
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(de.ixam97.carcompose.theme.CarTheme.carDimensions.iconButtonSize),
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                tint = CarButtonDefaults.colors.textColor
-                            )
-                        }
-                        Spacer(Modifier
-                            .height(2.dp)
-                            .fillMaxWidth()
-                            .padding(horizontal = 15.dp)
-                            .background(de.ixam97.carcompose.theme.CarTheme.carColors.onSurface.copy(alpha = 0.3f))
-                        )
-                        Box(
-                            modifier = Modifier
-                                .size(80.dp)
-                                .clickable {
-                                    mapViewPortState.cameraState?.let { cameraState ->
-                                        mapViewPortState.easeTo(cameraOptions {
-                                            center(cameraState.center)
-                                            zoom(cameraState.zoom - 1)
-                                        })
-                                    }
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(de.ixam97.carcompose.theme.CarTheme.carDimensions.iconButtonSize),
-                                imageVector = Icons.Default.Remove,
-                                contentDescription = null,
-                                tint = CarButtonDefaults.colors.textColor
-                            )
-                        }
-                    }
-                } else {
-                    CarGradientButton (
+            if (useCarCompose) {
+                MapControls(
+                    onResetZoom = { resetZoom() },
+                    onZoomIn = { changeZoom(1.0) },
+                    onZoomOut = { changeZoom(-1.0) }
+                )
+            } else {
+                Column(
+                    modifier = Modifier
+                        .padding(15.dp)
+                ) {
+                    CarGradientButton(
                         modifier = Modifier.size(65.dp),
                         contentPadding = PaddingValues(0.dp),
-                        onClick = { mapViewPortState.flyTo(tripCameraPosition, slowEasingAnimationOptions) }
+                        onClick = { resetZoom() }
                     ) {
                         Icon(
                             painterResource(id = R.drawable.ic_distance),
@@ -475,21 +385,14 @@ object Mapbox: MapboxInterface {
                         )
                     }
                     Spacer(Modifier.size(15.dp))
-                    CarGradientButton (
+                    CarGradientButton(
                         modifier = Modifier.size(65.dp),
                         contentPadding = PaddingValues(0.dp),
                         shape = RoundedCornerShape(
                             topStart = CarTheme.buttonCornerRadius,
                             topEnd = CarTheme.buttonCornerRadius
                         ),
-                        onClick = {
-                            mapViewPortState.cameraState?.let { cameraState ->
-                                mapViewPortState.easeTo(cameraOptions {
-                                    center(cameraState.center)
-                                    zoom(cameraState.zoom + 1)
-                                })
-                            }
-                        }
+                        onClick = { changeZoom(1.0) }
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Add,
@@ -499,21 +402,14 @@ object Mapbox: MapboxInterface {
                         )
                     }
                     Spacer(Modifier.size(4.dp))
-                    CarGradientButton (
+                    CarGradientButton(
                         modifier = Modifier.size(65.dp),
                         contentPadding = PaddingValues(0.dp),
                         shape = RoundedCornerShape(
                             bottomStart = CarTheme.buttonCornerRadius,
                             bottomEnd = CarTheme.buttonCornerRadius
                         ),
-                        onClick = {
-                            mapViewPortState.cameraState?.let { cameraState ->
-                                mapViewPortState.easeTo(cameraOptions {
-                                    center(cameraState.center)
-                                    zoom(cameraState.zoom - 1)
-                                })
-                            }
-                        }
+                        onClick = { changeZoom(-1.0) }
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Remove,
@@ -523,6 +419,88 @@ object Mapbox: MapboxInterface {
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MapControls(
+    onResetZoom: () -> Unit,
+    onZoomIn: () -> Unit,
+    onZoomOut: () -> Unit
+) {
+    val buttonShadow = Shadow(
+        radius = 12.dp,
+        spread = 0.dp,
+        color = Color(0x90000000)
+    )
+
+    Column(
+        modifier = Modifier.padding(15.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .dropShadow(
+                    shape = CarButtonDefaults.shape,
+                    shadow = buttonShadow
+                )
+                .clip(CarButtonDefaults.shape)
+                .background(CarButtonDefaults.colors.backgroundBrush)
+                .clickable(onClick = onResetZoom),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                modifier = Modifier.size(de.ixam97.carcompose.theme.CarTheme.carDimensions.iconButtonSize),
+                painter = painterResource(R.drawable.ic_distance),
+                contentDescription = null,
+                tint = CarButtonDefaults.colors.textColor
+            )
+        }
+        Spacer(Modifier.size(de.ixam97.carcompose.theme.CarTheme.carDimensions.defaultVerticalPadding))
+
+        Column(
+            modifier = Modifier
+                .width(IntrinsicSize.Min)
+                .dropShadow(
+                    shape = CarButtonDefaults.shape,
+                    shadow = buttonShadow
+                )
+                .clip(CarButtonDefaults.shape)
+                .background(CarButtonDefaults.colors.backgroundBrush)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .clickable(onClick = onZoomIn),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    modifier = Modifier.size(de.ixam97.carcompose.theme.CarTheme.carDimensions.iconButtonSize),
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = CarButtonDefaults.colors.textColor
+                )
+            }
+            Spacer(Modifier
+                .height(2.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp)
+                .background(de.ixam97.carcompose.theme.CarTheme.carColors.onSurface.copy(alpha = 0.3f))
+            )
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .clickable(onClick = onZoomOut),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    modifier = Modifier.size(de.ixam97.carcompose.theme.CarTheme.carDimensions.iconButtonSize),
+                    imageVector = Icons.Default.Remove,
+                    contentDescription = null,
+                    tint = CarButtonDefaults.colors.textColor
+                )
             }
         }
     }

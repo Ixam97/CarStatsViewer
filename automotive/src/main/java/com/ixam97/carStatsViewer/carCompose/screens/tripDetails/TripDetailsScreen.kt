@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -339,13 +340,18 @@ private fun TripDetailsMapSection(
     tripDetailsState: TripDetailsState,
     viewModel: TripDetailsViewModel
 ) {
-    Mapbox.MapBoxContainer(
-        modifier = Modifier,
-        trip = tripDetailsState.drivingSession,
-        useCarCompose = true,
-        chargingMarkerOnClick = { viewModel.setSelectedChargingDetails(it) },
-        actionFlow = viewModel.mapAction
-    )
+    Surface(
+        color = CarTheme.carColors.background,
+        contentColor = CarTheme.carColors.onBackground
+    ) {
+        Mapbox.MapBoxContainer(
+            modifier = Modifier,
+            trip = tripDetailsState.drivingSession,
+            useCarCompose = true,
+            chargingMarkerOnClick = { viewModel.setSelectedChargingDetails(it) },
+            actionFlow = viewModel.mapAction
+        )
+    }
 }
 
 @Composable
