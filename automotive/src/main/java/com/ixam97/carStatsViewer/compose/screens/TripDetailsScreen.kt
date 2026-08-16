@@ -83,6 +83,7 @@ import com.ixam97.carStatsViewer.ui.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLine
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLineConfiguration
+import com.ixam97.carStatsViewer.ui.plot.objects.PlotMarkers
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotRange
 import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.DataConverters
@@ -588,7 +589,8 @@ fun ConsumptionPlot(
     plotLinePaint: PlotLinePaint,
     distance: Float,
     limitedHeight: Boolean,
-    secondaryDimension: Int
+    secondaryDimension: Int,
+    plotMarkers: PlotMarkers? = null,
 ) {
     val appPreferences = CarStatsViewer.appPreferences
 
@@ -620,6 +622,8 @@ fun ConsumptionPlot(
                     plotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 10f
                 }
 
+                mTextSize = 22f
+
                 dimension = PlotDimensionX.DISTANCE
                 dimensionYSecondary = when (secondaryDimension) {
                     1 -> PlotDimensionY.SPEED
@@ -631,6 +635,8 @@ fun ConsumptionPlot(
                     MainActivity.DISTANCE_TRIP_DIVIDER)
                 dimensionSmoothing = 0.02f
                 dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
+
+                plotMarkers?.let { setPlotMarkers(it) }
                 visibleMarkerTypes.add(PlotMarkerType.CHARGE)
                 visibleMarkerTypes.add(PlotMarkerType.PARK)
 
@@ -690,6 +696,8 @@ fun ChargingPlot(
                 dimensionSmoothing = 0.01f
                 dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
                 dimensionYSecondary = PlotDimensionY.STATE_OF_CHARGE
+
+                mTextSize = 22f
 
                 addPlotLine(plotLine, plotLinePaint)
                 dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(time / 5)) + 1) * 5 + 1

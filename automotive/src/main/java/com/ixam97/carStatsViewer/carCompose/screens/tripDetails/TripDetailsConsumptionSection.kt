@@ -52,6 +52,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carCompose.components.ConsumptionGraph
 import com.ixam97.carStatsViewer.carCompose.theme.CarComposeIcon
 import com.ixam97.carStatsViewer.compose.theme.polestarOrange
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
@@ -391,15 +392,16 @@ private fun TripDetailsConsumptionSectionContent(
                 Box(
                     Modifier
                         .weight(1f)
-                        .fillMaxWidth()
-                        .padding(horizontal = CarTheme.carDimensions.defaultHorizontalPadding)
-                        .padding(top = CarTheme.carDimensions.defaultVerticalPadding)
-                        .background(brush = CarTheme.carColors.secondarySurfaceBrush),
+                        .fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "The Consumption Graph will return Soon™",
-                        style = CarTheme.carTypography.rowTitle
+//                    Text(
+//                        text = "The Consumption Graph will return Soon™",
+//                        style = CarTheme.carTypography.rowTitle
+//                    )
+                    ConsumptionGraph(
+                        drivingSession = drivingSession,
+                        consumptionGraphState = tripDetailsState.consumptionGraphState
                     )
                 }
                 CarRow(
@@ -488,7 +490,14 @@ private fun TripDetailsConsumptionSectionContent(
                                 dimensions = CarSegmentedButtonDefaults.dimensions.copy(
                                     buttonHorizontalPadding = adjustedButtonPadding,
                                 ),
-                                onSegmentChanged = {}
+                                onSegmentChanged = {
+                                    when (it) {
+                                        TripDistanceSegmentKeys.Dist100 -> viewModel.setConsumptionGraphDistance(100_000f)
+                                        TripDistanceSegmentKeys.Dist40 -> viewModel.setConsumptionGraphDistance(40_000f)
+                                        TripDistanceSegmentKeys.Dist20 -> viewModel.setConsumptionGraphDistance(20_000f)
+                                        else -> viewModel.setConsumptionGraphDistance(0f)
+                                    }
+                                }
                             )
                             Spacer(Modifier.size(CarTheme.carDimensions.defaultHorizontalPadding))
 
@@ -503,8 +512,20 @@ private fun TripDetailsConsumptionSectionContent(
                                     buttonVerticalPadding = 0.dp
                                 ),
                                 segments = secondaryPlotSegments,
-                                selectedKey = null,
-                                onSegmentChanged = { }
+                                selectedKey = when (tripDetailsState.consumptionGraphState.secondaryDimension) {
+                                    1 -> SecondaryPlotSegmentKeys.Speed
+                                    2 -> SecondaryPlotSegmentKeys.Altitude
+                                    3 -> SecondaryPlotSegmentKeys.StateOfCharge
+                                    else -> null
+                                },
+                                onSegmentChanged = {
+                                    when (it) {
+                                        SecondaryPlotSegmentKeys.Speed -> viewModel.setConsumptionGraphSecondaryDimension(1)
+                                        SecondaryPlotSegmentKeys.Altitude -> viewModel.setConsumptionGraphSecondaryDimension(2)
+                                        SecondaryPlotSegmentKeys.StateOfCharge -> viewModel.setConsumptionGraphSecondaryDimension(3)
+                                        null -> viewModel.setConsumptionGraphSecondaryDimension(0)
+                                    }
+                                }
                             )
                         }
                     }

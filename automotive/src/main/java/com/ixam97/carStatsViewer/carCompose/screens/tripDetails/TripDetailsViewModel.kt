@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carCompose.components.ConsumptionGraphState
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.DummyTripData
@@ -39,6 +40,10 @@ data class TripDetailsState(
     val startLocation: String? = null,
     val destinationLocation: String? = null,
     val chargingSessionsDetails: List<ChargingSessionDetails> = listOf(),
+    val consumptionGraphState: ConsumptionGraphState = ConsumptionGraphState(
+        secondaryDimension = CarStatsViewer.appPreferences.secondaryConsumptionDimension,
+        distance = 0f
+    ),
     val selectedChargingSessionDetailsId: Long? = null,
     val showChargingDetails: Boolean = false
 )
@@ -173,6 +178,19 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
                 }
             }
         }
+    }
+
+    fun setConsumptionGraphDistance(distance: Float) {
+        _tripDetailsState.update { it.copy(
+            consumptionGraphState = it.consumptionGraphState.copy(distance = distance)
+        ) }
+    }
+
+    fun setConsumptionGraphSecondaryDimension(dimension: Int) {
+        CarStatsViewer.appPreferences.secondaryConsumptionDimension = dimension
+        _tripDetailsState.update { it.copy(
+            consumptionGraphState = it.consumptionGraphState.copy(secondaryDimension = CarStatsViewer.appPreferences.secondaryConsumptionDimension)
+        ) }
     }
 
     fun exportChargingSession(

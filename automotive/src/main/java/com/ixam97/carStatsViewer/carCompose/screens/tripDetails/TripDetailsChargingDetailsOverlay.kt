@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carCompose.components.ChargeCurveGraph
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
 import com.ixam97.carStatsViewer.map.MapboxInterface
@@ -213,16 +214,10 @@ private fun TripDetailsChargingDetailsOverlayContent(
         Box(
             Modifier
                 .weight(1f)
-                .fillMaxWidth()
-                .padding(horizontal = CarTheme.carDimensions.defaultHorizontalPadding)
-                .padding(top = CarTheme.carDimensions.defaultVerticalPadding)
-                .background(brush = CarTheme.carColors.secondarySurfaceBrush),
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "The Charging Curve will return Soon™",
-                style = CarTheme.carTypography.rowTitle
-            )
+            ChargeCurveGraph(chargingSessionDetails.chargingSession)
         }
     }
 }

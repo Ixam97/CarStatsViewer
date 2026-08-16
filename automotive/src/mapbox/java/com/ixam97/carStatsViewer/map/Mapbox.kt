@@ -48,6 +48,7 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.compose.components.CarGradientButton
 import com.ixam97.carStatsViewer.compose.theme.CarTheme
+import com.ixam97.carStatsViewer.compose.theme.polestarOrange
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.mapbox.common.MapboxOptions
@@ -272,6 +273,7 @@ object Mapbox: MapboxInterface {
                 MapboxMap(
                     style = { MapStyle(style = "mapbox://styles/ixam97/clfekq5z500hu01mx8s0g54gu") },
                     mapViewportState = mapViewPortState,
+                    attribution = { Attribution(iconColor = polestarOrange) },
                     scaleBar = {},
                     compass = {}
                 ) {
@@ -284,12 +286,13 @@ object Mapbox: MapboxInterface {
                                     userTelemetryRequestState = false
                                     disableTelemetrySession()
                                 }
-                                attribution.getMapAttributionDelegate().geofencingConsent().apply {
-                                    setUserConsent(
-                                        false,
-                                        callback = {}
-                                    )
-                                }
+                                attribution.getMapAttributionDelegate().geofencingConsent()
+                                    .apply {
+                                        setUserConsent(
+                                            false,
+                                            callback = {}
+                                        )
+                                    }
                             } catch (e: Exception) {
                                 InAppLogger.w("Map Attributions not yet available!\n${e.message}")
                             }
@@ -298,12 +301,19 @@ object Mapbox: MapboxInterface {
                         if (tripPoints.isNotEmpty()) {
                             tripCameraPosition = mapView.mapboxMap.awaitCameraForCoordinates(
                                 coordinates = tripPoints,
-                                camera = cameraOptions {  },
-                                coordinatesPadding =  EdgeInsets(pxEdgeInsets,pxEdgeInsets,pxEdgeInsets,pxEdgeInsets + pxMapButtonInset),
+                                camera = cameraOptions { },
+                                coordinatesPadding = EdgeInsets(
+                                    pxEdgeInsets,
+                                    pxEdgeInsets,
+                                    pxEdgeInsets,
+                                    pxEdgeInsets + pxMapButtonInset
+                                ),
                                 maxZoom = 14.0
                             )
                         }
-                        mapViewPortState.flyTo(tripCameraPosition, mapAnimationOptions { duration(0) })
+                        mapViewPortState.flyTo(
+                            tripCameraPosition,
+                            mapAnimationOptions { duration(0) })
                     }
 
                     if (tripPoints.isNotEmpty()) {
