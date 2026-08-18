@@ -43,7 +43,6 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -71,6 +70,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Date
+import androidx.compose.ui.platform.LocalResources
 
 /**
  * ViewModel to store the currently configured layout across visibility changes of the details
@@ -144,7 +144,7 @@ private fun TripDetailsConsumptionSectionContent(
                     .weight(1.5f)
                     .fillMaxHeight()
             ) {
-                val tripTypes = LocalContext.current.resources.getStringArray(R.array.trip_type_names)
+                val tripTypes = LocalResources.current.getStringArray(R.array.trip_type_names)
                 Text(
                     modifier = Modifier.padding(
                         horizontal = CarTheme.carDimensions.defaultHorizontalPadding,
@@ -514,15 +514,15 @@ private fun TripDetailsConsumptionSectionContent(
                                 segments = secondaryPlotSegments,
                                 selectedKey = when (tripDetailsState.consumptionGraphState.secondaryDimension) {
                                     1 -> SecondaryPlotSegmentKeys.Speed
-                                    2 -> SecondaryPlotSegmentKeys.Altitude
-                                    3 -> SecondaryPlotSegmentKeys.StateOfCharge
+                                    2 -> SecondaryPlotSegmentKeys.StateOfCharge
+                                    3 -> SecondaryPlotSegmentKeys.Altitude
                                     else -> null
                                 },
                                 onSegmentChanged = {
                                     when (it) {
                                         SecondaryPlotSegmentKeys.Speed -> viewModel.setConsumptionGraphSecondaryDimension(1)
-                                        SecondaryPlotSegmentKeys.Altitude -> viewModel.setConsumptionGraphSecondaryDimension(2)
-                                        SecondaryPlotSegmentKeys.StateOfCharge -> viewModel.setConsumptionGraphSecondaryDimension(3)
+                                        SecondaryPlotSegmentKeys.StateOfCharge -> viewModel.setConsumptionGraphSecondaryDimension(2)
+                                        SecondaryPlotSegmentKeys.Altitude -> viewModel.setConsumptionGraphSecondaryDimension(3)
                                         null -> viewModel.setConsumptionGraphSecondaryDimension(0)
                                     }
                                 }

@@ -181,9 +181,15 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
     }
 
     fun setConsumptionGraphDistance(distance: Float) {
-        _tripDetailsState.update { it.copy(
-            consumptionGraphState = it.consumptionGraphState.copy(distance = distance)
-        ) }
+        if (distance > 0) {
+            _tripDetailsState.update { it.copy(
+                consumptionGraphState = it.consumptionGraphState.copy(distance = distance)
+            ) }
+        } else {
+            _tripDetailsState.update {
+                val tripDistanceToggler = if (it.consumptionGraphState.distance == 0f) -1f else 0f
+                it.copy(consumptionGraphState = it.consumptionGraphState.copy(distance = tripDistanceToggler)) }
+        }
     }
 
     fun setConsumptionGraphSecondaryDimension(dimension: Int) {

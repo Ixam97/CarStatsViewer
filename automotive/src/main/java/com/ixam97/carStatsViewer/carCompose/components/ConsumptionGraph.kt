@@ -1,6 +1,7 @@
 package com.ixam97.carStatsViewer.carCompose.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import com.ixam97.carStatsViewer.compose.screens.ConsumptionPlot
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotHighlightMethod
@@ -9,6 +10,7 @@ import com.ixam97.carStatsViewer.ui.plot.objects.PlotLine
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLineConfiguration
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotRange
 import com.ixam97.carStatsViewer.utils.DataConverters
+import com.ixam97.carStatsViewer.utils.InAppLogger
 
 data class ConsumptionGraphState(
     val secondaryDimension: Int,
@@ -40,13 +42,18 @@ fun ConsumptionGraph(
 
         val distance = if (consumptionGraphState.distance > 0) consumptionGraphState.distance else drivingSession.driven_distance.toFloat()
 
-        ConsumptionPlot(
-            plotLine = consumptionPlotLine,
-            plotMarkers = plotMarkers,
-            plotLinePaint = GraphValues.consumptionPlotPaint,
-            distance = distance,
-            limitedHeight = false,
-            secondaryDimension = consumptionGraphState.secondaryDimension
-        )
+        InAppLogger.d("Consumption graph distance: ${consumptionGraphState.distance}")
+
+        key(consumptionGraphState) {
+            ConsumptionPlot(
+                plotLine = consumptionPlotLine,
+                plotMarkers = plotMarkers,
+                plotLinePaint = GraphValues.consumptionPlotPaint,
+                distance = distance,
+                limitedHeight = false,
+                secondaryDimension = consumptionGraphState.secondaryDimension
+            )
+        }
+
     }
 }
