@@ -21,7 +21,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
+import com.ixam97.carStatsViewer.carCompose.CarComposeActivity
+import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.toContentKey
 import com.ixam97.carStatsViewer.compose.ComposeTripDetailsActivity
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.dataProcessor.DrivingState
@@ -772,7 +775,11 @@ class MainActivity : FragmentActivity() {
 
         mainButtonSettings.setOnClickListener {
             // startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
-            startActivity(Intent(this@MainActivity, ComposeSettingsActivity::class.java))
+            // startActivity(Intent(this@MainActivity, ComposeSettingsActivity::class.java))
+            startActivity(Intent(this@MainActivity, CarComposeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                putExtra("NavKey", SettingsScreenNavKey.toContentKey())
+            })
             if (BuildConfig.FLAVOR_aaos != "carapp")
                 overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }
@@ -854,7 +861,11 @@ class MainActivity : FragmentActivity() {
         }
 
         mainButtonHistory.setOnClickListener {
-            startActivity(Intent(this@MainActivity, HistoryActivity::class.java))
+            // startActivity(Intent(this@MainActivity, HistoryActivity::class.java))
+            startActivity(Intent(this@MainActivity, CarComposeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                putExtra("NavKey", TripHistoryScreenNavKey.toContentKey())
+            })
             if (BuildConfig.FLAVOR_aaos != "carapp")
                 overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }

@@ -92,7 +92,7 @@ class CarComposeActivity: ComponentActivity() {
                     darkTheme = when (globalState.uiBrightnessMode) {
                         UiBrightnessMode.Dark -> true
                         UiBrightnessMode.Bright -> false
-                        UiBrightnessMode.Auto -> isSystemInDarkTheme()
+                        else -> isSystemInDarkTheme()
                     },
                     windowInsets = windowInsets
                 ) {

@@ -29,7 +29,7 @@ enum class UiType {
 }
 
 enum class UiBrightnessMode {
-    Auto, Dark, Bright
+    Auto, Dark, Bright, Undefined
 }
 
 internal fun getVehicleModel(): VehicleModel {
@@ -43,9 +43,15 @@ internal fun getVehicleModel(): VehicleModel {
 }
 
 internal fun getDefaultBrightnessMode(): UiBrightnessMode {
-    return when {
-        Build.BRAND == "VolvoCars" && (Build.DEVICE == "ihu_abl_car" || Build.DEVICE == "ihu_emulator") -> UiBrightnessMode.Dark
-        else -> UiBrightnessMode.Auto
+    if (CarStatsViewer.appPreferences.carComposeBrightnessMode == UiBrightnessMode.Undefined) {
+        val defaultBrightnessMode = when {
+            Build.BRAND == "VolvoCars" && (Build.DEVICE == "ihu_abl_car" || Build.DEVICE == "ihu_emulator") -> UiBrightnessMode.Dark
+            else -> UiBrightnessMode.Auto
+        }
+        CarStatsViewer.appPreferences.carComposeBrightnessMode = defaultBrightnessMode
+        return defaultBrightnessMode
+    } else {
+        return CarStatsViewer.appPreferences.carComposeBrightnessMode
     }
 }
 
@@ -104,6 +110,7 @@ class CarComposeGlobalViewModel: ViewModel() {
     }
 
     fun setUiBrightnessMode(value: UiBrightnessMode) {
+        CarStatsViewer.appPreferences.carComposeBrightnessMode = value
         _globalState.update { it.copy(uiBrightnessMode = value) }
     }
 

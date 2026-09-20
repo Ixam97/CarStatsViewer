@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carCompose.UiBrightnessMode
 import com.ixam97.carStatsViewer.carCompose.UiType
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
@@ -67,6 +68,7 @@ class AppPreferences(
     private val PhoneNotification = AppPreference<Boolean>("preference_phone_notification", false, sharedPref)
     private val ColorTheme = AppPreference<Int>("preference_color_theme", 0, sharedPref)
     private val CarComposeTheme = AppPreference<String>("preference_car_compose_theme", UiType.Auto.name, sharedPref)
+    private val CarComposeBrightnessMode = AppPreference<String>("preference_car_compose_brightness_mode", UiBrightnessMode.Undefined.name, sharedPref)
     private val CarAppSelectedRealTimeData = AppPreference<Int>("preference_car_app_selected_real_time_data", 1, sharedPref)
     private val CarAppRealTimeData = AppPreference<Boolean>("preference_car_app_real_time_data", false, sharedPref)
 
@@ -118,8 +120,13 @@ class AppPreferences(
     var httpApiTelemetryType: Int get() = HttpApiTelemetryType.value; set(value) {HttpApiTelemetryType.value = value}
 
     var phoneNotification: Boolean get() = PhoneNotification.value; set(value) {PhoneNotification.value = value}
-    var colorTheme: Int get() = ColorTheme.value; set(value) {ColorTheme.value = value}
+    // var colorTheme: Int get() = ColorTheme.value; set(value) {ColorTheme.value = value}
+    var colorTheme: Int get() = when (UiType.valueOf(CarComposeTheme.value)) {
+        UiType.Club -> com.ixam97.carStatsViewer.compose.theme.ColorTheme.CLUB
+        else -> com.ixam97.carStatsViewer.compose.theme.ColorTheme.OEM
+    }; set(value) {} //  com.ixam97.carStatsViewer.compose.theme.ColorTheme.CLUB; set(value) {}
     var carComposeTheme: UiType get() = UiType.valueOf(CarComposeTheme.value); set(value) {CarComposeTheme.value = value.name}
+    var carComposeBrightnessMode: UiBrightnessMode get() = UiBrightnessMode.valueOf(CarComposeBrightnessMode.value); set(value) { CarComposeBrightnessMode.value = value.name }
     // var carAppSelectedRealTimeData: Int get() = CarAppSelectedRealTimeData.value; set(value) {CarAppSelectedRealTimeData.value = value}
     var carAppRealTimeData: Boolean get() = CarAppRealTimeData.value; set(value) {CarAppRealTimeData.value = value}
 

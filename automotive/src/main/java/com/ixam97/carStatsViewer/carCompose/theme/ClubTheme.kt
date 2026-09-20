@@ -1,11 +1,13 @@
 package com.ixam97.carStatsViewer.carCompose.theme
 
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.ixam97.carcompose.theme.CarThemeConfig
 import de.ixam97.carcompose.components.controls.CarRadioButtonColors
 import de.ixam97.carcompose.components.controls.CarSwitchColors
+import de.ixam97.carcompose.components.controls.CarSwitchShapes
 import de.ixam97.carcompose.theme.CarColors
 import de.ixam97.carcompose.theme.CarNavIconStyle
 import de.ixam97.carcompose.theme.CarShapes
@@ -65,9 +67,10 @@ val ClubThemeConfig = CarThemeConfig(
             border = Color.Transparent,
             track = buildSolidBrush(clubNightVariant),
             onTrack = Color.White,
-            trackChecked = buildSolidBrush(clubNightVariant),
+            trackChecked = buildSolidBrush(clubBlue),
             onTrackChecked = Color.White,
-            thumb = clubAccentContainerBrush,
+            thumb = buildSolidBrush(clubBlueMedium),
+            thumbChecked = buildSolidBrush(clubNightVariant),
             onThumb = Color.White
         ),
         radioButtonColors = CarRadioButtonColors(
@@ -80,6 +83,10 @@ val ClubThemeConfig = CarThemeConfig(
     ),
     carShapes = CarShapes(
         defaultOuterCornerSize = CornerSize(25.dp),
-        defaultInnerCornerSize = CornerSize(5.dp)
+        defaultInnerCornerSize = CornerSize(5.dp),
+        switchShapes = CarSwitchShapes(
+            track = RoundedCornerShape(50),
+            thumb = RoundedCornerShape(50)
+        )
     )
 )
