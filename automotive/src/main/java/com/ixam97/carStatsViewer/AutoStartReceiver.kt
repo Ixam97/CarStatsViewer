@@ -14,6 +14,7 @@ import com.ixam97.carStatsViewer.ui.activities.PermissionsActivity
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.hasBackgroundLocationPermission
 import com.ixam97.carStatsViewer.utils.hasVehiclePermissions
+import com.ixam97.carStatsViewer.utils.unGrantedPermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -56,6 +57,11 @@ class AutoStartReceiver: BroadcastReceiver() {
             InAppLogger.i("[ASR] Autostart disabled, canceling ASR.")
             return
         }
+
+//        if (unGrantedPermissions(CarStatsViewer.appContext).isNotEmpty()) {
+//            InAppLogger.i("[ASR] Car Stats Viewer is missing required permissions. Do not autostart.")
+//            return
+//        }
 
         if ((intent?.action?: "") == "com.ixam97.carStatsViewer.NOTIFICATION_DELETE") {
             CarStatsViewer.restartNotificationDismissed = true

@@ -74,10 +74,27 @@ class CarPropertiesClient(
 
     fun updateProperty(propertyId: Int) {
         // if (emulatorMode && propertyId == CarProperties.ENV_OUTSIDE_TEMPERATURE && debugTemperatureAttempt < 2) return
-        carPropertyManager.getProperty<Any>(propertyId, 0)?.let {
-            carPropertiesData.update(it, allowInvalidTimestamps = true, doLog = false)
+        try {
+            carPropertyManager.getProperty<Any>(propertyId, 0)?.let {
+                carPropertiesData.update(it, allowInvalidTimestamps = true, doLog = false)
+            }
+            propertiesProcessor(propertyId)
+        } catch (e: Exception) {
+            try {
+                if (e is PropertyNotAvailableException) {
+                    val errorMsg = "[CarPropertiesClient.updateProperty] Property is not available: ${PropertyNotAvailableErrorCode.toString(e.detailedErrorCode)}.\n\r${e.stackTraceToString()}"
+                    InAppLogger.logWithFirebase(errorMsg, Log.ERROR)
+                } else { throw e }
+            } catch (ee: Throwable) {
+                InAppLogger.e(ee.stackTraceToString())
+                val errorMsg = "[CarPropertiesClient.updateProperty] Failed to get Property ${CarProperties.getNameById(propertyId)} ($propertyId).\n\r${e.stackTraceToString()}"
+                InAppLogger.logWithFirebase(errorMsg, Log.ERROR)
+            }
         }
-        propertiesProcessor(propertyId)
+//        carPropertyManager.getProperty<Any>(propertyId, 0)?.let {
+//            carPropertiesData.update(it, allowInvalidTimestamps = true, doLog = false)
+//        }
+//        propertiesProcessor(propertyId)
     }
 
     /**

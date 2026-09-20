@@ -30,6 +30,7 @@ import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.WatchdogState
 import com.ixam97.carStatsViewer.utils.hasVehiclePermissions
 import com.ixam97.carStatsViewer.utils.isRunningOnAAOS
+import com.ixam97.carStatsViewer.utils.unGrantedPermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -81,7 +82,7 @@ class DataCollector: Service() {
                 Toast.makeText(applicationContext, getString(R.string.restart_toast_background), Toast.LENGTH_LONG).show()
             }
         }
-
+        InAppLogger.i("[NEO] Attempting to start Foreground service in onStartCommand() ... ")
         startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
         InAppLogger.i("[NEO] Foreground service started in onStartCommand()")
         // super.onStartCommand(intent, flags, startId)
@@ -94,8 +95,12 @@ class DataCollector: Service() {
      */
     override fun onCreate() {
         super.onCreate()
-
         setupServiceNotification()
+        InAppLogger.logWithFirebase("[NEO] Attempting to start Foreground service in onCreate() ... ")
+        val ungrantedPermissions = "Ungranted Permissions: ${
+            unGrantedPermissions(CarStatsViewer.appContext).joinToString(separator = ", ")
+        }"
+        InAppLogger.logWithFirebase(ungrantedPermissions)
         startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
         InAppLogger.i("[NEO] Foreground service started in onCreate()")
 
