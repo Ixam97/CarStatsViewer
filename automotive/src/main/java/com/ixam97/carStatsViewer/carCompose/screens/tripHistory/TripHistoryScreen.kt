@@ -157,6 +157,7 @@ fun TripHistoryContent(
                 modifier = Modifier
                     .width(CarTheme.carDimensions.columnDefaultMaxWidth - 100.dp),
                 backStack = backStack,
+                globalViewModel = globalViewModel,
                 viewModel = viewModel
             )
 
@@ -253,9 +254,11 @@ fun TripHistoryContent(
 internal fun TripHistoryList(
     modifier: Modifier = Modifier,
     backStack: NavBackStack<NavKey>,
+    globalViewModel: CarComposeGlobalViewModel,
     viewModel: TripHistoryViewModel,
 ) {
     val tripHistoryState by viewModel.tripHistoryState.collectAsState()
+    val globalState by globalViewModel.globalState.collectAsState()
     val context = LocalContext.current
 
     val debugTripListItems = listOf(
@@ -319,7 +322,7 @@ internal fun TripHistoryList(
             .onVisibilityChanged { if (it) viewModel.reloadTrips() }
         // TODO: Make sure the list updates if a trip reset appears while on this screen
     ) {
-        if (emulatorMode) {
+        if (emulatorMode || globalState.devModeEnabled) {
             carListSection(
                 sectionTitle = "Debug:",
                 listItems = debugTripListItems
