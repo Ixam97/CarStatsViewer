@@ -27,8 +27,10 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.screens.main.MainScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsApisNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.screens.tripDetails.TripDetailsScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.theme.ClubThemeConfig
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import de.ixam97.carcompose.theme.CarTheme
 import de.ixam97.carcompose.theme.GenericCarThemeConfig
 import de.ixam97.carcompose.theme.GenericCarTypography
@@ -43,14 +45,17 @@ class CarComposeActivity: ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        val initialNavKey = intent.getStringExtra("NavKey").let { key ->
-            when (key) {
-                SettingsScreenNavKey.toContentKey() -> SettingsScreenNavKey
-                TripHistoryScreenNavKey.toContentKey() -> TripHistoryScreenNavKey
-                SettingsApisNavKey.toContentKey() -> SettingsApisNavKey
+        val initialNavKey = intent.getStringExtra("NavKey")?.let { key ->
+            InAppLogger.v("NavKey Extra: $key")
+            when {
+                SettingsScreenNavKey.toContentKey() == key -> SettingsScreenNavKey
+                TripHistoryScreenNavKey.toContentKey() == key -> TripHistoryScreenNavKey
+                SettingsApisNavKey.toContentKey() == key -> SettingsApisNavKey
+                TripDetailsScreenNavKey.matchesContentKey(key) ->
+                    TripDetailsScreenNavKey.contentKeyToNavKey(key)
                 else -> MainScreenNavKey()
             }
-        }
+        }?: MainScreenNavKey()
 
         enableEdgeToEdge()
         setContent {

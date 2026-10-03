@@ -23,9 +23,9 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.CarComposeActivity
 import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.screens.tripDetails.TripDetailsScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.toContentKey
-import com.ixam97.carStatsViewer.compose.ComposeTripDetailsActivity
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.dataProcessor.DrivingState
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
@@ -826,29 +826,25 @@ class MainActivity : FragmentActivity() {
         }
         */
 
-        mainImageButtonSummary.setOnClickListener {
-            // openSummaryFragment()
-            val sessionId = CarStatsViewer.dataProcessor.selectedSessionData?.driving_session_id
+        fun openTripSummary() {
+            val sessionId = CarStatsViewer.dataProcessor.selectedSessionData?.driving_session_id ?: return
 
-            if (sessionId != null) {
-                val summaryIntent =
-                    Intent(this@MainActivity, ComposeTripDetailsActivity::class.java)
-                summaryIntent.putExtra("SessionId", sessionId)
-                startActivity(summaryIntent)
-            }
+//            val summaryIntent = Intent(this@MainActivity, ComposeTripDetailsActivity::class.java)
+//            summaryIntent.putExtra("SessionId", sessionId)
+//            startActivity(summaryIntent)
+
+            startActivity(Intent(this@MainActivity, CarComposeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                putExtra("NavKey", TripDetailsScreenNavKey(sessionId).toContentKey())
+            })
+        }
+
+        mainImageButtonSummary.setOnClickListener {
+            openTripSummary()
         }
 
         mainButtonSummaryCharge.setOnClickListener {
-            // openSummaryFragment()
-
-            val sessionId = CarStatsViewer.dataProcessor.selectedSessionData?.driving_session_id
-
-            if (sessionId != null) {
-                val summaryIntent =
-                    Intent(this@MainActivity, ComposeTripDetailsActivity::class.java)
-                summaryIntent.putExtra("SessionId", sessionId)
-                startActivity(summaryIntent)
-            }
+            openTripSummary()
         }
 
         mainButtonDismissChargePlot.setOnClickListener {

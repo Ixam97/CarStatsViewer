@@ -63,7 +63,22 @@ enum class SecondaryPlotSegmentKeys {
 @Serializable
 data class TripDetailsScreenNavKey(
     val sessionId: Long
-): NavKey
+): NavKey {
+    companion object {
+        private val regex = Regex("TripDetailsScreenNavKey\\(sessionId=([+-]?\\d+)\\)")
+
+        fun matchesContentKey(contentKey: String) = contentKey.contains(regex)
+
+        fun contentKeyToNavKey(contentKey: String): TripDetailsScreenNavKey {
+            if (!matchesContentKey(contentKey)) return TripDetailsScreenNavKey(0)
+            val sessionId = regex
+                .find(contentKey)!!
+                .groupValues[1]
+                .toLong()
+            return TripDetailsScreenNavKey(sessionId)
+        }
+    }
+}
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
