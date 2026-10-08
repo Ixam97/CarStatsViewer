@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,6 +38,7 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.components.ChargeCurveGraph
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
+import com.ixam97.carStatsViewer.compose.theme.clubHint
 import com.ixam97.carStatsViewer.map.MapboxInterface
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import de.ixam97.carcompose.components.controls.CarButton
@@ -111,12 +114,13 @@ private fun TripDetailsChargingDetailsOverlayContent(
     }?.state_of_charge?: chargingSessionDetails.chargingSession.chargingPoints?.first()?.state_of_charge
 
     val socString = if (endSoc != null && startSoc != null) {
-        String.format(
-            "%d%%  →  %d%%",
-            (startSoc * 100f).roundToInt(),
-            (endSoc * 100f).roundToInt(),
-        )
+        "${(startSoc * 100f).roundToInt()}% → ${(endSoc * 100f).roundToInt()}%"
     } else stringResource(R.string.summary_soc_unavailable)
+
+    val curveInterrupted: Boolean =
+        (chargingSessionDetails.chargingSession.chargingPoints?.filter { it.point_marker_type == 2}?.size?:0) > 1
+
+
 
     Column(
         modifier = modifier
@@ -149,12 +153,27 @@ private fun TripDetailsChargingDetailsOverlayContent(
                 )
                 CarListDivider()
                 CarRow(
-                    title = StringFormatters.getEnergyString(chargingSessionDetails.chargingSession.charged_energy.toFloat()),
-                    description = stringResource(R.string.summary_charged_energy)
+                    title = StringFormatters.getEnergyString(chargingSessionDetails.chargingSession.charged_energy.toFloat()) + " ($socString)",
+                    // description = stringResource(R.string.summary_charged_energy),
+                    descriptionContent = {
+                        Text(
+                            text = stringResource(R.string.summary_charged_energy),
+                            style = CarTheme.carTypography.rowContent,
+                            color = LocalContentColor.current.copy(alpha =  0.7f)
+                        )
+                        if (curveInterrupted) {
+                            Spacer(Modifier.size(CarTheme.carDimensions.rowTextSpacing))
+                            Text(
+                                text = stringResource(R.string.summary_interruption_warning),
+                                style = CarTheme.carTypography.rowContent,
+                                color = clubHint
+                            )
+                        }
+                    }
                 )
                 CarListDivider()
                 CarRow(
-                    title = StringFormatters.getElapsedTimeString(chargingSessionDetails.chargingSession.chargeTime),
+                    title = StringFormatters.getElapsedTimeString(chargingSessionDetails.chargingSession.end_epoch_time - chargingSessionDetails.chargingSession.start_epoch_time),
                     description = stringResource(R.string.summary_charge_time)
                 )
             }

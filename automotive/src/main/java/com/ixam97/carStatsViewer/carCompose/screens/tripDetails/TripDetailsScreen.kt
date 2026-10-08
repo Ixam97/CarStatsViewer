@@ -31,11 +31,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
@@ -215,21 +219,30 @@ private fun TripDetailsHorizontalTabs(
                 CarPaneLayout(
                     isLoading = globalState.isLoading,
                     headerStartContent = {
+                        val initialFontSize = CarTheme.carTypography.title.fontSize
+                        var fontSize by remember { mutableStateOf(initialFontSize) }
+                        fun onFontSizeTooLarge() { fontSize *= 0.95f }
                         Row() {
                             HeaderTabButton(
                                 title = stringResource(R.string.summary_tab_trip_details),
-                                active = tripDetailsState.selectedTab == TripDetailsTabKeys.Consumption
+                                active = tripDetailsState.selectedTab == TripDetailsTabKeys.Consumption,
+                                fontSize = fontSize,
+                                onFontSizeTooLarge = { onFontSizeTooLarge() }
                             ) { viewModel.setSelectedTab(TripDetailsTabKeys.Consumption) }
 
                             HeaderTabButton(
                                 title = stringResource(R.string.summary_tab_charging_sessions),
-                                active = tripDetailsState.selectedTab == TripDetailsTabKeys.Charging
+                                active = tripDetailsState.selectedTab == TripDetailsTabKeys.Charging,
+                                fontSize = fontSize,
+                                onFontSizeTooLarge = { onFontSizeTooLarge() }
                             ) { viewModel.setSelectedTab(TripDetailsTabKeys.Charging) }
 
                             if (showMapTab) {
                                 HeaderTabButton(
                                     title = stringResource(R.string.summary_tab_map),
-                                    active = tripDetailsState.selectedTab == TripDetailsTabKeys.Map
+                                    active = tripDetailsState.selectedTab == TripDetailsTabKeys.Map,
+                                    fontSize = fontSize,
+                                    onFontSizeTooLarge = { onFontSizeTooLarge() }
                                 ) { viewModel.setSelectedTab(TripDetailsTabKeys.Map) }
                             }
                         }
@@ -373,7 +386,9 @@ private fun TripDetailsMapSection(
 private fun HeaderTabButton(
     title: String,
     active: Boolean,
-    onClick: () -> Unit
+    onFontSizeTooLarge: () ->Unit,
+    fontSize: TextUnit,
+    onClick: () -> Unit,
 ) {
     val textColor = if (active) CarTheme.carColors.accent else LocalContentColor.current
 
@@ -394,7 +409,14 @@ private fun HeaderTabButton(
             Text(
                 text = title,
                 color = textColor,
-                style = CarTheme.carTypography.title
+                style = CarTheme.carTypography.title,
+                fontSize = fontSize,
+                onTextLayout = {
+                    if (it.multiParagraph.didExceedMaxLines) {
+                        onFontSizeTooLarge()
+                    }
+                },
+                maxLines = 1,
             )
         }
     }
