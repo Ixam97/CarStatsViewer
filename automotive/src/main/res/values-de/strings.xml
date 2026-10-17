@@ -89,6 +89,12 @@
         <item>Das Autostart-Verhalten wurde verbessert.</item>
         <item>Beginnend mit OTA P4.2.4 ist der Polestar 4 vollständig mit Car Stats Viewer kompatibel.</item>
         <item>[V](0.28.1)</item>
+        <item>Optimierungen und Anpassungen für Fahrzeugkompatibilität.</item>
+        <item>Überarbeitete Tripzusammenfassung für kompaktere und flexiblere Darstellungen, insbesondere auf Breitbild-Anzeigen.</item>
+        <item>Daten-Export (WIP): Trips und Ladevorgänge können per E-Mail als CSV-Dateien exportiert werden. Die Formatierung ist noch nicht endgültig und wird sich in zukünftigen Releases verändern.</item>
+        <item>Legacy Edition: Komplett überarbeitetes Einstellungen-UI (identisch zur Play Edition). Die Hauptansicht wird in einem späteren Update ebenfalls überarbeitet.</item>
+        <item>Play Edition: Migration zu einer Single Activity Architektur. Dies erlaubt flexiblere Einstellungs-UIs und eine detailliertere Tripzusammenfassung.</item>
+        <item>[V](0.29.0)</item>
     </string-array>
 
     <!-- Restart Dialog -->
@@ -110,7 +116,8 @@
     <string name="permissions_dialog_grant">Berechtigungen erteilen</string>
     <string name="permissions_dialog_grant_singular">Berechtigung erteilen</string>
     <string name="permissions_dialog_deny">Trotzdem fortfahren</string>
-    <string name="permissions_dialog_background_location_text">Für einen zuverlässigen Betrieb der App ist Zugriff auf den Standort aus dem Hintergrund notwendig. Bitte \"Immer zulassen\" für den Standortzugriff auswählen.\n\nDie Standort-Berechtigung ist erforderlich, um auch auf andere Fahrzeugdaten außer dem GPS-Standort zuzugreifen.\n\nStandardmäßig ist die Standorterfassung in der App deaktiviert und kann innerhalb der App-Einstellungen aktiviert werden. Dies kann auch für die jweils ferfügbaren Live-Daten-APIs einzeln festgelegt werden.</string>
+    <!--<string name="permissions_dialog_background_location_text">Für einen zuverlässigen Betrieb der App ist Zugriff auf den Standort aus dem Hintergrund notwendig. Bitte \"Immer zulassen\" für den Standortzugriff auswählen.\n\nDie Standort-Berechtigung ist erforderlich, um auch auf andere Fahrzeugdaten außer dem GPS-Standort zuzugreifen.\n\nStandardmäßig ist die Standorterfassung in der App deaktiviert und kann innerhalb der App-Einstellungen aktiviert werden. Dies kann auch für die jweils ferfügbaren Live-Daten-APIs einzeln festgelegt werden.</string>-->
+    <string name="permissions_dialog_background_location_text_0_29">Für einen zuverlässigen Betrieb der App ist Zugriff auf den Standort aus dem Hintergrund notwendig. Bitte \"Immer zulassen\" für den Standortzugriff auswählen.\n\nDie Standort-Berechtigung ist erforderlich, um auch auf andere Fahrzeugdaten außer dem GPS-Standort zuzugreifen.\n\nStandardmäßig ist die Standorterfassung in der App aktiviert und kann innerhalb der App-Einstellungen deaktiviert werden. Standortdaten werden ausschließlich lokal gespeichert, solange keine API konfiguriert ist. Dies kann auch für die jweils ferfügbaren Live-Daten-APIs einzeln festgelegt werden.</string>
 
     <string name="plot_dimensionY_SPEED">Geschwindigkeit</string>
     <string name="plot_dimensionY_ALTITUDE">Höhe</string>

@@ -160,13 +160,15 @@
         <item>Improved autostart behaviour.</item>
         <item>Starting with OTA P4.2.4, Polestar 4 is now fully compatible with Car Stats Viewer.</item>
         <item>[V](0.28.1)</item>
-    </string-array>
-
-    <string-array translatable="false" name="pending_changes">
+        <item>Numerous optimizations and adjustments to account for vehicle compatibility.</item>
+        <item>Overhaul of the Trip Details view for a more compact and flexible overview, especially for wide screen devices.</item>
         <item>Data Export (WIP): Trips and Charging Sessions can now be exported via E-Mail as CSV-files. The formatting is still WIP and will change in future updates.</item>
         <item>Legacy Edition: Complete rewrite of Settings-UI (same as Play Edition). The main Screen will follow at a later stage.</item>
         <item>Play Edition: Migrating to a single activity architecture. This makes the settings UI more flexible and allows for more detailed trip details.</item>
         <item>[V](0.29.0)</item>
+    </string-array>
+
+    <string-array translatable="false" name="pending_changes">
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
