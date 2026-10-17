@@ -3,7 +3,6 @@ package com.ixam97.carStatsViewer.carCompose.screens.settings
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.util.Patterns
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
@@ -32,6 +31,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import androidx.core.net.toUri
 
 data class SettingsGeneralState(
     val autoAppStart: Boolean = CarStatsViewer.appPreferences.autostart,
@@ -198,38 +198,46 @@ class SettingsViewModel: ViewModel() {
     //endregion
 
     //region About
-    fun openGitHubLink(context: Context) {
+    fun openGitHubLink(context: Context, snackBarState: CarSnackBarHostState) {
         val url = context.getString(R.string.readme_link)
-        openLink(context, url)
+        openLink(context, url, snackBarState)
     }
 
-    fun openGitHubIssuesLink(context: Context) {
+    fun openGitHubIssuesLink(context: Context, snackBarState: CarSnackBarHostState) {
         val url = context.getString(R.string.github_issues_link)
-        openLink(context, url)
+        openLink(context, url, snackBarState)
     }
 
-    fun openClubLink(context: Context) {
+    fun openClubLink(context: Context, snackBarState: CarSnackBarHostState) {
         val url = context.getString(R.string.polestar_fans_link)
-        openLink(context, url)
+        openLink(context, url, snackBarState)
     }
 
-    fun openForumsLink(context: Context) {
+    fun openForumsLink(context: Context, snackBarState: CarSnackBarHostState) {
         val url = context.getString(R.string.polestar_forum_link)
-        openLink(context, url)
+        openLink(context, url, snackBarState)
     }
 
-    fun openPrivacyLink(context: Context) {
+    fun openPrivacyLink(context: Context, snackBarState: CarSnackBarHostState) {
         val url = context.getString(R.string.privacy_policy_link)
-        openLink(context, url)
+        openLink(context, url, snackBarState)
     }
 
-    private fun openLink(context: Context, url: String) {
-        context.startActivity(
-            Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(url)
-            )
+    private fun openLink(context: Context, url: String, snackBarState: CarSnackBarHostState) {
+        val webIntent = Intent(
+            Intent.ACTION_VIEW,
+            url.toUri()
         )
+        try {
+            context.startActivity(webIntent)
+        } catch (e: Exception) {
+            snackBarState.showSnackBar(CarSnackBarConfig(
+                identifier = "LinkErrorSnackBar",
+                content = { Text("No default browser installed to open web links!") },
+                drawableResId = R.drawable.ic_error,
+                isError = true
+            ))
+        }
     }
     //endregion
 

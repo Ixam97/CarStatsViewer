@@ -22,6 +22,7 @@ import de.ixam97.carcompose.components.layout.CarColumn
 import de.ixam97.carcompose.components.layout.CarListItem
 import de.ixam97.carcompose.components.layout.CarListSection
 import de.ixam97.carcompose.components.layout.CarPaneLayout
+import de.ixam97.carcompose.components.layout.LocalCarSnackBarState
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -56,6 +57,7 @@ fun SettingsPrivacyContent(
 ) {
     val context = LocalContext.current
     val settingsPrivacyState by viewModel.settingsPrivacyState.collectAsState()
+    val snackBarState = LocalCarSnackBarState.current
 
     CarColumn(
         modifier = modifier
@@ -87,7 +89,7 @@ fun SettingsPrivacyContent(
                         title = stringResource(R.string.settings_privacy),
                         browsable = true,
                         browsableType = CarRowBrowsableType.External,
-                        onBrowse = { viewModel.openPrivacyLink(context) }
+                        onBrowse = { viewModel.openPrivacyLink(context, snackBarState) }
                     )
                 },
             )

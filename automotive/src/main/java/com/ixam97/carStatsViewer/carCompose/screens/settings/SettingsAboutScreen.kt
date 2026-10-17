@@ -122,7 +122,7 @@ fun SettingsAboutContent(
                             )
                         }",
                         browsable = true,
-                        onBrowse = { viewModel.openGitHubLink(context) },
+                        onBrowse = { viewModel.openGitHubLink(context, snackBarState) },
                         browsableType = CarRowBrowsableType.External
                     )
                 },
@@ -144,7 +144,7 @@ fun SettingsAboutContent(
                         title = "GitHub Issues",
                         description = stringResource(R.string.about_github_issues_description),
                         browsable = true,
-                        onBrowse = { viewModel.openGitHubIssuesLink(context) },
+                        onBrowse = { viewModel.openGitHubIssuesLink(context, snackBarState) },
                         browsableType = CarRowBrowsableType.External
                     )
                 },
@@ -153,7 +153,7 @@ fun SettingsAboutContent(
                         title = "Polestar Club",
                         description = stringResource(R.string.about_polestar_fans_description),
                         browsable = true,
-                        onBrowse = { viewModel.openClubLink(context) },
+                        onBrowse = { viewModel.openClubLink(context, snackBarState) },
                         browsableType = CarRowBrowsableType.External
                     )
                 },
@@ -162,7 +162,7 @@ fun SettingsAboutContent(
                         title = "Polestar Forum",
                         description = stringResource(R.string.about_polestar_forum_description),
                         browsable = true,
-                        onBrowse = { viewModel.openForumsLink(context) },
+                        onBrowse = { viewModel.openForumsLink(context, snackBarState) },
                         browsableType = CarRowBrowsableType.External
                     )
                 },
@@ -183,7 +183,7 @@ fun SettingsAboutContent(
                     CarRow(
                         title = stringResource(R.string.settings_privacy),
                         browsable = true,
-                        onBrowse = { viewModel.openPrivacyLink(context) },
+                        onBrowse = { viewModel.openPrivacyLink(context, snackBarState) },
                         browsableType = CarRowBrowsableType.External
                     )
                 }
