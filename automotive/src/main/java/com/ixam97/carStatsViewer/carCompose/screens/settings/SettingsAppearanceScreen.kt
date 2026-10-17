@@ -21,8 +21,11 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 import com.ixam97.carStatsViewer.carCompose.UiBrightnessMode
 import com.ixam97.carStatsViewer.carCompose.UiType
+import com.ixam97.carStatsViewer.carCompose.VehicleModel
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
+import com.ixam97.carStatsViewer.carCompose.getVehicleModel
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
+import com.ixam97.carStatsViewer.carCompose.vehicleUiTypeMap
 import de.ixam97.carcompose.components.controls.CarRow
 import de.ixam97.carcompose.components.controls.CarRowSwitch
 import de.ixam97.carcompose.components.controls.CarSegmentedButton
@@ -70,7 +73,7 @@ fun SettingsAppearanceContent(
     val globalState by globalViewModel.globalState.collectAsState()
     val settingsAppearanceState by viewModel.settingsAppearanceState.collectAsState()
 
-    val uiThemeSegments = listOf(
+    val uiThemeSegmentsExtended = listOf(
         CarSegmentedButton.Segment(
             content = { Text("PS Classic") },
             key = UiType.Classic
@@ -91,6 +94,32 @@ fun SettingsAppearanceContent(
             content = { Text("Generic") },
             key = UiType.Generic
         ),
+    )
+
+    val uiThemeSegmentsDefault = listOf(
+        CarSegmentedButton.Segment(
+            content = { Text("OEM") },
+            key = vehicleUiTypeMap[getVehicleModel()]?: UiType.Generic
+        ),
+        CarSegmentedButton.Segment(
+            content = { Text("Club") },
+            key = UiType.Club
+        ),
+        CarSegmentedButton.Segment(
+            content = { Text("Generic") },
+            key = UiType.Generic
+        )
+    )
+
+    val uiThemeSegmentsLimited = listOf(
+        CarSegmentedButton.Segment(
+            content = { Text("Club") },
+            key = UiType.Club
+        ),
+        CarSegmentedButton.Segment(
+            content = { Text("Generic") },
+            key = UiType.Generic
+        )
     )
 
     val uiBrightnessModeSegments = listOf(
@@ -122,6 +151,11 @@ fun SettingsAppearanceContent(
     CarColumn(
         modifier = modifier
     ) {
+        val uiThemeSegments = when {
+            CarStatsViewer.appPreferences.debugColors -> uiThemeSegmentsExtended
+            getVehicleModel() != VehicleModel.Other -> uiThemeSegmentsDefault
+            else -> uiThemeSegmentsLimited
+        }
         CarListSection(
             sectionTitle = "${stringResource(R.string.settings_general)}:",
             dividerAtBottom = true,

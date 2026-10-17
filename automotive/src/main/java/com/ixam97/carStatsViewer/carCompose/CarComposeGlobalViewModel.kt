@@ -32,7 +32,7 @@ enum class UiBrightnessMode {
     Auto, Dark, Bright, Undefined
 }
 
-internal fun getVehicleModel(): VehicleModel {
+fun getVehicleModel(): VehicleModel {
     return when {
         Build.MODEL == "PS4" || Build.DEVICE == "lemon_x86_64" -> VehicleModel.Polestar4
         Build.MODEL == "Polestar" && Build.DEVICE == "moose" -> VehicleModel.Polestar3
