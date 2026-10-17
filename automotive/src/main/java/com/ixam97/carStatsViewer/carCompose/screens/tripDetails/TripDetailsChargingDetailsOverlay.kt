@@ -104,14 +104,23 @@ private fun TripDetailsChargingDetailsOverlayContent(
 ) {
     val tripDetailsState by viewModel.tripDetailsState.collectAsState()
 
-    if (chargingSessionDetails.chargingSession.end_epoch_time == null) return
+    if (chargingSessionDetails.chargingSession.end_epoch_time == null) {
+        Text("This charging session contains no end time!")
+        return
+    }
 
-    val endSoc = tripDetailsState.drivingSession?.drivingPoints?.find {
-        it.driving_point_epoch_time >= chargingSessionDetails.chargingSession.end_epoch_time
-    }?.state_of_charge?: chargingSessionDetails.chargingSession.chargingPoints?.last()?.state_of_charge
-    val startSoc = tripDetailsState.drivingSession?.drivingPoints?.findLast {
-        it.driving_point_epoch_time <= chargingSessionDetails.chargingSession.start_epoch_time
-    }?.state_of_charge?: chargingSessionDetails.chargingSession.chargingPoints?.first()?.state_of_charge
+    val endSoc = if (tripDetailsState.drivingSession?.drivingPoints?.isNotEmpty() == true
+        && chargingSessionDetails.chargingSession.chargingPoints?.isNotEmpty() == true) {
+        tripDetailsState.drivingSession?.drivingPoints?.find {
+            it.driving_point_epoch_time >= chargingSessionDetails.chargingSession.end_epoch_time
+        }?.state_of_charge?: chargingSessionDetails.chargingSession.chargingPoints?.last()?.state_of_charge
+    } else { 0f }
+    val startSoc = if (tripDetailsState.drivingSession?.drivingPoints?.isNotEmpty() == true
+        && chargingSessionDetails.chargingSession.chargingPoints?.isNotEmpty() == true) {
+        tripDetailsState.drivingSession?.drivingPoints?.findLast {
+            it.driving_point_epoch_time <= chargingSessionDetails.chargingSession.start_epoch_time
+        }?.state_of_charge?: chargingSessionDetails.chargingSession.chargingPoints?.first()?.state_of_charge
+    } else { 0f }
 
     val socString = if (endSoc != null && startSoc != null) {
         "${(startSoc * 100f).roundToInt()}% → ${(endSoc * 100f).roundToInt()}%"

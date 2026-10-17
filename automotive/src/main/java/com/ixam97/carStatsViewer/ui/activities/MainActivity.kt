@@ -218,14 +218,14 @@ class MainActivity : FragmentActivity() {
                             mainPowerGage.setValue((it.power?:0f) / 1_000_000f)
 
                             mainChargeGage.setValue((it.power?:0f) / -1_000_000f)
-                            mainSoCGage.setValue((it.stateOfCharge!! * 100f).roundToInt())
-
+                            mainSoCGage.setValue(((it.stateOfCharge?:0f) * 100f).roundToInt())
                             mainSpeedGage.setValue(
                                 appPreferences.distanceUnit.toUnit(it.speed!! * 3.6).toInt()
                             )
-                            CarStatsViewer.dataProcessor.staticVehicleData.batteryCapacity?.let { batteryCapacity ->
-                                mainSocGage.setValue((it.batteryLevel!! / (batteryCapacity) * 100).roundToInt())
-                            }
+
+//                            CarStatsViewer.dataProcessor.staticVehicleData.batteryCapacity?.let { batteryCapacity ->
+//                                mainSocGage.setValue((it.batteryLevel!! / (batteryCapacity) * 100).roundToInt())
+//                            }
 
                             if (it.speed > .1 && !moving) {
                                 setSnow(true)

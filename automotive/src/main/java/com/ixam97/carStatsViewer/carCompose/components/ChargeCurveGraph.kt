@@ -25,7 +25,7 @@ fun ChargeCurveGraph(
 
     val plotPoints = DataConverters.chargePlotLineFromChargingPoints((chargingSession.chargingPoints?: listOf()).filter { it.power < -500_00 })
 
-    chargePlotLine.addDataPoints(plotPoints)
+    if (plotPoints.isNotEmpty()) chargePlotLine.addDataPoints(plotPoints)
 
     if (chargingSession.end_epoch_time != null) {
         //TODO: Temporary, replace with new compose based plot.

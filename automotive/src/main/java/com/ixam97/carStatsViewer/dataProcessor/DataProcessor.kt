@@ -187,12 +187,34 @@ class DataProcessor {
         }
 
         try {
+            /**
+             * Some emulators can cause properties to be NaN or provoke divisions by 0f.
+             * This prevents those values from being used in state and DB.
+             * TODO: Implement checks and warnings in case this ever occurs on a real car.
+             */
+            fun Any?.asSafeFloatProperty(): Float? {
+                if (this == null) return null
+                return if ((this as Float?)?.isNaN() == false) this
+                else null
+            }
+
             realTimeData = realTimeData.copy(
-                speed = if (carPropertiesData.CurrentSpeed.value == null) null else ((carPropertiesData.CurrentSpeed.value as Float?)?: 0f).absoluteValue,
-                power = if (carPropertiesData.CurrentPower.value == null) null else emulatorPowerSign * ((carPropertiesData.CurrentPower.value as Float?)?: 0f),
-                batteryLevel = if (carPropertiesData.BatteryLevel.value == null) null else (carPropertiesData.BatteryLevel.value as Float?)?: 0f,
-                stateOfCharge = if (carPropertiesData.BatteryLevel.value == null) null else ((carPropertiesData.BatteryLevel.value as Float?)?: 0f) / staticVehicleData.batteryCapacity!!,
-                ambientTemperature = if (carPropertiesData.CurrentAmbientTemperature.value == null) null else (carPropertiesData.CurrentAmbientTemperature.value as Float?)?: 0f,
+                speed = carPropertiesData.CurrentSpeed.value.asSafeFloatProperty().let { it?.absoluteValue },
+                power = carPropertiesData.CurrentPower.value.asSafeFloatProperty().let { if (it == null) null else it * emulatorPowerSign },
+                batteryLevel = carPropertiesData.BatteryLevel.value.asSafeFloatProperty(),
+                stateOfCharge = carPropertiesData.BatteryLevel.value.asSafeFloatProperty().let { batteryLevel ->
+                    staticVehicleData.batteryCapacity.let { batteryCapacity ->
+                        if (batteryCapacity != null && batteryCapacity > 0f && batteryLevel != null)
+                            batteryLevel / batteryCapacity
+                        else null
+                    }
+                },
+                ambientTemperature = carPropertiesData.CurrentAmbientTemperature.value.asSafeFloatProperty(),
+                // speed = if (carPropertiesData.CurrentSpeed.value == null) null else ((carPropertiesData.CurrentSpeed.value as Float?)?: 0f).absoluteValue,
+                // power = if (carPropertiesData.CurrentPower.value == null) null else emulatorPowerSign * ((carPropertiesData.CurrentPower.value as Float?)?: 0f),
+                // batteryLevel = if (carPropertiesData.BatteryLevel.value == null) null else (carPropertiesData.BatteryLevel.value as Float?)?: 0f,
+                // stateOfCharge = safeStateOfCharge,
+                // ambientTemperature = if (carPropertiesData.CurrentAmbientTemperature.value == null) null else (carPropertiesData.CurrentAmbientTemperature.value as Float?)?: 0f,
                 selectedGear = if (carPropertiesData.CurrentGear.value == null) null else (carPropertiesData.CurrentGear.value as Int?)?: 0,
                 ignitionState = if (carPropertiesData.CurrentIgnitionState.value == null) null else (carPropertiesData.CurrentIgnitionState.value as Int?)?: 0,
                 chargePortConnected = if (carPropertiesData.ChargePortConnected.value == null) null else (carPropertiesData.ChargePortConnected.value as Boolean?)?: false
