@@ -130,9 +130,9 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
                 _tripDetailsState.value.chargingSessionsDetails.firstOrNull { it.chargingSession.charging_session_id == chargingSessionId }.let {
                     _mapAction.send(MapboxInterface.MapboxAction.ZoomToLocation(
                         if (it != null && it.chargingSession.lat != null && it.chargingSession.lon != null) {
-                            MapboxInterface.MapboxLocation(it.chargingSession.lon.toDouble(), it.chargingSession.lat.toDouble(), 14.5)
+                            MapboxInterface.MapboxLocation(it.chargingSession.lon.toDouble(), it.chargingSession.lat.toDouble())
                         } else {
-                            MapboxInterface.MapboxLocation(13.848338959636092, 55.42557254430007, 14.5)
+                            MapboxInterface.MapboxLocation(13.848338959636092, 55.42557254430007)
                         }
                     ))
                 }

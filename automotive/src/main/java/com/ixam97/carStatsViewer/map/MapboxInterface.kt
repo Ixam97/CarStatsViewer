@@ -2,7 +2,7 @@ package com.ixam97.carStatsViewer.map
 
 import android.location.Geocoder
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,7 +17,9 @@ interface MapboxInterface {
     data class MapboxLocation(
         val lon: Double,
         val lat: Double,
-        val zoom: Double,
+        val zoom: Double = 15.5,
+        val pitch: Double = 30.0,
+        val bearing: Double = 0.0
     )
 
     sealed class MapboxAction {
@@ -32,6 +34,7 @@ interface MapboxInterface {
         modifier: Modifier,
         trip: DrivingSession?,
         chargingMarkerOnClick: ((id: Long) -> Unit),
+        useBrightMap: Boolean = false,
         actionFlow: Flow<MapboxAction>? = null,
         useCarCompose: Boolean = false
     ) {

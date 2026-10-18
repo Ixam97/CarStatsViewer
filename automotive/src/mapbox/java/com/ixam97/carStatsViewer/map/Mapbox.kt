@@ -27,17 +27,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -94,6 +96,11 @@ object Mapbox: MapboxInterface {
 
     private val gothenburgLocation: Point = Point.fromLngLat(11.964375837172494,57.71544764178327)
     private val ystadLocation: Point = Point.fromLngLat(13.848338959636092, 55.42557254430007)
+
+    private val mapStyleDarkBasic = "mapbox://styles/ixam97/clfekq5z500hu01mx8s0g54gu"
+    private val mapStyleDark3d = "mapbox://styles/ixam97/cmvd1v9yq003001s5df0d9e8l"
+    private val mapStyleNight3d = "mapbox://styles/ixam97/cmvd2alrf000e01s21tenfyuw"
+    private val mapStyleBright3d = "mapbox://styles/ixam97/cmvd0bucz008101s61n3qb9ks"
 
     data class ChargingLocation(
         val point: Point,
@@ -161,11 +168,13 @@ object Mapbox: MapboxInterface {
                 PolylineAnnotationOptions()
                     .withPoints(points)
                     .withLineColor(CarStatsViewer.appContext.getColor(R.color.polestar_orange_outline))
-                    .withLineWidth(10.0),
+                    .withLineWidth(10.0)
+                    .withLineEmissiveStrength(1.0),
                 PolylineAnnotationOptions()
                     .withPoints(points)
                     .withLineColor(CarStatsViewer.appContext.getColor(R.color.polestar_orange))
-                    .withLineWidth(6.0),
+                    .withLineWidth(6.0)
+                    .withLineEmissiveStrength(1.0),
             )
         )
     }
@@ -176,6 +185,7 @@ object Mapbox: MapboxInterface {
         modifier: Modifier,
         trip: DrivingSession?,
         chargingMarkerOnClick: (id: Long) -> Unit,
+        useBrightMap: Boolean,
         actionFlow: Flow<MapboxInterface.MapboxAction>?,
         useCarCompose: Boolean
     ) {
@@ -195,28 +205,24 @@ object Mapbox: MapboxInterface {
             return
         }
 
-        var tripPoints by remember { mutableStateOf(listOf<Point>()) }
-        var chargingLocations by remember { mutableStateOf(listOf<ChargingLocation>()) }
+        val tripPoints = trip?.drivingPoints?.let { drivingPoints ->
+            drivingPoints
+                .filter { it.lat != null && it.lon != null }
+                .map { Point.fromLngLat(it.lon!!.toDouble(), it.lat!!.toDouble()) }
+        } ?: listOf<Point>()
 
-        LaunchedEffect(trip) {
-            trip?.let { trip ->
-                trip.drivingPoints?.let { drivingPoints ->
-                    tripPoints = drivingPoints
-                        .filter { it.lat != null && it.lon != null }
-                        .map { Point.fromLngLat(it.lon!!.toDouble(), it.lat!!.toDouble()) }
+        val chargingLocations = trip?.chargingSessions?.let { chargingSessions ->
+            chargingSessions
+                .filter { it.lat != null && it.lon != null && (it.end_epoch_time ?: 0) > 0 }
+                .map {
+                    ChargingLocation(
+                        point = Point.fromLngLat(it.lon!!.toDouble(), it.lat!!.toDouble()),
+                        chargingSessionId = it.charging_session_id
+                    )
                 }
-                trip.chargingSessions?.let { chargingSessions ->
-                    chargingLocations = chargingSessions
-                        .filter { it.lat != null && it.lon != null && (it.end_epoch_time?:0) > 0 }
-                        .map { ChargingLocation(
-                            point = Point.fromLngLat(it.lon!!.toDouble(), it.lat!!.toDouble()),
-                            chargingSessionId =  it.charging_session_id
-                        ) }
-                }
-            }
-        }
+        } ?: listOf<ChargingLocation>()
 
-        var tripCameraPosition by remember { mutableStateOf(
+        var tripCameraPosition by rememberSaveable { mutableStateOf(
             cameraOptions {
                 center(gothenburgLocation)
                 zoom(13.0)
@@ -225,11 +231,11 @@ object Mapbox: MapboxInterface {
 
         val slowEasingAnimationOptions = mapAnimationOptions { duration(2500) }
 
-        val mapViewPortState = rememberMapViewportState { setCameraOptions(tripCameraPosition) }
+        val mapViewportState = rememberMapViewportState { setCameraOptions(tripCameraPosition) }
 
         fun changeZoom(zoomChange: Double) {
-            mapViewPortState.cameraState?.let { cameraState ->
-                mapViewPortState.easeTo(cameraOptions {
+            mapViewportState.cameraState?.let { cameraState ->
+                mapViewportState.easeTo(cameraOptions {
                     center(cameraState.center)
                     zoom(cameraState.zoom + zoomChange)
                 })
@@ -237,7 +243,14 @@ object Mapbox: MapboxInterface {
         }
 
         fun resetZoom() {
-            mapViewPortState.flyTo(tripCameraPosition, slowEasingAnimationOptions)
+            mapViewportState.flyTo(tripCameraPosition, slowEasingAnimationOptions)
+        }
+
+        fun resetBearing() {
+                mapViewportState.easeTo(cameraOptions {
+                    pitch(0.0)
+                    bearing(0.0)
+                })
         }
 
         val lifecycleOwner = LocalLifecycleOwner.current
@@ -245,16 +258,24 @@ object Mapbox: MapboxInterface {
             lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 withContext(Dispatchers.Main.immediate) {
                     actionFlow?.collect { action ->
-                        mapViewPortState.flyTo(when (action) {
+                        mapViewportState.flyTo(when (action) {
                             MapboxInterface.MapboxAction.Reset -> tripCameraPosition
                             is MapboxInterface.MapboxAction.ZoomToLocation -> cameraOptions {
                                 center(Point.fromLngLat(action.location.lon, action.location.lat))
                                 zoom(action.location.zoom)
+                                pitch(action.location.pitch)
+                                bearing(action.location.bearing)
                             }
                         }, slowEasingAnimationOptions )
                     }
                 }
             }
+        }
+
+        LaunchedEffect(tripCameraPosition) {
+            mapViewportState.flyTo(
+                tripCameraPosition,
+                mapAnimationOptions { duration(0) })
         }
 
         Box(
@@ -271,16 +292,16 @@ object Mapbox: MapboxInterface {
                 val pxMapButtonInset = with(LocalDensity.current){95.dp.toPx()}.toDouble()
 
                 MapboxMap(
-                    style = { MapStyle(style = "mapbox://styles/ixam97/clfekq5z500hu01mx8s0g54gu") },
-                    mapViewportState = mapViewPortState,
+                    style = { MapStyle(style = if (useBrightMap) mapStyleBright3d else mapStyleDark3d) },
+                    mapViewportState = mapViewportState,
                     attribution = { Attribution(iconColor = polestarOrange) },
                     scaleBar = {},
                     compass = {}
                 ) {
                     MapEffect(trip, tripPoints) { mapView ->
                         mapView.apply {
-                            gestures.pitchEnabled = false
-                            gestures.rotateEnabled = false
+                            gestures.pitchEnabled = true
+                            gestures.rotateEnabled = true
                             try {
                                 attribution.getMapAttributionDelegate().telemetry().apply {
                                     userTelemetryRequestState = false
@@ -301,19 +322,19 @@ object Mapbox: MapboxInterface {
                         if (tripPoints.isNotEmpty()) {
                             tripCameraPosition = mapView.mapboxMap.awaitCameraForCoordinates(
                                 coordinates = tripPoints,
-                                camera = cameraOptions { },
+                                camera = cameraOptions {
+                                    pitch(0.0)
+                                    bearing(0.0)
+                                                       },
                                 coordinatesPadding = EdgeInsets(
                                     pxEdgeInsets,
                                     pxEdgeInsets,
                                     pxEdgeInsets,
                                     pxEdgeInsets + pxMapButtonInset
                                 ),
-                                maxZoom = 14.0
+                                maxZoom = 14.0,
                             )
                         }
-                        mapViewPortState.flyTo(
-                            tripCameraPosition,
-                            mapAnimationOptions { duration(0) })
                     }
 
                     if (tripPoints.isNotEmpty()) {
@@ -341,7 +362,7 @@ object Mapbox: MapboxInterface {
                                 .padding(100.dp)
                                 .background(Color(0xFF141516))
                                 .padding(20.dp),
-                            text = "Trip contains no Location Data!",
+                            text = stringResource(R.string.summary_no_route),
                             color = Color.White,
                             fontSize = 30.sp
                         )
@@ -364,7 +385,7 @@ object Mapbox: MapboxInterface {
                     )
                     Text(
                         modifier = Modifier.padding(15.dp),
-                        text = "${mapViewPortState.cameraState?.center}",
+                        text = "${mapViewportState.cameraState?.center}",
                         color = Color.White,
                         fontSize = 30.sp
                     )
@@ -374,8 +395,11 @@ object Mapbox: MapboxInterface {
             if (useCarCompose) {
                 MapControls(
                     onResetZoom = { resetZoom() },
+                    onResetBearing = { resetBearing() },
                     onZoomIn = { changeZoom(1.0) },
-                    onZoomOut = { changeZoom(-1.0) }
+                    onZoomOut = { changeZoom(-1.0) },
+                    showBearingButton = mapViewportState.cameraState?.let { it.bearing != 0.0 || it.pitch != 0.0 }?:false,
+                    bearingAngle = mapViewportState.cameraState?.bearing?.toFloat()?:0f
                 )
             } else {
                 Column(
@@ -437,8 +461,11 @@ object Mapbox: MapboxInterface {
 @Composable
 private fun MapControls(
     onResetZoom: () -> Unit,
+    onResetBearing: () -> Unit,
     onZoomIn: () -> Unit,
-    onZoomOut: () -> Unit
+    onZoomOut: () -> Unit,
+    showBearingButton: Boolean = false,
+    bearingAngle: Float = 0f
 ) {
     val buttonShadow = Shadow(
         radius = 12.dp,
@@ -449,6 +476,31 @@ private fun MapControls(
     Column(
         modifier = Modifier.padding(15.dp)
     ) {
+        if (showBearingButton) {
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .dropShadow(
+                        shape = CarButtonDefaults.shape,
+                        shadow = buttonShadow
+                    )
+                    .clip(CarButtonDefaults.shape)
+                    .background(CarButtonDefaults.colors.backgroundBrush)
+                    .clickable(onClick = onResetBearing),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(de.ixam97.carcompose.theme.CarTheme.carDimensions.iconButtonSize)
+                        .rotate((bearingAngle * -1f) - 45f),
+                    painter = painterResource(R.drawable.ic_bearing),
+                    contentDescription = null,
+                    tint = CarButtonDefaults.colors.textColor
+                )
+            }
+            Spacer(Modifier.size(de.ixam97.carcompose.theme.CarTheme.carDimensions.defaultVerticalPadding))
+        }
+
         Box(
             modifier = Modifier
                 .size(80.dp)

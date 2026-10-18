@@ -154,7 +154,6 @@ private fun TripDetailsChargingDetailsOverlayContent(
                                 MapboxInterface.MapboxLocation(
                                     lon = chargingSessionDetails.chargingSession.lon.toDouble(),
                                     lat = chargingSessionDetails.chargingSession.lat.toDouble(),
-                                    zoom = 14.5
                                 )
                             )
                         }

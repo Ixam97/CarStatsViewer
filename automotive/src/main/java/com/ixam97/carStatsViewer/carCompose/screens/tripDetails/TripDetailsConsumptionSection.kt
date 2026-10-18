@@ -287,6 +287,23 @@ private fun TripDetailsConsumptionSectionContent(
             enter = expandVertically(expandFrom = Alignment.Top),
             exit = shrinkVertically(shrinkTowards = Alignment.Top)
         ) {
+            var altitudeUp: Float? = null
+            var altitudeDown: Float? = null
+            var lastAltitude = 0f
+
+            drivingSession.drivingPoints?.mapNotNull { it.alt }?.forEachIndexed { index, altitude ->
+                if (index == 0) {
+                    lastAltitude = altitude
+                }
+                else {
+                    when {
+                        altitude > lastAltitude -> altitudeUp = (altitudeUp?:0f) + (altitude - lastAltitude)
+                        altitude < lastAltitude -> altitudeDown = (altitudeDown?:0f) + (lastAltitude - altitude)
+                    }
+                    lastAltitude = altitude
+                }
+            }
+
             Column() {
                 CarListDivider()
                 CarColumn(
@@ -325,7 +342,11 @@ private fun TripDetailsConsumptionSectionContent(
                             CarListItem {
                                 StandardDataRow(
                                     iconPainter = painterResource(R.drawable.ic_altitude),
-                                    valueText = "Placeholder",
+                                    valueText = if (altitudeUp == null || altitudeDown == null) {
+                                        stringResource(R.string.summary_altitude_missing)
+                                    } else {
+                                        StringFormatters.getAltitudeString(altitudeUp, altitudeDown)
+                                    },
                                     descriptionText = stringResource(R.string.summary_altitude)
                                 )
                             },

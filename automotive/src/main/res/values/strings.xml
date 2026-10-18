@@ -246,6 +246,7 @@
     <string name="summary_charge_ambient_temp">Ambient temperature</string>
     <string name="summary_interruption_warning">Recording of charging session has been interrupted. This value is probably incorrect.</string>
     <string name="summary_altitude">Altitude change</string>
+    <string name="summary_altitude_missing">No altitude data available</string>
     <string name="summary_speed">Average speed</string>
     <string name="summary_ongoing">Ongoing trip</string>
     <string name="summary_tab_trip_details">Trip Details</string>
@@ -259,6 +260,7 @@
     <string name="summary_trip_type">Trip type</string>
     <string name="summary_soc_unavailable">State of charge unavailable</string>
     <string name="summary_ongoing_charging_session">Ongoing charging session ...</string>
+    <string name="summary_no_route">Trip contains no Location Data!</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
