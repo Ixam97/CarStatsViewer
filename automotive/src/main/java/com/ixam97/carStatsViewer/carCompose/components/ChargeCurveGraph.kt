@@ -5,6 +5,7 @@ import com.ixam97.carStatsViewer.compose.screens.ChargingPlot
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotHighlightMethod
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotLineLabelFormat
+import com.ixam97.carStatsViewer.ui.plot.enums.PlotSessionGapRendering
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLine
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLineConfiguration
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotRange
@@ -16,10 +17,11 @@ fun ChargeCurveGraph(
 ) {
     val chargePlotLine = PlotLine(
         PlotLineConfiguration(
-            PlotRange(0f, 20f, 0f, 400f, 20f),
-            PlotLineLabelFormat.FLOAT,
-            PlotHighlightMethod.AVG_BY_TIME,
-            "kW"
+            Range = PlotRange(0f, 20f, 0f, 400f, 20f),
+            LabelFormat = PlotLineLabelFormat.FLOAT,
+            HighlightMethod = PlotHighlightMethod.AVG_BY_TIME,
+            Unit = "kW",
+            SessionGapRendering = PlotSessionGapRendering.GAP
         )
     )
 
