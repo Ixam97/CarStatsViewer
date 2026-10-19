@@ -30,11 +30,27 @@ object StringFormatters {
 
     fun getDateString(date: Date?): String {
         if (date == null) return "-/-"
-        return "${dateFormat.format(date)}, ${timeFormat.format(date)}"
+        return "${dateFormat.format(date)} | ${timeFormat.format(date)}"
     }
 
     fun getDateString(tripStartDate: Calendar): String {
-        return "${dateFormat.format(tripStartDate.time)}, ${timeFormat.format(tripStartDate.time)}"
+        return "${dateFormat.format(tripStartDate.time)} | ${timeFormat.format(tripStartDate.time)}"
+    }
+
+    fun getStartToEndDateString(start: Date, end: Date? = null):String {
+        val startDate = dateFormat.format(start.time)
+        val startTime = timeFormat.format(start.time)
+
+        if (end == null) return "$startDate | $startTime"
+
+        val endDate = dateFormat.format(end.time)
+        val endTime = timeFormat.format(end.time)
+
+        return if (startDate == endDate) {
+            "$startDate | $startTime – $endTime"
+        } else {
+            "$startDate | $startTime – $endDate | $endTime"
+        }
     }
 
     fun getEnergyString(usedEnergy: Float): String {

@@ -372,7 +372,10 @@ internal fun DrivingSessionRow(
     onClick: (sessionId: Long) -> Unit,
 ) {
 
-    val rowTitle = "${StringFormatters.getDateString(Date(drivingSession.start_epoch_time))}, ID: ${drivingSession.driving_session_id}"
+    val endEpochTimeFromDrivePoints = drivingSession.drivingPoints?.maxByOrNull { it.driving_point_epoch_time }?.driving_point_epoch_time
+
+    // val rowTitle = "${StringFormatters.getDateString(Date(drivingSession.start_epoch_time))}, ID: ${drivingSession.driving_session_id}"
+    val rowTitle = StringFormatters.getStartToEndDateString(Date(drivingSession.start_epoch_time), endEpochTimeFromDrivePoints?.let { Date(it) })
     @Composable
     fun LeadingContent() {
         Icon(

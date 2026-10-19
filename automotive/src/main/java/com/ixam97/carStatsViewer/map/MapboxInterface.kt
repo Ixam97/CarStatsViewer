@@ -64,7 +64,21 @@ interface MapboxInterface {
             }
 
         return if (!result.isNullOrEmpty()) {
-            result[0].getAddressLine(0)
+            val thoroughfare = result[0].thoroughfare
+            val subThoroughfare = result[0].subThoroughfare
+            val postalCode = result[0].postalCode
+
+            if (subThoroughfare == null || thoroughfare == null || postalCode == null)
+                result[0].getAddressLine(0)
+
+            val road = result[0].getAddressLine(0).split(',').find {
+                it.contains(thoroughfare) || it.contains(subThoroughfare)
+            }?.trim(',')?.trim()
+            val city = result[0].locality ?: result[0].getAddressLine(0).substringAfterLast(postalCode).substringBefore(',').trim()
+//            InAppLogger.d("${result} \n ${result[0].locality}")
+//            result[0].getAddressLine(0).substringAfterLast(result[0].postalCode).substringBefore(',').trim()
+            if (road != null) "$road, $city"
+            else result[0].getAddressLine(0)
         } else {
             ("%.6f, %.6f".format(lat, lon))
         }

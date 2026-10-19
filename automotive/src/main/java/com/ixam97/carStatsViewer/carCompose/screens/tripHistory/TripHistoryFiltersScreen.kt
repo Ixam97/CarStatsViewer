@@ -90,7 +90,7 @@ fun ColumnScope.TripHistoryFiltersContent(
         CarListItem {
             var showDialog by remember { mutableStateOf(false) }
             CarRow(
-                title = "Date Range",
+                title = stringResource(R.string.history_dialog_filters_date_range),
                 descriptionContent = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -225,12 +225,12 @@ private fun DateRangePickerDialog(
                     modifier = Modifier.padding(top = CarTheme.carDimensions.defaultVerticalPadding),
                     text = dateRangeText(
                         dateRangePickerState.selectedStartDateMillis to dateRangePickerState.selectedEndDateMillis,
-                        "No date range selected"
+                        stringResource(R.string.history_dialog_date_range_no_range_selected)
                     ),
                     style = CarTheme.carTypography.title
                 )
                 Text(
-                    text = "Select a date range to filter for trips that start within this range.",
+                    text = stringResource(R.string.history_dialog_date_range_hint),
                     style = CarTheme.carTypography.defaultBody
                 )
                 Box(
@@ -275,7 +275,7 @@ private fun dateRangeText(
         else defaultText
     }
     val endDate = dateRange.second.run {
-        if (this != null) " - " + dateFormat.format(Date(this))
+        if (this != null) " – " + dateFormat.format(Date(this))
         else ""
     }
     return startDate + endDate

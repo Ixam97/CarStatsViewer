@@ -3,6 +3,7 @@ package com.ixam97.carStatsViewer.carCompose.screens.tripHistory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +58,7 @@ class TripHistoryViewModel: ViewModel() {
             withContext(Dispatchers.IO) {
                 if (CarStatsViewer.appPreferences.debugDelays) delay(5000L)
                 delay(500L)
-                val pastTrips = CarStatsViewer.tripDataSource.getPastDrivingSessions().sortedByDescending { it.start_epoch_time }
+                val pastTrips = getPastDrivingSessionsWithLastDrivingPoint() // CarStatsViewer.tripDataSource.getPastDrivingSessions().sortedByDescending { it.start_epoch_time }
                 _tripHistoryState.update {
                     it.copy(
                         pastTrips = pastTrips,
@@ -67,6 +68,40 @@ class TripHistoryViewModel: ViewModel() {
                 }
             }
         }
+    }
+
+    /**
+     * Loading past driving sessions and populate the drive points with the last point before the
+     * end time to get more accurate end time to display. If there is no suitable drive point, the
+     * start time will be used as a dummy. Probably not relevant for real devices and only relevant
+     * for trips that have been reset immediately again.
+     */
+    private suspend fun getPastDrivingSessionsWithLastDrivingPoint(): List<DrivingSession> {
+        return CarStatsViewer.tripDataSource.getPastDrivingSessions()
+            .sortedByDescending { it.start_epoch_time }
+            .apply {
+                this.forEach {
+                    var lastDrivingPoint = if (it.end_epoch_time != null)
+                        CarStatsViewer.tripDataSource.getLatestDrivingPointBefore(it.end_epoch_time)
+                    else null
+                    if (lastDrivingPoint != null) {
+                        if (lastDrivingPoint.driving_point_epoch_time <= it.start_epoch_time)
+                            lastDrivingPoint = lastDrivingPoint.copy(driving_point_epoch_time = it.start_epoch_time)
+                        it.drivingPoints = listOf(lastDrivingPoint)
+                    } else {
+                        it.drivingPoints = listOf(DrivingPoint(
+                            driving_point_epoch_time = it.start_epoch_time,
+                            energy_delta = 0f,
+                            distance_delta = 0f,
+                            point_marker_type = null,
+                            state_of_charge = 0f,
+                            lat = null,
+                            lon = null,
+                            alt = null
+                        ))
+                    }
+                }
+            }
     }
 
     private fun calculateValidDateRange(pastTrips: List<DrivingSession>): Pair<Long, Long>? {
@@ -101,7 +136,7 @@ class TripHistoryViewModel: ViewModel() {
             delay(500L)
             _tripHistoryState.update {
                 it.copy(
-                    pastTrips = CarStatsViewer.tripDataSource.getPastDrivingSessions().sortedByDescending { it.start_epoch_time },
+                    pastTrips = getPastDrivingSessionsWithLastDrivingPoint(), // CarStatsViewer.tripDataSource.getPastDrivingSessions().sortedByDescending { it.start_epoch_time },
                     isLoadingPastTrips = false
                 )
             }

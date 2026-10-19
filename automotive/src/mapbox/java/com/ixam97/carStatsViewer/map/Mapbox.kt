@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,8 +29,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -72,6 +76,7 @@ import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimati
 import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
 import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.gestures.gestures
+import de.ixam97.carcompose.components.controls.CarButton
 import de.ixam97.carcompose.components.controls.CarButtonDefaults
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -138,6 +143,16 @@ object Mapbox: MapboxInterface {
         onClick: () -> Unit = {}
     ){
         val marker = rememberIconImage(key = "charge-marker", painterResource(R.drawable.ic_trip_charging_location))
+        LocationMarkerImpl(point, onClick, marker)
+    }
+
+    @Composable
+    @MapboxMapComposable
+    private fun StopLocationMarker(
+        point: Point,
+        onClick: () -> Unit = {}
+    ) {
+        val marker = rememberIconImage(key = "stop-marker", painterResource(R.drawable.ic_trip_stop))
         LocationMarkerImpl(point, onClick, marker)
     }
 
@@ -211,6 +226,13 @@ object Mapbox: MapboxInterface {
                 .map { Point.fromLngLat(it.lon!!.toDouble(), it.lat!!.toDouble()) }
         } ?: listOf<Point>()
 
+        val stopPoints = trip?.drivingPoints?.let { drivingPoints ->
+            val mappedPoints = drivingPoints
+                .filter { it.point_marker_type == 2 && it.lat != null && it.lon != null }
+                .map { Point.fromLngLat(it.lon!!.toDouble(), it.lat!!.toDouble()) }
+            if (mappedPoints.size > 1) mappedPoints.subList(0, mappedPoints.size - 2) else listOf()
+        } ?: listOf<Point>()
+
         val chargingLocations = trip?.chargingSessions?.let { chargingSessions ->
             chargingSessions
                 .filter { it.lat != null && it.lon != null && (it.end_epoch_time ?: 0) > 0 }
@@ -233,6 +255,9 @@ object Mapbox: MapboxInterface {
 
         val mapViewportState = rememberMapViewportState { setCameraOptions(tripCameraPosition) }
 
+        var useDetailedMap by remember { mutableStateOf(false) }
+        var useStopMarkers by remember { mutableStateOf(false) }
+
         fun changeZoom(zoomChange: Double) {
             mapViewportState.cameraState?.let { cameraState ->
                 mapViewportState.easeTo(cameraOptions {
@@ -251,6 +276,25 @@ object Mapbox: MapboxInterface {
                     pitch(0.0)
                     bearing(0.0)
                 })
+        }
+
+        fun flyToPoint(point: Point) {
+            val location = MapboxInterface.MapboxLocation(
+                lon = point.longitude(),
+                lat = point.latitude()
+            )
+            mapViewportState.flyTo(
+                cameraOptions {
+                    center(Point.fromLngLat(
+                        location.lon,
+                        location.lat
+                    ))
+                    zoom(location.zoom)
+                    pitch(location.pitch)
+                    bearing(location.bearing)
+                },
+                slowEasingAnimationOptions
+            )
         }
 
         val lifecycleOwner = LocalLifecycleOwner.current
@@ -292,7 +336,13 @@ object Mapbox: MapboxInterface {
                 val pxMapButtonInset = with(LocalDensity.current){95.dp.toPx()}.toDouble()
 
                 MapboxMap(
-                    style = { MapStyle(style = if (useBrightMap) mapStyleBright3d else mapStyleDark3d) },
+                    style = {
+                        MapStyle(
+                            style = if (useDetailedMap) {
+                                if (useBrightMap) mapStyleBright3d else mapStyleDark3d
+                            } else mapStyleDarkBasic
+                        )
+                    },
                     mapViewportState = mapViewportState,
                     attribution = { Attribution(iconColor = polestarOrange) },
                     scaleBar = {},
@@ -339,6 +389,14 @@ object Mapbox: MapboxInterface {
 
                     if (tripPoints.isNotEmpty()) {
                         TripPolyline(tripPoints)
+                        if(stopPoints.isNotEmpty() && useStopMarkers) {
+                            stopPoints.forEach {
+                                StopLocationMarker(
+                                    point = it,
+                                    onClick = { flyToPoint(it) }
+                                )
+                            }
+                        }
                         if (chargingLocations.isNotEmpty()) {
                             chargingLocations.forEach {
                                 ChargeLocationMarker(
@@ -347,8 +405,8 @@ object Mapbox: MapboxInterface {
                                 )
                             }
                         }
-                        StartLocationMarker(tripPoints.first())
-                        DestinationLocationMarker(tripPoints.last())
+                        StartLocationMarker(tripPoints.first()) { flyToPoint(tripPoints.first()) }
+                        DestinationLocationMarker(tripPoints.last()) { flyToPoint(tripPoints.last()) }
                     }
                 }
 
@@ -393,14 +451,38 @@ object Mapbox: MapboxInterface {
             }
 
             if (useCarCompose) {
-                MapControls(
-                    onResetZoom = { resetZoom() },
-                    onResetBearing = { resetBearing() },
-                    onZoomIn = { changeZoom(1.0) },
-                    onZoomOut = { changeZoom(-1.0) },
-                    showBearingButton = mapViewportState.cameraState?.let { it.bearing != 0.0 || it.pitch != 0.0 }?:false,
-                    bearingAngle = mapViewportState.cameraState?.bearing?.toFloat()?:0f
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = AbsoluteAlignment.Right
+                ) {
+                    MapControls(
+                        onResetZoom = { resetZoom() },
+                        onResetBearing = { resetBearing() },
+                        onZoomIn = { changeZoom(1.0) },
+                        onZoomOut = { changeZoom(-1.0) },
+                        showBearingButton = mapViewportState.cameraState?.let { it.bearing != 0.0 || it.pitch != 0.0 }?:false,
+                        bearingAngle = mapViewportState.cameraState?.bearing?.toFloat()?:0f
+                    )
+                    Row(
+                        modifier = Modifier.padding(de.ixam97.carcompose.theme.CarTheme.carDimensions.defaultVerticalPadding,),
+                        horizontalArrangement = Arrangement.spacedBy(de.ixam97.carcompose.theme.CarTheme.carDimensions.defaultVerticalPadding),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Debug options:", style = de.ixam97.carcompose.theme.CarTheme.carTypography.rowTitle)
+                        CarButton(
+                            modifier = Modifier.heightIn(max = 70.dp),
+                            onClick = { useDetailedMap = !useDetailedMap },
+                            active = useDetailedMap
+                        ) { Text("Toggle Map Style") }
+                        CarButton(
+                            modifier = Modifier.heightIn(max = 70.dp),
+                            onClick = { useStopMarkers = !useStopMarkers },
+                            active = useStopMarkers
+                        ) { Text("Toggle Stop Markers") }
+                    }
+                }
             } else {
                 Column(
                     modifier = Modifier
@@ -474,7 +556,8 @@ private fun MapControls(
     )
 
     Column(
-        modifier = Modifier.padding(15.dp)
+        modifier = Modifier.padding(15.dp),
+        verticalArrangement = Arrangement.spacedBy(de.ixam97.carcompose.theme.CarTheme.carDimensions.defaultVerticalPadding)
     ) {
         if (showBearingButton) {
             Box(
@@ -498,7 +581,6 @@ private fun MapControls(
                     tint = CarButtonDefaults.colors.textColor
                 )
             }
-            Spacer(Modifier.size(de.ixam97.carcompose.theme.CarTheme.carDimensions.defaultVerticalPadding))
         }
 
         Box(
@@ -520,7 +602,6 @@ private fun MapControls(
                 tint = CarButtonDefaults.colors.textColor
             )
         }
-        Spacer(Modifier.size(de.ixam97.carcompose.theme.CarTheme.carDimensions.defaultVerticalPadding))
 
         Column(
             modifier = Modifier

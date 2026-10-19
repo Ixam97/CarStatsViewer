@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,17 +18,17 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -39,6 +38,7 @@ import com.ixam97.carStatsViewer.carCompose.components.ChargeCurveGraph
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
 import com.ixam97.carStatsViewer.compose.theme.clubHint
+import com.ixam97.carStatsViewer.compose.theme.clubHintDark
 import com.ixam97.carStatsViewer.map.MapboxInterface
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import de.ixam97.carcompose.components.controls.CarButton
@@ -103,6 +103,7 @@ private fun TripDetailsChargingDetailsOverlayContent(
     chargingSessionDetails: ChargingSessionDetails
 ) {
     val tripDetailsState by viewModel.tripDetailsState.collectAsState()
+    val snackBarHostState = LocalCarSnackBarState.current
 
     if (chargingSessionDetails.chargingSession.end_epoch_time == null) {
         Text("This charging session contains no end time!")
@@ -135,13 +136,13 @@ private fun TripDetailsChargingDetailsOverlayContent(
         modifier = modifier
             .fillMaxHeight()
     ) {
-        Row(
-            modifier = Modifier.height(IntrinsicSize.Min)
-        ) {
+//        Row(
+//            modifier = Modifier.height(IntrinsicSize.Min)
+//        ) {
             Column(
                 modifier = Modifier
-                    .weight(1.5f)
-                    .fillMaxHeight()
+                    // .weight(1.5f)
+                    .height(IntrinsicSize.Min)
             ) {
                 CarRow(
                     title = StringFormatters.getDateString(Date(chargingSessionDetails.chargingSession.start_epoch_time)),
@@ -160,31 +161,139 @@ private fun TripDetailsChargingDetailsOverlayContent(
                     }
                 )
                 CarListDivider()
-                CarRow(
-                    title = StringFormatters.getEnergyString(chargingSessionDetails.chargingSession.charged_energy.toFloat()) + " ($socString)",
-                    // description = stringResource(R.string.summary_charged_energy),
-                    descriptionContent = {
-                        Text(
-                            text = stringResource(R.string.summary_charged_energy),
-                            style = CarTheme.carTypography.rowContent,
-                            color = LocalContentColor.current.copy(alpha =  0.7f)
-                        )
-                        if (curveInterrupted) {
-                            Spacer(Modifier.size(CarTheme.carDimensions.rowTextSpacing))
-                            Text(
-                                text = stringResource(R.string.summary_interruption_warning),
-                                style = CarTheme.carTypography.rowContent,
-                                color = clubHint
+                Row(
+                    modifier = Modifier.height(IntrinsicSize.Min)
+                ) {
+                    CarRow(
+                        modifier = Modifier.weight(1f),
+                        title = StringFormatters.getEnergyString(chargingSessionDetails.chargingSession.charged_energy.toFloat()) + " ($socString)",
+                        description = stringResource(R.string.summary_charged_energy),
+                        leadingContent = {
+                            Icon(
+                                modifier = Modifier.size(CarTheme.carDimensions.iconButtonSize),
+                                painter = painterResource(R.drawable.ic_battery),
+                                contentDescription = null,
                             )
+                        }
+//                        descriptionContent = {
+//                            Text(
+//                                text = stringResource(R.string.summary_charged_energy),
+//                                style = CarTheme.carTypography.rowContent,
+//                                color = LocalContentColor.current.copy(alpha =  0.7f)
+//                            )
+//                            if (curveInterrupted) {
+//                                Spacer(Modifier.size(CarTheme.carDimensions.rowTextSpacing))
+//                                Text(
+//                                    text = stringResource(R.string.summary_interruption_warning),
+//                                    style = CarTheme.carTypography.rowContent,
+//                                    color = clubHint
+//                                )
+//                            }
+//                        }
+                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(vertical = CarTheme.carDimensions.defaultVerticalPadding)
+                            .fillMaxHeight()
+                            .width(2.dp)
+                            .background(brush = CarTheme.carColors.secondaryDivider)
+                    )
+                    CarRow(
+                        modifier = Modifier.weight(1f),
+                        title = StringFormatters.getElapsedTimeString(chargingSessionDetails.chargingSession.end_epoch_time - chargingSessionDetails.chargingSession.start_epoch_time),
+                        description = stringResource(R.string.summary_charge_time),
+                        leadingContent = {
+                            Icon(
+                                modifier = Modifier.size(CarTheme.carDimensions.iconButtonSize),
+                                painter = painterResource(R.drawable.ic_time),
+                                contentDescription = null,
+                            )
+                        }
+                    )
+                }
+//                if (curveInterrupted) {
+//                    CarListDivider()
+//                    CarRow(
+//                        title = stringResource(R.string.summary_interruption_warning),
+//                        foregroundColor = clubHint
+//                    )
+//                }
+                CarListDivider()
+                if (curveInterrupted) {
+                    Row (
+                        modifier = Modifier
+                            .padding(
+                                horizontal = CarTheme.carDimensions.defaultHorizontalPadding,
+                            )
+                            .padding(top = CarTheme.carDimensions.defaultVerticalPadding)
+                            .clip(CarTheme.carShapes.buttonShape)
+                            .background(clubHintDark)
+                            .padding(
+                                horizontal = CarTheme.carDimensions.defaultHorizontalPadding,
+                                vertical = CarTheme.carDimensions.defaultVerticalPadding
+                            ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultHorizontalPadding)
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(CarTheme.carDimensions.iconButtonSize),
+                            painter = painterResource(R.drawable.ic_error),
+                            contentDescription = null,
+                            tint = clubHint
+                        )
+                        Text(
+                            text = stringResource(R.string.summary_interruption_warning_0_29),
+                            style = CarTheme.carTypography.rowContent,
+                            maxLines = 2,
+                            autoSize = TextAutoSize.StepBased(
+                                maxFontSize = CarTheme.carTypography.rowContent.fontSize
+                            ),
+                            color = clubHint
+                        )
+                    }
+                }
+                CarRow(
+                    content = {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultHorizontalPadding),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            CarButton(
+                                modifier = Modifier
+                                    .heightIn(max = 70.dp),
+                                onClick = {
+                                    viewModel.exportChargingSession(
+                                        sessionID = chargingSessionDetails.chargingSession.charging_session_id,
+                                        snackBarHostState = snackBarHostState
+                                    )
+                                },
+                                enabled = CarStatsViewer.appPreferences.dataExportEnabled
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(40.dp),
+                                    painter = painterResource(R.drawable.ic_mail),
+                                    contentDescription = null
+                                )
+                                Text(stringResource(R.string.summary_charging_session_export_button))
+                            }
+                            CarButton(
+                                modifier = Modifier
+                                    .heightIn(max = 70.dp),
+                                onClick = {},
+                                enabled = false
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(40.dp),
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = null
+                                )
+                                Text(stringResource(R.string.summary_charging_session_edit_button))
+                            }
                         }
                     }
                 )
-                CarListDivider()
-                CarRow(
-                    title = StringFormatters.getElapsedTimeString(chargingSessionDetails.chargingSession.end_epoch_time - chargingSessionDetails.chargingSession.start_epoch_time),
-                    description = stringResource(R.string.summary_charge_time)
-                )
             }
+            /*
             Box(
                 modifier = Modifier
                     .padding(vertical = CarTheme.carDimensions.defaultVerticalPadding)
@@ -236,7 +345,8 @@ private fun TripDetailsChargingDetailsOverlayContent(
                     Text("Share")
                 }
             }
-        }
+            */
+        // }
         CarListDivider()
         Box(
             Modifier

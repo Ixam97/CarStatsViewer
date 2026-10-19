@@ -245,6 +245,7 @@
     <string name="summary_charge_time">Charge time</string>
     <string name="summary_charge_ambient_temp">Ambient temperature</string>
     <string name="summary_interruption_warning">Recording of charging session has been interrupted. This value is probably incorrect.</string>
+    <string name="summary_interruption_warning_0_29">Recording of charging session has been interrupted. The charged energy value is probably not correct.</string>
     <string name="summary_altitude">Altitude change</string>
     <string name="summary_altitude_missing">No altitude data available</string>
     <string name="summary_speed">Average speed</string>
@@ -261,6 +262,8 @@
     <string name="summary_soc_unavailable">State of charge unavailable</string>
     <string name="summary_ongoing_charging_session">Ongoing charging session ...</string>
     <string name="summary_no_route">Trip contains no Location Data!</string>
+    <string name="summary_charging_session_export_button">Export</string>
+    <string name="summary_charging_session_edit_button">Edit</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
@@ -420,9 +423,12 @@
     <string name="history_dialog_filters_month">Show monthly trips</string>
     <string name="history_dialog_filters_date">Earliest start date</string>
     <string name="history_dialog_filters_note">Note: The current trips are always shown regardless of applied filters.</string>
+    <string name="history_dialog_filters_date_range">Date Range</string>
     <string name="history_dialog_delete_title">Delete trip?</string>
     <string name="history_dialog_delete_message">The trip will be deleted permanently.</string>
     <string name="history_dialog_delete_confirm">Delete trip</string>
+    <string name="history_dialog_date_range_hint">Select a date range to filter for trips that start within this range.</string>
+    <string name="history_dialog_date_range_no_range_selected">No date range selected</string>
 
     <string name="history_dialog_multi_delete_title">Delete multiple trips?</string>
     <string name="history_dialog_multi_delete_message">You are about to delete %s trips. The trips will be deleted permanently.</string>
