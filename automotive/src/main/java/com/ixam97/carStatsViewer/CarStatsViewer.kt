@@ -49,7 +49,12 @@ var emulatorPowerSign = -1
 object Defines {
     const val PLOT_ENERGY_INTERVAL = 100L
     const val AUTO_RESET_TIME = 14_400_000L // 4h
-    const val PLOT_DISTANCE_INTERVAL = 100.0
+
+    /**
+     * Testing shorter interval.
+     * TODO: Decide on how to determine the interval driving points should be saved...
+     */
+    const val PLOT_DISTANCE_INTERVAL = 10.0 // 100.0
     const val MAIN_VIEW_DRIVING_POINTS = 2_000
 }
 
