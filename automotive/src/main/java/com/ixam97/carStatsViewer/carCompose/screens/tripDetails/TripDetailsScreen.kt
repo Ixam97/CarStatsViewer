@@ -12,7 +12,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -46,7 +45,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
-import com.ixam97.carStatsViewer.carCompose.UiBrightnessMode
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.map.Mapbox
 import de.ixam97.carcompose.components.layout.CarPaneLayout
@@ -371,28 +369,26 @@ private fun TripDetailsMapSection(
     globalViewModel: CarComposeGlobalViewModel,
     viewModel: TripDetailsViewModel
 ) {
-    val globalState by globalViewModel.globalState.collectAsState()
-    val tripDetailsState by viewModel.tripDetailsState.collectAsState()
+//    val globalState by globalViewModel.globalState.collectAsState()
+//    val tripDetailsState by viewModel.tripDetailsState.collectAsState()
 
-    val useBrightMap = if (globalState.uiSupportsBrightMode) {
-        when (globalState.uiBrightnessMode) {
-            UiBrightnessMode.Bright -> true
-            UiBrightnessMode.Auto if !isSystemInDarkTheme() -> true
-            else -> false
-        }
-    } else {
-        false
-    }
+//    val useBrightMap = if (globalState.uiSupportsBrightMode) {
+//        when (globalState.uiBrightnessMode) {
+//            UiBrightnessMode.Bright -> true
+//            UiBrightnessMode.Auto if !isSystemInDarkTheme() -> true
+//            else -> false
+//        }
+//    } else {
+//        false
+//    }
 
     Surface(
         color = CarTheme.carColors.background,
         contentColor = CarTheme.carColors.onBackground
     ) {
-        Mapbox.MapBoxContainer(
+        Mapbox.MapboxContainer(
             modifier = Modifier,
-            trip = tripDetailsState.drivingSession,
-            useCarCompose = true,
-            useBrightMap = useBrightMap,
+            mapTripDataState = tripDetailsState.mapTripDataState,
             chargingMarkerOnClick = { viewModel.setSelectedChargingDetails(it) },
             actionFlow = viewModel.mapAction
         )

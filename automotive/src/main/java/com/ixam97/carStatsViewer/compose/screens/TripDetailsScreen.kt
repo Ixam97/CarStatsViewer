@@ -371,13 +371,13 @@ fun TripDetailsPortraitScreen(
                                 }
 
                                 2 -> {
-                                    Mapbox.MapBoxContainer(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .weight(1f),
-                                        trip = trip,
-                                        chargingMarkerOnClick = {id -> viewModel.selectChargingSession(id)}
-                                    )
+//                                    Mapbox.MapBoxContainer(
+//                                        modifier = Modifier
+//                                            .fillMaxWidth()
+//                                            .weight(1f),
+//                                        trip = trip,
+//                                        chargingMarkerOnClick = {id -> viewModel.selectChargingSession(id)}
+//                                    )
                                 }
                             }
                         }
@@ -388,11 +388,11 @@ fun TripDetailsPortraitScreen(
                                     .fillMaxHeight()
                             ) {
 
-                                Mapbox.MapBoxContainer(
-                                    modifier = Modifier,
-                                    trip = trip,
-                                    chargingMarkerOnClick = {id -> viewModel.selectChargingSession(id)}
-                                )
+//                                Mapbox.MapBoxContainer(
+//                                    modifier = Modifier,
+//                                    trip = trip,
+//                                    chargingMarkerOnClick = {id -> viewModel.selectChargingSession(id)}
+//                                )
                             }
                         }
                     }

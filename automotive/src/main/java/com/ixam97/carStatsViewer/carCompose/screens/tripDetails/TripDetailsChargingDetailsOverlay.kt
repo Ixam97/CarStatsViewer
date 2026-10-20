@@ -64,7 +64,7 @@ fun TripDetailsChargingDetailsOverlay(
         val tripDetailsState by viewModel.tripDetailsState.collectAsState()
 
         CarPaneLayout(
-            headerTitle = "Charging Details",
+            headerTitle = stringResource(R.string.summary_charging_session_title),
             onBackAction = { viewModel.closeChargingDetails() }
         ) {
             tripDetailsState.chargingSessionsDetails.firstOrNull { it.chargingSession.charging_session_id == tripDetailsState.selectedChargingSessionDetailsId }.let { chargingSessionDetails ->
@@ -147,7 +147,12 @@ private fun TripDetailsChargingDetailsOverlayContent(
                 CarRow(
                     title = StringFormatters.getDateString(Date(chargingSessionDetails.chargingSession.start_epoch_time)),
                     description = chargingSessionDetails.chargingLocation,
-                    leadingContent = { Image(painterResource(R.drawable.ic_trip_charging_location), null) },
+                    leadingContent = {
+                        Image(
+                            modifier = Modifier.size(CarTheme.carDimensions.iconButtonSize),
+                            painter = painterResource(R.drawable.ic_trip_charging_location),
+                            contentDescription =  null)
+                    },
                     browsable = true,
                     onBrowse = {
                         if (chargingSessionDetails.chargingSession.lon != null && chargingSessionDetails.chargingSession.lat != null) {
@@ -227,7 +232,7 @@ private fun TripDetailsChargingDetailsOverlayContent(
                             )
                             .padding(top = CarTheme.carDimensions.defaultVerticalPadding)
                             .clip(CarTheme.carShapes.buttonShape)
-                            .background(clubHintDark)
+                            .background(if (CarTheme.useDarkTheme) clubHintDark else clubHint)
                             .padding(
                                 horizontal = CarTheme.carDimensions.defaultHorizontalPadding,
                                 vertical = CarTheme.carDimensions.defaultVerticalPadding
@@ -239,7 +244,7 @@ private fun TripDetailsChargingDetailsOverlayContent(
                             modifier = Modifier.size(CarTheme.carDimensions.iconButtonSize),
                             painter = painterResource(R.drawable.ic_error),
                             contentDescription = null,
-                            tint = clubHint
+                            tint = if (CarTheme.useDarkTheme) clubHint else clubHintDark
                         )
                         Text(
                             text = stringResource(R.string.summary_interruption_warning_0_29),
@@ -248,7 +253,7 @@ private fun TripDetailsChargingDetailsOverlayContent(
                             autoSize = TextAutoSize.StepBased(
                                 maxFontSize = CarTheme.carTypography.rowContent.fontSize
                             ),
-                            color = clubHint
+                            color = if (CarTheme.useDarkTheme) clubHint else clubHintDark
                         )
                     }
                 }

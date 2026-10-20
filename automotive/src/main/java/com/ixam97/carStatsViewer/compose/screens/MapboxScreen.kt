@@ -24,13 +24,13 @@ fun MapboxScreen() {
     var destAddr by remember { mutableStateOf("Unknown") }
 
     Column {
-        Mapbox.MapBoxContainer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            trip = trip,
-            chargingMarkerOnClick = {}
-        )
+//        Mapbox.MapBoxContainer(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .weight(1f),
+//            trip = trip,
+//            chargingMarkerOnClick = {}
+//        )
         Text(
             modifier = Modifier.padding(vertical = 10.dp, horizontal = 25.dp),
             text = "Start: $startAddr"

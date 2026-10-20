@@ -9,6 +9,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.FeatureInfo
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
@@ -91,6 +92,8 @@ class CarStatsViewer : Application() {
         lateinit var tripDataSource: LocalTripDataSource
         lateinit var dataProcessor: DataProcessor
         lateinit var watchdog: Watchdog
+
+        var glVersion: Long = 0
 
         lateinit var logDao: LogDao
 
@@ -195,7 +198,18 @@ class CarStatsViewer : Application() {
         }
     }
 
-
+    private fun checkGlVersion(context: Context): Long {
+        context.packageManager.systemAvailableFeatures.let { featureInfos ->
+            featureInfos.forEach { featureInfo ->
+                if (featureInfo.name == null) {
+                    return if (featureInfo.reqGlEsVersion != FeatureInfo.GL_ES_VERSION_UNDEFINED) {
+                        ((featureInfo.reqGlEsVersion.toLong() and 0xffff0000) shr 16)
+                    } else 1
+                }
+            }
+        }
+        return 1
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -210,6 +224,8 @@ class CarStatsViewer : Application() {
             "LogDatabase"
         ).build()
         logDao = logDatabase.logDao()
+
+        glVersion = checkGlVersion(applicationContext)
 
         val mDefaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
 

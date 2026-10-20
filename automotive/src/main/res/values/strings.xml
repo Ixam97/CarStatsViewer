@@ -245,7 +245,7 @@
     <string name="summary_charge_time">Charge time</string>
     <string name="summary_charge_ambient_temp">Ambient temperature</string>
     <string name="summary_interruption_warning">Recording of charging session has been interrupted. This value is probably incorrect.</string>
-    <string name="summary_interruption_warning_0_29">Recording of charging session has been interrupted. The charged energy value is probably not correct.</string>
+    <string name="summary_interruption_warning_0_29">Recording of charging session has been interrupted. The shown energy value is probably not correct.</string>
     <string name="summary_altitude">Altitude change</string>
     <string name="summary_altitude_missing">No altitude data available</string>
     <string name="summary_speed">Average speed</string>
@@ -262,6 +262,7 @@
     <string name="summary_soc_unavailable">State of charge unavailable</string>
     <string name="summary_ongoing_charging_session">Ongoing charging session ...</string>
     <string name="summary_no_route">Trip contains no Location Data!</string>
+    <string name="summary_charging_session_title">Charging Session</string>
     <string name="summary_charging_session_export_button">Export</string>
     <string name="summary_charging_session_edit_button">Edit</string>
 

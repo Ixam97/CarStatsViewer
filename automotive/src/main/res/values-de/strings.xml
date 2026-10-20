@@ -165,7 +165,7 @@
     <string name="summary_charge_time">Ladezeit</string>
     <string name="summary_charge_ambient_temp">Außentemperatur</string>
     <string name="summary_interruption_warning">Aufzeichnung der Ladekurve unterbrochen. Dieser Wert ist vermutlich nicht korrekt.</string>
-    <string name="summary_interruption_warning_0_29">Aufzeichnung der Ladekurve unterbrochen. Die geladene Energiemenge ist vermutlich nicht korrekt.</string>
+    <string name="summary_interruption_warning_0_29">Aufzeichnung der Ladekurve unterbrochen. Die angezeigte Energiemenge ist vermutlich nicht korrekt.</string>
     <string name="summary_altitude">Höhenunterschied</string>
     <string name="summary_altitude_missing">Keine Höhendaten verfügbar</string>
     <string name="summary_speed">Durchschnittsgeschwindigkeit</string>
@@ -182,6 +182,7 @@
     <string name="summary_soc_unavailable">Ladestand nicht verfügbar</string>
     <string name="summary_ongoing_charging_session">Laufender Ladevorgang ...</string>
     <string name="summary_no_route">Trip enthält keine Standortdaten!</string>
+    <string name="summary_charging_session_title">Ladevorgang</string>
     <string name="summary_charging_session_export_button">Exportieren</string>
     <string name="summary_charging_session_edit_button">Bearbeiten</string>
 
