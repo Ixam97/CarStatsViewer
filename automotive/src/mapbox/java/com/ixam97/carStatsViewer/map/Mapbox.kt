@@ -5,7 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,9 +15,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -92,6 +96,7 @@ object Mapbox: MapboxInterface {
     override fun MapboxContainer(
         modifier: Modifier,
         mapTripDataState: MapboxInterface.MapTripDataState,
+        isLoading: Boolean,
         chargingMarkerOnClick: (id: Long) -> Unit,
         useDarkMap: Boolean,
         actionFlow: Flow<MapboxInterface.MapboxAction>?
@@ -213,20 +218,34 @@ object Mapbox: MapboxInterface {
                     MapTripAnnotations(mapTripAnnotationsState)
                 }
 
-                if (mapTripDataState.tripPoints.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
+                if (mapTripDataState.isLoading) {
+                    MapInfoBox {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text =stringResource(R.string.summary_route_loading) ,
+                                style = CarTheme.carTypography.rowTitle
+                            )
+                            Spacer(Modifier.size(CarTheme.carDimensions.defaultHorizontalPadding))
+                            CircularProgressIndicator()
+                        }
+                    }
+                } else if (mapTripDataState.tripPoints.isEmpty()) {
+                    MapInfoBox {
                         Text(
-                            modifier = Modifier
-                                .padding(100.dp)
-                                .background(Color(0xFF141516))
-                                .padding(20.dp),
-                            text = stringResource(R.string.summary_no_route),
-                            color = Color.White,
-                            fontSize = 30.sp
+                            text = stringResource(R.string.summary_no_route_title),
+                            style = CarTheme.carTypography.title
                         )
+                        Spacer(Modifier.size(CarTheme.carDimensions.defaultHorizontalPadding))
+                        Text(
+                            text = stringResource(R.string.summary_no_route),
+                            style = CarTheme.carTypography.rowTitle
+                        )
+//                        Spacer(Modifier.size(CarTheme.carDimensions.defaultHorizontalPadding))
+//                        CarButton(onClick = {}) {
+//                            Text("Go to settings")
+//                        }
                     }
                 }
 
@@ -316,6 +335,36 @@ object Mapbox: MapboxInterface {
         )
     }
 
+    val mapOverlayShadow = Shadow(
+        radius = 12.dp,
+        spread = 0.dp,
+        color = Color(0x90000000)
+    )
+
+    @Composable
+    private fun MapInfoBox(
+        // modifier: Modifier = Modifier,
+        content: @Composable (ColumnScope.() -> Unit)
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(100.dp)
+                    .dropShadow(
+                        shape = CarButtonDefaults.shape,
+                        shadow = mapOverlayShadow
+                    )
+                    .clip(RoundedCornerShape(CarTheme.carShapes.listSectionCornerSize))
+                    .background(CarTheme.carColors.listSectionBackground)
+                    .padding(CarTheme.carDimensions.defaultHorizontalPadding),
+                content = content
+            )
+        }
+    }
+
     @Composable
     private fun MapControls(
         onResetZoom: () -> Unit,
@@ -327,12 +376,6 @@ object Mapbox: MapboxInterface {
         showBearingButton: Boolean = false,
         bearingAngle: Float = 0f
     ) {
-        val buttonShadow = Shadow(
-            radius = 12.dp,
-            spread = 0.dp,
-            color = Color(0x90000000)
-        )
-
         Column(
             modifier = Modifier.padding(15.dp),
             verticalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultVerticalPadding)
@@ -343,7 +386,7 @@ object Mapbox: MapboxInterface {
                         .size(80.dp)
                         .dropShadow(
                             shape = CarButtonDefaults.shape,
-                            shadow = buttonShadow
+                            shadow = mapOverlayShadow
                         )
                         .clip(CarButtonDefaults.shape)
                         .background(CarButtonDefaults.colors.backgroundBrush)
@@ -366,7 +409,7 @@ object Mapbox: MapboxInterface {
                     .size(80.dp)
                     .dropShadow(
                         shape = CarButtonDefaults.shape,
-                        shadow = buttonShadow
+                        shadow = mapOverlayShadow
                     )
                     .clip(CarButtonDefaults.shape)
                     .background(CarButtonDefaults.colors.backgroundBrush)
@@ -387,7 +430,7 @@ object Mapbox: MapboxInterface {
                         .size(80.dp)
                         .dropShadow(
                             shape = CarButtonDefaults.shape,
-                            shadow = buttonShadow
+                            shadow = mapOverlayShadow
                         )
                         .clip(CarButtonDefaults.shape)
                         .background(CarButtonDefaults.colors.backgroundBrush)
@@ -408,7 +451,7 @@ object Mapbox: MapboxInterface {
                     .width(IntrinsicSize.Min)
                     .dropShadow(
                         shape = CarButtonDefaults.shape,
-                        shadow = buttonShadow
+                        shadow = mapOverlayShadow
                     )
                     .clip(CarButtonDefaults.shape)
                     .background(CarButtonDefaults.colors.backgroundBrush)

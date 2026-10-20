@@ -44,7 +44,7 @@ data class TripDetailsState(
         secondaryDimension = CarStatsViewer.appPreferences.secondaryConsumptionDimension,
         distance = 0f
     ),
-    val mapTripDataState: MapboxInterface.MapTripDataState = MapboxInterface.MapTripDataState(),
+    val mapTripDataState: MapboxInterface.MapTripDataState = MapboxInterface.MapTripDataState(isLoading = true),
     val selectedChargingSessionDetailsId: Long? = null,
     val showChargingDetails: Boolean = false
 )

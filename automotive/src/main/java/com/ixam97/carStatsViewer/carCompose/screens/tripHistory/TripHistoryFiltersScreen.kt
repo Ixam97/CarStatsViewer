@@ -216,7 +216,7 @@ private fun DateRangePickerDialog(
             Column (
                 modifier = Modifier
                     .widthIn(max = 1024.dp)
-                    .clip(RoundedCornerShape(CarTheme.carShapes.defaultOuterCornerSize))
+                    .clip(RoundedCornerShape(CarTheme.carShapes.listSectionCornerSize))
                     .background(CarTheme.carColors.listSectionBackground)
                     .padding(CarTheme.carDimensions.defaultHorizontalPadding),
                 verticalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultVerticalPadding)

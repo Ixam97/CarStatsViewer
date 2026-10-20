@@ -166,6 +166,7 @@ private fun TripDetailsConsumptionSectionContent(
                         val lineColor = polestarOrange // CarTheme.carColors.accent
                         val pixelOffset = with(LocalDensity.current){ CarTheme.carDimensions.defaultVerticalPadding.toPx() }
                         Image(
+                            modifier = Modifier.size(CarTheme.carDimensions.iconButtonSize),
                             painter = painterResource(R.drawable.ic_trip_start),
                             contentDescription = null
                         )
@@ -190,15 +191,17 @@ private fun TripDetailsConsumptionSectionContent(
                 }
                 drivingSession.end_epoch_time.let { endTime ->
                     if (endTime != null && endTime > 0) {
-                        Row() {
+                        Row(
+                            modifier = Modifier.padding(
+                                start = CarTheme.carDimensions.defaultHorizontalPadding
+                            )
+                        ) {
                             Image(
                                 painter = painterResource(R.drawable.ic_trip_destination),
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .padding(
-                                        start = CarTheme.carDimensions.defaultHorizontalPadding,
-                                        top = CarTheme.carDimensions.defaultVerticalPadding
-                                    )
+                                    .padding(top = CarTheme.carDimensions.defaultVerticalPadding + 3.dp)
+                                    .size(CarTheme.carDimensions.iconButtonSize)
                             )
                             CarRow(
                                 title = StringFormatters.getDateString(Date(endTime)),
@@ -212,7 +215,7 @@ private fun TripDetailsConsumptionSectionContent(
                                 modifier = Modifier
                                     .padding(
                                         start = CarTheme.carDimensions.defaultHorizontalPadding,
-                                        top = CarTheme.carDimensions.defaultVerticalPadding / 2
+                                        top = CarTheme.carDimensions.defaultVerticalPadding / 2 + 3.dp
                                     )
                                     // .rotate(180f)
                             )

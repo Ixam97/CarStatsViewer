@@ -40,13 +40,14 @@ interface MapboxInterface {
     )
 
     data class MapTripDataState(
+        val isLoading: Boolean = false,
         val tripPoints: List<MapPoint> = listOf(),
         val stopPoints: List<MapPoint> = listOf(),
         val chargingLocations: List<ChargingLocation> = listOf()
     ) {
         companion object {
 
-            fun createStateFromTrip(trip: DrivingSession): MapTripDataState {
+            fun createStateFromTrip(trip: DrivingSession, isLoading: Boolean = false): MapTripDataState {
                 val tripPoints = trip.drivingPoints?.let { drivingPoints ->
                     drivingPoints
                         .filter { it.lat != null && it.lon != null }
@@ -72,6 +73,7 @@ interface MapboxInterface {
                 } ?: listOf<ChargingLocation>()
 
                 return MapTripDataState(
+                    isLoading = isLoading,
                     tripPoints = tripPoints,
                     stopPoints = stopPoints,
                     chargingLocations = chargingLocations
@@ -86,6 +88,7 @@ interface MapboxInterface {
     fun MapboxContainer(
         modifier: Modifier,
         mapTripDataState: MapTripDataState,
+        isLoading: Boolean = false,
         chargingMarkerOnClick: ((id: Long) -> Unit),
         useDarkMap: Boolean = CarTheme.useDarkTheme,
         actionFlow: Flow<MapboxAction>? = null

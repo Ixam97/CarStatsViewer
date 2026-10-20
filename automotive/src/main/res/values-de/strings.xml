@@ -180,8 +180,10 @@
     <string name="summary_no_charging_sessions">Keine Ladevorgänge für diesen Trip verfügbar.</string>
     <string name="summary_trip_type">Trip-Typ</string>
     <string name="summary_soc_unavailable">Ladestand nicht verfügbar</string>
-    <string name="summary_ongoing_charging_session">Laufender Ladevorgang ...</string>
-    <string name="summary_no_route">Trip enthält keine Standortdaten!</string>
+    <string name="summary_ongoing_charging_session">Laufender Ladevorgang...</string>
+    <string name="summary_route_loading">Lade Standortdaten…</string>
+    <string name="summary_no_route_title">Standortdaten nicht verfügbar</string>
+    <string name="summary_no_route">Der Trip enthält keine Standortdaten. Stelle sicher, dass die Standorterfassung in den Einstellungen aktiv ist, damit der Fahrtverlauf auf der Karte dargestellt werden kann.</string>
     <string name="summary_charging_session_title">Ladevorgang</string>
     <string name="summary_charging_session_export_button">Exportieren</string>
     <string name="summary_charging_session_edit_button">Bearbeiten</string>
