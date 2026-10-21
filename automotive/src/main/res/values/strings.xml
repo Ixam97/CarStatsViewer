@@ -419,6 +419,9 @@
     <string name="history_selected">Selected:</string>
     <string name="history_past_trips">Past trips:</string>
     <string name="history_current_trips">Current trips:</string>
+    <string name="history_no_data">No trips available</string>
+    <string name="history_delete_trips_button">Delete trips</string>
+    <string name="history_delete_no_trips_selected">No trips selected</string>
     <string name="history_dialog_filters_title">Trip filters</string>
     <string name="history_dialog_filters_manual">Show manual trips</string>
     <string name="history_dialog_filters_charge">Show since charge trips</string>

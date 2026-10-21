@@ -107,7 +107,7 @@ fun TripHistoryScreen(
     )
 
     CarPaneLayout(
-        headerTitle = if (tripHistoryState.deleteMode) "Delete Trips" else stringResource(R.string.history_title),
+        headerTitle = if (tripHistoryState.deleteMode) stringResource(R.string.history_delete_trips_button) else stringResource(R.string.history_title),
         onBackAction = if (tripHistoryState.deleteMode) null else onBack,
         isLoading = globalState.isLoading,
 //        headerStartContent = if (!tripHistoryState.deleteMode) null else {
@@ -165,7 +165,7 @@ fun TripHistoryContent(
                 Spacer(Modifier.weight(1f))
                 Column(
                     modifier = Modifier
-                        .widthIn(max = 600.dp)
+                        .widthIn(max = 700.dp)
                         .fillMaxHeight()
                         .padding(
                             horizontal = CarTheme.carDimensions.defaultHorizontalPadding,
@@ -200,7 +200,7 @@ fun TripHistoryContent(
                                 null,
                                 Modifier.size(CarTheme.carDimensions.iconButtonSize)
                             )
-                            Text("Delete Trips")
+                            Text(stringResource(R.string.history_delete_trips_button))
                         }
                     } else {
                         CarButton(
@@ -358,7 +358,7 @@ internal fun LoadingRow() {
 @Composable
 internal fun NoDataRow() {
     CarRow(
-        title = "No trips available"
+        title = stringResource(R.string.history_no_data)
     )
 }
 
@@ -513,7 +513,7 @@ internal fun showResetDialog(
 @Composable
 internal fun deleteButtonText(tripsNumber: Int): String {
     return when (tripsNumber) {
-        0 -> "No trips selected"
+        0 -> stringResource(R.string.history_delete_no_trips_selected)
         1 -> stringResource(R.string.history_dialog_delete_confirm)
         else -> stringResource(R.string.history_dialog_multi_delete_delete, tripsNumber)
     }

@@ -336,7 +336,9 @@
     <string name="history_title">Tripverlauf</string>
     <string name="history_selected">Ausgewählt:</string>
     <string name="history_past_trips">Frühere Trips:</string>
-    <string name="history_current_trips">Aktuelle Trips:</string>
+    <string name="history_current_trips">Aktuelle Trips:</string>i
+    <string name="history_delete_trips_button">Trips löschen</string>
+    <string name="history_delete_no_trips_selected">Keine Trips ausgewählt</string>
     <string name="history_dialog_filters_title">Trips filtern</string>
     <string name="history_dialog_filters_manual">Zeige manuelle Trips</string>
     <string name="history_dialog_filters_charge">Zeige "Seit Ladung"-Trips</string>
