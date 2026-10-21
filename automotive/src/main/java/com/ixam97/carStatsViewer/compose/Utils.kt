@@ -2,8 +2,12 @@ package com.ixam97.carStatsViewer.compose
 
 import android.os.Build
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -11,6 +15,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,13 +29,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carCompose.theme.badRed
+import com.ixam97.carStatsViewer.carCompose.theme.connectedBlue
+import com.ixam97.carStatsViewer.carCompose.theme.limitedYellow
 import com.ixam97.carStatsViewer.compose.theme.ColorTheme
 import com.ixam97.carStatsViewer.compose.theme.polestarOrange
+import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
+import de.ixam97.carcompose.components.controls.CarIconButton
+import de.ixam97.carcompose.components.controls.CarTextField
+import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -130,4 +151,68 @@ fun DefaultColumnScrollbar(
             content = content
         )
     }
+}
+
+@Composable
+fun ConnectionStatusIcon(
+    status: ConnectionStatus,
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        modifier = modifier.size(CarTheme.carDimensions.iconButtonSize),
+        painter = painterResource(R.drawable.ic_connected),
+        contentDescription = null,
+        tint = when (status) {
+            ConnectionStatus.CONNECTED -> connectedBlue
+            ConnectionStatus.ERROR -> badRed
+            ConnectionStatus.LIMITED -> limitedYellow
+            ConnectionStatus.UNUSED -> Color.Transparent
+        }
+    )
+}
+
+@Composable
+fun TextFieldWithValidation(
+    value: String,
+    onValueChange: (String) -> Unit,
+    validAddress: Boolean?
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        CarTextField(
+            value = value,
+            onValueChange = onValueChange,
+            singleLine = true,
+            modifier = Modifier.weight(1f),
+            trailingIcon = {
+                TextBoxCheckmark(validAddress)
+            }
+        )
+        Spacer(Modifier.size(CarTheme.carDimensions.defaultHorizontalPadding / 2f))
+        CarIconButton(imageVector = Icons.Outlined.Delete) { onValueChange("") }
+    }
+}
+
+@Composable
+internal fun TextBoxCheckmark(valid: Boolean?) {
+    if (valid != null) {
+        Icon(
+            modifier = Modifier.size(40.dp),
+            imageVector = if (valid) Icons.Default.Check else Icons.Default.ErrorOutline,
+            tint = if (valid) Color.Green else Color.Red,
+            contentDescription = null
+        )
+    } else {
+        Box(Modifier.size(40.dp))
+    }
+}
+
+@Composable
+fun RowContentText(text: String) {
+    Text(
+        text = text,
+        style = CarTheme.carTypography.rowContent,
+        color = LocalContentColor.current.copy(alpha =  0.7f)
+    )
 }

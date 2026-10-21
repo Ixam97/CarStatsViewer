@@ -8,6 +8,7 @@ import android.location.LocationManager
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.hasLocationPermission
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

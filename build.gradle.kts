@@ -1,30 +1,15 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-
-    // ext {
-    //     // Use the following booleans to configure the usage of some APIs
-    //     useMapbox = true
-    //     useFirebase = false
-    // }
-}
 plugins {
     alias(libs.plugins.androidApplication) apply false
-    alias(libs.plugins.kotlinAndroid) apply false
     alias(libs.plugins.kotlinSerialization) apply false
     alias(libs.plugins.aboutlibraries) apply false
-    alias(libs.plugins.kotlinKapt) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlin.parcelize) apply false
     alias(libs.plugins.googleServices) apply false
     alias(libs.plugins.firebaseCrashlytics) apply false
+    alias(libs.plugins.google.ksp) apply false
 }
 
-task clean(type: Delete) {
-    delete rootProject.getLayout().buildDirectory
+tasks.register<Delete>("clean") {
+    delete(rootProject.layout.buildDirectory)
 }

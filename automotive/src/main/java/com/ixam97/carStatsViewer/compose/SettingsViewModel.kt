@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,7 +19,6 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.log.LogEntry
 import com.ixam97.carStatsViewer.liveDataApi.ConnectionStatus
-import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitBody
 import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitRepository
 import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
@@ -36,7 +34,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.text.SimpleDateFormat
 import kotlin.collections.forEach
 
 class SettingsViewModel:
@@ -81,7 +78,10 @@ class SettingsViewModel:
 
     data class ApiSettingsState(
         val abrpStatus: ConnectionStatus = ConnectionStatus.UNUSED,
-        val httpStatus: ConnectionStatus = ConnectionStatus.UNUSED
+        val httpStatus: ConnectionStatus = ConnectionStatus.UNUSED,
+        val exportMailAddress: String = "",
+        val validExportMailAddress: Boolean? = null,
+        val enableDataExport: Boolean = false
     )
 
     private val _themeSettingState = MutableStateFlow<Int>(preferences.colorTheme)
@@ -115,7 +115,7 @@ class SettingsViewModel:
                     detailedNotifications = preferences.notifications,
                     altConsumptionUnit = preferences.consumptionUnit,
                     showChargingGages = preferences.chargePlotVisibleGages,
-                    showConsumptionGages = preferences.chargePlotVisibleGages,
+                    showConsumptionGages = preferences.consumptionPlotVisibleGages,
                     locationTracking = preferences.useLocation,
                     autoAppStart = preferences.autostart,
                     phoneNotification = preferences.phoneNotification,
@@ -137,6 +137,15 @@ class SettingsViewModel:
                     screenshotReceiver = preferences.debugScreenshotReceiver,
                     validReceiverAddress = validateEmailAddress(preferences.debugScreenshotReceiver),
                     userID = preferences.debugUserID
+                )
+
+                val exportAddressValid = if (preferences.dataExportAddress.isBlank()) null else preferences.dataExportEnabled && (validateEmailAddress(preferences.dataExportAddress) == true)
+                preferences.dataExportEnabled = exportAddressValid == true
+
+                apiSettingsState = apiSettingsState.copy(
+                    exportMailAddress = preferences.dataExportAddress,
+                    validExportMailAddress = exportAddressValid,
+                    enableDataExport = preferences.dataExportEnabled
                 )
                 try {
                     settingsState = settingsState.copy(
@@ -206,11 +215,11 @@ class SettingsViewModel:
     }
     fun setShowChargingGages(value: Boolean) {
         settingsState = settingsState.copy(showChargingGages = value)
-        preferences.consumptionPlotVisibleGages = value
+        preferences.chargePlotVisibleGages = value
     }
     fun setShowConsumptionGages(value: Boolean) {
         settingsState = settingsState.copy(showConsumptionGages = value)
-        preferences.chargePlotVisibleGages = value
+        preferences.consumptionPlotVisibleGages = value
     }
     fun setLocationTracking(value: Boolean) {
         settingsState = settingsState.copy(locationTracking = value)
@@ -257,6 +266,29 @@ class SettingsViewModel:
         } catch (_: Throwable) {
             InAppLogger.w("Firebase is disabled")
         }
+    }
+
+    fun setExportMailAddress(exportAddress: String) {
+        val valid = validateEmailAddress(exportAddress)
+        apiSettingsState = apiSettingsState.copy(
+            exportMailAddress = exportAddress,
+            validExportMailAddress = valid
+        )
+        if (valid != false) {
+            preferences.dataExportAddress = exportAddress
+        }
+        if (valid != true) {
+            preferences.dataExportEnabled = false
+            apiSettingsState = apiSettingsState.copy(
+                enableDataExport = false
+            )
+        }
+    }
+    fun setEnableDataExport(enabled: Boolean) {
+        preferences.dataExportEnabled = enabled
+        apiSettingsState = apiSettingsState.copy(
+            enableDataExport = enabled
+        )
     }
 
     fun openGitHubLink(context: Context) {
@@ -337,51 +369,15 @@ class SettingsViewModel:
             .show()
         viewModelScope.launch {
             withContext(Dispatchers.IO){
-                val submitMap = mutableMapOf<Long, String>()
-
-                InAppLogger.getLogEntries(
-                    logLevel = preferences.logLevel + 2,
-                    logLength = logLengths[preferences.logLength]
-                ).forEach { logEntry ->
-                    val logTimestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(logEntry.epochTime)
-                    val logType = InAppLogger.typeSymbol(logEntry.type)
-                    val logMessage = logEntry.message
-                    logEntry.id?.let {
-                        submitMap[it.toLong()] = "$logTimestamp | $logType: $logMessage"
-                    }
-                }
-                // Log.d("Log submit debug", Gson().toJson(LogSubmitBody(submitMap)))
-                var resultmsg: String?
-                try {
-                    val cpuInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-                        "${Build.SOC_MANUFACTURER} ${Build.SOC_MODEL}"
-                    else
-                        "Unknown"
-                    resultmsg = LogSubmitRepository.submitLog(LogSubmitBody(
-                        log = submitMap,
-                        userID = preferences.debugUserID,
-                        metadata = LogSubmitBody.LogMetadata(
-                            timestamp = System.currentTimeMillis(),
-                            brand = Build.BRAND,
-                            model = Build.MODEL,
-                            device = Build.DEVICE,
-                            appInfo = "${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})",
-                            cpuInfo = cpuInfo
-                        )
-                    ))
-                } catch (e: Exception) {
-                    InAppLogger.e("Failed: ${e.message}\n\r${e.stackTraceToString()}")
-                    resultmsg = e.message
-                }
+                val resultMessage = LogSubmitRepository.submitLog()
                 delay(500)
                 withContext(Dispatchers.Main) {
-                    if (resultmsg == null)
-                    {
+                    if (resultMessage == null) {
                         snackbar.updateStartDrawable(R.drawable.ic_checkmark)
                         snackbar.updateMessage("Log was submitted successfully.")
                     } else {
                         snackbar.setToError()
-                        snackbar.updateMessage("Failed to submit log!\n$resultmsg")
+                        snackbar.updateMessage("Failed to submit log!\n$resultMessage")
                     }
                     snackbar.startDuration(3000)
                 }

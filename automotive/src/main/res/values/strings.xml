@@ -160,16 +160,15 @@
         <item>Improved autostart behaviour.</item>
         <item>Starting with OTA P4.2.4, Polestar 4 is now fully compatible with Car Stats Viewer.</item>
         <item>[V](0.28.1)</item>
+        <item>Numerous optimizations and adjustments to account for vehicle compatibility.</item>
+        <item>Overhaul of the Trip Details view for a more compact and flexible overview, especially for wide screen devices.</item>
+        <item>Data Export (WIP): Trips and Charging Sessions can now be exported via E-Mail as CSV-files. The formatting is still WIP and will change in future updates.</item>
+        <item>Legacy Edition: Complete rewrite of Settings-UI (same as Play Edition). The main Screen will follow at a later stage.</item>
+        <item>Play Edition: Migrating to a single activity architecture. This makes the settings UI more flexible and allows for more detailed trip details.</item>
+        <item>[V](0.29.0)</item>
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
-        <!--
-        <item>PLEASE NOTE: Polestar 3, Polestar 4 and Volvo EX30 do not provide any power values. Not all app features will work until this is fixed by the OEMs!</item>
-        <item>Added a map to trip details (depending on release track implementation).</item>
-        <item>Completely overhauled the UI of settings and trip details. This makes use of landscape screens like in the Polestar 4.</item>
-        <item>(Play Edition) Re-Added trip history, but with limited information for now.</item>
-        <item>[V](0.28.0)</item>
-        -->
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>
@@ -193,7 +192,8 @@
     <string name="permissions_dialog_grant">Grant permissions</string>
     <string name="permissions_dialog_grant_singular">Grant permission</string>
     <string name="permissions_dialog_deny">Continue anyways</string>
-    <string name="permissions_dialog_background_location_text">For a reliable operation of the app, access to the background location permission is required. Please select \"Allow all the time\" for the location permission.\n\nThe location permission is needed to access vehicle data other than the actual GPS location.\n\nBy default, location tracking is disabled and can be enabled in the app\'s settings. It can also be configured for each supported Live Data API independently.</string>
+    <!--<string name="permissions_dialog_background_location_text">For a reliable operation of the app, access to the background location permission is required. Please select \"Allow all the time\" for the location permission.\n\nThe location permission is needed to access vehicle data other than the actual GPS location.\n\nBy default, location tracking is disabled and can be enabled in the app\'s settings. It can also be configured for each supported Live Data API independently.</string>-->
+    <string name="permissions_dialog_background_location_text_0_29">For a reliable operation of the app, access to the background location permission is required. Please select \"Allow all the time\" for the location permission.\n\nThe location permission is needed to access vehicle data other than the actual GPS location.\n\nBy default, location tracking is enabled and can be disabled in the app\'s settings. Location data is only stored locally as long as no API is configured. It can also be configured for each supported Live Data API independently.</string>
 
     <!-- Global -->
     <string name="plot_dimensionY_CONSUMPTION" translatable="false">-</string>
@@ -245,7 +245,9 @@
     <string name="summary_charge_time">Charge time</string>
     <string name="summary_charge_ambient_temp">Ambient temperature</string>
     <string name="summary_interruption_warning">Recording of charging session has been interrupted. This value is probably incorrect.</string>
+    <string name="summary_interruption_warning_0_29">Recording of charging session has been interrupted. The shown energy value is probably not correct.</string>
     <string name="summary_altitude">Altitude change</string>
+    <string name="summary_altitude_missing">No altitude data available</string>
     <string name="summary_speed">Average speed</string>
     <string name="summary_ongoing">Ongoing trip</string>
     <string name="summary_tab_trip_details">Trip Details</string>
@@ -259,6 +261,12 @@
     <string name="summary_trip_type">Trip type</string>
     <string name="summary_soc_unavailable">State of charge unavailable</string>
     <string name="summary_ongoing_charging_session">Ongoing charging session ...</string>
+    <string name="summary_route_loading">Loading Location Data…</string>
+    <string name="summary_no_route_title">Location Data unavailable</string>
+    <string name="summary_no_route">The trip does not contain any location data. Make sure you have enabled location tracking in the App settings if you want to be able to view past routes on the map.</string>
+    <string name="summary_charging_session_title">Charging Session</string>
+    <string name="summary_charging_session_export_button">Export</string>
+    <string name="summary_charging_session_edit_button">Edit</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
@@ -411,6 +419,9 @@
     <string name="history_selected">Selected:</string>
     <string name="history_past_trips">Past trips:</string>
     <string name="history_current_trips">Current trips:</string>
+    <string name="history_no_data">No trips available</string>
+    <string name="history_delete_trips_button">Delete trips</string>
+    <string name="history_delete_no_trips_selected">No trips selected</string>
     <string name="history_dialog_filters_title">Trip filters</string>
     <string name="history_dialog_filters_manual">Show manual trips</string>
     <string name="history_dialog_filters_charge">Show since charge trips</string>
@@ -418,9 +429,12 @@
     <string name="history_dialog_filters_month">Show monthly trips</string>
     <string name="history_dialog_filters_date">Earliest start date</string>
     <string name="history_dialog_filters_note">Note: The current trips are always shown regardless of applied filters.</string>
+    <string name="history_dialog_filters_date_range">Date Range</string>
     <string name="history_dialog_delete_title">Delete trip?</string>
     <string name="history_dialog_delete_message">The trip will be deleted permanently.</string>
     <string name="history_dialog_delete_confirm">Delete trip</string>
+    <string name="history_dialog_date_range_hint">Select a date range to filter for trips that start within this range.</string>
+    <string name="history_dialog_date_range_no_range_selected">No date range selected</string>
 
     <string name="history_dialog_multi_delete_title">Delete multiple trips?</string>
     <string name="history_dialog_multi_delete_message">You are about to delete %s trips. The trips will be deleted permanently.</string>

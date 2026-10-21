@@ -1,5 +1,6 @@
 package com.ixam97.carStatsViewer.compose
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,12 +11,17 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.map.Mapbox
+import com.ixam97.carStatsViewer.repository.dataExport.DataExportRepository
+import com.ixam97.carStatsViewer.repository.dataExport.DataExportState
+import com.ixam97.carStatsViewer.ui.views.SnackbarWidget
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TripDetailsViewModel: ViewModel() {
 
@@ -136,5 +142,40 @@ class TripDetailsViewModel: ViewModel() {
         tripDetailsState = tripDetailsState.copy(
             showChargingSessionDetails = false
         )
+    }
+
+    fun uploadChargingSession(context: Context, chargingSessionId: Long) {
+        val snackbar = SnackbarWidget.Builder(context, "Submitting log ...")
+            .setStartDrawable(R.drawable.ic_upload)
+            .show()
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                tripDetailsState.drivingSession?.chargingSessions?.let { chargingSessions ->
+                    val session = chargingSessions.find { it.charging_session_id == chargingSessionId }
+                    session?.let { session ->
+                        val result = DataExportRepository.exportChargingSessionData(session)
+
+                        withContext(Dispatchers.Main) {
+                            if (result.state == DataExportState.Success) {
+                                snackbar.updateStartDrawable(R.drawable.ic_checkmark)
+                                snackbar.updateMessage(result.message?:"Upload successful!")
+                            } else {
+                                snackbar.setToError()
+                                snackbar.updateMessage(result.message?:"Unknown Error!")
+                                InAppLogger.e(result.message?:"Data Export Error")
+                            }
+                            snackbar.startDuration(3000)
+                        }
+                    }
+                    if (session == null){
+                        withContext(Dispatchers.Main) {
+                            snackbar.setToError()
+                            snackbar.updateMessage("Failed to retrieve charging session!")
+                            snackbar.startDuration(3000)
+                        }
+                    }
+                }
+            }
+        }
     }
 }

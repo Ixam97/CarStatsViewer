@@ -21,8 +21,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
-import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
-import com.ixam97.carStatsViewer.compose.ComposeTripDetailsActivity
+import com.ixam97.carStatsViewer.carCompose.CarComposeActivity
+import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.screens.tripDetails.TripDetailsScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.toContentKey
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.dataProcessor.DrivingState
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
@@ -215,14 +218,14 @@ class MainActivity : FragmentActivity() {
                             mainPowerGage.setValue((it.power?:0f) / 1_000_000f)
 
                             mainChargeGage.setValue((it.power?:0f) / -1_000_000f)
-                            mainSoCGage.setValue((it.stateOfCharge!! * 100f).roundToInt())
-
+                            mainSoCGage.setValue(((it.stateOfCharge?:0f) * 100f).roundToInt())
                             mainSpeedGage.setValue(
                                 appPreferences.distanceUnit.toUnit(it.speed!! * 3.6).toInt()
                             )
-                            CarStatsViewer.dataProcessor.staticVehicleData.batteryCapacity?.let { batteryCapacity ->
-                                mainSocGage.setValue((it.batteryLevel!! / (batteryCapacity) * 100).roundToInt())
-                            }
+
+//                            CarStatsViewer.dataProcessor.staticVehicleData.batteryCapacity?.let { batteryCapacity ->
+//                                mainSocGage.setValue((it.batteryLevel!! / (batteryCapacity) * 100).roundToInt())
+//                            }
 
                             if (it.speed > .1 && !moving) {
                                 setSnow(true)
@@ -772,7 +775,11 @@ class MainActivity : FragmentActivity() {
 
         mainButtonSettings.setOnClickListener {
             // startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
-            startActivity(Intent(this@MainActivity, ComposeSettingsActivity::class.java))
+            // startActivity(Intent(this@MainActivity, ComposeSettingsActivity::class.java))
+            startActivity(Intent(this@MainActivity, CarComposeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                putExtra("NavKey", SettingsScreenNavKey.toContentKey())
+            })
             if (BuildConfig.FLAVOR_aaos != "carapp")
                 overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }
@@ -819,29 +826,25 @@ class MainActivity : FragmentActivity() {
         }
         */
 
-        mainImageButtonSummary.setOnClickListener {
-            // openSummaryFragment()
-            val sessionId = CarStatsViewer.dataProcessor.selectedSessionData?.driving_session_id
+        fun openTripSummary() {
+            val sessionId = CarStatsViewer.dataProcessor.selectedSessionData?.driving_session_id ?: return
 
-            if (sessionId != null) {
-                val summaryIntent =
-                    Intent(this@MainActivity, ComposeTripDetailsActivity::class.java)
-                summaryIntent.putExtra("SessionId", sessionId)
-                startActivity(summaryIntent)
-            }
+//            val summaryIntent = Intent(this@MainActivity, ComposeTripDetailsActivity::class.java)
+//            summaryIntent.putExtra("SessionId", sessionId)
+//            startActivity(summaryIntent)
+
+            startActivity(Intent(this@MainActivity, CarComposeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                putExtra("NavKey", TripDetailsScreenNavKey(sessionId).toContentKey())
+            })
+        }
+
+        mainImageButtonSummary.setOnClickListener {
+            openTripSummary()
         }
 
         mainButtonSummaryCharge.setOnClickListener {
-            // openSummaryFragment()
-
-            val sessionId = CarStatsViewer.dataProcessor.selectedSessionData?.driving_session_id
-
-            if (sessionId != null) {
-                val summaryIntent =
-                    Intent(this@MainActivity, ComposeTripDetailsActivity::class.java)
-                summaryIntent.putExtra("SessionId", sessionId)
-                startActivity(summaryIntent)
-            }
+            openTripSummary()
         }
 
         mainButtonDismissChargePlot.setOnClickListener {
@@ -854,7 +857,11 @@ class MainActivity : FragmentActivity() {
         }
 
         mainButtonHistory.setOnClickListener {
-            startActivity(Intent(this@MainActivity, HistoryActivity::class.java))
+            // startActivity(Intent(this@MainActivity, HistoryActivity::class.java))
+            startActivity(Intent(this@MainActivity, CarComposeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                putExtra("NavKey", TripHistoryScreenNavKey.toContentKey())
+            })
             if (BuildConfig.FLAVOR_aaos != "carapp")
                 overridePendingTransition(R.anim.slide_in_right, R.anim.stay_still)
         }

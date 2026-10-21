@@ -187,12 +187,34 @@ class DataProcessor {
         }
 
         try {
+            /**
+             * Some emulators can cause properties to be NaN or provoke divisions by 0f.
+             * This prevents those values from being used in state and DB.
+             * TODO: Implement checks and warnings in case this ever occurs on a real car.
+             */
+            fun Any?.asSafeFloatProperty(): Float? {
+                if (this == null) return null
+                return if ((this as Float?)?.isNaN() == false) this
+                else null
+            }
+
             realTimeData = realTimeData.copy(
-                speed = if (carPropertiesData.CurrentSpeed.value == null) null else ((carPropertiesData.CurrentSpeed.value as Float?)?: 0f).absoluteValue,
-                power = if (carPropertiesData.CurrentPower.value == null) null else emulatorPowerSign * ((carPropertiesData.CurrentPower.value as Float?)?: 0f),
-                batteryLevel = if (carPropertiesData.BatteryLevel.value == null) null else (carPropertiesData.BatteryLevel.value as Float?)?: 0f,
-                stateOfCharge = if (carPropertiesData.BatteryLevel.value == null) null else ((carPropertiesData.BatteryLevel.value as Float?)?: 0f) / staticVehicleData.batteryCapacity!!,
-                ambientTemperature = if (carPropertiesData.CurrentAmbientTemperature.value == null) null else (carPropertiesData.CurrentAmbientTemperature.value as Float?)?: 0f,
+                speed = carPropertiesData.CurrentSpeed.value.asSafeFloatProperty().let { it?.absoluteValue },
+                power = carPropertiesData.CurrentPower.value.asSafeFloatProperty().let { if (it == null) null else it * emulatorPowerSign },
+                batteryLevel = carPropertiesData.BatteryLevel.value.asSafeFloatProperty(),
+                stateOfCharge = carPropertiesData.BatteryLevel.value.asSafeFloatProperty().let { batteryLevel ->
+                    staticVehicleData.batteryCapacity.let { batteryCapacity ->
+                        if (batteryCapacity != null && batteryCapacity > 0f && batteryLevel != null)
+                            batteryLevel / batteryCapacity
+                        else null
+                    }
+                },
+                ambientTemperature = carPropertiesData.CurrentAmbientTemperature.value.asSafeFloatProperty(),
+                // speed = if (carPropertiesData.CurrentSpeed.value == null) null else ((carPropertiesData.CurrentSpeed.value as Float?)?: 0f).absoluteValue,
+                // power = if (carPropertiesData.CurrentPower.value == null) null else emulatorPowerSign * ((carPropertiesData.CurrentPower.value as Float?)?: 0f),
+                // batteryLevel = if (carPropertiesData.BatteryLevel.value == null) null else (carPropertiesData.BatteryLevel.value as Float?)?: 0f,
+                // stateOfCharge = safeStateOfCharge,
+                // ambientTemperature = if (carPropertiesData.CurrentAmbientTemperature.value == null) null else (carPropertiesData.CurrentAmbientTemperature.value as Float?)?: 0f,
                 selectedGear = if (carPropertiesData.CurrentGear.value == null) null else (carPropertiesData.CurrentGear.value as Int?)?: 0,
                 ignitionState = if (carPropertiesData.CurrentIgnitionState.value == null) null else (carPropertiesData.CurrentIgnitionState.value as Int?)?: 0,
                 chargePortConnected = if (carPropertiesData.ChargePortConnected.value == null) null else (carPropertiesData.ChargePortConnected.value as Boolean?)?: false
@@ -218,7 +240,8 @@ class DataProcessor {
 
         when (carProperty) {
             CarProperties.PERF_VEHICLE_SPEED -> speedUpdate()
-            CarProperties.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE -> powerUpdate()
+            // TODO: This is a test
+            // CarProperties.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE -> powerUpdate()
             CarProperties.IGNITION_STATE, CarProperties.EV_CHARGE_PORT_CONNECTED, CarProperties.GEAR_SELECTION -> stateUpdate()
             CarProperties.EV_BATTERY_LEVEL -> stateOfChargeUpdate()
         }
@@ -226,6 +249,7 @@ class DataProcessor {
 
     /** Actions related to changes in speed */
     private fun speedUpdate() {
+        // InAppLogger.v("[NEO] SpeedUpdate")
         if (carPropertiesData.CurrentSpeed.isInitialValue) {
             InAppLogger.w("[NEO] Dropped speed value, flagged as initial")
             return
@@ -237,33 +261,43 @@ class DataProcessor {
             return
         //}
         }
-        if (carPropertiesData.CurrentSpeed.timeDelta > 0 && (realTimeData.drivingState == DrivingState.DRIVE || (realTimeData.drivingState == DrivingState.CHARGE && emulatorMode))) {
+        if (carPropertiesData.CurrentSpeed.timeDelta > 0 && (realTimeData.drivingState == DrivingState.DRIVE || (realTimeData.drivingState == DrivingState.CHARGE /* && emulatorMode */))) {
             // if (!timestampSynchronizer.isSynced()) timestampSynchronizer.sync(System.currentTimeMillis(), carPropertiesData.CurrentSpeed.timestamp)
             val distanceDelta = (carPropertiesData.CurrentSpeed.value as Float).absoluteValue * (carPropertiesData.CurrentSpeed.timeDelta / 1_000_000_000f)
             pointDrivenDistance += distanceDelta
             valueDrivenDistance += distanceDelta
 
-            if (pointDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL)
+            if (pointDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL && realTimeData.drivingState == DrivingState.DRIVE)
                 //updateDrivingDataPoint(timestamp = timestampSynchronizer.getSystemTimeFromNanosTimestamp(carPropertiesData.CurrentSpeed.timestamp))
                 updateDrivingDataPoint()
                 // Put this else here to make sure only one of these functions is executed
             // else if (valueDrivenDistance >= Defines.PLOT_DISTANCE_INTERVAL / 2)
             //    updateTripDataValues(DrivingState.DRIVE)
 
-            /** only relevant in emulator since power is not updated periodically */
-            if (emulatorMode) {
-                val energyDelta = emulatorPowerSign * (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentSpeed.timeDelta / 3.6E12)
-                pointUsedEnergy += energyDelta
-                valueUsedEnergy += energyDelta
+            // TODO: This is a test to make power tracking in Polestar 4 reliable again by always
+            // updating power together with speed, eliminating the standalone power updater.
+            val energyDelta = emulatorPowerSign * (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentSpeed.timeDelta / 3.6E12)
+            pointUsedEnergy += energyDelta
+            valueUsedEnergy += energyDelta
 
-                if (valueUsedEnergy >= 100)
-                    updateTripDataValues(DrivingState.DRIVE)
-            }
+            if (valueUsedEnergy >= 100 && realTimeData.drivingState == DrivingState.DRIVE)
+                updateTripDataValues(DrivingState.DRIVE)
+
+            /** only relevant in emulator since power is not updated periodically */
+//            if (emulatorMode) {
+//                val energyDelta = emulatorPowerSign * (carPropertiesData.CurrentPower.value as Float) / 1_000f * (carPropertiesData.CurrentSpeed.timeDelta / 3.6E12)
+//                pointUsedEnergy += energyDelta
+//                valueUsedEnergy += energyDelta
+//
+//                if (valueUsedEnergy >= 100)
+//                    updateTripDataValues(DrivingState.DRIVE)
+//            }
         }
     }
 
     /** Actions related to changes in power draw */
     private fun powerUpdate() {
+        InAppLogger.v("[NEO] PowerUpdate")
         if (emulatorMode) return /** skip if run in emulator, see speedUpdate() */
         if (carPropertiesData.CurrentPower.isInitialValue) {
             InAppLogger.w("[NEO] Dropped power value, flagged as initial")

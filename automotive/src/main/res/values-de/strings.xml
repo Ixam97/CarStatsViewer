@@ -89,6 +89,12 @@
         <item>Das Autostart-Verhalten wurde verbessert.</item>
         <item>Beginnend mit OTA P4.2.4 ist der Polestar 4 vollständig mit Car Stats Viewer kompatibel.</item>
         <item>[V](0.28.1)</item>
+        <item>Optimierungen und Anpassungen für Fahrzeugkompatibilität.</item>
+        <item>Überarbeitete Tripzusammenfassung für kompaktere und flexiblere Darstellungen, insbesondere auf Breitbild-Anzeigen.</item>
+        <item>Daten-Export (WIP): Trips und Ladevorgänge können per E-Mail als CSV-Dateien exportiert werden. Die Formatierung ist noch nicht endgültig und wird sich in zukünftigen Releases verändern.</item>
+        <item>Legacy Edition: Komplett überarbeitetes Einstellungen-UI (identisch zur Play Edition). Die Hauptansicht wird in einem späteren Update ebenfalls überarbeitet.</item>
+        <item>Play Edition: Migration zu einer Single Activity Architektur. Dies erlaubt flexiblere Einstellungs-UIs und eine detailliertere Tripzusammenfassung.</item>
+        <item>[V](0.29.0)</item>
     </string-array>
 
     <!-- Restart Dialog -->
@@ -110,7 +116,8 @@
     <string name="permissions_dialog_grant">Berechtigungen erteilen</string>
     <string name="permissions_dialog_grant_singular">Berechtigung erteilen</string>
     <string name="permissions_dialog_deny">Trotzdem fortfahren</string>
-    <string name="permissions_dialog_background_location_text">Für einen zuverlässigen Betrieb der App ist Zugriff auf den Standort aus dem Hintergrund notwendig. Bitte \"Immer zulassen\" für den Standortzugriff auswählen.\n\nDie Standort-Berechtigung ist erforderlich, um auch auf andere Fahrzeugdaten außer dem GPS-Standort zuzugreifen.\n\nStandardmäßig ist die Standorterfassung in der App deaktiviert und kann innerhalb der App-Einstellungen aktiviert werden. Dies kann auch für die jweils ferfügbaren Live-Daten-APIs einzeln festgelegt werden.</string>
+    <!--<string name="permissions_dialog_background_location_text">Für einen zuverlässigen Betrieb der App ist Zugriff auf den Standort aus dem Hintergrund notwendig. Bitte \"Immer zulassen\" für den Standortzugriff auswählen.\n\nDie Standort-Berechtigung ist erforderlich, um auch auf andere Fahrzeugdaten außer dem GPS-Standort zuzugreifen.\n\nStandardmäßig ist die Standorterfassung in der App deaktiviert und kann innerhalb der App-Einstellungen aktiviert werden. Dies kann auch für die jweils ferfügbaren Live-Daten-APIs einzeln festgelegt werden.</string>-->
+    <string name="permissions_dialog_background_location_text_0_29">Für einen zuverlässigen Betrieb der App ist Zugriff auf den Standort aus dem Hintergrund notwendig. Bitte \"Immer zulassen\" für den Standortzugriff auswählen.\n\nDie Standort-Berechtigung ist erforderlich, um auch auf andere Fahrzeugdaten außer dem GPS-Standort zuzugreifen.\n\nStandardmäßig ist die Standorterfassung in der App aktiviert und kann innerhalb der App-Einstellungen deaktiviert werden. Standortdaten werden ausschließlich lokal gespeichert, solange keine API konfiguriert ist. Dies kann auch für die jweils ferfügbaren Live-Daten-APIs einzeln festgelegt werden.</string>
 
     <string name="plot_dimensionY_SPEED">Geschwindigkeit</string>
     <string name="plot_dimensionY_ALTITUDE">Höhe</string>
@@ -158,7 +165,9 @@
     <string name="summary_charge_time">Ladezeit</string>
     <string name="summary_charge_ambient_temp">Außentemperatur</string>
     <string name="summary_interruption_warning">Aufzeichnung der Ladekurve unterbrochen. Dieser Wert ist vermutlich nicht korrekt.</string>
+    <string name="summary_interruption_warning_0_29">Aufzeichnung der Ladekurve unterbrochen. Die angezeigte Energiemenge ist vermutlich nicht korrekt.</string>
     <string name="summary_altitude">Höhenunterschied</string>
+    <string name="summary_altitude_missing">Keine Höhendaten verfügbar</string>
     <string name="summary_speed">Durchschnittsgeschwindigkeit</string>
     <string name="summary_ongoing">Laufender Trip</string>
     <string name="summary_tab_trip_details">Trip-Details</string>
@@ -171,7 +180,13 @@
     <string name="summary_no_charging_sessions">Keine Ladevorgänge für diesen Trip verfügbar.</string>
     <string name="summary_trip_type">Trip-Typ</string>
     <string name="summary_soc_unavailable">Ladestand nicht verfügbar</string>
-    <string name="summary_ongoing_charging_session">Laufender Ladevorgang ...</string>
+    <string name="summary_ongoing_charging_session">Laufender Ladevorgang...</string>
+    <string name="summary_route_loading">Lade Standortdaten…</string>
+    <string name="summary_no_route_title">Standortdaten nicht verfügbar</string>
+    <string name="summary_no_route">Der Trip enthält keine Standortdaten. Stelle sicher, dass die Standorterfassung in den Einstellungen aktiv ist, damit der Fahrtverlauf auf der Karte dargestellt werden kann.</string>
+    <string name="summary_charging_session_title">Ladevorgang</string>
+    <string name="summary_charging_session_export_button">Exportieren</string>
+    <string name="summary_charging_session_edit_button">Bearbeiten</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
@@ -321,7 +336,10 @@
     <string name="history_title">Tripverlauf</string>
     <string name="history_selected">Ausgewählt:</string>
     <string name="history_past_trips">Frühere Trips:</string>
-    <string name="history_current_trips">Aktuelle Trips:</string>
+    <string name="history_current_trips">Aktuelle Trips:</string>i
+    <string name="history_no_data">Keine Trips verfügbar</string>
+    <string name="history_delete_trips_button">Trips löschen</string>
+    <string name="history_delete_no_trips_selected">Keine Trips ausgewählt</string>
     <string name="history_dialog_filters_title">Trips filtern</string>
     <string name="history_dialog_filters_manual">Zeige manuelle Trips</string>
     <string name="history_dialog_filters_charge">Zeige "Seit Ladung"-Trips</string>
@@ -329,9 +347,12 @@
     <string name="history_dialog_filters_month">Zeige monatliche Trips</string>
     <string name="history_dialog_filters_note">Hinweis: Aktuelle Trips werden unabhängig der eingestellten Filter immer angezeigt.</string>
     <string name="history_dialog_filters_date">Frühestes Startdatum</string>
+    <string name="history_dialog_filters_date_range">Zeitraum</string>
     <string name="history_dialog_delete_title">Trip Löschen?</string>
     <string name="history_dialog_delete_message">Der Trip wird dauerhaft gelöscht.</string>
     <string name="history_dialog_delete_confirm">Trip löschen</string>
+    <string name="history_dialog_date_range_hint">Zeitraum wählen, um nach Trips zu filtern, die innerhalb dessen beginnen.</string>
+    <string name="history_dialog_date_range_no_range_selected">Kein Zeitraum ausgewählt</string>
 
     <string name="history_dialog_multi_delete_title">Mehrere Trips löschen?</string>
     <string name="history_dialog_multi_delete_message">Es sind %s Trips zum Löschen ausgewählt. Die Trips werden dauerhaft gelöscht.</string>

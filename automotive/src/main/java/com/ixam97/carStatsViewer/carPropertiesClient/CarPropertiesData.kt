@@ -77,7 +77,7 @@ class CarPropertiesData {
         }
         property.value = value
         property.timestamp = timestamp
-        if (doLog) InAppLogger.v("Updated ${CarProperties.getNameById(propertyId)}, value=${property.value}, valueDelta=${property.valueDelta}, timeDelta=${property.timeDelta}")
+        if (doLog) InAppLogger.v("Updated ${CarProperties.getNameById(propertyId)}, value=${property.value}, valueDelta=${property.valueDelta}, timestamp=${property.timestamp} timeDelta=${property.timeDelta}")
         return VALID
     }
 

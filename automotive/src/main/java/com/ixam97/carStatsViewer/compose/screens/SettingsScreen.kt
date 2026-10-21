@@ -42,6 +42,7 @@ object SettingsScreens {
     const val DEV = "Dev"
     const val DEV_LOG = "Dev_Log"
     const val ABOUT_LICENSES = "About_Licenses"
+    const val DATA = "Data_Management"
 }
 
 @Composable

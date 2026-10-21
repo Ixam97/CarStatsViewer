@@ -1,0 +1,188 @@
+package com.ixam97.carStatsViewer.carCompose.screens.main
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
+import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
+import com.ixam97.carStatsViewer.carCompose.screens.CarComposeMainScreenViewModel
+import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryContent
+import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.theme.adaptiveIconPainterResource
+import de.ixam97.carcompose.components.controls.CarIconButton
+import de.ixam97.carcompose.components.layout.CarPaneLayout
+import de.ixam97.carcompose.components.layout.CarTabLayout
+import de.ixam97.carcompose.theme.CarTheme
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class MainScreenNavKey(
+    val selectedTabKey: MainScreenTabKeys? = null
+): NavKey
+
+@Serializable
+enum class MainScreenTabKeys {
+    Dashboard, History, Settings
+}
+
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+fun CarComposeMainScreen(
+    initialTabKey: MainScreenTabKeys? = null,
+    viewModel: CarComposeMainScreenViewModel = viewModel {
+        CarComposeMainScreenViewModel(initialTabKey)
+    },
+    globalViewModel: CarComposeGlobalViewModel,
+    backStack: NavBackStack<NavKey>,
+    debugOnClose: (() -> Unit)? = null,
+) {
+    if (deviceIsWideScreen()) {
+        CarComposeMainScreenLandscape(
+            globalViewModel = globalViewModel,
+            backStack = backStack,
+            debugOnClose = debugOnClose,
+            viewModel = viewModel
+        )
+    } else {
+        CarComposeMainScreenPortrait(
+            globalViewModel = globalViewModel,
+            backStack = backStack,
+            debugOnClose = debugOnClose
+        )
+    }
+}
+
+@Composable
+private fun CarComposeMainScreenLandscape(
+    globalViewModel: CarComposeGlobalViewModel,
+    backStack: NavBackStack<NavKey>,
+    debugOnClose: (() -> Unit)?,
+    viewModel: CarComposeMainScreenViewModel
+) {
+
+    val globalState by globalViewModel.globalState.collectAsState()
+
+    val tabsList = listOf(
+        CarTabLayout.Tab(
+            title = stringResource(R.string.car_app_dashboard),
+            icon = painterResource(de.ixam97.carcompose.R.drawable.ic_grid_48),
+            iconActive = painterResource(de.ixam97.carcompose.R.drawable.ic_grid_filled_48),
+            key = MainScreenTabKeys.Dashboard
+        ),
+        CarTabLayout.Tab(
+            title = stringResource(R.string.history_title),
+            icon = painterResource(R.drawable.ic_carcompose_history),
+            enabled = !globalViewModel.movingState,
+            key = MainScreenTabKeys.History
+        ),
+        CarTabLayout.Tab(
+            title = stringResource(R.string.settings_title),
+            icon = painterResource(R.drawable.ic_carcompose_settings),
+            enabled = !globalViewModel.movingState,
+            key = MainScreenTabKeys.Settings
+        )
+    )
+
+    CarTabLayout(
+        headerTitle = stringResource(R.string.app_name),
+        headerStartContent = { MainScreenAppIcon(debugOnClose) },
+        isLoading = globalState.isLoading,
+        tabs = tabsList,
+        selectedKey = viewModel.selectedTabKey?:tabsList.first().key,
+        onTabSelected = {
+            if (it == MainScreenTabKeys.Settings)
+                    backStack.add(SettingsScreenNavKey)
+            else
+                viewModel.setTabKey(it)
+        }
+    ) { key ->
+        LaunchedEffect(key) {
+            globalViewModel.setLoading(false)
+        }
+        AnimatedVisibility(
+            visible = key == MainScreenTabKeys.Dashboard,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+
+        }
+        AnimatedVisibility(
+            visible = key == MainScreenTabKeys.History,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+//            TabHistory(
+//                globalViewModel,
+//                backStack
+//            )
+            TripHistoryContent(
+                backStack = backStack,
+                viewModel = viewModel(),
+                globalViewModel = globalViewModel
+            )
+        }
+    }
+}
+
+@Composable
+private fun CarComposeMainScreenPortrait(
+    globalViewModel: CarComposeGlobalViewModel,
+    backStack: NavBackStack<NavKey>,
+    debugOnClose: (() -> Unit)?
+) {
+    val globalState by globalViewModel.globalState.collectAsState()
+    val headerButtonsList = mutableListOf<@Composable (() -> Unit)>(
+        {
+            CarIconButton(
+                onClick = { backStack.add(SettingsScreenNavKey) },
+                painter = painterResource(R.drawable.ic_carcompose_settings)
+            )
+        },
+        {
+            CarIconButton(
+                onClick = { backStack.add(TripHistoryScreenNavKey) },
+                painter = painterResource(R.drawable.ic_carcompose_history)
+            )
+        },
+    )
+    CarPaneLayout(
+        headerStartContent = { MainScreenAppIcon(debugOnClose) },
+        headerTitle = stringResource(R.string.app_name),
+        isLoading = globalState.isLoading,
+        headerIconButtons = headerButtonsList
+    ) {
+    }
+}
+
+@Composable
+private fun MainScreenAppIcon(
+    debugOnClose: (() -> Unit)?
+)
+{
+    Image(
+        modifier = Modifier
+            .size(CarTheme.carDimensions.iconButtonSize)
+            .clickable(
+                onClick = if (debugOnClose != null) debugOnClose else {{}},
+                enabled = debugOnClose != null
+            ),
+        painter = adaptiveIconPainterResource(R.mipmap.ic_launcher),
+        contentDescription = null
+    )
+}

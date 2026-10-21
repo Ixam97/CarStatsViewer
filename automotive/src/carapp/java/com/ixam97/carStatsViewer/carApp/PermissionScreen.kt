@@ -8,6 +8,7 @@ import androidx.car.app.model.LongMessageTemplate
 import androidx.car.app.model.ParkedOnlyOnClickListener
 import androidx.car.app.model.Template
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.utils.unGrantedPermissions
 
 class PermissionScreen(
     carContext: CarContext,
@@ -34,8 +35,8 @@ class PermissionScreen(
     }
 
     private fun requestPermissions() {
-        carContext.requestPermissions(session.permissions) {granted,_ ->
-            if (granted.containsAll(session.permissions)) {
+        carContext.requestPermissions(unGrantedPermissions(carContext)) { granted, _ ->
+            if (granted.containsAll(unGrantedPermissions(carContext))) {
                 if (carContext.checkSelfPermission(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED)
                     session.startService()
                 screenManager.pop()
@@ -49,7 +50,7 @@ class BackgroundLocationPermissionScreen(
     val session: CarStatsViewerSession
 ) : Screen(carContext) {
     override fun onGetTemplate(): Template {
-        return LongMessageTemplate.Builder(carContext.getString(R.string.permissions_dialog_background_location_text)).apply {
+        return LongMessageTemplate.Builder(carContext.getString(R.string.permissions_dialog_background_location_text_0_29)).apply {
             setTitle(carContext.getString(R.string.car_app_permissions_title))
             setHeaderAction(Action.APP_ICON)
             addAction(Action.Builder().apply {

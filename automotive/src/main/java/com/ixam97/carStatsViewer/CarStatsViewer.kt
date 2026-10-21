@@ -9,6 +9,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.FeatureInfo
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
@@ -30,6 +31,7 @@ import com.ixam97.carStatsViewer.database.tripData.TripDataDatabase
 import com.ixam97.carStatsViewer.liveDataApi.LiveDataApi
 import com.ixam97.carStatsViewer.liveDataApi.abrpLiveData.AbrpLiveData
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
+import com.ixam97.carStatsViewer.repository.dataExport.DataExportRepository
 import com.ixam97.carStatsViewer.repository.logSubmit.LogSubmitRepository
 import com.ixam97.carStatsViewer.ui.views.MultiButtonWidget
 import com.ixam97.carStatsViewer.utils.ChangeLogCreator.createChangelog
@@ -48,7 +50,12 @@ var emulatorPowerSign = -1
 object Defines {
     const val PLOT_ENERGY_INTERVAL = 100L
     const val AUTO_RESET_TIME = 14_400_000L // 4h
-    const val PLOT_DISTANCE_INTERVAL = 100.0
+
+    /**
+     * Testing shorter interval.
+     * TODO: Decide on how to determine the interval driving points should be saved...
+     */
+    const val PLOT_DISTANCE_INTERVAL = 25.0 // 100.0
     const val MAIN_VIEW_DRIVING_POINTS = 2_000
 }
 
@@ -76,6 +83,7 @@ class CarStatsViewer : Application() {
         var disabledAlpha by Delegates.notNull<Float>()
 
         var foregroundServiceStarted = false
+        var foregroundServicePermissionsFailure = false
         var restartNotificationDismissed = false
         var restartNotificationShown = false
         var restartReason: String? = null
@@ -84,6 +92,8 @@ class CarStatsViewer : Application() {
         lateinit var tripDataSource: LocalTripDataSource
         lateinit var dataProcessor: DataProcessor
         lateinit var watchdog: Watchdog
+
+        var glVersion: Long = 0
 
         lateinit var logDao: LogDao
 
@@ -188,7 +198,18 @@ class CarStatsViewer : Application() {
         }
     }
 
-
+    private fun checkGlVersion(context: Context): Long {
+        context.packageManager.systemAvailableFeatures.let { featureInfos ->
+            featureInfos.forEach { featureInfo ->
+                if (featureInfo.name == null) {
+                    return if (featureInfo.reqGlEsVersion != FeatureInfo.GL_ES_VERSION_UNDEFINED) {
+                        ((featureInfo.reqGlEsVersion.toLong() and 0xffff0000) shr 16)
+                    } else 1
+                }
+            }
+        }
+        return 1
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -203,6 +224,8 @@ class CarStatsViewer : Application() {
             "LogDatabase"
         ).build()
         logDao = logDatabase.logDao()
+
+        glVersion = checkGlVersion(applicationContext)
 
         val mDefaultUncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
 
@@ -318,6 +341,7 @@ class CarStatsViewer : Application() {
 
         if (resources.getIdentifier("csv_api_key", "string", applicationContext.packageName) != 0) {
             LogSubmitRepository.setApiKey(getString(resources.getIdentifier("csv_api_key", "string", applicationContext.packageName)))
+            DataExportRepository.setApiKey(getString(resources.getIdentifier("csv_api_key", "string", applicationContext.packageName)))
         }
 
         liveDataApis = arrayListOf(

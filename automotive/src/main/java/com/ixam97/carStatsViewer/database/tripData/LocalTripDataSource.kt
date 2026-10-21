@@ -34,6 +34,14 @@ class LocalTripDataSource(
         return drivingPoint
     }
 
+    override suspend fun getLatestDrivingPointBefore(epochTime: Long): DrivingPoint? {
+        return tripDao.getLatestDrivingPointBefore(epochTime)
+    }
+
+    override suspend fun getLastEpochTimeBefore(epochTime: Long): Long? {
+        return tripDao.getLastEpochTimeBefore(epochTime)
+    }
+
     override suspend fun getDrivingPointsSince(startTime: Long, limit: Int): List<DrivingPoint> {
         return tripDao.getDrivingPointsSince(startTime, limit)
     }

@@ -31,6 +31,7 @@ val clubNightVariant = Color(0xff111922)
 val clubNight = Color(0xff0a0f14)
 val clubNightDarker = Color(0xff05080C)
 val clubHint = Color(0xfff7ea48)
+val clubHintDark = Color(0xFF625B09)
 
 val badRed = Color(0xffEB1717)
 

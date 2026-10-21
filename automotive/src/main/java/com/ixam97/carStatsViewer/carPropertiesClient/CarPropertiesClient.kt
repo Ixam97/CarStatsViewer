@@ -28,7 +28,13 @@ class CarPropertiesClient(
                 InAppLogger.w("[CarPropertiesClient.carPropertyListener] Property ${CarProperties.getNameById(carPropertyValue.propertyId)} (${carPropertyValue.propertyId}) is currently not available. Status: ${carPropertyValue.status}.")
                 return
             }
-            carPropertiesData.update(carPropertyValue)
+            // With OTA 5.0.10, Polestar 2 reports power in a very slow interval, while speed is
+            // still updated quickly. Manually reading the power property delivers up-to-date
+            // values, though. So this is a workaround to have accurate data.
+            if (carPropertyValue.propertyId == CarProperties.PERF_VEHICLE_SPEED) {
+                updateProperty(CarProperties.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE)
+            }
+            carPropertiesData.update(carPropertyValue, doLog = false)
             propertiesProcessor(carPropertyValue.propertyId)
         }
         override fun onErrorEvent(propertyId: Int, zone: Int) {
@@ -68,10 +74,27 @@ class CarPropertiesClient(
 
     fun updateProperty(propertyId: Int) {
         // if (emulatorMode && propertyId == CarProperties.ENV_OUTSIDE_TEMPERATURE && debugTemperatureAttempt < 2) return
-        carPropertyManager.getProperty<Any>(propertyId, 0)?.let {
-            carPropertiesData.update(it, allowInvalidTimestamps = true)
+        try {
+            carPropertyManager.getProperty<Any>(propertyId, 0)?.let {
+                carPropertiesData.update(it, allowInvalidTimestamps = true, doLog = false)
+            }
+            propertiesProcessor(propertyId)
+        } catch (e: Exception) {
+            try {
+                if (e is PropertyNotAvailableException) {
+                    val errorMsg = "[CarPropertiesClient.updateProperty] Property is not available: ${PropertyNotAvailableErrorCode.toString(e.detailedErrorCode)}.\n\r${e.stackTraceToString()}"
+                    InAppLogger.logWithFirebase(errorMsg, Log.ERROR)
+                } else { throw e }
+            } catch (ee: Throwable) {
+                InAppLogger.e(ee.stackTraceToString())
+                val errorMsg = "[CarPropertiesClient.updateProperty] Failed to get Property ${CarProperties.getNameById(propertyId)} ($propertyId).\n\r${e.stackTraceToString()}"
+                InAppLogger.logWithFirebase(errorMsg, Log.ERROR)
+            }
         }
-        propertiesProcessor(propertyId)
+//        carPropertyManager.getProperty<Any>(propertyId, 0)?.let {
+//            carPropertiesData.update(it, allowInvalidTimestamps = true, doLog = false)
+//        }
+//        propertiesProcessor(propertyId)
     }
 
     /**

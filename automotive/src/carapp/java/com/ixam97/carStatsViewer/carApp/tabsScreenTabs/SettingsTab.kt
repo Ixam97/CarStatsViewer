@@ -7,19 +7,28 @@ import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
+import androidx.car.app.model.ParkedOnlyOnClickListener
 import androidx.car.app.model.Row
 import androidx.car.app.model.SectionedItemList
 import androidx.car.app.model.Toggle
 import androidx.core.graphics.drawable.IconCompat
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carApp.TabsScreen
-import com.ixam97.carStatsViewer.compose.ComposeSettingsActivity
+import com.ixam97.carStatsViewer.carApp.utils.launchActivity
+import com.ixam97.carStatsViewer.carCompose.CarComposeActivity
+import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.toContentKey
 
 @OptIn(ExperimentalCarApi::class)
 internal fun TabsScreen.settingsList() = ListTemplate.Builder().apply {
 
-    val composeSettingsActivityIntent = Intent(carContext, ComposeSettingsActivity::class.java).apply {
+//    val composeSettingsActivityIntent = Intent(carContext, ComposeSettingsActivity::class.java).apply {
+//        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//    }
+
+    val carComposeActivityIntent = Intent(carContext, CarComposeActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        putExtra("NavKey", SettingsScreenNavKey.toContentKey())
     }
 
     val quickSettingsItemList = ItemList.Builder().apply {
@@ -58,9 +67,9 @@ internal fun TabsScreen.settingsList() = ListTemplate.Builder().apply {
             setTitle(carContext.getString(R.string.car_app_advanced_settings))
             setImage(CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_car_app_settings)).build())
             setBrowsable(true)
-            setOnClickListener {
-                carContext.startActivity(composeSettingsActivityIntent)
-            }
+            setOnClickListener(ParkedOnlyOnClickListener.create {
+                launchActivity(carComposeActivityIntent)
+            })
         }.build())
     }.build()
 

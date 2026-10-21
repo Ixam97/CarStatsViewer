@@ -28,6 +28,9 @@ import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.ScreenshotService
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import com.ixam97.carStatsViewer.utils.WatchdogState
+import com.ixam97.carStatsViewer.utils.hasVehiclePermissions
+import com.ixam97.carStatsViewer.utils.isRunningOnAAOS
+import com.ixam97.carStatsViewer.utils.unGrantedPermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -45,6 +48,7 @@ class DataCollector: Service() {
 
     companion object {
         const val LIVE_DATA_TASK_INTERVAL = 5_000
+        const val LOCATION_CLIENT_INTERVAL: Long = 2_500
         private const val PROPERTY_INIT_MAX_ATTEMPTS = 10
     }
 
@@ -54,7 +58,7 @@ class DataCollector: Service() {
     private var locationClient: LocationClient? = null
     private var locationClientJob: Job? = null
 
-    private lateinit var carPropertiesClient: CarPropertiesClient
+    private var carPropertiesClient: CarPropertiesClient? = null
     private lateinit var dataProcessor: DataProcessor
 
     private var lastLocation: Location? = null
@@ -79,7 +83,7 @@ class DataCollector: Service() {
                 Toast.makeText(applicationContext, getString(R.string.restart_toast_background), Toast.LENGTH_LONG).show()
             }
         }
-
+        InAppLogger.i("[NEO] Attempting to start Foreground service in onStartCommand() ... ")
         startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
         InAppLogger.i("[NEO] Foreground service started in onStartCommand()")
         // super.onStartCommand(intent, flags, startId)
@@ -92,18 +96,26 @@ class DataCollector: Service() {
      */
     override fun onCreate() {
         super.onCreate()
-
         setupServiceNotification()
+        InAppLogger.logWithFirebase("[NEO] Attempting to start Foreground service in onCreate() ... ")
+        val ungrantedPermissions = "Ungranted Permissions: ${
+            unGrantedPermissions(CarStatsViewer.appContext).joinToString(separator = ", ")
+        }"
+        InAppLogger.logWithFirebase(ungrantedPermissions)
         startForeground(CarStatsViewer.FOREGROUND_NOTIFICATION_ID + 10, foregroundServiceNotification.build())
         InAppLogger.i("[NEO] Foreground service started in onCreate()")
 
         dataProcessor = CarStatsViewer.dataProcessor
         locationClient = DefaultLocationClient()
-        carPropertiesClient = CarPropertiesClient(
-            context = applicationContext,
-            propertiesProcessor = dataProcessor::processProperty,
-            carPropertiesData = dataProcessor.carPropertiesData
-        )
+        if (isRunningOnAAOS(applicationContext)) {
+            carPropertiesClient = CarPropertiesClient(
+                context = applicationContext,
+                propertiesProcessor = dataProcessor::processProperty,
+                carPropertiesData = dataProcessor.carPropertiesData
+            )
+        } else {
+            InAppLogger.e("DEVICE IS NOT A CAR!")
+        }
 
         /** detect if system is an emulator and show a toast */
         if (BuildConfig.DEBUG) {
@@ -112,11 +124,7 @@ class DataCollector: Service() {
         }
 
         serviceScope.launch {
-            withContext(Dispatchers.IO) { dataProcessor.checkTrips() }
-            readInitialStaticProperties()
-            setupDynamicCarProperties()
-
-            carPropertiesInitialized = true
+            if (!initPropertiesWithPermissionCheck()) { stopSelf() }
         }
 
         /** Setup the live data APIs */
@@ -141,7 +149,7 @@ class DataCollector: Service() {
         if (CarStatsViewer.appPreferences.autostart)
             CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 9_500, extendedLogging = true)
 
-        if (CarStatsViewer.appPreferences.useLocation) { startLocationClient(5_000) }
+        if (CarStatsViewer.appPreferences.useLocation) { startLocationClient(LOCATION_CLIENT_INTERVAL) }
 
         /** Check if location client has crashed or needs to be stopped or started after settings changed. */
         serviceScope.launch {
@@ -153,7 +161,7 @@ class DataCollector: Service() {
                         if (lastLocation == null) InAppLogger.w("[Watchdog] Location error: Location is null.")
                         if (locationClientJob == null) InAppLogger.w("[Watchdog] Location error: Location client not running.")
 
-                        startLocationClient(5_000)
+                        startLocationClient(LOCATION_CLIENT_INTERVAL)
                         WatchdogState.ERROR
                     } else {
                         WatchdogState.NOMINAL
@@ -195,8 +203,26 @@ class DataCollector: Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        InAppLogger.w("[NEO] Service stopped")
         serviceScope.cancel()
-        carPropertiesClient.disconnect()
+        carPropertiesClient?.disconnect()
+    }
+
+    /**
+     * Initialize the car properties with a check for required permissions.
+     */
+    private suspend fun initPropertiesWithPermissionCheck(): Boolean {
+        if (hasVehiclePermissions()) {
+            withContext(Dispatchers.IO) { dataProcessor.checkTrips() }
+            readInitialStaticProperties()
+            setupDynamicCarProperties()
+            carPropertiesInitialized = true
+            return true
+        } else {
+            InAppLogger.e("[NEO] Missing Vehicle Data Permissions!")
+            CarStatsViewer.foregroundServicePermissionsFailure = true
+            return false
+        }
     }
 
     /**
@@ -246,7 +272,7 @@ class DataCollector: Service() {
      * make based on various criteria.
      */
     private fun emulatorCarMake(): String {
-        val propertyMake = carPropertiesClient.getStringProperty(CarProperties.INFO_MAKE)?: "Unknown"
+        val propertyMake = carPropertiesClient?.getStringProperty(CarProperties.INFO_MAKE)?: "Unknown"
         if (propertyMake == "Toy Vehicle") {
             if (File("/product/fonts/PolestarUnica77-Regular.otf").exists())
                 return "Polestar"
@@ -289,10 +315,10 @@ class DataCollector: Service() {
     fun readStaticProperties() {
         InAppLogger.d("[NEO] Attempting to read static Properties...")
         dataProcessor.staticVehicleData = dataProcessor.staticVehicleData.copy(
-            batteryCapacity = carPropertiesClient.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
+            batteryCapacity = carPropertiesClient?.getFloatProperty(CarProperties.INFO_EV_BATTERY_CAPACITY),
             vehicleMake =  emulatorCarMake(),
-            modelName = carPropertiesClient.getStringProperty(CarProperties.INFO_MODEL),
-            distanceUnit = when (carPropertiesClient.getIntProperty(CarProperties.DISTANCE_DISPLAY_UNITS)) {
+            modelName = carPropertiesClient?.getStringProperty(CarProperties.INFO_MODEL),
+            distanceUnit = when (carPropertiesClient?.getIntProperty(CarProperties.DISTANCE_DISPLAY_UNITS)) {
                 VehicleUnit.MILE -> DistanceUnitEnum.MILES
                 VehicleUnit.KILOMETER -> DistanceUnitEnum.KM
                 else -> null
@@ -309,38 +335,50 @@ class DataCollector: Service() {
         var allPropertiesAvailable = false
         var attemptCounter = 0
         InAppLogger.d("[NEO] Attempting to init essential dynamic Properties...")
-        while (!allPropertiesAvailable) {
-            if (attemptCounter > 0) {
-                delay(500)
-            }
-            allPropertiesAvailable = true
-            CarProperties.essentialDynamicProperties.forEach { propertyId ->
-                if (!carPropertiesClient.registeredProperties.contains(propertyId)) {
-                    if (!carPropertiesClient.getCarPropertyUpdates(propertyId)) {
-                        allPropertiesAvailable = false
-                        val warnMsg = "[NEO] Essential Property ${CarProperties.getNameById(propertyId)} ($propertyId) is currently not available!"
-                        InAppLogger.logWithFirebase(warnMsg, Log.WARN)
-                    } else {
-                        InAppLogger.i("[NEO] Essential Property ${CarProperties.getNameById(propertyId)} ($propertyId) registered.")
+        carPropertiesClient?.let { carPropertiesClient ->
+            while (!allPropertiesAvailable) {
+                if (attemptCounter > 0) {
+                    delay(500)
+                }
+                allPropertiesAvailable = true
+                CarProperties.essentialDynamicProperties.forEach { propertyId ->
+                    if (!carPropertiesClient.registeredProperties.contains(propertyId)) {
+                        if (!carPropertiesClient.getCarPropertyUpdates(propertyId)) {
+                            allPropertiesAvailable = false
+                            val warnMsg =
+                                "[NEO] Essential Property ${CarProperties.getNameById(propertyId)} ($propertyId) is currently not available!"
+                            InAppLogger.logWithFirebase(warnMsg, Log.WARN)
+                        } else {
+                            InAppLogger.i(
+                                "[NEO] Essential Property ${
+                                    CarProperties.getNameById(
+                                        propertyId
+                                    )
+                                } ($propertyId) registered."
+                            )
+                        }
                     }
                 }
-            }
-            attemptCounter++
-            if (attemptCounter > PROPERTY_INIT_MAX_ATTEMPTS) {
-                val msg = "Service init failed: Not all required dynamic Car Properties are available!"
-                InAppLogger.e("[NEO] $msg")
-                // throw Exception(msg)
-                CarStatsViewer.watchdog.updateWatchdogState(CarStatsViewer.watchdog.getCurrentWatchdogState().copy(
-                    appErrorState = WatchdogState.Companion.AppErrorState("$msg\nCSV will not work as intended. Please contact the developer for debugging.")
-                ))
-                break
+                attemptCounter++
+                if (attemptCounter > PROPERTY_INIT_MAX_ATTEMPTS) {
+                    val msg =
+                        "Service init failed: Not all required dynamic Car Properties are available!"
+                    InAppLogger.e("[NEO] $msg")
+                    // throw Exception(msg)
+                    CarStatsViewer.watchdog.updateWatchdogState(
+                        CarStatsViewer.watchdog.getCurrentWatchdogState().copy(
+                            appErrorState = WatchdogState.Companion.AppErrorState("$msg\nCSV will not work as intended. Please contact the developer for debugging.")
+                        )
+                    )
+                    break
+                }
             }
         }
 
         setupOptionalDynamicProperties()
 
         CarProperties.usedProperties.forEach {
-            carPropertiesClient.updateProperty(it)
+            carPropertiesClient?.updateProperty(it)
         }
 
         if (allPropertiesAvailable)
@@ -351,16 +389,27 @@ class DataCollector: Service() {
 
     private fun setupOptionalDynamicProperties() {
         InAppLogger.d("[NEO] Attempting to init optional dynamic Properties...")
-        CarProperties.optionalDynamicProperties.forEach { propertyId ->
-            if (!carPropertiesClient.registeredProperties.contains(propertyId)) {
-                if (!carPropertiesClient.getCarPropertyUpdates(propertyId)) {
-                    val warnMsg = "[NEO] Optional Property ${CarProperties.getNameById(propertyId)} ($propertyId) is currently not available!"
-                    InAppLogger.logWithFirebase(warnMsg, Log.WARN)
-                } else {
-                    InAppLogger.i("[NEO] Optional Property ${CarProperties.getNameById(propertyId)} ($propertyId) registered.")
+        carPropertiesClient?.let { carPropertiesClient ->
+            CarProperties.optionalDynamicProperties.forEach { propertyId ->
+                if (!carPropertiesClient.registeredProperties.contains(propertyId)) {
+                    if (!carPropertiesClient.getCarPropertyUpdates(propertyId)) {
+                        val warnMsg =
+                            "[NEO] Optional Property ${CarProperties.getNameById(propertyId)} ($propertyId) is currently not available!"
+                        InAppLogger.logWithFirebase(warnMsg, Log.WARN)
+                    } else {
+                        InAppLogger.i(
+                            "[NEO] Optional Property ${
+                                CarProperties.getNameById(
+                                    propertyId
+                                )
+                            } ($propertyId) registered."
+                        )
+                    }
                 }
             }
+            return
         }
+        InAppLogger.e("[NEO] carPropertiesClient not available on this device!")
     }
 
     /**

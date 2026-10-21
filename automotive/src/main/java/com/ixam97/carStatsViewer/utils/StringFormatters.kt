@@ -11,7 +11,7 @@ object StringFormatters {
 
     private val dateFormat = DateFormat.getDateFormat(CarStatsViewer.appContext)
     private val timeFormat = DateFormat.getTimeFormat(CarStatsViewer.appContext)
-    private val appPreferences = CarStatsViewer.appPreferences
+    // private val appPreferences = CarStatsViewer.appPreferences
 
     fun getGearString(gear: Int): String {
         return when(gear) {
@@ -30,15 +30,31 @@ object StringFormatters {
 
     fun getDateString(date: Date?): String {
         if (date == null) return "-/-"
-        return "${dateFormat.format(date)}, ${timeFormat.format(date)}"
+        return "${dateFormat.format(date)} | ${timeFormat.format(date)}"
     }
 
     fun getDateString(tripStartDate: Calendar): String {
-        return "${dateFormat.format(tripStartDate.time)}, ${timeFormat.format(tripStartDate.time)}"
+        return "${dateFormat.format(tripStartDate.time)} | ${timeFormat.format(tripStartDate.time)}"
+    }
+
+    fun getStartToEndDateString(start: Date, end: Date? = null):String {
+        val startDate = dateFormat.format(start.time)
+        val startTime = timeFormat.format(start.time)
+
+        if (end == null) return "$startDate | $startTime"
+
+        val endDate = dateFormat.format(end.time)
+        val endTime = timeFormat.format(end.time)
+
+        return if (startDate == endDate) {
+            "$startDate | $startTime – $endTime"
+        } else {
+            "$startDate | $startTime – $endDate | $endTime"
+        }
     }
 
     fun getEnergyString(usedEnergy: Float): String {
-        if (!appPreferences.consumptionUnit) {
+        if (!CarStatsViewer.appPreferences.consumptionUnit) {
             return "%.1f kWh".format(
                 Locale.ENGLISH,
                 kiloRounder(usedEnergy))
@@ -47,33 +63,33 @@ object StringFormatters {
     }
 
     fun getTraveledDistanceString(traveledDistance: Float): String {
-        return "%.1f %s".format(Locale.ENGLISH, kiloRounder(appPreferences.distanceUnit.toUnit(traveledDistance)), appPreferences.distanceUnit.unit())
+        return "%.1f %s".format(Locale.ENGLISH, kiloRounder(CarStatsViewer.appPreferences.distanceUnit.toUnit(traveledDistance)), CarStatsViewer.appPreferences.distanceUnit.unit())
     }
 
     fun getAvgSpeedString(traveledDistance: Float, timeDriven: Long): String {
-        val speedString = if (timeDriven < 1) "-/-" else "%.0f".format((appPreferences.distanceUnit.toUnit(traveledDistance) / 1000f) / (timeDriven.toFloat() / (1000 * 60 * 60)))
-        return "Ø %s %s".format(Locale.ENGLISH, speedString, appPreferences.distanceUnit.unit() + "/h")
+        val speedString = if (timeDriven < 1) "-/-" else "%.0f".format((CarStatsViewer.appPreferences.distanceUnit.toUnit(traveledDistance) / 1000f) / (timeDriven.toFloat() / (1000 * 60 * 60)))
+        return "Ø %s %s".format(Locale.ENGLISH, speedString, CarStatsViewer.appPreferences.distanceUnit.unit() + "/h")
     }
 
     fun getRemainingRangeString(remainingRange: Float): String {
         return "%d %s".format(
             Locale.ENGLISH,
-            (((kiloRounder(appPreferences.distanceUnit.toUnit(remainingRange)).toInt()/10)*10)),
-            appPreferences.distanceUnit.unit()
+            (((kiloRounder(CarStatsViewer.appPreferences.distanceUnit.toUnit(remainingRange)).toInt()/10)*10)),
+            CarStatsViewer.appPreferences.distanceUnit.unit()
         )
     }
 
     fun getAvgConsumptionString(usedEnergy: Float, traveledDistance: Float): String {
-        val avgConsumption = appPreferences.distanceUnit.asUnit(usedEnergy / (traveledDistance / 1000))
+        val avgConsumption = CarStatsViewer.appPreferences.distanceUnit.asUnit(usedEnergy / (traveledDistance / 1000))
         val unitString = when {
-            appPreferences.consumptionUnit -> "Wh/%s".format(appPreferences.distanceUnit.unit())
-            else -> "kWh/100%s".format(appPreferences.distanceUnit.unit())
+            CarStatsViewer.appPreferences.consumptionUnit -> "Wh/%s".format(CarStatsViewer.appPreferences.distanceUnit.unit())
+            else -> "kWh/100%s".format(CarStatsViewer.appPreferences.distanceUnit.unit())
         }
 
         if (traveledDistance <= 0) {
             return "-/- $unitString"
         }
-        if (!appPreferences.consumptionUnit) {
+        if (!CarStatsViewer.appPreferences.consumptionUnit) {
             return "Ø %.1f %s".format(
                 Locale.ENGLISH,
                 (avgConsumption) / 10,
@@ -101,9 +117,9 @@ object StringFormatters {
 
     fun getAltitudeString(altUp: Float?, altDown: Float?): String {
         if (altUp == null || altDown == null) return ""
-        val unitAltUp = appPreferences.distanceUnit.asSubUnit(altUp).toInt()
-        val unitAltDown = appPreferences.distanceUnit.asSubUnit(altDown).toInt()
-        val unitString = appPreferences.distanceUnit.subUnit()
+        val unitAltUp = CarStatsViewer.appPreferences.distanceUnit.asSubUnit(altUp).toInt()
+        val unitAltDown = CarStatsViewer.appPreferences.distanceUnit.asSubUnit(altDown).toInt()
+        val unitString = CarStatsViewer.appPreferences.distanceUnit.subUnit()
         val formattedAltUp = "%d %s".format(unitAltUp, unitString)
         val formattedAltDown = "%d %s".format(unitAltDown, unitString)
         val formattedDelta = "%d %s".format(unitAltUp - unitAltDown, unitString)

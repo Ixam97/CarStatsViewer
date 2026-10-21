@@ -39,6 +39,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRightAlt
 import androidx.compose.material.icons.filled.UnfoldLess
 import androidx.compose.material.icons.filled.UnfoldMore
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,6 +68,8 @@ import com.ixam97.carStatsViewer.compose.theme.clubHint
 import com.ixam97.carStatsViewer.compose.theme.slideUpBackground
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import com.ixam97.carStatsViewer.database.tripData.DummyTripData
+import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.map.Mapbox
 import com.ixam97.carStatsViewer.ui.activities.MainActivity
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionSmoothingType
@@ -80,6 +83,7 @@ import com.ixam97.carStatsViewer.ui.plot.graphics.PlotLinePaint
 import com.ixam97.carStatsViewer.ui.plot.graphics.PlotPaint
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLine
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotLineConfiguration
+import com.ixam97.carStatsViewer.ui.plot.objects.PlotMarkers
 import com.ixam97.carStatsViewer.ui.plot.objects.PlotRange
 import com.ixam97.carStatsViewer.ui.views.PlotView
 import com.ixam97.carStatsViewer.utils.DataConverters
@@ -109,7 +113,9 @@ fun TripDetailsPortraitScreen(
         val splitScreenCondition = (width > 1500.dp) && (width > height)
 
         val tripDetailsState = viewModel.tripDetailsState
-        val trip = tripDetailsState.drivingSession
+        val trip =
+            if (emulatorMode) DummyTripData.getDummyDrivingSession()
+            else tripDetailsState.drivingSession
 
         Column(
             modifier = Modifier
@@ -365,13 +371,13 @@ fun TripDetailsPortraitScreen(
                                 }
 
                                 2 -> {
-                                    Mapbox.MapBoxContainer(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .weight(1f),
-                                        trip = trip,
-                                        chargingMarkerOnClick = {id -> viewModel.selectChargingSession(id)}
-                                    )
+//                                    Mapbox.MapBoxContainer(
+//                                        modifier = Modifier
+//                                            .fillMaxWidth()
+//                                            .weight(1f),
+//                                        trip = trip,
+//                                        chargingMarkerOnClick = {id -> viewModel.selectChargingSession(id)}
+//                                    )
                                 }
                             }
                         }
@@ -382,11 +388,11 @@ fun TripDetailsPortraitScreen(
                                     .fillMaxHeight()
                             ) {
 
-                                Mapbox.MapBoxContainer(
-                                    modifier = Modifier,
-                                    trip = trip,
-                                    chargingMarkerOnClick = {id -> viewModel.selectChargingSession(id)}
-                                )
+//                                Mapbox.MapBoxContainer(
+//                                    modifier = Modifier,
+//                                    trip = trip,
+//                                    chargingMarkerOnClick = {id -> viewModel.selectChargingSession(id)}
+//                                )
                             }
                         }
                     }
@@ -583,7 +589,8 @@ fun ConsumptionPlot(
     plotLinePaint: PlotLinePaint,
     distance: Float,
     limitedHeight: Boolean,
-    secondaryDimension: Int
+    secondaryDimension: Int,
+    plotMarkers: PlotMarkers? = null,
 ) {
     val appPreferences = CarStatsViewer.appPreferences
 
@@ -615,6 +622,8 @@ fun ConsumptionPlot(
                     plotLine.Configuration.Divider = appPreferences.distanceUnit.toFactor() * 10f
                 }
 
+                mTextSize = 22f
+
                 dimension = PlotDimensionX.DISTANCE
                 dimensionYSecondary = when (secondaryDimension) {
                     1 -> PlotDimensionY.SPEED
@@ -626,6 +635,8 @@ fun ConsumptionPlot(
                     MainActivity.DISTANCE_TRIP_DIVIDER)
                 dimensionSmoothing = 0.02f
                 dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
+
+                plotMarkers?.let { setPlotMarkers(it) }
                 visibleMarkerTypes.add(PlotMarkerType.CHARGE)
                 visibleMarkerTypes.add(PlotMarkerType.PARK)
 
@@ -685,6 +696,8 @@ fun ChargingPlot(
                 dimensionSmoothing = 0.01f
                 dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
                 dimensionYSecondary = PlotDimensionY.STATE_OF_CHARGE
+
+                mTextSize = 22f
 
                 addPlotLine(plotLine, plotLinePaint)
                 dimensionRestriction = TimeUnit.MINUTES.toMillis((TimeUnit.MILLISECONDS.toMinutes(time / 5)) + 1) * 5 + 1
@@ -838,10 +851,7 @@ fun ChargingSessionDetails(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    onCollapseClick()
-                },
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             TripDataRow(
@@ -849,10 +859,26 @@ fun ChargingSessionDetails(
                 title = "${StringFormatters.getDateString(Date(session.start_epoch_time))}, $socString",
                 text = location ?: stringResource(R.string.summary_location_unavailable)
             )
+            if (viewModel.preferences.dataExportEnabled) {
+                Icon(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .size(60.dp)
+                        .clickable {
+                            viewModel.uploadChargingSession(context, session.charging_session_id);
+                        },
+                    imageVector = Icons.Default.Upload,
+                    contentDescription = null,
+                    tint = Color.White
+                )
+            }
             Icon(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
-                    .size(60.dp),
+                    .size(60.dp)
+                    .clickable {
+                        onCollapseClick()
+                    },
                 imageVector = Icons.Default.UnfoldLess,
                 contentDescription = null,
                 tint = Color.White

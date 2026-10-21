@@ -1,6 +1,5 @@
 package com.ixam97.carStatsViewer.carApp
 
-import android.car.Car
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.annotation.OptIn
@@ -13,29 +12,39 @@ import androidx.lifecycle.lifecycleScope
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.carApp.renderer.CarDataSurfaceCallback
+import com.ixam97.carStatsViewer.carCompose.CarComposeActivity
+import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
+import com.ixam97.carStatsViewer.carCompose.toContentKey
 import com.ixam97.carStatsViewer.dataCollector.DataCollector
 import com.ixam97.carStatsViewer.utils.throttle
+import com.ixam97.carStatsViewer.utils.unGrantedPermissions
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCarApi::class)
 class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
 
-    val permissions = listOf(
-        Car.PERMISSION_ENERGY,
-        Car.PERMISSION_SPEED,
-        android.Manifest.permission.ACCESS_FINE_LOCATION,
-        android.Manifest.permission.ACCESS_COARSE_LOCATION
-    )
-
     lateinit var carDataSurfaceCallback: CarDataSurfaceCallback
 
     override fun onCreateScreen(intent: Intent): Screen {
+
+        val carComposeActivityIntent = Intent(carContext, CarComposeActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            putExtra("NavKey", SettingsScreenNavKey.toContentKey())
+        }
+
         carDataSurfaceCallback = CarDataSurfaceCallback(carContext)
         lifecycleScope.launch {
             CarStatsViewer.dataProcessor.realTimeDataFlow.throttle(1000).collect {
                 if (carContext.carAppApiLevel >= 7 && carDataSurfaceCallback.isEnabled()) {
                     carDataSurfaceCallback.requestRenderFrame()
                 }
+
+//                if (it.chargePortConnected == true && !isCharging) {
+//                    isCharging = true
+//                    launchActivity(carComposeActivityIntent)
+//                } else if (it.chargePortConnected != isCharging) {
+//                    isCharging = it.chargePortConnected?:false
+//                }
             }
         }
 
@@ -52,7 +61,7 @@ class CarStatsViewerSession : Session(), DefaultLifecycleObserver {
             screens.add(BackgroundLocationPermissionScreen(carContext, this))
         }
 
-        val neededPermissions = permissions.filter { carContext.checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }
+        val neededPermissions = unGrantedPermissions(carContext)
         if (neededPermissions.isNotEmpty()) {
             screens.add(PermissionScreen(carContext, this))
         } else {

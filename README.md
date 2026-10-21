@@ -7,6 +7,7 @@
 - Visualizes consumption, speed and state of charge along the trip
 - Visualizes and saves charge curves during a trip
 - Live Data API for ABRP and HTTP Webhook
+- Trip Data export via E-Mail
 
 ## [Changes](/CHANGES.md)
 
