@@ -55,7 +55,7 @@ object Defines {
      * Testing shorter interval.
      * TODO: Decide on how to determine the interval driving points should be saved...
      */
-    const val PLOT_DISTANCE_INTERVAL = 10.0 // 100.0
+    const val PLOT_DISTANCE_INTERVAL = 25.0 // 100.0
     const val MAIN_VIEW_DRIVING_POINTS = 2_000
 }
 

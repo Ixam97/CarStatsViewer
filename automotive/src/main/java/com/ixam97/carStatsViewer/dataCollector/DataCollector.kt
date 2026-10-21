@@ -48,6 +48,7 @@ class DataCollector: Service() {
 
     companion object {
         const val LIVE_DATA_TASK_INTERVAL = 5_000
+        const val LOCATION_CLIENT_INTERVAL: Long = 2_500
         private const val PROPERTY_INIT_MAX_ATTEMPTS = 10
     }
 
@@ -148,7 +149,7 @@ class DataCollector: Service() {
         if (CarStatsViewer.appPreferences.autostart)
             CarStatsViewer.setupRestartAlarm(CarStatsViewer.appContext, "termination", 9_500, extendedLogging = true)
 
-        if (CarStatsViewer.appPreferences.useLocation) { startLocationClient(5_000) }
+        if (CarStatsViewer.appPreferences.useLocation) { startLocationClient(LOCATION_CLIENT_INTERVAL) }
 
         /** Check if location client has crashed or needs to be stopped or started after settings changed. */
         serviceScope.launch {
@@ -160,7 +161,7 @@ class DataCollector: Service() {
                         if (lastLocation == null) InAppLogger.w("[Watchdog] Location error: Location is null.")
                         if (locationClientJob == null) InAppLogger.w("[Watchdog] Location error: Location client not running.")
 
-                        startLocationClient(5_000)
+                        startLocationClient(LOCATION_CLIENT_INTERVAL)
                         WatchdogState.ERROR
                     } else {
                         WatchdogState.NOMINAL
