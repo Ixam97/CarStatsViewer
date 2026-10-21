@@ -1,4 +1,20 @@
+# Changelog [EN]:
+
+## 0.29.0
+ - Play Edition: Migrating to a single activity architecture. This makes the settings UI more flexible and allows for more detailed trip details.
+ - Legacy Edition: Complete rewrite of Settings-UI (same as Play Edition). The main Screen will follow at a later stage.
+ - Data Export (WIP): Trips and Charging Sessions can now be exported via E-Mail as CSV-files. The formatting is still WIP and will change in future updates.
+ - Overhaul of the Trip Details view for a more compact and flexible overview, especially for wide screen devices.
+ - Numerous optimizations and adjustments to account for vehicle compatibility.
+
 # Changelog [DE]:
+
+## 0.29.0
+ - Play Edition: Migration zu einer Single Activity Architektur. Dies erlaubt flexiblere Einstellungs-UIs und eine detailliertere Tripzusammenfassung.
+ - Legacy Edition: Komplett überarbeitetes Einstellungen-UI (identisch zur Play Edition). Die Hauptansicht wird in einem späteren Update ebenfalls überarbeitet.
+ - Daten-Export (WIP): Trips und Ladevorgänge können per E-Mail als CSV-Dateien exportiert werden. Die Formatierung ist noch nicht endgültig und wird sich in zukünftigen Releases verändern.
+ - Überarbeitete Tripzusammenfassung für kompaktere und flexiblere Darstellungen, insbesondere auf Breitbild-Anzeigen.
+ - Optimierungen und Anpassungen für Fahrzeugkompatibilität.
 
 ## 0.28.1
  - Beginnend mit OTA P4.2.4 ist der Polestar 4 vollständig mit Car Stats Viewer kompatibel.
