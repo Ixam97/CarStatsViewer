@@ -155,6 +155,12 @@ Les données de localisation sont incluses, si elles ne sont pas désactivées.<
     <string name="plot_dimensionY_SPEED">Vitesse</string>
     <string name="plot_dimensionY_ALTITUDE">Altitude</string>
     <string name="summary_altitude">Variation d\'altitude</string>
+    <string name="summary_note">Note</string>
+    <string name="summary_note_add">Ajouter une note…</string>
+    <string name="summary_note_edit">Modifier la note</string>
+    <string name="summary_note_save">Sauvegarder</string>
+    <string name="summary_note_cancel">Annuler</string>
+    <string name="summary_note_locked_while_driving">Les notes ne peuvent être modifiées qu\'à l\'arrêt</string>
     <string name="about_translators">Traducteurs</string>
     <string name="restart_notification_reason_unknown">%s a redémarré pour une raison inconnue.</string>
     <string name="summary_speed">Vitesse moyenne</string>

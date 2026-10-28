@@ -168,6 +168,12 @@
     <string name="summary_interruption_warning_0_29">Aufzeichnung der Ladekurve unterbrochen. Die angezeigte Energiemenge ist vermutlich nicht korrekt.</string>
     <string name="summary_altitude">Höhenunterschied</string>
     <string name="summary_altitude_missing">Keine Höhendaten verfügbar</string>
+    <string name="summary_note">Notiz</string>
+    <string name="summary_note_add">Notiz hinzufügen…</string>
+    <string name="summary_note_edit">Notiz bearbeiten</string>
+    <string name="summary_note_save">Speichern</string>
+    <string name="summary_note_cancel">Abbrechen</string>
+    <string name="summary_note_locked_while_driving">Notizen können nur im Stand bearbeitet werden</string>
     <string name="summary_speed">Durchschnittsgeschwindigkeit</string>
     <string name="summary_ongoing">Laufender Trip</string>
     <string name="summary_tab_trip_details">Trip-Details</string>

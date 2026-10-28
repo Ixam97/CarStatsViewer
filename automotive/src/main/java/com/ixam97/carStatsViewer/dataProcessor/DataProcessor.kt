@@ -14,6 +14,7 @@ import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.emulatorMode
 import com.ixam97.carStatsViewer.emulatorPowerSign
 import com.ixam97.carStatsViewer.liveDataApi.http.HttpLiveData
+import com.ixam97.carStatsViewer.repository.tripNotes.replaceNote
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotLineMarkerType
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.Ticker
@@ -747,6 +748,24 @@ class DataProcessor {
                 }
                 InAppLogger.logThrowableWithFirebase("Error switching trip type! It appears there is no \"$type\".\n${e.message}", e)
             }
+        }
+    }
+
+    /**
+     * Update the note of an active session in the local session copies. Otherwise the next write
+     * of the local sessions to the database would revert the note. No-op for past sessions.
+     */
+    fun updateNote(sessionId: Long, note: String) {
+        while (!localSessionsAccess) {
+            InAppLogger.w("WAITING for local session access")
+        }
+        _localSessionsState.update { localSessions ->
+            localSessions.replaceNote(sessionId, note)?.let { updatedSession ->
+                if (selectedSessionData?.driving_session_id == sessionId) {
+                    selectedSessionData = updatedSession
+                }
+            }
+            localSessions
         }
     }
 

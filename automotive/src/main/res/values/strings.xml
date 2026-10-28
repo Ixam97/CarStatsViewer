@@ -248,6 +248,12 @@
     <string name="summary_interruption_warning_0_29">Recording of charging session has been interrupted. The shown energy value is probably not correct.</string>
     <string name="summary_altitude">Altitude change</string>
     <string name="summary_altitude_missing">No altitude data available</string>
+    <string name="summary_note">Note</string>
+    <string name="summary_note_add">Add note…</string>
+    <string name="summary_note_edit">Edit note</string>
+    <string name="summary_note_save">Save</string>
+    <string name="summary_note_cancel">Cancel</string>
+    <string name="summary_note_locked_while_driving">Notes can only be edited while parked</string>
     <string name="summary_speed">Average speed</string>
     <string name="summary_ongoing">Ongoing trip</string>
     <string name="summary_tab_trip_details">Trip Details</string>

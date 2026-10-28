@@ -96,6 +96,11 @@ class LocalTripDataSource(
         tripDao.upsertDrivingSession(drivingSession)
     }
 
+    override suspend fun updateDrivingSessionNote(sessionId: Long, note: String): Boolean {
+        InAppLogger.v("$TAG Updating note of driving session with ID $sessionId")
+        return tripDao.updateDrivingSessionNote(sessionId, note, System.currentTimeMillis()) > 0
+    }
+
     override suspend fun getActiveDrivingSessionsIdsMap(): Map<Int, Long> {
         val idsMap: MutableMap<Int, Long> = mutableMapOf()
         getActiveDrivingSessionsIds().forEach {

@@ -29,6 +29,9 @@ interface TripDataSource {
 
     suspend fun updateDrivingSession(drivingSession: DrivingSession)
 
+    /** Updates only the note of a driving session. Returns false if the session does not exist. */
+    suspend fun updateDrivingSessionNote(sessionId: Long, note: String): Boolean
+
     suspend fun getActiveDrivingSessionsIdsMap(): Map<Int, Long>
 
     suspend fun getPastDrivingSessionIds(): List<Long>

@@ -149,6 +149,12 @@
     <string name="plot_dimensionY_SPEED">速度</string>
     <string name="plot_dimensionY_ALTITUDE">海拔高度</string>
     <string name="summary_altitude">海拔變化</string>
+    <string name="summary_note">備註</string>
+    <string name="summary_note_add">新增備註…</string>
+    <string name="summary_note_edit">編輯備註</string>
+    <string name="summary_note_save">儲存</string>
+    <string name="summary_note_cancel">取消</string>
+    <string name="summary_note_locked_while_driving">僅能在停車時編輯備註</string>
     <string name="about_translators">翻譯人員</string>
     <string name="restart_notification_reason_unknown">%s因未知原因已重新啟動。</string>
     <string name="summary_speed">平均速度</string>

@@ -7,6 +7,7 @@ import com.ixam97.carStatsViewer.database.tripData.ChargingPoint
 import com.ixam97.carStatsViewer.database.tripData.ChargingSession
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import com.ixam97.carStatsViewer.repository.tripNotes.TripNotesRepository
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.serialization.json.Json
 import retrofit2.Response
@@ -135,7 +136,7 @@ object DataExportRepository {
         )
     }
 
-    private fun buildTripCsvData(drivingSession: DrivingSession): String {
+    internal fun buildTripCsvData(drivingSession: DrivingSession): String {
         var sessionCsvData = "# Trip recorded by Car Stats Viewer v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})\n#\n"
         sessionCsvData += "# Vehicle brand and model: ${Build.BRAND}, ${Build.MODEL} (${Build.DEVICE})\n"
         sessionCsvData += "# Start timestamp: ${drivingSession.start_epoch_time}\n"
@@ -146,7 +147,7 @@ object DataExportRepository {
         sessionCsvData += "# Used SoC: ${drivingSession.used_soc}\n"
         sessionCsvData += "# Used Soc (Energy): ${drivingSession.used_soc_energy}\n"
         sessionCsvData += "# Driven distance: ${drivingSession.driven_distance}\n"
-        sessionCsvData += "# Note: ${drivingSession.note}\n"
+        sessionCsvData += "# Note: ${TripNotesRepository.singleLineNote(drivingSession.note)}\n"
         sessionCsvData += "# Last edited: ${drivingSession.last_edited_epoch_time}\n"
 
         sessionCsvData += "\nTimestamp;Energy delta;Distance delta;Point Marker Type;SoC;lat;lon;alt\n"

@@ -23,12 +23,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +43,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.painter.Painter
@@ -47,6 +54,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ixam97.carStatsViewer.CarStatsViewer
@@ -60,6 +69,7 @@ import de.ixam97.carcompose.components.controls.CarButton
 import de.ixam97.carcompose.components.controls.CarRow
 import de.ixam97.carcompose.components.controls.CarSegmentedButton
 import de.ixam97.carcompose.components.controls.CarSegmentedButtonDefaults
+import de.ixam97.carcompose.components.controls.CarTextField
 import de.ixam97.carcompose.components.layout.CarColumn
 import de.ixam97.carcompose.components.layout.CarListDivider
 import de.ixam97.carcompose.components.layout.CarListItem
@@ -98,13 +108,25 @@ class TripDetailsConsumptionSectionLayoutStateViewModel(): ViewModel() {
 @Composable
 internal fun TripDetailsConsumptionSection(
     viewModel: TripDetailsViewModel,
-    drivingSession: DrivingSession?
+    drivingSession: DrivingSession?,
+    noteEditingEnabled: Boolean
 ) {
+    val tripDetailsState by viewModel.tripDetailsState.collectAsState()
+
+    if (tripDetailsState.isEditingNote) {
+        TripNoteEditorDialog(
+            viewModel = viewModel,
+            tripDetailsState = tripDetailsState,
+            editingEnabled = noteEditingEnabled
+        )
+    }
+
     drivingSession.let { drivingSession ->
         if (drivingSession != null)
             TripDetailsConsumptionSectionContent(
                 viewModel = viewModel,
-                drivingSession = drivingSession
+                drivingSession = drivingSession,
+                noteEditingEnabled = noteEditingEnabled
             )
         else Box(
             modifier = Modifier.fillMaxSize(),
@@ -116,7 +138,8 @@ internal fun TripDetailsConsumptionSection(
 @Composable
 private fun TripDetailsConsumptionSectionContent(
     viewModel: TripDetailsViewModel,
-    drivingSession: DrivingSession
+    drivingSession: DrivingSession,
+    noteEditingEnabled: Boolean
 ) {
     val layoutStateViewModel: TripDetailsConsumptionSectionLayoutStateViewModel = viewModel()
     val tripDetailsState by viewModel.tripDetailsState.collectAsState()
@@ -312,6 +335,17 @@ private fun TripDetailsConsumptionSectionContent(
                 CarColumn(
                     modifier = Modifier.fillMaxHeight()
                 ) {
+                    CarListSection(
+                        listItems = listOf(
+                            CarListItem {
+                                TripNoteRow(
+                                    viewModel = viewModel,
+                                    note = drivingSession.note,
+                                    editingEnabled = noteEditingEnabled
+                                )
+                            }
+                        )
+                    )
                     CarListSection(
                         listItems = listOf(
                             CarListItem {
@@ -635,5 +669,124 @@ private fun CompactDataColumn(
             iconPainter = painterResource(R.drawable.ic_time),
             valueText = StringFormatters.getElapsedTimeString(drivingSession.drive_time)
         )
+    }
+}
+
+/**
+ * Shows the note of a trip. Editing is only enabled while parked to avoid driver distraction.
+ */
+@Composable
+private fun TripNoteRow(
+    viewModel: TripDetailsViewModel,
+    note: String,
+    editingEnabled: Boolean
+) {
+    CarRow(
+        title = stringResource(R.string.summary_note),
+        description = when {
+            note.isNotBlank() -> note
+            editingEnabled -> stringResource(R.string.summary_note_add)
+            else -> stringResource(R.string.summary_note_locked_while_driving)
+        },
+        leadingContent = { CarComposeIcon(imageVector = Icons.Outlined.EditNote) },
+        browsable = editingEnabled,
+        onBrowse = { viewModel.startEditNote() }
+    )
+}
+
+/**
+ * Editor for the note of a trip. Shown as a dialog: its own window is placed above the on-screen
+ * keyboard by the system, independent of how the activity handles the keyboard insets (in
+ * portrait layouts, the tab content had no height left while the keyboard was shown). The buttons
+ * are placed above the text field so they stay visible if the height is reduced even further.
+ * Not using CarRow here: its intrinsic height measurement squeezes the buttons.
+ */
+@Composable
+private fun TripNoteEditorDialog(
+    viewModel: TripDetailsViewModel,
+    tripDetailsState: TripDetailsState,
+    editingEnabled: Boolean
+) {
+    val focusRequester = remember { FocusRequester() }
+
+    Dialog(
+        onDismissRequest = { if (!tripDetailsState.isSavingNote) viewModel.cancelEditNote() },
+        properties = DialogProperties(
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .widthIn(max = 1200.dp),
+            shape = RoundedCornerShape(CarTheme.carShapes.defaultOuterCornerSize),
+            color = CarTheme.carColors.background,
+            contentColor = CarTheme.carColors.onBackground
+        ) {
+            Column(
+                modifier = Modifier.padding(
+                    horizontal = CarTheme.carDimensions.defaultHorizontalPadding,
+                    vertical = CarTheme.carDimensions.defaultVerticalPadding
+                ),
+                verticalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultVerticalPadding)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultHorizontalPadding)
+                ) {
+                    CarComposeIcon(imageVector = Icons.Outlined.EditNote)
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = stringResource(R.string.summary_note_edit),
+                        style = CarTheme.carTypography.rowTitle,
+                        maxLines = 1
+                    )
+                    CarButton(
+                        onClick = { viewModel.cancelEditNote() },
+                        enabled = !tripDetailsState.isSavingNote
+                    ) {
+                        Text(stringResource(R.string.summary_note_cancel), maxLines = 1)
+                    }
+                    CarButton(
+                        onClick = { viewModel.saveNote() },
+                        enabled = editingEnabled && !tripDetailsState.isSavingNote,
+                        active = true
+                    ) {
+                        if (tripDetailsState.isSavingNote) {
+                            CircularProgressIndicator(modifier = Modifier.size(30.dp))
+                        } else {
+                            Text(stringResource(R.string.summary_note_save), maxLines = 1)
+                        }
+                    }
+                }
+                if (!editingEnabled) {
+                    Text(
+                        text = stringResource(R.string.summary_note_locked_while_driving),
+                        style = CarTheme.carTypography.rowContent
+                    )
+                }
+                // Shrinks if the dialog has little height, the text field scrolls internally
+                Box(
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .focusRequester(focusRequester)
+                ) {
+                    CarTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = tripDetailsState.noteDraft,
+                        onValueChange = { viewModel.setNoteDraft(it) },
+                        enabled = editingEnabled && !tripDetailsState.isSavingNote,
+                        placeholder = stringResource(R.string.summary_note_add),
+                        minLines = 3,
+                        maxLines = 6
+                    )
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (editingEnabled) focusRequester.requestFocus()
     }
 }

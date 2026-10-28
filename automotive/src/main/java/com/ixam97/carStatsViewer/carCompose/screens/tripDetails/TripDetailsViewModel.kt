@@ -13,6 +13,9 @@ import com.ixam97.carStatsViewer.map.Mapbox
 import com.ixam97.carStatsViewer.map.MapboxInterface
 import com.ixam97.carStatsViewer.repository.dataExport.DataExportRepository
 import com.ixam97.carStatsViewer.repository.dataExport.DataExportState
+import com.ixam97.carStatsViewer.repository.tripNotes.TripNotesRepository
+import com.ixam97.carStatsViewer.repository.tripNotes.withNote
+import com.ixam97.carStatsViewer.utils.InAppLogger
 import de.ixam97.carcompose.components.layout.CarSnackBarConfig
 import de.ixam97.carcompose.components.layout.CarSnackBarHostState
 import kotlinx.coroutines.Dispatchers
@@ -46,10 +49,18 @@ data class TripDetailsState(
     ),
     val mapTripDataState: MapboxInterface.MapTripDataState = MapboxInterface.MapTripDataState(isLoading = true),
     val selectedChargingSessionDetailsId: Long? = null,
-    val showChargingDetails: Boolean = false
+    val showChargingDetails: Boolean = false,
+    val noteDraft: String = "",
+    val isEditingNote: Boolean = false,
+    val isSavingNote: Boolean = false
 )
 
-class TripDetailsViewModel(sessionId: Long): ViewModel() {
+class TripDetailsViewModel(
+    sessionId: Long,
+    private val tripNotesRepository: Lazy<TripNotesRepository> = lazy { TripNotesRepository() }
+): ViewModel() {
+
+    private val isDummySession = sessionId.toInt() == -1
 
     private val _tripDetailsState = MutableStateFlow(TripDetailsState(isLoading = true))
     val tripDetailsState = _tripDetailsState.asStateFlow()
@@ -61,7 +72,7 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             if (CarStatsViewer.appPreferences.debugDelays) delay(5000)
             delay(500)
-            val session = if (sessionId.toInt() == -1) DummyTripData.getDummyDrivingSession() else CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId)
+            val session = if (isDummySession) DummyTripData.getDummyDrivingSession() else CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId)
             _tripDetailsState.update {
                 it.copy(
                     isLoading = false,
@@ -138,6 +149,47 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
                         }
                     ))
                 }
+            }
+        }
+    }
+
+    fun startEditNote() {
+        _tripDetailsState.update { it.copy(
+            isEditingNote = true,
+            noteDraft = it.drivingSession?.note ?: ""
+        ) }
+    }
+
+    fun setNoteDraft(text: String) {
+        _tripDetailsState.update { it.copy(noteDraft = text.take(TripNotesRepository.MAX_NOTE_LENGTH)) }
+    }
+
+    fun cancelEditNote() {
+        _tripDetailsState.update { it.copy(isEditingNote = false, noteDraft = "") }
+    }
+
+    fun saveNote(): Job? {
+        val state = _tripDetailsState.value
+        val drivingSession = state.drivingSession ?: return null
+        if (!state.isEditingNote || state.isSavingNote) return null
+        _tripDetailsState.update { it.copy(isSavingNote = true) }
+
+        return viewModelScope.launch(Dispatchers.IO) {
+            val savedNote = try {
+                if (isDummySession) TripNotesRepository.sanitizeNote(state.noteDraft)
+                else tripNotesRepository.value.saveNote(drivingSession.driving_session_id, state.noteDraft)
+            } catch (e: Exception) {
+                InAppLogger.e("[TripDetails] Failed to save note: ${e.stackTraceToString()}")
+                null
+            }
+            _tripDetailsState.update {
+                if (savedNote == null) it.copy(isSavingNote = false)
+                else it.copy(
+                    drivingSession = it.drivingSession?.withNote(savedNote),
+                    isEditingNote = false,
+                    isSavingNote = false,
+                    noteDraft = ""
+                )
             }
         }
     }

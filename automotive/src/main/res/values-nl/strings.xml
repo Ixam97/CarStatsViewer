@@ -149,6 +149,12 @@
     <string name="plot_dimensionY_SPEED">Snelheid</string>
     <string name="plot_dimensionY_ALTITUDE">Hoogte</string>
     <string name="summary_altitude">Hoogteverandering</string>
+    <string name="summary_note">Notitie</string>
+    <string name="summary_note_add">Notitie toevoegen…</string>
+    <string name="summary_note_edit">Notitie bewerken</string>
+    <string name="summary_note_save">Opslaan</string>
+    <string name="summary_note_cancel">Annuleren</string>
+    <string name="summary_note_locked_while_driving">Notities kunnen alleen worden bewerkt als de auto geparkeerd staat</string>
     <string name="about_translators">Vertalers</string>
     <string name="restart_notification_reason_unknown">%s is herstart om een onbekende reden.</string>
     <string name="summary_speed">Gemiddelde snelheid</string>

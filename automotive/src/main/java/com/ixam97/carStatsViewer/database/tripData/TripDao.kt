@@ -46,6 +46,13 @@ interface TripDao {
     @Query("SELECT * FROM DrivingSession WHERE driving_session_id = :sessionId")
     fun getDrivingSessionById(sessionId: Long): DrivingSession?
 
+    /**
+     * Only updates the note of a driving session. Unlike [upsertDrivingSession] this does not
+     * overwrite the sums of an active session that are kept in memory by the DataProcessor.
+     */
+    @Query("UPDATE DrivingSession SET note = :note, last_edited_epoch_time = :editedAt WHERE driving_session_id = :sessionId")
+    fun updateDrivingSessionNote(sessionId: Long, note: String, editedAt: Long): Int
+
     @Query("SELECT driving_session_id FROM DrivingSession WHERE end_epoch_time = 0") //
     fun getActiveDrivingSessionIds(): List<Long>
 

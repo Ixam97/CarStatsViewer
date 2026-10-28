@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -31,6 +33,7 @@ import androidx.compose.ui.layout.onVisibilityChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavBackStack
@@ -45,6 +48,7 @@ import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.DummyTripData
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import com.ixam97.carStatsViewer.emulatorMode
+import com.ixam97.carStatsViewer.repository.tripNotes.TripNotesRepository
 import com.ixam97.carStatsViewer.utils.StringFormatters
 import de.ixam97.carcompose.components.controls.CarButton
 import de.ixam97.carcompose.components.controls.CarButtonDefaults
@@ -462,6 +466,28 @@ internal fun DrivingSessionRow(
                 color = descriptionColor,
                 text = StringFormatters.getElapsedTimeString(drivingSession.drive_time, true)
             )
+        }
+        if (drivingSession.note.isNotBlank()) {
+            Row(
+                modifier = Modifier.height(28.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .padding(end = 5.dp)
+                        .size(28.dp),
+                    imageVector = Icons.Outlined.EditNote,
+                    tint = descriptionColor,
+                    contentDescription = null
+                )
+                Text(
+                    style = CarTheme.carTypography.rowContent,
+                    color = descriptionColor,
+                    text = TripNotesRepository.singleLineNote(drivingSession.note),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 

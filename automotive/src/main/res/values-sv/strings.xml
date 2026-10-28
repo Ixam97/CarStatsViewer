@@ -149,6 +149,12 @@
     <string name="plot_dimensionY_SPEED">Hastighet</string>
     <string name="plot_dimensionY_ALTITUDE">Höjd</string>
     <string name="summary_altitude">Höjdförändring</string>
+    <string name="summary_note">Anteckning</string>
+    <string name="summary_note_add">Lägg till anteckning…</string>
+    <string name="summary_note_edit">Redigera anteckning</string>
+    <string name="summary_note_save">Spara</string>
+    <string name="summary_note_cancel">Avbryt</string>
+    <string name="summary_note_locked_while_driving">Anteckningar kan bara redigeras när bilen är parkerad</string>
     <string name="about_translators">Översättare</string>
     <string name="restart_notification_reason_unknown">%s har startat om av okänd anledning.</string>
     <string name="summary_speed">Medelhastighet</string>

@@ -149,6 +149,12 @@
     <string name="plot_dimensionY_SPEED">Velocidade</string>
     <string name="plot_dimensionY_ALTITUDE">Altitude</string>
     <string name="summary_altitude">Mudança de altitude</string>
+    <string name="summary_note">Nota</string>
+    <string name="summary_note_add">Adicionar nota…</string>
+    <string name="summary_note_edit">Editar nota</string>
+    <string name="summary_note_save">Salvar</string>
+    <string name="summary_note_cancel">Cancelar</string>
+    <string name="summary_note_locked_while_driving">As notas só podem ser editadas com o veículo estacionado</string>
     <string name="about_translators">Tradutores</string>
     <string name="restart_notification_reason_unknown">%s foi reiniciado por um motivo desconhecido.</string>
     <string name="summary_speed">Velocidade média</string>

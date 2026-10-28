@@ -149,6 +149,12 @@
     <string name="plot_dimensionY_SPEED">Nopeus</string>
     <string name="plot_dimensionY_ALTITUDE">Korkeus merenpinnasta</string>
     <string name="summary_altitude">Korkeuden muutos</string>
+    <string name="summary_note">Muistiinpano</string>
+    <string name="summary_note_add">Lisää muistiinpano…</string>
+    <string name="summary_note_edit">Muokkaa muistiinpanoa</string>
+    <string name="summary_note_save">Tallenna</string>
+    <string name="summary_note_cancel">Peruuta</string>
+    <string name="summary_note_locked_while_driving">Muistiinpanoja voi muokata vain auton ollessa pysäköitynä</string>
     <string name="about_translators">Kääntäjät</string>
     <string name="restart_notification_reason_unknown">%s on käynnistynyt uudelleen tuntemattomasta syystä.</string>
     <string name="summary_speed">Keskinopeus</string>

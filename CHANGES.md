@@ -1,5 +1,8 @@
 # Changelog [EN]:
 
+## Unreleased
+ - Trip notes: a plain-text note can be added to every trip in the Trip Details (only while parked). It is shown in the trip history and included in the CSV export.
+
 ## 0.29.0
  - Play Edition: Migrating to a single activity architecture. This makes the settings UI more flexible and allows for more detailed trip details.
  - Legacy Edition: Complete rewrite of Settings-UI (same as Play Edition). The main Screen will follow at a later stage.
@@ -8,6 +11,9 @@
  - Numerous optimizations and adjustments to account for vehicle compatibility.
 
 # Changelog [DE]:
+
+## Unreleased
+ - Trip-Notizen: Jedem Trip kann in der Tripzusammenfassung eine Notiz hinzugefügt werden (nur im Stand). Sie wird im Tripverlauf angezeigt und im CSV-Export mitgeliefert.
 
 ## 0.29.0
  - Play Edition: Migration zu einer Single Activity Architektur. Dies erlaubt flexiblere Einstellungs-UIs und eine detailliertere Tripzusammenfassung.

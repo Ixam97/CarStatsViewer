@@ -149,6 +149,12 @@
     <string name="plot_dimensionY_SPEED">Hastighet</string>
     <string name="plot_dimensionY_ALTITUDE">Høyde</string>
     <string name="summary_altitude">Høydeendring</string>
+    <string name="summary_note">Notat</string>
+    <string name="summary_note_add">Legg til notat…</string>
+    <string name="summary_note_edit">Rediger notat</string>
+    <string name="summary_note_save">Lagre</string>
+    <string name="summary_note_cancel">Avbryt</string>
+    <string name="summary_note_locked_while_driving">Notater kan bare redigeres når bilen står parkert</string>
     <string name="about_translators">Oversettere</string>
     <string name="restart_notification_reason_unknown">%s har restartet av ukjent grunn.</string>
     <string name="summary_speed">Gjennomsnittsfart</string>
