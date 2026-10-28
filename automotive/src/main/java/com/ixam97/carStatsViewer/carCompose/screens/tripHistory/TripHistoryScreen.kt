@@ -51,6 +51,7 @@ import de.ixam97.carcompose.components.controls.CarButtonDefaults
 import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.controls.CarRow
 import de.ixam97.carcompose.components.controls.CarRowCheckbox
+import de.ixam97.carcompose.components.layout.CarColumn
 import de.ixam97.carcompose.components.layout.CarLazyColumn
 import de.ixam97.carcompose.components.layout.CarListItem
 import de.ixam97.carcompose.components.layout.CarPaneLayout
@@ -231,9 +232,9 @@ fun TripHistoryContent(
                             onClick = { viewModel.setDeleteMode(false) }
                         ) { Text(stringResource(R.string.dialog_reset_cancel)) }
                     }
-                    Spacer(Modifier.weight(1f))
                     if (availableWidth >= filtersWidthThreshold) {
-                        Column(horizontalAlignment = Alignment.Start) {
+                        // scrollable, so the filters stay reachable if they do not fit the screen height
+                        CarColumn(modifier = Modifier.weight(1f)) {
                             TripHistoryFiltersContent(
                                 viewModel = viewModel,
                                 sectionTitle = stringResource(R.string.history_dialog_filters_title) + ":",

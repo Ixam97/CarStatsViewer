@@ -342,7 +342,7 @@
     <string name="history_delete_no_trips_selected">Keine Trips ausgewählt</string>
     <string name="history_dialog_filters_title">Trips filtern</string>
     <string name="history_dialog_filters_manual">Zeige manuelle Trips</string>
-    <string name="history_dialog_filters_charge">Zeige "Seit Ladung"-Trips</string>
+    <string name="history_dialog_filters_charge">Zeige \"Seit Ladung\"-Trips</string>
     <string name="history_dialog_filters_auto">Zeige automatische Trips</string>
     <string name="history_dialog_filters_month">Zeige monatliche Trips</string>
     <string name="history_dialog_filters_note">Hinweis: Aktuelle Trips werden unabhängig der eingestellten Filter immer angezeigt.</string>
@@ -354,6 +354,11 @@
     <string name="history_dialog_date_range_hint">Zeitraum wählen, um nach Trips zu filtern, die innerhalb dessen beginnen.</string>
     <string name="history_dialog_filters_distance">Strecke</string>
     <string name="history_dialog_filters_distance_all">Alle Strecken</string>
+    <string name="history_dialog_filters_trip_types">Trip-Typen</string>
+    <string name="history_dialog_filters_type_auto">Automatische Trips</string>
+    <string name="history_dialog_filters_type_month">Monatliche Trips</string>
+    <string name="history_dialog_filters_type_charge">\"Seit Ladung\"-Trips</string>
+    <string name="history_dialog_filters_type_manual">Manuelle Trips</string>
     <string name="history_dialog_distance_hint">Nur Trips anzeigen, deren gefahrene Strecke in diesem Bereich liegt.</string>
     <string name="history_dialog_distance_range">%1$d – %2$d %3$s</string>
     <string name="history_dialog_distance_at_least">≥ %1$d %2$s</string>

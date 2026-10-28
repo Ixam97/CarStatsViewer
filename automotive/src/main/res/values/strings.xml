@@ -436,6 +436,11 @@
     <string name="history_dialog_date_range_hint">Select a date range to filter for trips that start within this range.</string>
     <string name="history_dialog_filters_distance">Distance</string>
     <string name="history_dialog_filters_distance_all">All distances</string>
+    <string name="history_dialog_filters_trip_types">Trip Types</string>
+    <string name="history_dialog_filters_type_auto">Automatic Trips</string>
+    <string name="history_dialog_filters_type_month">Monthly Trips</string>
+    <string name="history_dialog_filters_type_charge">Since Charge Trips</string>
+    <string name="history_dialog_filters_type_manual">Manual Trips</string>
     <string name="history_dialog_distance_hint">Only show trips with a driven distance in this range.</string>
     <string name="history_dialog_distance_range">%1$d – %2$d %3$s</string>
     <string name="history_dialog_distance_at_least">≥ %1$d %2$s</string>

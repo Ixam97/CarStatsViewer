@@ -35,6 +35,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -51,7 +53,6 @@ import de.ixam97.carcompose.components.controls.CarButton
 import de.ixam97.carcompose.components.controls.CarButtonDefaults
 import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.controls.CarRow
-import de.ixam97.carcompose.components.controls.CarRowCheckbox
 import de.ixam97.carcompose.components.controls.CarTextField
 import de.ixam97.carcompose.components.layout.CarColumn
 import de.ixam97.carcompose.components.layout.CarListItem
@@ -171,38 +172,15 @@ fun ColumnScope.TripHistoryFiltersContent(
             )
         },
         CarListItem {
-            CarRowCheckbox(
-                title = stringResource(R.string.history_dialog_filters_auto),
-                isSelected = tripHistoryState.selectedFilters[TripType.AUTO]?:false,
-                onSelect = {
-                    viewModel.setTripFilter(TripType.AUTO, !(tripHistoryState.selectedFilters[TripType.AUTO]?:false))
-                }
-            )
-        },
-        CarListItem {
-            CarRowCheckbox(
-                title = stringResource(R.string.history_dialog_filters_month),
-                isSelected = tripHistoryState.selectedFilters[TripType.MONTH]?:false,
-                onSelect = {
-                    viewModel.setTripFilter(TripType.MONTH, !(tripHistoryState.selectedFilters[TripType.MONTH]?:false))
-                }
-            )
-        },
-        CarListItem {
-            CarRowCheckbox(
-                title = stringResource(R.string.history_dialog_filters_charge),
-                isSelected = tripHistoryState.selectedFilters[TripType.SINCE_CHARGE]?:false,
-                onSelect = {
-                    viewModel.setTripFilter(TripType.SINCE_CHARGE, !(tripHistoryState.selectedFilters[TripType.SINCE_CHARGE]?:false))
-                }
-            )
-        },
-        CarListItem {
-            CarRowCheckbox(
-                title = stringResource(R.string.history_dialog_filters_manual),
-                isSelected = tripHistoryState.selectedFilters[TripType.MANUAL]?:false,
-                onSelect = {
-                    viewModel.setTripFilter(TripType.MANUAL, !(tripHistoryState.selectedFilters[TripType.MANUAL]?:false))
+            CarRow(
+                title = stringResource(R.string.history_dialog_filters_trip_types),
+                descriptionContent = {
+                    TripTypeFilterGrid(
+                        selectedFilters = tripHistoryState.selectedFilters,
+                        onToggle = { tripType ->
+                            viewModel.setTripFilter(tripType, tripHistoryState.selectedFilters[tripType] != true)
+                        }
+                    )
                 }
             )
         }
@@ -299,6 +277,42 @@ private fun DateRangePickerDialog(
                         active = true,
                         enabled = (dateRangePickerState.selectedStartDateMillis != null && dateRangePickerState.selectedEndDateMillis != null)
                     ) { Text(stringResource(R.string.dialog_apply)) }
+                }
+            }
+        }
+    }
+}
+
+private val tripTypeFilterRows = listOf(
+    listOf(TripType.AUTO to R.string.history_dialog_filters_type_auto, TripType.MONTH to R.string.history_dialog_filters_type_month),
+    listOf(TripType.SINCE_CHARGE to R.string.history_dialog_filters_type_charge, TripType.MANUAL to R.string.history_dialog_filters_type_manual),
+)
+
+/** Toggle buttons for the trip types in a 2x2 grid; a highlighted button means the type is shown. */
+@Composable
+private fun TripTypeFilterGrid(
+    selectedFilters: Map<Int, Boolean>,
+    onToggle: (tripType: Int) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultVerticalPadding)) {
+        tripTypeFilterRows.forEach { row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultVerticalPadding)) {
+                row.forEach { (tripType, label) ->
+                    val selected = selectedFilters[tripType] == true
+                    CarButton(
+                        modifier = Modifier
+                            .weight(1f)
+                            .semantics { this.selected = selected },
+                        active = selected,
+                        dimensions = CarButtonDefaults.dimensions.copy(horizontalPadding = 8.dp),
+                        onClick = { onToggle(tripType) }
+                    ) {
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = stringResource(label),
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
         }

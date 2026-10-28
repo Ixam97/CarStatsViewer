@@ -2,6 +2,7 @@
 
 ## Unreleased
  - Trip history: past trips can be filtered by driven distance (range slider with presets and fine adjustment). Part of the new CarCompose UI; in the Legacy Edition reachable via the developer options.
+ - Trip history: the trip type filters are shown as a compact grid of toggle buttons; the filter column on wide screens is scrollable.
 
 ## 0.29.0
  - Play Edition: Migrating to a single activity architecture. This makes the settings UI more flexible and allows for more detailed trip details.
@@ -14,6 +15,7 @@
 
 ## Unreleased
  - Tripverlauf: Vergangene Trips lassen sich nach gefahrener Strecke filtern (Bereichsregler mit Vorauswahl und Feineinstellung). Teil der neuen CarCompose-Oberfläche; in der Legacy Edition über die Entwickleroptionen erreichbar.
+ - Tripverlauf: Die Trip-Typ-Filter werden als kompaktes Raster aus Umschaltknöpfen angezeigt; die Filterspalte auf breiten Bildschirmen ist scrollbar.
 
 ## 0.29.0
  - Play Edition: Migration zu einer Single Activity Architektur. Dies erlaubt flexiblere Einstellungs-UIs und eine detailliertere Tripzusammenfassung.
