@@ -1,5 +1,8 @@
 # Changelog [EN]:
 
+## Unreleased
+ - Trip history: past trips can be filtered by driven distance (range slider with presets and fine adjustment). Part of the new CarCompose UI; in the Legacy Edition reachable via the developer options.
+
 ## 0.29.0
  - Play Edition: Migrating to a single activity architecture. This makes the settings UI more flexible and allows for more detailed trip details.
  - Legacy Edition: Complete rewrite of Settings-UI (same as Play Edition). The main Screen will follow at a later stage.
@@ -8,6 +11,9 @@
  - Numerous optimizations and adjustments to account for vehicle compatibility.
 
 # Changelog [DE]:
+
+## Unreleased
+ - Tripverlauf: Vergangene Trips lassen sich nach gefahrener Strecke filtern (Bereichsregler mit Vorauswahl und Feineinstellung). Teil der neuen CarCompose-Oberfläche; in der Legacy Edition über die Entwickleroptionen erreichbar.
 
 ## 0.29.0
  - Play Edition: Migration zu einer Single Activity Architektur. Dies erlaubt flexiblere Einstellungs-UIs und eine detailliertere Tripzusammenfassung.

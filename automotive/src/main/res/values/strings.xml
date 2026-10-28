@@ -434,6 +434,12 @@
     <string name="history_dialog_delete_message">The trip will be deleted permanently.</string>
     <string name="history_dialog_delete_confirm">Delete trip</string>
     <string name="history_dialog_date_range_hint">Select a date range to filter for trips that start within this range.</string>
+    <string name="history_dialog_filters_distance">Distance</string>
+    <string name="history_dialog_filters_distance_all">All distances</string>
+    <string name="history_dialog_distance_hint">Only show trips with a driven distance in this range.</string>
+    <string name="history_dialog_distance_range">%1$d – %2$d %3$s</string>
+    <string name="history_dialog_distance_at_least">≥ %1$d %2$s</string>
+    <string name="history_dialog_distance_at_most">≤ %1$d %2$s</string>
     <string name="history_dialog_date_range_no_range_selected">No date range selected</string>
 
     <string name="history_dialog_multi_delete_title">Delete multiple trips?</string>

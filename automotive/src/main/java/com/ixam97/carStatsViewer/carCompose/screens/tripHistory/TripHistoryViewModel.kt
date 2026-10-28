@@ -6,10 +6,15 @@ import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.database.tripData.TripType
+import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,20 +31,32 @@ data class TripHistoryState(
     ),
     val selectedDateRange: Pair<Long, Long>? = null,
     val validDateRange: Pair<Long, Long>? = null,
+    val selectedDistanceRange: DistanceRange? = null,
     val filtersModified: Boolean = false,
     val currentTrips: List<DrivingSession> = listOf(),
     val pastTrips: List<DrivingSession> = listOf(),
     val deleteSelection: List<Long> = listOf()
 )
 
+/** Past trips with the type, date and distance filters applied, newest first. */
+fun TripHistoryState.filteredPastTrips(unit: DistanceUnitEnum): List<DrivingSession> = pastTrips
+    .sortedByDescending { it.start_epoch_time }
+    .filter { selectedFilters[it.session_type] == true }
+    .filter { selectedDateRange == null || it.start_epoch_time in selectedDateRange.first..(selectedDateRange.second + 86400000) }
+    .filter { selectedDistanceRange == null || selectedDistanceRange.contains(it.driven_distance, unit) }
+
 class TripHistoryViewModel: ViewModel() {
 
     private var _tripHistoryState = MutableStateFlow(TripHistoryState())
     val tripHistoryState = _tripHistoryState.asStateFlow()
 
+    val filteredPastTrips: StateFlow<List<DrivingSession>> = tripHistoryState
+        .map { it.filteredPastTrips(CarStatsViewer.appPreferences.distanceUnit) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
     init {
 
-        _tripHistoryState.update { it.copy(filtersModified = filtersModified(it.selectedFilters, it.selectedDateRange)) }
+        _tripHistoryState.update { it.withFiltersModified() }
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -156,11 +173,13 @@ class TripHistoryViewModel: ViewModel() {
     }
 
     fun setFilterDateRange(dateRange: Pair<Long, Long>?) {
-        _tripHistoryState.update { it.copy(
-            selectedDateRange = dateRange,
-            filtersModified = filtersModified(it.selectedFilters, dateRange)
-        ) }
+        _tripHistoryState.update { it.copy(selectedDateRange = dateRange).withFiltersModified() }
         //TODO: Implement Preferences for Date range
+    }
+
+    fun setFilterDistanceRange(range: DistanceRange?) {
+        val normalized = range?.takeUnless { it.isUnbounded }
+        _tripHistoryState.update { it.copy(selectedDistanceRange = normalized).withFiltersModified() }
     }
 
     fun setTripFilter(tripType: Int, filter: Boolean) {
@@ -174,10 +193,7 @@ class TripHistoryViewModel: ViewModel() {
             _tripHistoryState.update {
                 val mutableMap = it.selectedFilters.toMutableMap()
                 mutableMap[tripType] = filter
-                it.copy(
-                    selectedFilters = mutableMap,
-                    filtersModified = filtersModified(mutableMap, it.selectedDateRange)
-                )
+                it.copy(selectedFilters = mutableMap).withFiltersModified()
             }
             updateValidDateRange()
         }
@@ -243,11 +259,6 @@ class TripHistoryViewModel: ViewModel() {
         }
     }
 
-    private fun filtersModified(filters: Map<Int, Boolean>, dateRange: Pair<Long, Long>?): Boolean {
-        return !(filters[TripType.MANUAL] == true &&
-                filters[TripType.MONTH] == true &&
-                filters[TripType.AUTO] == true &&
-                filters[TripType.SINCE_CHARGE] == true &&
-                dateRange == null)
-    }
+    private fun TripHistoryState.withFiltersModified() = copy(filtersModified =
+        selectedFilters.values.any { !it } || selectedDateRange != null || selectedDistanceRange != null)
 }

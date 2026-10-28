@@ -84,6 +84,11 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    testOptions {
+        // Robolectric tests need app resources (strings, preferences file key)
+        unitTests.isIncludeAndroidResources = true
+    }
+
     lint {
         abortOnError = false
         checkReleaseBuilds = false
@@ -136,6 +141,9 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.adaptive)
     implementation(libs.androidx.compose.material.icons.extended)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.navigation.compose)
@@ -153,6 +161,11 @@ dependencies {
     implementation("com.github.jetradarmobile:android-snowfall:1.2.1")
 
     implementation(libs.github.carcompose)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.robolectric)
 
     // to fix unresolved references to android.car
     // def sdkDir = project.android.sdkDirectory.canonicalPath

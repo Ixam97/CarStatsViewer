@@ -35,15 +35,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carCompose.components.CarRangeSlider
+import com.ixam97.carStatsViewer.carCompose.components.CarStepper
 import com.ixam97.carStatsViewer.compose.RowContentText
 import com.ixam97.carStatsViewer.database.tripData.TripType
 import de.ixam97.carcompose.components.controls.CarButton
+import de.ixam97.carcompose.components.controls.CarButtonDefaults
 import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.controls.CarRow
 import de.ixam97.carcompose.components.controls.CarRowCheckbox
@@ -121,6 +126,43 @@ fun ColumnScope.TripHistoryFiltersContent(
                             onDateRangeSelected = { dateRange ->
                                 showDialog = false
                                 viewModel.setFilterDateRange(dateRange)
+                            },
+                            onCancel = { showDialog = false }
+                        )
+                    }
+                }
+            )
+        },
+        CarListItem {
+            var showDialog by remember { mutableStateOf(false) }
+            CarRow(
+                title = stringResource(R.string.history_dialog_filters_distance),
+                descriptionContent = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultHorizontalPadding)
+                    ) {
+                        CarTextField(
+                            modifier = Modifier.weight(1f).clickable { showDialog = true },
+                            value = distanceRangeText(tripHistoryState.selectedDistanceRange),
+                            onValueChange = { },
+                            leadingIcon = { Icon(
+                                painterResource(R.drawable.ic_distance),
+                                null,
+                                modifier = Modifier.size(CarTheme.carDimensions.iconButtonSize)
+                            ) }
+                        )
+                        CarIconButton(
+                            painter = painterResource(R.drawable.ic_carcompose_reset),
+                            enabled = tripHistoryState.selectedDistanceRange != null
+                        ) { viewModel.setFilterDistanceRange(null) }
+                    }
+                    if (showDialog) {
+                        DistanceRangeDialog(
+                            selected = tripHistoryState.selectedDistanceRange,
+                            onApply = { range ->
+                                showDialog = false
+                                viewModel.setFilterDistanceRange(range)
                             },
                             onCancel = { showDialog = false }
                         )
@@ -260,6 +302,137 @@ private fun DateRangePickerDialog(
                 }
             }
         }
+    }
+}
+
+private val distanceRangePresets = listOf(
+    DistanceRange(0, 10),
+    DistanceRange(10, 50),
+    DistanceRange(50, 200),
+    DistanceRange(200, null),
+)
+
+/**
+ * Compose dialog to select a range of driven distances in the display unit. Combines a range
+ * slider for coarse selection, presets and steppers for fine adjustment. The value pair is the
+ * single source of truth, the slider thumbs follow it.
+ */
+@Composable
+internal fun DistanceRangeDialog(
+    selected: DistanceRange?,
+    onApply: (DistanceRange?) -> Unit,
+    onCancel: () -> Unit
+) {
+    var range by remember { mutableStateOf(selected ?: DistanceRange(0, null)) }
+    val unitText = CarStatsViewer.appPreferences.distanceUnit.unit()
+
+    Dialog(
+        onDismissRequest = onCancel,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier.padding(50.dp)
+        ) {
+            Column (
+                modifier = Modifier
+                    .widthIn(max = 1024.dp)
+                    .clip(RoundedCornerShape(CarTheme.carShapes.listSectionCornerSize))
+                    .background(CarTheme.carColors.listSectionBackground)
+                    .padding(CarTheme.carDimensions.defaultHorizontalPadding),
+                verticalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultVerticalPadding)
+            ) {
+                Text(
+                    modifier = Modifier.padding(top = CarTheme.carDimensions.defaultVerticalPadding),
+                    text = distanceRangeText(range),
+                    style = CarTheme.carTypography.title
+                )
+                Text(
+                    text = stringResource(R.string.history_dialog_distance_hint),
+                    style = CarTheme.carTypography.defaultBody
+                )
+                DialogDivider()
+                Row(horizontalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultVerticalPadding)) {
+                    distanceRangePresets.forEach { preset ->
+                        CarButton(
+                            modifier = Modifier.weight(1f),
+                            active = range == preset,
+                            // narrow padding, so the labels fit on four buttons in a narrow dialog
+                            dimensions = CarButtonDefaults.dimensions.copy(horizontalPadding = 8.dp),
+                            onClick = { range = preset }
+                        ) {
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = distanceRangeText(preset),
+                                textAlign = TextAlign.Center,
+                                maxLines = 1
+                            )
+                        }
+                    }
+                }
+                DialogDivider()
+                CarRangeSlider(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = valueToPosition(range.min)..valueToPosition(range.max),
+                    onValueChange = { position ->
+                        val min = positionToValue(position.start.coerceAtMost(DISTANCE_FILTER_ANCHORS.lastIndex.toFloat())) ?: 0
+                        range = DistanceRange(min, positionToValue(position.endInclusive))
+                    },
+                    valueRange = 0f..DISTANCE_FILTER_UNBOUNDED_POSITION,
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CarStepper(
+                        valueText = "${range.min} $unitText",
+                        onDecrement = { range = range.decrementMin() },
+                        onIncrement = { range = range.incrementMin() },
+                        decrementEnabled = range.canDecrementMin,
+                        incrementEnabled = range.canIncrementMin,
+                    )
+                    Spacer(Modifier.weight(1f))
+                    CarStepper(
+                        valueText = range.max?.let { "$it $unitText" } ?: "∞",
+                        onDecrement = { range = range.decrementMax() },
+                        onIncrement = { range = range.incrementMax() },
+                        decrementEnabled = range.canDecrementMax,
+                        incrementEnabled = range.canIncrementMax,
+                    )
+                }
+                DialogDivider()
+                Row() {
+                    CarButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = onCancel
+                    ) { Text(stringResource(R.string.dialog_reset_cancel)) }
+                    Spacer(modifier = Modifier.size(CarTheme.carDimensions.defaultHorizontalPadding))
+                    CarButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = { onApply(range.takeUnless { it.isUnbounded }) },
+                        active = true
+                    ) { Text(stringResource(R.string.dialog_apply)) }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DialogDivider() {
+    Box(
+        modifier = Modifier
+            .height(2.dp)
+            .fillMaxWidth()
+            .background(CarTheme.carColors.secondaryDivider)
+    )
+}
+
+/** Returns a string describing a distance range in the display unit, or "All distances". */
+@Composable
+private fun distanceRangeText(range: DistanceRange?): String {
+    val unitText = CarStatsViewer.appPreferences.distanceUnit.unit()
+    return when {
+        range == null || range.isUnbounded -> stringResource(R.string.history_dialog_filters_distance_all)
+        range.max == null -> stringResource(R.string.history_dialog_distance_at_least, range.min, unitText)
+        range.min == 0 -> stringResource(R.string.history_dialog_distance_at_most, range.max, unitText)
+        else -> stringResource(R.string.history_dialog_distance_range, range.min, range.max, unitText)
     }
 }
 

@@ -291,16 +291,11 @@ internal fun TripHistoryList(
         else -> listOf(CarListItem { NoDataRow() })
     }
 
+    val filteredPastTrips by viewModel.filteredPastTrips.collectAsState()
+
     val pastTripsListItems = when {
         tripHistoryState.isLoadingPastTrips && tripHistoryState.pastTrips.isEmpty() -> listOf(CarListItem { LoadingRow() })
-        tripHistoryState.pastTrips.any { tripHistoryState.selectedFilters[it.session_type] == true } -> tripHistoryState.pastTrips
-            .sortedBy { it.start_epoch_time }
-            .reversed()
-            .filter { tripHistoryState.selectedFilters[it.session_type] == true }
-            .filter {
-                if (tripHistoryState.selectedDateRange == null) true
-                else it.start_epoch_time in (tripHistoryState.selectedDateRange!!.first)..(tripHistoryState.selectedDateRange!!.second + 86400000)
-            }
+        filteredPastTrips.isNotEmpty() -> filteredPastTrips
             .map { drivingSession ->
                 CarListItem {
                     DrivingSessionRow(
