@@ -42,8 +42,8 @@ class LocalTripDataSource(
         return tripDao.getLastEpochTimeBefore(epochTime)
     }
 
-    override suspend fun getDrivingPointsSince(startTime: Long, limit: Int): List<DrivingPoint> {
-        return tripDao.getDrivingPointsSince(startTime, limit)
+    override suspend fun getLatestDrivingPointsSince(startTime: Long, limit: Int): List<DrivingPoint> {
+        return tripDao.getLatestDrivingPointsSince(startTime, limit)
     }
 
     override suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long? {

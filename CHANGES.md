@@ -6,6 +6,8 @@
  - Data Export (WIP): Trips and Charging Sessions can now be exported via E-Mail as CSV-files. The formatting is still WIP and will change in future updates.
  - Overhaul of the Trip Details view for a more compact and flexible overview, especially for wide screen devices.
  - Numerous optimizations and adjustments to account for vehicle compatibility.
+ - Fixed: consumption graph showed old data after app restart or trip reset.
+ - Fixed: 100 km/mi graph range only showed 50 km.
 
 # Changelog [DE]:
 
@@ -15,6 +17,8 @@
  - Daten-Export (WIP): Trips und Ladevorgänge können per E-Mail als CSV-Dateien exportiert werden. Die Formatierung ist noch nicht endgültig und wird sich in zukünftigen Releases verändern.
  - Überarbeitete Tripzusammenfassung für kompaktere und flexiblere Darstellungen, insbesondere auf Breitbild-Anzeigen.
  - Optimierungen und Anpassungen für Fahrzeugkompatibilität.
+ - Behoben: Das Verbrauchsdiagramm zeigte nach einem Neustart der App oder dem Zurücksetzen eines Trips alte Daten an.
+ - Behoben: Der Diagrammbereich 100 km/mi zeigte nur 50 km an.
 
 ## 0.28.1
  - Beginnend mit OTA P4.2.4 ist der Polestar 4 vollständig mit Car Stats Viewer kompatibel.

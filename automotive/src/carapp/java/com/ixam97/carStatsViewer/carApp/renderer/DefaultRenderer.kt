@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import androidx.car.app.CarContext
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.Defines
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.dataProcessor.RealTimeData
 import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
@@ -287,11 +288,7 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
             }
 
             diagram.apply {
-                val newDistance = when (CarStatsViewer.appPreferences.mainPrimaryDimensionRestriction) {
-                    1 -> 40_000L
-                    2 -> 100_000L
-                    else -> 20_000L
-                }
+                val newDistance = Defines.mainViewDistance(CarStatsViewer.appPreferences.mainPrimaryDimensionRestriction)
                 dimensionSmoothing = 0.01f
                 dimensionSmoothingType = PlotDimensionSmoothingType.PERCENTAGE
                 dimensionRestriction = CarStatsViewer.appPreferences.distanceUnit.asUnit(newDistance)
@@ -382,15 +379,11 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
         session?.drivingPoints?.let { drivingPoints ->
             val startIndex = consumptionPlotLine.getDataPointsSize()
             var prevDrivingPoint = consumptionPlotLine.lastItem()
-            var lastItemIndex = drivingPoints.withIndex().find { it.value.driving_point_epoch_time == prevDrivingPoint?.EpochTime }?.index
+            var lastItemIndex = drivingPoints.indexOfLast { it.driving_point_epoch_time == prevDrivingPoint?.EpochTime }.takeIf { it >= 0 }
 
             // InAppLogger.d("startIndex = $startIndex, lastItemIndex = $lastItemIndex, drivingPoints.size = ${drivingPoints.size}, prevDrivingPoint?.Distance = ${prevDrivingPoint?.Distance}")
 
-            val selectedDistance = appPreferences.distanceUnit.asUnit(when (appPreferences.mainPrimaryDimensionRestriction) {
-                1 -> 40_000L
-                2 -> 100_000L
-                else -> 20_000L
-            })
+            val selectedDistance = appPreferences.distanceUnit.asUnit(Defines.mainViewDistance(appPreferences.mainPrimaryDimensionRestriction))
 
             when {
                 startIndex == 0 && drivingPoints.isEmpty() -> {
@@ -430,11 +423,7 @@ class DefaultRenderer(val carContext: CarContext): Renderer {
         }
         consumptionPlotLine.reset()
         if (localDrivingPoints.isEmpty()) return
-        val newDistance = when (appPreferences.mainPrimaryDimensionRestriction) {
-            1 -> 40_000L
-            2 -> 100_000L
-            else -> 20_000L
-        }
+        val newDistance = Defines.mainViewDistance(appPreferences.mainPrimaryDimensionRestriction)
         val dataPoints = DataConverters.consumptionPlotLineFromDrivingPoints(localDrivingPoints, appPreferences.distanceUnit.asUnit(newDistance.toFloat()))
         consumptionPlotLine.addDataPoints(dataPoints)
     }

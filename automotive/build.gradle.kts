@@ -154,6 +154,11 @@ dependencies {
 
     implementation(libs.github.carcompose)
 
+    testImplementation(libs.junit)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.robolectric)
+
     // to fix unresolved references to android.car
     // def sdkDir = project.android.sdkDirectory.canonicalPath
     // def androidCarJar = "$sdkDir/platforms/android-33/optional/android.car.jar"

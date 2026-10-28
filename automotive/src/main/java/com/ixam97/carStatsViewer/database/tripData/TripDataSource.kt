@@ -13,7 +13,8 @@ interface TripDataSource {
 
     suspend fun getLastEpochTimeBefore(epochTime: Long): Long?
 
-    suspend fun getDrivingPointsSince(startTime: Long, limit: Int): List<DrivingPoint>
+    /** Newest [limit] driving points since [startTime], in chronological order. */
+    suspend fun getLatestDrivingPointsSince(startTime: Long, limit: Int): List<DrivingPoint>
 
     suspend fun supersedeDrivingSession(prevSessionId: Long, timestamp: Long): Long?
 

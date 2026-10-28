@@ -134,6 +134,8 @@ class DataProcessor {
          * writing and reading sessions for the local session copies at the same time. When run in a
          * Coroutine this job should always be joined to ensure data integrity. See
          * updateDrivingDataPoint as well!
+         * The list always contains the newest MAIN_VIEW_DRIVING_POINTS points in chronological
+         * order. This is the invariant both functions must maintain together.
          */
         return CoroutineScope(Dispatchers.IO).launch {
             _localSessionsState.update { localSessions ->
@@ -142,10 +144,13 @@ class DataProcessor {
                     // CarStatsViewer.tripDataSource.getFullDrivingSession(sessionId).let { session ->
                     CarStatsViewer.tripDataSource.getDrivingSession(sessionId)?.let { loadedSession ->
                         val session = loadedSession.copy()
-                        session.drivingPoints = CarStatsViewer.tripDataSource.getDrivingPointsSince(
+                        val points = CarStatsViewer.tripDataSource.getLatestDrivingPointsSince(
                             startTime = loadedSession.start_epoch_time,
                             limit = Defines.MAIN_VIEW_DRIVING_POINTS
                         )
+                        InAppLogger.d("[NEO] Loaded ${points.size} driving points for session ${loadedSession.driving_session_id} " +
+                            "(${points.firstOrNull()?.driving_point_epoch_time} … ${points.lastOrNull()?.driving_point_epoch_time})")
+                        session.drivingPoints = points
                         localSessions.add(session)
                         if (session.session_type == CarStatsViewer.appPreferences.mainViewTrip + 1) {
                             selectedSessionData = session
@@ -527,6 +532,8 @@ class DataProcessor {
          * writing and reading sessions for the local session copies at the same time. When run in a
          * Coroutine this job should always be joined to ensure data integrity. See
          * loadSessionsToMemory as well!
+         * The list always contains the newest MAIN_VIEW_DRIVING_POINTS points in chronological
+         * order. This is the invariant both functions must maintain together.
          */
         return CoroutineScope(Dispatchers.IO).launch { // Run database write in own coroutine to not Block fast Updates
 

@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.Defines
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.CarComposeActivity
 import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKey
@@ -361,15 +362,11 @@ class MainActivity : FragmentActivity() {
                     session?.drivingPoints?.let { drivingPoints ->
                         val startIndex = consumptionPlotLine.getDataPointsSize()
                         var prevDrivingPoint = consumptionPlotLine.lastItem()
-                        var lastItemIndex = drivingPoints.withIndex().find { it.value.driving_point_epoch_time == prevDrivingPoint?.EpochTime }?.index
+                        var lastItemIndex = drivingPoints.indexOfLast { it.driving_point_epoch_time == prevDrivingPoint?.EpochTime }.takeIf { it >= 0 }
 
                         // InAppLogger.d("startIndex = $startIndex, lastItemIndex = $lastItemIndex, drivingPoints.size = ${drivingPoints.size}, prevDrivingPoint?.Distance = ${prevDrivingPoint?.Distance}")
 
-                        val selectedDistance = appPreferences.distanceUnit.asUnit(when (appPreferences.mainPrimaryDimensionRestriction) {
-                            1 -> 40_000L
-                            2 -> 100_000L
-                            else -> 20_000L
-                        })
+                        val selectedDistance = appPreferences.distanceUnit.asUnit(Defines.mainViewDistance(appPreferences.mainPrimaryDimensionRestriction))
 
                         when {
                             startIndex == 0 && drivingPoints.isEmpty() -> {
@@ -558,11 +555,7 @@ class MainActivity : FragmentActivity() {
 
     fun setPrimaryConsumptionPlotDimension(index: Int) = with(binding) {
         InAppLogger.v("Changing primary plot restriction.")
-        val newDistance = when (index) {
-            1 -> 40_000L
-            2 -> 100_000L
-            else -> 20_000L
-        }
+        val newDistance = Defines.mainViewDistance(index)
         mainConsumptionPlot.dimensionRestriction = appPreferences.distanceUnit.asUnit(newDistance)
         refreshConsumptionPlot()
     }
@@ -906,11 +899,7 @@ class MainActivity : FragmentActivity() {
         consumptionPlotLine.reset()
         if (localDrivingPoints.isEmpty()) return
         lifecycleScope.launch {
-            val newDistance = when (appPreferences.mainPrimaryDimensionRestriction) {
-                1 -> 40_000L
-                2 -> 100_000L
-                else -> 20_000L
-            }
+            val newDistance = Defines.mainViewDistance(appPreferences.mainPrimaryDimensionRestriction)
             val dataPoints = DataConverters.consumptionPlotLineFromDrivingPoints(localDrivingPoints, appPreferences.distanceUnit.asUnit(newDistance.toFloat()))
             runOnUiThread {
                 consumptionPlotLine.addDataPoints(dataPoints)

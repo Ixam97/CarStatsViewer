@@ -56,7 +56,25 @@ object Defines {
      * TODO: Decide on how to determine the interval driving points should be saved...
      */
     const val PLOT_DISTANCE_INTERVAL = 25.0 // 100.0
-    const val MAIN_VIEW_DRIVING_POINTS = 2_000
+
+    /**
+     * Selectable live plot ranges, indexed by mainPrimaryDimensionRestriction. The values are
+     * given in meters and converted to the user's distance unit (km or mi) via asUnit().
+     */
+    val MAIN_VIEW_DISTANCES = listOf(20_000L, 40_000L, 100_000L)
+
+    /** Live plot range for a mainPrimaryDimensionRestriction index, falls back to the smallest range. */
+    fun mainViewDistance(index: Int): Long = MAIN_VIEW_DISTANCES.getOrElse(index) { MAIN_VIEW_DISTANCES.first() }
+
+    private const val MAX_UNIT_FACTOR = 1.60934 // miles
+    private const val PLOT_REBUILD_MARGIN = 200.0 // see DataConverters.consumptionPlotLineFromDrivingPoints
+
+    /**
+     * Newest driving points kept in memory per active session. Covers the largest plot range in
+     * miles (worst case) plus 10 % reserve for marker points with partial distances (≈ 7,090).
+     */
+    val MAIN_VIEW_DRIVING_POINTS: Int =
+        ((MAIN_VIEW_DISTANCES.max() * MAX_UNIT_FACTOR + PLOT_REBUILD_MARGIN) / PLOT_DISTANCE_INTERVAL * 1.1).toInt()
 }
 
 class CarStatsViewer : Application() {

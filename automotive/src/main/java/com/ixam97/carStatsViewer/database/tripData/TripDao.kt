@@ -22,8 +22,19 @@ interface TripDao {
     @Query("SELECT driving_point_epoch_time FROM DrivingPoint WHERE driving_point_epoch_time <= :epochTime ORDER BY driving_point_epoch_time DESC LIMIT 1")
     fun getLastEpochTimeBefore(epochTime: Long): Long?
 
-    @Query("SELECT * FROM DRIVINGPOINT WHERE driving_point_epoch_time >= :startTime ORDER BY driving_point_epoch_time ASC LIMIT :limit")
-    fun getDrivingPointsSince(startTime: Long, limit: Int): List<DrivingPoint>
+    /**
+     * Returns the newest [limit] driving points with an epoch time >= [startTime], sorted in
+     * ascending (chronological) order.
+     */
+    @Query("""
+        SELECT * FROM (
+            SELECT * FROM DrivingPoint
+            WHERE driving_point_epoch_time >= :startTime
+            ORDER BY driving_point_epoch_time DESC
+            LIMIT :limit
+        ) ORDER BY driving_point_epoch_time ASC
+    """)
+    fun getLatestDrivingPointsSince(startTime: Long, limit: Int): List<DrivingPoint>
 
     @Upsert
     fun upsertChargingPoint(chargingPoint: ChargingPoint)
