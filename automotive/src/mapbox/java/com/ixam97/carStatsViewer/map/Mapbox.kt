@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Route
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -99,7 +100,9 @@ object Mapbox: MapboxInterface {
         isLoading: Boolean,
         chargingMarkerOnClick: (id: Long) -> Unit,
         useDarkMap: Boolean,
-        actionFlow: Flow<MapboxInterface.MapboxAction>?
+        actionFlow: Flow<MapboxInterface.MapboxAction>?,
+        routeColorMode: MapboxInterface.RouteColorMode,
+        onRouteColorModeChange: ((MapboxInterface.RouteColorMode) -> Unit)?
     ) {
         if (MapboxOptions.accessToken.isBlank()) {
             Column(
@@ -215,7 +218,29 @@ object Mapbox: MapboxInterface {
                             )
                         }
                     }
-                    MapTripAnnotations(mapTripAnnotationsState)
+                    MapTripAnnotations(mapTripAnnotationsState, routeColorMode)
+                }
+
+                if (!mapTripDataState.isLoading && mapTripDataState.tripPoints.isNotEmpty()
+                    && routeColorMode != MapboxInterface.RouteColorMode.SOLID) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.BottomStart
+                    ) {
+                        RouteColorLegend(
+                            // Keeps the Mapbox logo, attribution and map controls visible
+                            modifier = Modifier
+                                .padding(start = 15.dp, end = 110.dp, bottom = 60.dp)
+                                .dropShadow(
+                                    shape = RoundedCornerShape(CarTheme.carShapes.listSectionCornerSize),
+                                    shadow = mapOverlayShadow
+                                )
+                                .clip(RoundedCornerShape(CarTheme.carShapes.listSectionCornerSize))
+                                .background(CarTheme.carColors.listSectionBackground)
+                                .padding(CarTheme.carDimensions.defaultHorizontalPadding),
+                            routeColorMode = routeColorMode
+                        )
+                    }
                 }
 
                 if (mapTripDataState.isLoading) {
@@ -281,6 +306,8 @@ object Mapbox: MapboxInterface {
                 showBearingButton = mapViewportState.cameraState?.let { it.bearing != 0.0 || it.pitch != 0.0 }?:false,
                 bearingAngle = mapViewportState.cameraState?.bearing?.toFloat()?:0f,
                 // satelliteSelected = satelliteTheme
+                routeColorMode = routeColorMode,
+                onRouteColorModeChange = onRouteColorModeChange
             )
         }
     }
@@ -374,7 +401,9 @@ object Mapbox: MapboxInterface {
         onSatellite: (() -> Unit)? = null,
         satelliteSelected: Boolean = false,
         showBearingButton: Boolean = false,
-        bearingAngle: Float = 0f
+        bearingAngle: Float = 0f,
+        routeColorMode: MapboxInterface.RouteColorMode = MapboxInterface.RouteColorMode.SOLID,
+        onRouteColorModeChange: ((MapboxInterface.RouteColorMode) -> Unit)? = null
     ) {
         Column(
             modifier = Modifier.padding(15.dp),
@@ -421,6 +450,13 @@ object Mapbox: MapboxInterface {
                     painter = painterResource(R.drawable.ic_distance),
                     contentDescription = null,
                     tint = CarButtonDefaults.colors.textColor
+                )
+            }
+
+            if (onRouteColorModeChange != null) {
+                RouteColorModeButton(
+                    routeColorMode = routeColorMode,
+                    onRouteColorModeChange = onRouteColorModeChange
                 )
             }
 
@@ -489,6 +525,50 @@ object Mapbox: MapboxInterface {
                     )
                 }
             }
+        }
+    }
+}
+
+/** Single button cycling through the route color modes, the icon shows the active mode. */
+@Composable
+private fun RouteColorModeButton(
+    routeColorMode: MapboxInterface.RouteColorMode,
+    onRouteColorModeChange: (MapboxInterface.RouteColorMode) -> Unit
+) {
+    val modes = MapboxInterface.RouteColorMode.entries
+    Box(
+        modifier = Modifier
+            .size(80.dp)
+            .dropShadow(
+                shape = CarButtonDefaults.shape,
+                shadow = Mapbox.mapOverlayShadow
+            )
+            .clip(CarButtonDefaults.shape)
+            .background(CarButtonDefaults.colors.backgroundBrush)
+            .clickable(onClick = { onRouteColorModeChange(modes[(modes.indexOf(routeColorMode) + 1) % modes.size]) }),
+        contentAlignment = Alignment.Center
+    ) {
+        val iconModifier = Modifier.size(CarTheme.carDimensions.iconButtonSize)
+        val tint = if (routeColorMode == MapboxInterface.RouteColorMode.SOLID) CarButtonDefaults.colors.textColor else CarTheme.carColors.accent
+        when (routeColorMode) {
+            MapboxInterface.RouteColorMode.SOLID -> Icon(
+                modifier = iconModifier,
+                imageVector = Icons.Default.Route,
+                contentDescription = stringResource(R.string.map_route_color_solid),
+                tint = tint
+            )
+            MapboxInterface.RouteColorMode.SPEED -> Icon(
+                modifier = iconModifier,
+                painter = painterResource(R.drawable.ic_speed),
+                contentDescription = stringResource(R.string.map_route_color_speed),
+                tint = tint
+            )
+            MapboxInterface.RouteColorMode.CONSUMPTION -> Icon(
+                modifier = iconModifier,
+                painter = painterResource(R.drawable.ic_avg_consumption),
+                contentDescription = stringResource(R.string.map_route_color_consumption),
+                tint = tint
+            )
         }
     }
 }

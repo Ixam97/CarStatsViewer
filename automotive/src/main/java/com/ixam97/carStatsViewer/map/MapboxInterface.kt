@@ -9,7 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import com.ixam97.carStatsViewer.utils.DrivingPointMetrics
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import com.ixam97.carStatsViewer.utils.RouteMetric
 import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.coroutines.flow.Flow
 import java.util.Locale
@@ -23,8 +25,12 @@ interface MapboxInterface {
 
     data class MapPoint(
         val lon: Double,
-        val lat: Double
+        val lat: Double,
+        val speed: Float? = null,        // m/s, smoothed
+        val consumption: Float? = null   // Wh/km, smoothed
     )
+
+    enum class RouteColorMode { SOLID, SPEED, CONSUMPTION }
 
     data class MapboxLocation(
         val lon: Double,
@@ -49,9 +55,19 @@ interface MapboxInterface {
 
             fun createStateFromTrip(trip: DrivingSession, isLoading: Boolean = false): MapTripDataState {
                 val tripPoints = trip.drivingPoints?.let { drivingPoints ->
-                    drivingPoints
-                        .filter { it.lat != null && it.lon != null }
-                        .map { MapPoint(it.lon!!.toDouble(), it.lat!!.toDouble()) }
+                    // Calculated before filtering, points without a location still carry time, distance and energy.
+                    val speeds = DrivingPointMetrics.compute(drivingPoints, RouteMetric.SPEED)
+                    val consumptions = DrivingPointMetrics.compute(drivingPoints, RouteMetric.CONSUMPTION)
+                    drivingPoints.indices
+                        .filter { drivingPoints[it].lat != null && drivingPoints[it].lon != null }
+                        .map {
+                            MapPoint(
+                                lon = drivingPoints[it].lon!!.toDouble(),
+                                lat = drivingPoints[it].lat!!.toDouble(),
+                                speed = speeds[it],
+                                consumption = consumptions[it]
+                            )
+                        }
                 } ?: listOf<MapPoint>()
 
                 val stopPoints = trip.drivingPoints?.let { drivingPoints ->
@@ -91,7 +107,9 @@ interface MapboxInterface {
         isLoading: Boolean = false,
         chargingMarkerOnClick: ((id: Long) -> Unit),
         useDarkMap: Boolean = CarTheme.useDarkTheme,
-        actionFlow: Flow<MapboxAction>? = null
+        actionFlow: Flow<MapboxAction>? = null,
+        routeColorMode: RouteColorMode = RouteColorMode.SOLID,
+        onRouteColorModeChange: ((RouteColorMode) -> Unit)? = null
     ) {
         Box (
             modifier = modifier.fillMaxSize(),

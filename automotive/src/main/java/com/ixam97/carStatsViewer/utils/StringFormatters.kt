@@ -6,6 +6,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 object StringFormatters {
 
@@ -97,6 +98,34 @@ object StringFormatters {
         }
         return "Ø ${(avgConsumption).toInt()} $unitString"
     }
+
+    /**
+     * Formats a single consumption value given in Wh/km in the user's units, without the "Ø" prefix.
+     * Whole kWh/100 values are shown without decimals ("15" instead of "15.0").
+     */
+    fun getConsumptionValueString(consumption: Float, withUnit: Boolean = true): String {
+        val value = CarStatsViewer.appPreferences.distanceUnit.asUnit(consumption)
+        val valueString = if (CarStatsViewer.appPreferences.consumptionUnit) {
+            "${value.roundToInt()}"
+        } else {
+            val tenths = value.roundToInt()
+            if (tenths % 10 == 0) "${tenths / 10}" else "%.1f".format(Locale.ENGLISH, value / 10)
+        }
+        return if (withUnit) "$valueString ${getConsumptionUnitString()}" else valueString
+    }
+
+    fun getConsumptionUnitString(): String = when {
+        CarStatsViewer.appPreferences.consumptionUnit -> "Wh/%s".format(CarStatsViewer.appPreferences.distanceUnit.unit())
+        else -> "kWh/100%s".format(CarStatsViewer.appPreferences.distanceUnit.unit())
+    }
+
+    /** Formats a single speed value given in m/s as km/h or mph. */
+    fun getSpeedValueString(speed: Float, withUnit: Boolean = true): String {
+        val value = CarStatsViewer.appPreferences.distanceUnit.toUnit(speed * 3.6f).roundToInt()
+        return if (withUnit) "$value ${getSpeedUnitString()}" else "$value"
+    }
+
+    fun getSpeedUnitString(): String = "${CarStatsViewer.appPreferences.distanceUnit.unit()}/h"
 
     fun getElapsedTimeString(elapsedTime: Long, minutes: Boolean = false): String {
         if (minutes) return String.format("%02d:%02d",

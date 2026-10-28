@@ -45,6 +45,7 @@ data class TripDetailsState(
         distance = 0f
     ),
     val mapTripDataState: MapboxInterface.MapTripDataState = MapboxInterface.MapTripDataState(isLoading = true),
+    val routeColorMode: MapboxInterface.RouteColorMode = CarStatsViewer.appPreferences.mapRouteColorMode,
     val selectedChargingSessionDetailsId: Long? = null,
     val showChargingDetails: Boolean = false
 )
@@ -103,6 +104,11 @@ class TripDetailsViewModel(sessionId: Long): ViewModel() {
         viewModelScope.launch {
             _mapAction.send(MapboxInterface.MapboxAction.Reset)
         }
+    }
+
+    fun setRouteColorMode(mode: MapboxInterface.RouteColorMode) {
+        CarStatsViewer.appPreferences.mapRouteColorMode = mode
+        _tripDetailsState.update { it.copy(routeColorMode = mode) }
     }
 
     fun setSelectedTab(tab: TripDetailsTabKeys) {

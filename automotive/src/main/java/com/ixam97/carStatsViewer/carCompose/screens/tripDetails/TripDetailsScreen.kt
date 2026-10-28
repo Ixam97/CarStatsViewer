@@ -390,7 +390,9 @@ private fun TripDetailsMapSection(
             modifier = Modifier,
             mapTripDataState = tripDetailsState.mapTripDataState,
             chargingMarkerOnClick = { viewModel.setSelectedChargingDetails(it) },
-            actionFlow = viewModel.mapAction
+            actionFlow = viewModel.mapAction,
+            routeColorMode = tripDetailsState.routeColorMode,
+            onRouteColorModeChange = { viewModel.setRouteColorMode(it) }
         )
     }
 }

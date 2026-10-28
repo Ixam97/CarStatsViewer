@@ -8,6 +8,7 @@ import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.UiBrightnessMode
 import com.ixam97.carStatsViewer.carCompose.UiType
 import com.ixam97.carStatsViewer.ui.plot.enums.PlotDimensionX
+import com.ixam97.carStatsViewer.map.MapboxInterface
 import com.ixam97.carStatsViewer.utils.DistanceUnitEnum
 import com.ixam97.carStatsViewer.utils.Exclude
 
@@ -38,6 +39,7 @@ class AppPreferences(
     private val ChargePlotVisibleGages = AppPreference<Boolean>(context.getString(R.string.preference_charge_plot_visible_gages_key), true, sharedPref)
     private val ChargePlotDimension = AppPreference<String>(context.getString(R.string.preference_charge_plot_dimension_key), PlotDimensionX.TIME.name, sharedPref)
     private val DistanceUnit = AppPreference<String>(context.getString(R.string.preference_distance_unit_key), DistanceUnitEnum.KM.name, sharedPref)
+    private val MapRouteColorMode = AppPreference<String>("preference_map_route_color_mode", MapboxInterface.RouteColorMode.SPEED.name, sharedPref)
     private val SecondaryConsumptionDimension = AppPreference<Int>(context.getString(R.string.preference_secondary_dimension_key), 0, sharedPref)
     private val MainPrimaryDimensionRestriction = AppPreference<Int>("preference_dimension_restriction", 0, sharedPref)
     private val MainViewTrip = AppPreference<Int>(context.getString(R.string.preference_main_view_trip_key), 1, sharedPref)
@@ -93,6 +95,7 @@ class AppPreferences(
     var chargePlotDimension: PlotDimensionX get() = PlotDimensionX.valueOf(ChargePlotDimension.value); set(value) {ChargePlotDimension.value = value.name}
     var distanceUnit: DistanceUnitEnum get() = DistanceUnitEnum.valueOf(DistanceUnit.value); set(value) {DistanceUnit.value = value.name}
     var mainPrimaryDimensionRestriction : Int get() = MainPrimaryDimensionRestriction.value; set(value) {MainPrimaryDimensionRestriction.value = value}
+    var mapRouteColorMode: MapboxInterface.RouteColorMode get() = runCatching { MapboxInterface.RouteColorMode.valueOf(MapRouteColorMode.value) }.getOrDefault(MapboxInterface.RouteColorMode.SPEED); set(value) {MapRouteColorMode.value = value.name}
     var secondaryConsumptionDimension: Int get() = SecondaryConsumptionDimension.value; set(value) {SecondaryConsumptionDimension.value = value}
     var mainViewTrip: Int get() = MainViewTrip.value; set(value) {MainViewTrip.value = value}
     var smtpAddress: String get() = SmtpAddress.value; set(value) {SmtpAddress.value = value}
