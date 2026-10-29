@@ -169,7 +169,7 @@
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
-        <item>Implemented compression for trip exports.</item>
+        <item>Implemented compression and optimized parsing for trip exports.</item>
         <item>[V](0.29.1)</item>
     </string-array>
 

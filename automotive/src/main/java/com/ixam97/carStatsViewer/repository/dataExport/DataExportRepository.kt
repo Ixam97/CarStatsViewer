@@ -64,7 +64,8 @@ object DataExportRepository {
     }
 
     private fun buildChargingSessionCsvData(chargingSession: ChargingSession): String {
-        var sessionCsvData = "# Charging session recorded by Car Stats Viewer v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})\n#\n"
+        val sessionCsvData = StringBuilder()
+        sessionCsvData.append("# Charging session recorded by Car Stats Viewer v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})\n#\n")
 //        sessionCsvData += "# Vehicle brand and model: ${Build.BRAND}, ${Build.MODEL} (${Build.DEVICE})\n"
 //        sessionCsvData += "# Date and time: ${StringFormatters.getDateString(Date(chargingSession.start_epoch_time))}\n"
 //        sessionCsvData += "# Charging duration: ${StringFormatters.getElapsedTimeString((chargingSession.end_epoch_time?:chargingSession.start_epoch_time) - chargingSession.start_epoch_time)}\n"
@@ -74,24 +75,24 @@ object DataExportRepository {
 //        }
 //        sessionCsvData += "# Outside temperature: ${"%.1f".format(chargingSession.outside_temp)} degC\n"
 
-        sessionCsvData += "# Vehicle brand and model: ${Build.BRAND}, ${Build.MODEL} (${Build.DEVICE})\n"
-        sessionCsvData += "# Start timestamp: ${chargingSession.start_epoch_time}\n"
-        sessionCsvData += "# End timestamp: ${chargingSession.end_epoch_time}\n"
-        sessionCsvData += "# Charged Energy: ${chargingSession.charged_energy}\n"
-        sessionCsvData += "# Charged SoC: ${chargingSession.charged_soc}\n"
-        sessionCsvData += "# Outside Temperature: ${chargingSession.outside_temp}\n"
-        sessionCsvData += "# Lat: ${chargingSession.lat}\n"
-        sessionCsvData += "# Lon: ${chargingSession.lon}\n"
+        sessionCsvData.append("# Vehicle brand and model: ${Build.BRAND}, ${Build.MODEL} (${Build.DEVICE})\n")
+        sessionCsvData.append("# Start timestamp: ${chargingSession.start_epoch_time}\n")
+        sessionCsvData.append("# End timestamp: ${chargingSession.end_epoch_time}\n")
+        sessionCsvData.append("# Charged Energy: ${chargingSession.charged_energy}\n")
+        sessionCsvData.append("# Charged SoC: ${chargingSession.charged_soc}\n")
+        sessionCsvData.append("# Outside Temperature: ${chargingSession.outside_temp}\n")
+        sessionCsvData.append("# Lat: ${chargingSession.lat}\n")
+        sessionCsvData.append("# Lon: ${chargingSession.lon}\n")
         // sessionCsvData += "\nTime [s];Power [kW];SoC [%]\n"
-        sessionCsvData += "\nTimestamp;Charging session id;energy delta; power;SoC;point marker type\n"
+        sessionCsvData.append("\nTimestamp;Charging session id;energy delta; power;SoC;point marker type\n")
 
-        chargingSession.chargingPoints?.forEach { chargingPoint ->
-            sessionCsvData += chargingPoint.toCsvLine()
-            // val pointSeconds = (chargingPoint.charging_point_epoch_time - chargingSession.start_epoch_time) / 1000
-            // sessionCsvData += "${pointSeconds};${"%.3f".format(chargingPoint.power / -1000000)};${(chargingPoint.state_of_charge * 100).toLong()}\n"
+        chargingSession.chargingPoints?.let { chargingPoints ->
+            chargingPoints.forEachIndexed { index, point ->
+                sessionCsvData.append(point.toCsvLine())
+            }
         }
 
-        return sessionCsvData
+        return sessionCsvData.toString()
     }
 
     private fun buildChargingSessionDataExportBody(chargingSession: ChargingSession): ChargingSessionDataExportBody {
@@ -148,26 +149,33 @@ object DataExportRepository {
     }
 
     private fun buildTripCsvData(drivingSession: DrivingSession): String {
-        var sessionCsvData = "# Trip recorded by Car Stats Viewer v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})\n#\n"
-        sessionCsvData += "# Vehicle brand and model: ${Build.BRAND}, ${Build.MODEL} (${Build.DEVICE})\n"
-        sessionCsvData += "# Start timestamp: ${drivingSession.start_epoch_time}\n"
-        sessionCsvData += "# End timestamp: ${drivingSession.end_epoch_time}\n"
-        sessionCsvData += "# Trip type: ${drivingSession.session_type}\n"
-        sessionCsvData += "# Drive time: ${drivingSession.drive_time}\n"
-        sessionCsvData += "# Used energy: ${drivingSession.used_energy}\n"
-        sessionCsvData += "# Used SoC: ${drivingSession.used_soc}\n"
-        sessionCsvData += "# Used Soc (Energy): ${drivingSession.used_soc_energy}\n"
-        sessionCsvData += "# Driven distance: ${drivingSession.driven_distance}\n"
-        sessionCsvData += "# Note: ${drivingSession.note}\n"
-        sessionCsvData += "# Last edited: ${drivingSession.last_edited_epoch_time}\n"
+        InAppLogger.v("[DataExportRepository] Parsing trip data...")
 
-        sessionCsvData += "\nTimestamp;Energy delta;Distance delta;Point Marker Type;SoC;lat;lon;alt\n"
+        val sessionCsvData = StringBuilder()
+        sessionCsvData.append("# Trip recorded by Car Stats Viewer v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})\n#\n")
+        sessionCsvData.append("# Vehicle brand and model: ${Build.BRAND}, ${Build.MODEL} (${Build.DEVICE})\n")
+        sessionCsvData.append("# Start timestamp: ${drivingSession.start_epoch_time}\n")
+        sessionCsvData.append("# End timestamp: ${drivingSession.end_epoch_time}\n")
+        sessionCsvData.append("# Trip type: ${drivingSession.session_type}\n")
+        sessionCsvData.append("# Drive time: ${drivingSession.drive_time}\n")
+        sessionCsvData.append("# Used energy: ${drivingSession.used_energy}\n")
+        sessionCsvData.append("# Used SoC: ${drivingSession.used_soc}\n")
+        sessionCsvData.append("# Used Soc (Energy): ${drivingSession.used_soc_energy}\n")
+        sessionCsvData.append("# Driven distance: ${drivingSession.driven_distance}\n")
+        sessionCsvData.append("# Note: ${drivingSession.note}\n")
+        sessionCsvData.append("# Last edited: ${drivingSession.last_edited_epoch_time}\n")
 
-        drivingSession.drivingPoints?.forEach {
-            sessionCsvData += it.toCsvLine()
+        sessionCsvData.append("\nTimestamp;Energy delta;Distance delta;Point Marker Type;SoC;lat;lon;alt\n")
+
+        drivingSession.drivingPoints?.let { drivingPoints ->
+            drivingPoints.forEachIndexed { index, point ->
+                if ((index + 1).mod(drivingPoints.size /  20) == 0 || (index + 1) == drivingPoints.size)
+                    InAppLogger.v("[DataExportRepository] Parsed ${index + 1}/${drivingPoints.size} points")
+                sessionCsvData.append(point.toCsvLine())
+            }
         }
 
-        return sessionCsvData
+        return sessionCsvData.toString()
     }
 
     suspend fun exportTripData(drivingSession: DrivingSession): DataExportStatus {
@@ -198,7 +206,7 @@ object DataExportRepository {
                     body = body
                 )
                 val endMillis = System.currentTimeMillis()
-                InAppLogger.d("[DataExportRepository] Export took ${endMillis - startMillis} ms")
+                InAppLogger.i("[DataExportRepository] Export took ${endMillis - startMillis} ms")
                 return evaluateResponse(response)
             }
         }
@@ -268,7 +276,7 @@ class GzipRequestInterceptor : Interceptor {
         val buffer = Buffer()
         this.compress().writeTo(buffer)
         InAppLogger.v("[DataExportRepository] Compression done, calculating size ...")
-        InAppLogger.v("[DataExportRepository] Compressed request size: ${buffer.size}")
+        InAppLogger.d("[DataExportRepository] Compressed request size: ${buffer.size}")
         return object : RequestBody() {
             override fun contentType(): MediaType? = this@compressWithLength.contentType()
             override fun contentLength(): Long = buffer.size
