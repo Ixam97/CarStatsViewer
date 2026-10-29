@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -91,66 +92,67 @@ class CarComposeActivity: ComponentActivity() {
                 if (globalState.overrideWindowInsets) PaddingValues(top = 64.dp, bottom = 138.dp)
                 else calculateWindowInsets()
 
-            Box(modifier = Modifier.fillMaxSize()) {
-                CarTheme(
-                    carThemeConfig = carThemeConfig,
-                    darkTheme = when (globalState.uiBrightnessMode) {
-                        UiBrightnessMode.Dark -> true
-                        UiBrightnessMode.Bright -> false
-                        else -> isSystemInDarkTheme()
-                    },
-                    windowInsets = windowInsets
-                ) {
-                    CarComposeNavigationRoot(
-                        globalViewModel = viewModel,
-                        backStack = backStack,
-                        onBack = {
-                            if (backStack.size > 1) backStack.removeLastOrNull()
-                            else finish()
-                        },
-                        debugOnClose = { finish() }
-                    )
-                    // Polestar4MainScreen(
-                    //     viewModel = viewModel,
-                    //     onBackClick = { finish() }
-                    // )
-                    // MainScreenLandscape(
-                    //     viewModel = viewModel,
-                    //     onBackClick = { finish() }
-                    // )
+            CompositionLocalProvider(
+                LocalNavController provides CarComposeNavController(backStack, this)
+            ) {
 
-                    // if (Build.MODEL == "PS4" || Build.DEVICE == "lemon_x86_64")
-                    //     Polestar4MainScreen(
-                    //         viewModel = viewModel,
-                    //         onBackClick = { finish() }
-                    //     )
-                    // else
-                    //     MainScreenLandscape(
-                    //         viewModel = viewModel,
-                    //         onBackClick = { finish() }
-                    //     )
-                }
-                if (globalState.overrideWindowInsets) {
-                    Image(
-                        painter = painterResource(R.drawable.img_p4_top_bar),
-                        modifier = Modifier
-                            .height(64.dp)
-                            .fillMaxWidth()
-                            .background(Color.Black)
-                            .align(Alignment.TopStart),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillBounds
-                    )
-                    Image(
-                        painter = painterResource(R.drawable.img_p4_bottom_bar),
-                        modifier = Modifier
-                            .height(138.dp)
-                            .fillMaxWidth()
-                            .background(Color.Black)
-                            .align(Alignment.BottomStart),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillBounds
-                    )
+                Box(modifier = Modifier.fillMaxSize()) {
+                    CarTheme(
+                        carThemeConfig = carThemeConfig,
+                        darkTheme = when (globalState.uiBrightnessMode) {
+                            UiBrightnessMode.Dark -> true
+                            UiBrightnessMode.Bright -> false
+                            else -> isSystemInDarkTheme()
+                        },
+                        windowInsets = windowInsets
+                    ) {
+                        val navController = LocalNavController.current!!
+                        CarComposeNavigationRoot(
+                            globalViewModel = viewModel,
+                            debugOnClose = { finish() }
+                        )
+                        // Polestar4MainScreen(
+                        //     viewModel = viewModel,
+                        //     onBackClick = { finish() }
+                        // )
+                        // MainScreenLandscape(
+                        //     viewModel = viewModel,
+                        //     onBackClick = { finish() }
+                        // )
+
+                        // if (Build.MODEL == "PS4" || Build.DEVICE == "lemon_x86_64")
+                        //     Polestar4MainScreen(
+                        //         viewModel = viewModel,
+                        //         onBackClick = { finish() }
+                        //     )
+                        // else
+                        //     MainScreenLandscape(
+                        //         viewModel = viewModel,
+                        //         onBackClick = { finish() }
+                        //     )
+                    }
+                    if (globalState.overrideWindowInsets) {
+                        Image(
+                            painter = painterResource(R.drawable.img_p4_top_bar),
+                            modifier = Modifier
+                                .height(64.dp)
+                                .fillMaxWidth()
+                                .background(Color.Black)
+                                .align(Alignment.TopStart),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillBounds
+                        )
+                        Image(
+                            painter = painterResource(R.drawable.img_p4_bottom_bar),
+                            modifier = Modifier
+                                .height(138.dp)
+                                .fillMaxWidth()
+                                .background(Color.Black)
+                                .align(Alignment.BottomStart),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillBounds
+                        )
+                    }
                 }
             }
         }
