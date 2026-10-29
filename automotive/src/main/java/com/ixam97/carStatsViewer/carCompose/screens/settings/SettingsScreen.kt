@@ -26,10 +26,12 @@ import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.R
 import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
+import com.ixam97.carStatsViewer.carCompose.screens.main.MainScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryContent
 import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.theme.CarComposeIcon
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
+import de.ixam97.carcompose.components.controls.CarIconButton
 import de.ixam97.carcompose.components.controls.CarRow
 import de.ixam97.carcompose.components.layout.CarColumn
 import de.ixam97.carcompose.components.layout.CarListItem
@@ -111,7 +113,14 @@ fun SettingsScreen(
             tabs = settingsTabs,
             maxTabs = settingsTabs.size.coerceAtMost(7),
             selectedKey = viewModel.selectedSettingsTabKey,
-            onTabSelected = { viewModel.setSettingsTabKey(it) }
+            onTabSelected = { viewModel.setSettingsTabKey(it) },
+            headerIconButtons = listOf(
+                {
+                    CarIconButton(
+                        painter = painterResource(R.drawable.ic_debug)
+                    ) { backStack.add(MainScreenNavKey()) }
+                }
+            )
         ) { key ->
             AnimatedVisibility(
                 visible = key == SettingsTabKeys.General,
@@ -167,7 +176,14 @@ fun SettingsScreen(
         CarPaneLayout(
             headerTitle = stringResource(R.string.settings_title),
             isLoading = globalState.isLoading,
-            onBackAction = onBack
+            onBackAction = onBack,
+            headerIconButtons = listOf(
+                {
+                    CarIconButton(
+                        painter = painterResource(R.drawable.ic_debug)
+                    ) { backStack.add(MainScreenNavKey()) }
+                }
+            )
         ) {
             CarComposeSettingsContent(
                 modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp) ,
