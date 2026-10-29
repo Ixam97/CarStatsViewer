@@ -169,6 +169,8 @@
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
+        <item>Implemented compression for trip exports.</item>
+        <item>[V](0.29.1)</item>
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>

@@ -9,6 +9,14 @@ import com.ixam97.carStatsViewer.database.tripData.DrivingPoint
 import com.ixam97.carStatsViewer.database.tripData.DrivingSession
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import kotlinx.serialization.json.Json
+import okhttp3.Interceptor
+import okhttp3.MediaType
+import okhttp3.OkHttpClient
+import okhttp3.RequestBody
+import okio.Buffer
+import okio.BufferedSink
+import okio.GzipSink
+import okio.buffer
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -23,9 +31,13 @@ object DataExportRepository {
         apiKey = key
     }
 
+    private val dataExportClient = OkHttpClient.Builder()
+        .addInterceptor(GzipRequestInterceptor())
+        .build()
     private val dataExportApi: DataExportApi by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .client(dataExportClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(DataExportApi::class.java)
@@ -166,6 +178,7 @@ object DataExportRepository {
         )
 
         InAppLogger.i("[DataExportRepository] Exporting trip with ID ${drivingSession.driving_session_id}...")
+        val startMillis = System.currentTimeMillis()
 
         val chargingSessions = drivingSession.chargingSessions?.map {
             buildChargingSessionDataExportBody(it)
@@ -184,6 +197,8 @@ object DataExportRepository {
                     apiKey = key,
                     body = body
                 )
+                val endMillis = System.currentTimeMillis()
+                InAppLogger.d("[DataExportRepository] Export took ${endMillis - startMillis} ms")
                 return evaluateResponse(response)
             }
         }
@@ -220,7 +235,7 @@ object DataExportRepository {
                     message = body.message
                 )
             } catch (e: Exception) {
-                InAppLogger.e("[Data Export Repository] Error body decoding error: ${e.message}")
+                InAppLogger.e("[DataExportRepository] Error body decoding error: ${e.message}")
                 return DataExportStatus(
                     state = DataExportState.Error,
                     message = "Unexpected Response: (${response.code()}) ${response.errorBody()?.string()}"
@@ -232,5 +247,49 @@ object DataExportRepository {
             state = DataExportState.Error,
             message = "Unexpected Response: (${response.code()}) ${response.errorBody()?.string()}"
         )
+    }
+}
+
+class GzipRequestInterceptor : Interceptor {
+
+    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+        val originalRequest = chain.request()
+        val body = originalRequest.body
+
+        val compressedRequest = originalRequest.newBuilder()
+            .header("Content-Encoding", "gzip")
+            .method(originalRequest.method, body?.compressWithLength())
+            .build()
+
+        return chain.proceed(compressedRequest)
+    }
+
+    private fun RequestBody.compressWithLength() : RequestBody {
+        val buffer = Buffer()
+        this.compress().writeTo(buffer)
+        InAppLogger.v("[DataExportRepository] Compression done, calculating size ...")
+        InAppLogger.v("[DataExportRepository] Compressed request size: ${buffer.size}")
+        return object : RequestBody() {
+            override fun contentType(): MediaType? = this@compressWithLength.contentType()
+            override fun contentLength(): Long = buffer.size
+            override fun writeTo(sink: BufferedSink) {
+                sink.write(buffer.snapshot())
+            }
+        }
+    }
+    private fun RequestBody.compress() : RequestBody {
+        val buffer = Buffer();
+        this.writeTo(buffer)
+        InAppLogger.v("[DataExportRepository] Uncompressed request size: ${buffer.size}")
+        InAppLogger.v("[DataExportRepository] Compressing request ...")
+        return object : RequestBody() {
+            override fun contentType(): MediaType? = this@compress.contentType()
+            override fun contentLength(): Long = -1
+            override fun writeTo(sink: BufferedSink) {
+                val gzipSink = GzipSink(sink).buffer()
+                this@compress.writeTo(gzipSink)
+                gzipSink.close()
+            }
+        }
     }
 }
