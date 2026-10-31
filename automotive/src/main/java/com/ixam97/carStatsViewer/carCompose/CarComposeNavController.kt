@@ -21,4 +21,6 @@ class CarComposeNavController(
     }
 }
 
-val LocalNavController = compositionLocalOf<CarComposeNavController?> { null }
+val LocalNavController = compositionLocalOf<CarComposeNavController> {
+    error("LocalNavController is not available!")
+}

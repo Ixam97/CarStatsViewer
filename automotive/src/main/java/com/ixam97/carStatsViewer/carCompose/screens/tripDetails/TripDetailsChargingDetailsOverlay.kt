@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ixam97.carStatsViewer.CarStatsViewer
 import com.ixam97.carStatsViewer.R
+import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 import com.ixam97.carStatsViewer.carCompose.components.ChargeCurveGraph
 import com.ixam97.carStatsViewer.carCompose.deviceIsWideScreen
 import com.ixam97.carStatsViewer.carCompose.theme.polestar4ContentPadding
@@ -53,7 +54,8 @@ import kotlin.math.roundToInt
 @Composable
 fun TripDetailsChargingDetailsOverlay(
     visible: Boolean,
-    viewModel: TripDetailsViewModel
+    viewModel: TripDetailsViewModel,
+    globalViewModel: CarComposeGlobalViewModel
 ) {
     AnimatedVisibility(
         visible = visible,
@@ -73,6 +75,7 @@ fun TripDetailsChargingDetailsOverlay(
                     TripDetailsChargingDetailsOverlayContent(
                         modifier = Modifier.padding(start = if (deviceIsWideScreen(2000.dp)) polestar4ContentPadding else 0.dp),
                         viewModel = viewModel,
+                        globalViewModel = globalViewModel,
                         chargingSessionDetails =  chargingSessionDetails
                     )
                 } else {
@@ -100,10 +103,10 @@ fun TripDetailsChargingDetailsOverlay(
 private fun TripDetailsChargingDetailsOverlayContent(
     modifier: Modifier = Modifier,
     viewModel: TripDetailsViewModel,
+    globalViewModel: CarComposeGlobalViewModel,
     chargingSessionDetails: ChargingSessionDetails
 ) {
     val tripDetailsState by viewModel.tripDetailsState.collectAsState()
-    val snackBarHostState = LocalCarSnackBarState.current
 
     if (chargingSessionDetails.chargingSession.end_epoch_time == null) {
         Text("This charging session contains no end time!")
@@ -267,9 +270,8 @@ private fun TripDetailsChargingDetailsOverlayContent(
                                 modifier = Modifier
                                     .heightIn(max = 70.dp),
                                 onClick = {
-                                    viewModel.exportChargingSession(
-                                        sessionID = chargingSessionDetails.chargingSession.charging_session_id,
-                                        snackBarHostState = snackBarHostState
+                                    globalViewModel.exportChargingSession(
+                                        chargingSession = chargingSessionDetails.chargingSession
                                     )
                                 },
                                 enabled = CarStatsViewer.appPreferences.dataExportEnabled

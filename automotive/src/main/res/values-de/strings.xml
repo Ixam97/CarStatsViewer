@@ -188,6 +188,15 @@
     <string name="summary_charging_session_export_button">Exportieren</string>
     <string name="summary_charging_session_edit_button">Bearbeiten</string>
 
+    <string name="export_snackbar_data_export">Datenexport</string>
+    <string name="export_snackbar_compressing">Komprimiere Daten…</string>
+    <string name="export_snackbar_parsing_trip">Verarbeite Tripdaten…</string>
+    <string name="export_snackbar_parsing_charging_session">Verarbeite Ladevorgang…</string>
+    <string name="export_snackbar_parsing_charging_sessions">Verarbeite Ladevorgänge…</string>
+    <string name="export_snackbar_uploading">Daten hochladen…</string>
+    <string name="export_snackbar_success">Datenexport erfolgreich!</string>
+    <string name="export_snackbar_failiure">Datenexport Fehlgeschlagen!</string>
+
     <!-- SettingsActivity -->
     <string name="settings_title">Einstellungen</string>
     <string name="settings_title_generic">Allgemeine Einstellungen:</string>

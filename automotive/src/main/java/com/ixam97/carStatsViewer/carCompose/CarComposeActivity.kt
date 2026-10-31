@@ -13,7 +13,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -21,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -31,7 +35,11 @@ import com.ixam97.carStatsViewer.carCompose.screens.settings.SettingsScreenNavKe
 import com.ixam97.carStatsViewer.carCompose.screens.tripDetails.TripDetailsScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.screens.tripHistory.TripHistoryScreenNavKey
 import com.ixam97.carStatsViewer.carCompose.theme.ClubThemeConfig
+import com.ixam97.carStatsViewer.repository.dataExport.DataExportProgressState
 import com.ixam97.carStatsViewer.utils.InAppLogger
+import de.ixam97.carcompose.components.layout.CarSnackBarConfig
+import de.ixam97.carcompose.components.layout.CarSnackBarHostState
+import de.ixam97.carcompose.components.layout.LocalCarSnackBarState
 import de.ixam97.carcompose.theme.CarTheme
 import de.ixam97.carcompose.theme.GenericCarThemeConfig
 import de.ixam97.carcompose.theme.GenericCarTypography
@@ -42,6 +50,8 @@ import de.ixam97.carcompose.theme.themes.VolvoCarUxThemeConfig
 import de.ixam97.carcompose.theme.themes.VolvoTypograph
 import de.ixam97.carcompose.utils.calculateWindowInsets
 
+const val SUCCESS_SNACKBAR_TIME = 3000
+const val FAILURE_SNACKBAR_TIME = 10000
 class CarComposeActivity: ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,7 +116,11 @@ class CarComposeActivity: ComponentActivity() {
                         },
                         windowInsets = windowInsets
                     ) {
-                        val navController = LocalNavController.current!!
+                        UpdateSnackBarWithDataExportProgressState(dataExportProgressState = viewModel.dataExportProgressState) {
+                            viewModel.clearDataExportProgressState()
+                        }
+
+                        val navController = LocalNavController.current
                         CarComposeNavigationRoot(
                             globalViewModel = viewModel,
                             debugOnClose = { finish() }
@@ -158,5 +172,136 @@ class CarComposeActivity: ComponentActivity() {
         }
 
         super.onCreate(savedInstanceState)
+    }
+}
+
+
+fun updateSnackBarWithDataExportProgressStateImpl(
+    dataExportProgressState: DataExportProgressState,
+    identifier: String = "DataExportSnackBar",
+    hostState: CarSnackBarHostState,
+    onFinishedState: () -> Unit
+){
+    hostState.apply {
+        when (dataExportProgressState) {
+            DataExportProgressState.Compressing -> showSnackBar(
+                CarSnackBarConfig(
+                    identifier = identifier,
+                    content = { Text(
+                        stringResource(R.string.export_snackbar_data_export)
+                                + "\n"
+                                + stringResource(R.string.export_snackbar_compressing)
+                    ) },
+                    continuousLoading = true,
+                    duration = 0,
+                    drawableResId = R.drawable.ic_upload
+                )
+            )
+
+            is DataExportProgressState.ParsingChargingSessions -> showSnackBar(
+                CarSnackBarConfig(
+                    identifier = identifier,
+                    content = { Text(
+                        stringResource(R.string.export_snackbar_data_export)
+                                + "\n"
+                                + stringResource(R.string.export_snackbar_parsing_charging_sessions)
+                                + " ${(dataExportProgressState.progress * 100).toInt()}%"
+                    ) },
+                    continuousLoading = false,
+                    progress = dataExportProgressState.progress,
+                    duration = 0,
+                    drawableResId = R.drawable.ic_upload
+                )
+            )
+
+            is DataExportProgressState.ParsingChargingSession -> showSnackBar(
+                CarSnackBarConfig(
+                    identifier = identifier,
+                    content = { Text(
+                        stringResource(R.string.export_snackbar_data_export)
+                                + "\n"
+                                + stringResource(R.string.export_snackbar_parsing_charging_session)
+                                + " ${(dataExportProgressState.progress * 100).toInt()}%"
+                    ) },
+                    continuousLoading = false,
+                    progress = dataExportProgressState.progress,
+                    duration = 0,
+                    drawableResId = R.drawable.ic_upload
+                )
+            )
+
+            is DataExportProgressState.ParsingTrip -> showSnackBar(
+                CarSnackBarConfig(
+                    identifier = identifier,
+                    content = { Text(
+                        stringResource(R.string.export_snackbar_data_export)
+                                + "\n"
+                                + stringResource(R.string.export_snackbar_parsing_trip)
+                                + " ${(dataExportProgressState.progress * 100).toInt()}%"
+                    ) },
+                    continuousLoading = false,
+                    progress = dataExportProgressState.progress,
+                    duration = 0,
+                    drawableResId = R.drawable.ic_upload
+                )
+            )
+
+            DataExportProgressState.Uploading -> showSnackBar(
+                CarSnackBarConfig(
+                    identifier = identifier,
+                    content = { Text(
+                        stringResource(R.string.export_snackbar_data_export)
+                                + "\n"
+                                + stringResource(R.string.export_snackbar_uploading)
+                    ) },
+                    continuousLoading = true,
+                    duration = 0,
+                    drawableResId = R.drawable.ic_upload
+                )
+            )
+
+            is DataExportProgressState.Success -> {
+                showSnackBar(CarSnackBarConfig(
+                    identifier = identifier,
+                    content = { Text(stringResource(R.string.export_snackbar_success)) },
+                    drawableResId = R.drawable.ic_checkmark,
+                    duration = SUCCESS_SNACKBAR_TIME
+                ))
+                onFinishedState()
+            }
+
+            is DataExportProgressState.Failure -> {
+                showSnackBar(CarSnackBarConfig(
+                    identifier = identifier,
+                    content = { Text(
+                        stringResource(R.string.export_snackbar_failiure)
+                                + "\n${dataExportProgressState.message}"
+                    ) },
+                    drawableResId = R.drawable.ic_error,
+                    isError = true,
+                    duration = FAILURE_SNACKBAR_TIME,
+                    actionText = "OK",
+                    onAction = { cancelSnackBar(identifier) }
+                ))
+                onFinishedState()
+            }
+            DataExportProgressState.None -> cancelSnackBar(identifier)
+        }
+    }
+}
+
+@Composable
+fun UpdateSnackBarWithDataExportProgressState(
+    dataExportProgressState: DataExportProgressState,
+    identifier: String = "DataExportSnackBar",
+    onFinishedState: () -> Unit
+) {
+    if (dataExportProgressState is DataExportProgressState.None) return
+    val hostState = LocalCarSnackBarState.current
+
+    LaunchedEffect(dataExportProgressState) {
+        updateSnackBarWithDataExportProgressStateImpl(
+            dataExportProgressState, identifier, hostState, onFinishedState
+        )
     }
 }

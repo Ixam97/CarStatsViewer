@@ -24,6 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object DataExportRepository {
 
     private const val BASE_URL = "https://ixam97.de/"
+    private const val LOG_LINES_PER_EXPORT_OBJECT = 20
 
     private var apiKey: String? = null
 
@@ -63,7 +64,10 @@ object DataExportRepository {
                "${this.alt?.let { alt -> "%.0f".format(alt) }}\n"
     }
 
-    private fun buildChargingSessionCsvData(chargingSession: ChargingSession): String {
+    private fun buildChargingSessionCsvData(
+        chargingSession: ChargingSession,
+        onProgressChanged: (index: Int, size: Int) -> Unit
+    ): String {
         val sessionCsvData = StringBuilder()
         sessionCsvData.append("# Charging session recorded by Car Stats Viewer v${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})\n#\n")
 //        sessionCsvData += "# Vehicle brand and model: ${Build.BRAND}, ${Build.MODEL} (${Build.DEVICE})\n"
@@ -88,6 +92,7 @@ object DataExportRepository {
 
         chargingSession.chargingPoints?.let { chargingPoints ->
             chargingPoints.forEachIndexed { index, point ->
+                onProgressChanged(index, chargingPoints.size)
                 sessionCsvData.append(point.toCsvLine())
             }
         }
@@ -95,18 +100,24 @@ object DataExportRepository {
         return sessionCsvData.toString()
     }
 
-    private fun buildChargingSessionDataExportBody(chargingSession: ChargingSession): ChargingSessionDataExportBody {
+    private fun buildChargingSessionDataExportBody(
+        chargingSession: ChargingSession,
+        onProgressChanged: (index: Int, size: Int) -> Unit
+    ): ChargingSessionDataExportBody {
         return ChargingSessionDataExportBody(
             receiverMailAddress = CarStatsViewer.appPreferences.dataExportAddress,
             startTime = chargingSession.start_epoch_time,
             lat = chargingSession.lat,
             lon = chargingSession.lon,
             outsideTemp = chargingSession.outside_temp,
-            sessionCsvData = buildChargingSessionCsvData(chargingSession)
+            sessionCsvData = buildChargingSessionCsvData(chargingSession, onProgressChanged)
         )
     }
 
-    suspend fun exportChargingSessionData(chargingSession: ChargingSession): DataExportStatus {
+    suspend fun exportChargingSessionData(
+        chargingSession: ChargingSession,
+        updateExportProgressState: (progressState: DataExportProgressState) -> Unit = {}
+    ): DataExportStatus {
 
         if (!CarStatsViewer.appPreferences.dataExportEnabled) {
             InAppLogger.w("[DataExportRepository] Data Export has not been enabled in API Settings!")
@@ -118,7 +129,14 @@ object DataExportRepository {
 
         InAppLogger.i("[DataExportRepository] Exporting charging session with ID ${chargingSession.charging_session_id}...")
 
-        val body = buildChargingSessionDataExportBody(chargingSession)
+        val body = buildChargingSessionDataExportBody(chargingSession) { index, size ->
+            updateExportProgressState(DataExportProgressState.ParsingChargingSession((index + 1).toFloat() / size))
+            if (size <= LOG_LINES_PER_EXPORT_OBJECT || (index + 1) == size || (index + 1).mod(size / LOG_LINES_PER_EXPORT_OBJECT) == 0) {
+                InAppLogger.v("[DataExportRepository] Parsed ${index + 1}/$size points")
+            }
+        }
+
+        updateExportProgressState(DataExportProgressState.Uploading)
 
         apiKey?.let { key ->
             dataExportApi.run {
@@ -148,7 +166,10 @@ object DataExportRepository {
         )
     }
 
-    private fun buildTripCsvData(drivingSession: DrivingSession): String {
+    private fun buildTripCsvData(
+        drivingSession: DrivingSession,
+        onProgressChanged: (index: Int, size: Int) -> Unit
+    ): String {
         InAppLogger.v("[DataExportRepository] Parsing trip data...")
 
         val sessionCsvData = StringBuilder()
@@ -169,8 +190,7 @@ object DataExportRepository {
 
         drivingSession.drivingPoints?.let { drivingPoints ->
             drivingPoints.forEachIndexed { index, point ->
-                if ((index + 1).mod(drivingPoints.size /  20) == 0 || (index + 1) == drivingPoints.size)
-                    InAppLogger.v("[DataExportRepository] Parsed ${index + 1}/${drivingPoints.size} points")
+                onProgressChanged(index, drivingPoints.size)
                 sessionCsvData.append(point.toCsvLine())
             }
         }
@@ -178,7 +198,10 @@ object DataExportRepository {
         return sessionCsvData.toString()
     }
 
-    suspend fun exportTripData(drivingSession: DrivingSession): DataExportStatus {
+    suspend fun exportTripData(
+        drivingSession: DrivingSession,
+        updateExportProgressState: (progressState: DataExportProgressState) -> Unit = {}
+    ): DataExportStatus {
 
         if (!CarStatsViewer.appPreferences.dataExportEnabled) return DataExportStatus(
             state = DataExportState.Error,
@@ -188,16 +211,37 @@ object DataExportRepository {
         InAppLogger.i("[DataExportRepository] Exporting trip with ID ${drivingSession.driving_session_id}...")
         val startMillis = System.currentTimeMillis()
 
-        val chargingSessions = drivingSession.chargingSessions?.map {
-            buildChargingSessionDataExportBody(it)
+        var totalSize = drivingSession.drivingPoints?.size?:0
+        drivingSession.chargingSessions?.forEach { totalSize += it.chargingPoints?.size?:0 }
+        var totalIndex = 0
+
+        val chargingSessionsExportBodies = drivingSession.chargingSessions?.let { chargingSessions ->
+            updateExportProgressState(DataExportProgressState.ParsingChargingSessions(0f))
+            chargingSessions.map {
+                buildChargingSessionDataExportBody(it) { index, size ->
+                    totalIndex++
+                    updateExportProgressState(DataExportProgressState.ParsingChargingSessions(totalIndex.toFloat() / totalSize))
+                    if (size <= LOG_LINES_PER_EXPORT_OBJECT || (index + 1) == size || (index + 1).mod(size / LOG_LINES_PER_EXPORT_OBJECT) == 0) {
+                        InAppLogger.v("[DataExportRepository] Parsed ${index + 1}/$size points")
+                    }
+                }
+            }
         }?:listOf()
 
         val body = TripDataExportBody(
             receiverMailAddress = CarStatsViewer.appPreferences.dataExportAddress,
             startTime = drivingSession.start_epoch_time,
-            tripDrivePointsCsvData = buildTripCsvData(drivingSession),
-            chargingSessionsData = chargingSessions
+            tripDrivePointsCsvData = buildTripCsvData(drivingSession) { index, size ->
+                totalIndex++
+                updateExportProgressState(DataExportProgressState.ParsingTrip(totalIndex.toFloat() / totalSize))
+                if (size <= LOG_LINES_PER_EXPORT_OBJECT || (index + 1) == size || (index + 1).mod(size / LOG_LINES_PER_EXPORT_OBJECT) == 0) {
+                    InAppLogger.v("[DataExportRepository] Parsed ${index + 1}/$size points")
+                }
+            },
+            chargingSessionsData = chargingSessionsExportBodies
         )
+
+        updateExportProgressState(DataExportProgressState.Uploading)
 
         apiKey?.let { key ->
             dataExportApi.run {

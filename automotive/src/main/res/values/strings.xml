@@ -169,7 +169,7 @@
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
-        <item>Implemented compression and optimized parsing for trip exports.</item>
+        <item>Optimize data export performance and added additional progress visualization.</item>
         <item>[V](0.29.1)</item>
     </string-array>
 
@@ -269,6 +269,15 @@
     <string name="summary_charging_session_title">Charging Session</string>
     <string name="summary_charging_session_export_button">Export</string>
     <string name="summary_charging_session_edit_button">Edit</string>
+
+    <string name="export_snackbar_data_export">Data Export</string>
+    <string name="export_snackbar_compressing">Compressing data…</string>
+    <string name="export_snackbar_parsing_trip">Parsing trip data…</string>
+    <string name="export_snackbar_parsing_charging_session">Parsing charging session…</string>
+    <string name="export_snackbar_parsing_charging_sessions">Parsing charging sessions…</string>
+    <string name="export_snackbar_uploading">Uploading data…</string>
+    <string name="export_snackbar_success">Data exported successfully!</string>
+    <string name="export_snackbar_failiure">Failed to export data!</string>
 
     <!-- SettingsActivity -->
     <string name="settings_title">Settings</string>
