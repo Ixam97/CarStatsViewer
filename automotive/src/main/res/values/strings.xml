@@ -166,11 +166,11 @@
         <item>Legacy Edition: Complete rewrite of Settings-UI (same as Play Edition). The main Screen will follow at a later stage.</item>
         <item>Play Edition: Migrating to a single activity architecture. This makes the settings UI more flexible and allows for more detailed trip details.</item>
         <item>[V](0.29.0)</item>
+        <item>Optimized data export performance and added additional progress visualization.</item>
+        <item>[V](0.29.1)</item>
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
-        <item>Optimize data export performance and added additional progress visualization.</item>
-        <item>[V](0.29.1)</item>
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>

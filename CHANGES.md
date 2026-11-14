@@ -1,5 +1,8 @@
 # Changelog [EN]:
 
+## 0.29.1
+ - Optimized data export performance and added additional progress visualization.
+
 ## 0.29.0
  - Play Edition: Migrating to a single activity architecture. This makes the settings UI more flexible and allows for more detailed trip details.
  - Legacy Edition: Complete rewrite of Settings-UI (same as Play Edition). The main Screen will follow at a later stage.
@@ -8,6 +11,9 @@
  - Numerous optimizations and adjustments to account for vehicle compatibility.
 
 # Changelog [DE]:
+
+## 0.29.1
+ - Der Daten-Export wurde optimiert und um zusätzliche Fortschrittsanzeigen ergänzt.
 
 ## 0.29.0
  - Play Edition: Migration zu einer Single Activity Architektur. Dies erlaubt flexiblere Einstellungs-UIs und eine detailliertere Tripzusammenfassung.

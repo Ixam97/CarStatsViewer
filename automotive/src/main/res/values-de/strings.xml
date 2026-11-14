@@ -95,6 +95,8 @@
         <item>Legacy Edition: Komplett überarbeitetes Einstellungen-UI (identisch zur Play Edition). Die Hauptansicht wird in einem späteren Update ebenfalls überarbeitet.</item>
         <item>Play Edition: Migration zu einer Single Activity Architektur. Dies erlaubt flexiblere Einstellungs-UIs und eine detailliertere Tripzusammenfassung.</item>
         <item>[V](0.29.0)</item>
+        <item>Der Daten-Export wurde optimiert und um zusätzliche Fortschrittsanzeigen ergänzt.</item>
+        <item>[V](0.29.1)</item>
     </string-array>
 
     <!-- Restart Dialog -->
