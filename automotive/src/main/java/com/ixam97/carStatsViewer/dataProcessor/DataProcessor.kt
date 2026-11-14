@@ -210,6 +210,7 @@ class DataProcessor {
                     }
                 },
                 ambientTemperature = carPropertiesData.CurrentAmbientTemperature.value.asSafeFloatProperty(),
+                avgBatteryTemperature = carPropertiesData.CurrentAvgBatteryTemperature.value.asSafeFloatProperty(),
                 // speed = if (carPropertiesData.CurrentSpeed.value == null) null else ((carPropertiesData.CurrentSpeed.value as Float?)?: 0f).absoluteValue,
                 // power = if (carPropertiesData.CurrentPower.value == null) null else emulatorPowerSign * ((carPropertiesData.CurrentPower.value as Float?)?: 0f),
                 // batteryLevel = if (carPropertiesData.BatteryLevel.value == null) null else (carPropertiesData.BatteryLevel.value as Float?)?: 0f,

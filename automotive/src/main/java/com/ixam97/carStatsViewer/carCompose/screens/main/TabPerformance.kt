@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import de.ixam97.carcompose.components.controls.CarRow
+import de.ixam97.carcompose.components.layout.CarColumn
+import de.ixam97.carcompose.components.layout.CarListDivider
 import de.ixam97.carcompose.theme.CarTheme
 import kotlin.math.absoluteValue
 
@@ -28,19 +31,27 @@ fun TabPerformance() {
 
     val performanceViewModel: PerformanceViewModel = viewModel()
 
-    Row {
-        RealTimeDataBar(
-            text = "${(performanceViewModel.performanceState.power / 1000000).toInt()} kW",
-            fraction = (performanceViewModel.performanceState.power / 400000000f)
-        )
-        RealTimeDataBar(
-            text= "Wh/km",
-            fraction = 0f
-        )
-        RealTimeDataBar(
-            text= "${(performanceViewModel.performanceState.speed * 3.6).toInt()} km/h",
-            fraction = ((performanceViewModel.performanceState.speed * 3.6f) / 200f)
-        )
+//    Row {
+//        RealTimeDataBar(
+//            text = "${(performanceViewModel.performanceState.power / 1000000).toInt()} kW",
+//            fraction = (performanceViewModel.performanceState.power / 400000000f)
+//        )
+//        RealTimeDataBar(
+//            text= "Wh/km",
+//            fraction = 0f
+//        )
+//        RealTimeDataBar(
+//            text= "${(performanceViewModel.performanceState.speed * 3.6).toInt()} km/h",
+//            fraction = ((performanceViewModel.performanceState.speed * 3.6f) / 200f)
+//        )
+//    }
+    CarColumn() {
+        performanceViewModel.performanceState.getDataStateStrings().forEach {
+            CarRow(
+                title = it
+            )
+            CarListDivider()
+        }
     }
 }
 

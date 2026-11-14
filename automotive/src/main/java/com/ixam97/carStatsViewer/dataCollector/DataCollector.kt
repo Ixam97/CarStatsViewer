@@ -377,7 +377,13 @@ class DataCollector: Service() {
 
         setupOptionalDynamicProperties()
 
-        CarProperties.usedProperties.forEach {
+//        CarProperties.usedProperties.forEach {
+//            carPropertiesClient?.updateProperty(it)
+//        }
+        CarProperties.essentialDynamicProperties.forEach {
+            carPropertiesClient?.updateProperty(it)
+        }
+        CarProperties.optionalDynamicProperties.forEach {
             carPropertiesClient?.updateProperty(it)
         }
 

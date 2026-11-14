@@ -120,7 +120,7 @@ private fun CarComposeMainScreenLandscape(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-
+            TabPerformance()
         }
         AnimatedVisibility(
             visible = key == MainScreenTabKeys.History,
@@ -167,6 +167,7 @@ private fun CarComposeMainScreenPortrait(
         isLoading = globalState.isLoading,
         headerIconButtons = headerButtonsList
     ) {
+        TabPerformance()
     }
 }
 

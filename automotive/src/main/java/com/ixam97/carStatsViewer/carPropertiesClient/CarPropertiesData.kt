@@ -19,6 +19,8 @@ class CarPropertiesData {
     val CurrentIgnitionState = CarProperty( VehiclePropertyIds.IGNITION_STATE)
     /** Current ambientTemperature */
     val CurrentAmbientTemperature = CarProperty( VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE)
+    /** Current average battery temperature */
+    val CurrentAvgBatteryTemperature = CarProperty(VehiclePropertyIds.EV_BATTERY_AVERAGE_TEMPERATURE)
 
     // Updater return values
     /** Value was updated */
@@ -59,7 +61,8 @@ class CarPropertiesData {
     fun update(value: Any?, pTimestamp: Long, propertyId: Int, doLog: Boolean = false, valueMustChange: Boolean = false, allowInvalidTimestamps: Boolean = false): Int {
         var timestamp = pTimestamp
         val failedPropertyString = "Failed to update car property ${CarProperties.getNameById(propertyId)}:"
-        if (!CarProperties.usedProperties.contains(propertyId)) {
+        if (!CarProperties.essentialDynamicProperties.contains(propertyId) && !CarProperties.optionalDynamicProperties.contains(propertyId)) {
+        // if (!CarProperties.usedProperties.contains(propertyId)) {
             InAppLogger.w("$failedPropertyString Invalid property ID")
             return INVALID_PROPERTY_ID
         }
@@ -88,7 +91,8 @@ class CarPropertiesData {
         ChargePortConnected.propertyId to ChargePortConnected,
         BatteryLevel.propertyId to BatteryLevel,
         CurrentIgnitionState.propertyId to CurrentIgnitionState,
-        CurrentAmbientTemperature.propertyId to CurrentAmbientTemperature
+        CurrentAmbientTemperature.propertyId to CurrentAmbientTemperature,
+        CurrentAvgBatteryTemperature.propertyId to CurrentAvgBatteryTemperature
     )
 
 }

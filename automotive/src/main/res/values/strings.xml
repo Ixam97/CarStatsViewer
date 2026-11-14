@@ -171,6 +171,8 @@
     </string-array>
 
     <string-array translatable="false" name="pending_changes">
+        <item>Testing for avg. battery temperature readings with API Level 35 (Android 15) and newer.</item>
+        <item>[V](0.30.0)</item>
     </string-array>
 
     <string name="file_name_current_trip_data" translatable="false">CurrentTripData</string>

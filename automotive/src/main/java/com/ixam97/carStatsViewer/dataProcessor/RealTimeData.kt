@@ -13,6 +13,7 @@ data class RealTimeData(
     val batteryLevel: Float? = null,
     val stateOfCharge: Float? = null,
     val ambientTemperature: Float? = null,
+    val avgBatteryTemperature: Float? = null,
     val lat: Float? = null,
     val lon: Float? = null,
     val alt: Float? = null
@@ -27,6 +28,10 @@ data class RealTimeData(
 
     fun isOptionalInitialized(): Boolean {
         return ambientTemperature != null
+        // Notice: avgBatteryTemperature is only available on vehicles with API level 35 and higher
+        // TODO: Build a system to dynamically react to available properties. Currently, everything is quite hardcoded.
+
+        //         && avgBatteryTemperature != null
     }
 
     fun isEssentialInitialized(): Boolean {
