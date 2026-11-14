@@ -15,7 +15,9 @@ interface DataExportApi {
         @Body body: ChargingSessionDataExportBody
     ): Response<DataExportResponse>
 
-    @Headers("content-type: application/json")
+    @Headers(
+        "content-type: application/json"
+    )
     @POST("/CSVBackend/tripDataExport")
     suspend fun tripDataExport(
         @Header("x-api-key") apiKey: String,

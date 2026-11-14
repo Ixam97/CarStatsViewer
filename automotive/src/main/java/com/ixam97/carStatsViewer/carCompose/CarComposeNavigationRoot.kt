@@ -31,10 +31,13 @@ import kotlinx.serialization.Serializable
 @Composable
 fun CarComposeNavigationRoot(
     globalViewModel: CarComposeGlobalViewModel,
-    backStack: NavBackStack<NavKey>,
-    onBack: () -> Unit,
+//    backStack: NavBackStack<NavKey>,
+//    onBack: () -> Unit,
     debugOnClose: (() -> Unit)? = null
 ) {
+    val navController = LocalNavController.current!!
+    val backStack = navController.backStack
+    val onBack: () -> Unit = { navController.navBack() }
     NavDisplay(
         backStack = backStack,
         onBack = onBack,

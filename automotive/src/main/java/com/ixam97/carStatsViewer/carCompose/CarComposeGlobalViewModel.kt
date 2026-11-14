@@ -8,8 +8,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ixam97.carStatsViewer.BuildConfig
 import com.ixam97.carStatsViewer.CarStatsViewer
+import com.ixam97.carStatsViewer.database.tripData.ChargingSession
+import com.ixam97.carStatsViewer.database.tripData.DrivingSession
+import com.ixam97.carStatsViewer.repository.dataExport.DataExportProgressState
+import com.ixam97.carStatsViewer.repository.dataExport.DataExportRepository
+import com.ixam97.carStatsViewer.repository.dataExport.DataExportState
+import com.ixam97.carStatsViewer.repository.dataExport.DataExportStatus
 import com.ixam97.carStatsViewer.utils.InAppLogger
 import com.ixam97.carStatsViewer.utils.isRunningOnAAOS
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -80,6 +88,9 @@ class CarComposeGlobalViewModel: ViewModel() {
     var movingState by mutableStateOf(false)
         private set
 
+    var dataExportProgressState by mutableStateOf<DataExportProgressState>(DataExportProgressState.None)
+        private set
+
     init {
         viewModelScope.launch {
             CarStatsViewer.dataProcessor.realTimeDataFlow.collect { realTimeData ->
@@ -116,6 +127,39 @@ class CarComposeGlobalViewModel: ViewModel() {
 
     fun setOverrideWindowInsets(override: Boolean) {
         _globalState.update { it.copy(overrideWindowInsets = override) }
+    }
+
+    fun clearDataExportProgressState() {
+        dataExportProgressState = DataExportProgressState.None
+    }
+
+    fun exportTrip(drivingSession: DrivingSession?) {
+        exportWrapper {
+            if (drivingSession == null) DataExportStatus(DataExportState.Error)
+            else DataExportRepository.exportTripData(drivingSession) { dataExportProgressState = it }
+        }
+    }
+
+    fun exportChargingSession(chargingSession: ChargingSession?) {
+        exportWrapper {
+            if (chargingSession == null) DataExportStatus(DataExportState.Error)
+            else DataExportRepository.exportChargingSessionData(chargingSession) {dataExportProgressState = it }
+        }
+    }
+
+    private fun exportWrapper(export: suspend () -> DataExportStatus) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = export()
+                dataExportProgressState = if (response.state == DataExportState.Success) {
+                    DataExportProgressState.Success
+                } else {
+                    DataExportProgressState.Failure(response.message ?: "Unknown Error")
+                }
+            } catch (e: CancellationException) {
+                dataExportProgressState = DataExportProgressState.Failure("Export has been canceled.")
+            }
+        }
     }
 
 //    fun setSelectedMainScreenTabIndex(tabIndex: Int) {

@@ -160,7 +160,11 @@ private fun TripDetailsVerticalTabs(
                     visible = selectedKey == TripDetailsTabKeys.Consumption,
                     enter = fadeIn(),
                     exit = fadeOut()
-                ) { TripDetailsConsumptionSection(viewModel, tripDetailsState.drivingSession) }
+                ) { TripDetailsConsumptionSection(
+                    viewModel = viewModel,
+                    globalViewModel = globalViewModel,
+                    drivingSession = tripDetailsState.drivingSession
+                ) }
 
                 AnimatedVisibility(
                     visible = selectedKey == TripDetailsTabKeys.Charging,
@@ -176,7 +180,8 @@ private fun TripDetailsVerticalTabs(
         }
         TripDetailsChargingDetailsOverlay(
             visible = tripDetailsState.showChargingDetails,
-            viewModel = viewModel
+            viewModel = viewModel,
+            globalViewModel = globalViewModel
         )
     }
 }
@@ -283,6 +288,7 @@ private fun TripDetailsHorizontalTabs(
                         ) {
                             TripDetailsConsumptionSection(
                                 viewModel = viewModel,
+                                globalViewModel = globalViewModel,
                                 drivingSession = tripDetailsState.drivingSession
                             )
                         }
@@ -309,7 +315,8 @@ private fun TripDetailsHorizontalTabs(
 
         TripDetailsChargingDetailsOverlay(
             visible = tripDetailsState.showChargingDetails,
-            viewModel = viewModel
+            viewModel = viewModel,
+            globalViewModel = globalViewModel
         )
     }
 }

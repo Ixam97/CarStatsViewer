@@ -64,13 +64,13 @@ import de.ixam97.carcompose.components.layout.CarColumn
 import de.ixam97.carcompose.components.layout.CarListDivider
 import de.ixam97.carcompose.components.layout.CarListItem
 import de.ixam97.carcompose.components.layout.CarListSection
-import de.ixam97.carcompose.components.layout.LocalCarSnackBarState
 import de.ixam97.carcompose.theme.CarTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Date
 import androidx.compose.ui.platform.LocalResources
+import com.ixam97.carStatsViewer.carCompose.CarComposeGlobalViewModel
 
 /**
  * ViewModel to store the currently configured layout across visibility changes of the details
@@ -98,12 +98,14 @@ class TripDetailsConsumptionSectionLayoutStateViewModel(): ViewModel() {
 @Composable
 internal fun TripDetailsConsumptionSection(
     viewModel: TripDetailsViewModel,
+    globalViewModel: CarComposeGlobalViewModel,
     drivingSession: DrivingSession?
 ) {
     drivingSession.let { drivingSession ->
         if (drivingSession != null)
             TripDetailsConsumptionSectionContent(
                 viewModel = viewModel,
+                globalViewModel = globalViewModel,
                 drivingSession = drivingSession
             )
         else Box(
@@ -116,6 +118,7 @@ internal fun TripDetailsConsumptionSection(
 @Composable
 private fun TripDetailsConsumptionSectionContent(
     viewModel: TripDetailsViewModel,
+    globalViewModel: CarComposeGlobalViewModel,
     drivingSession: DrivingSession
 ) {
     val layoutStateViewModel: TripDetailsConsumptionSectionLayoutStateViewModel = viewModel()
@@ -250,14 +253,12 @@ private fun TripDetailsConsumptionSectionContent(
                         ),
                     verticalArrangement = Arrangement.spacedBy(CarTheme.carDimensions.defaultVerticalPadding)
                 ) {
-                    val snackBarHostState = LocalCarSnackBarState.current
                     CarButton(
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(max = 70.dp),
-                        onClick = { viewModel.exportTrip(
-                            sessionID = drivingSession.driving_session_id,
-                            snackBarHostState = snackBarHostState
+                        onClick = { globalViewModel.exportTrip(
+                            drivingSession = tripDetailsState.drivingSession
                         ) },
                         enabled = CarStatsViewer.appPreferences.dataExportEnabled
                     ) {
