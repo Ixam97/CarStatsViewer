@@ -56,6 +56,16 @@ fun SettingsScreen(
 ) {
     val globalState by globalViewModel.globalState.collectAsState()
 
+    val headerIconButtons = if (BuildConfig.FLAVOR_version == "dev") {
+        listOf(
+            @Composable {
+                CarIconButton(
+                    painter = painterResource(R.drawable.ic_debug)
+                ) { backStack.add(MainScreenNavKey()) }
+            }
+        )
+    } else listOf()
+
     val tripHistoryTab = CarTabLayout.Tab(
         title = stringResource(R.string.history_title),
         icon = painterResource(R.drawable.ic_carcompose_history),
@@ -114,13 +124,7 @@ fun SettingsScreen(
             maxTabs = settingsTabs.size.coerceAtMost(7),
             selectedKey = viewModel.selectedSettingsTabKey,
             onTabSelected = { viewModel.setSettingsTabKey(it) },
-            headerIconButtons = listOf(
-                {
-                    CarIconButton(
-                        painter = painterResource(R.drawable.ic_debug)
-                    ) { backStack.add(MainScreenNavKey()) }
-                }
-            )
+            headerIconButtons = headerIconButtons
         ) { key ->
             AnimatedVisibility(
                 visible = key == SettingsTabKeys.General,
@@ -177,13 +181,7 @@ fun SettingsScreen(
             headerTitle = stringResource(R.string.settings_title),
             isLoading = globalState.isLoading,
             onBackAction = onBack,
-            headerIconButtons = listOf(
-                {
-                    CarIconButton(
-                        painter = painterResource(R.drawable.ic_debug)
-                    ) { backStack.add(MainScreenNavKey()) }
-                }
-            )
+            headerIconButtons = headerIconButtons
         ) {
             CarComposeSettingsContent(
                 modifier = Modifier.padding(start = if (deviceIsWideScreen()) polestar4ContentPadding else 0.dp) ,
